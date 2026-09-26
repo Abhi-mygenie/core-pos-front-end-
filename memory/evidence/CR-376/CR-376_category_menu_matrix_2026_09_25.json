@@ -1,0 +1,16 @@
+{
+  "categories_total": 45,
+  "categories_shared": 2,
+  "premium_only_cats": 25,
+  "normal_only_cats": 18,
+  "same_name_both_menus": 7,
+  "examples": [
+    "margherita pizza",
+    "cold coffee",
+    "paneer tikka sandwich",
+    "aloo tikki burger",
+    "peri peri fries",
+    "red sauce pasta",
+    "white sauce pasta"
+  ]
+}

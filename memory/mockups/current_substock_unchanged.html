@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Current Stock + Sub-Recipe Stock — UNCHANGED boundary</title>
+<style>
+*{box-sizing:border-box;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+body{margin:0;background:#fff;color:#1e293b}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 30px}
+.mockbar{background:#0f172a;color:#fff;font-size:12px;letter-spacing:.4px;padding:8px 30px;display:flex;gap:16px;align-items:center}
+.mockbar b{color:#60a5fa}
+.mockbar .tag{background:#1e293b;padding:3px 10px;border-radius:999px}
+h1{font-size:24px;margin:4px 0 14px;display:flex;align-items:center;gap:10px}
+.keepbanner{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:600;margin-bottom:18px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:30px}
+th{text-align:left;color:#94a3b8;font-size:11px;letter-spacing:.6px;font-weight:700;padding:9px 16px;border-bottom:1px solid #e2e8f0}
+td{padding:13px 16px;border-bottom:1px solid #f1f5f9}
+.name{font-weight:600;color:#b91c1c}
+.name.ok{color:#166534}
+.qty b{font-size:15px}
+.unit{color:#64748b;font-size:13px;margin-left:3px}
+.paren-keep{color:#94a3b8;font-size:12px;margin-left:6px}
+.note{display:inline-block;background:#eff6ff;color:#1d4ed8;border:1px dashed #93c5fd;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:8px}
+.oos{background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+.inb{background:#dcfce7;color:#15803d;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+h2{font-size:16px;margin:6px 0 12px;color:#334155}
+</style></head><body>
+<div class="mockbar"><span class="tag">MOCKUP · not wired</span> <b>CURRENT STOCK + SUB-RECIPE STOCK — UNCHANGED</b> · BUG-455 parenthetical RETAINED (change boundary)</div>
+<div class="wrap">
+<div class="keepbanner">🔒 UNCHANGED — BUG-459 / CR-387 do NOT touch these two screens. The BUG-455 parenthetical stays because there is no two-box / breakdown UI here, so no redundancy exists.</div>
+
+<h1>📦 Current Stock</h1>
+<table>
+<thead><tr><th>INGREDIENT</th><th>CATEGORY</th><th>CURRENT STOCK</th><th>STATUS</th></tr></thead>
+<tbody>
+<tr><td class="name">Aloo Gobhi</td><td>UAT Raw Conversion</td><td class="qty"><b>0</b><span class="unit">pieces</span><span class="paren-keep">(0 piece)</span><span class="note">BUG-455 KEPT</span></td><td><span class="oos">Out of Stock</span></td></tr>
+<tr><td class="name ok">UAT COOKING OIL</td><td>UAT Biryani Kitchen</td><td class="qty"><b>11</b><span class="unit">tin</span><span class="paren-keep">(11 tin 35 ml)</span><span class="note">BUG-455 KEPT</span></td><td><span class="inb">In Stock</span></td></tr>
+<tr><td class="name">ACHARI TIKKA</td><td>UAT Raw Conversion</td><td class="qty"><b>0</b><span class="unit">kg</span></td><td><span class="oos">Out of Stock</span></td></tr>
+</tbody></table>
+
+<h2>🥣 Sub-Recipe Stock</h2>
+<table>
+<thead><tr><th>SUB-RECIPE</th><th>CATEGORY</th><th>CURRENT STOCK</th><th>STATUS</th></tr></thead>
+<tbody>
+<tr><td class="name ok">Biryani Gravy Base</td><td>Sub-Recipe</td><td class="qty"><b>4.5</b><span class="unit">batch</span><span class="paren-keep">(4 batch 500 gm)</span><span class="note">BUG-455 KEPT</span></td><td><span class="inb">In Stock</span></td></tr>
+<tr><td class="name">Tikka Marinade</td><td>Sub-Recipe</td><td class="qty"><b>0</b><span class="unit">kg</span></td><td><span class="oos">Out of Stock</span></td></tr>
+</tbody></table>
+</div></body></html>

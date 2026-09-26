@@ -1,0 +1,49 @@
+{
+  "status": true,
+  "message": "Room types",
+  "data": {
+    "types": [],
+    "rooms": [
+      {
+        "restaurant_table_id": 8528,
+        "table_no": "r1",
+        "title": null,
+        "local_room_type_id": null,
+        "local_room_type_name": null,
+        "default_sell_rate": null
+      },
+      {
+        "restaurant_table_id": 8526,
+        "table_no": "r2",
+        "title": null,
+        "local_room_type_id": null,
+        "local_room_type_name": null,
+        "default_sell_rate": null
+      },
+      {
+        "restaurant_table_id": 8524,
+        "table_no": "r3",
+        "title": null,
+        "local_room_type_id": null,
+        "local_room_type_name": null,
+        "default_sell_rate": null
+      },
+      {
+        "restaurant_table_id": 8525,
+        "table_no": "r4",
+        "title": null,
+        "local_room_type_id": null,
+        "local_room_type_name": null,
+        "default_sell_rate": null
+      },
+      {
+        "restaurant_table_id": 8527,
+        "table_no": "r5",
+        "title": null,
+        "local_room_type_id": null,
+        "local_room_type_name": null,
+        "default_sell_rate": null
+      }
+    ]
+  }
+}

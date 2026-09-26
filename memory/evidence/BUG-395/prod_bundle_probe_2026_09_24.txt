@@ -1,0 +1,20 @@
+# pos.mygenie.online prod bundle probe — 2026-09-24 (read-only GET; bundle main.1f7d79fb.js, 5,679,764 bytes; not stored — extract only)
+
+## occurrences
+deliveryCustName       1
+deliveryCustAddress    1
+deliveryCustPincode    1
+deliveryCustPhone      1
+deliveryCustHouse      1
+deliveryCustFloor      1
+deliveryCustCity       1
+deliveryCustState      1
+printer_agent          15
+front-desk-v2          3
+Front Desk (Beta)      1
+
+## bill payload (buildBillPrintPayload) — 4 keys present, conditional on orderType
+deliveryCustHouse:"delivery"===e.orderType&&((null===(h=N.deliveryAddress)||void 0===h?void 0:h.house)||(null===(x=e.deliveryAddress)||void 0===x?void 0:x.house))||"",deliveryCustFloor:"delivery"===e.orderType&&((null===(f=N.deliveryAddress)||void 0===f?void 0:f.floor)||(null===(g=e.deliveryAddress)||void 0===g?void 0:g.floor))||"",deliveryCustCity:"delivery"===e.orderType&&((null===(b=N.deliveryAddress)||void 0===b?void 0:b.city)||(null===(v=e.deliveryAddress)||void 0===v?void 0:v.city))||"",deliveryCustState:"delivery"===e.orderType&&((null===(y=N.deliveryAddress)||void 0===y?void 0:y.state)||(null===(w=e.deliveryAddress)||void 0===w?void 0:w.state))||""
+
+## KOT / bill-without-orderData payload (printOrder else-branch) — no deliveryCust* keys
+order_id:Number(e),print_type:t,waiterName:(null===l||void 0===l?void 0:l.waiter)||"",tablename:"takeAway"===(null===l||void 0===l?void 0:l.orderType)?"TA":"delivery"===(null===l||void 0===l?void 0:l.orderType)?"Del":null!==l&&void 0!==l&&l.isWalkIn?"WC":(null===l||void 0===l?void 0:l.tableNumber)||"",custName:(null===l||void 0===l?void 0:l.customerName)||"",custPhone:(null===l||void 0===l?void 0:l.phone)||"",orderNote:(null===l||void 0===l?void 0:l.orderNote)||"",billFoodList:(null===l||void 0===l?void 0:l.rawOrderDetails)||[],daily_token:(null===l||void 0===l?void 0:l.dailyToken)||""},r.station_kot="kot"===t&&o?o:"")

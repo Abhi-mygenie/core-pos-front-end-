@@ -1,0 +1,33 @@
+{
+  "R-M2-03_initial": {
+    "checkin": "2026-09-21",
+    "checkout": "2026-09-22",
+    "checkout_min": "2026-09-21",
+    "checkin_val": "2026-09-21",
+    "rateplan": "suite-s-ep",
+    "preview_current": "Current \u2192 New\nNights\n1\n\u2014\nBooking charge\n\u20b931,500\n\u2014\nSGST\n\u20b92,835\n\u2014\nCGST\n\u20b92,835\n\u2014\nTotal (incl. GST)\n\u20b937,170\n\u2014\nBalance due\n\u20b937,170\n\u2014\nChange vs current\n\u2014\nFigures come from the server preview; nothing is saved until you confirm.",
+    "confirm_disabled": true
+  },
+  "R-M2-03_single_fill": {
+    "within_400ms": 0,
+    "total_after_debounce": 1,
+    "bodies": [
+      "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"Modified from Front Desk\",\"preview\":true}"
+    ]
+  },
+  "R-M2-03_preview_ui": {
+    "nights": "2",
+    "total": "\u20b974,340",
+    "delta": "+\u20b937,170",
+    "confirm_disabled": false
+  },
+  "R-M2-03_burst": {
+    "patch_count": 1,
+    "bodies": [
+      "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\",\"preview\":true}"
+    ]
+  },
+  "R-M2-03_reason_patch": [
+    "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"QA role4\",\"preview\":true}"
+  ]
+}

@@ -37,14 +37,14 @@ export const fromAPI = {
   }),
 
   /**
-   * Transform products array — filters to Normal food_for only
+   * Transform products array — filters out Aggregator menu only (CR-376: Phase 3 multi-menu)
    * Phase 3: will support multiple menus (Buffet, HappyHour, etc.)
    */
   productList: (apiProducts) => {
     if (!Array.isArray(apiProducts)) return [];
     return apiProducts
       .map(fromAPI.product)
-      .filter(p => p.foodFor === 'Normal')
+      .filter(p => p.foodFor !== 'Aggregator') // CR-376: Phase 3 — expose all non-Aggregator menus
       .filter(p => p.productName.toLowerCase() !== 'check in');
   },
 
