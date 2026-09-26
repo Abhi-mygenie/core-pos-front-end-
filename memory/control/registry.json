@@ -28328,6 +28328,23 @@
       "related": "CR-376",
       "registered": "2026-09-25",
       "implemented": "2026-09-25"
+    },
+    {
+      "id": "BUG-465",
+      "title": "Reports charts crash in production build \u2014 recharts/es-toolkit Terser minification (TypeError: mR is not a function)",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "HIGH",
+      "status": "GATE_1_INTAKE",
+      "sprint_key": "sep_bug_closure",
+      "gate": "1",
+      "intake_doc": "change_requests/BUG-465_REPORTS_CHARTS_PROD_CRASH_RECHARTS_ESKIT_MINIFICATION_INTAKE.md",
+      "investigation_report": "memory/PL_CHARTS_PROD_CRASH_INVESTIGATION_REPORT.md",
+      "blast_radius": "LARGE (30 files, all recharts report pages)",
+      "files": "package.json (overrides) \u2014 no src/ files",
+      "duplicate_check": "DISTINCT",
+      "registered": "2026-09-26",
+      "source": "AGENT-DISCOVERED"
     }
   ],
   "meta": {
