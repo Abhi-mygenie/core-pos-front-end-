@@ -1,10 +1,10 @@
 # BUG-465 — Reports Charts Crash in Production Build (recharts/es-toolkit Terser minification)
 
 **Date:** 2026-09-26
-**Updated:** 2026-09-26 (v2 — production uses npm; going forward npm is the canonical build tool)
+**Updated:** 2026-09-26 (v3 — OD-465-01 LOCKED Option A; Gate 1 CLOSED)
 **Role:** INTAKE
 **Sprint:** sep_bug_closure
-**Gate:** 1
+**Gate:** 1 — CLOSED
 
 ---
 
@@ -16,7 +16,7 @@
 | Type | BUG |
 | Severity | **P1 — HIGH** |
 | Risk | **HIGH** |
-| Status | GATE_1_INTAKE |
+| Status | GATE_2_READY |
 | Source | AGENT-DISCOVERED (investigation report `PL_CHARTS_PROD_CRASH_INVESTIGATION_REPORT.md`) |
 | Confidence | CONFIRMED — local `craco build` reproduced the crash; stack trace matches deployed prod |
 | Build tool (prod) | **npm** — `npm install` + `npm run build` (`craco build`) |
@@ -190,22 +190,21 @@ higher churn, not recommended).
 
 ---
 
-## 11. Open Decisions for Planning
+## 11. Owner Decisions
 
 | OD | Question | Agent recommendation | Status |
 |---|---|---|---|
-| OD-465-01 | Option 1 (`es-toolkit` pin to `1.46.1`) vs Option 2 (`recharts` downgrade to `2.x`)? | **Option 1** — less churn, no API changes | OPEN |
-| OD-465-02 | Regression scope — all 30 chart files in prod build, or spot-check key pages? | Full regression on production build | OPEN |
-| OD-465-03 | Confirm: commit `package-lock.json` after fix so deps are locked going forward? | **YES** — prevents future silent version floats | **OWNER DIRECTION: YES (2026-09-26)** |
+| OD-465-01 | Option 1 (`es-toolkit` pin to `1.46.1`) vs Option 2 (`recharts` downgrade to `2.x`)? | Option 1 — less churn, no API changes | **LOCKED: Option A — pin `es-toolkit@1.46.1` via npm `"overrides"` (owner 2026-09-26)** |
+| OD-465-02 | Regression scope — all 30 chart files in prod build, or spot-check key pages? | Full regression on production build | OPEN — for Gate 2 |
+| OD-465-03 | Commit `package-lock.json` after fix so deps are locked going forward? | YES — prevents future silent version floats | **LOCKED: YES (owner 2026-09-26)** |
 
 ---
 
-## 12. Next Step
+## 12. Gate Status
 
-→ **Planning Gate 2** — Impact Analysis:
-  - Exact `package.json` `overrides` change
-  - Clean install procedure (`npm install`)
-  - Commit `package-lock.json`
-  - Production build regression matrix (all 30 chart pages, `npm run build`)
+**Gate 1 — CLOSED (owner 2026-09-26)**
+- OD-465-01 LOCKED: Option A
+- OD-465-03 LOCKED: YES commit lockfile
+- OD-465-02 OPEN: answer at Gate 2
 
-Awaiting owner: **"Gate 2 GO"**
+**Next: Gate 2 GO (Planning — Impact Analysis). Zero code. Awaiting owner.**

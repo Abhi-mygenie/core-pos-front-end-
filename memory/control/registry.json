@@ -28335,9 +28335,9 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_2_READY",
       "sprint_key": "sep_bug_closure",
-      "gate": "1",
+      "gate": "1 CLOSED",
       "intake_doc": "change_requests/BUG-465_REPORTS_CHARTS_PROD_CRASH_RECHARTS_ESKIT_MINIFICATION_INTAKE.md",
       "investigation_report": "memory/PL_CHARTS_PROD_CRASH_INVESTIGATION_REPORT.md",
       "blast_radius": "LARGE (30 files, all recharts report pages)",
@@ -28346,7 +28346,10 @@
       "registered": "2026-09-26",
       "source": "AGENT-DISCOVERED",
       "notes": "UPDATED 2026-09-26: production uses npm (npm install + npm run build). Fix uses npm overrides field. Going forward npm is canonical build tool; package-lock.json to be committed after fix. OD-465-03 LOCKED: YES commit lockfile.",
-      "build_tool": "npm"
+      "build_tool": "npm",
+      "od_465_01": "LOCKED: Option A \u2014 pin es-toolkit@1.46.1 via npm overrides",
+      "od_465_03": "LOCKED: YES commit package-lock.json",
+      "od_465_02": "OPEN \u2014 answer at Gate 2"
     }
   ],
   "meta": {
