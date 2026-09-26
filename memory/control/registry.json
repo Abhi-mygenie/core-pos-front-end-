@@ -28344,7 +28344,9 @@
       "files": "package.json (overrides) \u2014 no src/ files",
       "duplicate_check": "DISTINCT",
       "registered": "2026-09-26",
-      "source": "AGENT-DISCOVERED"
+      "source": "AGENT-DISCOVERED",
+      "notes": "UPDATED 2026-09-26: production uses npm (npm install + npm run build). Fix uses npm overrides field. Going forward npm is canonical build tool; package-lock.json to be committed after fix. OD-465-03 LOCKED: YES commit lockfile.",
+      "build_tool": "npm"
     }
   ],
   "meta": {
