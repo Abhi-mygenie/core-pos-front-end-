@@ -238,9 +238,15 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '',
 
   // CR-002: Defensive filter — exclude cart items from suggestions
   const filteredCrossSell = intel?.crossSellItems?.filter(xs => {
+    if (!menuItems.some(f => String(f.id) === String(xs.itemId))) return false; // CR-376-FU-A: hide off-menu suggestions
     // menuItems passed from OrderEntry already have cart context
     return true; // server already filters; keeping for structural completeness
   }) || [];
+
+  // CR-376-FU-A: filter Past Favourites to only items in the active menu
+  const filteredTopItems = intel?.orderPatterns?.topItems?.filter(item =>
+    menuItems.some(f => String(f.id) === String(item.itemId))
+  ) || [];
 
   // CR-002: Collapsible state for edit form in existing-customer mode
   const [editFormOpen, setEditFormOpen] = useState(false);
@@ -547,11 +553,11 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '',
           )}
 
           {/* CR-002: Past Favourites (hidden for first-time or no intel) */}
-          {isExistingCustomer && intel && !intel.isFirstTimeCustomer && intel.orderPatterns.topItems.length > 0 && (
+          {isExistingCustomer && intel && !intel.isFirstTimeCustomer && filteredTopItems.length > 0 && ( // CR-376-FU-A
             <div data-testid="customer-favourites-section">
               <label className="text-xs font-medium mb-2 block uppercase tracking-wide" style={{ color: COLORS.grayText }}>Past Favourites</label>
               <div className="flex flex-wrap gap-2">
-                {intel.orderPatterns.topItems.map(item => (
+                {filteredTopItems.map(item => ( // CR-376-FU-A
                   <button
                     key={item.itemId}
                     onClick={() => handleIntelItemClick(item.itemId)}

@@ -6,6 +6,7 @@ import { COLORS } from "../constants";
 import { useToast } from "../hooks/use-toast";
 import { useStations, useMenu, useRestaurant } from "../contexts";
 import { fetchStationData } from "../api/services/stationService";
+import { setActiveMenuType } from '../utils/activeMenuPrefs'; // CR-376
 // CR-008 #4 Phase A / Bucket D1 (May-2026): browser-local "Stay on Order
 // Entry After Collect Bill" preference. UI lives in the UI Elements section
 // below (next to Order Taking). Read site is OrderEntry.jsx after a
@@ -66,6 +67,9 @@ const QSR_MODE_FACTORY = false;
 const QSR_DISCOUNT_KEY = 'mygenie_qsr_discount_enabled';
 const QSR_DISCOUNT_FACTORY = false;
 // BUG-273: AUTO_SETTLE_KEY + AUTO_SETTLE_FACTORY + autoSettleEnabled state + localStorage read/write + toggle UI removed
+// CR-376: Active Menu Type — station-level menu switch. Default 'Normal' = no change for existing restaurants.
+const ACTIVE_MENU_TYPE_KEY = 'mygenie_active_menu_type';
+const ACTIVE_MENU_TYPE_DEFAULT = 'Normal';
 
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
@@ -140,7 +144,7 @@ const StatusConfigPage = () => {
     setAllStationData,
   } = useStations();
   // Categories needed to build categoriesMap for fetchStationData
-  const { categories } = useMenu();
+  const { categories, availableMenuTypes } = useMenu(); // CR-376: +availableMenuTypes for Active Menu selector
 
   // CR-024 Bug B: Get API features to filter channels
   const { features } = useRestaurant();
@@ -208,6 +212,8 @@ const StatusConfigPage = () => {
   const [takeawayNameReq, setTakeawayNameReq] = useState(true);
   // CR-350: Room check-in ID upload mandatory toggle
   const [roomIdUploadReq, setRoomIdUploadReq] = useState(false);
+  // CR-376: Active Menu Type — station-level menu switch
+  const [activeMenuTypeSetting, setActiveMenuTypeSetting] = useState(ACTIVE_MENU_TYPE_DEFAULT);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -331,6 +337,14 @@ const StatusConfigPage = () => {
       console.error('Failed to read QSR mode flags:', e);
     }
 
+    // CR-376: hydrate Active Menu Type
+    try {
+      const storedMenuType = localStorage.getItem(ACTIVE_MENU_TYPE_KEY);
+      if (storedMenuType) setActiveMenuTypeSetting(storedMenuType);
+    } catch (e) {
+      console.error('Failed to read active menu type:', e);
+    }
+
     // CR-010: hydrate Weight Entry Prompt toggle
     try {
       const storedWeight = localStorage.getItem('mygenie_weight_prompt_enabled');
@@ -418,6 +432,7 @@ const StatusConfigPage = () => {
     setTakeawayNameReq(true);
     // CR-350: reset room ID upload (default: not required)
     setRoomIdUploadReq(false);
+    setActiveMenuTypeSetting(ACTIVE_MENU_TYPE_DEFAULT); // CR-376
     setHasChanges(true);
   };
 
@@ -552,6 +567,8 @@ const StatusConfigPage = () => {
     localStorage.setItem('mygenie_takeaway_name_required', takeawayNameReq ? 'true' : 'false');
     // CR-350: persist room ID upload requirement
     localStorage.setItem('mygenie_room_id_upload_required', roomIdUploadReq ? 'true' : 'false');
+    // CR-376: persist Active Menu Type
+    setActiveMenuType(activeMenuTypeSetting);
 
     // STATION_VIEW_SYNC (Apr-2026): localStorage write alone leaves StationContext
     // stale until a full reload, so the dashboard's StationPanel renders nothing
@@ -993,6 +1010,40 @@ const StatusConfigPage = () => {
                 </button>
               </div>
             </div>
+
+            {/* ============== CR-376: ACTIVE MENU ============== */}
+            {availableMenuTypes.length > 1 && (
+              <div
+                className="mt-4 p-4 rounded-xl flex items-center justify-between gap-4"
+                style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
+              >
+                <div className="flex flex-col gap-1 flex-1 min-w-0">
+                  <span className="text-sm font-semibold" style={{ color: COLORS.darkText }}>
+                    Active Menu
+                  </span>
+                  <span className="text-xs" style={{ color: COLORS.grayText }}>
+                    Select which menu is active for order taking on this station. Per-device setting.
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 flex-shrink-0">
+                  {availableMenuTypes.map(type => (
+                    <button
+                      key={type}
+                      data-testid={`active-menu-option-${type.toLowerCase().replace(/\s+/g, '-')}`}
+                      onClick={() => { setActiveMenuTypeSetting(type); setHasChanges(true); }}
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-colors"
+                      style={{
+                        backgroundColor: activeMenuTypeSetting === type ? `${COLORS.primaryGreen}15` : COLORS.white,
+                        borderColor: activeMenuTypeSetting === type ? COLORS.primaryGreen : COLORS.borderGray,
+                        color: activeMenuTypeSetting === type ? COLORS.primaryGreen : COLORS.grayText,
+                      }}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* ============== CR-051: CUSTOMER FIELD REQUIREMENTS ============== */}
             <div className="mt-6 pt-4" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>

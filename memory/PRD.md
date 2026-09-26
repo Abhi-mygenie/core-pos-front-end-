@@ -686,3 +686,26 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - 2026-09-25 CR-376 stays Gate 3: R11 probe done (Normal 117/Premium 141, no backend change), live before-screenshots, HTML mockup `public/cr376-menu-switch-mockup.html`, new OD-376-08/09/10 raised (selector style · drop E6/E7 · empty categories). QA_OWNER creds restored to gitignored test_credentials.md. Zero code.
 - 2026-09-25 CR-376 Gate 3 FINAL: mockup `#findings` section highlights OD-376-07/08/09/10 visually; intake gained Gate 4 Preconditions P1–P5; owner-review handover `handover/SESSION_HANDOVER_2026_09_25_CR376_GATE3_FINAL_OWNER_REVIEW.md` for next agent (present plan, collect decisions/blockers, then await "CR-376 Gate 4 GO"). Zero code.
 - 2026-09-25 CR-376 session CLOSED at Gate 3. Multi-menu Q answered (N menus → N pills in Local Settings; Order Entry = one chip, no tabs). Pill-sort note added to plan E3b. Handover §8. Zero code.
+
+## 2026-09-25 — PLANNING Gate 2 COMPLETE: CR-376-FU-B (CategoryPanel hide-empty + counts + default All + Popular scoping)
+- Blocker (count by `categoryId` vs `categoryIds`) validated against code + evidence: grid L561 uses `categoryId` only; every probed product has `category_ids` = 1 entry = `category_id`. RESOLVED → count by `categoryId`. Owner "Gate 2 GO".
+- Written `impact/CR-376-FU-B_IMPACT_ANALYSIS.md`: 4 gaps, rules B1–B5 locked, 2 files (`CategoryPanel.jsx` ~15 lines · `OrderEntry.jsx` L102/L556/L1670 ~4 additive lines, R5 hotspot → no Fast Lane), conflict CLEAR, 0 open ODs. Registry → GATE_2_IMPACT_COMPLETE (2/7), sprint `sep_bug_closure`. Zero code.
+- Handover `handover/SESSION_HANDOVER_2026_09_25_CR376_FU_B_GATE2_COMPLETE.md` — next agent: recap last 2 sessions → walk owner through Impact Analysis → ask "Gate 3 GO".
+- Still blocked on credentials: CR-376 Gate 5b remaining cases + CR-376-FU-A QA need `QA_OWNER` / `cafe103`; BUG-459/CR-387 need `QA_INV` or "Gate 4 GO".
+
+## 2026-09-26 — CR-376-FU-B lifecycle (Gate 3 → 5b) in one session
+- Branch in use: `21implement` (synced 2026-09-25 at 2a2a2383; remote now 0b4d3a69 — only CR-389 intake doc pulled, owner choice)
+- PLANNING: `plans/CR-376-FU-B_IMPLEMENTATION_PLAN.md`
+- IMPLEMENTATION (owner Gate 4 GO): `CategoryPanel.jsx` E1-E3, `OrderEntry.jsx` E4-E6, new `__tests__/CategoryPanel.cr376fub.test.jsx` (6/6)
+- QA Gate 5b PASS 13/13 via browser automation with QA_HYATT: `test_reports/CR-376-FU-B_QA_REPORT_2026_09_26.md`
+- Credentials restored to gitignored `memory/test_credentials.md` (QA_HYATT verified; cafe103/QA_INV same pwd; QA_OWNER email unknown)
+- Next: Gate 6 Owner Smoke (CR-376-FU-B) · QA GO for CR-376-FU-A and CR-376 remaining cases · Gate 4 GO pending for CR-388, BUG-459, CR-387
+
+## 2026-09-26 — QA Gate 5b PASS: CR-376 (+ CR-376-FU-A, + CR-376-FU-B V10)
+- Role: QA (ALPHA v0.7 Role 4), frontend automation via testing_agent. Owner GO scope 1c; accounts cafe103 / QA_OWNER / QA_HYATT (all HTTP 200). No code modified; no orders placed/settled.
+- Result: 9/9 executed browser cases PASS, 0 blockers. cafe103 zero-change (no selector, no chip); QA_OWNER Normal↔Premium switch (chip 'Premium Menu' on/off + category set changes = FU-B V10 re-confirmed); QA_HYATT 10 pills + empty-state; search+add-to-cart regression (no submit).
+- CR-376-FU-A: T4 first-time-customer PASS (sections hidden). T1/T2/T3 CODE-VERIFIED only (filter CustomerModal.jsx L240-249 scoped to activeMenuProducts) — no live cross-menu returning customer sourceable from frontend. NOTE, no defect.
+- Registry advanced: CR-376 → GATE_5B_QA_PASS · CR-376-FU-A → GATE_5B_QA_PASS · CR-376-FU-B already GATE_5B_QA_PASS. Registry SYNCED.
+- Report: `test_reports/CR-376_QA_REPORT_2026_09_26.md` (raw `/app/test_reports/iteration_2.json`).
+- Data drift: QA_OWNER Normal menu now 7 items (was 117); Premium unchanged; switch behaviour unaffected (count-agnostic assertions per owner).
+- Next: Gate 6 Owner Smoke for CR-376 + FU-A + FU-B (SMOKE FACILITATOR). Suggest smoking Normal↔Premium on preprod + a TakeAway/Walk-in order (R13) + FU-A live cross-menu customer if available.

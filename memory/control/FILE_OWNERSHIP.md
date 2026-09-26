@@ -1,7 +1,17 @@
 # Layer 7 — File Ownership Map
 
 **Status:** POPULATED
-**Last Updated:** 2026-09-24 (sep_bug_closure WAVE 2 IMPL — BUG-452 DashboardPage.jsx D-1/D-2 + OrderEntry.jsx D-3 comment + bug452 test — see rows below) — 2026-09-24 (sep_bug_closure WAVE 1 IMPL — CR-386 public/index.html+manifest+3 PNGs · BUG-453 soundManager/NotificationContext/DashboardPage/ScanOrderPopOut(comments)+test · BUG-451 constants/LoadingPage/useRefreshAllData/productService+test — see section below) — 2026-09-24 (CR-385 P5 §5.7 registry closure — docs/evidence rows added, `frontend/src` diff empty) — 2026-09-21 (BUG-439 BUG FIX — see section below) — 2026-09-21 (CR-385 Phase 0.5 BUG FIX — BUG-434…438, see section below) — 2026-09-21 (CR-385 M0 Phase 0 IMPL — see section below) — 2026-09-16 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+**Last Updated:** 2026-09-26 (CR-376-FU-B IMPL — CategoryPanel.jsx E1-E3 + OrderEntry.jsx E4-E6 + NEW __tests__/CategoryPanel.cr376fub.test.jsx — see section below) — 2026-09-24 (sep_bug_closure WAVE 2 IMPL — BUG-452 DashboardPage.jsx D-1/D-2 + OrderEntry.jsx D-3 comment + bug452 test — see rows below) — 2026-09-24 (sep_bug_closure WAVE 1 IMPL — CR-386 public/index.html+manifest+3 PNGs · BUG-453 soundManager/NotificationContext/DashboardPage/ScanOrderPopOut(comments)+test · BUG-451 constants/LoadingPage/useRefreshAllData/productService+test — see section below) — 2026-09-24 (CR-385 P5 §5.7 registry closure — docs/evidence rows added, `frontend/src` diff empty) — 2026-09-21 (BUG-439 BUG FIX — see section below) — 2026-09-21 (CR-385 Phase 0.5 BUG FIX — BUG-434…438, see section below) — 2026-09-21 (CR-385 M0 Phase 0 IMPL — see section below) — 2026-09-16 (CR-162: roomService.js L173 — payment_type: interim added to recordPartialPayment()) — 2026-09-11 (CR-377: reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8 — 9 edits, 82 fields, BUG-393 absorbed) — 2026-09-11 (BUG-394: ProductForm.jsx E1/E1b/E1c/E3c/E6e/E6f/E6g + BulkEditor.jsx E2+E6a + AddonManagementPanel.jsx E3a/E3b/E4a/E4b/E6b/E6c/E6d + VariationExpandPanel.jsx E5+E6h) — 2026-09-11 (CR-378: Sidebar.jsx L820 — restaurant name added alongside restaurant ID. Fast Lane.) — 2026-09-11 (BUG-395 addendum-2: customerTransform.js L199-210 — `crossRestaurantAddress` missing house/floor/road/contactPersonName/contactPersonNumber) — 2026-09-10 (BUG-395: orderTransform.js L2194-2205 — 4 delivery address sub-fields added to buildBillPrintPayload) — 2026-09-10 (BUG-391: ProductForm.jsx E1-E3 + BulkEditor.jsx E4 + menuManagementTransform.js E5) — 2026-09-09 (BUG-386: roomGstCalculator.js NEW + profileTransform.js E1 + pmsService.js E5 + CheckInPage.jsx E3+E4 + orderTransform.js E6 + PmsCheckoutDrawer.jsx E7) — 2026-09-09 (BUG-383: roomStatusTransform.js E1 + RoomStatusPage.jsx E2+E3 + roomStatusTransform.cr358p4.test.js E4) — 2026-09-01 (BUG-374/369/372/371: OrderEntry.jsx + CartPanel.jsx + profileTransform.js + CollectPaymentPanel.jsx + orderTransform.js + DashboardPage.jsx + VariationExpandPanel.jsx + BulkEditor.jsx) — 2026-09-01 (BUG-370: OrderCard.jsx + TableCard.jsx; BUG-373: profileTransform.js + CollectPaymentPanel.jsx; BUG-375: ProductForm.jsx) — 2026-09-01 (CR-353+CR-355: StationMappingTab + Sidebar) — 2026-08-30 (CR-352)
+
+---
+
+## FILE_OWNERSHIP — CR-376-FU-B IMPL (2026-09-26) — marker `// CR-376-FU-B`
+
+| File | Change | Owner |
+|---|---|---|
+| `src/components/order-entry/CategoryPanel.jsx` | E1 +2 props `activeMenuProducts`, `popularProducts` (L6-8) · E2 `allCategories` useMemo rewritten: visible = active && !disabled, real cats counted by `categoryId` and hidden at 0, All always with total, Popular = popular ∩ visible by `productId` hidden at 0 (L9-25) · E3 span renders `Name (count)` (L68) | CR-376-FU-B IMPL 2026-09-26 |
+| `src/components/order-entry/OrderEntry.jsx` | E4 L102 `useState("all")` default tab · E5 L556-558 Popular branch filtered by `visibleIds` of active menu · E6 L1678-1679 passes 2 props to `<CategoryPanel>` | CR-376-FU-B IMPL 2026-09-26 |
+| `src/components/order-entry/__tests__/CategoryPanel.cr376fub.test.jsx` | NEW — 6 unit tests V1-V6 (counts, hide 0, All always, Popular scope/gate/hidden, row order) | CR-376-FU-B IMPL 2026-09-26 |
 
 ---
 
@@ -1538,4 +1548,33 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `memory/control/{registry.json,BUG_TRACKER.md,CR_REGISTRY.md,OPEN_GAPS_REGISTER.md,CONTROL_DASHBOARD.md,SPRINT_STATUS.md,FILE_OWNERSHIP.md}`, `memory/PRD.md` | §5.7 registry closure (P5 PASSED, awaiting sign-off; BUG-448/449 registered; FU-385-C row) | CR-385 P5 §5.7 2026-09-24 |
 
 `frontend/src` diff: **empty** (verified `git status --short frontend/src` → 0 at §5.7 close). Hotspots byte-identical by sha256 (FINAL_GUARDS G3).
+
+| `src/api/transforms/productTransform.js` | L47 filter `==='Normal'` → `!=='Aggregator'` (E1) | CR-376 IMPL 2026-09-25 |
+| `src/utils/activeMenuPrefs.js` | NEW FILE — localStorage util for active menu type | CR-376 IMPL 2026-09-25 |
+| `src/contexts/MenuContext.jsx` | +import activeMenuPrefs · +3 memos (activeMenuType/activeMenuProducts/availableMenuTypes) · +3 context exports | CR-376 IMPL 2026-09-25 |
+| `src/components/order-entry/OrderEntry.jsx` | L57 destructure +activeMenuProducts+activeMenuType · L558/560 grid→activeMenuProducts · L1722 chip · L1800 empty-state · L2867 menuItems→activeMenuProducts | CR-376 IMPL 2026-09-25 |
+| `src/pages/StatusConfigPage.jsx` | +import setActiveMenuType · +ACTIVE_MENU_TYPE constants · +state activeMenuTypeSetting · +hydrate/save/reset · +E5h card-row UI | CR-376 IMPL 2026-09-25 |
+| `src/components/inventory/IngredientBulkEditor.jsx` | L79+L81: +`!r.isSubRecipe` to filtered useMemo (both branches) | BUG-461 FIX 2026-09-25 |
+
+| `src/components/inventory/InventorySetupPanel.jsx` | E1 L379: add form minUnit span→select · E2 L470: edit form minUnit span→select · E3 L189: startEdit priority flip | CR-388 IMPL 2026-09-25 |
+| `src/components/inventory/IngredientBulkEditor.jsx` | E4 L478: bulk minUnit span→conditional select | CR-388 IMPL 2026-09-25 |
+
+## FILE_OWNERSHIP — BUG-464 BUG FIX (2026-09-25) — marker `// BUG-464`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/OrderEntry.jsx` | L1723 comment + L1730: `{activeMenuType} Menu` → `/menu$/i` regex guard — suppress " Menu" suffix when type name already ends with "menu" (case-insensitive). 1 line change + 1 comment line. Hotspot R5, +2 additive, no existing logic line changed. | BUG-464 FIX 2026-09-25 |
+
+## FILE_OWNERSHIP — BUG-462 BUG FIX (2026-09-25) — markers `// BUG-462`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/OrderEntry.jsx` | L57: +`availableMenuTypes` to `useMenu()` destructure (+1 word in existing line). L1801-1804: replaced `activeMenuType !== 'Normal'` guard with `availableMenuTypes.length > 1` + 3-line comment block. Hotspot R5, +4 lines, no financial logic changed. | BUG-462 FIX 2026-09-25 |
+
+## FILE_OWNERSHIP — CR-376-FU-A IMPL (2026-09-25) — markers `// CR-376-FU-A`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/CustomerModal.jsx` | L241: +1 line ID guard in `filteredCrossSell` filter. L246-249: +4 lines `filteredTopItems` const. L556: render condition swap `topItems.length` → `filteredTopItems.length`. L560: map swap `topItems.map` → `filteredTopItems.map`. Non-hotspot. 6 lines total, no financial logic. | CR-376-FU-A IMPL 2026-09-25 |
+
 

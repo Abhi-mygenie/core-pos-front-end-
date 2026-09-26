@@ -186,7 +186,7 @@ function IngredientsTab() {
     setEditIng({
       name: ing.name, categoryId: ing.categoryId, unit: ing.unit,
       smallUnit: ing.smallUnit || '', conversionFactor: ing.conversionFactor || '',
-      minQtyAlert: ing.minQtyAlert || '', minUnitAlert: ing.smallUnit || ing.minUnitAlert || '',
+      minQtyAlert: ing.minQtyAlert || '', minUnitAlert: ing.minUnitAlert || ing.smallUnit || '', // CR-388: stored value wins over smallUnit default
       stockQty: parseFloat(ing.displayQty || ing.calQuantity || ing.quantity) || 0, // BUG-456 F1-fix
     });
     setShowAddForm(false);
@@ -376,11 +376,22 @@ function IngredientsTab() {
                       <div className="flex gap-1">
                         <Input type="number" value={newIng.minQtyAlert} onChange={e => setNewIng(p => ({ ...p, minQtyAlert: e.target.value }))}
                           placeholder="Alert qty" className="h-8 text-xs w-16" data-testid="new-ingredient-min-qty" />
-                        {/* BUG-269-C: Alert unit locked to smallUnit (read-only) */}
-                        <span className="h-8 text-xs border border-slate-100 rounded-md px-2 w-16 inline-flex items-center justify-center bg-slate-50 text-slate-500"
-                          data-testid="new-ingredient-min-unit">
-                          {newIng.smallUnit || newIng.unit || '—'}
-                        </span>
+                        {/* CR-388: Min alert unit — base or small unit only (OD-388-01) */}
+                        {newIng.smallUnit ? (
+                          <select className="h-8 text-xs border border-slate-200 rounded-md px-2 outline-none"
+                            value={newIng.minUnitAlert || newIng.smallUnit || ''}
+                            onChange={e => setNewIng(p => ({ ...p, minUnitAlert: e.target.value }))}
+                            data-testid="new-ingredient-min-unit">
+                            {[newIng.unit, newIng.smallUnit].filter(Boolean).map((u, i) => (
+                              <option key={i} value={u}>{u}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="h-8 text-xs border border-slate-100 rounded-md px-2 w-16 inline-flex items-center justify-center bg-slate-50 text-slate-500"
+                            data-testid="new-ingredient-min-unit">
+                            {newIng.unit || '—'}
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="py-2 px-4 text-center">
@@ -456,11 +467,22 @@ function IngredientsTab() {
                       <div className="flex gap-1">
                         <Input type="number" value={editIng.minQtyAlert} onChange={e => setEditIng(p => ({ ...p, minQtyAlert: e.target.value }))}
                           placeholder="Alert qty" className="h-8 text-xs w-16" data-testid="edit-ingredient-min-qty" />
-                        {/* BUG-269-C: Alert unit locked to smallUnit (read-only) */}
-                        <span className="h-8 text-xs border border-slate-100 rounded-md px-2 w-16 inline-flex items-center justify-center bg-slate-50 text-slate-500"
-                          data-testid="edit-ingredient-min-unit">
-                          {editIng.smallUnit || editIng.unit || '—'}
-                        </span>
+                        {/* CR-388: Min alert unit — base or small unit only (OD-388-01) */}
+                        {editIng.smallUnit ? (
+                          <select className="h-8 text-xs border border-slate-200 rounded-md px-2 outline-none"
+                            value={editIng.minUnitAlert || editIng.smallUnit || ''}
+                            onChange={e => setEditIng(p => ({ ...p, minUnitAlert: e.target.value }))}
+                            data-testid="edit-ingredient-min-unit">
+                            {[editIng.unit, editIng.smallUnit].filter(Boolean).map((u, i) => (
+                              <option key={i} value={u}>{u}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="h-8 text-xs border border-slate-100 rounded-md px-2 w-16 inline-flex items-center justify-center bg-slate-50 text-slate-500"
+                            data-testid="edit-ingredient-min-unit">
+                            {editIng.unit || '—'}
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="py-2 px-4 text-center">

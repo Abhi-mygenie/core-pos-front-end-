@@ -82,31 +82,34 @@ If ANY anchor has drifted → **STOP. Return to Planning.** Do not improvise.
 
 ---
 
-## Scope Lock
+## Scope Lock — UPDATED 2026-09-25 (OD-376-09 locked = drop E6/E7)
 
-**Files WILL change:**
+**Files WILL change (5 files, 2 hotspots):**
 1. `src/api/transforms/productTransform.js`
 2. `src/utils/activeMenuPrefs.js` ← **NEW FILE**
 3. `src/contexts/MenuContext.jsx`
-4. `src/components/order-entry/OrderEntry.jsx`
-5. `src/pages/StatusConfigPage.jsx`
-6. `src/pages/LoadingPage.jsx`
-7. `src/hooks/useRefreshAllData.js`
+4. `src/components/order-entry/OrderEntry.jsx` ← HOTSPOT
+5. `src/pages/StatusConfigPage.jsx` ← HOTSPOT
+
+**Files REMOVED from scope (OD-376-09 = a):**
+~~6. `src/pages/LoadingPage.jsx`~~ — DROPPED (E6 removed)
+~~7. `src/hooks/useRefreshAllData.js`~~ — DROPPED (E7 removed)
 
 **Files will NOT touch:**
-`CartPanel.jsx` · `CollectPaymentPanel.jsx` · `CategoryPanel.jsx` · `orderTransform.js` · `AppProviders.jsx` · `App.js` · all service files · all report files · any other file not listed above.
+`CartPanel.jsx` · `CollectPaymentPanel.jsx` · `CategoryPanel.jsx` · `CustomerModal.jsx` (except E4e L2844 — 1 line, same file as E4) · `LoadingPage.jsx` · `useRefreshAllData.js` · `orderTransform.js` · `AppProviders.jsx` · `App.js` · all service files · all report files.
 
 Scope expansion → STOP, re-declare, get owner approval.
 
 ---
 
-## Execution Sequence
+## Execution Sequence — UPDATED 2026-09-25 (E6/E7 dropped)
 
-Run edits in this order. Compile-check after E3. Compile-check after E5. Final compile after E7.
+Run edits in this order. Compile-check after E3. Final compile after E5.
 
 ```
-E1 → E2 → E3 → [compile check] → E4 → E5 → E6 → E7 → [final compile check]
+E1 → E2 → E3 → [compile check] → E4 → E5 → [final compile check]
 ```
+E6 and E7 REMOVED (OD-376-09 = a, owner 2026-09-25).
 
 ---
 
@@ -394,7 +397,7 @@ Find this exact block (L1712-1722):
 
 ---
 
-**E4e — CustomerModal Smart Suggestions `menuItems` (L2844) — GOVERNED BY OD-376-07 (OPEN)**
+**E4e — CustomerModal Smart Suggestions `menuItems` (L2844) — OD-376-07 = (a) LOCKED (owner 2026-09-25)**
 
 **Current (L2844):**
 ```jsx
@@ -409,16 +412,20 @@ Path: `CustomerModal` (CR-002) → Favourites / Smart Suggestions rows → `hand
 | (b) Leave as-is | none | Documented exception to OD-376-01. |
 | (c) Park as OD-376-07 | none in this CR | Decide later; CR-376 ships without it. |
 
-**Implementation agent: do NOT touch L2844 until OD-376-07 is locked by owner in the intake doc.**
+**OD-376-07=(a) FIRM. Replace L2844:**
+```jsx
+          menuItems={activeMenuProducts.filter(p => p.isActive && !p.isDisabled).map(adaptProduct)} // CR-376: OD-376-07=(a) scope to active menu
+```
+Off-menu CRM suggestions become inert (existing L231 skip guard). Zero change for Normal-only restaurants. Follow-up: CR-376-FU-A.
 
 **Verification after E4:**
 ```bash
 grep -n "activeMenuProducts\|activeMenuType" src/components/order-entry/OrderEntry.jsx
-# Expected: 6+ hits (destructure, 2 grid branches, chip, empty-state ×2; +1 if OD-376-07 = a)
+# Expected: 7+ hits (destructure, 2 grid branches, chip, empty-state ×2, E4e L2844)
 grep -n "products.filter\|products={products}\|menuItems={" src/components/order-entry/OrderEntry.jsx
 # Expected: L558/L560 area now activeMenuProducts (not products)
 # L2828 still products={products} (unchanged — AddCustomItemModal)
-# L2844 menuItems= → activeMenuProducts if OD-376-07 = a, else unchanged
+# L2844 menuItems= → activeMenuProducts (OD-376-07=a LOCKED)
 ```
 
 ---
@@ -539,9 +546,9 @@ Find:
 
 ---
 
-**E5h — Active Menu UI section in JSX**
+**E5h — Active Menu UI section in JSX — OD-376-08 = (b): CARD-ROW (updated 2026-09-25)**
 
-Find this exact closing sequence (L995-997 at HEAD 2026-09-25 — was ~L993-998):
+Find this exact closing sequence (L995-997 at HEAD 2026-09-25):
 ```jsx
               </div>
             </div>
@@ -549,28 +556,32 @@ Find this exact closing sequence (L995-997 at HEAD 2026-09-25 — was ~L993-998)
             {/* ============== CR-051: CUSTOMER FIELD REQUIREMENTS ============== */}
 ```
 
-**Insert BETWEEN the `</div></div>` (end of CR-010 section) and the CR-051 comment:**
+**Insert BETWEEN the `</div></div>` and the CR-051 comment — card-row style matching toggle-card neighbours:**
 
 ```jsx
             {/* ============== CR-376: ACTIVE MENU ============== */}
             {availableMenuTypes.length > 1 && (
-              <div className="mt-6 pt-4" style={{ borderTop: `1px solid ${COLORS.borderGray}` }}>
-                <h3 className="text-sm font-semibold mb-1" style={{ color: COLORS.darkText }}>
-                  Active Menu
-                </h3>
-                <p className="text-xs mb-3" style={{ color: COLORS.grayText }}>
-                  Select which menu is active for order taking on this station.
-                  Only menus with configured items are shown. Per-device setting.
-                </p>
-                <div className="flex flex-wrap gap-2">
+              <div
+                className="mt-4 p-4 rounded-xl flex items-center justify-between gap-4"
+                style={{ backgroundColor: COLORS.lightBg, border: `1px solid ${COLORS.borderGray}` }}
+              >
+                <div className="flex flex-col gap-1 flex-1 min-w-0">
+                  <span className="text-sm font-semibold" style={{ color: COLORS.darkText }}>
+                    Active Menu
+                  </span>
+                  <span className="text-xs" style={{ color: COLORS.grayText }}>
+                    Select which menu is active for order taking on this station. Per-device setting.
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 flex-shrink-0">
                   {availableMenuTypes.map(type => (
                     <button
                       key={type}
-                      data-testid={`active-menu-option-${type.toLowerCase()}`}
+                      data-testid={`active-menu-option-${type.toLowerCase().replace(/\s+/g, '-')}`}
                       onClick={() => { setActiveMenuTypeSetting(type); setHasChanges(true); }}
-                      className="px-4 py-2 rounded-lg text-sm font-medium border-2 transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-colors"
                       style={{
-                        backgroundColor: activeMenuTypeSetting === type ? `${COLORS.primaryGreen}10` : COLORS.lightBg,
+                        backgroundColor: activeMenuTypeSetting === type ? `${COLORS.primaryGreen}15` : COLORS.white,
                         borderColor: activeMenuTypeSetting === type ? COLORS.primaryGreen : COLORS.borderGray,
                         color: activeMenuTypeSetting === type ? COLORS.primaryGreen : COLORS.grayText,
                       }}
@@ -582,6 +593,8 @@ Find this exact closing sequence (L995-997 at HEAD 2026-09-25 — was ~L993-998)
               </div>
             )}
 ```
+
+**Note (OD-376-08 = b):** Card has title + description on left, pills on right — matches toggle-card neighbours. `data-testid` slug uses kebab-case with space→dash replace to handle multi-word menu names like "Bar & Drinks".
 
 **Verification after E5:**
 ```bash
@@ -660,12 +673,11 @@ After each file group, record before moving on:
 ☐ E1 — productTransform.js — filter line changed
 ☐ E2 — activeMenuPrefs.js — new file created
 ☐ E3 — MenuContext.jsx — 3 memos + 3 exports added, compile clean
-☐ E4 — OrderEntry.jsx — destructure + item grid + chip + empty-state
-☐ E5 — StatusConfigPage.jsx — constant + import + state + useMenu + hydrate + save + reset + UI section
-☐ E6 — LoadingPage.jsx — calculateItemCounts scoped
-☐ E7 — useRefreshAllData.js — calculateItemCounts scoped
+☐ E4 — OrderEntry.jsx — destructure + item grid + chip + empty-state + E4e (OD-376-07=a)
+☐ E5 — StatusConfigPage.jsx — constant + import + state + useMenu + hydrate + save + reset + UI card-row (OD-376-08=b)
 ☐ FINAL — webpack compiled with 0 new errors/warnings
 ```
+E6 (LoadingPage.jsx) and E7 (useRefreshAllData.js) REMOVED — OD-376-09=(a) locked 2026-09-25.
 
 ---
 
@@ -682,8 +694,8 @@ After each file group, record before moving on:
 | V7 | E4c | `OrderEntry.jsx` | `data-testid="active-menu-type-chip"` present in JSX | grep |
 | V8 | E5 | `StatusConfigPage.jsx` | `ACTIVE_MENU_TYPE_KEY` constant defined, state `activeMenuTypeSetting` exists, `setActiveMenuType()` called in save | grep |
 | V9 | E5h | `StatusConfigPage.jsx` | `availableMenuTypes.length > 1 &&` gates the UI section | grep |
-| V10 | E6 | `LoadingPage.jsx` | `_cr376ActiveProds` used in `calculateItemCounts` call | grep |
-| V11 | E7 | `useRefreshAllData.js` | `prodResult.products.filter(p => p.foodFor === _cr376MenuType)` in calculateItemCounts call | grep |
+| V10 | ~~E6~~ | ~~`LoadingPage.jsx`~~ | ~~`_cr376ActiveProds` used in calculateItemCounts~~ | **DROPPED — OD-376-09=(a) locked 2026-09-25. E6 not implemented.** |
+| V11 | ~~E7~~ | ~~`useRefreshAllData.js`~~ | ~~`prodResult.products.filter(p => p.foodFor === _cr376MenuType)`~~ | **DROPPED — OD-376-09=(a) locked 2026-09-25. E7 not implemented.** |
 | V12 | ALL | webpack | `yarn start` → `webpack compiled successfully` with 0 new warnings | build output |
 | V13 | E4d | `OrderEntry.jsx` | `data-testid="active-menu-empty-state"` present; outer scroll container L1787 unwrapped | grep + browser (set `mygenie_active_menu_type` to a menu with 0 items) |
 | V14 | E4e | `OrderEntry.jsx` | L2844 `menuItems=` uses `activeMenuProducts` **iff OD-376-07 = (a)**; otherwise unchanged | grep |
@@ -697,7 +709,7 @@ After each file group, record before moving on:
 Implementation agent MUST execute ALL before writing handover:
 
 ```
-☐ 1. registry.json: CR-376 → status: "IMPLEMENTED", sprint_key: "sep_bug_closure" (moved from pos_7_0 — owner 2026-09-25)
+☐ 1. registry.json: CR-376 → status: "IMPLEMENTED", sprint_key: "sep_bug_closure"
      python3 -c "import json; d=json.load(open('/app/memory/control/registry.json')); 
      item=[i for i in d['items'] if i['id']=='CR-376'][0];
      print(item['status'], item.get('sprint_key'))"
@@ -705,11 +717,13 @@ Implementation agent MUST execute ALL before writing handover:
 
 ☐ 2. CR_REGISTRY.md: CR-376 row updated to Gate 5a — IMPLEMENTED
 
-☐ 3. FILE_OWNERSHIP.md: Add entries for all 7 files with CR-376 + date
+☐ 3. FILE_OWNERSHIP.md: Add entries for all 5 files with CR-376 + date
+     (productTransform.js · activeMenuPrefs.js NEW · MenuContext.jsx · OrderEntry.jsx · StatusConfigPage.jsx)
+     E6 (LoadingPage.jsx) and E7 (useRefreshAllData.js) are DROPPED — do NOT add them.
 
 ☐ 4. Code markers: // CR-376 comment in every modified/created file
      grep -rn "CR-376" src/ --include="*.js" --include="*.jsx"
-     # Expected: ≥1 hit in each of the 7 files
+     # Expected: ≥1 hit in each of the 5 files
 
 ☐ 5. Compile: webpack compiled with 0 new warnings
      tail -3 /var/log/supervisor/frontend.out.log | grep -i "compiled"
@@ -727,7 +741,7 @@ Implementation agent MUST execute ALL before writing handover:
 | StatusConfigPage `setHasChanges` name mismatch | LOW | E5h uses `setHasChanges(true)` — confirm with grep before coding |
 | LoadingPage boot order (localStorage not yet set on first boot) | NONE — defaults to 'Normal', same as current behaviour | `|| 'Normal'` fallback in E6 |
 | OrderEntry `activeMenuType` falsy edge case | NONE — `activeMenuType` memo defaults to `'Normal'` via `ACTIVE_MENU_TYPE_DEFAULT` | E3b + E4c guard |
-| **CustomerModal Favourites/Smart Suggestions add off-menu item (CR-002 path, L2844)** | **HIGH if OD-376-07 ≠ (a)** — CRM history is mostly Normal-menu, so on a Party/Premium station almost every suggestion would be off-menu | E4e (pending OD-376-07) |
+| ~~CustomerModal Favourites/Smart Suggestions add off-menu item~~ | ~~HIGH~~ | **MITIGATED — E4e confirmed (OD-376-07=a). L2844 scoped to `activeMenuProducts`.** |
 | Empty-state wrap breaks `isPlacingOrder` dimming | LOW | E4d keeps outer L1787 container unwrapped; V13 |
 | OrderEntry.jsx shared with 7 items awaiting Gate 6 (CR-104, BUG-281/305/335/398/399/452) | LOW — disjoint line ranges | Conflict pre-check refresh above; owner to confirm sequencing at Gate 4 |
 | E6/E7 scope `itemCount` that no UI renders (probe 2026-09-25) | CERTAIN | OD-376-09 — recommend dropping E6/E7 (→ 5 files, 2 hotspots) |
@@ -740,14 +754,15 @@ Implementation agent MUST execute ALL before writing handover:
 
 ---
 
-**Planning complete: CR-376** (revalidated 2026-09-25)
-Stage: Implementation Plan (Gate 3) — re-validation at HEAD
+**Planning complete: CR-376** (revalidated + decisions locked 2026-09-25)
+Stage: Implementation Plan (Gate 3) — all ODs locked, all preconditions answered
 Code reality: NONE (re-confirmed 2026-09-25)
 Risk: MEDIUM
-Files WILL change: `productTransform.js`, `activeMenuPrefs.js` (NEW), `MenuContext.jsx`, `OrderEntry.jsx`, `StatusConfigPage.jsx`, `LoadingPage.jsx`, `useRefreshAllData.js` (7 — unchanged)
-Files WILL NOT touch: `CartPanel.jsx`, `CollectPaymentPanel.jsx`, `CategoryPanel.jsx`, `CustomerModal.jsx`, `AddCustomItemModal.jsx`, `orderTransform.js`, `AppProviders.jsx`, all service/report files
-Verification matrix: 16 checks (11 grep, 1 build, 4 browser)
-Owner decisions: **OD-376-07 / 08 / 09 / 10 OPEN** (see intake OD table + `frontend/public/cr376-menu-switch-mockup.html` §4). OD-376-01…06 locked. R11 probe DONE 2026-09-25 (Normal 117 / Premium 141 / Party 0 / Aggregator 0 — no backend change).
-Sprint: `sep_bug_closure`
-Docs: `plans/CR-376_IMPLEMENTATION_PLAN.md` · `impact/CR-376_IMPACT_ANALYSIS.md` §11 · intake OD table
-Next: **Owner locks OD-376-07 → owner verbatim "CR-376 Gate 4 GO" → IMPLEMENTATION agent.** Gate 4 has NOT been given.
+Files WILL change: `productTransform.js`, `activeMenuPrefs.js` (NEW), `MenuContext.jsx`, `OrderEntry.jsx`, `StatusConfigPage.jsx` — **5 files, 2 hotspots** (E6/E7 dropped per OD-376-09=a)
+Files WILL NOT touch: `CartPanel.jsx`, `CollectPaymentPanel.jsx`, `CategoryPanel.jsx`, `CustomerModal.jsx` (except 1 line E4e), `LoadingPage.jsx`, `useRefreshAllData.js`, `orderTransform.js`, `AppProviders.jsx`, all service/report files
+OD decisions: **ALL LOCKED** — OD-07=(a) E4e firm · OD-08=(b) card-row · OD-09=(a) E6/E7 dropped · OD-10=(a) follow-up CR-376-FU-B
+Sequencing: P1=parallel now · P2=run alongside · P3=QA_HYATT (multi-menu test) + Normal-only proof TBD · P4=confirmed · P5=follow-ups registered
+Follow-up CRs registered: CR-376-FU-A · CR-376-FU-B · CR-376-FU-C
+New risk (Hyatt probe): `ACTIVE_MENU_TYPE_DEFAULT='Normal'` → restaurants with no Normal menu see empty-state on first boot — expected OD-376-06 behaviour; add as Gate 6 smoke step
+Docs: `plans/CR-376_IMPLEMENTATION_PLAN.md` · `impact/CR-376_IMPACT_ANALYSIS.md` · `change_requests/CR-376_MENU_SWITCH_ORDER_ENTRY_INTAKE.md` · `evidence/CR-376/CR-376_hyatt_probe_2026_09_25.json`
+Next: **Owner to say verbatim "CR-376 Gate 4 GO" → IMPLEMENTATION agent.**

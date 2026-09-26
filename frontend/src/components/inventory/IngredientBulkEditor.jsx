@@ -36,6 +36,7 @@ function buildRow(ing) {
     conversionFactor: ing.conversionFactor || '',
     minQtyAlert: ing.minQtyAlert || '',
     minUnitAlert: ing.minUnitAlert || '',
+    isSubRecipe: ing.isSubRecipe || false, // BUG-461: required for filtered useMemo sub-recipe exclusion
   };
 }
 
@@ -76,9 +77,9 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
 
   // ── Derived ────────────────────────────────────────────────
   const filtered = useMemo(() => {
-    if (!search) return rows.filter(r => !r._deleted);
+    if (!search) return rows.filter(r => !r._deleted && !r.isSubRecipe); // BUG-461
     const q = search.toLowerCase();
-    return rows.filter(r => !r._deleted && r.name.toLowerCase().includes(q));
+    return rows.filter(r => !r._deleted && !r.isSubRecipe && r.name.toLowerCase().includes(q)); // BUG-461
   }, [rows, search]);
 
   // Group by category
@@ -474,10 +475,21 @@ export default function IngredientBulkEditor({ allItems, categories, units, onRe
                           placeholder="—" data-testid={`bulk-minqty-${row._key}`} />
                       </td>
                       <td className={`${cellCls} text-center`}>
-                        {/* BUG-309: minUnitAlert is a unit string — read-only span locked to smallUnit (matches card view BUG-269-C) */}
-                        <span className="text-xs text-slate-500 select-none" data-testid={`bulk-minunit-${row._key}`}>
-                          {row.minUnitAlert || row.smallUnit || row.unit || '—'}
-                        </span>
+                        {/* CR-388: Min alert unit — base or small unit only (OD-388-01) */}
+                        {row.smallUnit ? (
+                          <select className="h-7 text-xs border border-slate-200 rounded px-1 outline-none w-full"
+                            value={row.minUnitAlert || row.smallUnit || ''}
+                            onChange={e => updateRow(row._key, 'minUnitAlert', e.target.value)}
+                            data-testid={`bulk-minunit-${row._key}`}>
+                            {[row.unit, row.smallUnit].filter(Boolean).map((u, i) => (
+                              <option key={i} value={u}>{u}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="text-xs text-slate-500 select-none" data-testid={`bulk-minunit-${row._key}`}>
+                            {row.unit || '—'}
+                          </span>
+                        )}
                       </td>
                       <td className={`${cellCls} text-center`}>
                         {row._saving ? (

@@ -107,24 +107,24 @@ panel       │  (category panel auto-adjusts, cart preserved on switch)
 | OD-376-04 | Labels? | **Dynamic from DB** — menu type names displayed as-is from API response | Owner (2026-09-11) |
 | OD-376-05 | Where does the setting live? | **StatusConfigPage (Local Settings page) only.** No dashboard header selector — one place, one truth. Whatever is set there reflects in Order Entry. | Owner (2026-09-10) |
 | OD-376-06 | Fallback: if active menu has 0 items configured, what happens? | **No fallback — Option B. Show empty-state in Order Entry: "Party menu has no items configured. Please update in Local Settings."** Waiter cannot proceed until manager fixes the setting. | Owner (2026-09-10) |
-| **OD-376-07** | CustomerModal Favourites / Smart Suggestions (`OrderEntry.jsx:2844`, CR-002 path) receive the full `products` list. After CR-376 E1 that list contains all menus → a Party/Premium station could add a Normal-menu item via one tap in the customer modal (contradicts OD-376-01). Options: **(a)** scope `menuItems` to `activeMenuProducts` (1 line, same file; off-menu suggestions become inert — agent recommended) · **(b)** leave as-is, document as exception to OD-376-01 · **(c)** park, decide later, exclude from this Gate 4. | **OPEN** — raised by PLANNING revalidation 2026-09-25. Owner asked for walk-through (delivered), then: "update docs and decision, don't jump gate". Awaiting a/b/c. | — |
+| **OD-376-07** | CustomerModal Favourites / Smart Suggestions (`OrderEntry.jsx:2844`, CR-002 path) receive the full `products` list. After CR-376 E1 that list contains all menus → a Party/Premium station could add a Normal-menu item via one tap in the customer modal (contradicts OD-376-01). Options: **(a)** scope `menuItems` to `activeMenuProducts` (1 line, same file; off-menu suggestions become inert — agent recommended) · **(b)** leave as-is, document as exception to OD-376-01 · **(c)** park, decide later, exclude from this Gate 4. | **(a) LOCKED — Owner (2026-09-25).** E4e is FIRM. L2844: `products.filter(...)` → `activeMenuProducts.filter(...)`. Follow-up: CR-376-FU-A (hide inert rows). | Owner (2026-09-25) |
 
-| **OD-376-08** | Visual style of the Active Menu selector in Local Settings. Live screenshot 2026-09-25 shows neighbouring settings as toggle-cards (title + ON/OFF badge + description + switch). Plan E5h uses pills under a heading. | (a) pills under heading as planned · **(b) card row matching neighbouring toggle cards, pills on the right (agent recommended)** — same file, same behaviour | **OPEN** (2026-09-25) |
-| **OD-376-09** | R11 probe + grep 2026-09-25: category `itemCount` produced by `calculateItemCounts` is **not rendered anywhere** in Order Entry (`CategoryPanel.jsx` shows names only). Plan E6 (`LoadingPage.jsx` hotspot) + E7 (`useRefreshAllData.js`) scope a value nobody displays. | **(a) drop E6 + E7 → 5 files, 2 hotspots (agent recommended)** · (b) keep for data correctness | **OPEN** (2026-09-25) |
-| **OD-376-10** | Probe: 45 categories = 25 Premium-only · 18 Normal-only · 2 shared. `CategoryPanel` does not hide empty categories, so today a Normal station already lists 25 Premium-only categories (empty grid on click); after CR-376 a Premium station lists 18 empty Normal-only categories. | **(a) accept for CR-376, log follow-up CR (agent recommended)** · (b) hide categories with 0 items in active menu → expands scope to `CategoryPanel.jsx` (currently "will NOT touch"), re-plan needed | **OPEN** (2026-09-25) |
+| **OD-376-08** | Visual style of the Active Menu selector in Local Settings. Live screenshot 2026-09-25 shows neighbouring settings as toggle-cards (title + ON/OFF badge + description + switch). Plan E5h uses pills under a heading. | (a) pills under heading as planned · **(b) card row matching neighbouring toggle cards, pills on the right (agent recommended)** — same file, same behaviour | **(b) LOCKED — Owner (2026-09-25).** E5h rewritten as card-row matching neighbouring toggle-cards. Same state/save/reset logic. | Owner (2026-09-25) |
+| **OD-376-09** | R11 probe + grep 2026-09-25: category `itemCount` produced by `calculateItemCounts` is **not rendered anywhere** in Order Entry (`CategoryPanel.jsx` shows names only). Plan E6 (`LoadingPage.jsx` hotspot) + E7 (`useRefreshAllData.js`) scope a value nobody displays. | **(a) drop E6 + E7 → 5 files, 2 hotspots (agent recommended)** · (b) keep for data correctness | **(a) LOCKED — Owner (2026-09-25).** E6 + E7 DROPPED. Final scope: 5 files, 2 hotspots. LoadingPage.jsx + useRefreshAllData.js exit scope. | Owner (2026-09-25) |
+| **OD-376-10** | Probe: 45 categories = 25 Premium-only · 18 Normal-only · 2 shared. `CategoryPanel` does not hide empty categories, so today a Normal station already lists 25 Premium-only categories (empty grid on click); after CR-376 a Premium station lists 18 empty Normal-only categories. | **(a) accept for CR-376, log follow-up CR (agent recommended)** · (b) hide categories with 0 items in active menu → expands scope to `CategoryPanel.jsx` (currently "will NOT touch"), re-plan needed | **(a) LOCKED — Owner (2026-09-25).** CategoryPanel.jsx stays out of scope. Follow-up: CR-376-FU-B. | Owner (2026-09-25) |
 
-**ODs 01–06 locked. OD-376-07/08/09/10 OPEN (2026-09-25). Gate 3 revalidated + R11 probe done; Gate 4 NOT given.**
+**ALL ODs 01–10 LOCKED (2026-09-25). Gate 3 revalidated + R11 probe done. Awaiting verbatim "CR-376 Gate 4 GO".**
 **HTML mockup:** `frontend/public/cr376-menu-switch-mockup.html` (open at `<preview>/cr376-menu-switch-mockup.html`).
 **Visual walkthrough of OD-07…10:** mockup section "★ Highlighted for owner" (`#findings`) — each decision shown as option (a) vs (b).
 
 ## Gate 4 Preconditions (to be answered by owner — see handover `SESSION_HANDOVER_2026_09_25_CR376_GATE3_FINAL_OWNER_REVIEW.md` §5)
 | # | Question | Owner answer | Date |
 |---|---|---|---|
-| P1 | Implement CR-376 in parallel with the 7 `OrderEntry.jsx` items awaiting Gate 6, or after? | — | — |
-| P2 | Wait for `sep_bug_closure` Gate 6 smoke, or run alongside? | — | — |
-| P3 | Smoke restaurant: QA_OWNER (Normal+Premium) only, or also a Normal-only restaurant for zero-change proof? | — | — |
-| P4 | Re-confirm: setting applies on next Order Entry open, not live (Design A) | — | — |
-| P5 | Register follow-ups now (hide inert suggestions · hide empty categories · server-side active menu) or after ship? | — | — |
+|| P1 | Implement CR-376 in parallel with the 7 `OrderEntry.jsx` items awaiting Gate 6, or after? | **Parallel — implement now.** Line ranges disjoint (parallel-safe). | Owner (2026-09-25) |
+|| P2 | Wait for `sep_bug_closure` Gate 6 smoke, or run alongside? | **Run alongside. Does not wait.** | Owner (2026-09-25) |
+|| P3 | Smoke restaurant? | **QA_HYATT probed 2026-09-25:** 379 products, 10 custom menu types (FOOD MENU/Bar & Drinks/Breakfast/etc.) — zero Normal/Premium/Party. Not a zero-change proof account. Suitable for multi-menu pill test. Zero-change proof account: owner to provide or waive at Gate 6. New plan risk: `ACTIVE_MENU_TYPE_DEFAULT='Normal'` → Hyatt shows empty-state on first boot (OD-376-06 expected). Evidence: `evidence/CR-376/CR-376_hyatt_probe_2026_09_25.json`. | Agent probe (2026-09-25) |
+|| P4 | Setting applies on next Order Entry open, not live. | **Confirmed — acceptable (Design A).** | Owner (2026-09-25) |
+|| P5 | Register follow-ups now? | **Yes — register and plan before implementation.** CR-376-FU-A (CustomerModal inert rows), CR-376-FU-B (CategoryPanel empty cats), CR-376-FU-C (server-side menu). | Owner (2026-09-25) |
 
 **Sprint:** moved `pos_7_0` → `sep_bug_closure` (owner 2026-09-25).
 
@@ -144,4 +144,4 @@ No existing CR covers menu switch in OrderEntry. **DISTINCT.**
 
 ---
 
-*Intake CLOSED. All 6 ODs locked. Ready for Gate 2 Impact Analysis.*
+*Intake UPDATED 2026-09-25. All 10 ODs locked. All Gate 4 preconditions answered. Awaiting verbatim "CR-376 Gate 4 GO".*

@@ -78,7 +78,7 @@ This applies to both:
 
 | # | Question | Decision | Source |
 |---|----------|----------|--------|
-| OD-388-01 | What unit options in the dropdown? | **LOCKED: Same unit options as the smallUnit selector (standard unit list / UNIT_SMALL_MAP values). Editable select dropdown in BOTH add and edit inline forms.** | Owner: "there should be use while adding as well as editing ingredients" + screenshot showing dropdown in edit form |
+| OD-388-01 | What unit options in the dropdown? | **LOCKED (updated 2026-09-25): Only the ingredient's own base unit and small unit — max 2 options. `[ingredient.unit, ingredient.smallUnit].filter(Boolean)`. NOT the global unit list. If no smallUnit exists → read-only span (no dropdown needed — only 1 possible unit). If smallUnit exists → 2-option dropdown (base or small). Applies to add form, edit form, and bulk edit.** | Owner 2026-09-25: "alert quantity will be either in tin or gram" — confirmed base/small only. |
 | OD-388-02 | Auto-default from smallUnit? | **LOCKED: (a) YES — auto-default minUnitAlert from smallUnit when smallUnit changes, but user can override independently** | Owner: "o2 - A" |
 | OD-388-03 | Scope — where to apply? | **LOCKED: (a) Both — single edit inline form + add form + Bulk Edit table** | Owner: "o3 a add and edit single and bulk both places" |
 
