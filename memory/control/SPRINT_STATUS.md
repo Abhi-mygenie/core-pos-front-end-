@@ -1,3 +1,5 @@
+**Last Updated:** 2026-09-26 (close) — **Session closed. ENTRY POINT for next agent: `handover/SESSION_HANDOVER_2026_09_26_CR389_CR390_PLANNING_ENTRY.md`** — PLANNING role: **CR-389 Registry Excel Export first** (owner decisions OD-389-01…04 given: all modules · all 21 columns · include all IDs · 3–5 lines everywhere; sprint → `modules_pdf`; Planning route, no Fast Lane; **HB-389-01 registry sync = hard blocker before build** — decisions recorded in handover, intake update pending owner "ok"), **then CR-390 Screen Reference PDFs** (OD-01/02/03/05/06/07/14b open). Zero code.
+
 # Layer 6 — Sprint Status Board
 
 **Status:** POPULATED

@@ -28336,6 +28336,6 @@
     "total": 726,
     "total_items": 726,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "Entry point handover/SESSION_HANDOVER_2026_09_26_CR390_MODULES_PDF_INTAKE.md. Next: owner answers OD-390-09…14 + locks 01/02/03/05/06/07 → \"Gate 2 GO\"."
+    "last_note": "Session closed 2026-09-26; ENTRY POINT for next agent: handover/SESSION_HANDOVER_2026_09_26_CR389_CR390_PLANNING_ENTRY.md — PLANNING role: CR-389 (Excel export; owner decisions in handover §2.3 not yet applied to intake) first, then CR-390 (Screen Reference PDFs). HB-389-01 registry sync is a hard blocker before CR-389 build."
   }
 }
