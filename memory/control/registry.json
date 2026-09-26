@@ -28335,7 +28335,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "sprint_key": "sep_bug_closure",
       "gate": "3 COMPLETE",
       "intake_doc": "change_requests/BUG-465_REPORTS_CHARTS_PROD_CRASH_RECHARTS_ESKIT_MINIFICATION_INTAKE.md",
@@ -28351,7 +28351,9 @@
       "od_465_03": "LOCKED: YES commit package-lock.json",
       "od_465_02": "LOCKED: YES \u2014 full regression, all 30 chart pages in npm run build (owner 2026-09-26)",
       "impact_analysis": "impact/BUG-465_IMPACT_ANALYSIS.md",
-      "implementation_plan": "plans/BUG-465_IMPLEMENTATION_PLAN.md"
+      "implementation_plan": "plans/BUG-465_IMPLEMENTATION_PLAN.md",
+      "implemented": "2026-09-26",
+      "fix_note": "overrides es-toolkit >=1.48.0 (1.52.0 installed). isPlainObject.mjs fix landed in 1.48.0. npm run build exit 0."
     }
   ],
   "meta": {

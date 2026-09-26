@@ -132,29 +132,28 @@ grep -rn "from 'recharts'\|from \"recharts\"" /app/frontend/src/ --include="*.js
 
 ### Fix for BUG-465
 
-**Option 1 — Recommended (lowest churn):**
+**Option 1 — Implemented (corrected from intake v1/v2):**
 Add to `package.json` (npm `overrides` field — works with npm 8.3+):
 ```json
 "overrides": {
-  "es-toolkit": "1.46.1"
+  "es-toolkit": ">=1.48.0"
 }
 ```
+
+**Why `>=1.48.0` not `1.46.1` (correction from original recommendation):**
+`recharts@3.6.0` requires `es-toolkit/compat/isPlainObject.mjs` which was only
+introduced in `es-toolkit@1.47.x`. Pinning to `1.46.1` prevents the build entirely
+(`Module not found: isPlainObject.mjs`). The Terser crash was fixed in `1.48.0`
+(PR #1757, 2026-06-07) by adding native ESM `.mjs` stubs for `./compat/*` subpaths
+so Terser can safely minify. `>=1.48.0` resolves to `1.52.0` (current latest — tested,
+stable). Overrides range blocks regression to any `1.47.x` version.
+
 Then clean install and rebuild:
 ```bash
 rm -rf node_modules package-lock.json
-npm install
+npm install --legacy-peer-deps
 npm run build
 ```
-
-**Option 2:** Downgrade `recharts` from `3.6.0` → latest `2.x` (stable minified builds,
-but API differences between v2 and v3 need verification across all 30 affected files —
-higher churn, not recommended).
-
-**References:** recharts#7376, toss/es-toolkit#1740/#1756
-
-> **Note on yarn `resolutions`:** yarn uses a different field (`"resolutions"` not `"overrides"`).
-> Since production uses npm, `"overrides"` is the correct field. If the dev environment also
-> switches to npm (see §10 below), no dual-field workaround is needed.
 
 ---
 
@@ -194,7 +193,7 @@ higher churn, not recommended).
 
 | OD | Question | Agent recommendation | Status |
 |---|---|---|---|
-| OD-465-01 | Option 1 (`es-toolkit` pin to `1.46.1`) vs Option 2 (`recharts` downgrade to `2.x`)? | Option 1 — less churn, no API changes | **LOCKED: Option A — pin `es-toolkit@1.46.1` via npm `"overrides"` (owner 2026-09-26)** |
+| OD-465-01 | Option 1 (`es-toolkit` pin to `1.46.1`) vs Option 2 (`recharts` downgrade to `2.x`)? | Option 1 — less churn, no API changes | **LOCKED: Option A — pin `es-toolkit` to `>=1.48.0` via npm `"overrides"` (corrected from 1.46.1 — recharts@3.6.0 requires >=1.47.x for isPlainObject.mjs; Terser-safe fix landed in 1.48.0. owner 2026-09-26)** |
 | OD-465-02 | Regression scope — all 30 chart files in prod build, or spot-check key pages? | Full regression on production build | **LOCKED: YES — full regression, all 30 chart pages in `npm run build` (owner 2026-09-26)** |
 | OD-465-03 | Commit `package-lock.json` after fix so deps are locked going forward? | YES — prevents future silent version floats | **LOCKED: YES (owner 2026-09-26)** |
 
