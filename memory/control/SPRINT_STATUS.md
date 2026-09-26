@@ -278,6 +278,7 @@
 | 2026-09-26 | CR-390 module structure OWNER-DEFINED (MM Menu · EM Expenses · IM Inventory · DC Day Closure & Settlement · DR Daily Report · Insights Basic / Advanced · PMS redo) | "4 modules - Menu management, Expenses management, Inventory management, Day closure and settlement, Daily report - … Insights … divided in 2 basic and advanced report - PMS … redo this one also" | Agent M1–M6 draft superseded; OD-390-09 raised to confirm count/exclusions |
 | 2026-09-26 | CR-390 audience LOCKED — client-facing | "Open questions - for clients" | Scrub rules + footer proposed as OD-390-14 |
 | 2026-09-26 | CR-390 OD-390-08 template DEFERRED | "8 later" | PMS v2.0 template interim default |
+| 2026-09-26 | CR-390 OD-390-09 LOCKED — module list confirmed (8 PDFs); unnamed screens excluded | "Menu management, expenses management, Inventory management, Day closure and settlement, Daily report - … Insights … divided in 2 basic and advanced report - PMS … redo this one also" (re-stated) | Intake OD-09 + registry updated |
 
 || 2026-06-05 | **S5 Re-open: 6 business rules locked + implemented** | Owner "lock it" — All Items tab, Punched Date default, bucket grouping, ₹0 revenue for Cancelled/Comp, within-bucket sort, tab counts | All 6 rules shipped in ItemSalesHybridMockup.jsx |
 || 2026-06-05 | **Tab reorder + renames** | Owner directive: "All / Sold / Cancelled / Complimentary / Pending / Top / Slow" + remove "Items" and "Lines" from labels | TABS array reordered + renamed |
