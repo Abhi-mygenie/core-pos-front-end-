@@ -324,7 +324,7 @@
 | Item | Status |
 |---|---|
 | **CR-389** | **GATE_1_INTAKE 2026-09-26 — BRAINSTORM MODE.** Repeat PMS v2.0 exercise (real routes + dummy data → PDF) for M1 POS Core · M2 Menu & Setup · M3 Inventory & Recipes · M4 Expenses & Staff · M5a/b/c Reports · M6 PMS regen (~90–100 screens) via committed pipeline. **OD-389-01…08 OPEN** — lock in order, 01 (data strategy) first. Gate 2 blocked until all locked. Zero code. Intake `change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md`. |
-| Brainstorm log | 2026-09-26 session 1: inventory of PMS artifacts done (v1/v2 PDFs on disk, generator scripts lost); module/screen inventory drafted; 8 decision points tabled. Next session: OD-389-01. |
+| Brainstorm log | 2026-09-26 session 1: inventory of PMS artifacts done (v1/v2 PDFs on disk, generator scripts lost); module/screen inventory drafted; 8 decision points tabled. **Full option analysis for OD-389-01…08 written into the intake doc (§ Brainstorm) at owner request** — owner to read and reply per OD next session. Key finding for OD-06: `PUBLIC_ROUTES.md` already says PMS PDFs in `public/` are temporary carve-outs → default output = `memory/design_briefs/downloads/`. Next session: owner locks ODs one by one (01 first). |
 
 ## sep_bug_closure — Sept bug closure (BUG-451 · BUG-452 · BUG-453 · CR-386) — COMBINED WAVE 1+2 QA CONDITIONAL PASS 2026-09-24 (Gate 5B) · Gate 6 Owner Smoke next
 

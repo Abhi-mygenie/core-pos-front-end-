@@ -22,16 +22,18 @@ Owner asked to (1) pull out the earlier PMS "dummy-data screenshots + PDF" deliv
 | `control/CONTROL_DASHBOARD.md` | Last Updated line |
 
 ## 4. Brainstorm agenda (owner decisions — lock in order)
+**Full option analysis (pros/cons/recommendation per OD) is in the intake doc § "Brainstorm — option analysis per decision". Owner asked for it to be written up so they can read and decide next session.**
+
 | OD | Topic | Agent recommendation |
 |---|---|---|
-| OD-389-01 | Data strategy | (b) Playwright `/api/*` interception + per-module fixture JSON — real logic/charts, 0 app code |
-| OD-389-02 | Shared persona | one property across all PDFs ("Sharma Hotel & Restaurant", matches PMS v2.0) |
-| OD-389-03 | Screen granularity | primary view + 1–2 key interaction states (as PMS v2.0) |
-| OD-389-04 | Ordering | journey order for POS/Inventory, sidebar order for Reports |
-| OD-389-05 | Packaging | master PDF + per-module PDFs + PNG packs, one run |
-| OD-389-06 | Output location | approved editions in `public/` (CR-372 rules), working outputs in `memory/` |
-| OD-389-07 | Sequencing | pilot M4 Expenses & Staff → M3 → M1 → M2 → M5a/b/c → M6 PMS regen |
-| OD-389-08 | Template | PMS v2.0 template as the standard, parameterised |
+| OD-389-01 | Data strategy | (b) Playwright `/api/*` interception + per-module fixture JSON — real logic/charts, 0 app code; (c) demo-mode later as own CR |
+| OD-389-02 | Shared persona | one business ("Sharma Hotel & Restaurant"), report fixtures generated from one synthetic order set so totals reconcile |
+| OD-389-03 | Screen granularity | primary view + 1–2 key interaction states, cap 3 pages/route |
+| OD-389-04 | Ordering | (c) hybrid — journey for POS/Inventory/PMS, sidebar-derived for Menu & Settings/Insights |
+| OD-389-05 | Packaging | (c) master + per-module PDFs + PNG packs; modules M1 POS Core · M2 Menu & Settings · M3 Inventory · M4 Expenses & Daily Report · M5a/b/c Insights · M6 PMS |
+| OD-389-06 | Output location | `memory/design_briefs/downloads/screen_reference/` (CR-372 `PUBLIC_ROUTES.md` already treats `public/` PDFs as temporary carve-outs); move PMS PDFs out of `public/` in M6 |
+| OD-389-07 | Sequencing | pilot M4 → M3 → M1 → M2 → M5a/b/c → M6 PMS regen |
+| OD-389-08 | Template | PMS v2.0 template as standard, parameterised; edition rule vMAJOR.MINOR |
 
 Open questions (non-blocking): audience (internal vs client-facing) · regeneration cadence · screenshot change-diff for CLOSURE.
 

@@ -28284,9 +28284,9 @@
         "OD-389-01": "OPEN — data strategy: (a) DOM injection · (b) Playwright /api/* interception + fixtures [recommended] · (c) in-app demo-mode flag",
         "OD-389-02": "OPEN — one shared persona/property across all PDFs",
         "OD-389-03": "OPEN — screen granularity (primary only / + interaction states / + empty-error states)",
-        "OD-389-04": "OPEN — ordering (sidebar vs user-journey)",
+        "OD-389-04": "OPEN — ordering: recommended (c) hybrid (journey for POS/Inventory/PMS, sidebar-derived for Menu & Settings/Insights)",
         "OD-389-05": "OPEN — packaging (per-module / master / both + PNG packs)",
-        "OD-389-06": "OPEN — output location vs CR-372 public surface",
+        "OD-389-06": "OPEN — output location: recommended memory/design_briefs/downloads/screen_reference/ (PUBLIC_ROUTES.md treats public/ PDFs as temporary carve-outs); move PMS PDFs out of public/ in M6",
         "OD-389-07": "OPEN — sequencing; recommended pilot M4 Expenses & Staff",
         "OD-389-08": "OPEN — reuse PMS v2.0 template as standard"
       },
@@ -28302,12 +28302,13 @@
           "path": "memory/change_requests/CR-389_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
           "type": "intake"
         }
-      ]
+      ],
+      "brainstorm_status": "Option analysis for OD-389-01…08 written in intake doc §Brainstorm (2026-09-26); owner to lock next session"
     }
   ],
   "meta": {
     "last_updated": "2026-09-26",
-    "last_action": "INTAKE 2026-09-26: CR-389 registered (P2/LOW) under NEW sprint modules_pdf — Screen Reference PDFs for all modules. Brainstorm mode: OD-389-01…08 OPEN, Gate 2 blocked until locked. Zero code.",
+    "last_action": "INTAKE 2026-09-26: CR-389 registered (P2/LOW) under NEW sprint modules_pdf; full brainstorm option analysis OD-389-01…08 written into intake at owner request. Gate 2 blocked until ODs locked. Zero code.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

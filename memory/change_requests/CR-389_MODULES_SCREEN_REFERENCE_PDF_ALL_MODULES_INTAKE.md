@@ -91,13 +91,118 @@ Rough total beyond PMS: **~90–100 screens**.
 | OD-389-01 | **Data strategy** (shapes everything else) | (a) DOM injection per screen (PMS method, no code change, brittle, weak for charts) · (b) Playwright **network interception** of `/api/*` with per-module fixture JSON — real transforms/charts render, 0 app code, fixtures reusable in tests · (c) in-app demo-mode flag (`?demo=1`) switching services to fixtures — reusable for live demos/sales but touches app code (Risk → MEDIUM, CR-372 review) | **(b)** | OPEN |
 | OD-389-02 | **Persona / story consistency** | one fictional property used across all PDFs (name, staff, menu, dates, ₹ figures) vs per-module ad hoc data | one property ("Sharma Hotel & Restaurant" — matches PMS v2.0) with a shared `fixtures/persona.json` | OPEN |
 | OD-389-03 | **Screen granularity** | (a) primary view per route only · (b) primary + 1–2 critical interaction states (drawer/modal/filter applied) as PMS v2.0 did · (c) also empty/error states | **(b)**; login page as optional preface | OPEN |
-| OD-389-04 | **Ordering inside a PDF** | (a) sidebar order · (b) user-journey order (PMS approach) | POS Core by shift lifecycle (open → order → settle → day close); Reports by sidebar group; Inventory by procure → receive → stock → audit | OPEN |
-| OD-389-05 | **Packaging** | (a) one PDF per module (M1…M6) · (b) single master "MyGenie Screen Reference" with module sections · (c) both (master + per-module exports from the same run) | **(c)**; plus PNG pack per module in `memory/evidence/CR-389/<module>/` for CR-intake reuse | OPEN |
-| OD-389-06 | **Output location & public surface** | keep PDFs in `frontend/public/` (served, as PMS today) vs `memory/design_briefs/downloads/` (repo-only) | serve only the final approved editions from `public/`; working outputs in `memory/` — align with CR-372 `PUBLIC_ROUTES.md` | OPEN |
+| OD-389-04 | **Ordering inside a PDF** | (a) sidebar order · (b) user-journey order (PMS approach) · (c) hybrid | **(c)** journey order for M1 POS Core / M3 Inventory / M6 PMS; sidebar order (derived from `Sidebar.jsx`, self-updating) for M2 Menu & Settings / M5 Insights | OPEN |
+| OD-389-05 | **Packaging** | (a) one PDF per module · (b) single master "MyGenie Screen Reference" with module sections · (c) both (master + per-module exports from the same run) | **(c)**; plus PNG pack per module in `memory/evidence/CR-389/<module>/`; module split refined vs sidebar: M1 POS Core · M2 Menu & Settings · M3 Inventory & Recipes · M4 Expenses & Daily Report · M5a/b/c Insights · M6 PMS | OPEN |
+| OD-389-06 | **Output location & public surface** | keep PDFs in `frontend/public/` (served, as PMS today) vs `memory/design_briefs/downloads/` (repo-only) | **`memory/design_briefs/downloads/screen_reference/`** — `PUBLIC_ROUTES.md` (CR-372) already marks the PMS PDF/HTML in `public/` as temporary carve-outs to be moved to `design_briefs/`; also move existing PMS PDFs out of `public/` during M6 regen | OPEN |
 | OD-389-07 | **Sequencing / pilot** | which module first | pilot pipeline on **M4 Expenses & Staff** (~5 screens) to lock template + tooling → M3 Inventory → M1 POS Core → M2 Menu & Setup → M5a/b/c Reports → M6 PMS regen | OPEN |
 | OD-389-08 | **Template ownership** | reuse PMS v2.0 visual template as the standard for all modules (cover, badge, eyebrow, footer) | YES, parameterise module name/colour accent only | OPEN |
 
 Each locked decision → recorded here + `SPRINT_STATUS.md` Owner Decision Log. After all locked → PLANNING Gate 2 (Impact Analysis = pipeline design + per-module screen manifests).
+
+---
+
+## Brainstorm — option analysis per decision (written 2026-09-26 for the owner to read before the next session)
+
+Read in order; each decision narrows the next. Recommendations are the agent's; nothing is locked. Reply per OD with the letter (or your own variant) and it will be recorded in the table above.
+
+### OD-389-01 — Data strategy (foundation; decide first)
+
+**Context.** Every screen loads from the Laravel backend (`preprod.mygenie.online/api/...`) via `src/api/services/*`, passes through transforms, then renders tables/charts. Preprod sandbox data is thin, inconsistent and contains real restaurant names — that is why the PMS exercise faked data.
+
+| | (a) DOM injection *(PMS v1/v2 method)* | (b) Network interception + fixtures | (c) In-app demo mode (`?demo=1`) |
+|---|---|---|---|
+| How | Playwright opens the real route, then a script rewrites text nodes / cells / KPI values before the screenshot | Playwright answers every `/api/*` call from fixture JSON; app code untouched; real services → transforms → components → charts run on fake data | Services switch to bundled fixtures when a flag is set |
+| App code change | none | none | YES — `api/services/*`, possibly auth/providers → Risk **MEDIUM**, full gates, R5/R7 caution, fixtures ship in bundle, CR-372 review |
+| Fidelity | display only — totals/GST can drift from the math; **charts cannot be injected** (SVG drawn from data) | **100 %** — KPIs, GST, totals, badges, charts computed by real logic | 100 % |
+| Effort shape | **per screen** (~90 screens × 10–30 selectors) | **per endpoint** (~60 routes share ~40–50 endpoints; Reports mostly share `order-logs-report` / `daily-sales-revenue-report`) | per endpoint + app wiring |
+| Maintenance | brittle — UI refactor silently breaks selectors → the "recurring task" problem | self-healing — UI change = re-run; only an API contract change touches a fixture | same as (b) + production flag risk (demo left on in a live POS) |
+| Side benefits | — | fixtures reusable as jest/QA data; screenshot set = visual regression baseline per sprint | live browser demo for sales/onboarding |
+| Watch-outs | Reports module (~45 chart-heavy screens) nearly impossible | must also mock login/`me`, block Socket.io + Firebase pushes; fixture realism (GST slabs, rates, prices consistent) is the real work → OD-389-02 | all of (b) plus release risk |
+
+**Recommendation: (b).** (c) can be layered on later as its own CR using the very same fixture files — nothing lost by starting with (b).
+**Downstream if (b):** pipeline = Playwright (yarn devDependency) + `fixtures/<module>/*.json` + `screens/<module>.manifest.json` (route, title, description, pre-actions such as "open drawer") + PDF assembler; Gate 2 needs a read-only **endpoint inventory per route** (from `grep` in services, no live calls); persona dataset (OD-02) generates all fixtures.
+
+### OD-389-02 — Shared persona / story consistency
+
+**Context.** PMS v2.0 already uses a fictional property (Sharma Hotel, guest Arun Patel, ₹ figures). If POS, Inventory and Reports use different names/dates/menus, the set of PDFs reads as 6 unrelated products.
+
+| | (a) One fictional business across all PDFs | (b) Per-module ad-hoc data |
+|---|---|---|
+| What | `fixtures/persona.json`: property name + outlets (restaurant, bar, rooms), ~40 menu items with real-looking prices & GST slabs, ~12 ingredients with units/conversions (bottle/ml, pkt/gm — matches CR-387/BUG-459 work), ~8 staff (cashier, servers, HK), ~6 recurring customers, one "reference week" of dates, aggregator channels (Zomato/Swiggy) | each module invents its own |
+| Pros | one story: a room-service order in PMS folio shows the same dish/price as in Menu and Item Sales; numbers reconcile across Day Closure ↔ Settlement ↔ P&L; client-facing credibility | fastest per module |
+| Cons | upfront ~1 session to define; generator needed to derive report aggregates from the order set so totals reconcile | inconsistent totals/names across PDFs; every later module re-invents data → recurring effort |
+
+**Recommendation: (a)** — keep "Sharma Hotel & Restaurant" (continuity with PMS v2.0). Generate report fixtures **from** a synthetic order list (≈300 orders over the reference week) so every report agrees with every other by construction.
+**Sub-decisions:** currency ₹ + Indian GST (5 %/18 %, room slabs 12 %/18 % as per BUG-389 work) · reference week (e.g. Mon 14 → Sun 20 Sep 2026) · whether real aggregator logos may appear (PMS v2.0 avoided AIOSELL wording — same rule?).
+
+### OD-389-03 — Screen granularity
+
+| | (a) Primary view per route | (b) Primary + 1–2 key interaction states *(PMS v2.0 practice)* | (c) (b) + empty / error / loading states |
+|---|---|---|---|
+| Pages (non-PMS) | ~60 | ~90–100 | ~150+ |
+| Value | quick map of the product | shows the actual workflow (drawer open, filter applied, modal, settled state) — what a client or designer needs | useful for QA/design system, noise for a screen reference |
+| Cost | manifest only | manifest + `pre-actions` per state (click testid, wait) — cheap with (b) since data is deterministic | doubles fixtures (empty responses) + manifest |
+
+**Recommendation: (b)**, with a hard cap of 3 pages per route. Empty/error states → separate optional "QA appendix" later if ever wanted. Login page: include as a single preface page per PDF (yes/no?). R5 hotspot `OrderEntry.jsx` (`/dashboard`) is only *rendered*, never modified — states: empty cart → cart with items → Collect Payment panel.
+
+### OD-389-04 — Ordering inside a PDF
+
+**Context.** Sidebar (code truth, `components/layout/Sidebar.jsx`): Dashboard · Day Closure · Expenses · Menu Management · Credit Management · Daily Report · Settings · Inventory · Insights (12 groups: Sales, Sales Ledger, Payments, Tax, Discounts, Cancellations, Locations, Staff, Audit, Customers, Operations, Expenses) · Aggregator · Rooms & Reservations.
+
+| | (a) Sidebar order | (b) User-journey order *(PMS approach)* | (c) Hybrid |
+|---|---|---|---|
+| Pros | matches what users see; zero debate; auto-derivable from `Sidebar.jsx` (self-updating) | tells the operational story (open shift → orders → settle → day close) | journey for operational modules, sidebar for catalogue-type modules |
+| Cons | Reports read as a catalogue anyway — fine; POS/Inventory lose narrative | ordering is a manual editorial decision per module → maintenance | two rules |
+
+**Recommendation: (c)** — journey order for M1 POS Core (open → order → KOT → settle → credit → day close), M3 Inventory (setup → purchase/receive → stock → audit → dashboard) and M6 PMS (as v2.0); **sidebar order for M2 Menu & Setup and M5 Insights** (group headers = PDF sections, derived from `Sidebar.jsx` so new reports slot in automatically).
+
+### OD-389-05 — Packaging
+
+| | (a) One PDF per module | (b) One master PDF | (c) Both from one run (+ PNG packs) |
+|---|---|---|---|
+| Output | 6–8 PDFs of 10–40 pp | 1 PDF ≈ 140 pp / ~30 MB | master + per-module + `evidence/CR-389/<module>/NN_<screen>.png` |
+| Use | share a module to a client/designer | full product walkthrough | both, plus PNGs reusable in CR intakes, mockup comparisons, smoke docs |
+| Cost | — | — | assembler emits both from the same screenshot set; negligible |
+
+**Recommendation: (c).** Module split proposal (refined against the sidebar): **M1 POS Core** (Dashboard/Order Entry, Order Summary, Settlement, Day Closure, Credit, Delivery Mgmt) · **M2 Menu & Settings** (Menu, Restaurant Setup, Table Mgmt, Printers, Dashboard Display, Employees, Aggregator) · **M3 Inventory & Recipes** · **M4 Expenses & Daily Report** (Expenses, Expense Setup, Daily Report group incl. P&L, Consumption, Sales Summary, Order Report, Settlement, Expense/Purchase Report) · **M5 Insights** (12 sidebar groups → 5a Sales + Sales Ledger, 5b Payments + Tax + Discounts, 5c Cancellations/Locations/Staff/Audit/Customers/Operations/Expenses) · **M6 PMS** (regen incl. Front Desk v2). Master TOC mirrors this.
+
+### OD-389-06 — Output location & public surface
+
+**Context (code/policy truth).** `control/PUBLIC_ROUTES.md` (CR-372, OD-CR372-01) lists the PMS HTML + PDF in `public/` as **temporary carve-outs** "to be moved to `/app/memory/design_briefs/` when `pos_pms_1` closes". So the default policy already says: design references do **not** live in `public/`.
+
+| | (a) `frontend/public/` (served, as PMS today) | (b) `memory/design_briefs/downloads/` (repo-only) | (c) (b) + approved editions attached to the dev dashboard / shared out-of-band |
+|---|---|---|---|
+| Pros | one URL to share | compliant with CR-372; no bundle bloat (PMS PDF alone is 7.4 MB in every build); no unauthenticated exposure of internal screens | compliant + still shareable |
+| Cons | ~30 MB of PDFs shipped with production build; unauthenticated exposure; contradicts PUBLIC_ROUTES policy | owner downloads from repo / agent shares file | needs a dashboard link or storage step |
+
+**Recommendation: (b)** for all working + approved editions (`memory/design_briefs/downloads/screen_reference/<module>/MyGenie_<Module>_Screen_Reference_vX_<date>.pdf`), PNG packs under `memory/evidence/CR-389/`. Also propose **moving the existing PMS PDFs out of `public/`** as part of M6 regen (closes the CR-372 carve-out). If a public URL is truly needed for clients → separate owner decision, not default.
+
+### OD-389-07 — Sequencing / pilot
+
+| Order option | Rationale |
+|---|---|
+| (a) **Pilot small → widen**: M4 Expenses (≈5 screens) → M3 Inventory → M1 POS Core → M2 Menu & Settings → M5a/b/c Insights → M6 PMS regen | proves pipeline + template on the cheapest module; Inventory second because fixtures (ingredients/units) are fresh in memory from CR-387/BUG-459; Reports last because they need the synthetic order set to be final; PMS last so the tool is mature and Front Desk v2 (CR-385) is included |
+| (b) **Business priority first**: M1 POS Core → M5 Insights → … | highest-value modules first, but the pipeline is debugged on the hardest screens (R5 hotspot, charts) |
+| (c) **PMS regen first** | fastest visible parity check against v2.0 (36 known screens), but delays everything new |
+
+**Recommendation: (a).** Each module = one mini-cycle: manifest + fixtures (Gate 3 plan note) → run → owner review of PDF (Gate 6 equivalent) → lock edition v1.0. Estimated: pilot 1 session; Inventory/POS/Menu ~1 session each; Insights 2–3 sessions; PMS regen 1 session.
+
+### OD-389-08 — Template ownership
+
+| | (a) Reuse PMS v2.0 template as the standard | (b) New template |
+|---|---|---|
+| Elements | green brand block cover with module eyebrow ("PROPERTY MANAGEMENT SYSTEM" → "INVENTORY & RECIPES"), tagline, edition/date/supersedes lines · contents page grouped by section · per page: numbered badge + section eyebrow + title + one-line description + full-width screenshot + footer `MyGenie <Module> · Screen Reference Guide vX · <date> · Page N` · confidentiality line | redesign |
+| Pros | owner-approved already; consistency across 6 PDFs; parameterise only module name + accent | — |
+| Cons | none material | rework + approval cycle |
+
+**Recommendation: (a)**, parameterised (`template.json`: module name, eyebrow, tagline, accent colour from `PMS_DESIGN_TOKENS.md`). Master PDF = same cover with "All Modules" + section dividers per module. Edition rule: `vMAJOR.MINOR` — MAJOR when screens added/removed, MINOR for re-shots; each PDF records "Supersedes vX (date)" as v2.0 does.
+
+### Cross-cutting notes for Gate 2
+- **Auth in the pipeline:** mock `login`/`me`/restaurant-picker responses too → zero live calls, no credentials in the tool (R20).
+- **Deterministic rendering:** freeze clock (Playwright `page.clock`) to the reference week so "Today" widgets match fixtures; fixed viewport 1440×900 (PMS v2.0 look); disable animations.
+- **Change-diff (open question 3):** pixel-diff each screenshot against the previous edition → list of changed screens → feeds CLOSURE role and smoke docs.
+- **Cadence (open question 2):** proposal — re-run per sprint CLOSURE for touched modules only; full re-run per MAJOR release.
+- **Audience (open question 1):** if client-facing, add a scrub check (no "Beta", no dev testids, no sandbox names) to the pipeline.
 
 ---
 
