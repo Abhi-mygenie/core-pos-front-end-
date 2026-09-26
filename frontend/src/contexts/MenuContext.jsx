@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { getActiveMenuType, ACTIVE_MENU_TYPE_DEFAULT } from '../utils/activeMenuPrefs'; // CR-376
 
 // Create Menu Context
 const MenuContext = createContext(null);
@@ -95,6 +96,27 @@ export const MenuProvider = ({ children }) => {
     return products.filter((p) => p.isActive && !p.isOutOfStock);
   }, [products]);
 
+  // CR-376: Active menu type — read once from localStorage on context init.
+  // Changes to localStorage (from StatusConfigPage save) take effect on next mount.
+  const activeMenuType = useMemo(() => getActiveMenuType(), []);
+
+  // CR-376: Products filtered to the active menu type — used by OrderEntry item grid.
+  const activeMenuProducts = useMemo(
+    () => products.filter(p => p.foodFor === activeMenuType),
+    [products, activeMenuType]
+  );
+
+  // CR-376: Distinct non-Aggregator menu types that have ≥1 active, non-disabled item.
+  // Used by StatusConfigPage to render the Active Menu selector.
+  const availableMenuTypes = useMemo(
+    () => [...new Set(
+      products
+        .filter(p => p.isActive && !p.isDisabled && p.foodFor !== 'Aggregator')
+        .map(p => p.foodFor)
+    )].sort((a, b) => a === 'Normal' ? -1 : b === 'Normal' ? 1 : a.localeCompare(b)),
+    [products]
+  );
+
   // Context value
   const value = useMemo(() => ({
     // State
@@ -102,6 +124,9 @@ export const MenuProvider = ({ children }) => {
     products,
     popularProducts, // BUG-340
     isLoaded,
+    activeMenuProducts, // CR-376
+    availableMenuTypes, // CR-376
+    activeMenuType,     // CR-376
     
     // Actions
     setCategories,
@@ -123,6 +148,9 @@ export const MenuProvider = ({ children }) => {
     products,
     popularProducts, // BUG-340
     isLoaded,
+    activeMenuProducts, // CR-376
+    availableMenuTypes, // CR-376
+    activeMenuType,     // CR-376
     setCategories,
     setProducts,
     setPopularProducts, // BUG-340

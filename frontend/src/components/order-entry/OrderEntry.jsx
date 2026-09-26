@@ -54,7 +54,7 @@ const DROPDOWN_TABLE_SORT = { available: 0, reserved: 1, occupied: 2, billReady:
 
 // Order Entry Screen Component - 3-Panel Layout
 const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrderTypeChange, allTables = [], onSelectTable, savedCart = [], onCartChange, initialShowPayment = false, initialTransferItem = null, initialShowMerge = false, initialShowShift = false, onCollectBillStayOnOrder }) => {
-  const { categories, products, popularProducts } = useMenu(); // BUG-340: +popularProducts from boot
+  const { categories, products, popularProducts, activeMenuProducts, activeMenuType, availableMenuTypes } = useMenu(); // BUG-340: +popularProducts from boot // CR-376: +activeMenuProducts, +activeMenuType // BUG-462: +availableMenuTypes
   const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged, waitForOrderReady, getOrderByTableId, getOrderById } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
   const { restaurant, features, cancellation, settings, printerAgents } = useRestaurant();
@@ -555,9 +555,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     if (activeCategory === "popular") { // CR-148 / BUG-340: popular tab — transform matches other branches
       items = popularProducts.map(adaptProduct);
     } else if (activeCategory === "all") {
-      items = products.filter(p => p.isActive && !p.isDisabled).map(adaptProduct);
+      items = activeMenuProducts.filter(p => p.isActive && !p.isDisabled).map(adaptProduct); // CR-376
     } else {
-      items = products
+      items = activeMenuProducts // CR-376
         .filter(p => p.categoryId === activeCategory && p.isActive && !p.isDisabled)
         .map(adaptProduct);
     }
@@ -1719,6 +1719,18 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               </span>
             )}
 
+            {/* CR-376: Active menu chip — visible only when non-Normal menu is active */}
+            {/* BUG-464: suppress " Menu" suffix when type name already ends with "menu" (e.g. "FOOD MENU" → "FOOD MENU", "Premium" → "Premium Menu") */}
+            {activeMenuType && activeMenuType !== 'Normal' && (
+              <span
+                data-testid="active-menu-type-chip"
+                className="text-xs px-2 py-1 rounded-full font-medium flex-shrink-0"
+                style={{ backgroundColor: '#FFF3E0', color: COLORS.primaryOrange, border: `1px solid ${COLORS.primaryOrange}` }}
+              >
+                {/menu$/i.test(activeMenuType) ? activeMenuType : `${activeMenuType} Menu`}
+              </span>
+            )}
+
             {/* Action Icons: Plus, Customer, Notes, Shift, Merge */}
             <div className="flex items-center gap-3 flex-shrink-0">
               {/* Add Custom Item */}
@@ -1785,6 +1797,20 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
           {/* Menu Items - Pill Layout */}
           <div className="flex-1 overflow-y-auto p-4" style={{ opacity: isPlacingOrder ? 0.5 : 1, pointerEvents: isPlacingOrder ? 'none' : 'auto' }}>
+            {/* CR-376: OD-376-06 — empty-state when active menu has no configured items */}
+            {/* BUG-462: replaced `activeMenuType !== 'Normal'` guard with `availableMenuTypes.length > 1` —
+                Normal-only restaurants (length=1) never see this; multi-menu restaurants (length>1) correctly
+                see empty-state on first boot when no active-menu products exist (e.g. QA_HYATT). */}
+            {availableMenuTypes.length > 1 && activeMenuProducts.filter(p => p.isActive && !p.isDisabled).length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12" data-testid="active-menu-empty-state">
+                <p className="text-sm font-semibold mb-1" style={{ color: COLORS.primaryOrange }}>
+                  {activeMenuType} menu has no items configured.
+                </p>
+                <p className="text-xs" style={{ color: COLORS.grayText }}>
+                  Please update in Local Settings.
+                </p>
+              </div>
+            ) : (
             <div className="flex flex-wrap gap-3">
               {getFilteredItems().map(item => {
                 const cartCount = cartCountMap[item.id] || 0;
@@ -1825,6 +1851,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 );
               })}
             </div>
+            )}
           </div>
         </div>
 
@@ -2841,7 +2868,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           customerIntelLoading={customerIntelLoading}
           onAddToCart={addToCart}
           onCustomizeItem={setCustomizationItem}
-          menuItems={products.filter(p => p.isActive && !p.isDisabled).map(adaptProduct)}
+          menuItems={activeMenuProducts.filter(p => p.isActive && !p.isDisabled).map(adaptProduct)} // CR-376: OD-376-07=(a) scope to active menu; off-menu suggestions become inert
           cartItems={cartItems}
           orderType={orderType}
         />

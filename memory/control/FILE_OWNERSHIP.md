@@ -1539,3 +1539,32 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 
 `frontend/src` diff: **empty** (verified `git status --short frontend/src` → 0 at §5.7 close). Hotspots byte-identical by sha256 (FINAL_GUARDS G3).
 
+| `src/api/transforms/productTransform.js` | L47 filter `==='Normal'` → `!=='Aggregator'` (E1) | CR-376 IMPL 2026-09-25 |
+| `src/utils/activeMenuPrefs.js` | NEW FILE — localStorage util for active menu type | CR-376 IMPL 2026-09-25 |
+| `src/contexts/MenuContext.jsx` | +import activeMenuPrefs · +3 memos (activeMenuType/activeMenuProducts/availableMenuTypes) · +3 context exports | CR-376 IMPL 2026-09-25 |
+| `src/components/order-entry/OrderEntry.jsx` | L57 destructure +activeMenuProducts+activeMenuType · L558/560 grid→activeMenuProducts · L1722 chip · L1800 empty-state · L2867 menuItems→activeMenuProducts | CR-376 IMPL 2026-09-25 |
+| `src/pages/StatusConfigPage.jsx` | +import setActiveMenuType · +ACTIVE_MENU_TYPE constants · +state activeMenuTypeSetting · +hydrate/save/reset · +E5h card-row UI | CR-376 IMPL 2026-09-25 |
+| `src/components/inventory/IngredientBulkEditor.jsx` | L79+L81: +`!r.isSubRecipe` to filtered useMemo (both branches) | BUG-461 FIX 2026-09-25 |
+
+| `src/components/inventory/InventorySetupPanel.jsx` | E1 L379: add form minUnit span→select · E2 L470: edit form minUnit span→select · E3 L189: startEdit priority flip | CR-388 IMPL 2026-09-25 |
+| `src/components/inventory/IngredientBulkEditor.jsx` | E4 L478: bulk minUnit span→conditional select | CR-388 IMPL 2026-09-25 |
+
+## FILE_OWNERSHIP — BUG-464 BUG FIX (2026-09-25) — marker `// BUG-464`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/OrderEntry.jsx` | L1723 comment + L1730: `{activeMenuType} Menu` → `/menu$/i` regex guard — suppress " Menu" suffix when type name already ends with "menu" (case-insensitive). 1 line change + 1 comment line. Hotspot R5, +2 additive, no existing logic line changed. | BUG-464 FIX 2026-09-25 |
+
+## FILE_OWNERSHIP — BUG-462 BUG FIX (2026-09-25) — markers `// BUG-462`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/OrderEntry.jsx` | L57: +`availableMenuTypes` to `useMenu()` destructure (+1 word in existing line). L1801-1804: replaced `activeMenuType !== 'Normal'` guard with `availableMenuTypes.length > 1` + 3-line comment block. Hotspot R5, +4 lines, no financial logic changed. | BUG-462 FIX 2026-09-25 |
+
+## FILE_OWNERSHIP — CR-376-FU-A IMPL (2026-09-25) — markers `// CR-376-FU-A`
+
+| File | Lines / change | Owner |
+|---|---|---|
+| `src/components/order-entry/CustomerModal.jsx` | L241: +1 line ID guard in `filteredCrossSell` filter. L246-249: +4 lines `filteredTopItems` const. L556: render condition swap `topItems.length` → `filteredTopItems.length`. L560: map swap `topItems.map` → `filteredTopItems.map`. Non-hotspot. 6 lines total, no financial logic. | CR-376-FU-A IMPL 2026-09-25 |
+
+

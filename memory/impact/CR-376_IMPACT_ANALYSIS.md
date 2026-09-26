@@ -464,6 +464,25 @@ const enrichedCategories = categoryService.calculateItemCounts(
 
 ---
 
+---
+
+## 12. Owner Decisions Locked — 2026-09-25 (post Gate 3 revalidation)
+
+All open ODs are now locked. Impact on this IA:
+
+| OD | Decision | IA §affected | Effect |
+|---|---|---|---|
+| OD-376-07=(a) | Scope CustomerModal `menuItems` to `activeMenuProducts` | §4/E4e | E4e confirmed firm. 1 line L2844. No scope change (same file as E4). |
+| OD-376-08=(b) | Card-row UI in Local Settings | §4/E5h | E5h JSX rewritten to card-row style. Logic identical. No scope change. |
+| **OD-376-09=(a)** | **Drop E6 + E7** | **§3, §8/V5, §8/V6** | **E6 (LoadingPage.jsx) and E7 (useRefreshAllData.js) removed from scope. Final scope = 5 files, 2 hotspots. §3 table rows 6/7 retained for history — marked DROPPED.** |
+| OD-376-10=(a) | Accept empty categories, raise follow-up | §7 downstream | CategoryPanel.jsx confirmed out of scope. Follow-up registered as CR-376-FU-B. |
+
+**§8 Verification Matrix V5/V6 impact (OD-376-09=a):** V5 and V6 verified E6/E7 category counts. These verifications are **DROPPED** — those edits don't exist. V1–V4, V7 remain. V-updated matrix in Implementation Plan §Verification Matrix.
+
+**§3 scope update:** rows 6 (LoadingPage.jsx) and 7 (useRefreshAllData.js) are historical — both DROPPED per OD-376-09=(a).
+
+**Hyatt probe finding (P3 precondition, 2026-09-25):** QA_HYATT (owner@hyatt.com) has 379 products across 10 custom `food_for` types (FOOD MENU / Bar & Drinks / Breakfast / etc.) — zero Normal/Premium/Party. `ACTIVE_MENU_TYPE_DEFAULT='Normal'` → Hyatt shows OD-376-06 empty-state on first boot (Design A expected). Hyatt suitable as multi-menu pill test, NOT as zero-change regression proof. Evidence: `evidence/CR-376/CR-376_hyatt_probe_2026_09_25.json`.
+
 **Planning complete: CR-376**
 Stage: Impact Analysis (Gate 2)
 Code reality: NONE

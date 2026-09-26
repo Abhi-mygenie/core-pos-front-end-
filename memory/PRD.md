@@ -686,3 +686,9 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - 2026-09-25 CR-376 stays Gate 3: R11 probe done (Normal 117/Premium 141, no backend change), live before-screenshots, HTML mockup `public/cr376-menu-switch-mockup.html`, new OD-376-08/09/10 raised (selector style · drop E6/E7 · empty categories). QA_OWNER creds restored to gitignored test_credentials.md. Zero code.
 - 2026-09-25 CR-376 Gate 3 FINAL: mockup `#findings` section highlights OD-376-07/08/09/10 visually; intake gained Gate 4 Preconditions P1–P5; owner-review handover `handover/SESSION_HANDOVER_2026_09_25_CR376_GATE3_FINAL_OWNER_REVIEW.md` for next agent (present plan, collect decisions/blockers, then await "CR-376 Gate 4 GO"). Zero code.
 - 2026-09-25 CR-376 session CLOSED at Gate 3. Multi-menu Q answered (N menus → N pills in Local Settings; Order Entry = one chip, no tabs). Pill-sort note added to plan E3b. Handover §8. Zero code.
+
+## 2026-09-25 — PLANNING Gate 2 COMPLETE: CR-376-FU-B (CategoryPanel hide-empty + counts + default All + Popular scoping)
+- Blocker (count by `categoryId` vs `categoryIds`) validated against code + evidence: grid L561 uses `categoryId` only; every probed product has `category_ids` = 1 entry = `category_id`. RESOLVED → count by `categoryId`. Owner "Gate 2 GO".
+- Written `impact/CR-376-FU-B_IMPACT_ANALYSIS.md`: 4 gaps, rules B1–B5 locked, 2 files (`CategoryPanel.jsx` ~15 lines · `OrderEntry.jsx` L102/L556/L1670 ~4 additive lines, R5 hotspot → no Fast Lane), conflict CLEAR, 0 open ODs. Registry → GATE_2_IMPACT_COMPLETE (2/7), sprint `sep_bug_closure`. Zero code.
+- Handover `handover/SESSION_HANDOVER_2026_09_25_CR376_FU_B_GATE2_COMPLETE.md` — next agent: recap last 2 sessions → walk owner through Impact Analysis → ask "Gate 3 GO".
+- Still blocked on credentials: CR-376 Gate 5b remaining cases + CR-376-FU-A QA need `QA_OWNER` / `cafe103`; BUG-459/CR-387 need `QA_INV` or "Gate 4 GO".
