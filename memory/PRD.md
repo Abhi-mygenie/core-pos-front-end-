@@ -700,3 +700,12 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - QA Gate 5b PASS 13/13 via browser automation with QA_HYATT: `test_reports/CR-376-FU-B_QA_REPORT_2026_09_26.md`
 - Credentials restored to gitignored `memory/test_credentials.md` (QA_HYATT verified; cafe103/QA_INV same pwd; QA_OWNER email unknown)
 - Next: Gate 6 Owner Smoke (CR-376-FU-B) · QA GO for CR-376-FU-A and CR-376 remaining cases · Gate 4 GO pending for CR-388, BUG-459, CR-387
+
+## 2026-09-26 — QA Gate 5b PASS: CR-376 (+ CR-376-FU-A, + CR-376-FU-B V10)
+- Role: QA (ALPHA v0.7 Role 4), frontend automation via testing_agent. Owner GO scope 1c; accounts cafe103 / QA_OWNER / QA_HYATT (all HTTP 200). No code modified; no orders placed/settled.
+- Result: 9/9 executed browser cases PASS, 0 blockers. cafe103 zero-change (no selector, no chip); QA_OWNER Normal↔Premium switch (chip 'Premium Menu' on/off + category set changes = FU-B V10 re-confirmed); QA_HYATT 10 pills + empty-state; search+add-to-cart regression (no submit).
+- CR-376-FU-A: T4 first-time-customer PASS (sections hidden). T1/T2/T3 CODE-VERIFIED only (filter CustomerModal.jsx L240-249 scoped to activeMenuProducts) — no live cross-menu returning customer sourceable from frontend. NOTE, no defect.
+- Registry advanced: CR-376 → GATE_5B_QA_PASS · CR-376-FU-A → GATE_5B_QA_PASS · CR-376-FU-B already GATE_5B_QA_PASS. Registry SYNCED.
+- Report: `test_reports/CR-376_QA_REPORT_2026_09_26.md` (raw `/app/test_reports/iteration_2.json`).
+- Data drift: QA_OWNER Normal menu now 7 items (was 117); Premium unchanged; switch behaviour unaffected (count-agnostic assertions per owner).
+- Next: Gate 6 Owner Smoke for CR-376 + FU-A + FU-B (SMOKE FACILITATOR). Suggest smoking Normal↔Premium on preprod + a TakeAway/Walk-in order (R13) + FU-A live cross-menu customer if available.

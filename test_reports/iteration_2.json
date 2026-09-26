@@ -1,0 +1,78 @@
+{
+  "summary": "CR-376 Gate 5b QA (frontend-only). Executed T1 (cafe103 Normal-only), T2/T3/T4/T5 (QA_OWNER Normal+Premium switching), R1/R3 regression (search + add-to-cart, no submit), T9/T10 (QA_HYATT multi-menu + empty-state), and CR-376-FU-A T4 (first-time customer). FU-A T1/T2/T3 code-verified (filter is present at CustomerModal.jsx L240-249 using activeMenu-scoped menuItems). No code modified. ALL EXECUTED CASES PASS. No blockers.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "T1_cafe103_normal_only": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "GET /visibility/status-config -> zero elements matching [data-testid^='active-menu-option-'] (selector correctly hidden because availableMenuTypes.length===1; Party menu not active). Order Entry opened from a table shows NO [data-testid='active-menu-type-chip'] and grid renders 396 Normal items. Screenshots: /app/test_reports/cafe103_status.png, /app/test_reports/cafe103_oe.png."
+    },
+    "T2_qaowner_selector_visible": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "Active Menu section shows [data-testid=active-menu-option-normal] and [data-testid=active-menu-option-premium]. Normal is highlighted by default (border-color rgb(50,153,55) = primaryGreen). Screenshot: /app/test_reports/qaowner_status_default.png."
+    },
+    "T3_T4_switch_to_premium": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "After clicking active-menu-option-premium + save-btn + reload: localStorage.mygenie_active_menu_type === 'Premium'. Order Entry header shows [data-testid=active-menu-type-chip] with text 'Premium Menu'. [data-testid=category-panel] renders and 30 category/panel elements are present (Premium categories, e.g. category-9232, category-9223, category-9245, ...). Screenshot: /app/test_reports/qaowner_oe_premium.png."
+    },
+    "T5_switch_back_to_normal_and_FU_B_V10": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "After clicking active-menu-option-normal + save-btn + reload: localStorage.mygenie_active_menu_type === 'Normal'. Order Entry shows NO active-menu-type-chip (chip only renders when activeMenuType !== 'Normal'), [data-testid=category-all] present, 7 categories (category-all + 4 numeric cats). Category set (5960, 5962, 5963, 5964) differs from Premium set (9232, 9223, 9245, 5960, 9239, ...) — CR-376-FU-B V10 (menu switch changes CategoryPanel) confirmed on QA_OWNER. Screenshot: /app/test_reports/qaowner_oe_normal.png."
+    },
+    "R1_R3_regression_no_submit": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "menu-search-input filters items 7 -> 4 for query 'a'; after clearing, clicking first menu tile added 'virgin mojito' (qty 1, ₹99) to cart; 'Update Order (1)' button appeared. Test STOPPED before Place Order/Collect Bill. Screenshot: /app/test_reports/qaowner_cart.png."
+    },
+    "T9_qahyatt_multi_menu_pills": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "10 active-menu-option pills rendered on /visibility/status-config: 24hrs Menu, Bar & Drinks, Breakfast, FOOD MENU, GROK, Kids Menu, PET FOOD, Promational Menu, Promotional Menu, Tea Coffee & Soft Beverages. testid pattern active-menu-option-<name-kebab> confirmed. Screenshot: /app/test_reports/hyatt_status.png."
+    },
+    "T10_empty_state": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "Set localStorage.mygenie_active_menu_type = 'Normal' via page.evaluate on QA_HYATT (Hyatt has no Normal menu). Opened Order Entry from a table -> [data-testid=active-menu-empty-state] visible with message 'Normal menu has no items configured. Please update in Local Settings.' No chip rendered. Screenshot: /app/test_reports/hyatt_oe_empty.png."
+    },
+    "FU_A_T1_T2_off_menu_filter": {
+      "status": "CODE-VERIFY PASS (NOTE: no cross-menu returning customer sourced live)",
+      "severity": "NOTE",
+      "evidence": "Code check /app/frontend/src/components/order-entry/CustomerModal.jsx L240-244 (filteredCrossSell) and L247-249 (filteredTopItems) both filter using `menuItems.some(f => String(f.id) === String(item.itemId))`. menuItems prop is passed from OrderEntry scoped to activeMenuProducts (OrderEntry.jsx L2875). Off-menu (Normal-only) items therefore excluded from Smart Suggestions and Past Favourites when Premium is active. Could not source a live cross-menu returning customer in QA_OWNER preprod within test scope — filter behaviour is code-verified only (per handover fallback)."
+    },
+    "FU_A_T3_normal_sections_intact": {
+      "status": "CODE-VERIFY PASS",
+      "severity": "NOTE",
+      "evidence": "Same filter logic passes through when menuItems contains the item — on Normal-active with a returning customer, favourites and suggestions render normally (only off-menu items are excluded). Guards at L556 (favourites) and L576 (suggestions) require isExistingCustomer && intel && !isFirstTimeCustomer, so sections still render for returning customers with history."
+    },
+    "FU_A_T4_first_time_customer": {
+      "status": "PASS",
+      "severity": "n/a",
+      "evidence": "Opened [data-testid=customer-modal] via customer-info-btn, entered new phone '9999900001' (first-time). Neither [data-testid=customer-favourites-section] nor [data-testid=customer-suggestions-section] rendered — sections correctly guarded by isFirstTimeCustomer (CustomerModal.jsx L556, L576). Screenshot: /app/test_reports/hyatt_customer_modal.png."
+    }
+  },
+  "test_report_links": [],
+  "action_items": [
+    "No fixes required — CR-376 Gate 5b PASS on all executed cases.",
+    "Optional (future): source a QA_OWNER returning customer with cross-menu order history to live-verify FU-A T1/T2 filter behaviour (currently code-verified only)."
+  ],
+  "critical_code_review_comments": [
+    "StatusConfigPage.jsx L1032: kebab conversion uses only /\\s+/g replace, so multi-word menu names like 'Bar & Drinks' become 'bar-&-drinks' (ampersand and comma preserved) — see QA_HYATT testids 'active-menu-option-bar-&-drinks' and 'active-menu-option-tea,-coffee-&-soft-beverages'. Non-blocker, but if any test harness treats '&' or ',' as CSS/selector special, escape or extend the kebab regex to strip non-[a-z0-9-].",
+    "QA_HYATT status-config shows duplicate 'Promational Menu' (typo) and 'Promotional Menu' options — this is a preprod data-drift issue, not code, but worth flagging to owner."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "100% (9/9 executed cases PASS; 2 code-verify NOTE)"},
+  "test_credentials": "See /app/memory/test_credentials.md (aliases cafe103, QA_OWNER, QA_HYATT). Passwords NOT echoed per R20.",
+  "seed_data_creation": "None. No orders placed or settled. Cart on QA_OWNER was left with virgin mojito added but was NOT submitted (Update Order pending). Local Settings on QA_OWNER left with Active Menu = Normal (restored to Design A baseline). QA_HYATT localStorage.mygenie_active_menu_type was set to 'Normal' during T10 — this only affects the QA test device and can be reset via the Active Menu selector.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-376 Gate 5b passed on cafe103/QA_OWNER/QA_HYATT. Data drift note: QA_OWNER Normal menu now has only 7 items (down from 117 on 2026-09-25) but Premium still has 141 categories/items visible; menu-switch behaviour (chip on/off, category set change) is unaffected. FU-A T1/T2 remains code-verified — live-verify requires sourcing a returning customer with cross-menu order history in QA_OWNER preprod (not possible from front-end alone).",
+  "rca of the issue": "n/a — no defects observed."
+}
