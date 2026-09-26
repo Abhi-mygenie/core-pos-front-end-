@@ -1,3 +1,5 @@
+**Last Updated:** 2026-09-26 — **CR-376-FU-B Gate 5a IMPLEMENTED** (owner "Gate 4 GO"). E1–E3 `CategoryPanel.jsx`, E4–E6 `OrderEntry.jsx`, E7 unit test 6/6 PASS, webpack 0 new warnings, EXIT GATE 5/5. **Browser self-test V7–V9 PENDING — `test_credentials.md` empty (QA_HYATT password not in memory).** QA handover `handover/QA_HANDOVER_CR376_FU_B_2026_09_26.md`. Handover `handover/SESSION_HANDOVER_2026_09_26_CR376_FU_B_GATE5A_IMPLEMENTED.md`.
+
 **Last Updated:** 2026-09-26 — **CR-376-FU-B Gate 3 COMPLETE** (owner "Gate 3 GO"). Plan `plans/CR-376-FU-B_IMPLEMENTATION_PLAN.md`: E1–E3 `CategoryPanel.jsx` (props, menu-aware counts, hide 0-count, `Name (n)`), E4–E6 `OrderEntry.jsx` (default "all", Popular ∩ active menu, 2 props), E7 unit test; 12-check matrix; R5 regression list. IA anchors re-verified identical at HEAD. Also: CR-389 intake doc synced from remote (intake only — registry/CR_REGISTRY rows for CR-389 intentionally NOT synced, owner choice). **Zero code. Gate 4 NOT given.** Handover `handover/SESSION_HANDOVER_2026_09_26_CR376_FU_B_GATE3_COMPLETE.md`.
 
 
