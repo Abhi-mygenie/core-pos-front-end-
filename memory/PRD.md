@@ -692,3 +692,11 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Written `impact/CR-376-FU-B_IMPACT_ANALYSIS.md`: 4 gaps, rules B1–B5 locked, 2 files (`CategoryPanel.jsx` ~15 lines · `OrderEntry.jsx` L102/L556/L1670 ~4 additive lines, R5 hotspot → no Fast Lane), conflict CLEAR, 0 open ODs. Registry → GATE_2_IMPACT_COMPLETE (2/7), sprint `sep_bug_closure`. Zero code.
 - Handover `handover/SESSION_HANDOVER_2026_09_25_CR376_FU_B_GATE2_COMPLETE.md` — next agent: recap last 2 sessions → walk owner through Impact Analysis → ask "Gate 3 GO".
 - Still blocked on credentials: CR-376 Gate 5b remaining cases + CR-376-FU-A QA need `QA_OWNER` / `cafe103`; BUG-459/CR-387 need `QA_INV` or "Gate 4 GO".
+
+## 2026-09-26 — CR-376-FU-B lifecycle (Gate 3 → 5b) in one session
+- Branch in use: `21implement` (synced 2026-09-25 at 2a2a2383; remote now 0b4d3a69 — only CR-389 intake doc pulled, owner choice)
+- PLANNING: `plans/CR-376-FU-B_IMPLEMENTATION_PLAN.md`
+- IMPLEMENTATION (owner Gate 4 GO): `CategoryPanel.jsx` E1-E3, `OrderEntry.jsx` E4-E6, new `__tests__/CategoryPanel.cr376fub.test.jsx` (6/6)
+- QA Gate 5b PASS 13/13 via browser automation with QA_HYATT: `test_reports/CR-376-FU-B_QA_REPORT_2026_09_26.md`
+- Credentials restored to gitignored `memory/test_credentials.md` (QA_HYATT verified; cafe103/QA_INV same pwd; QA_OWNER email unknown)
+- Next: Gate 6 Owner Smoke (CR-376-FU-B) · QA GO for CR-376-FU-A and CR-376 remaining cases · Gate 4 GO pending for CR-388, BUG-459, CR-387

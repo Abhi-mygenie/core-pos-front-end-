@@ -28230,7 +28230,7 @@
       "sprint_key": "sep_bug_closure",
       "id": "CR-376-FU-B",
       "title": "CategoryPanel: hide empty categories for active menu (follow-up to CR-376)",
-      "status": "GATE_5A_IMPLEMENTED (2026-09-26). E1-E6 coded per plan (CategoryPanel.jsx + OrderEntry.jsx), E7 unit test 6/6 PASS, webpack 0 new warnings. Browser self-test V7-V9 PENDING (no QA_HYATT password in test_credentials.md). Awaiting QA Gate 5b.",
+      "status": "GATE_5B_QA_PASS (2026-09-26). 13/13 (6 unit + 7 browser with QA_HYATT: default All, 12/12 count==tiles on FOOD MENU, 16-row panel on Bar & Drinks, no ghost cats, search+cart regression OK, console clean). Popular row absent on Hyatt (unit-covered only). Awaiting Gate 6 Owner Smoke.",
       "files": "CategoryPanel.jsx, OrderEntry.jsx, __tests__/CategoryPanel.cr376fub.test.jsx (new)",
       "notes": "P2 MEDIUM. Rules locked B1-B5: hide 0-count cats, Name (count) labels, All always default, Popular scoped to active menu, count by categoryId. OrderEntry.jsx R5 hotspot ~4 additive lines -> no Fast Lane.",
       "artifact_refs": [
@@ -28258,11 +28258,16 @@
           "label": "QA Handover",
           "path": "memory/handover/QA_HANDOVER_CR376_FU_B_2026_09_26.md",
           "type": "qa_handover"
+        },
+        {
+          "label": "QA Report Gate 5b",
+          "path": "memory/test_reports/CR-376-FU-B_QA_REPORT_2026_09_26.md",
+          "type": "qa_report"
         }
       ],
-      "completeness": "4/7",
+      "completeness": "5/7",
       "category": "IN_PROGRESS",
-      "gate": "5A"
+      "gate": "5B"
     },
     {
       "type": "CR",

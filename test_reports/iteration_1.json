@@ -1,0 +1,84 @@
+{
+  "summary": "QA Gate 5b (CR-376-FU-B) frontend-only verification against preprod. Logged in as QA_HYATT (password masked as ***). Set active menu FOOD MENU via /visibility/status-config, opened Order Entry from a free table, and validated all V-checks. All V-checks PASS: default tab is 'All (86)' (V7), every category row's bracket count exactly equals rendered menu-item tiles (V8, 12/12 rows), no ghost (0) rows and only FOOD-MENU categories are shown (V8b), Popular row absent (V9 acceptable — see notes), menu switch to 'Bar & Drinks' changes the panel to 16 Bar & Drinks-only categories with All (170) and correct counts (V10), regression search+add-to-cart works (V11), no CategoryPanel/OrderEntry console errors (R5).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "v_checks": {
+    "V7_default_tab_all": {
+      "status": "PASS",
+      "detail": "category-all is the highlighted row on Order Entry mount. Label='All (86)' matches /^All \\(\\d+\\)$/. Active state uses inline style backgroundColor=COLORS.primaryGreen (rgb(50,153,55)) — visually green in screenshot, and confirmed via computed style on V10 run."
+    },
+    "V8_count_equality_FOOD_MENU": {
+      "status": "PASS",
+      "table": [
+        {"label": "All (86)", "n": 86, "tiles": 86, "match": true},
+        {"label": "Soups (8)", "n": 8, "tiles": 8, "match": true},
+        {"label": "Salads (5)", "n": 5, "tiles": 5, "match": true},
+        {"label": "Small Plates (6)", "n": 6, "tiles": 6, "match": true},
+        {"label": "Appetizers (14)", "n": 14, "tiles": 14, "match": true},
+        {"label": "Wholesome Breads (6)", "n": 6, "tiles": 6, "match": true},
+        {"label": "Thin Crust Pizzas (3)", "n": 3, "tiles": 3, "match": true},
+        {"label": "Asian & Western (12)", "n": 12, "tiles": 12, "match": true},
+        {"label": "Bombay Biryani (3)", "n": 3, "tiles": 3, "match": true},
+        {"label": "Indian Curries & Rice (14)", "n": 14, "tiles": 14, "match": true},
+        {"label": "Indian Breads (9)", "n": 9, "tiles": 9, "match": true},
+        {"label": "Desserts (6)", "n": 6, "tiles": 6, "match": true}
+      ]
+    },
+    "V8b_no_ghost_categories": {
+      "status": "PASS",
+      "detail": "Zero categories showing '(0)'. 12 category rows shown (incl. All). All 11 non-All categories map to FOOD MENU only — categories that live in Bar & Drinks/Breakfast/etc. are NOT rendered."
+    },
+    "V9_popular_scoping": {
+      "status": "PASS (Popular row absent — acceptable)",
+      "detail": "data-testid category-popular is not rendered when FOOD MENU is active. Consistent with the CR-376-FU-B rule that Popular is hidden entirely when the popular ∩ active-menu intersection is empty, or when restaurant setting showPopularCategory is OFF. Could not disambiguate the exact reason from the client (setting is a backend flag), but no failure per acceptance criteria."
+    },
+    "V10_menu_switch": {
+      "status": "PASS",
+      "detail": "Switched active menu to 'Bar & Drinks' (via localStorage + hard reload). Chip shows 'Bar & Drinks Menu'. Category set completely changed to 16 Bar & Drinks-only rows (Cocktails, Beer, Gin, Breezers, Cognac, Single Malt, White Wine, Red Wine, Champagne & Sparkling Wine, Whisky/Bourbon, Rum, Vodka, Tequila & Agave, Liqueur & Aperitif, Sober Tales + All). Default tab is again All (170). Spot-check tile counts: All (170)=170, Cocktails (20)=20, Beer (9)=9, Gin (20)=20 — all match. computed backgroundColor of active row = rgb(50,153,55) (green).",
+      "categories_count": 16
+    },
+    "V11_R1_regression_order_flow": {
+      "status": "PASS",
+      "detail": "Typed 'chicken' in menu-search-input → tile count narrowed from 86 → 21. Cleared search. Clicked first tile (Fresh Fruit Platter.) — cart shows the item at ₹399 with qty 1, 'No items in order' placeholder is gone, Place Order button becomes active. Category-back-btn is present in the panel."
+    },
+    "R5_console": {
+      "status": "PASS",
+      "detail": "No console errors/warnings mentioning CategoryPanel, OrderEntry, 'count', 'undefined' or key collisions. Only unrelated infra warnings: Firebase notification permission denied, presocket.mygenie.online WebSocket close, [OrderPolling] aborted (mount-or-auth, 15000ms)."
+    }
+  },
+  "available_active_menu_options": [
+    "active-menu-option-24hrs-menu",
+    "active-menu-option-bar-&-drinks",
+    "active-menu-option-breakfast",
+    "active-menu-option-food-menu",
+    "active-menu-option-grok",
+    "active-menu-option-kids-menu",
+    "active-menu-option-pet-food",
+    "active-menu-option-promational-menu",
+    "active-menu-option-promotional-menu",
+    "active-menu-option-tea,-coffee-&-soft-beverages"
+  ],
+  "notes": [
+    "Two potentially anomalous menu-option pills exist for the Hyatt restaurant: 'promational-menu' (typo?) and 'grok'. They are surfaced by data as-is; not part of this CR but worth flagging to product.",
+    "Note the chip text for Bar & Drinks reads 'Bar & Drinks Menu' (has a trailing 'Menu' suffix) while FOOD MENU chip reads 'FOOD MENU'. Chip label formatting is inconsistent between menu types — cosmetic only, not a CR-376-FU-B blocker."
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CategoryPanel.jsx uses inline style backgroundColor for active row — automated tests cannot rely on className='bg-green-*'. Consider adding data-testid attribute variant or aria-selected to make active-row assertions cheaper.",
+    "Chip label formatting differs between menus ('FOOD MENU' vs 'Bar & Drinks Menu'). Consider unifying (either always append 'Menu' or never).",
+    "Two suspicious menu options 'grok' and 'promational-menu' appear alongside 'promotional-menu' — likely data-quality issues in the restaurant's menu list. Out of scope for CR-376-FU-B but should be reported to data/backend team."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only per request)", "frontend": "100% (7/7 V-checks PASS)"},
+  "test_credentials": "QA_HYATT: owner@hyatt.com / *** (verified). Password masked per R20.",
+  "seed_data_creation": "None. No orders were placed/settled on preprod (only added an item to the cart client-side, never submitted). localStorage key mygenie_active_menu_type toggled between 'FOOD MENU' and 'Bar & Drinks'.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Order Entry navigation with QA_HYATT: (1) login using data-testid login-email/login-password + submit button; (2) wait 20-25s for boot (300+ products loading from preprod); (3) set active menu via localStorage.setItem('mygenie_active_menu_type','FOOD MENU') and reload — much more reliable than clicking through StatusConfig; (4) click any table-card-<id> from /dashboard; (5) category-panel + active-menu-type-chip render within ~4s. Active-row highlight uses inline style backgroundColor=rgb(50,153,55), NOT a class token — assert with computed style, not className. Popular row was absent for both FOOD MENU and Bar & Drinks — acceptable per spec.",
+  "rca of the issue": "No issue observed for CR-376-FU-B. All acceptance criteria met on Hyatt (multi-menu) restaurant."
+}
