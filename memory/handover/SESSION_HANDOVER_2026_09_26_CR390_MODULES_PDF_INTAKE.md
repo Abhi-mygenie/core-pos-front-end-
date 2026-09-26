@@ -26,6 +26,17 @@ Owner asked to (1) pull out the earlier PMS "dummy-data screenshots + PDF" deliv
 ## 4. Brainstorm agenda (owner decisions — lock in order)
 **Full option analysis (pros/cons/recommendation per OD) is in the intake doc § "Brainstorm — option analysis per decision". Owner asked for it to be written up so they can read and decide next session.**
 
+### Session 2 (2026-09-26, owner walkthrough of CR-390) — outcome
+- **Modules redefined by owner** (one PDF + one approval cycle each): **MM Menu Management · EM Expenses Management · IM Inventory Management · DC Day Closure & Settlement · DR Daily Report (contents to discuss) · Insights Basic · Insights Advanced · PMS redo** (module changed since v2.0). Agent's M1–M6 draft superseded.
+- **OD-390-04 LOCKED:** perfect user journey per module; **each module's journey must be owner-approved before generation** (sub-gate G-journey).
+- **Audience LOCKED: for clients** → scrub rules / footer proposed (OD-390-14).
+- **OD-390-08 DEFERRED** ("later"); PMS v2.0 template interim default.
+- **Doubts re-asked at Intake gate → OD-390-09…14** (module list/exclusions · DC contents · DR contents · Insights Basic/Advanced allocation — agent draft in intake · PMS redo scope · client scrub rules).
+- OD-01/02/03/05/06/07 not addressed → still OPEN (owner may say "all recommended").
+- Owner decision log rows appended in `SPRINT_STATUS.md`.
+
+### Standing agenda (recommendations)
+
 | OD | Topic | Agent recommendation |
 |---|---|---|
 | OD-390-01 | Data strategy | (b) Playwright `/api/*` interception + per-module fixture JSON — real logic/charts, 0 app code; (c) demo-mode later as own CR |
@@ -40,9 +51,10 @@ Owner asked to (1) pull out the earlier PMS "dummy-data screenshots + PDF" deliv
 Open questions (non-blocking): audience (internal vs client-facing) · regeneration cadence · screenshot change-diff for CLOSURE.
 
 ## 5. Next session
-1. Read this handover + intake doc.
-2. Continue brainstorm: **OD-390-01 first**, then 02…08. Record each lock in the intake doc table + `SPRINT_STATUS.md` Owner Decision Log.
-3. When all locked → owner verbatim "Gate 2 GO" → PLANNING Gate 2 (pipeline design + per-module screen manifests). **No code / no screenshots before that.**
+1. Read this handover + intake doc (§ "Owner direction 2026-09-26 (session 2)" first).
+2. Get owner answers to **OD-390-09…14** (module list · DC contents · DR contents · Insights split · PMS redo scope · client scrub rules) and lock **OD-01/02/03/05/06/07** (or "all recommended"). Record each in the intake tables + `SPRINT_STATUS.md` decision log.
+3. When all locked → owner verbatim "Gate 2 GO" → PLANNING Gate 2 (pipeline design + endpoint inventory + **per-module journey drafts for owner approval**). **No code / no screenshots before that.**
+4. Offer the owner a full re-pull of `memory/` from remote before Gate 2 (local behind by 12 files).
 
 ## 6. Rules observed
 R0 (registered ID before work) · R3 (no policy invented — all choices tabled as ODs) · R19/R20 (no secrets printed) · zero `frontend/src` changes.

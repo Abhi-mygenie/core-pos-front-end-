@@ -54,6 +54,48 @@ Produce one Screen Reference PDF per module (or one master + per-module exports 
 Excluded (dev-only): `/screen1…9-compare`, `/settings-preview`, `/cr132-print`, `/loading`, `/login` (login = optional cover-adjacent page — OD-390-03).
 Rough total beyond PMS: **~90–100 screens**.
 
+> **SUPERSEDED 2026-09-26 (session 2)** — the M1–M6 split above was the agent's draft. Owner redefined the module structure; see next section. Route lists above stay as the raw inventory to map from.
+
+---
+
+## Owner direction 2026-09-26 (session 2) — module structure & decisions (verbatim-derived)
+
+Owner: *"4 modules - Menu management, Expenses management, Inventory management, Day closure and settlement, Daily report - Section will discuss what all will be covered in this - Insights section - this section we will have divided in 2 basic and advanced report - PMS we have gone through change so redo this one also - 390-04 Page order this should be perfect user journey before each module approval needs to be taken - 7. Open questions - for clients, 8 later, update docs and decision if any doubts questions re ask gate intake."*
+
+### Module structure (owner-defined) — each module = one PDF, one approval cycle
+
+| # | Module (owner name) | Routes mapped from inventory | Status |
+|---|---|---|---|
+| MM | **Menu Management** | `/menu` (categories, items, variations/add-ons, availability), aggregator menu mapping if in scope | **CONFIRMED** |
+| EM | **Expenses Management** | `/expense-setup`, `/expenses` | **CONFIRMED** |
+| IM | **Inventory Management** | `/inventory-setup` (Ingredients & Setup), `/inventory-smart-purchase` (Stock Update), `/inventory-receive`, `/inventory-purchase`, `/inventory-current-stock`, `/inventory-sub-recipe-stock`, `/inventory-audit`, `/inventory-physical`, `/inventory-dashboard`, `/recipes` | **CONFIRMED** |
+| DC | **Day Closure & Settlement** | `/day-closure`, `/settlement/preview`, `/reports-module/cashier-settlement`, `/reports-module/settlement`, `/credit` (credit collection at close — confirm) | **CONFIRMED** (contents to confirm — see OD-390-10) |
+| DR | **Daily Report** | Sidebar "Daily Report" group: P&L, Consumption Report, Sales Summary (`/reports/summary`), Order Report (`/reports/audit`), Orders (Beta), Settlement Report, Expense Report, Purchase Report | **CONFIRMED as a section; contents TO BE DISCUSSED** (OD-390-11) |
+| IN-B / IN-A | **Insights — Basic** / **Insights — Advanced** | 12 sidebar groups (~45 reports) split in two PDFs | **CONFIRMED split; allocation TO BE DISCUSSED** (OD-390-12) |
+| PMS | **PMS (redo)** | all `/pms/*` incl. Front Desk v2 (CR-385), Night Audit, Revenue, Folio, Rates & Restrictions — regenerate because the module changed since v2.0 | **CONFIRMED** |
+
+Not named by owner → **excluded unless owner adds them** (OD-390-09): Order Entry / Dashboard (`/dashboard`), Order Summary standalone, Credit Management (unless inside DC), Delivery Management, Settings (Restaurant Setup, Table Management, Printers, Dashboard Display, All Settings), Employee Management, Aggregator Setup, Status Config, Printer Config.
+
+### Decisions taken this session
+
+| OD | Decision | Status |
+|---|---|---|
+| OD-390-04 | Page order = **perfect user journey**, module by module. **Hard rule: the journey (ordered screen list + states) for each module is presented to the owner and approved BEFORE that module is generated.** Journey approval becomes a per-module sub-gate (G-journey). | **LOCKED 2026-09-26** |
+| OD-390-08 | Template — owner: "later" | **DEFERRED** — PMS v2.0 template used as interim default for the pilot; revisit before client release |
+| Audience (open Q1) | **For clients** (client-facing collateral) | **LOCKED 2026-09-26** → consequences: scrub rule (no "Beta" labels, no dev test-ids, no sandbox/real restaurant names, no internal CR/BUG references), confidentiality footer, polish level = release quality, PDF editions versioned |
+
+### New owner decisions raised (doubts re-asked at Intake gate, per owner instruction)
+
+| ID | Doubt / question | Agent proposal | Status |
+|---|---|---|---|
+| OD-390-09 | Owner said "4 modules" but named 5 (+ Insights + PMS = 7 PDFs). Confirm the final list, and confirm the **not-named** screens are excluded: Order Entry/Dashboard, Credit Management, Delivery Mgmt, Settings (Restaurant Setup / Tables / Printers / Employees), Aggregator Setup. | Treat list as 7 PDFs: MM · EM · IM · DC · DR · IN-Basic · IN-Advanced (+ PMS). Add an 8th "Operations & Settings" module later only if owner wants Order Entry/Settings covered for clients. | OPEN |
+| OD-390-10 | Day Closure & Settlement — exact contents: does it include Credit Management (pay-later collection), Cashier Settlement report, Settlement Report (Insights), Galla/cash-drawer view from Order Summary? | Journey: open-shift context → cashier settlement → credit collection → day closure → settlement report. | OPEN — discuss |
+| OD-390-11 | Daily Report — owner: "will discuss what all will be covered". Candidate list = sidebar Daily Report group (8 items, 1 "coming soon" Item Report, 1 Beta). | Include P&L, Consumption, Sales Summary, Order Report, Settlement Report, Expense Report, Purchase Report; exclude Orders (Beta) and coming-soon for clients. | OPEN — discuss |
+| OD-390-12 | Insights Basic vs Advanced — allocation criteria. | **Basic** (owner/manager daily use): Dashboard, Sales Overview, Daily Sales, Hourly Sales, Day-of-Week, Items Ledger, Item Sales, Payments Overview, Cashier Settlement, Discount Report, Cancellations, Table-wise Sales, Expense Report. **Advanced** (analyst/finance): Channel & Payment, Variation & Addon, Orders Ledger, Gateway Recon, Tip Report, Round-Off, GST/VAT Detail, Tax Slabs, Inclusive/Exclusive, Coupon Usage, Item Cancel Detail, Order Notes, Delivery Charges, Room Transfers, Server Performance, Cashier Activity, Order Edit Audit, Customer Intelligence, Guest vs Registered, Kitchen Ops, KOT Variance, Room Orders, Food Court. **Beta reports** (Orders Beta, Customer Intelligence Beta, Guest vs Registered Beta, Food Court Beta) excluded for clients. | OPEN — discuss |
+| OD-390-13 | PMS redo scope — regenerate all 36 v2.0 screens + Front Desk v2 workstation (CR-385 M0–M7), or replace the legacy Front Desk / Arrivals / In-House / Departures pages with the v2 workstation only? | Show v2 workstation as the primary journey; keep legacy pages only if still reachable in the sidebar at generation time (code truth). | OPEN |
+| OD-390-14 | Client-facing consequences — confirm scrub rules (no Beta, no coming-soon, fictional business name, ₹/GST realistic) and whether a **confidentiality / "sample data" footer** is wanted. | YES to all; footer text: "Sample data shown for illustration · © MyGenie". | OPEN |
+| OD-390-01/02/03/05/06/07 | Not addressed by owner this session. | Owner may reply "all recommended" or take them one by one next session. | OPEN |
+
 ---
 
 ## Evidence
@@ -92,11 +134,11 @@ Rough total beyond PMS: **~90–100 screens**.
 | OD-390-01 | **Data strategy** (shapes everything else) | (a) DOM injection per screen (PMS method, no code change, brittle, weak for charts) · (b) Playwright **network interception** of `/api/*` with per-module fixture JSON — real transforms/charts render, 0 app code, fixtures reusable in tests · (c) in-app demo-mode flag (`?demo=1`) switching services to fixtures — reusable for live demos/sales but touches app code (Risk → MEDIUM, CR-372 review) | **(b)** | OPEN |
 | OD-390-02 | **Persona / story consistency** | one fictional property used across all PDFs (name, staff, menu, dates, ₹ figures) vs per-module ad hoc data | one property ("Sharma Hotel & Restaurant" — matches PMS v2.0) with a shared `fixtures/persona.json` | OPEN |
 | OD-390-03 | **Screen granularity** | (a) primary view per route only · (b) primary + 1–2 critical interaction states (drawer/modal/filter applied) as PMS v2.0 did · (c) also empty/error states | **(b)**; login page as optional preface | OPEN |
-| OD-390-04 | **Ordering inside a PDF** | (a) sidebar order · (b) user-journey order (PMS approach) · (c) hybrid | **(c)** journey order for M1 POS Core / M3 Inventory / M6 PMS; sidebar order (derived from `Sidebar.jsx`, self-updating) for M2 Menu & Settings / M5 Insights | OPEN |
-| OD-390-05 | **Packaging** | (a) one PDF per module · (b) single master "MyGenie Screen Reference" with module sections · (c) both (master + per-module exports from the same run) | **(c)**; plus PNG pack per module in `memory/evidence/CR-390/<module>/`; module split refined vs sidebar: M1 POS Core · M2 Menu & Settings · M3 Inventory & Recipes · M4 Expenses & Daily Report · M5a/b/c Insights · M6 PMS | OPEN |
+| OD-390-04 | **Ordering inside a PDF** | (a) sidebar order · (b) user-journey order (PMS approach) · (c) hybrid | — | **LOCKED 2026-09-26 — (b) perfect user journey for every module; per-module journey must be owner-approved BEFORE generation (sub-gate G-journey)** |
+| OD-390-05 | **Packaging** | (a) one PDF per module · (b) single master "MyGenie Screen Reference" with module sections · (c) both (master + per-module exports from the same run) | **(c)**; plus PNG pack per module in `memory/evidence/CR-390/<module>/`; module split now OWNER-DEFINED (session 2): MM Menu · EM Expenses · IM Inventory · DC Day Closure & Settlement · DR Daily Report · IN-Basic · IN-Advanced · PMS redo | OPEN (packaging a/b/c still to lock; module list per OD-390-09) |
 | OD-390-06 | **Output location & public surface** | keep PDFs in `frontend/public/` (served, as PMS today) vs `memory/design_briefs/downloads/` (repo-only) | **`memory/design_briefs/downloads/screen_reference/`** — `PUBLIC_ROUTES.md` (CR-372) already marks the PMS PDF/HTML in `public/` as temporary carve-outs to be moved to `design_briefs/`; also move existing PMS PDFs out of `public/` during M6 regen | OPEN |
-| OD-390-07 | **Sequencing / pilot** | which module first | pilot pipeline on **M4 Expenses & Staff** (~5 screens) to lock template + tooling → M3 Inventory → M1 POS Core → M2 Menu & Setup → M5a/b/c Reports → M6 PMS regen | OPEN |
-| OD-390-08 | **Template ownership** | reuse PMS v2.0 visual template as the standard for all modules (cover, badge, eyebrow, footer) | YES, parameterise module name/colour accent only | OPEN |
+| OD-390-07 | **Sequencing / pilot** | which module first | re-based on owner modules: pilot **EM Expenses Management** (smallest) → MM Menu → IM Inventory → DC Day Closure & Settlement → DR Daily Report → IN-Basic → IN-Advanced → PMS redo | OPEN |
+| OD-390-08 | **Template ownership** | reuse PMS v2.0 visual template as the standard for all modules (cover, badge, eyebrow, footer) | YES, parameterise module name/colour accent only | **DEFERRED 2026-09-26 (owner: "later")** — PMS v2.0 template = interim default for pilot |
 
 Each locked decision → recorded here + `SPRINT_STATUS.md` Owner Decision Log. After all locked → PLANNING Gate 2 (Impact Analysis = pipeline design + per-module screen manifests).
 
@@ -208,11 +250,11 @@ Read in order; each decision narrows the next. Recommendations are the agent's; 
 ---
 
 ## Open Questions for owner (non-blocking for registration)
-1. Audience of the PDFs — internal design reference only, or client-facing sales/onboarding collateral? (drives polish level, confidentiality footer, whether real restaurant names must be scrubbed)
+1. ~~Audience~~ → **LOCKED 2026-09-26: FOR CLIENTS** (client-facing). Consequences tracked in OD-390-14.
 2. Cadence — regenerate per sprint closure automatically (CLOSURE role step) or on demand?
 3. Should the pipeline also emit a **change-diff** (screens whose screenshot changed vs last edition) to feed CLOSURE / smoke docs?
 
 ---
 
 ## Next
-**Gate 1 registered 2026-09-26.** → Brainstorm sessions: lock OD-390-01 first (data strategy), then 02–08 in order → then PLANNING Gate 2. **No pipeline code and no screenshots until owner says "Gate 2 GO".**
+**Gate 1 registered 2026-09-26; session 2 (same day) locked OD-04 + audience, deferred OD-08, owner redefined modules, raised OD-390-09…14.** Gate stays **INTAKE** until: OD-09 (module list) · 10 (DC contents) · 11 (DR contents) · 12 (Insights split) · 13 (PMS redo scope) · 14 (client scrub rules) answered, and OD-01/02/03/05/06/07 locked or "all recommended". Then owner verbatim "Gate 2 GO" → PLANNING. **No pipeline code and no screenshots before that.**

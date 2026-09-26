@@ -28268,7 +28268,7 @@
       "priority": "P2",
       "risk": "LOW (upgrades to MEDIUM if OD-390-01 = (c) in-app demo-mode flag)",
       "sprint_key": "modules_pdf",
-      "status": "GATE_1_INTAKE — BRAINSTORM (OD-390-01…08 OPEN; Gate 2 blocked until locked)",
+      "status": "GATE_1_INTAKE — BRAINSTORM session 2 done 2026-09-26 (OD-04 + audience LOCKED, OD-08 DEFERRED, modules owner-defined, OD-09…14 raised); Gate 2 blocked",
       "created_at": "2026-09-26",
       "created": "2026-09-26",
       "code_reality": "PARTIAL — PMS PDF v1/v2 artifacts exist in frontend/public/; generator scripts (/app/pms_dummy_data.py, /app/generate_pms_pdf_v2.py) LOST, never committed",
@@ -28284,11 +28284,17 @@
         "OD-390-01": "OPEN — data strategy: (a) DOM injection · (b) Playwright /api/* interception + fixtures [recommended] · (c) in-app demo-mode flag",
         "OD-390-02": "OPEN — one shared persona/property across all PDFs",
         "OD-390-03": "OPEN — screen granularity (primary only / + interaction states / + empty-error states)",
-        "OD-390-04": "OPEN — ordering: recommended (c) hybrid (journey for POS/Inventory/PMS, sidebar-derived for Menu & Settings/Insights)",
-        "OD-390-05": "OPEN — packaging (per-module / master / both + PNG packs)",
+        "OD-390-04": "LOCKED 2026-09-26 — (b) perfect user journey per module; per-module journey owner-approved BEFORE generation (sub-gate G-journey)",
+        "OD-390-05": "OPEN — packaging a/b/c; module split now OWNER-DEFINED: MM Menu · EM Expenses · IM Inventory · DC Day Closure & Settlement · DR Daily Report · IN-Basic · IN-Advanced · PMS redo",
         "OD-390-06": "OPEN — output location: recommended memory/design_briefs/downloads/screen_reference/ (PUBLIC_ROUTES.md treats public/ PDFs as temporary carve-outs); move PMS PDFs out of public/ in M6",
-        "OD-390-07": "OPEN — sequencing; recommended pilot M4 Expenses & Staff",
-        "OD-390-08": "OPEN — reuse PMS v2.0 template as standard"
+        "OD-390-07": "OPEN — sequencing re-based: pilot EM → MM → IM → DC → DR → IN-Basic → IN-Advanced → PMS redo",
+        "OD-390-08": "DEFERRED 2026-09-26 (owner: 'later') — PMS v2.0 template interim default",
+        "OD-390-09": "OPEN — confirm final module list ('4 modules' vs 5 named + Insights + PMS) and exclusion of Order Entry/Credit/Settings/Aggregator",
+        "OD-390-10": "OPEN — Day Closure & Settlement exact contents (Credit collection? Cashier Settlement? Settlement Report?)",
+        "OD-390-11": "OPEN — Daily Report section contents (owner: to discuss)",
+        "OD-390-12": "OPEN — Insights Basic vs Advanced allocation (agent draft in intake); Beta reports excluded for clients",
+        "OD-390-13": "OPEN — PMS redo scope (v2 workstation primary vs legacy pages)",
+        "OD-390-14": "OPEN — client-facing scrub rules + 'sample data' footer"
       },
       "related": [
         "PMS Screen Reference v2.0 2026-09-16",
@@ -28303,12 +28309,23 @@
           "type": "intake"
         }
       ],
-      "brainstorm_status": "Option analysis for OD-390-01…08 written in intake doc §Brainstorm (2026-09-26); owner to lock next session"
+      "brainstorm_status": "Option analysis for OD-390-01…08 written in intake doc §Brainstorm (2026-09-26); owner to lock next session",
+      "audience": "LOCKED 2026-09-26 — FOR CLIENTS (client-facing collateral)",
+      "modules_owner_defined": [
+        "MM Menu Management",
+        "EM Expenses Management",
+        "IM Inventory Management",
+        "DC Day Closure & Settlement",
+        "DR Daily Report (contents TBD)",
+        "IN-Basic Insights",
+        "IN-Advanced Insights",
+        "PMS redo"
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-09-26",
-    "last_action": "INTAKE 2026-09-26: CR-390 registered (P2/LOW) under NEW sprint modules_pdf; full brainstorm option analysis OD-390-01…08 written into intake at owner request. Gate 2 blocked until ODs locked. Zero code.",
+    "last_action": "INTAKE 2026-09-26 s2: CR-390 — owner redefined modules (MM/EM/IM/DC/DR/IN-Basic/IN-Advanced/PMS redo), OD-390-04 LOCKED (user journey + per-module approval), audience LOCKED clients, OD-08 deferred, OD-09…14 raised. Zero code.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -28317,6 +28334,6 @@
     "total": 726,
     "total_items": 726,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
-    "last_note": "Session 2026-09-26: CR-390 intake; entry point handover/SESSION_HANDOVER_2026_09_26_CR390_MODULES_PDF_INTAKE.md. Next: brainstorm OD-390-01 (data strategy) → 02…08 → owner \"Gate 2 GO\"."
+    "last_note": "Entry point handover/SESSION_HANDOVER_2026_09_26_CR390_MODULES_PDF_INTAKE.md. Next: owner answers OD-390-09…14 + locks 01/02/03/05/06/07 → \"Gate 2 GO\"."
   }
 }
