@@ -62,7 +62,7 @@ Rough total beyond PMS: **~90–100 screens**.
 
 Owner: *"4 modules - Menu management, Expenses management, Inventory management, Day closure and settlement, Daily report - Section will discuss what all will be covered in this - Insights section - this section we will have divided in 2 basic and advanced report - PMS we have gone through change so redo this one also - 390-04 Page order this should be perfect user journey before each module approval needs to be taken - 7. Open questions - for clients, 8 later, update docs and decision if any doubts questions re ask gate intake."*
 
-### Module structure (owner-defined) — each module = one PDF, one approval cycle
+### Module structure (owner-defined, LOCKED OD-390-09/10) — 9 PDFs, each module = one PDF + one live journey discussion + one approval cycle
 
 | # | Module (owner name) | Routes mapped from inventory | Status |
 |---|---|---|---|
@@ -71,9 +71,9 @@ Owner: *"4 modules - Menu management, Expenses management, Inventory management,
 | IM | **Inventory Management** | `/inventory-setup` (Ingredients & Setup), `/inventory-smart-purchase` (Stock Update), `/inventory-receive`, `/inventory-purchase`, `/inventory-current-stock`, `/inventory-sub-recipe-stock`, `/inventory-audit`, `/inventory-physical`, `/inventory-dashboard`, `/recipes` | **CONFIRMED** |
 | DC | **Day Closure & Settlement** | `/day-closure`, `/settlement/preview`, `/reports-module/cashier-settlement`, `/reports-module/settlement`, ~~`/credit`~~ (moved to CM) | **CONFIRMED** (contents LOCKED — OD-390-10) |
 | CM | **Credit Management** | `/credit` (pay-later ledger, collections, customer credit history) | **CONFIRMED 2026-09-26 — separate module (owner: "credit management different module")** |
-| DR | **Daily Report** | Sidebar "Daily Report" group: P&L, Consumption Report, Sales Summary (`/reports/summary`), Order Report (`/reports/audit`), Orders (Beta), Settlement Report, Expense Report, Purchase Report | **CONFIRMED as a section; contents TO BE DISCUSSED** (OD-390-11) |
-| IN-B / IN-A | **Insights — Basic** / **Insights — Advanced** | 12 sidebar groups (~45 reports) split in two PDFs | **CONFIRMED split; allocation TO BE DISCUSSED** (OD-390-12) |
-| PMS | **PMS (redo)** | all `/pms/*` incl. Front Desk v2 (CR-385), Night Audit, Revenue, Folio, Rates & Restrictions — regenerate because the module changed since v2.0 | **CONFIRMED** |
+| DR | **Daily Report** | Sidebar "Daily Report" group: P&L, Consumption Report, Sales Summary (`/reports/summary`), Order Report (`/reports/audit`), Orders (Beta), Settlement Report, Expense Report, Purchase Report | **CONFIRMED · contents LOCKED 2026-09-26 (OD-390-11):** P&L · Consumption · Sales Summary · Order Report · Settlement Report · Expense Report · Purchase Report (Beta/coming-soon excluded) |
+| IN-B / IN-A | **Insights — Basic** / **Insights — Advanced** | 12 sidebar groups (~45 reports) split in two PDFs | **CONFIRMED · allocation LOCKED 2026-09-26 (OD-390-12)** — Basic 13 daily-use reports / Advanced 23 finance-analyst reports; 4 Beta reports excluded |
+| PMS | **PMS (redo)** | all `/pms/*` incl. Front Desk v2 (CR-385), Night Audit, Revenue, Folio, Rates & Restrictions — regenerate because the module changed since v2.0 | **CONFIRMED · scope DEFERRED (OD-390-13)** — PMS work ongoing; sequenced LAST; owner to discuss |
 
 Not named by owner → **excluded unless owner adds them** (OD-390-09): Order Entry / Dashboard (`/dashboard`), Order Summary standalone, Credit Management (unless inside DC), Delivery Management, Settings (Restaurant Setup, Table Management, Printers, Dashboard Display, All Settings), Employee Management, Aggregator Setup, Status Config, Printer Config.
 
@@ -259,4 +259,4 @@ Read in order; each decision narrows the next. Recommendations are the agent's; 
 ---
 
 ## Next
-**Gate 1 registered 2026-09-26; session 2 (same day) locked OD-04 + audience, deferred OD-08, owner redefined modules, raised OD-390-09…14.** Gate stays **INTAKE** until: ~~OD-09/10/11/12/14~~ (LOCKED) · 13 (PMS redo scope — DEFERRED, owner to discuss) · **14b (disclaimer placement/wording)** answered, and OD-01/02/03/05/06/07 locked or "all recommended". Then owner verbatim "Gate 2 GO" → PLANNING. **No pipeline code and no screenshots before that.**
+**Gate 1 registered 2026-09-26; session 2 (same day) locked OD-04 + audience, deferred OD-08, owner redefined modules, raised OD-390-09…14.** Gate stays **INTAKE** until: ~~OD-09/10/11/12/14~~ (LOCKED) · 13 (PMS redo scope — DEFERRED, owner to discuss) · **14b (disclaimer placement/wording)** answered, and OD-01/02/03/05/06/07 locked or "all recommended". Then owner verbatim "Gate 2 GO" → PLANNING. **No pipeline code and no screenshots before that.** Standing rule (owner 2026-09-26): every module journey is discussed and approved LIVE at module start — agent drafts are proposals only.
