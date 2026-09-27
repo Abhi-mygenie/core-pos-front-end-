@@ -1,0 +1,4937 @@
+{
+  "generated_at": "2026-09-25T08:15:16.557176+00:00",
+  "source": "gen_dashboard_sync.py (CR-048-REBUILD)",
+  "schema_version": "2.0",
+  "sprints": {
+    "pos_5_0": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "POS2-001",
+          "title": "Delivery charge / GST / web delivery lock",
+          "status": "NOT STARTED",
+          "priority": "",
+          "category": "NOT_STARTED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_002_ORDER_FROM_WEB_PIPELINE_CR_IMPACT_ANALYSIS_2026_05_07.md",
+              "type": "impact"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-001_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "POS2-008 Phase 2",
+          "title": "Backend-owned tone delivery",
+          "status": "CLOSED \u2014 PLANNING COMPLETE, backend-owned (retroactive 2026-06-15)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-008_Phase_2_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-010",
+          "title": "Weight-based menu item support (item_unit / item_unit_price)",
+          "status": "CLOSED \u2014 IMPLEMENTED (2026-06-09, retroactive closure 2026-06-15). Full gate cycle: Impact + Plan + Code Gate + Impl Summary. Weight-based billing in OrderEntry, CartPanel, CancelFoodModal, productTransform.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_010_INTAKE_2026_06_01.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-011",
+          "title": "Complete Reports Module (new, role-based, separate tab)",
+          "status": "OPEN \u2014 Phase 3 COMPLETE. 28/28 screens built + verified (screenshots). All endpoints live. Awaiting owner Gate \u2461 review + sidebar rearrangement.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_011_INTAKE_2026_06_01.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_IMPACT_ANALYSIS_2026_06_01.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Field-to-Report Atlas (Discovery)",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_FIELD_TO_REPORT_ATLAS_2026_06_01.md",
+              "type": "discovery"
+            },
+            {
+              "label": "Backend Coordination Note",
+              "path": "memory/memory/change_requests/impact_analysis/CR_011_BACKEND_COORDINATION_NOTE_2026_06_01.md",
+              "type": "coordination"
+            },
+            {
+              "label": "Screen Freeze Protocol (BINDING)",
+              "path": "memory/control/CR_011_SCREEN_FREEZE_PROTOCOL.md",
+              "type": "governance"
+            },
+            {
+              "label": "Screen Freeze Log",
+              "path": "memory/control/CR_011_SCREEN_FREEZE_LOG.md",
+              "type": "tracking"
+            },
+            {
+              "label": "Design Guidelines (locked DNA)",
+              "path": "design_guidelines.json",
+              "type": "design"
+            },
+            {
+              "label": "S0 Landing Dashboard Mockup",
+              "path": "frontend/src/pages/reports-module/DashboardMockup.jsx",
+              "type": "mockup"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-012",
+          "title": "Menu Management \u2014 migrate to new API contract (scope-limited)",
+          "status": "OPEN \u2014 INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/CR_012_INTAKE_2026_06_01.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-041",
+          "title": "Sidebar Restructure: Reorder, Rename, Panel\u2192Route Migration, Settings Consolidation",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_041_NAVIGATION_CONSISTENCY.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/CR_041_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-043",
+          "title": "Credit Per-Customer Totals in Reports + Portfolio Export Optimization",
+          "status": "REGISTERED \u2014 GATE 1 ONLY",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-045",
+          "title": "Insights Module: Suppress/Ignore Unused API Response Fields (FE Strip)",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-046",
+          "title": "Control Dashboard v2.0 \u2014 Interactive Workflow Controller (login, batch queue, gate approvals, smoke cards)",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-047",
+          "title": "AGENT_PROMPT_ALPHA v0.6 \u2014 Role Hardening (Intake, QA, Bug Fix, Investigation)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-048",
+          "title": "Auto-Sync Registry \u2192 Dashboard JSON (eliminate manual sync gap)",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE | CR-048-REBUILD: sync script recreated + dashboard JSONs regenerated (2026-07-25)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_048_AUTO_SYNC_REGISTRY_DASHBOARD.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/CR_048_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/CR_048_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            },
+            {
+              "label": "Qa Handover",
+              "path": "memory/handover/QA_HANDOVER_2026_06_15_CR049_SESSION.md",
+              "type": "qa_handover"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-049",
+          "title": "Insights Module: Migrate FE Aggregation to Backend Aggregation Endpoints",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_049_INSIGHTS_BACKEND_AGGREGATION_MIGRATION.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/CR_049_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/CR_049_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            },
+            {
+              "label": "Qa Handover",
+              "path": "memory/handover/QA_HANDOVER_2026_06_15_CR049_SESSION.md",
+              "type": "qa_handover"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-050",
+          "title": "Insights Dashboard: Quarterly Comparison View (Q1 vs Q2 revenue card)",
+          "status": "INTAKE COMPLETE \u2014 registered for future sprint",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_050_QUARTERLY_COMPARISON_VIEW.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-051",
+          "title": "Customer Field Mandatoriness Override (Visibility Section)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR_051_CUSTOMER_FIELD_MANDATORINESS_OVERRIDE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-052",
+          "title": "Sidebar Hover Flyout \u2014 collapsed sidebar shows popover with children on hover/click",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_052_SIDEBAR_HOVER_FLYOUT.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-053",
+          "title": "MyGenie Training Academy \u2014 In-App Training & Mission System",
+          "status": "IMPLEMENTATION IN PROGRESS (Phase 1: Checkpoints 1-2 done, Missions 1-3 verified E2E)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_053_TRAINING_ACADEMY.md",
+            "/app/memory/CR_053_IMPACT_ANALYSIS.md",
+            "/app/memory/CR_053_IMPLEMENTATION_PLAN.md",
+            "/app/design_guidelines.json",
+            "/app/training-backend/",
+            "/app/training-sdk/"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-055",
+          "title": "OrderCard \u2014 served items visible by default (invert current collapse)",
+          "status": "CLOSED \u2014 CODE VERIFIED (served toggle + section exist; default=collapsed is current design. Owner directed close 2026-07-09)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_055_ORDERCARD_SERVED_VISIBLE_INTAKE.md",
+            "/app/memory/impact/ORDERCARD_CLUSTER_IMPACT_ANALYSIS_2026_07_04.md",
+            "/app/memory/plans/ORDERCARD_CLUSTER_IMPLEMENTATION_PLAN_2026_07_04.md",
+            "/app/memory/plans/ORDERCARD_CLUSTER_LINE_BY_LINE_ADDENDUM_2026_07_04.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-056",
+          "title": "Restaurant Setting \u2014 toggle to show/suppress incoming scan-order popup",
+          "status": "QA PASS (2026-07-24) \u2014 5/5 code + curl tests. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_056_SCAN_POPUP_CONFIG_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-057",
+          "title": "Menu Management \u2014 add \"No Tax\" option + document tax rules",
+          "status": "CLOSED \u2014 OWNER DECISION: Not required. 0% GST workaround sufficient. Tax-exempt items not a use case for this restaurant group. Closed 2026-08-20.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_057_NO_TAX_OPTION_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-058",
+          "title": "Order-level \"Mark Order Complimentary\" action + mandatory discount note",
+          "status": "INTAKE \u2014 PARKED (2026-08-22, deferred by owner. OQ-1 through OQ-8 unanswered. Do not plan or implement until owner explicitly resumes.)",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR_058_ORDER_LEVEL_COMPLIMENTARY_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-059",
+          "title": "Expense Module \u2014 Migration from Old POS to New POS",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_059_EXPENSE_MODULE_INTEGRATION.md",
+              "type": "intake"
+            },
+            {
+              "label": "Discovery",
+              "path": "memory/evidence/CR-059/API_DISCOVERY_REPORT.md",
+              "type": "discovery"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR_059_PHASE1_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Screen Freeze",
+              "path": "memory/evidence/CR-059/SCREEN_FREEZE_CR059_PHASE1.md",
+              "type": "screen_freeze"
+            },
+            {
+              "label": "Mockup Entry",
+              "path": "https://static.prod-images.emergentagent.com/jobs/ccc78091-2b03-47a2-98d6-0a465e2009b3/images/3ce641af4736a98ea844a1f1851a524b5b7248fdc0232aea062216d341a03368.png",
+              "type": "mockup_entry"
+            },
+            {
+              "label": "Mockup Setup",
+              "path": "https://static.prod-images.emergentagent.com/jobs/ccc78091-2b03-47a2-98d6-0a465e2009b3/images/173b35c94332c4928070be25038ffa466d6d0c7f9884acd4129521b8ba327999.png",
+              "type": "mockup_setup"
+            },
+            {
+              "label": "Backend Gaps",
+              "path": "memory/evidence/CR-059/BACKEND_GAPS_BRIEF.html",
+              "type": "backend_gaps"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR_059_PHASE1_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-060",
+          "title": "Table/Room Management \u2014 Wire CRUD APIs to Existing UI",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_060_TABLE_ROOM_MANAGEMENT.md",
+              "type": "intake"
+            },
+            {
+              "label": "Discovery",
+              "path": "memory/evidence/CR-060/API_DISCOVERY_REPORT.md",
+              "type": "discovery"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR_060_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Screen Freeze",
+              "path": "memory/evidence/CR-060/SCREEN_FREEZE_CR060.md",
+              "type": "screen_freeze"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR_060_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-061",
+          "title": "Expense Report \u2014 FE Build with Client-Side Aggregation",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_061_EXPENSE_REPORT_FE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Discovery",
+              "path": "memory/evidence/CR-059/PHASE2_REPORTING_DISCOVERY.md",
+              "type": "discovery"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR_061_IMPLEMENTATION_PLAN_V3.md",
+              "type": "implementation_plan"
+            },
+            {
+              "label": "Mockup",
+              "path": "frontend/public/cr061-expense-report-mockup.html",
+              "type": "mockup"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-062",
+          "title": "Expense Report \u2014 Backend Aggregation Contract",
+          "status": "QA PASS (2026-07-24) \u2014 6/6 code + curl tests. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR_062_EXPENSE_REPORT_BACKEND_CONTRACT.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-064",
+          "title": "Add Item: include unit price field in quick-add form",
+          "status": "QA PASS (2026-07-19) \u2014 iteration_9: Unit Price field present in Stock Master quick-add row + existing items show \u20b9 price column.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-065",
+          "title": "Item-level inline edit (rename) on Expense Setup item list",
+          "status": "RETIRED \u2014 SUPERSEDED-BY-BUG-202 (2026-07-16)",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-066",
+          "title": "Unit Price Management: owner-only route for setting/editing expense stock item unit prices",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-067",
+          "title": "Expense Bulk Editor \u2014 Full Parity Redesign with Menu Management Pattern",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-068",
+          "title": "Cancellation role-gating \u2014 make cancellation rights role-based",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-069",
+          "title": "Employee Management + Role Management (Migration Wave 1)",
+          "status": "QA PASS (2026-07-19) \u2014 iteration_9: Employee list (9 employees), Roles tab (14 roles), Add Employee, search, status toggle all present.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-070",
+          "title": "Role Management (Migration Phase 2 \u2014 Role CRUD + Permission Matrix)",
+          "status": "SUBSUMED into CR-069 (2026-07-15)",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-072",
+          "title": "Inventory Management \u2014 Migration from Old POS",
+          "status": "QA PASS (2026-07-19) \u2014 iteration_9: Setup tabs (Ingredients, Vendors, Wastage), Recipes, Current Stock all load with data.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-074",
+          "title": "Expense Setup \u2014 remove Import/Export + design consistency refresh (match Menu Management)",
+          "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (-A: 2026-07-16, -B: 2026-07-17). All 5 code phases shipped + QA-verified (iterations 26-28). Phase 6 closeout complete.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "impact/CR-074-B_IMPACT_ANALYSIS.md",
+            "plans/CR-074-B_IMPLEMENTATION_PLAN.md",
+            "impact/BATCH_A_EXPENSE_BUGS_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-075",
+          "title": "Inventory Module UX Overhaul \u2014 Stock export fix, status chips, vendor typeahead, error display, field validation, Purchase/Receive conditional",
+          "status": "ABSORBED into CR-085 (2026-07-21). S1 export shipped, remaining polish \u2192 CR-085.",
+          "priority": "P1",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-076",
+          "title": "Amazon S3 File Upload \u2014 Invoice attachments (Purchase/Receive) + Room Check-in document uploads",
+          "status": "ABSORBED into CR-085 (2026-07-21). D1 S3 upload PARKED \u2014 awaiting backend presigned URL.",
+          "priority": "P2",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-073",
+          "title": "Recipe Bulk Editor \u2014 Inline Spreadsheet for Recipe Management (92+ recipes)",
+          "status": "QA PASS (2026-07-19) \u2014 19/19 checks pass. V9+RT-1 fixed by BUG-206. Testing iterations 4+6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-073-FU-01",
+          "title": "Recipe Bulk Editor \u2014 Column Visibility Toggle (missing from CR-073 implementation)",
+          "status": "ABSORBED into CR-085 (2026-07-21). D3 column toggle \u2192 CR-085 Phase 1.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-081",
+          "title": "Inventory V5 Mockup Design Alignment Pass \u2014 4 phases (Nav Tab Bar + Dashboard + Smart Purchase + Other Screens)",
+          "status": "HALTED \u2192 ABSORBED into CR-085 (2026-07-21). Screens 1-3 shipped, design gaps \u2192 CR-085 Cat A.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-082",
+          "title": "Socket Room-Join \u2014 FE must emit join('rest_<rid>') after socket connect so room-scoped backend events reach the POS client",
+          "status": "QA PASS (2026-07-20) \u2014 7/7 tests pass, 0 blockers. Coverage 3/3. Ready for Gate 6 (Owner Smoke).",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-083",
+          "title": "Expense Split/Partial Payment \u2014 split single expense across multiple payment methods (Cash+UPI, Paid+Unpaid)",
+          "status": "QA PASS (2026-07-20) \u2014 8/8 tests pass, 0 blockers. Split flow, validation, Unpaid, Cash Draw hint, cancel, remove, regression all verified.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-084",
+          "title": "Vendor Management CRUD Screen \u2014 wire GET/PUT/DELETE vendor endpoints to VendorsTab. Replace vendor-types with actual vendor list.",
+          "status": "QA PASS (2026-07-20, iteration_18) \u2014 vendor CRUD verified. Promoted from IMPLEMENTED.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-085",
+          "title": "Inventory Module Completion (Phase 2 Consolidation) \u2014 Design gaps, recipe backend blockers, unstarted features (Dispatch/S3/Column Toggle), code quality, registry sync",
+          "status": "IMPLEMENTED PHASE 1 + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). A1 grid borders PASS. A3 recipe cost/sale real values PASS. KPI cards 4 widgets PASS.",
+          "priority": "P1",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-085_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Plan",
+              "path": "/app/memory/plans/CR-085_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-086",
+          "title": "Current Stock & Ingredients UX Overhaul \u2014 Card-based filters, proper export fields, PDF export, Ingredient Bulk Editor, Import wiring",
+          "status": "IMPLEMENTED + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). F1 KPI filters PASS. F2 Excel export downloads .xlsx. F3 PDF downloads .pdf. F4 BulkEditor 15 categories, amber dirty highlight, save enable, close verified. F5 DEFERRED.",
+          "priority": "P2",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-086_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Plan",
+              "path": "/app/memory/plans/CR-086_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-087",
+          "title": "New Expense Payment Fields \u2014 payment_made_to + payment_ref_id",
+          "status": "GATE 5 IMPLEMENTED + QA PASS (2026-07-22) \u2014 iteration_3.json: 9/9 tests PASS. Form Row 2: Notes+Paid To+Ref ID side-by-side. Table: 12 cols. Report: 11 cols. Edit mode: 2 new inputs. Search extended. Transform layer maps paymentMadeTo+paymentRefId.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/LEARNING_SUMMARY_OQ_CLOSURE_2026_07_22.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Plan",
+              "path": "/app/memory/plans/CR-087_IMPLEMENTATION_PLAN_2026_07_22.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-088",
+          "title": "Recipe By Ingredient Reverse View Tab",
+          "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-088_RECIPE_BY_INGREDIENT_REVERSE_VIEW_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-089",
+          "title": "PDF Export for Standard Sub and Addon Recipes",
+          "status": "QA PASS (2026-07-24) \u2014 jsPDF + 3-section PDF + button verified. Ready for Gate 6.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-089_PDF_EXPORT_RECIPES_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-090",
+          "title": "Inventory Categories \u2014 Edit and Delete",
+          "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. 71 categories with trash icon confirmed. Ready for Gate 6.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-090_INVENTORY_CATEGORIES_EDIT_DELETE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-090_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "/app/memory/plans/CR-090_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-091",
+          "title": "Purchase \u2014 Transaction ID for Bank Transfer",
+          "status": "INTAKE \u2014 BACKEND-BLOCKED (covered by CR-100)",
+          "priority": "P2",
+          "category": "BLOCKED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-091_PURCHASE_TRANSACTION_ID_BANK_TRANSFER_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-092",
+          "title": "Recipe Tabs \u2014 Sort Controls",
+          "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+          "priority": "P3",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-092_RECIPE_TABS_SORT_CONTROLS_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-093",
+          "title": "Consumption Report \u2014 New Screen (Date Range Category Ingredient Margin Cost)",
+          "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-093_CONSUMPTION_REPORT_NEW_SCREEN_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-094",
+          "title": "P&L Report \u2014 New Screen Under Daily Reports Above Sales",
+          "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+          "priority": "P1",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-094_PL_REPORT_DAILY_REPORTS_ABOVE_SALES_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-095",
+          "title": "Waiter-to-Waiter Transfer \u2014 Unlock Settlement Feature",
+          "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-095_WAITER_TRANSFER_UNLOCK_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-095_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-095_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "BUG-229",
+          "title": "Employee: Auto-Populate Email (User ID) as firstname@restaurantname.com",
+          "status": "QA PASS (2026-07-22) \u2014 iteration_7: T1-T3 PASS (auto-email gen, clear/refill, manual override). T4 code-verified (email mandatory validation at L134). Disappearing-row bug is pre-existing.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/BUG-229_EMPLOYEE_AUTO_EMAIL_USER_ID.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact",
+              "path": "/app/memory/impact/BUG-229_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Plan",
+              "path": "/app/memory/plans/BUG-229_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "BUG-230",
+          "title": "Employee: Name Change \u2192 Email Auto-Sync (if auto-generated)",
+          "status": "QA PASS (2026-07-22) \u2014 iteration_7: T5a PASS (existing employee email syncs on fname change when matching pattern). T5b PASS (custom email NOT overwritten). Both scenarios confirmed.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/BUG-230_EMPLOYEE_NAME_EMAIL_SYNC.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact",
+              "path": "/app/memory/impact/BUG-230_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Plan",
+              "path": "/app/memory/plans/BUG-230_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-096",
+          "title": "Role Type Derivation from Template map_role (Option A)",
+          "status": "QA PASS \u2014 OWNER SMOKE PENDING",
+          "priority": "P1",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-097",
+          "title": "Auto-Settle \u2014 Throttle/Stagger Concurrent Settle Calls on Dashboard Load",
+          "status": "QA PASS \u2014 10/10. Ready for Gate 6 (Owner Smoke).",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/impact/CR_097_IMPACT_ANALYSIS.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR_097_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "/app/memory/plans/CR_097_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            },
+            {
+              "label": "QA Report",
+              "path": "/app/memory/test_reports/CR_097_QA_REPORT_2026_07_24.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Qa Handover",
+              "path": "/app/memory/handover/QA_HANDOVER_CR097_2026_07_24.md",
+              "type": "qa_handover"
+            }
+          ],
+          "completeness": "4/7"
+        },
+        {
+          "id": "CR-098",
+          "title": "Short Code (Item Code) Display on Order Card",
+          "status": "QA PASS (2026-07-24) \u2014 8/8 code + curl tests. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_098_SHORTCODE_ORDERCARD_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact",
+              "path": "impact/CR_098_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Plan",
+              "path": "plans/CR_098_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-099",
+          "title": "Per-Item Preparation & Serve Time Display on Order Card",
+          "status": "QA PASS (2026-07-24) \u2014 8/8 code tests. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_099_PREPSERVE_TIME_ORDERCARD_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact",
+              "path": "impact/CR_099_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Plan",
+              "path": "plans/CR_099_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-100",
+          "title": "Smart Purchase \u2014 Partial Payment, Reference ID, Notes & Unpaid Status",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap \u2014 flag Pre-Release Audit \u00a7F). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_100_SMART_PURCHASE_PARTIAL_PAYMENT_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Backend Brief",
+              "path": "briefs/BACKEND_BLOCKERS_BRIEF_2026_07_22.html (\u00a7CR-100)",
+              "type": "backend_brief"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-101",
+          "title": "Daily Report \u2014 Collected By + Punched By Filter Dropdowns on Settled Tab",
+          "status": "QA PASS (2026-07-24) \u2014 filter state + dropdowns + options verified. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_101_DAILY_REPORT_COLLECTED_PUNCHED_FILTER_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-102",
+          "title": "Inventory Add/Edit: Send consumption_unit in Payload (G-020 Alignment)",
+          "status": "QA PASS (2026-07-24) \u2014 hasConversion guard + consumption_unit verified. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_102_INVENTORY_CONSUMPTION_UNIT_PAYLOAD.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "impact/INVESTIGATION_CONSUMPTION_FACTOR_2026_07_24.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-103",
+          "title": "Smart Purchase: Bulk Remove UX (Select All + Prominent Cross Button)",
+          "status": "QA PASS (2026-07-24) \u2014 selection + bulk remove + activeRows + prominent \u00d7 verified. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR_103_SMART_PURCHASE_BULK_REMOVE_UX.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-105",
+          "title": "Smart Purchase: Show All Ingredients + Manual Add to Purchase List",
+          "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-105_SMART_PURCHASE_SHOW_ALL_MANUAL_ADD_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "/app/memory/evidence/SP-INVESTIGATION/INVESTIGATION_REPORT_SP_LIMITED_ITEMS_2026-07-25.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-105_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Mockup",
+              "path": "__dev/cr105-mockup.html",
+              "type": "mockup"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "/app/memory/plans/CR-105_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-106",
+          "title": "Aggregator Integration Module (UrbanPiper / Swiggy / Zomato)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-07-31, code audit: 14 files, 51 markers, all features verified)",
+          "priority": "P1",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-106_AGGREGATOR_MODULE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Evidence",
+              "path": "/app/memory/evidence/CR-106/",
+              "type": "evidence"
+            },
+            {
+              "label": "Handover",
+              "path": "/app/memory/handover/SESSION_HANDOVER_2026_07_25_CR106_INTAKE_IA.md",
+              "type": "handover"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "/app/memory/impact/CR-106_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "/app/memory/plans/CR-106_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-107",
+          "title": "Aggregator Auto-Accept (with Dynamic Prep Time)",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-108",
+          "title": "Auto-KOT + Auto-Bill on Aggregator Accept \u2014 PARKED pending payload confirmation",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-109",
+          "title": "Dynamic Prep Time + Auto-Accept for Aggregator (no KOT/bill \u2014 separate CR)",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-110",
+          "title": "MyGenie Brand Badge for Own Delivery Orders",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-111",
+          "title": "OrderCard Aggregator Item Format: \u25cf Qty\u00d7 Name Pattern",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-112",
+          "title": "OrderCard Item Price Display (\u20b9 per item line)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-113",
+          "title": "OrderCard Customer+Phone Section for Aggregator",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-114",
+          "title": "Smart Purchase \u2014 Default All Items Unselected (Opt-In)",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-115",
+          "title": "Smart Purchase \u2014 Search Filter + Sort by Category",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "P1",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-116",
+          "title": "B2B Customer GST & Name Capture \u2014 New Input Fields in Collect Bill",
+          "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-117",
+          "title": "Order Report Beta \u2014 Combined Backend-Aggregated Daily Order Report",
+          "status": "GATE_5_PENDING_QA",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-118",
+          "title": "Aggregator KOT & Bill Manual Print",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-120",
+          "title": "Aggregator: Split KOT/Bill Buttons by Order Status (Preparing\u2192KOT, Ready\u2192Bill)",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-121",
+          "title": "Dashboard Quick-Start: Single-Click Order for Delivery / Takeaway / Walk-in",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-122",
+          "title": "Inventory: Rename 'Smart Purchase' \u2192 'Stock Update' + Move Vendor Preview to Top",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-123",
+          "title": "Stock Update: 'Update Stock' Button Sticky Fixed Bottom-Right",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-124",
+          "title": "Call PaaS Logout API on User Logout (token invalidation + FCM deregistration)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap \u2014 flag Pre-Release Audit \u00a7F). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan",
+              "path": "plans/CR-124_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-139",
+          "title": "Sub-Recipe Stock: Dedicated tab (absorbs BUG-312 + BUG-313) \u2014 owner decisions locked",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-139_SUBRECIPE_STOCK_DEDICATED_TAB_INTAKE.md",
+            "CR-139_IMPACT_ANALYSIS.md",
+            "frontend/public/cr139-subrecipe-stock-mockup.html",
+            "CR-139_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-158",
+          "title": "GST/VAT Validate Button in Menu Management (Pre-Submit Highlight)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code confirmed: BulkEditor.jsx CR-158 markers lines 245/471/544/896, Validate Tax button fully live)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-158_GST_VAT_VALIDATE_BUTTON_MENU_MGMT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-166",
+          "title": "Customer Service / Franchise Multi-Restaurant Login (Common Login + Restaurant Picker)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-166_COMMON_LOGIN_RESTAURANT_PICKER_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-170",
+          "title": "Conditional Grand Total Round-Off \u2014 < 0.10 paise floor (negative round_up), \u2265 0.10 ceil",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_2_0": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "POS2-002",
+          "title": "Order origin / Scan&Order web pipeline",
+          "status": "CLOSED \u2014 RESOLVED VIA CR",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_SCRUTINY_AND_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/POS_FINAL_1_0_BUG_045_PRE_IMPL_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/status_vs_channel_view_movement_investigation/STATUS_VS_CHANNEL_VIEW_MOVEMENT_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-001_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-002_INTAKE_2026_05_30.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "4/7"
+        },
+        {
+          "id": "POS2-003",
+          "title": "Print Agent Mapping",
+          "status": "CLOSED \u2014 IMPLEMENTED + QA PASSED (retroactive closure 2026-06-15). Print Agent Mapping: printerAgents threaded through place-order, update-order, collect-bill, KOT, bill print. 10 artifacts.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/qa_reports/POS2_003_FU_02_PRINTER_AGENT_NULL_GAP_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/QA_REPORT_authenticated_subtotal_delivery.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_REOPEN_A_WIRE_LEVEL_QA_REPORT_2026_05_09.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/CR_REFS_SYNC_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "POS2-003-FU-02",
+          "title": "printer_agent null on Collect Bill",
+          "status": "CLOSED \u2014 IMPLEMENTED (printer_agent null fix, retroactive 2026-06-15)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-fu-02",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-fu-02",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "POS2-003-REOPEN-A",
+          "title": "Update/cancel printer_agent",
+          "status": "CLOSED \u2014 IMPLEMENTED + QA PASSED (update/cancel printer_agent, retroactive 2026-06-15)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "POS2-003-REOPEN-B",
+          "title": "v1\u2192v2 place-order revert",
+          "status": "CLOSED \u2014 VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-reopen-b",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-003-reopen-b",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "POS2-004",
+          "title": "f_order_status=8 investigation",
+          "status": "CLOSED \u2014 IMPLEMENTED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_004_F_STATUS_8_HOLD_PAID_DASHBOARD_INVESTIGATION_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_003_PRINT_AGENT_MAPPING_QA_REPORT_2026_05_08.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "POS2-005",
+          "title": "f_status=8 Hold/Audit reroute",
+          "status": "SHIPPED + VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_006_CONFIRM_ORDER_TONE_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/POS2_008_PHASE2_BACKEND_OWNED_TONE_DELIVERY_CR_PLANNING_2026_05_09.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_042_C_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_042_A_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_A_CANCEL_UPDATE_PRINTER_AGENT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_005_F_STATUS_8_HOLD_REROUTE_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_005_POS2_007_JUNGLE_TRAIL_QA_REPORT_2026_05_09.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_ADDENDUM_FU_01_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/CLOSURE_DEBT_REAUDIT_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_042_A_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_042_C_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-005-FU__B_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "control/sessions/SESSION_START_2026_05_30_SUBSUMED_BACKLOG_ATTESTATION.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "POS2-005-FU \u00a7A",
+          "title": "Collect-Bill hidden for status-8",
+          "status": "CLOSED \u2014 IMPLEMENTED (Collect-Bill hidden for status-8, retroactive 2026-06-15)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-a",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-a",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "POS2-005-FU \u00a7B",
+          "title": "PG filter cross-tab",
+          "status": "CLOSED \u2014 AS DESIGNED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-b",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#pos2-005-fu-b",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "POS2-006",
+          "title": "confirmOrderTone investigation",
+          "status": "CLOSED \u2014 INVESTIGATION COMPLETE (retroactive closure 2026-06-15). Spawned POS2-007 (shipped) + POS2-008 (backend planning complete).",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/POS2_008_PHASE2_BACKEND_OWNED_TONE_DELIVERY_CR_PLANNING_2026_05_09.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_002_PHASE_3_HEADER_PLATFORM_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_10.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_006_PG_FILTER_DROPDOWN_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/POS2-006_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/POS2-006_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "POS2-007 Phase 1",
+          "title": "Confirm-order tone FE override",
+          "status": "CLOSED \u2014 IMPLEMENTED + QA PASSED (confirm-order tone FE override, retroactive 2026-06-15)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "crm_2_0": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-001",
+          "title": "Customer Notes Suggestion",
+          "status": "SUBSUMED into CR-002",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/discovery/CRM2_0_CR_001_CUSTOMER_NOTES_SUGGESTION_DISCOVERY_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_001_CUSTOMER_NOTES_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/sprint_consolidation/POS2_0_OWNER_DECISIONS_AMENDMENT_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/CR_013_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/station_api_visible_loading_investigation/STATION_API_VISIBLE_LOADING_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_5_CODE_DIFF_PREVIEW_BUG_071_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-002",
+          "title": "Cross-Sell + Customer Intelligence",
+          "status": "SHIPPED + VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/production_hotfixes/PROD_HOTFIX_006_007_INTAKE_2026_05_29.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_REQUIREMENTS_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crm/crm_2_0/contract/CRM2_0_CR_002_CROSS_SELL_CONTRACT_FREEZE_2026_05_26.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_003_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_001_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/crm/crm_2_0/implementation/CRM2_0_CR_002_CROSS_SELL_PHASE_1_IMPLEMENTATION_REPORT_2026_05_26.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_001_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/crm/crm_2_0/qa/CRM2_0_CR_002_CROSS_SELL_PHASE_2_QA_REPORT_2026_05_26.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-002_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/ACTIVE_CR_COMPLIANCE_001_OWNER_SMOKE_SIGNOFF_2026_05_30.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-003",
+          "title": "Tab",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_COUPON_CRM_CONTRACT_GAP_AND_QUESTIONS_2026_05_25.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_COUPON_LOYALTY_WALLET_CRM_API_DISCOVERY_PLAN_2026_05_22.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/vat_mapping_gap_investigation/VAT_MAPPING_GAP_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_099_QSR_QUICK_BILLING_UX_DECISION_PLAN_2026_05_19.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_059_REVISED_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_059_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_6_CODE_DIFF_PREVIEW_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_004_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "control/SUBSUMED_BACKLOG_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "intake",
+              "subsumed_owner_attested": true
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-003_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-003_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-004",
+          "title": "Up-sell",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/bugs/BUG_048_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_003_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_001_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/bugs/BUG_048_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_048_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_004_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_001_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/CR_003_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_003_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_001_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/QA_HANDOVER_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-004_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-004_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-005",
+          "title": "Wallet",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_097_104_CONTINUATION_PLANNING_2026_05_20.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_003_PRINT_AGENT_MAPPING_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_DELIVERY_AUDIT_DISPATCH_AND_NAVIGATION.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_005_B2_SPLIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_004_REVALIDATION_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-005_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-005_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-005_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-006",
+          "title": "Item-level Notes",
+          "status": "SUBSUMED into CR-002",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/CR_004_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_D1_DEFAULT_LANDING_SCREEN_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_008_D1_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-007",
+          "title": "Order-level Notes",
+          "status": "SUBSUMED into CR-002",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_F_STATUS_8_HOLD_REROUTE_CR_IMPACT_ANALYSIS_2026_05_08.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/impact_analysis/POS2_005_FU_STATUS_8_9_COLLECT_BILL_AND_PG_FILTER_INVESTIGATION_2026_05_09.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_CR_MASTER_PLANNING_2026_05_18.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS2_0_WAVE_4_CODE_DIFF_PREVIEW_BUG_057_2026_05_17.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_005_F_STATUS_8_HOLD_REROUTE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_003_REOPEN_B_PLACE_ORDER_V2_REVERT_IMPLEMENTATION_SUMMARY_2026_05_09.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/implementation_summaries/POS2_007_PHASE1_CONFIRM_ORDER_TONE_OVERRIDE_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/CR_005_B2_SPLIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/A0b_ROLE_NAME_WIRE_FIX_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-008",
+          "title": "Integrations",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/post_action_navigation_investigation/POST_ACTION_NAVIGATION_ORDERENTRY_SCOPE_PLAN.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_POPUP_SOUND_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_INVESTIGATION.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/POS2_003_PRINT_AGENT_MAPPING_IMPLEMENTATION_PLAN_2026_05_08.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/implementation_plans/CR_013_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/snooze_popup_sound_investigation/SNOOZE_SOUND_STOP_AND_DURATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/bugs/BUG_046_PRE_IMPLEMENTATION_CODE_GATE.md",
+              "type": "code_gate"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_D1_DEFAULT_LANDING_SCREEN_IMPLEMENTATION_SUMMARY.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/CR_008_DELIVERY_AUDIT_DISPATCH_AND_NAVIGATION.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "memory/change_requests/post_action_navigation_investigation/POST_ACTION_NAVIGATION_ORDERENTRY_FIX_REPORT.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/scan_order_delivery_charge_edit_investigation/SCAN_ORDER_DELIVERY_CHARGE_EDIT_QA_REPORT.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_handover/CR_008_SUB_1_QA_HANDOVER.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/POS2_002_PHASE_4_WEB_YTC_POPOUT_QA_REPORT_2026_05_10.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_029_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/bugs/BUG_046_SMOKE_SIGNOFF.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-008_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-008_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "5/7"
+        },
+        {
+          "id": "CR-009",
+          "title": "BUG-108 Carryover",
+          "status": "CLOSED \u2014 SUBSUMED (owner-attested)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/BASELINE_RECONCILIATION_REPORT_2026_05_04.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_BUG_108_BASELINE_RECONCILIATION_NOTE_2026_05_22.md",
+              "type": "impact"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "control/OWNER_DECISION_QUEUE.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/order_polling_reconciliation_investigation/ORDER_POLLING_RECONCILIATION_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/FO_B1_01_MULTI_VARIANT_QTY_DISPLAY_FIX_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/change_requests/impact_analysis/COMBINED_HYGIENE_9_ITEMS_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/change_requests/qa_reports/QA_REPORT_INDEX.md",
+              "type": "qa_report"
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/change_requests/final_sprint_reconciliation/POS3_0_COMPLETE_SPRINT_STATUS_RECONCILIATION_2026_05_21.md",
+              "type": "smoke_signoff"
+            },
+            {
+              "label": "Intake",
+              "path": "memory/crs/intake/CR-009_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/CR-009_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Code Gate",
+              "path": "control/CODE_GATE_PREMATURE_WAIVER_REGISTRY_2026_05_30.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/crs/subsumed/CR-009_SUBSUMED_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "smoke_signoff",
+              "subsumed_owner_attested": true
+            },
+            {
+              "label": "Intake",
+              "path": "control/SUBSUMED_BACKLOG_OWNER_ATTESTATION_2026_05_30.md",
+              "type": "intake",
+              "subsumed_owner_attested": true
+            }
+          ],
+          "completeness": "4/7"
+        }
+      ]
+    },
+    "standalone": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "Audit Report Optimization",
+          "title": "Transform rewrite + dual-mode sheet",
+          "status": "SHIPPED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan",
+              "path": "memory/memory/change_requests/AUDIT_REPORT_OPTIMISE_CR_CLEAN_PLAN_2026_05_28.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#audit-report-optimization",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report / Handover",
+              "path": "memory/memory/change_requests/AUDIT_REPORT_CR_QA_HANDOVER_2026_05_29.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "Order Activity Log",
+          "title": "Chronological activity feed per order",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/memory/crs/intake/Order_Activity_Log_INTAKE_2026_05_30.md",
+              "type": "intake"
+            },
+            {
+              "label": "CR Registration",
+              "path": "memory/memory/change_requests/ORDER_ACTIVITY_LOG_CR_REGISTERED_2026_05_28.md",
+              "type": "intake"
+            },
+            {
+              "label": "Code Gate (premature waiver)",
+              "path": "memory/crs/code_gate_premature/Order_Activity_Log_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#order-activity-log",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#order-activity-log",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "4/7"
+        },
+        {
+          "id": "PROD-HOTFIX-006",
+          "title": "Takeaway print: custPhone empty",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Code Gate",
+              "path": "memory/crs/code_gate_premature/PROD-HOTFIX-006_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-006",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-006",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "PROD-HOTFIX-007",
+          "title": "Loyalty earn points display",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-007",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-007",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "PROD-HOTFIX-008",
+          "title": "Manual KOT/Bill print: custName & custPhone NULL",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/change_requests/production_hotfixes/PROD_007_008_IMPACT_ANALYSIS_2026_05_29.md"
+            },
+            {
+              "label": "Implementation Summary",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-008",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#prod-hotfix-008",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "DEV-DASHBOARD-001",
+          "title": "Internal dev control dashboard (v1.0 + v1.1)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "type": "smoke_signoff",
+              "label": "Owner Smoke Sign-off",
+              "path": "memory/memory/DEV_DASHBOARD_V1_1_OWNER_SMOKE_SIGNOFF_2026_05_29.md"
+            },
+            {
+              "label": "Intake / Session Start",
+              "path": "memory/control/sessions/SESSION_START_2026_05_29_DEV_DASHBOARD.md",
+              "type": "intake"
+            },
+            {
+              "label": "Implementation Plan (v1.1)",
+              "path": "memory/memory/change_requests/DEV_DASHBOARD_V1_1_ROW_DETAIL_PLAN_2026_05_29.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Implementation Summary (v1.0)",
+              "path": "memory/memory/HANDOVER_DEV_DASHBOARD_2026_05_29.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "Implementation Summary (v1.1)",
+              "path": "memory/memory/HANDOVER_DEV_DASHBOARD_V1_1_2026_05_29.md",
+              "type": "impl_summary"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#dev-dashboard-001",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "4/7"
+        }
+      ]
+    },
+    "phase_3": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "UX-LOADING-02",
+          "title": "Parallel API loading + visible station progress",
+          "status": "CLOSED \u2014 AS DESIRED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan / Spec",
+              "path": "memory/memory/change_requests/phase_3/UX_LOADING_02_VISIBLE_STATION_PROGRESS.md",
+              "type": "impl_plan"
+            },
+            {
+              "label": "Code Gate (premature waiver)",
+              "path": "memory/crs/code_gate_premature/UX-LOADING-02_CG_PREMATURE.md",
+              "type": "code_gate",
+              "waived": true,
+              "waived_premature": true
+            },
+            {
+              "label": "Implementation Summary (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#ux-loading-02",
+              "type": "impl_summary",
+              "source": "POS4-QA-001"
+            },
+            {
+              "label": "QA Report (backfill)",
+              "path": "control/POS4_QA_001_QA_BACKFILL_EVIDENCE_2026_05_31.md#ux-loading-02",
+              "type": "qa_report",
+              "source": "POS4-QA-001"
+            }
+          ],
+          "completeness": "3/7"
+        }
+      ]
+    },
+    "unassigned": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-013",
+          "title": "Food Court Report \u2014 Station-wise Order Breakdown",
+          "status": "CLOSED \u2014 IMPLEMENTED + FROZEN (retroactive closure 2026-06-15). 20 artifacts. FoodCourtMockup.jsx + foodCourtService.js + Sidebar route + GST threading across CollectPaymentPanel, OrderEntry, orderTransform.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-149",
+          "title": "Remove Coming-Soon Settings Tiles (Printers, Operating Hours, Cancellation Reasons)",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-149_REMOVE_COMING_SOON_SETTINGS_TILES_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-151",
+          "title": "Sub Recipe Excel Upload",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-151_SUB_RECIPE_EXCEL_UPLOAD_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-152",
+          "title": "Test Connection for LAN Printer",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-152_LAN_PRINTER_TEST_CONNECTION_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-153",
+          "title": "Wastage Report / Top Wasted Items",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-153_WASTAGE_REPORT_TOP_WASTED_ITEMS_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-154",
+          "title": "Settings Flags for Inventory as Central Inventory",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-154_CENTRAL_INVENTORY_SETTINGS_FLAG_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-156",
+          "title": "Table Number in Cancellation Reports (Insights)",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-156_TABLE_NUMBER_CANCELLATION_REPORT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-164",
+          "title": "Send Payment Link from Daily Reports (Per-Row Action)",
+          "status": "INTAKE \u2014 CRM_EVENTS_ENDPOINT_BLOCKED",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-164_SEND_PAYMENT_LINK_FROM_REPORTS_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-347",
+          "title": "Multiple Menu: Frontend Menu-Switcher UI Not Implemented",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-146_MULTIPLE_MENU_FE_UI_NOT_IMPLEMENTED_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-168",
+          "title": "Printer Agent: Test Print Job + Live Printer Status (wire up Coming Soon stubs)",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-168_PRINTER_TEST_PRINT_AND_STATUS_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-358-P4",
+          "title": "PMS Phase 4 \u2014 Tape Chart (S2) + Room Status Board (S7)",
+          "status": "QA PASS \u2014 Gate 5b (2026-09-04). 34/34 exec PASS + testing agent 100%. Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Design Mockup",
+              "path": "frontend/public/cr358-p4-pms-mockup.html",
+              "type": "design"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-358-P4_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-358-P4_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "2/7"
+        }
+      ]
+    },
+    "pos_4_0": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-014",
+          "title": "Menu Management API Migration",
+          "status": "CLOSED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-015",
+          "title": "Settlement Module",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-016",
+          "title": "Settlement History \u2014 Insights Module",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-017",
+          "title": "WhatsApp Payment Link \u2014 Send Razorpay Payment Link to Customer via WhatsApp",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-018",
+          "title": "Schedule Order \u2014 Place orders for future date/time",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-019",
+          "title": "Restaurant Settings \u2014 Self-Onboarding Setup Wizard",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-029",
+          "title": "Room order scope consistency \u2014 one shared room predicate + per-screen incl./excl. rooms badge or toggle",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-030",
+          "title": "Revenue attribution toggle \u2014 punch date vs collection date, standardized + labelled on every Insights screen",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-031",
+          "title": "Canonical cancellation money formula \u2014 Dashboard vs Cancellations report disagree every month",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-032",
+          "title": "Shared payment-method classifier module \u2014 handle pending/partial/cash_on_delivery/zero-amount-paid consistently",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-033",
+          "title": "Settlement report 'total sale' basis \u2014 define + reconcile against Insights (backend ask)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-034",
+          "title": "Items & Menu \u2014 Order Ledger-style buckets (Sold / Added to Credit / Cancelled / Pending Billing)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-035",
+          "title": "Report Definitions help page + header links",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-037",
+          "title": "Remove Popular Items from Boot + Order Screen",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-038",
+          "title": "Boot Screen Retry Policy \u2014 Manual Retry with Counter/Limit",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-039",
+          "title": "Credit Management: Wire Total Credit / Total Paid from API",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-040",
+          "title": "Sidebar Navigation: Rename Report Labels + Remove X/Y/Z Reports",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-042",
+          "title": "Rename 'Items & Menu' to 'Item Ledger' in Sidebar (Insights)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-020",
+          "title": "Restaurant Settings Wizard \u2014 Bug Sweep (15 bugs B1-B15)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-021",
+          "title": "Collect Bill \u2014 Split/Partial Payment Defects + Prepaid Parity",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-022",
+          "title": "Menu Management \u2014 Food Type Filters (item_type enum fix)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-023",
+          "title": "Bulk Editor \u2014 Typing Lag Fix (422 items)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-024",
+          "title": "Channel Visibility Override (StatusConfigPage feature-gate)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-025",
+          "title": "Discount Payload Fix \u2014 order_discount sends amount not percentage (P0 money)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-026",
+          "title": "Report Data & Rounding Sweep (6 session-3 fixes)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-027",
+          "title": "Unified Toast & Error Surfacing (3-phase rollout)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-028",
+          "title": "Item-Level Discount \u2014 payload + give_discount exclusion (P1 money)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (2026-06-15, retroactive \u2014 code present on 15-june branch)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-029-QSR",
+          "title": "QSR Payload Parity + round_up Persistence on Collect Bill",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-036",
+          "title": "Bulk Editor \u2014 Add Item Row Visibility (Top-Pinned, Empty Category)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-036-FU-01",
+          "title": "Bulk Editor \u2014 Validation UX (toast + red border + focus + Trash2)",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-036-FU-02",
+          "title": "Bulk Editor \u2014 Column Reorder + Sold By (Unit) Tier-1 Promotion",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-036-FU-03",
+          "title": "Bulk Editor \u2014 Tax-Required Validation + Backdrop Loader + Data-Loss Race Guard",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-06-14, code verified + QA passed)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-044",
+          "title": "Insights Module: Report Data Persistence Across Navigation (Shared Cache)",
+          "status": "CLOSED \u2014 OWNER VERIFIED",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "backlog": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-054",
+          "title": "Training Sandbox Mode (Service Worker mutation interception)",
+          "status": "PLACEHOLDER INTAKE \u2014 10 open questions pending owner workshop",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_5_0_wave_2": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-071",
+          "title": "App-Wide Role Gating / Permission Consumer Wiring (Migration Phase 3 \u2014 DEFERRED)",
+          "status": "INTAKE \u2014 DEFERRED (post CR-057 + CR-058 close, and CR-069 ship)",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-077",
+          "title": "Hierarchy Stock Transfer \u2014 Receive \u00b7 Dispatch \u00b7 Dispute \u00b7 Return (split from CR-075 P5 per B15)",
+          "status": "PHASE 1 IMPLEMENTED + QA PASS (2026-07-19, iteration_10) \u2014 8/8 PASS. PHASE 2 DEFERRED (2026-07-21) \u2014 Dispatch/Return deferred per owner. [Registry drift corrected 2026-07-21]",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-078",
+          "title": "Smart Purchase \u2014 Item-First Planner with Velocity & Vendor Intelligence (split from CR-075 per Q10-a)",
+          "status": "QA PASS (2026-07-19) \u2014 iteration_9: Smart Purchase renders with horizon picker, 24-item shopping list, vendor cells, ad-hoc button.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-079",
+          "title": "Inventory Information Architecture Restructure \u2014 Intelligence-as-Dashboard (split from CR-075 per FB-5)",
+          "status": "QA PASS (2026-07-19) \u2014 iteration_9: All 6 nav items render, sidebar visible, Receive hidden for normal, /inventory redirects to dashboard.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_5_0_wave_3": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-080",
+          "title": "Transfer-First Smart Purchase \u2014 Franchise cross-flow optimisation (Phase 2 \u00b7 depends on CR-077 + CR-078)",
+          "status": "CLOSED \u2014 WONT-DO (2026-07-20). Owner ruling: franchise model is push-based (parent dispatches, franchise receives). Franchise does not request from parent \u2014 buys from vendors via Smart Purchase (CR-078). Transfer-First optimization not needed.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_6_0": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-104",
+          "title": "Item-level complementary reason (mandatory note per food item)",
+          "status": "QA PASS \u2014 Gate 5b (2026-08-22). Awaiting Gate 6 (Owner Smoke).",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "/app/memory/change_requests/CR-104_COMPLEMENTARY_REASON_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Backend Brief",
+              "path": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html (appended 2026-07-25)",
+              "type": "backend_brief"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-147",
+          "title": "Online Delivery Charge Configuration with Distance Calculation",
+          "status": "QA PASS \u2014 Gate 5b (2026-08-23). Awaiting Gate 6 (Owner Smoke).",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-147_DELIVERY_CHARGE_DISTANCE_CALC_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-148",
+          "title": "Popular Food Category",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-148_POPULAR_FOOD_CATEGORY_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-150",
+          "title": "Purchase Report in New POS",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-150_PURCHASE_REPORT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-155",
+          "title": "Move Addon Stock and Variation Stock from Aggregator Setup to Menu Management",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-155_MOVE_ADDON_VARIATION_STOCK_TO_MENU_MGMT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-157",
+          "title": "Food Court Report (New Report \u2014 Backend Contract Pending)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-157_FOOD_COURT_REPORT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-159",
+          "title": "Bulk Delete in Menu Management",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-159_BULK_DELETE_MENU_MANAGEMENT_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-162",
+          "title": "Mid-Stay Partial Payment for Room Orders",
+          "status": "GATE_5B_QA_PASS (2026-09-13). 5/5 PASS, 0 BLOCKER, 0 MAJOR. Live API test: payment_type=interim confirmed. Negative test: old field names return 3 required errors confirming fix. Report: test_reports/QA_REPORT_CR162_2026_09_13.md. Ready for Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-162_ROOM_MID_STAY_PARTIAL_PAYMENT_INTAKE.md",
+            "/app/memory/impact/CR-162_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-165",
+          "title": "Razorpay Cancel and Refund Integration",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-165_RAZORPAY_CANCEL_REFUND_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_5_1": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-119",
+          "title": "Aggregator Food Mapping \u2014 POS Menu to Platform Item Mapping",
+          "status": "IMPLEMENTED Gate 5a \u2014 QA PENDING (Gate 5b)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR-119_AGGREGATOR_FOOD_MAPPING_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "impact/CR-119_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Mockup",
+              "path": "https://pos-react-deploy-6.preview.emergentagent.com/cr119-mockup.html",
+              "type": "mockup"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "plans/CR-119_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-126",
+          "title": "Backdated Billing Date \u2014 User-selectable billing date on order punch (backend-config gated)",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-127",
+          "title": "Room Check-In: Add cust_membership_id to Check-In Payload",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap \u2014 flag Pre-Release Audit \u00a7F). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-127_ROOM_CHECKIN_CUST_MEMBERSHIP_ID_INTAKE.md",
+            "impact/CR-127_IMPACT_ANALYSIS.md",
+            "plans/CR-127_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-128",
+          "title": "B2B Customer CRM Wiring \u2014 Read + Write + Auto-Populate from CRM v2 Contract",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-06. Code-verified PASS. NOTE: BUG-SCAN-DEDUP missing code marker (R18 gap \u2014 flag Pre-Release Audit \u00a7F). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-128_B2B_CUSTOMER_CRM_WIRING_INTAKE.md",
+            "impact/CR-128_B2B_CUSTOMER_CRM_WIRING_IMPACT_ANALYSIS.md",
+            "plans/CR-128_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-129",
+          "title": "Room Check-In \u2014 Document Preview & Selection from CRM (View existing + Upload to CRM)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-129_ROOM_CHECKIN_DOCUMENT_PREVIEW_SELECTION_INTAKE.md",
+            "impact/CR-129_IMPACT_ANALYSIS.md",
+            "plans/CR-129_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-130",
+          "title": "Add BILL Printer to printer_agent Array in Place Order Payload (KOT + BILL together)",
+          "status": "QA PASS (Gate 5b, 2026-08-06) \u2014 Awaiting Gate 6 Owner Smoke",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-130_BILL_PRINTER_IN_PLACE_ORDER_PRINTER_AGENT_INTAKE.md",
+            "impact/CR-130_IMPACT_ANALYSIS.md",
+            "plans/CR-130_IMPLEMENTATION_PLAN.md",
+            "handover/QA_HANDOVER_CR130_2026_08_06.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-131",
+          "title": "Customer Intelligence (Beta) + Guest vs Registered (Beta) \u2014 CRM-enriched report screens",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-131_CUSTOMER_REPORT_DATA_SOURCE_CRM_VS_POS_INTAKE.md",
+            "evidence/CR-131/crm_api_probe_2026_08_06.md",
+            "plans/CR-131_IMPLEMENTATION_PLAN.md",
+            "investigation/CR-131_INVESTIGATION_REPORT.md",
+            "impact/CR-131_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-132",
+          "title": "Restaurant Settings \u2014 Wire New Backend Fields to FE (42 fields, 8-screen wizard)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-132_RESTAURANT_SETTINGS_NEW_BACKEND_FIELDS_INTAKE.md",
+            "impact/CR-132_IMPACT_ANALYSIS.md",
+            "handover/SESSION_HANDOVER_2026_08_09_CR132_DESIGN_REVIEW.md",
+            "handover/CR133_AMENDMENT_SETTINGS_INTEGRATION_2026_08_09.md",
+            "handover/SESSION_HANDOVER_2026_08_09_CR132_COMPARISON_PAGES.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-133",
+          "title": "Printer Agent Config \u2014 Full Settings Screen (Complete Rewrite of PrintersView)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-133_PRINTER_AGENT_CONFIG_SETTINGS_INTAKE.md",
+            "change_requests/CR-133_PRINTER_AGENT_CONFIG_IMPACT_ANALYSIS.md",
+            "backend_briefs/BACKEND_BRIEF_CR133_PRINTER_FIELD_CONFIG_2026_08_07.md",
+            "evidence/CR-133/get_response_fresh.json",
+            "evidence/CR-133/get_response_after_new_fields.json",
+            "plans/CR-133_IMPLEMENTATION_PLAN.md",
+            "evidence/CR-133/get_response_gate3_probe.json",
+            "handover/QA_HANDOVER_2026_08_07_CR133.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-134",
+          "title": "Settings Tiles \u2014 Mirror All Restaurant Setup Wizard Fields (tile-wizard parity)",
+          "status": "HOLD \u2014 BACKEND PENDING",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "change_requests/CR-134_SETTINGS_TILES_WIZARD_MIRROR_INTAKE.md",
+            "investigation/INV-SETTINGS-COVERAGE_2026_08_08.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-135",
+          "title": "Aggregator Setup \u2014 New Settings Screen (UrbanPiper Config, Sync, Stock & Operational Flags)",
+          "status": "QA PASS \u2014 AWAITING OWNER SMOKE (Gate 6)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-135_AGGREGATOR_SETUP_SETTINGS_SCREEN_INTAKE.md",
+            "impact/CR-135_IMPACT_ANALYSIS.md",
+            "handover/SESSION_HANDOVER_2026_08_09_CR135_GATE2_CLOSED.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-136",
+          "title": "Item Sales Ledger + Variation & Addon Sales Report",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR-136_ITEM_SALES_LEDGER_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact",
+              "path": "impact/CR-136_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Plan",
+              "path": "plans/CR-136_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Mockup",
+              "path": "/cr136-item-sales-ledger-mockup.html",
+              "type": "mockup"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-137",
+          "title": "Optional discount_for field in order payload",
+          "status": "QA_PASS",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "change_requests/CR-137_DISCOUNT_FOR_OPTIONAL_FIELD_INTAKE.md",
+            "impact/CR-137_IMPACT_ANALYSIS.md",
+            "plans/CR-137_IMPLEMENTATION_PLAN.md",
+            "plans/CR-137_REGRESSION_TEST_LIST.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-138",
+          "title": "Dual Excel Download \u2014 Add Backend Excel Endpoint to CR-136 Screens",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "change_requests/CR-138_DUAL_EXCEL_DOWNLOAD_CR136_AMENDMENT_INTAKE.md",
+            "investigation/INV-CR136-EXCEL_2026_08_12.md",
+            "evidence/CR-136-INV/endpoint_evidence.json"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-140",
+          "title": "Aggregator Menu Management \u2014 Food Add/Edit/StockToggle Fix (GAP-1..7)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-05. Code-verified PASS. NOTE: CR-140 CR_REGISTRY.md row stale (shows INTAKE, registry.json=IMPLEMENTED \u2014 CLOSURE to fix). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-141",
+          "title": "Aggregator Sync Operations \u2014 Category Timings + Sync/Clear Controls (GAP-8..11)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-142",
+          "title": "Addon Master V2 \u2014 Full CRUD Upgrade + Standalone Management UI",
+          "status": "IMPLEMENTED \u2014 QA PASS",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-143",
+          "title": "Aggregator Leftover \u2014 Force-Swiggy Enable + Addon Stock + Variation Stock Tabs",
+          "status": "IMPLEMENTED \u2014 QA PASS",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-144",
+          "title": "Addon Master \u2014 Unified Management in Menu Management Panel (All Menu Types)",
+          "status": "IMPLEMENTED \u2014 QA PASS",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-145",
+          "title": "BulkEditor \u2014 Addon & Variation Columns + Row Expand / Quick Edit",
+          "status": "IMPLEMENTED \u2014 QA PASS",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-146",
+          "title": "Aggregator Menu: Client/Branch Selector Dropdown",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "path": "memory/investigation/CR140_CR141_CLIENT_DROPDOWN_STOCK_INV_2026_08_16.md",
+              "type": "investigation"
+            },
+            {
+              "path": "memory/impact/CR-146_CLIENT_DROPDOWN_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "path": "memory/plans/CR-146_CLIENT_DROPDOWN_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-348",
+          "title": "Custom Item Modal \u2014 Add GST / Tax field",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-348_CUSTOM_ITEM_GST_FIELD_MISSING_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-349",
+          "title": "OrderReportBetaPage: Wire Change/Unpaid/Reprint on Settled tab",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-349_ORDER_REPORT_BETA_SETTLED_TAB_ACTION_BUTTONS_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-350",
+          "title": "Room Check-In: ID upload mandatory/optional toggle",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-350_ROOM_CHECKIN_ID_UPLOAD_MANDATORY_TOGGLE_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-353",
+          "title": "Printer Agent \u2014 Remove Stations Tab + Build Station Mapping Tab (Select Employee \u2192 Load \u2192 Area/User rows)",
+          "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/evidence/INV-PA-MAPPING-001/INVESTIGATION_REPORT_2026_08_31.md",
+            "impact/CR-353_IMPACT_ANALYSIS.md",
+            "plans/CR-353_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-354",
+          "title": "Printer Agent Bill Content \u2014 Employee Dropdown Wire (G3b) \u2014 CLOSURE Phase B",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-09-01). QA PASS: employee dropdown renders + saves + persists.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "impact/CR-354_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-355",
+          "title": "Sidebar \u2014 Printers Shortcut Shows Coming Soon for All Users (wire to correct route)",
+          "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "impact/CR-355_IMPACT_ANALYSIS.md",
+            "plans/CR-355_IMPLEMENTATION_PLAN.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-356",
+          "title": "Restaurant Settings Wizard Step 2 \u2014 Printer Agent Tabs 2/3/4 (replace placeholders with real Agent config)",
+          "status": "CLOSED \u2014 WONTFIX (owner decision 2026-09-01: redirect text acceptable, Printer Agent configured via Settings \u2192 All Settings \u2192 Printers)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-356_WIZARD_AGENT_TABS_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-357",
+          "title": "Room Advance \u2014 Full-Bill Deduction + Mid-Stay Deposits + Credit Overflow",
+          "status": "PARKED \u2014 15 DAYS (2026-09-14). Hotel not taking room advances currently (advance_payment=0 confirmed). +Pay button interim-disabled has zero operational impact. Re-evaluate ~2026-09-29. Gate 2 READY when owner decides to proceed \u2014 all 7 ODs resolved.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "change_requests/CR-357_ROOM_ADVANCE_FULL_BILL_DEDUCTION_INTAKE.md",
+            "change_requests/CR-357_OWNER_DECISIONS.md"
+          ],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_5_x": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-125",
+          "title": "Aggregator Brand Name \u2014 Display on OrderCard + Include in Print Payload",
+          "status": "CLOSED \u2014 OWNER VERIFIED (retroactive 2026-08-22, code verified)",
+          "priority": "P2",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "change_requests/CR-125_AGGREGATOR_BRAND_NAME_DISPLAY_PRINT_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "impact/CR-125_BRAND_NAME_IMPACT_ANALYSIS_2026_08_01.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "plans/CR-125_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-160",
+          "title": "Printer Mapping Screen \u2014 Employee to Printer Assignment (KOT / Bill)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-160_PRINTER_MAPPING_EMPLOYEE_SCREEN_INTAKE.md",
+            "/app/memory/impact/CR-160_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-161",
+          "title": "Station Management Screen \u2014 CRUD + Restaurant-Level Printing Mode (Fixed/Waiter/Station)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-07. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-161_STATION_MANAGEMENT_PRINTING_MODE_INTAKE.md",
+            "/app/memory/impact/CR-161_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-167",
+          "title": "Printer Agent: Add/Edit Printer Wizard \u2192 Single-Step Inline Form",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-167_PRINTER_ADD_WIZARD_TO_SINGLE_FORM_INTAKE.md",
+            "/app/memory/impact/CR-167_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-169",
+          "title": "Live Bill/KOT Print Preview in Printer Config (end-user, wired to real config data)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-08. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-169_LIVE_BILL_KOT_PRINT_PREVIEW_INTAKE.md",
+            "/app/memory/impact/CR-169_IMPACT_ANALYSIS.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-351",
+          "title": "Local Printer Setup: Bill Content + Bill Style Tabs",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-09. Code-verified PASS. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-351_LOCAL_PRINTER_BILL_CONTENT_STYLE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Evidence",
+              "path": "memory/evidence/CR-LOCAL-PRINTER/bill_printer_config_response.json",
+              "type": "evidence"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-352",
+          "title": "Printer Type Routing Gate \u2014 Direct Printer / Printer Agent toggle + Settings Screen 2 tabbed + Printers tile routing",
+          "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-352_PRINTER_ROUTING_GATE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-352_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-352_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            },
+            {
+              "label": "QA Report",
+              "path": "memory/test_reports/QA_REPORT_CR352_BUG364_2026_08_30.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "4/7"
+        },
+        {
+          "id": "CR-359",
+          "title": "Station Mapping Tab: Rewire to /station-printer-map Endpoint + Fix Data Model",
+          "status": "QA PASS (Gate 5b) \u2014 Awaiting Gate 6 (Owner Smoke)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            "change_requests/CR-359_STATION_PRINTER_MAP_REWIRE_INTAKE.md",
+            "handover/INVESTIGATION_STATION_PRINTER_MAP_2026_09_02.md",
+            "backend_briefs/BACKEND_BRIEF_STATION_PRINTER_MAP_GAP6_2026_09_02.md",
+            "handover/PROBE_REPORT_STATION_PRINTER_MAP_2026_09_02.md",
+            "impact/CR-359_IMPACT_ANALYSIS.md",
+            "plans/CR-359_IMPLEMENTATION_PLAN.md",
+            "test_reports/QA_REPORT_CR359_2026_09_02.md"
+          ],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_pms_1": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-163",
+          "title": "Move Food Items from Room Order to Table (Room-to-Table Transfer)",
+          "status": "GATE_5B_QA_PASS (2026-09-13). Ready for Gate 6 owner smoke.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            "/app/memory/change_requests/CR-163_ROOM_TO_TABLE_FOOD_TRANSFER_INTAKE.md"
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-358-P1",
+          "title": "PMS Phase 1 \u2014 Foundation + Channel Manager (S8) + In-House Guests (S6)",
+          "status": "QA PASS \u2014 Gate 5b",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-358-P1_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Phase 1 Impact Analysis",
+              "path": "memory/impact/CR-358-P1_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Parent Impact Analysis",
+              "path": "memory/impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Phased Execution Plan",
+              "path": "memory/plans/CR-358_EXECUTION_PLAN_PHASED.md",
+              "type": "plan"
+            },
+            {
+              "label": "QA Handover",
+              "path": "memory/handover/QA_HANDOVER_CR358_P1_2026_09_02.md",
+              "type": "handover"
+            },
+            {
+              "label": "Session Handover",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_02_CR358_P1_IMPL.md",
+              "type": "handover"
+            }
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-360",
+          "title": "S6 In-House Guests \u2014 Phase 1 completion: KPI tiles (Checkout Today / Outstanding Balance / Avg Nights) + View Bill wiring",
+          "status": "QA PASS \u2014 Gate 5b",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-360_S6_IN_HOUSE_KPI_VIEW_BILL_PHASE1_COMPLETION_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-360_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-360_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-358-P2",
+          "title": "PMS Phase 2 \u2014 New Booking (S3) + Check-In (S4): WalkIn / Direct / OTA",
+          "status": "QA PASS \u2014 Gate 5b (13/13 tests PASS, 100%)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-358-P2_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-358-P2_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Approved Design Mockup (v3)",
+              "path": "frontend/public/cr358-p2-v3-mockup.html",
+              "type": "design"
+            },
+            {
+              "label": "Session Handover (Gate 2 close)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE2_CLOSED.md",
+              "type": "handover"
+            },
+            {
+              "label": "Session Handover (Gate 3)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE3.md",
+              "type": "handover"
+            },
+            {
+              "label": "Backend Brief BUG-BE-05",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_BUG-BE-05_2026_09_03.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "R11 Probe Evidence",
+              "path": "memory/evidence/CR-358-P2/",
+              "type": "evidence"
+            },
+            {
+              "label": "QA Report (iteration 1)",
+              "path": "test_reports/iteration_1.json",
+              "type": "qa"
+            },
+            {
+              "label": "QA Handover",
+              "path": "memory/handover/QA_HANDOVER_CR358P2_2026_09_03.md",
+              "type": "qa_handover"
+            },
+            {
+              "label": "Session Handover (Gate 5b)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P2_GATE5B.md",
+              "type": "handover"
+            },
+            {
+              "label": "QA Report (formal)",
+              "path": "memory/test_reports/QA_REPORT_CR358P2_2026_09_03.md",
+              "type": "qa_report"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-358-P3",
+          "title": "PMS Phase 3 \u2014 Reservation Operations: Front Desk (S1) + Arrivals (S9) + Departures (S10)",
+          "status": "QA PASS \u2014 Gate 5b (2026-09-04). 30/31 exec PASS (1 V-M4 skipped \u2014 preprod mutation). Ready for Gate 6.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-358-P3_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Parent phased plan",
+              "path": "memory/plans/CR-358_EXECUTION_PLAN_PHASED.md",
+              "type": "plan"
+            },
+            {
+              "label": "Design mockups (2026-08-31 freeze)",
+              "path": "frontend/public/pms/front-desk.html; arrivals.html; departures.html",
+              "type": "design"
+            },
+            {
+              "label": "Gate 2 probe evidence",
+              "path": "memory/evidence/CR-358-P3/",
+              "type": "evidence"
+            },
+            {
+              "label": "Design gap comparison (31-Aug vs proposed v2, OD-P3-01..10 annotated)",
+              "path": "frontend/public/cr358-p3-design-comparison.html",
+              "type": "design"
+            },
+            {
+              "label": "Backend reply round 3",
+              "path": "memory/backend_replies/ques3_reply_2026_09_03.md",
+              "type": "backend_reply"
+            },
+            {
+              "label": "Backend brief \u2014 list paging/date filter (deferred)",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR-358-P3_LIST_PARAMS_2026_09_03.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "Session handover (Gate 2 reopened \u2014 START HERE)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_03_CR358P3_GATE2_REOPENED.md",
+              "type": "handover"
+            },
+            {
+              "label": "PMS design tokens",
+              "path": "memory/control/PMS_DESIGN_TOKENS.md",
+              "type": "design"
+            }
+          ],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-361",
+          "title": "PMS \u2014 Room Assignment on Tape Chart (pre-arrival mapping to physical rooms)",
+          "status": "INTAKE \u2014 BACKEND-BLOCKED",
+          "priority": "",
+          "category": "BLOCKED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-361_PMS_ROOM_ASSIGNMENT_TAPE_CHART_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-362",
+          "title": "PMS \u2014 Booking Modification & Cancellation (cancel / modify dates-room / extend stay / no-show)",
+          "status": "GATE_5B_QA_PASS (2026-09-14). 17/17 PASS + 4 regression PASS. 0 BLOCKER, 0 MAJOR. 3 NOTE (live API, covered by pre-impl probes). Coverage 10/10. Report: test_reports/QA_REPORT_CR362_2026_09_14.md. Ready Gate 6.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-362_PMS_BOOKING_MODIFICATION_CANCELLATION_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-363",
+          "title": "PMS \u2014 Night Audit Report (end-of-day room reconciliation)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred \u2014 no >366d data). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-363_PMS_NIGHT_AUDIT_REPORT_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Backend Brief",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR363_NIGHT_AUDIT_2026_09_16.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "Impact Analysis (joint)",
+              "path": "memory/impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-364",
+          "title": "PMS \u2014 Guest Folio Detail Page (itemised charges, payments, balance, checkout)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred \u2014 no >366d data). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-364_PMS_GUEST_FOLIO_DETAIL_PAGE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Investigation \u2014 CIB comparison",
+              "path": "memory/CR-364_INVESTIGATION_CIB_COMPARISON.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Backend Brief \u2014 Folio Print",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "Sub-CR \u2014 Print path",
+              "path": "memory/change_requests/CR-364-PRINT_PMS_FOLIO_PRINT_TEMPLATE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-364_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-364_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-365",
+          "title": "PMS \u2014 Housekeeping Workflow (task queue, checklist, assignment, time tracking, notifications)",
+          "status": "UNBLOCKED (2026-09-13) \u2014 All HK endpoints live. B-365-04/07 answered. Sockets deferred. Laundry scope: OD-365-NEW-01 open. BUG-397 prerequisite. Ready Gate 2.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-365_PMS_HOUSEKEEPING_WORKFLOW_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-366",
+          "title": "PMS \u2014 Revenue Dashboard / Analytics (Occupancy %, ADR, RevPAR, channel split, trends)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-01. 37/37 checks. 0 BLOCKER. CR-363: 12/12 PASS. CR-364: 10/10 PASS. CR-366: 10/11 PASS (V-20 month-view deferred \u2014 no >366d data). Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-366_PMS_REVENUE_DASHBOARD_ANALYTICS_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Backend Brief",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR366_REVENUE_AGGREGATION_2026_09_15.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "Impact Analysis (joint)",
+              "path": "memory/impact/CR-363_CR-366_JOINT_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            }
+          ],
+          "completeness": "2/7"
+        },
+        {
+          "id": "CR-367",
+          "title": "PMS \u2014 WhatsApp / SMS Guest Notifications (confirmation, check-in instructions, checkout reminder)",
+          "status": "INTAKE \u2014 BACKEND-BLOCKED",
+          "priority": "",
+          "category": "BLOCKED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-367_PMS_WHATSAPP_SMS_GUEST_NOTIFICATIONS_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-358-P5",
+          "title": "PMS Phase 5 \u2014 Rates & Restrictions tab (S8-C) + Mark No-Show (S8-D) + module regression",
+          "status": "GATE_5B_QA_PASS (2026-09-09) \u2014 8/8 executed PASS, 13 NOTE deferred. Core: Rate grid\u2705 popover\u2705 Inv Restrictions\u2705 No-Show OTA\u2705 regression\u2705. Ready for Gate 6 owner smoke.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-358-P5_PMS_RATES_RESTRICTIONS_NO_SHOW_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/PMS_ENHANCEMENTS_FEASIBILITY_INVESTIGATION.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Backend Brief",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR358_P5_2026_09_08.md",
+              "type": "backend_brief"
+            },
+            {
+              "label": "Design Guidelines",
+              "path": "app/design_guidelines.json",
+              "type": "design"
+            },
+            {
+              "label": "V3 HTML Mock",
+              "path": "frontend/public/cr358-p5-v3-mockup.html",
+              "type": "mockup"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-358-P5_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-358-P5_IMPLEMENTATION_PLAN.md",
+              "type": "implementation_plan"
+            }
+          ],
+          "completeness": "3/7"
+        },
+        {
+          "id": "CR-358-P5.1",
+          "title": "PMS Phase 5.1 \u2014 Inventory Restrictions + Rate Restrictions (S8-C remainder)",
+          "status": "RETIRED \u2014 merged back into CR-358-P5 (2026-09-08)",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [
+            {
+              "label": "Parent IA",
+              "path": "memory/impact/CR-358-P5_IMPACT_ANALYSIS.md",
+              "type": "impact_analysis"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-379",
+          "title": "New PMS Check-In: CRM Customer Link (Core)",
+          "status": "GATE_5B_QA_PASS",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-379_PMS_CHECKIN_CRM_CUSTOMER_LINK_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/investigations/INV-PMS-CHECKIN-CRM-GAP_INVESTIGATION_REPORT_2026_09_12.md",
+              "type": "investigation"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-379_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Design Decisions",
+              "path": "memory/plans/CR-379_DESIGN_DECISIONS.md",
+              "type": "design"
+            },
+            {
+              "label": "Design Mockup",
+              "path": "public/cr379-design-mockup.html",
+              "type": "mockup"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-379_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Probe Results",
+              "path": "memory/evidence/PROBE_CR379_2026_09_13.md",
+              "type": "evidence"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-380",
+          "title": "New PMS Check-In: Guest ID Documents",
+          "status": "GATE_5B_QA_PASS",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-380_PMS_CHECKIN_GUEST_ID_DOCUMENTS_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Investigation",
+              "path": "memory/investigations/INV-PMS-CHECKIN-CRM-GAP_INVESTIGATION_REPORT_2026_09_12.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-381",
+          "title": "PMS \u2014 Laundry Management (linen queue, stock levels, dirty\u2192clean processing, settings)",
+          "status": "INTAKE \u2014 Gate 2 pending OD-381-01 (standalone vs sub-tab) + CR-365 Gate 2 completion",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-364-PRINT",
+          "title": "PMS \u2014 Guest Folio Print Template (rtype=RM branch, ~60-field payload extension)",
+          "status": "INTAKE \u2014 BACKEND-BLOCKED (Q-364P-01/08/09/10/13/15 unanswered). Parked until BE answers print questions. No FE work until order-temp-store behaviour + rtype=RM template confirmed.",
+          "priority": "",
+          "category": "BLOCKED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-364-PRINT_PMS_FOLIO_PRINT_TEMPLATE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Backend Brief (parent)",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md",
+              "type": "backend_brief"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-382",
+          "title": "PMS \u2014 Local Room Types: Settings CRUD + Room Assignment + Rate Pre-fill",
+          "status": "PARKED \u2014 OD-382-01 answered: PARK (2026-09-15). Build Local Room Types for non-CM hotels deferred. Re-evaluate when hotel without Aiosell onboards.",
+          "priority": "",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-383",
+          "title": "Daily Report \u2014 Room food orders (orderRoom) excluded from Running Orders card",
+          "status": "PARKED \u2014 OD-383-01 answered: PARK (2026-09-15). Room orders stay in separate Room section, not combined with Running Orders card.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-384",
+          "title": "Channel Manager \u2014 Add default rateplan selector per room (supports rate auto-fill at booking)",
+          "status": "INTAKE \u2014 GATE 1 \u2014 BACKEND-BLOCKED (Change 1 + Change 2 both confirmed backend tasks)",
+          "priority": "",
+          "category": "BLOCKED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_5_2": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-358",
+          "title": "PMS Module \u2014 Property Management + Channel Manager Integration (AIOSELL + Room Redesign)",
+          "status": "GATE 3 \u2014 PHASED PLAN OWNER-APPROVED (2026-09-01)",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_audit_1": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-368",
+          "title": "Test Suite Triage \u2014 Achieve Zero-Failure Baseline",
+          "status": "GATE 2 \u2014 IMPACT ANALYSIS WRITTEN",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-368_TEST_SUITE_TRIAGE_CLEAN_BASELINE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Evidence",
+              "path": "memory/evidence/BASELINE-2026-09/",
+              "type": "evidence"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-368_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Evidence (Jest run + triage)",
+              "path": "memory/evidence/CR-368/",
+              "type": "evidence"
+            },
+            {
+              "label": "Backend Brief (OD-05ii / OD-06)",
+              "path": "memory/backend_briefs/BACKEND_BRIEF_CR-368_2026-09-08.md",
+              "type": "backend_brief"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-369",
+          "title": "Write AGENT_PROMPT_ALPHA_v0.8.md",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-369_AGENT_PROMPT_ALPHA_V08_WRITE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Gap Analysis",
+              "path": "memory/control/AGENT_PROMPT_GAP_ANALYSIS_v0.8.md",
+              "type": "investigation"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-370",
+          "title": "Stale Doc Corrections \u2014 5 Records from Audit \u00a73",
+          "status": "IMPLEMENTED \u2014 5 doc corrections applied (2026-09-08)",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-370_STALE_DOC_CORRECTIONS_5_RECORDS_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-370_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-370_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Session Handover (Impl)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_08_CR370_IMPL.md",
+              "type": "handover"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-371",
+          "title": "Build sync_registry.py \u2014 Canonical Registry Sync Script",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-371_SYNC_REGISTRY_PY_CANONICAL_SCRIPT_INTAKE.md",
+              "type": "intake"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-372",
+          "title": "Security Remediation \u2014 Remove Internal Files from Public Surface",
+          "status": "SPLIT \u2192 CR-372-A + CR-372-B",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Baseline",
+              "path": "memory/control/PROJECT_BASELINE_2026_09.md",
+              "type": "evidence"
+            }
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-372-A",
+          "title": "Security: File Moves + .env Cleanup (Zero src/ changes)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-03. 26/26 PASS. ENV notes re .env keys \u2014 not a regression. Awaiting Gate 6 Owner Smoke.",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-372-A_SECURITY_FILE_MOVES_ENV_CLEANUP_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Parent",
+              "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Impact Analysis",
+              "path": "memory/impact/CR-372-A_IMPACT_ANALYSIS.md",
+              "type": "impact"
+            },
+            {
+              "label": "Implementation Plan",
+              "path": "memory/plans/CR-372-A_IMPLEMENTATION_PLAN.md",
+              "type": "plan"
+            },
+            {
+              "label": "Move list",
+              "path": "memory/evidence/CR-372-A/move_list_html_2026_09_08.txt",
+              "type": "evidence"
+            },
+            {
+              "label": "Session Handover (Planning)",
+              "path": "memory/handover/SESSION_HANDOVER_2026_09_08_CR372A_PLANNING.md",
+              "type": "handover"
+            },
+            "handover/SESSION_HANDOVER_2026_09_08_CR372A_IMPL.md"
+          ],
+          "completeness": "1/7"
+        },
+        {
+          "id": "CR-372-B",
+          "title": "Security: Add ProtectedRoute to 23 Unguarded Routes (App.js only)",
+          "status": "INTAKE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [
+            {
+              "label": "Intake",
+              "path": "memory/change_requests/CR-372-B_SECURITY_ROUTE_GUARDING_APP_JS_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Parent",
+              "path": "memory/change_requests/CR-372_SECURITY_REMEDIATION_PUBLIC_SURFACE_INTAKE.md",
+              "type": "intake"
+            },
+            {
+              "label": "Public Routes",
+              "path": "memory/control/PUBLIC_ROUTES.md",
+              "type": "reference"
+            }
+          ],
+          "completeness": "1/7"
+        }
+      ]
+    },
+    "pos_7_0": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-374",
+          "title": "BulkEditor Filter Panel \u2014 Status / Type / Category (Always-Visible Strip)",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-375",
+          "title": "Aggregator Menu: Bulk Delete Capability in BulkEditor",
+          "status": "INTAKE \u2014 BLOCKED (backend brief filed)",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-376",
+          "title": "POS Order Entry: Menu Switch (Normal / Party / Premium tabs)",
+          "status": "GATE 3 COMPLETE \u2014 Implementation Plan written (2026-09-11). Awaiting Gate 4 GO from owner. 7 files, ~98 lines, MEDIUM risk. Design A (local setting via StatusConfigPage). Plan: plans/CR-376_IMPLEMENTATION_PLAN.md",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-373",
+          "title": "Aggregator ProductForm: Use Item Image for Swiggy toggle",
+          "status": "GATE_5B_QA_PASS (2026-09-15). BATCH-04. 38/38 PASS. No findings. Awaiting Gate 6 Owner Smoke.",
+          "priority": "P2",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-377",
+          "title": "Sales Report Complete Redesign \u2014 surface all 82 API fields (Expense, Purchase, Galla/Cash Drawer)",
+          "status": "IMPLEMENTED \u2014 Gate 5a (2026-09-11). reportService.js F1-E1 + OrderSummaryPage.jsx P2-E1..E8. 9 edits, 82 fields, BUG-393 absorbed. webpack clean. EXIT GATE 5/5. QA PENDING.",
+          "priority": "P2",
+          "category": "SUBSUMED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-378",
+          "title": "Sidebar Profile \u2014 Show Restaurant Name Alongside Restaurant ID",
+          "status": "IMPLEMENTED \u2014 Gate 5a+5b (2026-09-11: Sidebar.jsx L820 \u2014 restaurant name added alongside ID). Fast Lane. EXIT GATE 5/5. Testing agent PASS. Awaiting owner smoke (Gate 6).",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "pos_pms_2": {
+      "status": "CLOSED",
+      "crs": [
+        {
+          "id": "CR-385",
+          "title": "PMS Front Desk \u2014 Unified Tabbed Workstation UX Revamp",
+          "status": "P5 REGRESSION PASSED 2026-09-24 \u2014 awaiting owner sign-off (\u00a75.8); NOT CLOSED until the owner's verbatim close word. Role 4 report test_reports/QA_REPORT_2026_09_24_CR385_P5_ROLE4.md: 34 rows 34 PASS / 0 FAIL (row 34 = Step 5 registry checklist executed 2026-09-24). Sessions A'/B/C PASS (it.30\u201334), D17 legs A/B/C ALL_PASS, probe pack 5/5 + held_fallback skipped-no-recipe, guards 6/6 on origin HEAD b2db5a0 (hotspots byte-identical by sha256; 642ccb8 obsolete \u2014 history re-imported 2026-09-23), zero code changes in frontend/src, sandbox restored (owner stay r1 #256 untouched). Findings F1\u2013F13 MINOR/NOTE/process only; Phase 5.5 not triggered. FU-385-C / FU-385-D = separate CRs (owner 2026-09-23). Prior: GATE_5B_QA_PASSED (P4 + P4.5) 2026-09-22 \u2014 independent testing_agent (QA_TGK) Sessions A it.23 6/7 \u00b7 B it.25 5/5 \u00b7 C it.26 PASS (exit read-back 4/4); 0 BLOCKER/MAJOR remaining (BUG-448 FIXED + QA-VERIFIED; BUG-449 legacy \u2192 FU-385-C). OG-PMS-039/040/041/045 CLOSED; OG-PMS-038 open \u2014 5th deferral (r2 occupied) \u2192 combined smoke M2-S08 only. BUG-418 FIXED + QA-VERIFIED (Beta). BUG-433 integer case only. Report test_reports/QA_REPORT_2026_09_22_CR385_P4_ROLE4.md. Gate 6 combined owner smoke IN PROGRESS 2026-09-22 (owner \"GO combined smoke \u2014 logged in\"). P5 handover written (handover/CR-385_PHASE5_HANDOVER_2026_09_22.md), awaiting owner \"Phase 5 GO\" after \"Phase 2 + 3 + 4 smoke OK\". BUG-450 mini-gate FIXED + QA-VERIFIED (it.27); D88 Split hidden (P4.5b); OG-PMS-049 filed (P5 entry). NEXT: Gate 6 combined owner smoke M2-S01\u2026S13 + M3-S01\u2026S10 + M4-S01\u2026S09 (D86) \u2192 'Phase 2 + 3 + 4 smoke OK' \u2192 Phase 5 closure.",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    },
+    "sep_bug_closure": {
+      "status": "IN_PROGRESS",
+      "crs": [
+        {
+          "id": "CR-386",
+          "title": "PWA install support \u2014 manifest.json + logo192/512 (+maskable) + index.html links",
+          "status": "GATE_5A_IMPLEMENTED 2026-09-24 (Wave 1, commit 3783ee8, owner \"Gate 4 GO\") \u00b7 testing_agent iteration_1 PASS (0 findings) \u00b7 Gate 5 QA: automated VA/VB/VC checks PASS; owner manual smoke pending",
+          "priority": "",
+          "category": "SHIPPED",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        },
+        {
+          "id": "CR-387",
+          "title": "Smart Purchase (Stock Update): unit-consistent quantity breakdown for Projected Need / Gap / Suggested / Qty to Buy + two-box purchase qty input + send display unit & display quantity on add-purchase",
+          "status": "GATE_3_PLAN_COMPLETE",
+          "priority": "",
+          "category": "IN_PROGRESS",
+          "artifact_refs": [],
+          "completeness": "0/7"
+        }
+      ]
+    }
+  },
+  "cross_sprint_dependency_flags": [],
+  "category_counts": {
+    "NOT_STARTED": 1,
+    "SHIPPED": 179,
+    "IN_PROGRESS": 40,
+    "SUBSUMED": 21,
+    "BLOCKED": 5
+  },
+  "active_count": 46,
+  "shipped_count": 179,
+  "subsumed_count": 21,
+  "closed_count": 179,
+  "tracked_total": 246
+}

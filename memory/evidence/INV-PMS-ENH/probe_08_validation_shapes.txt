@@ -1,0 +1,75 @@
+== POST mark-no-show {}
+{
+ "booking_id": [
+  "The booking id field is required when aiosell reservation id is not present."
+ ],
+ "aiosell_reservation_id": [
+  "The aiosell reservation id field is required when booking id is not present."
+ ]
+}
+== POST push-rates {}
+{
+ "start_date": [
+  "The start date field is required."
+ ],
+ "end_date": [
+  "The end date field is required."
+ ],
+ "rates": [
+  "The rates field is required."
+ ]
+}
+== POST fetch-rates {}
+{
+ "start_date": [
+  "The start date field is required."
+ ],
+ "end_date": [
+  "The end date field is required."
+ ]
+}
+== POST push-inventory-restrictions {}
+{
+ "start_date": [
+  "The start date field is required."
+ ],
+ "end_date": [
+  "The end date field is required."
+ ],
+ "to_channels": [
+  "The to channels field is required."
+ ],
+ "rooms": [
+  "The rooms field is required."
+ ]
+}
+== POST push-rate-restrictions {}
+{
+ "start_date": [
+  "The start date field is required."
+ ],
+ "end_date": [
+  "The end date field is required."
+ ],
+ "to_channels": [
+  "The to channels field is required."
+ ],
+ "rates": [
+  "The rates field is required."
+ ]
+}
+== POST direct-reservation {}
+{
+ "guest": [
+  "The guest field is required."
+ ],
+ "checkin": [
+  "The checkin field is required."
+ ],
+ "checkout": [
+  "The checkout field is required."
+ ],
+ "rooms": [
+  "The rooms field is required."
+ ]
+}

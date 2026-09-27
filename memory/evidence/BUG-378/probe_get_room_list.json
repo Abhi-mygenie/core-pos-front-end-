@@ -1,0 +1,77 @@
+[
+  {
+    "table": {
+      "id": 8526,
+      "restaurant_id": 69,
+      "waiter_id": 5115,
+      "title": null,
+      "table_no": "r2",
+      "qr_code": null,
+      "status": 1,
+      "created_at": "2026-08-30T11:10:04.000000Z",
+      "updated_at": "2026-08-30T11:10:04.000000Z",
+      "rtype": "RM",
+      "room_operational_status": null,
+      "room_operational_status_at": null,
+      "room_operational_status_by": null
+    },
+    "order_id": 1232176,
+    "user": {
+      "id": 42613,
+      "f_name": "WalkIn Probe Test",
+      "l_name": "",
+      "phone": "9000111222",
+      "email": "temp_6a9672dc2d8655.61239695@mygenie.online"
+    }
+  },
+  {
+    "table": {
+      "id": 8527,
+      "restaurant_id": 69,
+      "waiter_id": 5115,
+      "title": null,
+      "table_no": "r5",
+      "qr_code": null,
+      "status": 1,
+      "created_at": "2026-08-30T11:10:05.000000Z",
+      "updated_at": "2026-08-30T11:10:05.000000Z",
+      "rtype": "RM",
+      "room_operational_status": null,
+      "room_operational_status_at": null,
+      "room_operational_status_by": null
+    },
+    "order_id": 1232181,
+    "user": {
+      "id": 1179,
+      "f_name": "Test Guest",
+      "l_name": "",
+      "phone": "9876543210",
+      "email": null
+    }
+  },
+  {
+    "table": {
+      "id": 8528,
+      "restaurant_id": 69,
+      "waiter_id": 5115,
+      "title": null,
+      "table_no": "r1",
+      "qr_code": null,
+      "status": 1,
+      "created_at": "2026-08-30T11:10:05.000000Z",
+      "updated_at": "2026-08-30T11:10:05.000000Z",
+      "rtype": "RM",
+      "room_operational_status": null,
+      "room_operational_status_at": null,
+      "room_operational_status_by": null
+    },
+    "order_id": 1232179,
+    "user": {
+      "id": 42614,
+      "f_name": "Future Guest",
+      "l_name": "",
+      "phone": "9888888888",
+      "email": "future@example.com"
+    }
+  }
+]

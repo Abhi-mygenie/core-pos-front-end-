@@ -1,0 +1,31 @@
+== GET /sounds/forty_five_sec_buzzer.wav (headers only, body discarded)
+HTTP/2 200 
+date: Thu, 24 Sep 2026 13:52:17 GMT
+content-type: application/octet-stream
+content-length: 1925805
+server: cloudflare
+last-modified: Thu, 24 Sep 2026 12:02:51 GMT
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+etag: "6ab5116b-1d62ad"
+accept-ranges: bytes
+cf-cache-status: DYNAMIC
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fNHMGPbwoJ5vg1O%2FqKegb0uSF2a89mx91A%2F0yQ76P2PgC6N1%2B6zhLLhIqpfbu5uMnzqXDXj2J%2BchH8o105gnmFej%2FXJ7cfRaxnMMKNjgtIG4UqdyiTJyqoVNTl48HnEg5lnZ2NwmZ1Jy"}]}
+cf-ray: ***
+alt-svc: h3=":443"; ma=86400
+
+
+== GET /login
+HTTP/2 200 
+date: Thu, 24 Sep 2026 13:52:25 GMT
+content-type: text/html
+server: cloudflare
+last-modified: Thu, 24 Sep 2026 12:06:27 GMT
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+x-content-type-options: nosniff
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=03lmw27XJZEfN7c7dQ3lLqhno8LKO3bsMMU3vCqm1o7XLQCEHTFi4mDL3%2FpYI%2FtzIA0tn49U1I7q%2B9PaOFqDey%2Fxsruthds075omgiY%2BVB6yGnB3VNwPCfuDRJon%2Ft9pi%2FBZrKRhBcUj"}]}
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+cf-ray: ***
+alt-svc: h3=":443"; ma=86400
+

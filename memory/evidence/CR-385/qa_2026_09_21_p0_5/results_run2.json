@@ -1,0 +1,78 @@
+{
+  "results": {
+    "BUG-435_caseA": {
+      "pass": true,
+      "new_reqs": 0
+    },
+    "BUG-435_caseB": {
+      "pass": true,
+      "new_reqs": 1
+    },
+    "BUG-435_caseC": {
+      "pass": false,
+      "new_reqs": 0
+    },
+    "BUG-435_caseD": {
+      "pass": true,
+      "new_reqs": 1
+    },
+    "BUG-436": {
+      "pass": true,
+      "tag": "MAIN",
+      "inside_page": true,
+      "cm_details": {
+        "fd-tab-arrivals": false,
+        "fd-tab-departures": false,
+        "fd-tab-inhouse": false,
+        "fd-tab-rooms": false
+      }
+    },
+    "BUG-438_keyboard": {
+      "pass": true,
+      "row_count": 10,
+      "first_two": [
+        "fd-row-15",
+        "fd-row-17"
+      ],
+      "a_down": "fd-row-17",
+      "a_up": "fd-row-15",
+      "exp_open": true,
+      "count": 1,
+      "exp_esc_gone": true
+    },
+    "BUG-438_phone": {
+      "pass": false,
+      "phone_info": null
+    },
+    "BUG-438_turns": {
+      "pass": true,
+      "chip_n": 0,
+      "tile_turns": 0,
+      "empty_visible": true
+    },
+    "BUG-437_urlreset": {
+      "pass": true,
+      "sel": "true",
+      "text": "Late 10"
+    },
+    "BUG-434_retry_inflight": {
+      "pass": true,
+      "state_early": {
+        "disabled": true,
+        "text": "Retrying\u2026",
+        "aria": "true"
+      },
+      "enabled_after": {
+        "disabled": false,
+        "text": "Retry"
+      },
+      "req_count_for_one_click": 1
+    },
+    "BUG-434_recover": {
+      "pass": false,
+      "err": "Page.wait_for_selector: Timeout 45000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-tab-strip\\\"]\") to be visible\n"
+    },
+    "BUG-434_error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-tab-rooms\\\"]\")\n"
+  },
+  "console_errors": []
+}

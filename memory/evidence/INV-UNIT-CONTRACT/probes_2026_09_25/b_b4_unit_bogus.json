@@ -1,0 +1,8 @@
+{
+ "http": 422,
+ "body": {
+  "status": false,
+  "error_code": "PURCHASE_UNIT_NOT_COMPATIBLE",
+  "message": "Unit must be the purchase unit or consumption unit configured on this ingredient."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "http": 422,
+ "body": {
+  "error": "Early check-in is not allowed for this property (stay check-in 2026-10-10 is after business date 2026-09-24)."
+ }
+}

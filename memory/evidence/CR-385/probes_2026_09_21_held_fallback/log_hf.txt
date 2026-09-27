@@ -1,0 +1,7 @@
+rate 2026-11-17 [('executive-s-ep', 0), ('suite-s-ep', 0)]
+rate 2026-11-16 [('executive-s-ep', 0), ('suite-s-ep', 0)]
+rate 2026-11-15 [('executive-s-ep', 0), ('suite-s-ep', 0)]
+rate 2026-11-14 [('executive-s-ep', 8600), ('suite-s-ep', 36800)]
+stay before: in_house 2026-11-14 2026-11-15 {'nights': 1, 'rate_per_night': 36800, 'booking_charge': 36800, 'total_with_gst': 43424, 'advance_payment': 500, 'balance_due': 42924} nights_detail: None
+EXTEND HTTP True {'nights': 2, 'rate_per_night': 36800, 'booking_charge': 73600, 'sgst': 6624, 'cgst': 6624, 'total_with_gst': 86848, 'advance_payment': 500, 'balance_due': 86348}
+  nights_detail: [{'date': '2026-11-14', 'rate': 36800, 'source': 'held', 'gst_percent': 18, 'gst': 6624}, {'date': '2026-11-15', 'rate': 36800, 'source': 'held_fallback', 'gst_percent': 18, 'gst': 6624}]

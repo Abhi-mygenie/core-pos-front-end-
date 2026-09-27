@@ -97,9 +97,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     itemCode: product.itemCode || '',                      // CR-098: short code for display + search
   });
 
-  // CR-148 / BUG-340: Popular category gate — default to popular if enabled, products read from MenuContext
+  // CR-148 / BUG-340: Popular category gate — products read from MenuContext
   const showPopularCategory = !!restaurant?.settings?.showPopularCategory;
-  const [activeCategory, setActiveCategory] = useState(() => showPopularCategory ? "popular" : "all");
+  const [activeCategory, setActiveCategory] = useState("all"); // CR-376-FU-B: B3 — "All" is always the default tab (was popular when setting ON)
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [printAllKOT,  setPrintAllKOT]  = useState(() => !!restaurant?.settings?.autoKot);
@@ -553,7 +553,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const getFilteredItems = () => {
     let items;
     if (activeCategory === "popular") { // CR-148 / BUG-340: popular tab — transform matches other branches
-      items = popularProducts.map(adaptProduct);
+      // CR-376-FU-B: B4 — Popular scoped to active menu (same visible-set predicate as CategoryPanel count)
+      const visibleIds = new Set(activeMenuProducts.filter(p => p.isActive && !p.isDisabled).map(p => p.productId));
+      items = popularProducts.filter(p => visibleIds.has(p.productId)).map(adaptProduct);
     } else if (activeCategory === "all") {
       items = activeMenuProducts.filter(p => p.isActive && !p.isDisabled).map(adaptProduct); // CR-376
     } else {
@@ -1673,6 +1675,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onBack={onClose}
           categories={categories}
           showPopularCategory={showPopularCategory} // CR-148
+          activeMenuProducts={activeMenuProducts} // CR-376-FU-B
+          popularProducts={popularProducts} // CR-376-FU-B
         />
 
         {/* MIDDLE PANEL - Menu Items */}

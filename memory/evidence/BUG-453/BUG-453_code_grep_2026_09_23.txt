@@ -1,0 +1,96 @@
+# BUG-453 code-reality grep — 2026-09-23 @ HEAD 1be4055
+## soundManager.js
+    // Stop any currently playing audio
+    this.stop();
+
+    // Use cached or create new Audio instance
+    const audio = this.audioCache[soundKey]
+      ? this.audioCache[soundKey].cloneNode()
+      : new Audio(path);
+
+    audio.addEventListener('ended', () => {
+      if (this.currentAudio === audio) {
+        this.currentAudio = null;
+      }
+    });
+
+    audio.addEventListener('error', (e) => {
+      console.error('[SoundManager] Playback error for', soundKey, e);
+      this.currentAudio = null;
+    });
+
+    this.currentAudio = audio;
+    audio.play().catch((err) => {
+      console.warn('[SoundManager] Play blocked:', err.message);
+      this.currentAudio = null;
+    });
+  }
+
+  /**
+   * Stop currently playing sound
+   */
+  stop() {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
+    }
+  }
+
+
+## NotificationContext.jsx play()
+
+    // Play sound (SoundManager handles silent, unknown keys, etc.)
+    if (resolvedSound) {
+      console.log('[Notification] Playing sound:', resolvedSound);
+      soundManager.play(resolvedSound);
+    }
+
+
+## ScanOrderPopOut anti-rule + handleSnoozeClick
+// Strict anti-rules:
+//   - soundManager import is allowed ONLY for `soundManager.stop()` inside
+//     handleSnoozeClick (CR SNOOZE_SOUND_STOP_AND_DURATION, Jan-2026 —
+//     owner override of the original "NO soundManager import" rule). NO
+//     `soundManager.play(...)`. NO `soundManager.setEnabled(...)`. NO
+//     global mute. NO per-order mute. NO future-sound suppression.
+//   - NO NotificationContext import. Pop-out remains a silent layer for
+  const handleSnoozeClick = useCallback(
+    (orderId) => {
+      // Stop the in-progress chime (CR SNOOZE_SOUND_STOP_AND_DURATION, Jan-2026).
+      // soundManager.stop() is idempotent and a no-op when nothing is playing.
+      try {
+        soundManager.stop();
+      } catch (e) {
+        console.warn('[Snooze] soundManager.stop() failed:', e?.message);
+      }
+      // Reuse existing dashboard snooze handler (dims card on dashboard).
+
+## snoozedOrders consumers
+src/components/sections/TableSection.jsx:6:const TableSection = ({ section, onTableClick, onOpenModal, onUpdateStatus, onBillClick, onConfirmOrder, onCancelOrder, searchQuery, matchingTableIds, snoozedOrders, onToggleSnooze, currencySymbol, tableFilter }) => {
+src/components/sections/TableSection.jsx:56:            isSnoozed={snoozedOrders?.has(table.id)}
+src/components/dashboard/ChannelColumn.jsx:59:  snoozedOrders,
+src/components/dashboard/ChannelColumn.jsx:308:                          isSnoozed={snoozedOrders?.has(item.id)}
+src/components/dashboard/ChannelColumn.jsx:326:                        isSnoozed={snoozedOrders?.has(item.id)}
+src/components/dashboard/ScanOrderPopOut.jsx:148: * @param {Set<string|number>} snoozedOrders — existing dashboard snooze Set (read-only here)
+src/components/dashboard/ScanOrderPopOut.jsx:157:  snoozedOrders,
+src/components/dashboard/ScanOrderPopOut.jsx:262:    snoozedOrders && typeof snoozedOrders.has === 'function' && snoozedOrders.has(idStr);
+src/components/dashboard/ChannelColumnsLayout.jsx:81:  snoozedOrders,
+src/components/dashboard/ChannelColumnsLayout.jsx:206:          snoozedOrders={snoozedOrders}
+src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:58:      snoozedOrders={new Set()}
+src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:199:        snoozedOrders={new Set()}
+src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:270:        snoozedOrders={new Set()}
+src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:350:        snoozedOrders={new Set()}
+src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:488:        snoozedOrders={new Set()}
+src/pages/DashboardPage.jsx:130:const OrderListSection = ({ title, orders, orderType, matchingIds, snoozedOrders, onToggleSnooze, onEdit, onMarkReady, onMarkServed, onBillClick, onCancelOrder, onItemStatusChange, canCancelOrder, canPrintBill, canBill, className }) => (
+src/pages/DashboardPage.jsx:146:              isSnoozed={snoozedOrders.has(String(order.orderId))}
+src/pages/DashboardPage.jsx:459:  const [snoozedOrders, setSnoozedOrders] = useState(new Set());
+src/pages/DashboardPage.jsx:1670:          snoozedOrders={snoozedOrders}
+src/pages/DashboardPage.jsx:1807:                snoozedOrders={snoozedOrders}
+src/pages/DashboardPage.jsx:1850:                        snoozedOrders={snoozedOrders}
+src/pages/DashboardPage.jsx:1881:                          snoozedOrders={snoozedOrders}
+src/pages/DashboardPage.jsx:1915:                        isSnoozed={snoozedOrders?.has(item.id)}
+src/pages/DashboardPage.jsx:1964:                          isSnoozed={snoozedOrders.has(table.id)}
+src/pages/DashboardPage.jsx:2000:                        isSnoozed={snoozedOrders.has(String(order.orderId))}
+src/pages/DashboardPage.jsx:2030:                        isSnoozed={snoozedOrders.has(String(order.orderId))}
+blast: soundManager refs: 23

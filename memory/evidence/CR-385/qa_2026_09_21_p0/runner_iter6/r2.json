@@ -1,0 +1,98 @@
+{
+  "results": [
+    {
+      "case": "\u00a71-M0-09-no-cm",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": "has=True locs=[{'tag': 'SPAN', 'cls': 'text-sm', 'text': 'Channel Manager'}]"
+    },
+    {
+      "case": "\u00a71-M0-06b-write",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": "hk-btn missing after Clean"
+    },
+    {
+      "case": "\u00a71-M0-08-slash",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "active=fd-search-input"
+    },
+    {
+      "case": "\u00a71-M0-08-results",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "n=1"
+    },
+    {
+      "case": "\u00a71-M0-08-empty",
+      "status": "PASS",
+      "severity": "MINOR",
+      "evidence": "n=1"
+    },
+    {
+      "case": "\u00a71-M0-05-alert-bar",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "bar=1 items=3 more=1"
+    },
+    {
+      "case": "\u00a71-M0-05-popover",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "pop=1"
+    },
+    {
+      "case": "\u00a72-A9-board500-tile",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "rc='\u2014' sub='board unavailable'"
+    },
+    {
+      "case": "\u00a72-A9-rooms-error",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "err=1 retry=1"
+    },
+    {
+      "case": "\u00a72-A9-retry",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": "tiles=0"
+    },
+    {
+      "case": "\u00a72-A10-lr500",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "pe=1 rt=1"
+    },
+    {
+      "case": "\u00a72-A10-retry",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": "strip=0"
+    },
+    {
+      "case": "\u00a72-A8-1366-overflow",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "overflow=False"
+    },
+    {
+      "case": "\u00a72-A7-dup-1366",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "[]"
+    },
+    {
+      "case": "console-hygiene",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": "n=2 sample=['Failed to load resource: the server responded with a status of 500 (Internal Server Error)', 'Failed to load resource: the server responded with a status of 500 (Internal Server Error)']"
+    }
+  ],
+  "console": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ]
+}
