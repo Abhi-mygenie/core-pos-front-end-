@@ -1214,6 +1214,24 @@ READ:
 - **No unused imports:** `yarn build` should produce 0 warnings about unused imports from sprint changes.
 - **ESLint clean:** Only pre-existing warnings. No NEW lint warnings from sprint changes.
 
+#### D1. DEPENDENCY CONSTRAINTS CHECK (MANDATORY — runs alongside D)
+
+Read `/app/memory/control/DEPENDENCY_CONSTRAINTS.md` and for each FROZEN package, verify the installed version has not drifted:
+
+```bash
+# Recharts — must be 2.x, never 3.x
+node -e "const v=require('./node_modules/recharts/package.json').version; console.log('recharts:', v); if(v.startsWith('3.')) process.exit(1);"
+```
+
+If any FROZEN package is at a non-allowed version → **RELEASE BLOCKER**. Raise as a P1 defect before releasing.
+
+Additionally, run a production build to catch any Terser/minification regressions introduced this sprint:
+```bash
+npm run build   # must exit 0 with zero TypeError in output
+```
+
+**Why this matters:** The dev server never exposes Terser crashes. A package version that looks fine in dev can crash every chart page in production (BUG-465, 2026-09-26). The pre-release audit is the last safety net before prod.
+
 #### E. RELEASE HYGIENE — NO TEST/DOC ARTIFACTS IN BUILD
 - **Test files excluded from build:** `find build/ -name "*.test.*" -o -name "*.spec.*"` → empty
 - **Memory/doc files not in build:** `find build/ -name "*.md"` → empty (except __dev/)
@@ -1588,6 +1606,30 @@ Using `api.post()` on an update endpoint returns **405 Method Not Allowed** (oft
 - If a `POST` update genuinely exists on the backend, document it as an exception in `KNOWN BACKEND QUIRKS` with the endpoint name — do not assume.
 
 **Applies to:** PLANNING, IMPLEMENTATION, BUG FIX, INVESTIGATION, QA (API testing).
+
+---
+
+### R26: Frozen dependency constraints — read before touching package.json
+
+`control/DEPENDENCY_CONSTRAINTS.md` lists every dependency that is version-locked for a production-safety reason. **Before changing any version in `package.json`:**
+
+1. `cat /app/memory/control/DEPENDENCY_CONSTRAINTS.md` — check if the package is listed.
+2. If listed as FROZEN → **DO NOT upgrade without explicit owner approval + production build test.**
+3. Any `package.json` change that touches a listed dependency is HIGH risk regardless of how small it looks.
+
+**Current frozen packages (summary — full details in `DEPENDENCY_CONSTRAINTS.md`):**
+
+| Package | Locked at | Why frozen |
+|---|---|---|
+| `recharts` | `2.15.4` (2.x) | recharts 3.x uses es-toolkit CJS compat shim that Terser mangles → `TypeError: mR is not a function` crashes ALL chart pages in production. **Never upgrade to 3.x without a full production build (`npm run build`) + all 30 chart pages verified in the minified bundle.** (BUG-465, 2026-09-26) |
+
+**Production build is MANDATORY after any `package.json` change:**
+```bash
+npm run build   # must exit 0, zero TypeError in output
+```
+The dev server (`yarn start` / `npm start`) runs unminified and will NEVER catch Terser minification crashes. Only `npm run build` proves the production bundle is safe.
+
+**Applies to:** ALL roles that touch `package.json` (IMPLEMENTATION, BUG FIX, DEPLOYMENT, PRE-RELEASE AUDIT).
 
 ---
 

@@ -437,6 +437,7 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `/app/memory/crm/crm_1_0/*` | Closed CRM 1.0 baseline |
 | `orderTransform.js` outbound payload contracts | Financial/payment truth |
 | `DeliveryCard.jsx` | Legacy/unused — owner directive: do not delete or modify |
+| `frontend/package.json` → `recharts` version | **FROZEN at 2.15.4 (2.x series).** recharts 3.x crashes ALL chart pages in production (BUG-465). See `control/DEPENDENCY_CONSTRAINTS.md` before touching. Any change needs owner approval + `npm run build` + 30-page production build verification. |
 
 ---
 
