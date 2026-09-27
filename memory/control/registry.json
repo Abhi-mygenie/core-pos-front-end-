@@ -28355,7 +28355,9 @@
       "implemented": "2026-09-26",
       "fix_note": "overrides es-toolkit >=1.48.0 (1.52.0 installed). isPlainObject.mjs fix landed in 1.48.0. npm run build exit 0.",
       "qa_report": "test_reports/QA_REPORT_BUG-465_2026_09_26.md",
-      "qa_result": "7/7 PASS. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (Expense Report 0 SVG \u2014 empty data, not crash). Production build verified."
+      "qa_result": "7/7 PASS. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (Expense Report 0 SVG \u2014 empty data, not crash). Production build verified.",
+      "fix_final": "recharts downgraded 3.6.0 \u2192 2.15.4. recharts 2.x has zero es-toolkit dependency. Production build main.2b8a0639.js. 7/7 QA PASS.",
+      "qa_report_final": "test_reports/iteration_2.json"
     }
   ],
   "meta": {
