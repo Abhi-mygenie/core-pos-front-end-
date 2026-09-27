@@ -28377,6 +28377,28 @@
       "source": "OWNER-REQUESTED (chat 2026-09-25)",
       "open_decisions": "OD-389-01 (Area set) \u00b7 OD-389-02 (columns) \u00b7 OD-389-03 (include non-CR/BUG IDs) \u00b7 OD-389-04 (description depth)",
       "notes": "Registry was intentionally not synced at intake time (owner choice per CONTROL_DASHBOARD 2026-09-26). Now officially registered on owner request 2026-09-26."
+    },
+    {
+      "id": "CR-390",
+      "title": "Screen Reference PDFs for ALL modules \u2014 committed repeatable pipeline (Playwright + network fixtures + PDF assembler) per module: MM \u00b7 EM \u00b7 IM \u00b7 DC \u00b7 CM \u00b7 DR \u00b7 IN-Basic \u00b7 IN-Advanced \u00b7 PMS-redo (9 PDFs)",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "GATE_1_INTAKE",
+      "sprint_key": "modules_pdf",
+      "gate": "1",
+      "area": "SHARED (documentation / tooling)",
+      "intake_doc": "change_requests/CR-390_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
+      "evidence": "evidence/CR-390/EVIDENCE_POINTER.md",
+      "blast_radius": "ZERO runtime src/ files. New: frontend/scripts/screen-reference/ (pipeline) + memory/design_briefs/downloads/screen_reference/ (PDFs). PARTIAL code reality \u2014 PMS PDFs exist in public/; generator scripts lost/never committed.",
+      "code_reality": "PARTIAL \u2014 PMS Screen Reference v2.0 (36 screens) + v1.0 in frontend/public/. Generator scripts absent (lived in container root, never committed \u2014 must rebuild).",
+      "duplicate_check": "DISTINCT",
+      "registered": "2026-09-26",
+      "source": "OWNER-REQUESTED (2026-09-26)",
+      "related": "CR-372-A (public surface) \u00b7 CR-389 (registry xlsx, separate) \u00b7 PMS Screen Reference v2.0 (2026-09-16)",
+      "locked_decisions": "OD-390-04 LOCKED (user-journey order, per-module approval) \u00b7 OD-390-09 LOCKED (9 PDFs: MM/EM/IM/DC/CM/DR/IN-Basic/IN-Advanced/PMS) \u00b7 OD-390-10 LOCKED (DC contents) \u00b7 OD-390-11 LOCKED (DR contents) \u00b7 OD-390-12 LOCKED (Insights Basic/Advanced split) \u00b7 OD-390-14 LOCKED (client-facing scrub rules)",
+      "open_decisions": "OD-390-01 (data strategy \u2014 rec.b network interception) \u00b7 OD-390-02 (persona) \u00b7 OD-390-03 (screen granularity) \u00b7 OD-390-05 (packaging) \u00b7 OD-390-06 (output location) \u00b7 OD-390-07 (sequencing) \u00b7 OD-390-08 DEFERRED (template) \u00b7 OD-390-13 DEFERRED (PMS scope) \u00b7 OD-390-14b OPEN (disclaimer placement)",
+      "notes": "New sprint modules_pdf created. Per-module journey must be owner-approved BEFORE generation (sub-gate G-journey per OD-390-04). No pipeline code and no screenshots until all remaining ODs locked + owner Gate 2 GO."
     }
   ],
   "meta": {
