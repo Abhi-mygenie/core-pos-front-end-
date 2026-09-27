@@ -1,3 +1,4 @@
+**Last Updated:** 2026-09-26 — **INTAKE: CR-389 officially registered (P2/LOW, sprint `sep_bug_closure`, Gate 1).** Registry Excel Export — generate `.xlsx` of all 730 CRs + BUGs with status, descriptions & tracking columns. Intake doc exists since 2026-09-25 but was intentionally kept out of registry (owner choice); now officially registered on owner request 2026-09-26. Code reality NONE · DISTINCT · blast radius ZERO app code. OD-389-01…04 OPEN (Area set · columns · include non-CR/BUG IDs · description depth). **Next: owner answers ODs → "GO" → generate xlsx.** Registry 730 items.
 **Last Updated:** 2026-09-25 — **IMPLEMENTATION Gate 5a COMPLETE: CR-387 coded** (owner verbatim "Gate 4 GO"). FINAL plan applied (OD-UNIFY-01/02): `quantityBreakdown.rowQuantity()` + jest 8/8; `purchasePlanner.js` +conversion metadata (velocity+alert rows); `AutoShoppingList.jsx` breakdown on Projected Need/Gap/Suggested + two-box Qty-to-Buy + **E-A10/E-A11 BUG-455 on-hand parenthetical suppressed**; `SmartPurchasePanel.jsx` two-box seed + `rowQuantity` submit (Unit=display unit, rate per display unit, amount unchanged); `GroupedVendorPreview.jsx` breakdown text. Live smoke PASS (On-Hand no paren; Projected Need/Suggested in breakdown units; no-conversion rows single-unit). Registry `GATE_5A_IMPLEMENTED`. **Next: combined QA wave.**
 
 **Last Updated:** 2026-09-25 — **CR-387 OD-387-06 probe EXECUTED (read-only) → RESOLVED: `vendor-item-list.unit_price` = Amount ÷ BASE qty** (per-base-unit basis; plan E-A7 default confirmed, no change). Owner supplied `QA_INV` creds (stored gitignored). Owner: "no gate 4 till then" — BUG-455 Gate 5b (QA) must close first. Zero code.
@@ -66,6 +67,14 @@
 **Last Updated:** 2026-09-11 — **CR-378 IMPLEMENTED (Gate 5a, Fast Lane).** Sidebar profile sub-line now shows `{restaurant.name} · #{restaurant.id}` (e.g. `CAFE 103 · #644`). `Sidebar.jsx:820` — 1 line. webpack clean. EXIT GATE 5/5. Screenshot verified. QA PENDING.
 **Last Updated:** 2026-09-11 — **CR-378 INTAKE COMPLETE (Gate 1).** Sidebar Profile: show restaurant name alongside ID. P2 LOW risk. 1 file (Sidebar.jsx), 1 line. DISTINCT, code reality NONE. Fast Lane eligible — awaiting OD-378-02 (owner approval). Registry: 645 items.
 **Last Updated:** 2026-09-09 — **CR-358-P5 GATE 5b QA PASS** — 8/8 executed PASS, 13 NOTE deferred. Rate grid✅ popover✅ Inv Restrictions✅ No-Show OTA✅ regression✅. QA report: `test_reports/QA_REPORT_CR358P5_2026_09_09.md`. Ready for Gate 6 owner smoke.
+
+---
+
+## 2026-09-26 — REGISTRY EXCEL EXPORT (sprint `sep_bug_closure` — GATE 1 INTAKE)
+
+| CR ID | Title | Priority | Risk | Status | Gate | Code reality | Blast | Notes |
+|---|---|---|---|---|---|---|---|---|
+| **CR-389** | Registry Excel Export — All CRs + BUGs with Status, Description & Tracking Columns. Generate `.xlsx` workbook (`All Items` · `Open Only` · `Summary` pivot tabs) from `control/registry.json` (730 items). 21 proposed columns incl. ID, Title, Description (3–5 lines), Area, Priority, Risk, Gate, Status, Dates, Sprint, Blocked, Files, Related, Docs. | P2 | LOW | **GATE_1_INTAKE 2026-09-26** | 1 | NONE | ZERO app code — 2 new files: `memory/reports/registry_export.py` + `memory/reports/REGISTRY_EXPORT_<date>.xlsx` | Source OWNER-REQUESTED (2026-09-25). Intake doc since 2026-09-25, officially registered in registry 2026-09-26. **OD-389-01** Area value set (a: POS/PMS only · b: POS/PMS/INV/CRM/SHARED — rec. b) · **OD-389-02** columns (a: all 21 · b: owner's 12 · c: 12+extras — rec. a) · **OD-389-03** include non-CR/BUG IDs (a: all 730 · b: CR+BUG only — rec. a) · **OD-389-04** description depth (a: 3–5 lines all rows · b: 3–5 open only, 1 line closed — rec. b). Intake `change_requests/CR-389_REGISTRY_EXCEL_EXPORT_ALL_CRS_BUGS_INTAKE.md`. Next: owner answers OD-389-01…04 + "GO" → generate xlsx. |
 
 ---
 

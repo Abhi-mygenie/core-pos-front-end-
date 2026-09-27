@@ -28358,6 +28358,25 @@
       "qa_result": "7/7 PASS. 0 BLOCKER/MAJOR/MINOR. 1 NOTE (Expense Report 0 SVG \u2014 empty data, not crash). Production build verified.",
       "fix_final": "recharts downgraded 3.6.0 \u2192 2.15.4. recharts 2.x has zero es-toolkit dependency. Production build main.2b8a0639.js. 7/7 QA PASS.",
       "qa_report_final": "test_reports/iteration_2.json"
+    },
+    {
+      "id": "CR-389",
+      "title": "Registry Excel Export \u2014 All CRs + BUGs with Status, Description & Tracking Columns",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "LOW",
+      "status": "GATE_1_INTAKE",
+      "sprint_key": "sep_bug_closure",
+      "gate": "1",
+      "area": "SHARED (control layer)",
+      "intake_doc": "change_requests/CR-389_REGISTRY_EXCEL_EXPORT_ALL_CRS_BUGS_INTAKE.md",
+      "blast_radius": "ZERO app code \u2014 2 new files: memory/reports/registry_export.py + REGISTRY_EXPORT_<date>.xlsx",
+      "duplicate_check": "DISTINCT",
+      "code_reality": "NONE",
+      "registered": "2026-09-26",
+      "source": "OWNER-REQUESTED (chat 2026-09-25)",
+      "open_decisions": "OD-389-01 (Area set) \u00b7 OD-389-02 (columns) \u00b7 OD-389-03 (include non-CR/BUG IDs) \u00b7 OD-389-04 (description depth)",
+      "notes": "Registry was intentionally not synced at intake time (owner choice per CONTROL_DASHBOARD 2026-09-26). Now officially registered on owner request 2026-09-26."
     }
   ],
   "meta": {
