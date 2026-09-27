@@ -28384,9 +28384,9 @@
       "type": "CR",
       "severity": "P2",
       "risk": "LOW",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "sprint_key": "modules_pdf",
-      "gate": "1",
+      "gate": "3",
       "area": "SHARED (documentation / tooling)",
       "intake_doc": "change_requests/CR-390_MODULES_SCREEN_REFERENCE_PDF_ALL_MODULES_INTAKE.md",
       "evidence": "evidence/CR-390/EVIDENCE_POINTER.md",
@@ -28398,7 +28398,9 @@
       "related": "CR-372-A (public surface) · CR-389 (registry xlsx, separate) · PMS Screen Reference v2.0 (2026-09-16)",
       "locked_decisions": "OD-390-02 LOCKED (Sharma Hotel fictional name, DOM swap) · OD-390-03 LOCKED (primary + 1-2 interaction states, 3pp cap) · OD-390-04 LOCKED (user-journey order, per-module approval) · OD-390-05 LOCKED (c: master + 9 per-module PDFs + PNG packs) · OD-390-06 LOCKED (b: memory/design_briefs/downloads/screen_reference/) · OD-390-07 LOCKED (MM → EM → IM → DC → CM → DR → IN-Basic → IN-Advanced → PMS) · OD-390-09 LOCKED (9 PDFs) · OD-390-10 LOCKED (DC contents) · OD-390-11 LOCKED (DR contents) · OD-390-12 LOCKED (Insights Basic/Advanced split) · OD-390-14 LOCKED (scrub rules) · OD-390-14b LOCKED (c: cover + every-page footer)",
       "open_decisions": "OD-390-01 DEFERRED to Planning (credentials per module, data method module-by-module) · OD-390-08 DEFERRED (template — PMS v2.0 interim default) · OD-390-13 DEFERRED (PMS redo scope — PMS still changing)",
-      "notes": "All actionable intake decisions locked 2026-09-27. Awaiting owner Gate 2 GO → PLANNING. Per-module journey approved LIVE before generation (sub-gate G-journey). No pipeline code/screenshots before Gate 2 GO."
+      "notes": "All actionable intake decisions locked 2026-09-27. Awaiting owner Gate 2 GO → PLANNING. Per-module journey approved LIVE before generation (sub-gate G-journey). No pipeline code/screenshots before Gate 2 GO.",
+      "impact_analysis": "impact/CR-390_IMPACT_ANALYSIS.md",
+      "implementation_plan": "plans/CR-390_IMPLEMENTATION_PLAN.md"
     }
   ],
   "meta": {
