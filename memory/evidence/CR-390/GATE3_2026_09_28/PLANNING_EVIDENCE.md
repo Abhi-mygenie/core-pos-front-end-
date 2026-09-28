@@ -44,11 +44,19 @@ Registry comparison baseline: remove only item `CR-390`, serialize remaining reg
 
 - Current amendment in `memory/plans/CR-390_IMPLEMENTATION_PLAN.md`; historical foundation retained below.
 - New detailed all-70/data annex: `memory/plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`.
-- Current handover: `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`.
+- Current presentation handover: `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_OPTION3B_ACCEPTED_PRESENTATION.md` (option 3b accepted for planning; next agent presents both sessions and P3B-1…4, then waits). Earlier `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md` remains supporting history.
 - Proposed edits and verification matrix are future work, not executed test cases. Gate 3 remains OPEN for owner review/decisions. No Gate 4 GO inferred.
 - New owner-detail questions OD-390-23/24/25 do not reopen locked OD-390-16…22. Data/action bindings and additional evidence remain unapproved. No estimate, screenshot count or video delivery date certified.
 
-## Follow-up — owner 1a/2a; decision 3 walkthrough requested
+## Option 3b accepted — presentation handover only
+
+Owner “Gate 3B plan is fine” accepts **OD-390-25 option 3b LOCKED FOR PLANNING**, read-only discovery first, and requests a detailed next-agent handover covering both sessions/current state/remaining approvals. “3b” is not a new gate. Gate 3 OPEN; no Gate 4 GO and no live access/discovery permission.
+
+Created `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_OPTION3B_ACCEPTED_PRESENTATION.md` and synchronized current decision/status pointers and plan/annex. Next agent presents first, explains P3B-1…4 (read scope, secure access, minimal private output and staging/GO), asks and waits. Demo IDs are inventory outputs; exact later mutation/cleanup permits remain separate. Source/tooling/original scripts/assets/env/data untouched. No auth/browser/API/capture/integration/app QA run.
+
+**Handover-only verification:** 59 documentation/preservation conditions checked: **58 passed initially**, and the reference-existence check flagged only the explicitly documented missing `memory/test_credentials.md`. Rechecked required references while excluding that known absent access prerequisite: **PASS**, no unexpected missing reference. No document fix, credential creation or login was needed for that assertion. Protected source/tooling/env/original scripts/mapping hashes unchanged; **72 original binary assets unchanged** against entry commit `f553f22`. Registry schema and parent status/gate/sprint preserved; unrelated records unchanged. All 70 FAQ IDs/source anchors, 237 original scene groups, 8 edit groups, 34 future checks, accepted 3b/no-execution boundary, four pending P3B approvals, 15 current pointers, safe scope/secret-pattern checks and PRD line limit verified. These are local documentation checks, NOT discovery or application QA.
+
+## Historical follow-up — owner 1a/2a; decision 3 walkthrough requested
 
 Owner verbatim: **“1 a 2 a 3 take me through”**. Recorded OD-390-23/24 as LOCKED FOR PLANNING; category-order writes denied, FAQ-10 gesture cancelled without saved-result claim; truthful adaptations accepted for FAQ-02/22/63 and other agreed constrained claims, all 70 IDs retained. OD-390-25 OPEN: explain data options, no choice/login/discovery/access or business-write authorization.
 

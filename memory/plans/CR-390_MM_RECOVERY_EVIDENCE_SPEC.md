@@ -1,7 +1,7 @@
 # CR-390 — Step 2 evidence, data and content specification
 
 **Date:** 2026-09-28 (workspace UTC). **Role:** PLANNING, Gate 3 ONLY.
-**Status:** PROPOSED / OWNER REVIEW. Owner “1 a 2 a 3 take me through”: **OD-390-23/24 LOCKED FOR PLANNING** (gesture-only category reorder; truthful FAQ adaptations). **OD-390-25 OPEN**, walkthrough only, no option/access approved. Gate 3 OPEN; no Gate 4 GO. Not a runnable manifest, corrected script, storyboard or capture approval.
+**Status:** PROPOSED / OWNER REVIEW. **OD-390-23/24 LOCKED FOR PLANNING** (1a gesture-only category reorder; 2a truthful FAQ adaptations). **OD-390-25 LOCKED FOR PLANNING: option 3b read-only discovery first**, owner “Gate 3B plan is fine”. Option 3b is not a new gate or execution permission. **Gate 3 OPEN; no Gate 4 GO**, no live access. Detailed presentation/remaining P3B-1…4 approvals: `../handover/SESSION_HANDOVER_2026_09_28_CR390_OPTION3B_ACCEPTED_PRESENTATION.md`. Not a runnable manifest, corrected script, storyboard or capture approval.
 **Parent plan:** `CR-390_IMPLEMENTATION_PLAN.md`, current Step 2 amendment.
 **Baseline:** `../impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` — 70 FAQs / 237 original scene groups, 34 blocked as written/mapped and 36 partial. No reclassification or external acceptance here.
 

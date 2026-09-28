@@ -1,5 +1,7 @@
 # CR-390 MM — Step 2 / Gate 3 plan draft ready for owner review
 
+> **SUPERSEDED dispatch — option 3b accepted:** Owner “Gate 3B plan is fine” selects **OD-390-25 option 3b, LOCKED FOR PLANNING**, then requests a detailed next-agent presentation. Read `SESSION_HANDOVER_2026_09_28_CR390_OPTION3B_ACCEPTED_PRESENTATION.md` first. Present both sessions, current position and remaining P3B-1…4 execution approvals, then WAIT. **Gate 3 OPEN; no Gate 4 GO**, no discovery/access permission. Historical open-choice wording below is preserved as history, not a request to re-ask 3a/3b.
+
 **Date:** 2026-09-28 (workspace UTC). **Role:** 2 — PLANNING. **Language:** English.
 **Authorization:** owner “begin step 2”; “donot jump gates”.
 **Current stop:** detailed plan drafted; **Gate 3 OPEN, awaiting owner decisions/review/closure. No Gate 4 GO.** No implementation, capture or video authorization inferred.

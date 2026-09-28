@@ -96,3 +96,12 @@ These dated entries were moved verbatim from PRD.md on 2026-09-28 to keep that f
 - Owner verbatim: “1 a 2 a 3 take me through”. OD-390-23/24 LOCKED FOR PLANNING: category reorder gesture-only/no saved-result claim; truthful FAQ adaptations accepted with all 70 IDs retained and missing evidence still BLOCKED.
 - OD-390-25 remains OPEN: explain owner-prepared data vs separately authorized read-only discovery. No option or login/discovery/data-write permission selected. Recommend inventorying existing examples first only if separately authorized, then ask for missing safe records individually.
 - Plan/annex/current handover and decision/status pointers synchronized. No source, original narration/manifest/assets, environment, live/capture/business-data change. Gate 3 OPEN, no Gate 4 GO.
+
+## 2026-09-28 — CR-390 option 3b accepted; detailed presentation handover
+
+- Owner “Gate 3B plan is fine” accepts **OD-390-25 option 3b LOCKED FOR PLANNING**, read-only discovery first. This is not a new gate, Gate 3 closure or live-access/implementation GO. Earlier 1a/2a/menu/video choices retained.
+- Created `handover/SESSION_HANDOVER_2026_09_28_CR390_OPTION3B_ACCEPTED_PRESENTATION.md`: original goal, prior foundation/Step 1 findings, this session's Step 2 work and decisions, evidence provenance, exact current stop, remaining P3B-1…4 execution approvals, safe inventory/output proposal and next-agent present/ask/wait instructions.
+- Remaining approvals: read account/menu/brand scope; secure authorized access; minimal private output/privacy; Gate 3 scope review/closure and separate scoped Gate 4 GO. Do not require unknown demo IDs before the inventory intended to identify them; later write/capture/cleanup permits remain separate.
+- Plan/annex/current registry/status/evidence pointers/PRD/ROADMAP synchronized. No source/tooling/original scripts/manifests/binary assets/env/dependency/business-data changes; no browser/API/discovery/capture/integration or application test performed.
+- **Next agent presents first and waits. Gate 3 OPEN; no Gate 4 GO.** Handover checks: 58 initial passes plus required-reference recheck PASS (known missing credential prerequisite explicitly excluded); 59 conditions satisfied, 72 original binary assets unchanged. No discovery/live access or application QA. Details in the Gate 3 ledger.
+
