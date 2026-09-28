@@ -1,6 +1,8 @@
 # CR-390 — Impact Analysis
 ## Screen Reference PDFs for ALL Modules — committed, repeatable pipeline
 
+> **CURRENT AMENDMENT — 2026-09-28:** Step 1 analysis complete; **OD-390-16…22 LOCKED FOR PLANNING**. Owner selected Palm House Normal, Kunafa Mahal Aggregator, and Palm House Premium for switching/comparison only; no Party setup. See `CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` §7. Code reality PARTIAL; recovery risk CRITICAL. **Await separate Step 2 instruction; Gate 3 NOT STARTED, no new Gate 4 GO.** Original pipeline design below is historical, not capture authorization. No source/original assets changed; no external asset acceptance implied.
+
 **Gate:** 2 — Impact Analysis
 **Date:** 2026-09-27
 **Planning agent:** PLANNING role (v0.7)

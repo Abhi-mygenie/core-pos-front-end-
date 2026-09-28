@@ -7,6 +7,16 @@
 **Risk:** LOW
 **Based on:** `impact/CR-390_IMPACT_ANALYSIS.md`
 
+## Documentation-only amendment — OD-390-15 (2026-09-28)
+
+Owner selected **(a) video-first with an optional annotated reference PDF**, then instructed: "a update docs and decsion do not start step 1".
+
+For the MM FAQ video pack, source PNGs show the application UI without added explanatory paragraphs, functionality lists or narration boxes. Keep those explanations in separate scripts/mappings/storyboards. Videos consume the PNGs, not PDF pages; the annotated PDF remains an optional reference companion. Existing video subtitles, highlights/zoom, voiceover and intro/outro are unchanged. The original nine-module PDF scope and frozen reference layout are not cancelled or redesigned.
+
+**Step 1 NOT STARTED.** This note records the delivery decision only; it is not the Gate 2 impact-analysis amendment, Gate 3 repair plan, or Gate 4 GO. No capture, code, preprod data or generated artifact changes are authorized. The original foundation plan below remains historical; the forthcoming coverage review must precede the repair plan. External validation of all 70 FAQs remains required before storyboard/video generation.
+
+Current delivery decision and execution hold: `design_briefs/MM_FAQ_VIDEO_PIPELINE_PLAN.md` and `handover/SESSION_HANDOVER_2026_06_CR390_MM_RECAPTURE_AND_VIDEO_PIPELINE.md`.
+
 ---
 
 ## Scope Lock

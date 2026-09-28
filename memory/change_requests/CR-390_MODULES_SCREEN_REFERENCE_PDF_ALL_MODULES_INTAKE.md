@@ -1,5 +1,9 @@
 # CR-390 — Screen Reference PDFs for ALL modules (repeat the PMS "dummy-data screenshots → PDF" exercise, reusable pipeline) — INTAKE 2026-09-26
 
+**Next-agent request (2026-09-28):** read `../handover/SESSION_HANDOVER_2026_09_28_CR390_PRESENT_PLAN_AWAIT_STEP2.md`; present the full agreed sequence, Step 1 work and accepted decisions, then ask for Step 2 / Gate 3 ONLY and wait. Do not write the detailed repair plan before that approval.
+
+> **CURRENT 2026-09-28 — decisions recorded:** Owner: “All recommended but use normal menu from palm house and aggregator menu from kunafa while switching menu u can use premium from palm house”. **OD-390-16…22 LOCKED FOR PLANNING**, details in `../impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` §7. Standard = Palm House Normal; aggregator = Kunafa Mahal Aggregator; switching/comparison = Palm House Premium alongside Normal; **no Party setup**. Safe disposable records, corrected narration, actual aggregator semantics, supported claims, enough screenshots and privacy recommendations accepted. Exact data/actions remain later-plan details, not mutation approval. **Await separate Step 2 instruction; Gate 3 NOT STARTED; no new Gate 4 GO.** No code/script/capture/data/video changes. OD-15/nine-module scope and unaccepted evidence baseline unchanged; prior holds are historical.
+
 **Source:** OWNER-REPORTED (2026-09-26: "we did one exercise for PMS module to generate screenshots with dummy data but actual logic and create a PDF … we want to do similar work for all modules so need to brainstorm on it so we can plan for all modules") · owner instruction: "choose intake, register this CR under new sprint Modules_pdf".
 **Sprint:** `modules_pdf` (NEW, created by this intake) · **Gate:** 1 (INTAKE) · **Mode:** BRAINSTORM FIRST — Gate 2 must not start until OD-390-01…07 are locked.
 **Related:** PMS Screen Reference PDF v1.0 (2026-09-05, 13 screens) + v2.0 (2026-09-16, 36 screens) — see `handover/SESSION_HANDOVER_2026_09_06_PMS_TRACK.md` §2 · `control/PUBLIC_ROUTES.md` (PDF served from `public/`) · `design_briefs/README.md` (PMS carve-outs in `public/`) · CR-372 / CR-372-A (public surface security — governs what may live in `public/`).
@@ -141,6 +145,16 @@ Not named by owner → **excluded unless owner adds them** (OD-390-09): Order En
 | OD-390-06 | **Output location & public surface** | keep PDFs in `frontend/public/` (served, as PMS today) vs `memory/design_briefs/downloads/` (repo-only) | **`memory/design_briefs/downloads/screen_reference/`** — `PUBLIC_ROUTES.md` (CR-372) already marks the PMS PDF/HTML in `public/` as temporary carve-outs to be moved to `design_briefs/`; also move existing PMS PDFs out of `public/` during M6 regen | **LOCKED 2026-09-27 — (b) `memory/design_briefs/downloads/screen_reference/<module>/`; existing PMS PDFs moved out of `public/` during M6 regen (closes CR-372 carve-out)** |
 | OD-390-07 | **Sequencing / pilot** | which module first | re-based on owner modules: pilot **EM Expenses Management** (smallest) → MM Menu → IM Inventory → DC Day Closure & Settlement → DR Daily Report → IN-Basic → IN-Advanced → PMS redo | **LOCKED 2026-09-27 — owner-defined order: MM Menu Management → EM Expenses → IM Inventory → DC Day Closure & Settlement → CM Credit Management → DR Daily Report → IN-Basic → IN-Advanced → PMS (redo, last)** |
 | OD-390-08 | **Template ownership** | reuse PMS v2.0 visual template as the standard for all modules (cover, badge, eyebrow, footer) | YES, parameterise module name/colour accent only | **DEFERRED 2026-09-26 (owner: "later")** — PMS v2.0 template = interim default for pilot |
+
+### OD-390-15 — MM FAQ video preparation amendment (LOCKED 2026-09-28)
+
+| ID | Decision | Owner choice | Authorization boundary |
+|---|---|---|---|
+| OD-390-15 | Video-first assets and reference-PDF role | **(a)** Clean application screenshots for videos; explanations, narration and mappings kept separately; annotated PDF retained as an **optional reference**, not a video-frame source or mandatory preparation deliverable | **Documentation update only. Step 1 NOT STARTED.** No new planning execution, captures, code changes, preprod mutations or PDF/ZIP/video generation |
+
+Owner instruction (verbatim): "a update docs and decsion do not start step 1".
+
+This amends the MM FAQ video pack's packaging requirements, not the original nine-module PDF scope or frozen PDF layout. Existing video subtitles, highlights/zoom, voiceover and intro/outro choices remain unchanged. Keep all-70-FAQ external validation as a hard gate before storyboard/video generation. Record this decision in the pipeline plan and current handover; await separate owner instruction before the Step 1 coverage/impact-analysis amendment. No Gate 4 GO is granted by this decision.
 
 Each locked decision → recorded here + `SPRINT_STATUS.md` Owner Decision Log. After all locked → PLANNING Gate 2 (Impact Analysis = pipeline design + per-module screen manifests).
 

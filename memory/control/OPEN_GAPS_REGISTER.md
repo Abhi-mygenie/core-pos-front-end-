@@ -1,5 +1,13 @@
 # Layer 9 — Open Gaps Register
 
+## 2026-09-28 — CR-390 MM recovery / Gate 2 assessment (OPEN)
+
+| ID | Priority | Status | Gap | Owner / Next |
+|---|---|---|---|---|
+| OG-CR390-001 | P0 recovery safety | OPEN | Fail-open runner/ambiguous selectors/immediate import remain unsafe. General disposable-data policy accepted, but exact actions/records/cleanup and mutation permission not approved. | OD-390-16…22 LOCKED FOR PLANNING. Await separate Step 2 instruction, then Gate 3 / Gate 4. Do not run capture manifest. |
+| OG-CR390-002 | P1 coverage | OPEN | Baseline 70 FAQs / 237 groups: 34 blocked, 36 partial; 50 PNGs / 42 distinct hashes not accepted. Party setup excluded by OD-17; replacement Normal/Premium evidence still pending. Main Brand variations empty; other brands unverified. | Approved sources: Palm House Normal/Premium switching; Kunafa Mahal Aggregator. See assessment §7. No external acceptance; Gate 3 NOT STARTED. |
+| OG-CR390-003 | P1 content / privacy | OPEN | Correct narration and private truthful evidence policy accepted; existing inaccurate scripts and sensitive dashboard captures remain unrepaired. Product gaps require separate intake. | OD-390-18…22 LOCKED FOR PLANNING. No original script rewrite, recapture or public export yet. |
+
 **Status:** POPULATED
 **Last Updated:** 2026-09-25 (Wave A QA: OG-INV-001 filed — BUG-456 MINOR `Number(ing.displayQty)` NaN risk; OG-INV-002 filed — BUG-457 addon runtime coverage gap). Prior: 2026-09-24 (CR-385 P5 closure §5.7: OG-PMS-022 re-observed in the 2026-09-24 probe pack, unchanged; OG-PMS-027 / BQ-385-19 re-confirmed (LR `charge.nights_detail` on gate4 §4 + n11); OG-PMS-042 kept OPEN (P5 drove no legacy Departures drawer — it.34 had no departure rows); OG-PMS-048 stays OPEN → FU-385-D (owner sentence verbatim); OG-PMS-049 stays TRIAGED. Info: 24 pre-existing `react-hooks/exhaustive-deps` build warnings in 12 non-CR-385 files (FINAL_GUARDS G6) — outside CR-385, no P5 gap. Report `test_reports/QA_REPORT_2026_09_24_CR385_P5_ROLE4.md`.)
 

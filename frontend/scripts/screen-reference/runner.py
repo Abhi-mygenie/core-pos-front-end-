@@ -54,9 +54,30 @@ def swap_restaurant_name(page, real_name, fictional_name):
 
 
 def scrub_toasts(page):
-    """CR-390: remove transient error/success toasts (slow preprod API) before capture."""
+    """CR-390: remove transient error/success toasts AND inject persistent CSS so any
+    late-arriving toast (API timeout firing after scrub) is also invisible at screenshot time."""
     page.evaluate("""() => {
-        document.querySelectorAll('li[role="status"], [data-sonner-toast], [data-radix-toast-viewport] li').forEach(el => el.remove());
+        // 1. Remove any already-present toast nodes
+        document.querySelectorAll(
+            'li[role="status"], [data-sonner-toast], [data-radix-toast-viewport] li, ' +
+            '[data-sonner-toast-theme], ol[data-sonner-toaster], ' +
+            '[role="region"][aria-label*="toast" i], [role="region"][aria-label*="notification" i]'
+        ).forEach(el => el.remove());
+        // 2. Inject a persistent hide rule so late-arriving toasts (API timeout after scrub) stay invisible
+        if (!document.getElementById('_cr390_toast_hide')) {
+            const s = document.createElement('style');
+            s.id = '_cr390_toast_hide';
+            s.textContent = [
+                'li[role="status"]',
+                '[data-sonner-toast]',
+                '[data-radix-toast-viewport] li',
+                '[data-sonner-toast-theme]',
+                'ol[data-sonner-toaster]',
+                '[role="region"][aria-label*="toast" i]',
+                '[role="region"][aria-label*="notification" i]',
+            ].join(', ') + ' { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
+            document.head.appendChild(s);
+        }
     }""")
 
 

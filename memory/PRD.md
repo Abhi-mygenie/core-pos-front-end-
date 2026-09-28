@@ -1,5 +1,10 @@
 # MyGenie Core POS Frontend — Deployment PRD
 
+> **Current session (2026-09-28):** CR-390 Step 1 analysis complete; OD-390-16…22 LOCKED FOR PLANNING. Palm House Normal for standard MM, Kunafa Mahal Aggregator for aggregator MM, Palm House Premium only for switching/comparison; no Party setup. Await separate Step 2 instruction; Gate 3 NOT STARTED. Assessment: `impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` (70 FAQs / 237 scene groups; 34 blocked as written, 36 partial; no asset acceptance). No source/capture/script/business-data changes. Historical branch/URL entries below are not current; preview comes only from protected `REACT_APP_BACKEND_URL`.
+> **Original goal:** import the existing React POS frontend as-is into `/app`, preserve platform files and `.env` during re-sync, and run under supervisor. Current documentation extension is controlled repair of MM tutorial evidence, not an app rebuild.
+> **History and priorities:** recent dated entries moved verbatim to `CHANGELOG.md`; current P0/P1/P2 and next actions in `ROADMAP.md`. Earlier project history below remains intact.
+> **Next-agent request:** `handover/SESSION_HANDOVER_2026_09_28_CR390_PRESENT_PLAN_AWAIT_STEP2.md` — present the complete agreed sequence and Step 1 results, then ask for Step 2 ONLY and wait. No Gate 3 start or implementation authorized by creating this handover.
+
 ## Source
 - Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
 - Branch: 16sep (latest)
@@ -687,35 +692,3 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - 2026-09-25 CR-376 Gate 3 FINAL: mockup `#findings` section highlights OD-376-07/08/09/10 visually; intake gained Gate 4 Preconditions P1–P5; owner-review handover `handover/SESSION_HANDOVER_2026_09_25_CR376_GATE3_FINAL_OWNER_REVIEW.md` for next agent (present plan, collect decisions/blockers, then await "CR-376 Gate 4 GO"). Zero code.
 - 2026-09-25 CR-376 session CLOSED at Gate 3. Multi-menu Q answered (N menus → N pills in Local Settings; Order Entry = one chip, no tabs). Pill-sort note added to plan E3b. Handover §8. Zero code.
 
-## 2026-09-25 — PLANNING Gate 2 COMPLETE: CR-376-FU-B (CategoryPanel hide-empty + counts + default All + Popular scoping)
-- Blocker (count by `categoryId` vs `categoryIds`) validated against code + evidence: grid L561 uses `categoryId` only; every probed product has `category_ids` = 1 entry = `category_id`. RESOLVED → count by `categoryId`. Owner "Gate 2 GO".
-- Written `impact/CR-376-FU-B_IMPACT_ANALYSIS.md`: 4 gaps, rules B1–B5 locked, 2 files (`CategoryPanel.jsx` ~15 lines · `OrderEntry.jsx` L102/L556/L1670 ~4 additive lines, R5 hotspot → no Fast Lane), conflict CLEAR, 0 open ODs. Registry → GATE_2_IMPACT_COMPLETE (2/7), sprint `sep_bug_closure`. Zero code.
-- Handover `handover/SESSION_HANDOVER_2026_09_25_CR376_FU_B_GATE2_COMPLETE.md` — next agent: recap last 2 sessions → walk owner through Impact Analysis → ask "Gate 3 GO".
-- Still blocked on credentials: CR-376 Gate 5b remaining cases + CR-376-FU-A QA need `QA_OWNER` / `cafe103`; BUG-459/CR-387 need `QA_INV` or "Gate 4 GO".
-
-## 2026-09-26 — CR-376-FU-B lifecycle (Gate 3 → 5b) in one session
-- Branch in use: `21implement` (synced 2026-09-25 at 2a2a2383; remote now 0b4d3a69 — only CR-389 intake doc pulled, owner choice)
-- PLANNING: `plans/CR-376-FU-B_IMPLEMENTATION_PLAN.md`
-- IMPLEMENTATION (owner Gate 4 GO): `CategoryPanel.jsx` E1-E3, `OrderEntry.jsx` E4-E6, new `__tests__/CategoryPanel.cr376fub.test.jsx` (6/6)
-- QA Gate 5b PASS 13/13 via browser automation with QA_HYATT: `test_reports/CR-376-FU-B_QA_REPORT_2026_09_26.md`
-- Credentials restored to gitignored `memory/test_credentials.md` (QA_HYATT verified; cafe103/QA_INV same pwd; QA_OWNER email unknown)
-- Next: Gate 6 Owner Smoke (CR-376-FU-B) · QA GO for CR-376-FU-A and CR-376 remaining cases · Gate 4 GO pending for CR-388, BUG-459, CR-387
-
-## 2026-09-26 — QA Gate 5b PASS: CR-376 (+ CR-376-FU-A, + CR-376-FU-B V10)
-- Role: QA (ALPHA v0.7 Role 4), frontend automation via testing_agent. Owner GO scope 1c; accounts cafe103 / QA_OWNER / QA_HYATT (all HTTP 200). No code modified; no orders placed/settled.
-- Result: 9/9 executed browser cases PASS, 0 blockers. cafe103 zero-change (no selector, no chip); QA_OWNER Normal↔Premium switch (chip 'Premium Menu' on/off + category set changes = FU-B V10 re-confirmed); QA_HYATT 10 pills + empty-state; search+add-to-cart regression (no submit).
-- CR-376-FU-A: T4 first-time-customer PASS (sections hidden). T1/T2/T3 CODE-VERIFIED only (filter CustomerModal.jsx L240-249 scoped to activeMenuProducts) — no live cross-menu returning customer sourceable from frontend. NOTE, no defect.
-- Registry advanced: CR-376 → GATE_5B_QA_PASS · CR-376-FU-A → GATE_5B_QA_PASS · CR-376-FU-B already GATE_5B_QA_PASS. Registry SYNCED.
-- Report: `test_reports/CR-376_QA_REPORT_2026_09_26.md` (raw `/app/test_reports/iteration_2.json`).
-- Data drift: QA_OWNER Normal menu now 7 items (was 117); Premium unchanged; switch behaviour unaffected (count-agnostic assertions per owner).
-- Next: Gate 6 Owner Smoke for CR-376 + FU-A + FU-B (SMOKE FACILITATOR). Suggest smoking Normal↔Premium on preprod + a TakeAway/Walk-in order (R13) + FU-A live cross-menu customer if available.
-
-## 2026-09-27 — IMPLEMENTATION Gate 5A: CR-389 Registry Excel Export
-- Role: IMPLEMENTATION (ALPHA v0.7 Role 3). Owner "Gate 4 GO". Entry verification PASS (registry GATE_3_PLAN_COMPLETE, 731 items).
-- NEW `memory/reports/registry_export.py` (marker `# CR-389`) + first output `memory/reports/REGISTRY_EXPORT_2026_09_27.xlsx` — All Items 731 · Open Only 427 · Summary pivots. Zero `frontend/` / `backend/` change. `openpyxl` installed (local tooling only).
-- Owner-approved amendments to plan E-1: (A-1) notes rsplit bug fix; (A-2) gate-based `norm_status()` for 66 legacy statuses ("status will be as per gate"). Only 7 INVESTIGATION items remain generic OPEN.
-- Self-test V-1..V-10 10/10 PASS. EXIT GATE 5/5. Registry: CR-389 → IMPLEMENTED — GATE_5A. CR_REGISTRY / FILE_OWNERSHIP / CONTROL_DASHBOARD updated.
-- Docs: `handover/QA_HANDOVER_CR389_2026_09_27.md` · `handover/SESSION_HANDOVER_2026_09_27_CR389_IMPL.md`.
-- Weekly recurring (plan §8): `python3 /app/memory/reports/registry_export.py` — no gate cycle needed.
-- Next: QA agent for CR-389 · Gate 6 owner smoke CR-376 family · CR-390 ODs · BUG-465 prod build re-check.
-- Tooling (owner-approved "a"): NEW `frontend/eslint.config.js` (ESLint 9 flat config) — unblocks platform completion lint; `npx eslint src` exit 0. Lint surfaced 5 latent pre-existing code findings (L-1..L-5 in session handover, incl. `orderTransform.js:1397` duplicate `self_discount` key — R5/R6) → NOT fixed, candidates for INTAKE.

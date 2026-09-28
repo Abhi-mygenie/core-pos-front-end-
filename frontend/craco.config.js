@@ -139,6 +139,8 @@ webpackConfig.devServer = (devServerConfig) => {
   // webpack-dev-server 4.15+ removed these deprecated options that react-scripts 5.0.1 injects
   delete devServerConfig.onBeforeSetupMiddleware;
   delete devServerConfig.onAfterSetupMiddleware;
+  // 'https' is not a valid top-level option in webpack-dev-server 4.x (moved to 'server')
+  delete devServerConfig.https;
 
   // Add health check endpoints if enabled
   if (config.enableHealthCheck && setupHealthEndpoints && healthPluginInstance) {
