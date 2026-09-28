@@ -48,7 +48,13 @@ Registry comparison baseline: remove only item `CR-390`, serialize remaining reg
 - Proposed edits and verification matrix are future work, not executed test cases. Gate 3 remains OPEN for owner review/decisions. No Gate 4 GO inferred.
 - New owner-detail questions OD-390-23/24/25 do not reopen locked OD-390-16…22. Data/action bindings and additional evidence remain unapproved. No estimate, screenshot count or video delivery date certified.
 
-## Documentation verification
+## Follow-up — owner 1a/2a; decision 3 walkthrough requested
+
+Owner verbatim: **“1 a 2 a 3 take me through”**. Recorded OD-390-23/24 as LOCKED FOR PLANNING; category-order writes denied, FAQ-10 gesture cancelled without saved-result claim; truthful adaptations accepted for FAQ-02/22/63 and other agreed constrained claims, all 70 IDs retained. OD-390-25 OPEN: explain data options, no choice/login/discovery/access or business-write authorization.
+
+Updated plan/annex/current handover, current decision/status pointers, PRD/ROADMAP/CHANGELOG and CR-390 registry metadata only. Follow-up reconciliation checked 36 conditions: 34 passed initially, two exact-text pointer assertions flagged ROADMAP/assessment status wording. Standardized those two notices and their targeted recheck passed 2/2. The other 34 included protected source/tooling/env/original scripts/assets hashes, unchanged parent/unrelated registry records, all 70 IDs, accepted decisions, denied category-order write and future V23 restriction. No application QA, captures or live requests; no new integration. Gate 3 remains OPEN, no Gate 4 GO.
+
+## Initial Step 2 documentation verification (before the follow-up decisions)
 
 **Final read-only reconciliation: 50/50 PASS** (same session, after status synchronization).
 

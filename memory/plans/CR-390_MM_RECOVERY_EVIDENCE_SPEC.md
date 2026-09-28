@@ -1,7 +1,7 @@
 # CR-390 — Step 2 evidence, data and content specification
 
 **Date:** 2026-09-28 (workspace UTC). **Role:** PLANNING, Gate 3 ONLY.
-**Status:** PROPOSED / OWNER REVIEW. Not a runnable manifest, corrected script, storyboard or capture approval.
+**Status:** PROPOSED / OWNER REVIEW. Owner “1 a 2 a 3 take me through”: **OD-390-23/24 LOCKED FOR PLANNING** (gesture-only category reorder; truthful FAQ adaptations). **OD-390-25 OPEN**, walkthrough only, no option/access approved. Gate 3 OPEN; no Gate 4 GO. Not a runnable manifest, corrected script, storyboard or capture approval.
 **Parent plan:** `CR-390_IMPLEMENTATION_PLAN.md`, current Step 2 amendment.
 **Baseline:** `../impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` — 70 FAQs / 237 original scene groups, 34 blocked as written/mapped and 36 partial. No reclassification or external acceptance here.
 
@@ -46,7 +46,7 @@ These are **current frontend call shapes**, not independently certified backend 
 | W-CREATE-CAT | Add / Enter in category form | POST `P1/add-categories`, multipart name/station/printer/order | Name unique; category restaurant-wide. Returned or uniquely reconciled ID, GET categories; cleanup only after verifying no foods in any menu. |
 | W-EDIT-CAT | Save / Enter in category editor | POST `P1/update-categories/{id}`, name/image/type/station/printer/order | Compare complete outgoing payload to baseline, allow only approved changes on CAT-A/B; same endpoint can restore snapshot fields, then GET categories. |
 | W-DELETE-CAT | Yes in delete strip | DELETE `P2/delete-categories/{id}` | Zero attachments across all menus, disposable ID only; confirm absence. No restoration claim for deletion. |
-| W-REORDER-CAT | Category drag release | POST `P2/quick-reorder`, `{type: category, items:[{id,position}]}` | **All categories submitted**, including off-search/operational rows. Default HOLD under OD-390-16. Requires separately accepted whole-vector scope and original vector restore, or do not release the drag. |
+| W-REORDER-CAT (DENIED) | Category drag release — forbidden under OD-390-23 | POST `P2/quick-reorder`, `{type: category, items:[{id,position}]}` | **All categories submitted**. Owner chose gesture-only explanation (1a); no release/save or category-order request allowed. Cancel the gesture, verify original order; no saved-result claim. Any future reversal of this policy requires renewed owner scope review, not an ordinary per-record permit. |
 | W-CREATE-FOOD | Add Product | POST `P2/add-food`, multipart `food_info` + optional image | N only; exact approved full initial payload. Fresh GET foods-list Normal → unique ID. Cleanup uses approved disposable delete reason, not blind retry. |
 | W-EDIT-FOOD | Quick Edit / Full Edit Save | POST `P2/foods/{id}`, Normal multipart `food_info`; A flat multipart | Full form serialization can write unedited fields/defaults; compare all fields, not only visually edited one. Reopen/fetch and compare all persisted values. Restore only from captured original fields; image-removal contract unknown. |
 | W-STATUS-FOOD | Card Power immediately / Bulk status after edit request | POST `P2/status-food/{id}`; N `{status}`, A `{food_for: Aggregator}` | N explicit value can be restored. A is toggle-like: never retry blindly; use read-back and separate approved action. A status changes not substituted for timed stock. |
@@ -82,7 +82,7 @@ Sources: `menuManagementService.js:31–219`, `aggregatorConfigService.js:148–
 | FAQ-07 | 108 | N; S02 | category-before → rename-draft → saved-name. Save or Enter both write; no unproved POS-wide immediacy. | D/W-EDIT-CAT; CAT-A |
 | FAQ-08 | 122 | N; S02 | empty-category → delete-strip → removed-category. Remove blanket nonempty-deletion refusal claim; don't test refusal on operational category. | W-DELETE-CAT; dedicated empty category |
 | FAQ-09 | 139 | N; S02 | current-station → mapped-printer-draft → saved-mapping. Show actual existing mapping; do not promise physical print from form evidence. | H/W-EDIT-CAT; mapped example needed |
-| FAQ-10 | 156 | N; S02 | order-before → lifted-category → order-after-reload. Whole-category vector requires separate decision; without it, only an owner-approved gesture explanation, no persisted-result claim. | H; OD-390-23 |
+| FAQ-10 | 156 | N; S02 | order-before → lifted-category → gesture-cancelled-original-order. Owner 1a accepts gesture-only explanation. No drag release, save/request, order-after-save screen or persisted-result claim. Cancellation itself must be safety-verified before a later approved capture. | D; OD-390-23 LOCKED FOR PLANNING; no capture GO |
 | FAQ-11 | 174 | N; S01/S03 | search-empty → typed-demo-name → matching-card → cleared-search. Use actual edit icon, not generic card click. | R; uniquely bound demo search |
 | FAQ-12 | 188 | N; S03 | filters → inactive-items → reactivated-item → all-reset. Reactivation is immediate API write, not a filter action. | R/W-STATUS-FOOD; FOOD-A |
 | FAQ-13 | 202 | N; S03 | filters → nonveg → inactive-nonveg → cleared-filters. Show both dimensions and matching IDs, not just one chip. | R; suitable approved records |
@@ -94,7 +94,7 @@ Sources: `menuManagementService.js:31–219`, `aggregatorConfigService.js:148–
 | FAQ-19 | 303 | N; S03 | old-category → existing-target-selection → saved-new-category. Remove nonworking '+' creation branch. | D/W-EDIT-FOOD; CAT-A/B |
 | FAQ-20 | 317 | N; S03 | complementary-no → complementary-yes → saved-flag. Explain configuration only; avoid automatic zero-bill claim absent confirmed rule. | D/W-EDIT-FOOD; billing remains unverified |
 | FAQ-21 | 335 | N; S04 | image-before → selected-file-preview → saved-reopened-image. Owner-approved photo only; don't infer guest publication. | D/W-EDIT-FOOD; IMAGE-A |
-| FAQ-22 | 352 | N; S04 | existing-preview → cleared-preview. **Persisted photo removal is unverified**; proposed question clarifies preview clearing vs saved-image removal. If original removal promise retained, HOLD for backend contract/evidence. | D/H; OD-390-24 |
+| FAQ-22 | 352 | N; S04 | existing-preview → cleared-preview. Owner 2a accepts explaining preview clearing, NOT promising persisted photo deletion. Original persisted-removal claim is outside this approved adaptation; no Save or backend-removal demonstration implied. | D; OD-390-24 LOCKED FOR PLANNING; no capture GO |
 | FAQ-23 | 366 | N; S04 | description-before → description-draft → saved-description. Guest visibility is conditional on confirmed product behavior; no invented guest screen. | D/W-EDIT-FOOD/H for downstream claim |
 | FAQ-24 | 384 | N; S04 | pricing-expanded → tax-type-rate → saved-tax. Omit Full Edit Tax Calc; explain Aggregator GST-5 lock separately. | D/W-EDIT-FOOD |
 | FAQ-25 | 401 | N; S03 | quick-edit-tax-calc → exclusive-context → inclusive-context. Explain arithmetic separately from screenshots; no Full Edit control or verified invoice claim. | D; approved illustrative values, no save necessary |
@@ -135,7 +135,7 @@ Sources: `menuManagementService.js:31–219`, `aggregatorConfigService.js:148–
 | FAQ-60 | 972 | N; S08 | demo-category-filter → exact-visible-IDs → exact-selected-IDs → delete-result. Filter first, clear old selection, assert every ID, never All Categories. | W-BULK-DELETE; CAT-B and only demo rows |
 | FAQ-61 | 990 | A; S09 | brand-item → live-pill → urbanpiper-popover → approved-disabled-result. Remove platform-chip click and 4h preset. | D/W-AGG-ITEM/H pending exposure permit |
 | FAQ-62 | 1007 | A; S09 | urbanpiper-popover → 30m-selected → saved-schedule → actual-return only with later real evidence. Schedule acceptance does not prove timed restoration. | W-AGG-ITEM/H; no accelerated clock substitute |
-| FAQ-63 | 1021 | A; S09 | listing-flags → zomato-off-draft → saved-listing. Adapt to Zomato listing flag versus UrbanPiper timed stock; don't assert Normal unchanged across different restaurants. | D/W-EDIT-FOOD; explicit adaptation review |
+| FAQ-63 | 1021 | A; S09 | listing-flags → zomato-off-draft → saved-listing. Owner 2a accepts Zomato listing flag versus UrbanPiper timed stock adaptation; don't assert Normal unchanged across different restaurants. A saved-listing state still needs later explicit write/evidence approval. | D/W-EDIT-FOOD; adaptation LOCKED FOR PLANNING, no write GO |
 | FAQ-64 | 1039 | A; S04/S09 | same-image-mode → different-mode → approved-image-preview → saved-reopened-image. Default depends on existing photo; no platform publication promise. | D/W-EDIT-FOOD; IMAGE-B and exposure permit |
 | FAQ-65 | 1056 | A; S09 | platform-sync → one-flag-off → persisted-flags. Other flag unchanged in read-back; no timed-stock equivalence. | D/W-EDIT-FOOD |
 | FAQ-66 | 1070 | A; S09 | aggregator-edit-context → saved-catalog-fields → separately-confirmed-sync-rule. Explain only supported sync behavior; no automatic push success/timing claim. | R/H; no sync-catalog action |

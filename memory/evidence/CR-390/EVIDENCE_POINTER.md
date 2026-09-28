@@ -7,7 +7,7 @@
 - Current planning ledger: `memory/evidence/CR-390/GATE3_2026_09_28/PLANNING_EVIDENCE.md`; Step 1 source: `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`; historical ledger: `memory/evidence/CR-390/GATE2_2026_09_28/READ_ONLY_EVIDENCE.md`.
 - Original images: `memory/evidence/CR-390/MM/` (50 PNGs / 42 distinct hashes, not accepted). 70 FAQ baseline remains 34 blocked/36 partial; proposed correction chains do not reclassify it.
 - Locked sources: Palm House Normal; Kunafa Mahal Aggregator; Palm House Premium for switching/comparison only. No Party setup.
-- **Gate 3 OPEN / OWNER REVIEW; OD-390-23/24/25 OPEN; no Gate 4 GO.** No code, original narration/mapping/manifest/PNG/env, live/data or generated deliverable changes. Existing MM tooling remains unmodified/unsafe to rerun; old PMS missing-generator inventory below is historical.
+- **Gate 3 OPEN / OWNER REVIEW; OD-390-23/24 LOCKED FOR PLANNING (owner 1a/2a); OD-390-25 OPEN (walkthrough only, no access); no Gate 4 GO.** No code, original narration/mapping/manifest/PNG/env, live/data or generated deliverable changes. Existing MM tooling remains unmodified/unsafe to rerun; old PMS missing-generator inventory below is historical.
 
 ## Historical PMS intake inventory (preserved)
 

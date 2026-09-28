@@ -35,13 +35,15 @@
 
 OD-390-15 video-first clean PNGs / separate text / optional reference PDF. OD-390-16…22 remain LOCKED FOR PLANNING: disposable approved records; Palm House **Normal**, Kunafa Mahal **Aggregator**, Palm House **Premium for switching/comparison only**, **no Party setup**; accurate app/control/aggregator semantics; qualify unproven downstream claims; sufficient action evidence, not 50-image cap; private truthful evidence. All 70 IDs retained. Nine original PDF modules/frozen layout unchanged.
 
-## Owner decisions to present next (Gate 3, not Gate 4)
+## Latest owner response / remaining walkthrough (Gate 3, not Gate 4)
 
-- **OD-390-23 — category reorder:** keep whole-list writes blocked and use owner-supplied genuine evidence or approved gesture-only explanation; a full-vector change/restore requires a separate exact scope exception. No such exception granted.
-- **OD-390-24 — exact FAQ adaptations:** review FAQ-22 preview vs persisted-image-removal limitation, FAQ-02 read-only Normal/Premium comparison, FAQ-63 actual listing controls, and handling of unavailable result evidence. Keep incomplete required evidence BLOCKED until truthful scope is accepted.
-- **OD-390-25 — data readiness:** owner prepares/nominates exact demo records/brand/options and safe photo/printer/recipe examples, or separately authorizes guarded read-only discovery. No seeding, data mutation or stock action permitted yet.
+Owner verbatim: **“1 a 2 a 3 take me through”**.
 
-Do not treat these as reopening the seven accepted general directions. Present the recommendations in plain language; record choices only when answered. After owner reviews/closes Gate 3, ask for a separate scoped Gate 4 GO. Tooling-only GO is not capture/data-write GO.
+- **OD-390-23 LOCKED FOR PLANNING (1a):** category reorder is gesture-only, cancelled without saving; no category-order write and no persisted-result claim. Do not offer a whole-list maintenance exception under this accepted plan.
+- **OD-390-24 LOCKED FOR PLANNING (2a):** accept the proposed truthful FAQ adaptations (preview clearing without saved-photo deletion promise, read-only Normal/Premium comparison, listing flags vs timed stock). Keep 70 IDs and missing essential evidence BLOCKED; original narration is not rewritten in this decision update.
+- **OD-390-25 OPEN:** “take me through” asks for an explanation, not a choice. Walk through owner-prepared records vs read-only discovery, the exact example types and the later record/action/cleanup approval step. Neither option nor live access is authorized.
+
+Recommended explanation: a separately authorized read-only pass could identify existing examples first, then give the owner a small readiness table and request only missing safe examples. Existing operational records are observation-only unless separately approved for a specific action; no blanket write permission follows from calling an item a demo. No login, discovery, creation, import, toggle, printing or order operation now. Do not re-ask OD-390-16…24. Gate 3 remains OPEN; owner review/closure precedes separate scoped Gate 4 GO.
 
 ## Verification and final stop
 

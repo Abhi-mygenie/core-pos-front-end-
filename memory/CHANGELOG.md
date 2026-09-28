@@ -89,3 +89,10 @@ These dated entries were moved verbatim from PRD.md on 2026-09-28 to keep that f
 - Ledger `evidence/CR-390/GATE3_2026_09_28/PLANNING_EVIDENCE.md`; handover `handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Frontend .env current hash preserved despite differing from historical Step 1; credentials file absent, no guesses/login.
 - Next: owner reviews open details and plan; separate scoped Gate 4 GO before implementation. All-70 external/owner acceptance still required before storyboard/translation/TTS/video; EM later.
 - Final documentation/preservation checks **50/50 PASS**; 72 original binary evidence/deliverable files unchanged from entry commit, all 70 FAQ anchors verified. Initial wrong-heading assertion corrected to compare actual preserved foundation suffix; final suite rerun green. No application QA/capture/live requests. See Gate 3 ledger for method and limits.
+
+
+## 2026-09-28 — CR-390 Gate 3 decisions 1a/2a; data walkthrough pending
+
+- Owner verbatim: “1 a 2 a 3 take me through”. OD-390-23/24 LOCKED FOR PLANNING: category reorder gesture-only/no saved-result claim; truthful FAQ adaptations accepted with all 70 IDs retained and missing evidence still BLOCKED.
+- OD-390-25 remains OPEN: explain owner-prepared data vs separately authorized read-only discovery. No option or login/discovery/data-write permission selected. Recommend inventorying existing examples first only if separately authorized, then ask for missing safe records individually.
+- Plan/annex/current handover and decision/status pointers synchronized. No source, original narration/manifest/assets, environment, live/capture/business-data change. Gate 3 OPEN, no Gate 4 GO.

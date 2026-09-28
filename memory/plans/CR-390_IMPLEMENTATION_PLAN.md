@@ -3,7 +3,7 @@
 ## CURRENT — Step 2 / Gate 3 MM recovery amendment (2026-09-28)
 
 **Role:** 2 — PLANNING. **Owner authorization:** “begin step 2”; preceding constraint: “choose planning role for step 2 , donot jump gates”.
-**Status:** PLAN DRAFT WRITTEN / OWNER REVIEW; **Gate 3 OPEN, NOT owner-closed. No Gate 4 GO.** Detailed decisions/bindings below remain pending. Writing a plan is not executing it.
+**Status:** PLAN DRAFT WRITTEN / OWNER REVIEW; **Gate 3 OPEN, NOT owner-closed. No Gate 4 GO.** Owner follow-up “1 a 2 a 3 take me through”: **OD-390-23/24 LOCKED FOR PLANNING**; **OD-390-25 OPEN**, explanation requested, no data/access option selected. Category reorder is gesture-only: no release/save, category-order API call or persisted-order claim under this plan. Any older conditional whole-vector permission language is superseded by this accepted restriction. Writing a plan is not executing it.
 **Sprint:** `modules_pdf`. **Risk:** CRITICAL. **Code Reality:** PARTIAL — existing runner/manifest/PDF tooling, scripts and 50 PNGs; recovery safety and accepted FAQ coverage not implemented. Plan only remaining work; do not rebuild the foundation.
 **Based on:** `../impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` (Step 1), including OD-390-15…22. Detailed companion: `CR-390_MM_RECOVERY_EVIDENCE_SPEC.md` (data/requests/all-70 evidence rows).
 **Baseline:** workspace HEAD `016efe1`; source, tooling, scripts, mapping and original PNG hashes match Step 1. Frontend .env has a different entry hash in this preview and is preserved as-is. See `../evidence/CR-390/GATE3_2026_09_28/PLANNING_EVIDENCE.md`.
@@ -140,7 +140,7 @@ If a structural recipe fails uniqueness in the live preflight, mark state BLOCKE
 | V20 | E4 | Expanded specific controls and correct item/route/menu; no dashboard/loader/empty substitute | Visual + request provenance |
 | V21 | E4 | Clean UI, native labels visible, no guest/account identifiers, no falsified fields or hidden errors | Independent privacy/visual review |
 | V22 | E2/E3 | Normal create/edit/status/links read back full permitted fields; unrelated sentinels unchanged; restore recorded | Scoped live W permits |
-| V23 | E2/E3 | Category reorder whole vector blocked unless separately approved; item vector exact demo IDs | Offline + scoped live only if approved |
+| V23 | E2/E3 | Category reorder request/release always blocked under OD-390-23; cancelled gesture leaves original order; item vector exact approved demo IDs | Offline; category gesture only in later scoped capture; item writes only if separately permitted |
 | V24 | E2/E3 | Delete/bulk delete permitted disposable IDs only; selected set exact, post-delete absent; no undo claim | Scoped live W permits |
 | V25 | E2/E3 | Bulk partial success handled per ID; Reset not portrayed as server rollback | Offline failure fixtures; live happy-path read-back |
 | V26 | E2/E3 | Export privacy contract and template schema checked; import only exact permitted file/rows, immediate request, read-back reconciled | X/W only after contract permission |
@@ -173,9 +173,13 @@ These checks seed implementation self-testing and independent QA; no QA agent ru
 
 | ID | Question / recommendation | Status |
 |---|---|---|
-| OD-390-23 | Category-reorder evidence touches the entire restaurant category vector. Recommended: keep live release blocked; supply genuine owner-approved before/after evidence or approve a truthful gesture-only FAQ adaptation. Alternative: explicitly approve a maintenance-window whole-vector change/restore after reviewing ALL affected IDs. No such exception assumed. | OPEN — Gate 3 review |
-| OD-390-24 | Accept truthful constrained versions for FAQ-22 (preview clearing is not persisted photo deletion), FAQ-02 (read-only N/P price comparison), FAQ-63 (listing flags, not Zomato-only timed stock), and unavailable result journeys? Recommended: keep 70 IDs, qualify to provable behavior, retain BLOCKED where essential evidence still missing. Do not mark these approved simply because their proposed text is in annex. | OPEN — exact adaptation review; general current-app direction remains accepted |
-| OD-390-25 | How will demo-data readiness be supplied? Recommended: owner nominates/prepares exact disposable record/brand IDs, licensed photos, mapped printer and recipe-enabled example, then permits a read-only binding check. Alternative: authorize a separately scoped read-only discovery first. No setup/business write until exact fields/actions/cleanup and Gate 4 scope are accepted. | OPEN — data/access source |
+| OD-390-23 | Owner **1a**: gesture-only category-reorder explanation, cancel without releasing/saving; no persisted-result claim. Category-order API writes are DENIED under this plan, not a maintenance-window exception. | LOCKED FOR PLANNING — owner “1 a 2 a 3 take me through” |
+| OD-390-24 | Owner **2a**: accepted the proposed truthful FAQ adaptations (read-only Normal/Premium comparison; preview clearing without promising saved-photo removal; listing flags distinct from timed stock). Retain all 70 IDs; missing essential evidence stays BLOCKED. Original narration/assets remain unchanged until separately approved repair execution. | LOCKED FOR PLANNING — owner “1 a 2 a 3 take me through” |
+| OD-390-25 | Owner asks **“3 take me through”**, not a choice or access approval. Explain owner-prepared data vs a separately authorized read-only inventory, what examples are needed, missing-data treatment and later item-by-item write/cleanup permission. Recommendation for this walkthrough: consider read-only discovery first to minimize owner preparation, then owner identifies/prepares only missing safe examples. | OPEN — walkthrough requested; neither option selected; NO live access |
+
+**Decision-3 walkthrough (explanation only):** the goal is real, safely usable tutorial examples, not testing on normal trading items. An explicitly authorized read-only inventory would list existing Palm House Normal items/categories/add-ons, existing Normal/Premium comparison pairs, and Kunafa brand/item/add-on/variation examples. It must separately distinguish an existing operational item (observe only) from an owner-confirmed disposable record (candidate for later permitted edits). It also checks whether an existing printer mapping/recipe-enabled add-on and owner-provided licensed photos are available. Nothing is created, edited, deleted, imported, reordered, toggled, printed or submitted to aggregators. No full-menu workbook download is included.
+
+The output would be a short readiness table: example, account/menu/brand/ID, FAQ use, existing-vs-missing, read-only-vs-potential-mutation, risk, and exact later proposed action/cleanup. Owner then reviews only the gaps and specific proposed records. If the owner already has a safe demo set, they may nominate it instead and skip broader discovery. A read-only option selected later is still not automatic live access or Gate 4: record the exact request/account scope and obtain explicit authorization before logging in. New demo data, bindings, mutation permits and cleanup remain later separately authorized work. No unavailable photo/recipe/variation or outcome is fabricated to make the pack green.
 
 **Gate 4 readiness checklist — not met:** owner reviews/closes Gate 3; accepted plan/annex revision; OD-23/24/25 resolved or explicit blocked subsets; scoped GO for tooling vs capture vs writes; valid secret access provision; required bootstrap/read requests source-confirmed; exact demo IDs/field baselines/allowed actions/cleanup; safe aggregator exposure and data/brand feasibility; permitted workbook/contract for import; privacy policy; approved G-journey revision. Tooling-only authorization may omit live prerequisites but cannot advance captures.
 
@@ -193,7 +197,7 @@ These checks seed implementation self-testing and independent QA; no QA agent ru
 
 Plan draft: **8 edit groups across 5 existing files + 2 new tooling/test files**, all proposed. Data/action inventory and all 70 correction/evidence chains in `CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. Verification matrix: **34 future checks** (offline, live-permitted and independent visual/external review). No source or original assets changed in this session.
 
-**Gate 3 remains OPEN for owner review and OD-390-23/24/25. Await owner decisions/plan approval, then a separate Gate 4 GO.** Do not execute the historical commands below.
+**Gate 3 remains OPEN for OD-390-25 walkthrough and owner plan review. OD-390-23/24 are LOCKED FOR PLANNING via 1a/2a; no category-order writes or persisted-order claim. No discovery/access permission inferred from “take me through”. Await owner review/closure, then a separate Gate 4 GO.** Do not execute the historical commands below.
 
 ---
 

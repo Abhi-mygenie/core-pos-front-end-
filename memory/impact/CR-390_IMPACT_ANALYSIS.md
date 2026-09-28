@@ -1,7 +1,7 @@
 # CR-390 — Impact Analysis
 ## Screen Reference PDFs for ALL Modules — committed, repeatable pipeline
 
-> **CURRENT AMENDMENT — later 2026-09-28:** Owner “begin step 2”; recovery Gate 3 draft in `../plans/CR-390_IMPLEMENTATION_PLAN.md` and all-70/data annex `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW; no Gate 4 GO.** Handover `../handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Step 1/OD-390-16…22 retained; OD-390-23/24/25 pending. Code reality PARTIAL/recovery risk CRITICAL. Source/original evidence unchanged; historical foundation below is not a command to rebuild or run captures.
+> **CURRENT AMENDMENT — later 2026-09-28:** Owner “begin step 2”; recovery Gate 3 draft in `../plans/CR-390_IMPLEMENTATION_PLAN.md` and all-70/data annex `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW; no Gate 4 GO.** Handover `../handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Step 1/OD-390-16…22 retained; OD-390-23/24 LOCKED FOR PLANNING via 1a/2a; OD-390-25 OPEN for walkthrough only, no data/access choice made. Code reality PARTIAL/recovery risk CRITICAL. Source/original evidence unchanged; historical foundation below is not a command to rebuild or run captures.
 
 **Gate:** 2 — Impact Analysis
 **Date:** 2026-09-27

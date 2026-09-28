@@ -1,6 +1,6 @@
 # Layer 6 — Sprint Status Board
 
-**CR-390 current Step 2 (2026-09-28):** Owner “begin step 2” authorized Planning only. **Gate 3 plan DRAFT WRITTEN / OWNER REVIEW; Gate 3 OPEN, no Gate 4 GO.** `plans/CR-390_IMPLEMENTATION_PLAN.md`, `plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`; current handover `handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. OD-390-23/24/25 OPEN. All accepted menu/video decisions retained; no code, source assets, capture, live or business-data changes. Parent milestone/sprint unchanged.
+**CR-390 current Step 2 (2026-09-28):** Owner “begin step 2” authorized Planning only. **Gate 3 plan DRAFT WRITTEN / OWNER REVIEW; Gate 3 OPEN, no Gate 4 GO.** `plans/CR-390_IMPLEMENTATION_PLAN.md`, `plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`; current handover `handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. OD-390-23/24 LOCKED FOR PLANNING via 1a/2a; OD-390-25 OPEN, walkthrough only, no option or live access approved. All accepted menu/video decisions retained; no code, source assets, capture, live or business-data changes. Parent milestone/sprint unchanged.
 
 > **Historical Step 1 decision notice, superseded for stage dispatch:**
 
