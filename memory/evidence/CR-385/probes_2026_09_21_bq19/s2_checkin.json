@@ -1,0 +1,55 @@
+{
+ "http": 200,
+ "body": {
+  "message": "Group check-in completed successfully",
+  "user_id": 42775,
+  "cust_membership_id": null,
+  "data": {
+   "order_id": 1232635,
+   "orders": [
+    {
+     "room_id": "8525",
+     "room_no": "r4",
+     "room_price": 10100,
+     "advance_payment": 1000,
+     "balance_payment": 9100,
+     "order_id": 1232635,
+     "gst_tax": 1818
+    }
+   ],
+   "charge": {
+    "rate_per_night": 8600,
+    "nights": 1,
+    "rateplan_code": "executive-s-ep",
+    "rateplan_name": "executive-s-ep",
+    "upgrade_amount": 1500,
+    "booking_charge": 10100,
+    "sgst": 909,
+    "cgst": 909,
+    "total_with_gst": 11918,
+    "prepaid_amount": 0,
+    "advance_payment": 1000,
+    "balance_due": 10918
+   }
+  },
+  "charge": {
+   "rate_per_night": 8600,
+   "nights": 1,
+   "rateplan_code": "executive-s-ep",
+   "rateplan_name": "executive-s-ep",
+   "upgrade_amount": 1500,
+   "booking_charge": 10100,
+   "sgst": 909,
+   "cgst": 909,
+   "total_with_gst": 11918,
+   "prepaid_amount": 0,
+   "advance_payment": 1000,
+   "balance_due": 10918
+  },
+  "upgrade": {
+   "type": "paid",
+   "amount": 1500,
+   "reason": "bq19"
+  }
+ }
+}

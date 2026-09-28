@@ -1,0 +1,258 @@
+{
+  "captured": {
+    "requests": [
+      {
+        "ts": "2026-09-21T17:42:22.465410",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:25.234596",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:27.577098",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:32.718771",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=50&offset=1",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:32.718863",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=50&offset=1",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:34.641524",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/223/cancel",
+        "method": "POST",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json",
+          "content-type": "application/json"
+        },
+        "post_data": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"notify_cm\":true}"
+      },
+      {
+        "ts": "2026-09-21T17:42:35.844017",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:42.282815",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:45.376107",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-07-23&end_date=2026-10-21",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:45.376237",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-07-23&end_date=2026-11-20&status=cancelled",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:45.376328",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-07-23&end_date=2026-10-21",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      },
+      {
+        "ts": "2026-09-21T17:42:45.376402",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-07-23&end_date=2026-11-20&status=cancelled",
+        "method": "GET",
+        "headers": {
+          "sec-ch-ua-platform": "\"Linux\"",
+          "authorization": "***",
+          "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+          "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+          "x-localization": "en",
+          "sec-ch-ua-mobile": "?0",
+          "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+          "accept": "application/json"
+        },
+        "post_data": null
+      }
+    ],
+    "responses": [
+      {
+        "ts": "2026-09-21T17:42:26.162812",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"total_size\":1,\"limit\":\"100\",\"offset\":\"1\",\"reasons\":[{\"id\":411,\"reason\":\"guest cancelled\",\"restaurant_id\":69,\"user_type\":\"restaurant\",\"status\":1,\"item_type\":null,\"created_at\":\"2026-09-15T17:03:58.000000Z\",\"updated_at\":\"2026-09-15T17:03:58.000000Z\"}]}"
+      },
+      {
+        "ts": "2026-09-21T17:42:29.733325",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"status\":true,\"message\":\"Local reservations fetched successfully\",\"data\":{\"meta\":{\"business_date\":\"2026-09-21\",\"server_time\":\"2026-09-21T23:12:28+05:30\",\"timezone\":\"Asia\\/Kolkata\"},\"counts\":{\"arrivals_today\":2,\"arrivals_late\":10,\"arrivals_tomorrow\":0,\"departures_today\":2,\"departures_overdue\":0,\"in_house\":2,\"leaving_today\":2,\"arrived_today\":0},\"reservations\":[{\"id\":15,\"booking_id\":\"San1ce92d141430\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-03 10:46:49\",\"amount_before_tax\":null,\"amount_after_tax\":\"5400.00\",\"advance_payment\":0,\"balance_payment\":5400,\"charge\":{\"rate_per_night\":5142.86,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":5142.86,\"sgst\":128.57,\"cgst\":128.57,\"total_with_gst\":5400,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":5400},\"currency\":null,\"special_requests\":null,\"user_id_document_id\":16965,\"guest\":{\"first_name\":\"TEST\",\"last_name\":\"TEST\",\"email\":null,\"phone\":null,\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":29,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":\"TEST\",\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":16,\"booking_id\":\"MG-69-A26BDA2F-9575-4D41-8FCE-C643FF242A3A\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":false,\"operational_status\":\"departed\",\"booked_on\":\"2026-09-03 17:57:02\",\"amount_before_tax\":\"1000.00\",\"amount_after_tax\":\"1000.00\",\"advance_payment\":200,\"balance_payment\":800,\"charge\":{\"rate_per_night\":1000,\"nights\":1,\"rateplan_code\":null,\"rateplan_name\":null,\"upgrade_amount\":0,\"booking_charge\":1000,\"sgst\":25,\"cgst\":25,\"total_with_gst\":1050,\"prepaid_amount\":1000,\"advance_payment\":1000,\"balance_due\":0},\"currency\":\"INR\",\"special_requests\":\"CR-358-P2 Gate 3 probe \\u00b7 Meal plan: Room Only (EP)\",\"user_id_document_id\":16955,\"guest\":{\"first_name\":\"CR358P2\",\"last_name\":\"Probe\",\"email\":null,\"phone\":\"9000000001\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":16,\"room_code\":\"suite\",\"rateplan_code\":null,\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"checked_out\",\"restaurant_table_id\":8524,\"table_no\":\"r3\",\"table_title\":\"3rd floor\",\"order_id\":1232205,\"user_id_document_id\":16955,\"order_f_order_status\":6,\"order_payment_status\":\"paid\",\"checked_in_at\":\"2026-09-03 17:58:08\",\"checked_out_at\":\"2026-09-03 23:14:56\"}]},{\"id\":17,\"booking_id\":\"San1eab3a969017\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-03 16:43:43\",\"amount_before_tax\":null,\"amount_after_tax\":\"7400.00\",\"advance_payment\":0,\"balance_payment\":7400,\"charge\":{\"rate_per_night\":7047.62,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":7047.62,\"sgst\":176.19,\"cgst\":176.19,\"total_with_gst\":7400,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":7400},\"currency\":null,\"special_requests\":null,\"user_id_document_id\":16960,\"guest\":{\"first_name\":\"Loki\",\"last_name\":\"Loki\",\"email\":null,\"phone\":null,\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":28,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":\"Loki\",\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":20,\"booking_id\":\"MG-69-BD4A880D-B98C-4A1F-B279-B1438AFF5E4C\",\"cm_booking_id\":null,\"channel\":\"WalkIn\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-04\",\"checkout\":\"2026-09-05\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"departed\",\"booked_on\":\"2026-09-04 01:02:45\",\"amount_before_tax\":\"1000.00\",\"amount_after_tax\":\"1000.00\",\"advance_payment\":0,\"balance_payment\":1000,\"charge\":{\"rate_per_night\":1000,\"nights\":1,\"rateplan_code\":null,\"rateplan_name\":null,\"upgrade_amount\":0,\"booking_charge\":1000,\"sgst\":25,\"cgst\":25,\"total_with_gst\":1050,\"prepaid_amount\":0,\"advance_payment\":1000,\"balance_due\":50},\"currency\":\"INR\",\"special_requests\":\"Meal plan: Breakfast Included (CP)\",\"user_id_document_id\":16958,\"guest\":{\"first_name\":\"tobii\",\"last_name\":\"\",\"email\":\"temp_6a99bfb2637c99.4621"
+      },
+      {
+        "ts": "2026-09-21T17:42:33.547715",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=50&offset=1",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"total_size\":1,\"limit\":\"50\",\"offset\":\"1\",\"reasons\":[{\"id\":411,\"reason\":\"guest cancelled\",\"restaurant_id\":69,\"user_type\":\"restaurant\",\"status\":1,\"item_type\":null,\"created_at\":\"2026-09-15T17:03:58.000000Z\",\"updated_at\":\"2026-09-15T17:03:58.000000Z\"}]}"
+      },
+      {
+        "ts": "2026-09-21T17:42:33.941424",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=50&offset=1",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"total_size\":1,\"limit\":\"50\",\"offset\":\"1\",\"reasons\":[{\"id\":411,\"reason\":\"guest cancelled\",\"restaurant_id\":69,\"user_type\":\"restaurant\",\"status\":1,\"item_type\":null,\"created_at\":\"2026-09-15T17:03:58.000000Z\",\"updated_at\":\"2026-09-15T17:03:58.000000Z\"}]}"
+      },
+      {
+        "ts": "2026-09-21T17:42:35.859099",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/223/cancel",
+        "method": "POST",
+        "status": 200,
+        "body": "{\"status\":true,\"message\":\"Reservation cancelled successfully\",\"data\":{\"status\":\"cancelled\",\"cancelled_at\":\"2026-09-21 23:12:35\",\"cancel_reason\":\"guest cancelled\",\"reservation\":{\"id\":223,\"booking_id\":\"MG-69-C5164D2D-F9B1-471A-8D1D-20774D3B2CB2\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"status\":\"cancelled\",\"cancelled_at\":\"2026-09-21 23:12:35\",\"cancel_reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"pah\":true,\"operational_status\":\"cancelled\",\"booked_on\":\"2026-09-21 22:40:56\",\"amount_before_tax\":\"63000.00\",\"amount_after_tax\":\"74340.00\",\"advance_payment\":0,\"balance_payment\":63000,\"charge\":{\"rate_per_night\":31500,\"nights\":2,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":63000,\"sgst\":5670,\"cgst\":5670,\"total_with_gst\":74340,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":74340},\"currency\":\"INR\",\"special_requests\":\"| MODIFY: Modified from Front Desk\",\"user_id_document_id\":17245,\"guest\":{\"first_name\":\"QA-P1-Modify\",\"last_name\":\"\",\"email\":null,\"phone\":\"9999900002\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":234,\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},\"inventory_push\":{\"success\":true,\"message\":\"Inventory pushed successfully\",\"data\":{\"success\":true,\"message\":\"Request Received Successfully\"},\"payload\":{\"hotelCode\":\"sandbox-pms\",\"updates\":[{\"startDate\":\"2026-09-21\",\"endDate\":\"2026-09-23\",\"rooms\":[{\"roomCode\":\"suite\",\"available\":3},{\"roomCode\":\"executive\",\"available\":0}]}]}}}}"
+      },
+      {
+        "ts": "2026-09-21T17:42:37.878298",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"status\":true,\"message\":\"Local reservations fetched successfully\",\"data\":{\"meta\":{\"business_date\":\"2026-09-21\",\"server_time\":\"2026-09-21T23:12:37+05:30\",\"timezone\":\"Asia\\/Kolkata\"},\"counts\":{\"arrivals_today\":1,\"arrivals_late\":10,\"arrivals_tomorrow\":0,\"departures_today\":2,\"departures_overdue\":0,\"in_house\":2,\"leaving_today\":2,\"arrived_today\":0},\"reservations\":[{\"id\":15,\"booking_id\":\"San1ce92d141430\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-03 10:46:49\",\"amount_before_tax\":null,\"amount_after_tax\":\"5400.00\",\"advance_payment\":0,\"balance_payment\":5400,\"charge\":{\"rate_per_night\":5142.86,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":5142.86,\"sgst\":128.57,\"cgst\":128.57,\"total_with_gst\":5400,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":5400},\"currency\":null,\"special_requests\":null,\"user_id_document_id\":16965,\"guest\":{\"first_name\":\"TEST\",\"last_name\":\"TEST\",\"email\":null,\"phone\":null,\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":29,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":\"TEST\",\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":16,\"booking_id\":\"MG-69-A26BDA2F-9575-4D41-8FCE-C643FF242A3A\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":false,\"operational_status\":\"departed\",\"booked_on\":\"2026-09-03 17:57:02\",\"amount_before_tax\":\"1000.00\",\"amount_after_tax\":\"1000.00\",\"advance_payment\":200,\"balance_payment\":800,\"charge\":{\"rate_per_night\":1000,\"nights\":1,\"rateplan_code\":null,\"rateplan_name\":null,\"upgrade_amount\":0,\"booking_charge\":1000,\"sgst\":25,\"cgst\":25,\"total_with_gst\":1050,\"prepaid_amount\":1000,\"advance_payment\":1000,\"balance_due\":0},\"currency\":\"INR\",\"special_requests\":\"CR-358-P2 Gate 3 probe \\u00b7 Meal plan: Room Only (EP)\",\"user_id_document_id\":16955,\"guest\":{\"first_name\":\"CR358P2\",\"last_name\":\"Probe\",\"email\":null,\"phone\":\"9000000001\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":16,\"room_code\":\"suite\",\"rateplan_code\":null,\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"checked_out\",\"restaurant_table_id\":8524,\"table_no\":\"r3\",\"table_title\":\"3rd floor\",\"order_id\":1232205,\"user_id_document_id\":16955,\"order_f_order_status\":6,\"order_payment_status\":\"paid\",\"checked_in_at\":\"2026-09-03 17:58:08\",\"checked_out_at\":\"2026-09-03 23:14:56\"}]},{\"id\":17,\"booking_id\":\"San1eab3a969017\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-03\",\"checkout\":\"2026-09-04\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-03 16:43:43\",\"amount_before_tax\":null,\"amount_after_tax\":\"7400.00\",\"advance_payment\":0,\"balance_payment\":7400,\"charge\":{\"rate_per_night\":7047.62,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":7047.62,\"sgst\":176.19,\"cgst\":176.19,\"total_with_gst\":7400,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":7400},\"currency\":null,\"special_requests\":null,\"user_id_document_id\":16960,\"guest\":{\"first_name\":\"Loki\",\"last_name\":\"Loki\",\"email\":null,\"phone\":null,\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":28,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":\"Loki\",\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":20,\"booking_id\":\"MG-69-BD4A880D-B98C-4A1F-B279-B1438AFF5E4C\",\"cm_booking_id\":null,\"channel\":\"WalkIn\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-04\",\"checkout\":\"2026-09-05\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"departed\",\"booked_on\":\"2026-09-04 01:02:45\",\"amount_before_tax\":\"1000.00\",\"amount_after_tax\":\"1000.00\",\"advance_payment\":0,\"balance_payment\":1000,\"charge\":{\"rate_per_night\":1000,\"nights\":1,\"rateplan_code\":null,\"rateplan_name\":null,\"upgrade_amount\":0,\"booking_charge\":1000,\"sgst\":25,\"cgst\":25,\"total_with_gst\":1050,\"prepaid_amount\":0,\"advance_payment\":1000,\"balance_due\":50},\"currency\":\"INR\",\"special_requests\":\"Meal plan: Breakfast Included (CP)\",\"user_id_document_id\":16958,\"guest\":{\"first_name\":\"tobii\",\"last_name\":\"\",\"email\":\"temp_6a99bfb2637c99.4621"
+      },
+      {
+        "ts": "2026-09-21T17:42:43.673328",
+        "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"total_size\":1,\"limit\":\"100\",\"offset\":\"1\",\"reasons\":[{\"id\":411,\"reason\":\"guest cancelled\",\"restaurant_id\":69,\"user_type\":\"restaurant\",\"status\":1,\"item_type\":null,\"created_at\":\"2026-09-15T17:03:58.000000Z\",\"updated_at\":\"2026-09-15T17:03:58.000000Z\"}]}"
+      },
+      {
+        "ts": "2026-09-21T17:42:46.534493",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-07-23&end_date=2026-11-20&status=cancelled",
+        "method": "GET",
+        "status": 200,
+        "body": "{\"status\":true,\"message\":\"Local reservations fetched successfully\",\"data\":{\"meta\":{\"business_date\":\"2026-09-21\",\"server_time\":\"2026-09-21T23:12:46+05:30\",\"timezone\":\"Asia\\/Kolkata\"},\"counts\":{\"arrivals_today\":0,\"arrivals_late\":0,\"arrivals_tomorrow\":0,\"departures_today\":0,\"departures_overdue\":0,\"in_house\":0,\"leaving_today\":0,\"arrived_today\":0},\"reservations\":[{\"id\":8,\"booking_id\":\"BDC3809664\",\"cm_booking_id\":\"CM-BDC3809664\",\"channel\":\"booking.com\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-07\",\"checkout\":\"2026-09-11\",\"status\":\"cancelled\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":false,\"operational_status\":\"cancelled\",\"booked_on\":\"2026-08-31 06:06:27\",\"amount_before_tax\":\"13922.28\",\"amount_after_tax\":\"13922.28\",\"advance_payment\":0,\"balance_payment\":0,\"charge\":{\"rate_per_night\":6961.14,\"nights\":4,\"rateplan_code\":\"suite-d-cp\",\"rateplan_name\":\"suite-d-cp\",\"upgrade_amount\":0,\"booking_charge\":27844.56,\"sgst\":696.12,\"cgst\":696.12,\"total_with_gst\":29236.8,\"prepaid_amount\":13922.28,\"advance_payment\":0,\"balance_due\":15314.52},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":16936,\"guest\":{\"first_name\":\"Test\",\"last_name\":\"Guest\",\"email\":\"testguest@example.com\",\"phone\":\"9876543210\",\"address_city\":\"Bangalore\",\"address_state\":\"Karnataka\",\"address_country\":\"India\"},\"rooms\":[{\"id\":7,\"room_code\":\"suite\",\"rateplan_code\":\"suite-d-cp\",\"guest_name\":\"Test Guest\",\"adults\":2,\"children\":2,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":151,\"booking_id\":\"MG-69-88E50F9F-63C9-4131-972B-1865209A0AC4\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-20\",\"checkout\":\"2026-09-21\",\"status\":\"cancelled\",\"cancelled_at\":\"2026-09-20 09:17:17\",\"cancel_reason\":\"E2E: upgrade rejected, re-creating as suite\",\"cancelled_by\":\"agent-probe\",\"pah\":true,\"operational_status\":\"cancelled\",\"booked_on\":\"2026-09-20 09:16:06\",\"amount_before_tax\":\"3000.00\",\"amount_after_tax\":\"3150.00\",\"advance_payment\":1000,\"balance_payment\":2000,\"charge\":{\"rate_per_night\":3000,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":3000,\"sgst\":75,\"cgst\":75,\"total_with_gst\":3150,\"prepaid_amount\":0,\"advance_payment\":1000,\"balance_due\":2150},\"currency\":\"INR\",\"special_requests\":\"CR-385 E2E probe\",\"user_id_document_id\":17123,\"guest\":{\"first_name\":\"E2E\",\"last_name\":\"Probe Guest\",\"email\":\"e2e@probe.test\",\"phone\":\"9000000009\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":162,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":154,\"booking_id\":\"MG-69-1E925C2C-F578-4A69-87A3-99AD82F907ED\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-20\",\"checkout\":\"2026-09-21\",\"status\":\"cancelled\",\"cancelled_at\":\"2026-09-20 09:23:58\",\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"cancelled\",\"booked_on\":\"2026-09-20 09:23:04\",\"amount_before_tax\":\"0.00\",\"amount_after_tax\":\"0.00\",\"advance_payment\":0,\"balance_payment\":0,\"charge\":{\"rate_per_night\":0,\"nights\":1,\"rateplan_code\":\"executive-s-ep\",\"rateplan_name\":\"executive-s-ep\",\"upgrade_amount\":0,\"booking_charge\":0,\"sgst\":0,\"cgst\":0,\"total_with_gst\":0,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":0},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":17127,\"guest\":{\"first_name\":\"D1\",\"last_name\":\"Verify Guest\",\"email\":\"d1@probe.test\",\"phone\":null,\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":165,\"room_code\":\"executive\",\"rateplan_code\":\"executive-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},{\"id\":222,\"booking_id\":\"MG-69-50189CAC-6BA1-40E6-A78B-7ED33D00CF5E\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-22\",\"status\":\"cancelled\",\"cancelled_at\":\"2026-09-21 23:11:30\",\"cancel_reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"pah\":true,\"operational_status\":\"cancelled\",\"booked_on\":\"2026-09-21 22:40:54\",\"amount_before_tax\":\"31500.00\",\"amount_after_tax\":\"37170.00\",\"advance_payment\":0,\"balance_payment\":31500,\"charge\":{\"rate_per_night\":31500,\"nights\":1,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":31500,\"sgst\":2835,\"cgst\":2835,\"total_with_gst\":37170,\"prepaid_amount\":0,\"advance_payment\":0,\"ba"
+      }
+    ]
+  },
+  "console_errors": []
+}

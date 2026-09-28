@@ -1,0 +1,155 @@
+{
+ "http": 200,
+ "body": {
+  "status": true,
+  "message": "Stay extended successfully",
+  "data": {
+   "order_id": 1232648,
+   "new_checkout_date": "2026-11-16",
+   "new_restaurant_table_id": null,
+   "room_price": 73600,
+   "reason": "held_fallback probe (owner scenario)",
+   "charge": {
+    "rate_per_night": 36800,
+    "nights": 2,
+    "rateplan_code": "suite-s-ep",
+    "rateplan_name": "suite-s-ep",
+    "upgrade_amount": 0,
+    "booking_charge": 73600,
+    "sgst": 6624,
+    "cgst": 6624,
+    "total_with_gst": 86848,
+    "prepaid_amount": 0,
+    "advance_payment": 500,
+    "balance_due": 86348,
+    "nights_detail": [
+     {
+      "date": "2026-11-14",
+      "rate": 36800,
+      "source": "held",
+      "gst_percent": 18,
+      "gst": 6624
+     },
+     {
+      "date": "2026-11-15",
+      "rate": 36800,
+      "source": "held_fallback",
+      "gst_percent": 18,
+      "gst": 6624
+     }
+    ]
+   },
+   "payment_record_id": null,
+   "reservation": {
+    "id": 221,
+    "booking_id": "MG-69-8597CA73-2102-49E6-B157-7BBF359ED667",
+    "cm_booking_id": null,
+    "channel": "Direct",
+    "hotel_code": "sandbox-pms",
+    "checkin": "2026-11-14",
+    "checkout": "2026-11-16",
+    "status": "confirmed",
+    "cancelled_at": null,
+    "cancel_reason": null,
+    "cancelled_by": null,
+    "pah": true,
+    "operational_status": "in_house",
+    "booked_on": "2026-09-21 11:41:36",
+    "amount_before_tax": "73600.00",
+    "amount_after_tax": "86848.00",
+    "advance_payment": 500,
+    "balance_payment": 73100,
+    "charge": {
+     "rate_per_night": 36800,
+     "nights": 2,
+     "rateplan_code": "suite-s-ep",
+     "rateplan_name": "suite-s-ep",
+     "upgrade_amount": 0,
+     "booking_charge": 73600,
+     "sgst": 6624,
+     "cgst": 6624,
+     "total_with_gst": 86848,
+     "prepaid_amount": 0,
+     "advance_payment": 500,
+     "balance_due": 86348,
+     "nights_detail": [
+      {
+       "date": "2026-11-14",
+       "rate": 36800,
+       "source": "held",
+       "gst_percent": 18,
+       "gst": 6624
+      },
+      {
+       "date": "2026-11-15",
+       "rate": 36800,
+       "source": "held_fallback",
+       "gst_percent": 18,
+       "gst": 6624
+      }
+     ]
+    },
+    "currency": "INR",
+    "special_requests": "| EXTEND: held_fallback probe (owner scenario)",
+    "user_id_document_id": 17243,
+    "guest": {
+     "first_name": "HF",
+     "last_name": "FE Guest",
+     "email": null,
+     "phone": "9876611413",
+     "address_city": null,
+     "address_state": null,
+     "address_country": null
+    },
+    "rooms": [
+     {
+      "id": 232,
+      "room_code": "suite",
+      "rateplan_code": "suite-s-ep",
+      "guest_name": null,
+      "adults": 2,
+      "children": 0,
+      "line_status": "checked_in",
+      "restaurant_table_id": 8525,
+      "table_no": "r4",
+      "table_title": "2nd floor",
+      "order_id": 1232648,
+      "user_id_document_id": 17243,
+      "order_f_order_status": 5,
+      "order_payment_status": "unpaid",
+      "checked_in_at": "2026-09-21 11:41:37",
+      "checked_out_at": null
+     }
+    ]
+   },
+   "inventory_push": {
+    "success": true,
+    "message": "Inventory pushed successfully",
+    "data": {
+     "success": true,
+     "message": "Request Received Successfully"
+    },
+    "payload": {
+     "hotelCode": "sandbox-pms",
+     "updates": [
+      {
+       "startDate": "2026-11-14",
+       "endDate": "2026-11-16",
+       "rooms": [
+        {
+         "roomCode": "suite",
+         "available": 3
+        },
+        {
+         "roomCode": "executive",
+         "available": 1
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "inventory_push_warning": null
+  }
+ }
+}

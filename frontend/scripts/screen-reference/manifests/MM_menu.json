@@ -1,0 +1,1295 @@
+{
+  "_comment": "CR-390: Menu Management module manifest — 36-screen journey approved by owner 2026-09-27 (expanded from 10). Read-only capture: no Save/Delete/Confirm is ever pressed.",
+  "module_code": "MM",
+  "module_name": "Menu Management",
+  "eyebrow": "MENU MANAGEMENT",
+  "journey_approved": true,
+  "journey_approved_date": "2026-09-27",
+  "overview": {
+    "summary": "Menu Management is where the restaurant builds and maintains everything a guest can order: categories, items, prices, taxes, variations (sizes / spice levels), add-ons, images, channel availability (Dine-In, Delivery, Takeaway, Live Web) and the separate Aggregator menu that is pushed to Swiggy and Zomato. It offers three editing speeds — Quick Edit on the card, a Full Edit form, and a spreadsheet-style Bulk Editor with Excel import/export — plus drag-and-drop ordering that controls how the menu appears on the POS order screen.",
+    "who_uses": "Owner and Manager roles (permission 'food'). Typically used at menu launch, seasonal price revisions, daily out-of-stock marking, and when onboarding a new delivery aggregator.",
+    "key_capabilities": [
+      "Multiple menus — Normal, Party, Premium, Aggregator — switched from one dropdown; a station picks its Active Menu in Local Settings",
+      "Categories — create, rename, delete, assign a kitchen station / printer, drag to reorder",
+      "Items — card view with search and Active / Inactive / Veg / Non-Veg / Egg / Jain filters; drag to reorder inside a category",
+      "Quick Edit — the 12 most-changed fields inline on the card (price, tax, category, food type, flags)",
+      "Full Edit / Add Item — image upload, description, pricing & tax, discounts, classification, availability window, variations, add-ons, operations timings & charges, status flags",
+      "Add-ons master — one list of add-ons (price, weight, veg flag, inventory / recipe link) reused across items",
+      "Bulk Editor — spreadsheet grid, column picker by tier, dirty-cell tracking, Validate Tax, multi-select delete with reason, Excel download (all / template) and upload",
+      "Aggregator menu — Swiggy / Zomato sync flags, Swiggy-specific image, per-item stock ON / OFF with automatic turn-on time, Addon Stock and Variation Stock tabs"
+    ]
+  },
+  "journey": [
+    {
+      "route": "/dashboard",
+      "section": "Getting There",
+      "states": [
+        {
+          "slug": "sidebar-entry",
+          "title": "Opening Menu Management from the sidebar",
+          "description": "Menu Management lives in the left navigation sidebar of the POS. With the sidebar expanded, the 'Menu Management' entry (fork-and-knife icon) is visible in the main list. Clicking it opens the module as a full page at /menu.",
+          "controls": [
+            "Sidebar expand / collapse arrow — widens the sidebar to show labels next to icons",
+            "Menu Management entry — opens the module; highlighted in orange when active",
+            "Restaurant profile block (bottom) — shows the logged-in restaurant and role"
+          ],
+          "narration": "From anywhere in MyGenie, open the sidebar and tap Menu Management. This is the home of every category, item, price and add-on your guests can order.",
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='expand-sidebar']",
+              "wait_after": 600
+            },
+            {
+              "type": "hover",
+              "selector": "[data-testid='sidebar-menu-management']"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Landing & Menus",
+      "states": [
+        {
+          "slug": "card-view-landing",
+          "title": "Menu Management landing — Card View",
+          "description": "The default view. The left column (30%) lists categories with an item count badge; the right column (70%) shows item cards for the selected category ('All' by default). The header holds the menu-type dropdown and the three mode buttons: Add-ons, Bulk Edit and Close.",
+          "controls": [
+            "Menu type dropdown — switches between Normal, Party, Premium and Aggregator menus; everything below reloads",
+            "Add-ons button — opens the add-ons master panel",
+            "Bulk Edit button — swaps the card view for the spreadsheet Bulk Editor (label becomes 'Card View' to switch back)",
+            "Close (X) — returns to the previous page",
+            "Category column — 'All' plus every category with its item count; click one to filter the cards",
+            "Item column — search box, Filters toggle and green '+ Add' button above the item cards",
+            "Loading… indicator — appears next to the title while items are being fetched"
+          ],
+          "narration": "This is the Card View. Categories on the left, items on the right. The dropdown at the top decides which menu you are editing.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            }
+          ]
+        },
+        {
+          "slug": "menu-type-premium",
+          "title": "Switching menus — Premium menu selected",
+          "description": "Each restaurant can run several menus. Selecting 'Premium' reloads categories, counts and cards for that menu only. Party and Premium menus are priced independently from Normal; Aggregator is the Swiggy / Zomato catalogue.",
+          "controls": [
+            "Menu type dropdown — lists every menu configured for the restaurant (Normal / Party / Premium / Aggregator)",
+            "Item counts — recalculated for the chosen menu",
+            "Item cards — show the Premium prices and availability chips"
+          ],
+          "narration": "Need a separate party or premium price list? Switch menus here. Every card and count you see now belongs to the Premium menu only.",
+          "pre_actions": [
+            {
+              "type": "select",
+              "selector": "[data-testid='menu-type-selector']",
+              "value": "Premium",
+              "wait_after": 1500
+            }
+          ],
+          "fresh_route": false
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Categories",
+      "states": [
+        {
+          "slug": "category-list",
+          "title": "Category column — search, counts and station",
+          "description": "Categories are the top-level grouping guests see on the order screen. Each row shows the drag grip (⋮⋮), the category name, the kitchen station / printer it routes to (small grey text) and a count badge of items in it. The list has its own search box and an '+ Add Category' button at the bottom.",
+          "controls": [
+            "Search categories — filters the list as you type",
+            "All — clears the category filter and shows every item",
+            "Category row — click to show only that category's items (row turns orange with a left bar)",
+            "Drag grip ⋮⋮ (left of each row) — press-and-hold to reorder categories; the order is what the POS shows",
+            "Station label — the printer / KDS station this category's KOTs go to",
+            "Count badge — number of items in the category for the current menu",
+            "+ Add Category — opens the inline create form"
+          ],
+          "narration": "Categories drive both the guest-facing order screen and kitchen routing. The grey label under each name is the station its KOTs print to.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all'])",
+              "nth": 0,
+              "wait_after": 700
+            }
+          ]
+        },
+        {
+          "slug": "category-hover-actions",
+          "title": "Category row hover — rename and delete",
+          "description": "Hovering a category row reveals its two actions on the right: a pencil (rename / change station) and a red trash (delete). Actions are hidden until hover to keep the list clean.",
+          "controls": [
+            "Pencil — turns the row into an inline edit form (name + station dropdown)",
+            "Trash — asks 'Delete?' inline with Yes / No before removing the category",
+            "Drag grip — becomes fully visible on hover"
+          ],
+          "narration": "Hover any category to reveal rename and delete. Nothing is deleted without a confirmation.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all'])",
+              "nth": 1
+            }
+          ]
+        },
+        {
+          "slug": "category-inline-edit",
+          "title": "Rename a category / change its station",
+          "description": "The inline edit form replaces the row: a text box for the name and a station dropdown (KDS or any configured printer station). The printer icon confirms which physical printer the station maps to. Save commits, Cancel or Escape discards.",
+          "controls": [
+            "Name input — Enter saves, Escape cancels",
+            "Station dropdown — KDS / kitchen / bar etc.; decides where KOTs for this category print",
+            "Printer hint — shows the printer bound to the selected station, or a warning if none",
+            "Save — writes the change and refreshes the list",
+            "Cancel — discards"
+          ],
+          "narration": "Renaming or re-routing a category to a different kitchen printer is a two-second inline edit.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all'])",
+              "nth": 1
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all']) >> nth=1 >> button >> nth=0",
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "press",
+              "key": "Escape"
+            }
+          ]
+        },
+        {
+          "slug": "category-delete-confirm",
+          "title": "Delete a category — inline confirmation",
+          "description": "Clicking the trash icon opens a small red confirmation strip under the row: 'Delete?' with No / Yes. Only Yes removes the category. (Not pressed in this guide.)",
+          "controls": [
+            "Yes — deletes the category (items must be moved first if any remain)",
+            "No — closes the strip"
+          ],
+          "narration": "Deleting asks for a confirmation right in place, so a stray click never removes a category.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all'])",
+              "nth": 2
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all']) >> nth=2 >> button >> nth=1",
+              "wait_after": 500
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "button:has-text('No')"
+            }
+          ]
+        },
+        {
+          "slug": "category-add-form",
+          "title": "Add Category form",
+          "description": "The '+ Add Category' button opens an inline form at the bottom of the column: category name, station dropdown (defaults to KDS) and the printer hint. Add saves and the new category appears immediately with a 0 count.",
+          "controls": [
+            "Category name — required",
+            "Station dropdown — choose the kitchen station for KOT routing",
+            "Printer hint — which printer that station uses",
+            "Add — creates the category",
+            "Cancel — closes the form"
+          ],
+          "narration": "Adding a category is name plus station. The station matters: it decides which kitchen printer gets the ticket.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='add-category-btn']",
+              "wait_after": 500
+            },
+            {
+              "type": "type",
+              "selector": "[data-testid='new-category-input']",
+              "value": "Seasonal Specials"
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "button:has-text('Cancel')"
+            }
+          ]
+        },
+        {
+          "slug": "category-drag-reorder",
+          "title": "Drag-and-drop category ordering",
+          "description": "Press-and-hold the ⋮⋮ grip and move the row. The lifted row turns light orange and the others shift to make room. Releasing saves the new order, which is the order guests and staff see on the order screen. There is no separate 'reorder' button — drag is always on.",
+          "controls": [
+            "Drag grip ⋮⋮ — the only handle; press, move, release",
+            "Lifted row (orange tint) — the category being moved",
+            "Gap — where it will land on release"
+          ],
+          "narration": "To reorder categories just grab the grip and drag. The lifted row glows orange; drop it where you want it and the POS follows that order.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "drag_hold",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all']) >> nth=0 >> .cursor-grab",
+              "dy": 90
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "press",
+              "key": "Escape"
+            },
+            {
+              "type": "mouse_up"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Items — Card View",
+      "states": [
+        {
+          "slug": "item-card-anatomy",
+          "title": "Item cards — what each card tells you",
+          "description": "With a category selected, each item is a card. Left to right: drag grip, food-type square (green veg / red non-veg / yellow egg / purple jain), item name with an 'Inactive' tag when switched off, the category · food-type line, and a row of chips: Dine-In / Delivery / Takeaway availability (green when on), plus Inventory, Packaged, Out of Stock, Hidden and Tax Incl. badges when applicable. The price sits on the right.",
+          "controls": [
+            "Food-type square — colour-codes veg / non-veg / egg / jain",
+            "Channel chips — Dine-In, Delivery, Takeaway; green = item is sold on that channel",
+            "Inventory badge — item consumes stock from Inventory",
+            "Packaged badge — pre-packaged product (no kitchen prep)",
+            "Out of Stock badge — temporarily unavailable",
+            "Hidden badge — hidden from the POS order screen",
+            "Tax Incl. badge — price already includes tax",
+            "Price — base price in restaurant currency"
+          ],
+          "narration": "Every card is a one-line status report: what kind of food it is, where it is sold, whether it is in stock, and what it costs.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='category-']:not([data-testid='category-list']):not([data-testid='category-search']):not([data-testid='category-all'])",
+              "nth": 0,
+              "wait_after": 700
+            }
+          ]
+        },
+        {
+          "slug": "item-search-filters",
+          "title": "Search and filter items",
+          "description": "The search box matches item names live. The Filters button reveals two chip rows: Status (All / Active / Inactive) and Food type (All / Veg / Non-Veg / Egg / Jain). Filters combine with the selected category.",
+          "controls": [
+            "Search products — live text filter on item name",
+            "Filters toggle — shows / hides the chip rows (orange when open)",
+            "Status chips — All, Active, Inactive",
+            "Food type chips — All, Veg, Non-Veg, Egg, Jain (each in its colour)",
+            "+ Add — opens the blank Add Item form"
+          ],
+          "narration": "Looking for every inactive non-veg item? Open Filters, tap Inactive and Non-Veg, and the list narrows instantly.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='category-all']",
+              "wait_after": 500
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='toggle-filters']",
+              "wait_after": 400
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='filter-chips'] button:has-text('Non-Veg')",
+              "wait_after": 500
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='filter-chips'] button:has-text('All')",
+              "nth": 1
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='toggle-filters']"
+            }
+          ]
+        },
+        {
+          "slug": "item-hover-actions",
+          "title": "Item card hover — the four action buttons",
+          "description": "Hovering a card reveals four icon buttons at the right edge, next to the price: Power (Activate / Deactivate), Lightning (Quick Edit), Pencil (Full Edit) and Trash (Delete). The drag grip on the left also becomes fully visible.",
+          "controls": [
+            "Power (green) — toggles the item Active / Inactive instantly, no form",
+            "Lightning (amber) — opens Quick Edit inline on the card",
+            "Pencil (grey) — opens the Full Edit form for every field",
+            "Trash (red) — opens the delete-with-reason confirmation",
+            "Drag grip ⋮⋮ — press-and-hold to reorder the item within its category"
+          ],
+          "narration": "Hover a card and four buttons appear: switch it on or off, quick edit, full edit, or delete. The grip on the left lets you drag it.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            }
+          ]
+        },
+        {
+          "slug": "item-drag-reorder",
+          "title": "Drag-and-drop item ordering",
+          "description": "Same gesture as categories: hold the ⋮⋮ grip on a card and move it. The card turns orange while lifted; releasing writes the new sort order for that category so the POS shows items in this sequence.",
+          "controls": [
+            "Drag grip ⋮⋮ — press-and-hold, move, release",
+            "Lifted card (orange border) — item being moved",
+            "Gap — landing position"
+          ],
+          "narration": "Put your best-sellers at the top: hold the grip, drag the card, release. The POS order screen follows this order.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "drag_hold",
+              "selector": "[data-testid^='product-card-'] >> nth=0 >> .cursor-grab",
+              "dy": 110
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "press",
+              "key": "Escape"
+            },
+            {
+              "type": "mouse_up"
+            }
+          ]
+        },
+        {
+          "slug": "item-inactive-state",
+          "title": "Inactive item — how it looks",
+          "description": "An item switched off with the Power button stays in the list but is greyed out, gets an 'Inactive' tag next to its name and its price is dimmed. It will not appear on the POS order screen until switched back on. Filtering by Status = Inactive lists them all.",
+          "controls": [
+            "Inactive tag — grey pill next to the name",
+            "Dimmed card — 70% opacity, grey background",
+            "Power button — re-activates on click"
+          ],
+          "narration": "Switched-off items stay visible to managers but vanish from the order screen. One tap on the power icon brings them back.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='toggle-filters']",
+              "wait_after": 300
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='filter-chips'] button:has-text('Inactive')",
+              "wait_after": 600
+            },
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='filter-chips'] button:has-text('All')",
+              "nth": 0
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='toggle-filters']"
+            }
+          ]
+        },
+        {
+          "slug": "item-quick-edit",
+          "title": "Quick Edit — inline on the card",
+          "description": "Quick Edit expands the card into a compact form with the fields that change most often: Name, Sold By (unit), Category (with a '+' to create one), Price, Food Type, Complementary, Tax Type / Tax %, Tax Calc (Inclusive / Exclusive), Inventory and Packaged. Save writes immediately; Cancel collapses the card unchanged.",
+          "controls": [
+            "Name — item name",
+            "Sold By (Unit) — Piece / Kg / Ltr etc.",
+            "Category dropdown + '+' — move the item or create a new category on the spot",
+            "Price — base price",
+            "Food Type — Veg / Non-Veg / Egg / Jain",
+            "Complementary — Yes / No (free item)",
+            "Tax Type — GST / VAT / None, with Tax %",
+            "Tax Calc — Inclusive or Exclusive of the price",
+            "Inventory / Packaged — Yes / No flags",
+            "Save (green) — commits; Cancel — discards"
+          ],
+          "narration": "For a price or tax change you do not need the full form. Quick Edit puts the twelve everyday fields right on the card.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='quick-edit-']",
+              "nth": 0,
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='quick-edit-form'] button:has-text('Cancel')"
+            }
+          ]
+        },
+        {
+          "slug": "item-delete-reason",
+          "title": "Delete an item — reason required",
+          "description": "The trash button opens a red confirmation strip inside the card: 'Delete \"item\"?' with a mandatory reason dropdown (reasons come from the restaurant's configured list). The Delete button stays disabled until a reason is chosen. (Not pressed in this guide.)",
+          "controls": [
+            "Reason dropdown — mandatory; pre-configured delete reasons",
+            "Delete (red) — enabled only after a reason is selected",
+            "Cancel — closes the strip"
+          ],
+          "narration": "Deleting an item always records why. Pick a reason, then confirm — or cancel.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 1
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='product-card-'] >> nth=1 >> [data-testid^='delete-']:not([data-testid^='delete-reason-'])",
+              "wait_after": 500
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid^='product-card-'] >> nth=1 >> button:has-text('Cancel')"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Full Edit / Add Item",
+      "states": [
+        {
+          "slug": "full-edit-top-image",
+          "title": "Full Edit — name, unit, description and Item Image",
+          "description": "The Full Edit form (pencil on a card, or '+ Add' for a new item) replaces the item column. The top block holds Name, Sold By (Unit), Description and the Item Image uploader: a thumbnail preview with an X to remove and an Upload / Change button that accepts any image file. Below it the form is organised into collapsible sections.",
+          "controls": [
+            "Back arrow — returns to the card list without saving",
+            "Name — required",
+            "Sold By (Unit) — Piece / Kg / Ltr / Plate etc.",
+            "Description — shown to guests on Live Web and aggregators",
+            "Item Image: Upload / Change — picks an image file; preview appears at once",
+            "Item Image: X — removes the current image",
+            "Section headers — click to expand / collapse each group of fields",
+            "Save (bottom) — writes all sections in one call"
+          ],
+          "narration": "The Full Edit form covers everything. Start at the top: name, unit, description and the photo guests will see online.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='product-search']"
+            },
+            {
+              "type": "type",
+              "selector": "[data-testid='product-search']",
+              "value": "Avocado and Feta",
+              "wait_after": 800
+            },
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='full-edit-']",
+              "nth": 0,
+              "wait_after": 900
+            }
+          ]
+        },
+        {
+          "slug": "full-edit-pricing-classification",
+          "title": "Pricing & Tax and Classification sections",
+          "description": "Pricing & Tax: Category (required), Price, Tax Type (GST / VAT / None) with Tax %, and an Allow Discount toggle that reveals Discount amount + Type (flat / percent). Classification: Item Code, Food Type selector, Allergens text and Kcal.",
+          "controls": [
+            "Category — required dropdown",
+            "Price — base selling price",
+            "Tax Type + Tax % — GST / VAT / None and the rate",
+            "Allow Discount — toggle; when on, Discount and Type (Flat / Percent) appear",
+            "Item Code — internal SKU / code",
+            "Food Type — Veg / Non-Veg / Egg / Jain",
+            "Allergens — free text, e.g. Milk, Nuts",
+            "Kcal — calorie value shown to guests"
+          ],
+          "narration": "Pricing and tax live together: price, GST or VAT and the rate. Allow Discount lets this item accept a flat or percentage discount.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-classification']"
+            },
+            {
+              "type": "scroll_container",
+              "selector": "[data-testid='product-form'] .overflow-y-auto",
+              "dy": 60
+            }
+          ]
+        },
+        {
+          "slug": "full-edit-availability",
+          "title": "Availability & Channels — where and when it sells",
+          "description": "Four channel toggles decide where the item is orderable: Dine-In, Delivery, Takeaway and Live Web (online ordering). Available From / Until define a daily time window (e.g. breakfast items 07:00–11:00); outside it the item is hidden on the order screen.",
+          "controls": [
+            "Dine-In — sell on table orders",
+            "Delivery — sell on delivery orders",
+            "Takeaway — sell on parcel / pickup orders",
+            "Live Web (Online Ordering) — publish on the restaurant's web ordering page",
+            "Available From / Available Until — daily time window (24h)"
+          ],
+          "narration": "Decide where and when the item is sold: any mix of Dine-In, Delivery, Takeaway and web, and an optional daily time window.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-availability-&-channels']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='section-availability-&-channels']",
+              "wait_after": 400
+            },
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-food-variations']"
+            },
+            {
+              "type": "scroll_container",
+              "selector": "[data-testid='product-form'] .overflow-y-auto",
+              "dy": -110
+            }
+          ]
+        },
+        {
+          "slug": "full-edit-variations",
+          "title": "Food Variations — sizes, portions, spice levels",
+          "description": "A variation is a named group of options a guest must (or may) choose from — Size: Regular / Large, Spice: Mild / Hot. Each group has a name, Single or Multi select, a Required checkbox, Min / Max picks for multi, and a list of options each with its own extra price. Groups and options can be added or deleted freely.",
+          "controls": [
+            "Variation name — e.g. Size, Spice Level",
+            "Single / Multi — one choice or several",
+            "Required — guest must choose before adding to order",
+            "Min / Max (multi only) — bounds on number of picks",
+            "Option rows — label + extra price; trash removes an option",
+            "+ Add option — new option row",
+            "+ Add New Variation — new group",
+            "Group trash — removes the whole variation"
+          ],
+          "narration": "Variations turn one item into many: sizes, portions or spice levels, each with its own price. Mark a group Required and the cashier must pick before adding.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-food-variations']"
+            },
+            {
+              "type": "scroll_container",
+              "selector": "[data-testid='product-form'] .overflow-y-auto",
+              "dy": 40
+            }
+          ]
+        },
+        {
+          "slug": "full-edit-addons",
+          "title": "Food Addons — attach existing or create new",
+          "description": "Add-ons are optional extras (extra cheese, fries) drawn from the restaurant's Add-ons master. The section lists every add-on with a checkbox and price; ticked ones are offered with this item. Below the list a mini-form creates a brand-new add-on (name, Veg / Non-Veg, price) without leaving the item.",
+          "controls": [
+            "Add-on checkboxes — tick to attach; badge shows how many are selected",
+            "New add-on name — text",
+            "Veg / Non-Veg — dropdown",
+            "Price — extra charge",
+            "Add — creates the add-on in the master and refreshes the list"
+          ],
+          "narration": "Tick the add-ons this item can carry. Need a new one? Create it right here — it lands in the master list for every other item too.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-food-addons']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='section-food-addons']",
+              "wait_after": 400
+            },
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='add-addon-btn']"
+            },
+            {
+              "type": "scroll_container",
+              "selector": "[data-testid='product-form'] .overflow-y-auto",
+              "dy": -60
+            }
+          ]
+        },
+        {
+          "slug": "full-edit-operations-flags",
+          "title": "Operations and Status & Flags sections",
+          "description": "Operations holds kitchen timing and per-item charges: Prep Time and Serve Time in minutes (feed the KDS and prep-time reports), Pack Charges, Takeaway Charge and Delivery Charge. Status & Flags has five toggles: Complementary, Inventory Item, Packaged Item, Out of Stock and Hidden from POS.",
+          "controls": [
+            "Prep Time (min) — expected kitchen time; drives KDS colour and reports",
+            "Serve Time (min) — expected time to table",
+            "Pack Charges / Takeaway Charge / Delivery Charge — per-item add-on charges by channel",
+            "Complementary — item is offered free",
+            "Inventory Item — consumes stock from the Inventory module",
+            "Packaged Item — pre-packaged, no kitchen ticket",
+            "Out of Stock — temporarily unavailable; shows a red badge",
+            "Hidden from POS — keep in the menu but hide from order taking",
+            "Save Item — commits every section"
+          ],
+          "narration": "Operations sets prep and serve times plus packing and delivery charges. Status & Flags is where you mark an item out of stock or hide it from the POS.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-operations']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='section-operations']",
+              "wait_after": 300
+            },
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-status-&-flags']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='section-status-&-flags']",
+              "wait_after": 400
+            },
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='product-form-save']"
+            }
+          ]
+        },
+        {
+          "slug": "add-item-blank-form",
+          "title": "Add Item — blank form",
+          "description": "The green '+ Add' button above the cards opens the same form empty. Required fields are Name, Category and Price; everything else has sensible defaults (GST, Exclusive tax, all channels on). Saving creates the item in the currently selected menu.",
+          "controls": [
+            "+ Add (card view) — opens this blank form",
+            "Required: Name, Category, Price",
+            "Defaults — Food Type Veg, Tax Type GST, all channels on, no variations / add-ons",
+            "Save Item — creates the item in the active menu type"
+          ],
+          "narration": "Adding a new dish starts from the plus button. Fill name, category and price — the rest is optional — and save.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='add-product-btn']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='add-product-btn']",
+              "wait_after": 800
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Add-ons Master",
+      "states": [
+        {
+          "slug": "addons-master-panel",
+          "title": "Add-ons panel — the shared add-on list",
+          "description": "The Add-ons button in the header opens the master list. Every add-on has a name, price, weight in grams, Veg / Non-Veg flag, an Inventory checkbox (deduct stock) and, when a recipe is attached, recipe-linked costing. Add-ons defined here are what items pick from in their Food Addons section.",
+          "controls": [
+            "Search add-ons — live filter",
+            "+ Add add-on — inline row: Name, Price, Weight g, Veg / Non-Veg",
+            "Pencil — edit a row inline",
+            "Inventory checkbox — deduct from stock when sold (needs a recipe first)",
+            "Trash — delete the add-on",
+            "Close — back to Card View"
+          ],
+          "narration": "Add-ons are managed once, here, and reused across every item. Price, weight, veg flag and whether it draws from inventory.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='manage-addons-btn']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='manage-addons-btn']",
+              "wait_after": 900
+            }
+          ]
+        },
+        {
+          "slug": "addons-master-add-row",
+          "title": "Add-ons panel — creating a new add-on",
+          "description": "Clicking '+ Add' inserts an editable row at the top: Name, Price, Weight (g) and Veg / Non-Veg. Save creates it; Cancel discards. The new add-on is instantly available to every item.",
+          "controls": [
+            "Name — required",
+            "Price — extra charge when chosen",
+            "Weight g — for portion / inventory maths",
+            "Veg / Non-Veg — dropdown",
+            "Save / Cancel"
+          ],
+          "narration": "A new add-on is a single row: name, price, weight, veg flag, save.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='add-addon-panel-btn']",
+              "wait_after": 500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Bulk Editor",
+      "states": [
+        {
+          "slug": "bulk-editor-grid",
+          "title": "Bulk Editor — spreadsheet view of the whole menu",
+          "description": "Bulk Edit turns the menu into an editable grid: one row per item, one column per field. Cells edit in place; changed cells turn orange and the Save button shows a count. The toolbar offers Search, Columns, Download Excel, Upload Excel, + Add Row, Validate Tax and Save Changes.",
+          "controls": [
+            "Search items — filters rows",
+            "Columns — picker to show / hide columns by tier",
+            "Download Excel ▾ — All items, or a blank Template",
+            "Upload Excel — import an .xlsx to add / update items",
+            "+ Add Row — new blank item row",
+            "Validate Tax — checks tax type / % consistency across rows",
+            "Save Changes (n) — writes every dirty row in one go",
+            "Select-all checkbox — for multi-select delete",
+            "Img / Name / Category / Price / Add-ons / Variations / Status / Type / Tax columns — tier-1 defaults",
+            "Card View — back to cards"
+          ],
+          "narration": "When you have a hundred prices to change, use the Bulk Editor. Edit cells like a spreadsheet, then save everything at once.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='bulk-edit-toggle-btn']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-edit-toggle-btn']",
+              "wait_after": 1500
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='bulk-editor-grid']"
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-column-picker",
+          "title": "Column picker — choose which fields to edit",
+          "description": "Columns are grouped in tiers: Tier 1 essentials (name, category, price, tax, status), Tier 2 channels & flags, Tier 3 operations & charges, Tier 4 nutrition. Tick a column to add it to the grid; Name and Image are always shown.",
+          "controls": [
+            "Tier groups — expand to see the columns in each",
+            "Checkbox per column — show / hide",
+            "Always visible — Img and Name cannot be hidden"
+          ],
+          "narration": "Only see what you are editing. The column picker shows fields by tier — from essentials to nutrition.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='column-picker-btn']",
+              "wait_after": 500
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "press",
+              "key": "Escape"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-editor-search']"
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-excel-menu",
+          "title": "Download Excel — all items or blank template",
+          "description": "The Download Excel menu exports the grid to .xlsx. 'Export all' writes every item with its current values (ideal for offline price revisions); 'Template' writes only the headers for adding brand-new items. Both files re-import through Upload Excel.",
+          "controls": [
+            "Export all items — full menu as Excel",
+            "Export template — headers only, for new items",
+            "Upload Excel — imports .xlsx / .xls; a confirmation dialog summarises adds vs updates before anything is written"
+          ],
+          "narration": "Take the menu to Excel, change prices offline, upload it back. The template gives you the exact columns for new items.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='download-excel-btn']",
+              "wait_after": 500
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "press",
+              "key": "Escape"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-editor-search']"
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-filter-strip",
+          "title": "Filter strip and inline cell editing",
+          "description": "The filter strip narrows rows by category and by quick chips (e.g. Active, Inactive, Veg). Any cell can be edited directly: text and numbers by typing, dropdowns by selecting, Yes / No flags by clicking. A changed cell is tinted orange until saved; Reset All undoes everything.",
+          "controls": [
+            "Category select — show one category's rows",
+            "Quick chips — status / food-type filters",
+            "Clear — removes all filters",
+            "Cell edit — click a cell and type or pick",
+            "Orange cell — unsaved change",
+            "Reset All / Save (footer) — discard or commit all dirty rows"
+          ],
+          "narration": "Filter down to the rows you need, edit cells in place — orange means unsaved — and commit with Save.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "type",
+              "selector": "[data-testid='bulk-editor-search']",
+              "value": "Coffee",
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "type",
+              "selector": "[data-testid='bulk-editor-search']",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-addon-expand",
+          "title": "Add-ons and Variations expand inside a row",
+          "description": "The Add-ons and Variations columns show a count chip. Clicking the chip expands a panel under the row: for add-ons, checkboxes for every master add-on; for variations, the groups and options with prices. This lets you attach add-ons or review variations for many items without opening each Full Edit form.",
+          "controls": [
+            "Add-ons chip — click to expand the add-on checklist",
+            "Variations chip — click to expand variation groups (disabled when 0)",
+            "Checkbox per add-on — attach / detach; marks the row dirty",
+            "Collapse — click the chip again"
+          ],
+          "narration": "Attach add-ons in bulk: click the chip on any row, tick the add-ons, move to the next row.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "type",
+              "selector": "[data-testid='bulk-editor-search']",
+              "value": "Avocado and Feta",
+              "wait_after": 700
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='addon-chip-']",
+              "nth": 0,
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid^='addon-chip-']",
+              "nth": 0
+            },
+            {
+              "type": "type",
+              "selector": "[data-testid='bulk-editor-search']",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-select-delete",
+          "title": "Multi-select rows — bulk delete banner",
+          "description": "Ticking row checkboxes shows an orange banner with the selected count and a 'Delete selected' button. Deleting opens a dialog that requires a reason (same list as single delete). Clear deselects everything. (Dialog is cancelled in this guide.)",
+          "controls": [
+            "Row checkbox — select an item",
+            "Select-all checkbox (header) — select every visible row",
+            "Banner count — how many are selected",
+            "Delete selected — opens the reason dialog",
+            "Clear — deselect all"
+          ],
+          "narration": "Retiring a whole section of the menu? Tick the rows, hit Delete selected, give a reason.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid^='bulk-row-checkbox-']",
+              "nth": 0,
+              "wait_after": 200
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='bulk-row-checkbox-']",
+              "nth": 1,
+              "wait_after": 200
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='bulk-row-checkbox-']",
+              "nth": 2,
+              "wait_after": 400
+            }
+          ]
+        },
+        {
+          "slug": "bulk-editor-delete-dialog",
+          "title": "Bulk delete — reason dialog",
+          "description": "The confirmation dialog names how many items will be deleted and asks for a reason from the configured list. Confirm is disabled until a reason is chosen; Cancel closes without changes.",
+          "controls": [
+            "Reason for deletion — dropdown, mandatory",
+            "Confirm delete — enabled after a reason is picked",
+            "Cancel — closes the dialog"
+          ],
+          "narration": "Bulk delete still needs a reason — the same audit trail as deleting one item.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-delete-selected-btn']",
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-delete-cancel-btn']"
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='bulk-delete-clear-btn']"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/menu",
+      "section": "Aggregator Menu (Swiggy / Zomato)",
+      "states": [
+        {
+          "slug": "aggregator-card-view",
+          "title": "Aggregator menu — Card View",
+          "description": "Selecting 'Aggregator' in the menu dropdown shows the catalogue that syncs to Swiggy and Zomato. Cards swap the Dine-In / Delivery / Takeaway chips for Swiggy and Zomato chips (green = listed) and gain a stock pill on the right ('Live' or 'Off · back at HH:MM'). An 'Aggregator Stock' button appears in the header. When the restaurant runs sub-brands, a Brand selector (All / Main Branch / brand) also appears.",
+          "controls": [
+            "Menu type = Aggregator — switches to the aggregator catalogue",
+            "Swiggy / Zomato chips — whether the item is listed on each platform",
+            "Stock pill — click to take the item offline / online on the aggregators",
+            "Offline · Back at … badge — item is off with an automatic turn-on time",
+            "Aggregator Stock button — opens Addon Stock / Variation Stock tabs",
+            "Brand selector — filter by sub-brand (only when sub-brands exist)"
+          ],
+          "narration": "The Aggregator menu is what Swiggy and Zomato customers see. Each card shows its platform listing and a live stock pill.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='menu-type-selector']"
+            },
+            {
+              "type": "select",
+              "selector": "[data-testid='menu-type-selector']",
+              "value": "Aggregator",
+              "wait_after": 1800
+            },
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            }
+          ]
+        },
+        {
+          "slug": "aggregator-stock-popover",
+          "title": "Item stock toggle — take offline until a time",
+          "description": "Clicking the stock pill opens a small popover. Turning an item OFF asks for a turn-on time (or 'until I switch it on'); the item is instantly marked out-of-stock on Swiggy and Zomato and shows an 'Offline · Back at' badge. Turning ON re-lists it at once.",
+          "controls": [
+            "Turn-on time options — e.g. 30 min, 1 h, tomorrow, manual",
+            "Confirm — pushes the stock change to the aggregators",
+            "Cancel — closes without change",
+            "Enable (when offline) — brings the item back live"
+          ],
+          "narration": "Ran out of a dish mid-shift? Tap the pill, pick when it will be back, confirm — Swiggy and Zomato update immediately.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid^='stock-toggle-']",
+              "nth": 0,
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "button:has-text('Cancel')"
+            }
+          ]
+        },
+        {
+          "slug": "aggregator-quick-edit",
+          "title": "Quick Edit on an aggregator item — Swiggy / Zomato / Brand",
+          "description": "Quick Edit in Aggregator mode adds a top row: Swiggy (Yes / No), Zomato (Yes / No) and Brand (Main or a sub-brand), plus the Swiggy Pack Chrg flag lower down. The rest of the fields match the normal Quick Edit.",
+          "controls": [
+            "Swiggy — list / unlist on Swiggy",
+            "Zomato — list / unlist on Zomato",
+            "Brand — which sub-brand catalogue the item belongs to",
+            "Swiggy Pack Chrg — apply Swiggy packaging charge",
+            "Save / Cancel"
+          ],
+          "narration": "On the aggregator menu, Quick Edit also controls the platform switches: Swiggy, Zomato, brand and packing charge.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 0
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='quick-edit-']",
+              "nth": 0,
+              "wait_after": 600
+            }
+          ],
+          "post_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='quick-edit-form'] button:has-text('Cancel')"
+            }
+          ]
+        },
+        {
+          "slug": "aggregator-full-edit-platform-sync",
+          "title": "Full Edit on an aggregator item — Platform Sync and Swiggy image",
+          "description": "The aggregator Full Edit form has two extras. Under Item Image, a 'Swiggy Image' switch: 'Use same as Item Image' or 'Upload different image' (Swiggy has stricter photo rules). A 'Platform Sync' section holds the Swiggy, Zomato and Swiggy Packing Charge toggles and the Brand dropdown.",
+          "controls": [
+            "Swiggy Image: Use same as Item Image — one photo for everything",
+            "Swiggy Image: Upload different image — separate uploader for Swiggy",
+            "Platform Sync: Swiggy / Zomato toggles — list on each platform",
+            "Platform Sync: Swiggy Packing Charge — apply Swiggy's packing fee",
+            "Platform Sync: Brand — sub-brand assignment",
+            "Save — writes item + both images in one multipart call"
+          ],
+          "narration": "Aggregator items can carry a dedicated Swiggy photo and their own platform switches — all in the Platform Sync section.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "hover",
+              "selector": "[data-testid^='product-card-']",
+              "nth": 1
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid^='full-edit-']",
+              "nth": 0,
+              "wait_after": 900
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='swiggy-upload-different']",
+              "wait_after": 400
+            },
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid='section-platform-sync']"
+            },
+            {
+              "type": "scroll_container",
+              "selector": "[data-testid='product-form'] .overflow-y-auto",
+              "dy": -140
+            }
+          ]
+        },
+        {
+          "slug": "aggregator-addon-stock",
+          "title": "Aggregator Stock — Addon Stock tab",
+          "description": "The Aggregator Stock button opens two tabs. Addon Stock lists every add-on used on the aggregator menu with Enable / Disable buttons per brand, and a catalog-level status that applies to all brands restaurant-wide (a warning explains this). Use it when an add-on ingredient runs out.",
+          "controls": [
+            "Addon Stock / Variation Stock tabs",
+            "Brand dropdown — Main Brand or a sub-brand",
+            "Enable / Disable per add-on — stock ON / OFF on the aggregators",
+            "Catalog status warning — changes apply to ALL brands"
+          ],
+          "narration": "Out of one add-on, not the dish? Aggregator Stock lets you disable just that add-on across Swiggy and Zomato.",
+          "pre_actions": [
+            {
+              "type": "wait_for",
+              "selector": "[data-testid^='product-card-']",
+              "timeout": 100000,
+              "reload": true
+            },
+            {
+              "type": "wait_for",
+              "selector": "[data-testid='menu-type-selector']"
+            },
+            {
+              "type": "select",
+              "selector": "[data-testid='menu-type-selector']",
+              "value": "Aggregator",
+              "wait_after": 1500
+            },
+            {
+              "type": "click",
+              "selector": "[data-testid='aggregator-stock-btn']",
+              "wait_after": 1200
+            }
+          ]
+        },
+        {
+          "slug": "aggregator-variation-stock",
+          "title": "Aggregator Stock — Variation Stock tab",
+          "description": "Variation Stock does the same for variation options (e.g. 'Large' size unavailable): each option can be enabled or disabled on the aggregators without touching the parent item.",
+          "controls": [
+            "Variation Stock tab — switch from Addon Stock",
+            "Enable / Disable per option — stock ON / OFF",
+            "Brand dropdown — scope by sub-brand"
+          ],
+          "narration": "Same idea for variations: switch off a single size or portion on the aggregators while the dish stays live.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "click",
+              "selector": "[data-testid='stock-tab-variation-stock']",
+              "wait_after": 1000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/visibility/status-config",
+      "section": "Local Settings",
+      "states": [
+        {
+          "slug": "status-config-overview",
+          "title": "Status Configuration — station-level settings",
+          "description": "Local Settings (Status Configuration) are stored per device / station, not per restaurant. This page controls how the order screen behaves on this terminal: order-taking mode, QSR mode, weight prompts, takeaway name / phone requirements, station view and — for menus — which menu this station actively sells from.",
+          "controls": [
+            "Back — return to previous page",
+            "Enable all / Disable all — quick toggles for the visibility grid",
+            "Order-taking / QSR / Weight prompt toggles — order screen behaviour",
+            "Save — persists to this device; Reset — restores defaults"
+          ],
+          "narration": "Status Configuration is per terminal. It decides how this device takes orders — and which menu it sells.",
+          "pre_actions": [
+            {
+              "type": "wait",
+              "ms": 1200
+            }
+          ]
+        },
+        {
+          "slug": "active-menu-selector",
+          "title": "Active Menu — which menu this station sells",
+          "description": "The Active Menu block lists the restaurant's menus (Normal, Party, Premium…). The chosen one becomes the menu the order screen loads on this device: categories, items and prices all come from it. Default is Normal, so restaurants with one menu see no change. Save applies; the order screen picks it up on next open.",
+          "controls": [
+            "Menu option buttons — Normal / Party / Premium (one active)",
+            "Save — stores the choice on this device",
+            "Reset — back to Normal"
+          ],
+          "narration": "Running a party in the banquet hall? Set that terminal's Active Menu to Party and it sells the party price list — other terminals are untouched.",
+          "fresh_route": false,
+          "pre_actions": [
+            {
+              "type": "scroll_into_view",
+              "selector": "[data-testid^='active-menu-option-']"
+            },
+            {
+              "type": "wait",
+              "ms": 500
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

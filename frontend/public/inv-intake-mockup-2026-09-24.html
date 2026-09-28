@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Inventory intake mockup — BUG-455 · BUG-456 · BUG-457 (2026-09-24)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: Poppins, ui-sans-serif, system-ui, sans-serif; background:#f8f8f8; }
+  .tag { font-size:10px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; padding:2px 6px; border-radius:4px; }
+  .new { outline:2px dashed #f97316; outline-offset:2px; border-radius:4px; }
+  .note { font-size:11px; color:#c2410c; }
+  th { font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:#475569; font-weight:600; text-align:left; padding:10px 16px; background:#f1f5f9; }
+  td { padding:12px 16px; border-top:1px solid #f1f5f9; font-size:13px; color:#0f172a; }
+</style>
+</head>
+<body class="p-8 text-slate-900">
+<h1 class="text-2xl font-semibold">Inventory intake mockup — where the changes appear</h1>
+<p class="text-sm text-slate-500 mt-1 mb-8">Static wireframe for owner review at INTAKE (2026-09-24). <span class="new px-1">Orange dashed</span> = new/changed element. Nothing here is implemented.</p>
+
+<!-- ============ BUG-455 ============ -->
+<section class="mb-12">
+  <h2 class="text-lg font-semibold mb-1">BUG-455 — on-hand quantity shows <code>display_qty_text</code> alongside the current figure</h2>
+  <p class="text-sm text-slate-500 mb-4">5 places show on-hand stock today. Each gets the same treatment: existing bold qty + unit stays; a small grey text with the backend's mixed-unit breakdown is appended when it differs.</p>
+
+  <div class="grid grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="px-4 py-2 flex items-center gap-2 border-b"><span class="tag bg-slate-100 text-slate-600">1 · Operations › Current Stock</span><span class="text-xs text-slate-400">CurrentStockPanel</span></div>
+      <table class="w-full">
+        <thead><tr><th>Ingredient</th><th>Category</th><th>Current stock</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>UAT Marination</td><td class="text-slate-500">Test Raw</td><td><span class="font-semibold">9.8</span> <span class="text-xs text-slate-400">pkt</span> <span class="new ml-2 text-xs text-slate-500">9 pkt 400 gm</span></td><td><span class="tag bg-emerald-50 text-emerald-700">In stock</span></td></tr>
+          <tr><td>Chicken</td><td class="text-slate-500">Test Raw</td><td><span class="font-semibold">12.5</span> <span class="text-xs text-slate-400">kg</span> <span class="new ml-2 text-xs text-slate-500">12 kg 500 gm</span></td><td><span class="tag bg-emerald-50 text-emerald-700">In stock</span></td></tr>
+          <tr><td>UAT Tortila</td><td class="text-slate-500">Packed</td><td><span class="font-semibold">2.25</span> <span class="text-xs text-slate-400">pkt</span> <span class="new ml-2 text-xs text-slate-500">2 pkt 5 piece</span></td><td><span class="tag bg-amber-50 text-amber-700">Low</span></td></tr>
+          <tr><td>Rice</td><td class="text-slate-500">Test Raw</td><td><span class="font-semibold">3</span> <span class="text-xs text-slate-400">kg</span> <span class="ml-2 note">← no text when identical</span></td><td><span class="tag bg-emerald-50 text-emerald-700">In stock</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="px-4 py-2 flex items-center gap-2 border-b"><span class="tag bg-slate-100 text-slate-600">2 · Operations › Sub-Recipe Stock</span><span class="text-xs text-slate-400">SubRecipeStockPanel</span></div>
+      <table class="w-full">
+        <thead><tr><th>Sub-recipe</th><th class="text-right">Current / book stock</th><th>Produce qty</th></tr></thead>
+        <tbody>
+          <tr><td>Masala Mix <span class="tag bg-purple-50 text-purple-600 ml-1">Sub-Recipe</span></td><td class="text-right"><span class="font-semibold">1.75</span> <span class="text-xs text-slate-400">kg</span> <span class="new ml-2 text-xs text-slate-500">1 kg 750 gm</span></td><td><input class="border rounded h-8 w-24 px-2 text-xs" placeholder="qty"/></td></tr>
+          <tr><td>Gravy Base <span class="tag bg-purple-50 text-purple-600 ml-1">Sub-Recipe</span></td><td class="text-right"><span class="font-semibold">4</span> <span class="text-xs text-slate-400">ltr</span></td><td><input class="border rounded h-8 w-24 px-2 text-xs" placeholder="qty"/></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="px-4 py-2 flex items-center gap-2 border-b"><span class="tag bg-slate-100 text-slate-600">3 · Operations › Stock Audit</span><span class="text-xs text-slate-400">StockAuditPanel</span></div>
+      <table class="w-full">
+        <thead><tr><th>Ingredient</th><th class="text-right">Book stock</th><th>Physical count</th><th>Drift</th></tr></thead>
+        <tbody>
+          <tr><td>UAT Marination<div class="text-xs text-slate-400">Test Raw</div></td><td class="text-right"><span class="font-semibold">9.8</span> <span class="text-xs text-slate-400">pkt</span><div class="new inline-block ml-2 text-xs text-slate-500">9 pkt 400 gm</div></td><td><input class="border rounded h-8 w-20 px-2 text-xs" value="9"/></td><td class="text-red-600 text-xs">−0.8 pkt</td></tr>
+          <tr><td>Chicken<div class="text-xs text-slate-400">Test Raw</div></td><td class="text-right"><span class="font-semibold">12.5</span> <span class="text-xs text-slate-400">kg</span><div class="new inline-block ml-2 text-xs text-slate-500">12 kg 500 gm</div></td><td><input class="border rounded h-8 w-20 px-2 text-xs" placeholder="qty"/></td><td class="text-slate-400 text-xs">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="px-4 py-2 flex items-center gap-2 border-b"><span class="tag bg-slate-100 text-slate-600">4 · Operations › Stock Update (shopping list)</span><span class="text-xs text-slate-400">AutoShoppingList</span></div>
+      <table class="w-full">
+        <thead><tr><th>Ingredient</th><th>On hand</th><th>Need</th><th>Order qty</th></tr></thead>
+        <tbody>
+          <tr><td>UAT Marination</td><td>9.8 pkt <span class="new ml-2 text-xs text-slate-500">9 pkt 400 gm</span></td><td>15 pkt</td><td><input class="border rounded h-8 w-20 px-2 text-xs" value="6"/></td></tr>
+          <tr><td>Chicken</td><td>12.5 kg <span class="new ml-2 text-xs text-slate-500">12 kg 500 gm</span></td><td>20 kg</td><td><input class="border rounded h-8 w-20 px-2 text-xs" value="8"/></td></tr>
+        </tbody>
+      </table>
+      <p class="px-4 py-2 note">OD-455-03: include this screen? (on-hand here comes via purchasePlanner — needs the text passed through)</p>
+    </div>
+  </div>
+
+  <div class="mt-4 bg-white rounded-xl border border-slate-200 p-4">
+    <span class="tag bg-slate-100 text-slate-600">5 · Excel / PDF export (Current Stock)</span>
+    <table class="mt-2 text-xs">
+      <thead><tr><th>Ingredient</th><th>Category</th><th>Current Stock</th><th>Unit</th><th class="new">Stock (text)</th><th>Status</th></tr></thead>
+      <tbody><tr><td>UAT Marination</td><td>Test Raw</td><td>9.8</td><td>pkt</td><td class="new">9 pkt 400 gm</td><td>In stock</td></tr></tbody>
+    </table>
+    <p class="note mt-1">OD-455-02: add this column, or leave exports as they are?</p>
+  </div>
+</section>
+
+<!-- ============ BUG-456 ============ -->
+<section class="mb-12">
+  <h2 class="text-lg font-semibold mb-1">BUG-456 — Setup › Ingredients › edit row: zero-stock gate</h2>
+  <p class="text-sm text-slate-500 mb-4">Same row you saw in the screenshot. Nothing changes until the user edits Unit or Conversion on an ingredient that has stock.</p>
+
+  <div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-4">
+    <div class="px-4 py-2 border-b"><span class="tag bg-slate-100 text-slate-600">A · Today / stock = 0 / unit &amp; conversion untouched</span></div>
+    <table class="w-full">
+      <thead><tr><th>Ingredient name</th><th>Base unit</th><th>Conversion</th><th>Small unit</th><th>Min alert</th><th>Actions</th></tr></thead>
+      <tbody><tr class="bg-blue-50/40">
+        <td><input class="border-2 border-slate-800 rounded h-9 px-3 w-full" value="Chicken"/></td>
+        <td><select class="border rounded h-8 px-2 text-xs"><option>kg</option></select></td>
+        <td class="text-center text-slate-400">—</td>
+        <td><span class="tag bg-slate-100 text-slate-600">gm</span></td>
+        <td><input class="border rounded h-8 w-16 px-2 text-xs" placeholder="Alert"/> <span class="text-xs text-slate-400">kg</span></td>
+        <td><button class="text-xs border border-blue-600 text-blue-600 rounded px-3 h-7">Save</button> <button class="text-xs text-slate-500 px-2 h-7">Cancel</button></td>
+      </tr></tbody>
+    </table>
+  </div>
+
+  <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="px-4 py-2 border-b"><span class="tag bg-slate-100 text-slate-600">B · Stock on hand 12.5 kg → user switches Unit to "pkt" (or edits Conversion)</span></div>
+    <table class="w-full">
+      <thead><tr><th>Ingredient name</th><th>Base unit</th><th>Conversion</th><th>Small unit</th><th>Min alert</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr class="bg-blue-50/40">
+          <td><input class="border-2 border-slate-800 rounded h-9 px-3 w-full" value="Chicken"/></td>
+          <td><select class="new border border-amber-400 rounded h-8 px-2 text-xs bg-amber-50"><option>pkt</option></select></td>
+          <td><input class="new border border-amber-400 rounded h-8 w-24 px-2 text-xs bg-amber-50" value="1000" title="1 pkt = ? gm"/></td>
+          <td><span class="tag bg-slate-100 text-slate-600">gm</span></td>
+          <td><input class="border rounded h-8 w-16 px-2 text-xs" placeholder="Alert"/> <span class="text-xs text-slate-400">gm</span></td>
+          <td><button class="new text-xs border border-slate-300 text-slate-400 bg-slate-100 rounded px-3 h-7 cursor-not-allowed" title="Bring stock to 0 before changing unit or conversion">Save</button> <button class="text-xs text-slate-500 px-2 h-7">Cancel</button></td>
+        </tr>
+        <tr><td colspan="6" class="p-0">
+          <div class="new mx-4 my-2 flex items-center gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+            <span class="font-bold">⚠</span>
+            <span><b>Stock on hand is 12.5 kg (12 kg 500 gm).</b> Unit and conversion are locked until stock is 0 — the backend will reject this change.</span>
+            <button class="ml-auto underline">Undo unit change</button>
+          </div>
+        </td></tr>
+      </tbody>
+    </table>
+    <p class="px-4 py-2 note">OD-456-01 alternative: grey-out Unit + Conversion with a 🔒 tooltip whenever stock &gt; 0 (user can't touch them at all). Recommendation: this warn-on-change version.</p>
+  </div>
+</section>
+
+<!-- ============ BUG-457 ============ -->
+<section class="mb-12">
+  <h2 class="text-lg font-semibold mb-1">BUG-457 — Recipes › Bulk Edit › delete confirmation with reason</h2>
+  <p class="text-sm text-slate-500 mb-4">Trash icon on a row opens an app dialog instead of the browser's OK/Cancel box. Reason dropdown appears on the <b>Addon</b> tab only (backend requires it there).</p>
+
+  <div class="grid grid-cols-3 gap-6">
+    <div>
+      <div class="mb-2"><span class="tag bg-red-50 text-red-600">Today</span></div>
+      <div class="bg-white border border-slate-300 rounded shadow-md w-80 text-sm">
+        <div class="px-4 py-3 border-b text-xs text-slate-500">react-app-deploy-18.preview… says</div>
+        <div class="px-4 py-3">Delete recipe "with fingertips"?</div>
+        <div class="px-4 py-3 flex justify-end gap-2 bg-slate-50"><button class="border rounded px-3 h-7 text-xs">Cancel</button><button class="bg-blue-600 text-white rounded px-3 h-7 text-xs">OK</button></div>
+      </div>
+      <div class="mt-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-2 w-80 flex items-center gap-2"><span class="font-bold">!</span> The reason field is required.</div>
+      <p class="note mt-2">Standard tab: green "deleted" toast but the row stays until reload.</p>
+    </div>
+
+    <div>
+      <div class="mb-2"><span class="tag bg-emerald-50 text-emerald-700">After — Addon tab</span></div>
+      <div class="new bg-white border border-slate-200 rounded-xl shadow-lg w-96 text-sm p-5">
+        <div class="font-semibold text-base">Delete addon recipe</div>
+        <p class="text-slate-500 text-xs mt-1">"with fingertips" will be removed from Addon Recipes. This cannot be undone.</p>
+        <label class="block mt-4 text-xs font-medium text-slate-700">Reason <span class="text-red-500">*</span></label>
+        <select class="mt-1 w-full border border-slate-300 rounded-md h-9 px-2 text-sm bg-white">
+          <option>Select a reason…</option>
+          <option>Item not in menu any more</option>
+          <option>Duplicate item</option>
+        </select>
+        <p class="text-[11px] text-slate-400 mt-1">Reasons come from the same list used by Menu Management delete.</p>
+        <div class="mt-5 flex justify-end gap-2">
+          <button class="border rounded-md px-3 h-9 text-sm">Cancel</button>
+          <button class="bg-slate-300 text-white rounded-md px-3 h-9 text-sm cursor-not-allowed" title="Pick a reason first">Delete recipe</button>
+        </div>
+      </div>
+      <p class="note mt-2">Delete button turns red and enables once a reason is chosen.</p>
+    </div>
+
+    <div>
+      <div class="mb-2"><span class="tag bg-emerald-50 text-emerald-700">After — Standard / Sub tab</span></div>
+      <div class="new bg-white border border-slate-200 rounded-xl shadow-lg w-96 text-sm p-5">
+        <div class="font-semibold text-base">Delete recipe</div>
+        <p class="text-slate-500 text-xs mt-1">"Chicken Biryani" will be removed from Standard Recipes. This cannot be undone.</p>
+        <div class="mt-5 flex justify-end gap-2">
+          <button class="border rounded-md px-3 h-9 text-sm">Cancel</button>
+          <button class="bg-red-600 text-white rounded-md px-3 h-9 text-sm">Delete recipe</button>
+        </div>
+      </div>
+      <div class="mt-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-lg px-3 py-2 w-96 flex items-center gap-2">✓ Recipe "Chicken Biryani" deleted</div>
+      <p class="note mt-2">After success the list is re-fetched → row disappears in Bulk view, Card view and the tab counter.</p>
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>BUG-386 Design — Room GST in Check-In Panel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F7F7F7; padding: 24px; }
+  h1 { font-size: 13px; font-weight: 600; color: #888; margin-bottom: 16px; text-transform: uppercase; letter-spacing: .05em; }
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
+  .card { background: white; border: 1px solid #E5E5E5; border-radius: 12px; overflow: hidden; }
+  .card-header { background: #FAFAFA; border-bottom: 1px solid #E5E5E5; padding: 12px 16px; font-size: 12px; font-weight: 700; color: #666; letter-spacing: .04em; text-transform: uppercase; }
+  .card-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* form inputs */
+  label { display: block; font-size: 11px; color: #888; margin-bottom: 5px; font-weight: 500; }
+  .input-wrap { position: relative; }
+  .prefix { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #888; }
+  input[type=text], input[type=number], select {
+    width: 100%; border: 1px solid #E5E5E5; border-radius: 8px; padding: 0 10px; height: 38px; font-size: 13px; color: #1A1A1A; background: white;
+  }
+  input.padl { padding-left: 22px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: end; }
+  .nights-val { font-size: 18px; font-weight: 800; color: #1A1A1A; text-align: center; padding-bottom: 8px; }
+
+  /* BEFORE — no GST */
+  .before-note { font-size: 11px; color: #888; background: #FAFAFA; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; display: flex; gap: 6px; align-items: center; }
+
+  /* AFTER — GST strip */
+  .gst-strip {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gst-strip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .gst-label { font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; gap: 5px; }
+  .gst-badge { background: #22C55E; color: white; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+  .gst-na { background: #E5E5E5; color: #888; font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 20px; }
+  .gst-rows { font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .gst-row { display: flex; justify-content: space-between; color: #374151; }
+  .gst-row.total { font-weight: 700; color: #1A1A1A; border-top: 1px solid #BBF7D0; padding-top: 5px; margin-top: 2px; }
+  .gst-row.total .amount { color: #15803D; font-size: 14px; }
+  .gst-row .muted { color: #888; font-size: 11px; }
+  .gst-na-msg { font-size: 12px; color: #888; }
+
+  /* confirm btn */
+  .confirm-btn {
+    width: 100%; height: 42px; border-radius: 10px; background: #329937; color: white;
+    font-size: 14px; font-weight: 600; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;
+  }
+  .confirm-btn.disabled { background: #ccc; cursor: not-allowed; }
+
+  /* labels */
+  .change-label { font-size: 11px; font-weight: 700; border-radius: 4px; padding: 2px 8px; display: inline-block; margin-bottom: 6px; }
+  .change-label.before { background: #FEF2F2; color: #B91C1C; }
+  .change-label.after  { background: #F0FDF4; color: #166534; }
+  .change-label.new    { background: #EFF6FF; color: #1D4ED8; }
+
+  /* divider */
+  .divider { height: 1px; background: #F0F0F0; margin: 4px 0; }
+
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+  .tag.red { background: #FEE2E2; color: #B91C1C; }
+  .tag.green { background: #DCFCE7; color: #15803D; }
+</style>
+</head>
+<body>
+
+<h1>BUG-386 — CheckInPage GST Breakdown · Design Review</h1>
+
+<div class="layout">
+
+  <!-- BEFORE -->
+  <div>
+    <span class="change-label before">BEFORE — Current (Broken)</span>
+    <div class="card">
+      <div class="card-header">Check-In Panel · Financials Section</div>
+      <div class="card-body">
+
+        <div class="grid2">
+          <div>
+            <label>Room Amount *</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="8000" />
+            </div>
+          </div>
+          <div>
+            <label>Advance Payment</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- No GST info shown at all -->
+        <div class="before-note">
+          <svg width="14" height="14" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          Booking type: <strong>WalkIn</strong>
+        </div>
+
+        <!-- Hidden bug callout -->
+        <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 12px;font-size:11px;color:#991B1B;">
+          🐛 <strong>BUG:</strong> Payload sends <code>gst_tax: "0.00"</code> always.<br/>
+          <code>balance_payment = 8000 − 0 = 8000</code> (should be 8400)
+        </div>
+
+        <button class="confirm-btn">✓ Confirm Check-In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div>
+    <span class="change-label after">AFTER — Fixed (BUG-386)</span>
+    <div class="card">
+      <div class="card-header">Check-In Panel · Financials Section</div>
+      <div class="card-body">
+
+        <div class="grid2">
+          <div>
+            <label>Room Amount *</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="8000" />
+            </div>
+          </div>
+          <div>
+            <label>Advance Payment</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW GST STRIP -->
+        <div class="gst-strip">
+          <div class="gst-strip-header">
+            <span class="gst-label">
+              <svg width="12" height="12" fill="none" stroke="#166534" stroke-width="2" viewBox="0 0 24 24"><path d="M9 14l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              GST (Accommodation)
+            </span>
+            <span class="gst-badge">18% Slab</span>
+          </div>
+          <div class="gst-rows">
+            <div class="gst-row">
+              <span>Nightly unit rate</span>
+              <span>₹8,000 ÷ 1 night ÷ 1 room = ₹8,000</span>
+            </div>
+            <div class="divider"></div>
+            <div class="gst-row">
+              <span>CGST (9%)</span>
+              <span>₹8,000 × 9% = <strong>₹720</strong></span>
+            </div>
+            <div class="gst-row">
+              <span>SGST (9%)</span>
+              <span>₹8,000 × 9% = <strong>₹720</strong></span>
+            </div>
+            <div class="gst-row" style="font-size:11px;color:#888;font-style:italic;">
+              <span>Total GST (CGST + SGST)</span>
+              <span>₹720 + ₹720 = <strong style="color:#166534;">₹1,440</strong></span>
+            </div>
+            <div class="divider"></div>
+            <div class="gst-row total">
+              <span>Total incl. GST</span>
+              <span class="amount">₹9,440</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;font-size:11px;color:#888;display:flex;gap:6px;align-items:center;">
+          <svg width="14" height="14" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          Booking type: <strong style="color:#1A1A1A;">WalkIn</strong>
+        </div>
+
+        <!-- Fixed payload callout -->
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 12px;font-size:11px;color:#15803D;">
+          ✅ <strong>Fixed:</strong> Payload sends <code>gst_tax: "1440.00"</code><br/>
+          <code>balance_payment = 8000 + 1440 − 0 = 9440</code>
+        </div>
+
+        <button class="confirm-btn">✓ Confirm Check-In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GST N/A case -->
+  <div>
+    <span class="change-label new">EDGE CASE — GST Not Applicable</span>
+    <div class="card">
+      <div class="card-header">Check-In Panel · When roomGstApplicable = false</div>
+      <div class="card-body">
+
+        <div class="grid2">
+          <div>
+            <label>Room Amount *</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="5000" />
+            </div>
+          </div>
+          <div>
+            <label>Advance Payment</label>
+            <div class="input-wrap">
+              <span class="prefix">₹</span>
+              <input type="number" class="padl" value="1000" />
+            </div>
+          </div>
+        </div>
+
+        <!-- GST N/A strip -->
+        <div class="gst-strip" style="background:#FAFAFA;border-color:#E5E5E5;">
+          <div class="gst-strip-header">
+            <span class="gst-label" style="color:#888;">
+              <svg width="12" height="12" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><path d="M9 14l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              GST (Accommodation)
+            </span>
+            <span class="gst-na">Not Applicable</span>
+          </div>
+          <div class="gst-na-msg">GST not configured for this property. Sending <code>gst_tax: "0.00"</code>.</div>
+          <div class="gst-rows" style="margin-top:4px;">
+            <div class="gst-row total">
+              <span>Total (no GST)</span>
+              <span class="amount" style="color:#1A1A1A;">₹5,000</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="confirm-btn">✓ Confirm Check-In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout drawer change -->
+  <div>
+    <span class="change-label new">NEW — PmsCheckoutDrawer (OD-386-02 A)</span>
+    <div class="card">
+      <div class="card-header">Checkout Drawer · Room Accommodation GST in Payload</div>
+      <div class="card-body">
+        <div style="font-size:12px;color:#555;line-height:1.6;">
+          <p style="margin-bottom:10px;"><strong>What changes (NO visual UI change):</strong></p>
+          <ul style="list-style:disc;padding-left:16px;display:flex;flex-direction:column;gap:6px;">
+            <li>After <code>detail</code> is fetched via <code>SINGLE_ORDER_NEW</code>, read <code>detail.roomInfo.roomPaymentSummary.gstTax</code></li>
+            <li>This value was stored at check-in time (now will be correct post-fix)</li>
+            <li>Inject it into the <code>BILL_PAYMENT</code> payload alongside food-order GST</li>
+          </ul>
+        </div>
+        <div class="divider" style="margin:6px 0;" />
+        <div style="background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:10px 12px;font-size:11px;color:#9A3412;">
+          ⚠ <strong>Prerequisite:</strong> Confirm exact payload field name with backend via curl probe before coding (<code>room_gst_tax</code> vs adding to <code>gst_tax</code>).
+        </div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 12px;font-size:11px;color:#166534;margin-top:6px;">
+          <strong>orderTransform.js change:</strong> Add <code>gstTax</code> field to <code>roomPaymentSummary</code> map at L431:
+          <br/><code>gstTax: parseFloat(api.room_info.room_payment_summary.gst_tax) || 0,</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:20px;max-width:900px;background:white;border:1px solid #E5E5E5;border-radius:12px;padding:16px;">
+  <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Files Changed Summary</div>
+  <div style="display:grid;grid-template-columns:200px 1fr 80px;gap:6px;font-size:12px;">
+    <div style="font-weight:700;color:#888;">File</div>
+    <div style="font-weight:700;color:#888;">Change</div>
+    <div style="font-weight:700;color:#888;">Risk</div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">roomGstCalculator.js</div>
+    <div>NEW — pure slab computation utility</div>
+    <div><span class="tag green">LOW</span></div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">profileTransform.js</div>
+    <div>Add <code>roomGstSlabs</code> to <code>checkInFlags</code> — parse <code>api.settings?.room_gst</code> JSON string</div>
+    <div><span class="tag red">HIGH</span></div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">pmsService.js</div>
+    <div>Replace <code>gst_tax:'0.00'</code> with computed; fix <code>balance_payment</code></div>
+    <div><span class="tag red">HIGH</span></div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">CheckInPage.jsx</div>
+    <div>Read slabs from context; compute; render GST strip; pass <code>gstTax</code> to service</div>
+    <div><span class="tag red">HIGH</span></div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">orderTransform.js</div>
+    <div>Add <code>gstTax</code> to <code>roomPaymentSummary</code> map (R5 HOTSPOT — additive only)</div>
+    <div><span class="tag red">CRITICAL</span></div>
+
+    <div style="color:#1D4ED8;font-family:monospace;">PmsCheckoutDrawer.jsx</div>
+    <div>Read <code>gstTax</code> from <code>detail.roomInfo.roomPaymentSummary</code>; inject in <code>BILL_PAYMENT</code> payload</div>
+    <div><span class="tag red">HIGH</span></div>
+  </div>
+</div>
+
+</body>
+</html>

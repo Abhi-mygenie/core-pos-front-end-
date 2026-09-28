@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UI Preview — BUG-297 / BUG-298 / BUG-299</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; padding: 24px; }
+  .section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 32px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .section-title { font-size: 13px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .section-subtitle { font-size: 12px; color: #9CA3AF; margin-bottom: 20px; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 10px; border-radius: 6px; display: inline-block; margin-bottom: 12px; }
+  .label-before { background: #FEE2E2; color: #DC2626; }
+  .label-after  { background: #DCFCE7; color: #16A34A; }
+  /* ---- SHARED FORM STYLES ---- */
+  .form-box { border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; }
+  .form-field { margin-bottom: 10px; }
+  .form-field label { display: block; font-size: 11px; color: #6B7280; font-weight: 500; margin-bottom: 4px; }
+  .form-input { width: 100%; padding: 7px 10px; border: 1px solid #D1D5DB; border-radius: 7px; font-size: 13px; color: #111; background: white; }
+  .form-input:focus { outline: none; border-color: #F26B33; }
+  .form-select { width: 100%; padding: 7px 10px; border: 1px solid #D1D5DB; border-radius: 7px; font-size: 13px; color: #111; background: white; }
+  .btn-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+  .btn { padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; }
+  .btn-cancel { background: #F3F4F6; color: #374151; border: 1px solid #D1D5DB; }
+  .btn-add    { background: #329937; color: white; }
+  .hint { font-size: 10px; color: #9CA3AF; margin-top: 3px; }
+  .highlight-new { background: #F0FDF4; border: 1.5px dashed #4ADE80; border-radius: 7px; padding: 8px 10px; }
+  .highlight-new label { color: #16A34A !important; font-weight: 600 !important; }
+  .highlight-tag { font-size: 10px; background: #BBF7D0; color: #15803D; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: 600; }
+  .auto-badge { font-size: 10px; background: #D1FAE5; color: #065F46; padding: 2px 7px; border-radius: 10px; margin-left: 6px; }
+  /* ---- ITEM ROW STYLES ---- */
+  .cart-container { border: 1px solid #E5E7EB; border-radius: 10px; overflow: hidden; }
+  .cart-header { background: #F9FAFB; padding: 10px 14px; font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #E5E7EB; }
+  .item-row { display: flex; align-items: flex-start; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #F3F4F6; }
+  .item-row:last-child { border-bottom: none; }
+  .status-dot { width: 32px; height: 32px; border-radius: 50%; background: #F0FDF4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .item-btn { width: 34px; height: 34px; border-radius: 50%; background: #F9FAFB; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .item-btn-cancel { color: #9CA3AF; }
+  .item-btn-comp  { color: #9CA3AF; }
+  .item-btn-comp.active { background: rgba(46,125,50,0.1); color: #329937; }
+  .item-details { flex: 1; }
+  .item-name { font-size: 13px; font-weight: 600; color: #111827; }
+  .item-meta { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+  .item-price { font-size: 13px; font-weight: 600; color: #111827; text-align: right; }
+  .comp-badge { font-size: 10px; background: #D1FAE5; color: #065F46; padding: 1px 6px; border-radius: 8px; margin-left: 6px; }
+  .strikethrough { text-decoration: line-through; color: #9CA3AF; }
+  /* ---- MODAL STYLES ---- */
+  .modal-overlay { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 20px; }
+  .modal-box { background: white; border-radius: 16px; overflow: hidden; max-width: 380px; margin: 0 auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-header { padding: 18px 20px; border-bottom: 1px solid #F3F4F6; display: flex; justify-content: space-between; align-items: center; }
+  .modal-title { font-size: 17px; font-weight: 700; color: #111827; }
+  .modal-subtitle { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+  .modal-close { width: 28px; height: 28px; border-radius: 50%; background: #F3F4F6; border: none; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .modal-body { padding: 18px 20px; }
+  .qty-selector { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .qty-row { display: flex; align-items: center; justify-content: space-between; }
+  .qty-label { font-size: 12px; color: #6B7280; }
+  .qty-value { font-size: 13px; font-weight: 700; color: #111827; margin-left: 8px; }
+  .qty-controls { display: flex; align-items: center; gap: 8px; }
+  .qty-btn { width: 34px; height: 34px; border-radius: 8px; background: #E5E7EB; border: none; cursor: pointer; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .qty-num { min-width: 32px; text-align: center; font-size: 18px; font-weight: 700; color: #329937; }
+  .qty-info { font-size: 11px; color: #9CA3AF; margin-top: 8px; }
+  .modal-btn { width: 100%; padding: 13px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; color: white; background: #329937; cursor: pointer; }
+  .modal-btn-grey { background: #9CA3AF; }
+  /* ---- CANCEL MODAL (reference) ---- */
+  .reason-select { width: 100%; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 10px; font-size: 13px; color: #6B7280; margin-bottom: 10px; }
+  /* ---- ANNOTATIONS ---- */
+  .annotation { background: #FFF9C4; border-left: 3px solid #F59E0B; padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 11px; color: #92400E; margin-top: 10px; }
+  .arrow { font-size: 22px; color: #329937; text-align: center; padding: 8px 0; }
+  .page-title { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 4px; }
+  .page-desc  { font-size: 13px; color: #6B7280; margin-bottom: 28px; }
+  svg { display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="page-title">UI Changes Preview</div>
+<div class="page-desc">Visual mockup — BUG-297 · BUG-298 · BUG-299 &nbsp;|&nbsp; No code has been edited</div>
+
+<!-- ============================================================ -->
+<!-- BUG-297: ADD CATEGORY FORM -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-297 — Add Category Form</div>
+  <div class="section-subtitle">Menu Management → Category List → "Add Category" button</div>
+  <div class="compare">
+
+    <!-- BEFORE -->
+    <div>
+      <span class="col-label label-before">Before (broken)</span>
+      <div class="form-box">
+        <div class="form-field">
+          <label>Category Name</label>
+          <input class="form-input" placeholder="Category name" value="Cocktails" />
+        </div>
+        <div class="form-field">
+          <label>Station</label>
+          <select class="form-select">
+            <option>BAR</option>
+            <option>KDS</option>
+            <option>KITCHEN</option>
+          </select>
+        </div>
+        <!-- NO PRINTER FIELD -->
+        <div class="btn-row">
+          <button class="btn btn-cancel">Cancel</button>
+          <button class="btn btn-add">Add</button>
+        </div>
+      </div>
+      <div class="annotation">
+        ❌ <strong>restaurant_printer_id</strong> sent as empty string → backend stores NULL → KOT printing broken silently
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div>
+      <span class="col-label label-after">After (fixed)</span>
+      <div class="form-box">
+        <div class="form-field">
+          <label>Category Name</label>
+          <input class="form-input" placeholder="Category name" value="Cocktails" />
+        </div>
+        <div class="form-field">
+          <label>Station</label>
+          <select class="form-select">
+            <option selected>BAR</option>
+            <option>KDS</option>
+            <option>KITCHEN</option>
+          </select>
+        </div>
+        <!-- NEW: Printer auto-derived from station — shown as read-only info -->
+        <div class="highlight-new form-field">
+          <label>
+            Printer
+            <span class="highlight-tag">NEW</span>
+            <span class="auto-badge">Auto from station</span>
+          </label>
+          <div style="font-size:13px; color:#111; padding: 6px 2px; font-weight:600;">
+            Everycom-58-Series
+            <span style="font-size:11px; color:#9CA3AF; font-weight:400;"> · BAR station</span>
+          </div>
+          <div class="hint">Printer is auto-matched to the selected station. Change station to change printer.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-cancel">Cancel</button>
+          <button class="btn btn-add">Add</button>
+        </div>
+      </div>
+      <div class="annotation">
+        ✅ <strong>restaurant_printer_id</strong> auto-derived from station → backend stores correct printer → KOT routing works
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit Category — same fix -->
+<div class="section">
+  <div class="section-title">BUG-297 — Edit Category Form</div>
+  <div class="section-subtitle">Same fix applies to the Edit Category inline form</div>
+  <div class="compare">
+    <div>
+      <span class="col-label label-before">Before (broken)</span>
+      <div class="form-box">
+        <input class="form-input" value="Cocktails" style="margin-bottom:8px;" />
+        <select class="form-select" style="margin-bottom:8px;"><option>BAR</option></select>
+        <div class="btn-row">
+          <button class="btn btn-cancel">Cancel</button>
+          <button class="btn btn-add">Save</button>
+        </div>
+      </div>
+      <div class="annotation">❌ Edit also omits printerId → printer gets wiped on every save</div>
+    </div>
+    <div>
+      <span class="col-label label-after">After (fixed)</span>
+      <div class="form-box">
+        <input class="form-input" value="Cocktails" style="margin-bottom:8px;" />
+        <select class="form-select" style="margin-bottom:8px;"><option>BAR</option></select>
+        <div class="highlight-new" style="margin-bottom:8px; font-size:12px; color:#065F46;">
+          <strong>Printer:</strong> Everycom-58-Series
+          <span class="highlight-tag">pre-filled</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-cancel">Cancel</button>
+          <button class="btn btn-add">Save</button>
+        </div>
+      </div>
+      <div class="annotation">✅ Pre-fills from existing category.printerId → save preserves the printer</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BUG-298 + BUG-299: PLACED ITEM ROW — COMP BUTTON -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-298 + BUG-299 — Placed Item Row (Cart Panel)</div>
+  <div class="section-subtitle">Order Entry → right panel → placed items · Works in Dine-in AND QSR</div>
+  <div class="compare">
+
+    <!-- BEFORE -->
+    <div>
+      <span class="col-label label-before">Before (no comp option)</span>
+      <div class="cart-container">
+        <div class="cart-header">Placed Items</div>
+
+        <!-- Item 1 -->
+        <div class="item-row">
+          <div class="status-dot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <!-- Cancel only -->
+          <button class="item-btn item-btn-cancel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <div class="item-details">
+            <div class="item-name">Chicken Biryani <span style="color:#9CA3AF; font-size:11px;">×3</span></div>
+            <div class="item-meta">Dine-in · KDS</div>
+          </div>
+          <div class="item-price">₹750</div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="item-row">
+          <div class="status-dot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <button class="item-btn item-btn-cancel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <div class="item-details">
+            <div class="item-name">Butter Naan <span style="color:#9CA3AF; font-size:11px;">×2</span></div>
+            <div class="item-meta">Dine-in · KITCHEN</div>
+          </div>
+          <div class="item-price">₹120</div>
+        </div>
+
+      </div>
+      <div class="annotation">❌ No way to mark any item as complementary. Cashier has no option.</div>
+    </div>
+
+    <!-- AFTER -->
+    <div>
+      <span class="col-label label-after">After — Gift button added per item</span>
+      <div class="cart-container">
+        <div class="cart-header">Placed Items</div>
+
+        <!-- Item 1 — Partially comped (1 of 3) -->
+        <div class="item-row">
+          <div class="status-dot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0-2-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <!-- Cancel -->
+          <button class="item-btn item-btn-cancel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <!-- COMP BUTTON — active (1 comp set) -->
+          <button class="item-btn item-btn-comp active" title="1 of 3 marked complementary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          </button>
+          <div class="item-details">
+            <div class="item-name">Chicken Biryani <span style="color:#9CA3AF; font-size:11px;">×3</span>
+              <span class="comp-badge">1 Comp</span>
+            </div>
+            <div class="item-meta">Dine-in · KDS</div>
+          </div>
+          <div class="item-price">
+            <span class="strikethrough" style="font-size:11px;">₹750</span><br/>
+            <span style="color:#329937; font-size:13px; font-weight:700;">₹500</span>
+          </div>
+        </div>
+
+        <!-- Item 2 — No comp -->
+        <div class="item-row">
+          <div class="status-dot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <button class="item-btn item-btn-cancel">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </button>
+          <!-- COMP BUTTON — inactive -->
+          <button class="item-btn item-btn-comp" title="Mark as complementary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          </button>
+          <div class="item-details">
+            <div class="item-name">Butter Naan <span style="color:#9CA3AF; font-size:11px;">×2</span></div>
+            <div class="item-meta">Dine-in · KITCHEN</div>
+          </div>
+          <div class="item-price">₹120</div>
+        </div>
+
+      </div>
+      <div class="annotation">✅ Gift 🎁 button next to Cancel on every placed item. Green = comp active. Badge shows count. Price updates.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BUG-298 + BUG-299: MARKCOMPMODAL -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-298 + BUG-299 — Mark Complementary Modal</div>
+  <div class="section-subtitle">Opens when cashier taps the Gift button · qty &gt; 1 → shows selector · qty = 1 → toggles directly</div>
+  <div class="compare">
+
+    <!-- Cancel Modal reference -->
+    <div>
+      <span class="col-label label-before" style="background:#EEF2FF; color:#4338CA;">Cancel Modal (reference pattern)</span>
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <div class="modal-header">
+            <div>
+              <div class="modal-title">Cancel Chicken Biryani</div>
+              <div class="modal-subtitle">Select cancellation details</div>
+            </div>
+            <button class="modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="qty-selector">
+              <div class="qty-row">
+                <div><span class="qty-label">Current Qty:</span><span class="qty-value">3</span></div>
+                <div class="qty-controls">
+                  <span class="qty-label">Cancel Qty:</span>
+                  <button class="qty-btn">−</button>
+                  <span class="qty-num">1</span>
+                  <button class="qty-btn">+</button>
+                </div>
+              </div>
+            </div>
+            <select class="reason-select"><option>Select the Reason</option><option>Customer Changed Mind</option></select>
+            <button class="modal-btn" style="background:#EF4444;">Cancel 1 Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New MarkCompModal -->
+    <div>
+      <span class="col-label label-after">New MarkCompModal <span class="highlight-tag">NEW</span></span>
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <div class="modal-header">
+            <div>
+              <div class="modal-title">Mark Complementary</div>
+              <div class="modal-subtitle">Chicken Biryani</div>
+            </div>
+            <button class="modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="qty-selector">
+              <div class="qty-row">
+                <div><span class="qty-label">Current Qty:</span><span class="qty-value">3</span></div>
+                <div class="qty-controls">
+                  <span class="qty-label">Comp Qty:</span>
+                  <button class="qty-btn">−</button>
+                  <span class="qty-num" style="color:#329937;">1</span>
+                  <button class="qty-btn">+</button>
+                </div>
+              </div>
+              <div class="qty-info">1 complementary &nbsp;·&nbsp; 2 remain charged</div>
+            </div>
+            <button class="modal-btn">Mark 1 Complementary</button>
+          </div>
+        </div>
+      </div>
+      <div class="annotation">✅ Same UX pattern as Cancel modal. No reason dropdown needed. Works for 1-of-3, 2-of-3, or all-3 comp.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- UNDO comp scenario -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-298 — Undo Complementary</div>
+  <div class="section-subtitle">Cashier taps Gift button again on an already-comped item</div>
+  <div style="max-width: 420px; margin: 0 auto;">
+    <div class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title">Mark Complementary</div>
+            <div class="modal-subtitle">Chicken Biryani &nbsp;·&nbsp; <span style="color:#329937; font-weight:700;">1 currently comp</span></div>
+          </div>
+          <button class="modal-close">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="qty-selector">
+            <div class="qty-row">
+              <div><span class="qty-label">Current Qty:</span><span class="qty-value">3</span></div>
+              <div class="qty-controls">
+                <span class="qty-label">Comp Qty:</span>
+                <button class="qty-btn">−</button>
+                <span class="qty-num" style="color:#329937;">0</span>
+                <button class="qty-btn">+</button>
+              </div>
+            </div>
+            <div class="qty-info" style="color:#F59E0B;">Set to 0 to remove complementary entirely</div>
+          </div>
+          <button class="modal-btn modal-btn-grey">Remove Complementary</button>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">✅ Cashier sets qty to 0 → removes comp. Pre-fills with current value so they know what's already set.</div>
+  </div>
+</div>
+
+</body>
+</html>

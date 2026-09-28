@@ -1,0 +1,6 @@
+{
+  "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+  "method": "POST",
+  "content_type": "application/json",
+  "post_data": "{\"data\":\"{\\\"basic\\\":{\\\"allow_early_checkin\\\":true,\\\"extend_rate_mode\\\":\\\"calendar\\\"}}\"}"
+}

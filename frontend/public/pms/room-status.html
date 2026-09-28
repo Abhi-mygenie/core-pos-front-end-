@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Room Status</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+  .sb{width:64px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+  .sb-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:#666;transition:background .15s}
+  .sb-icon:hover{background:#F7F7F7}
+  .sb-nav-item{width:100%;height:44px;display:flex;align-items:center;justify-content:center;border-left:3px solid transparent;cursor:pointer;border:none;background:transparent;color:#666}
+  .sb-nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.08);color:#329937}
+  .sb-nav-section{height:1px;background:#F0F0F0;margin:4px 8px}
+
+  /* ── Room card: compact, left border = status color ── */
+  .room-card{
+    background:#fff;border:1px solid #E5E5E5;border-radius:8px;
+    padding:10px 12px;display:flex;flex-direction:column;gap:0;
+    transition:box-shadow .15s,border-color .15s;cursor:pointer;
+    position:relative;overflow:hidden;
+  }
+  .room-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.07);border-color:#D0D0D0}
+  /* Status left border indicator (4px) */
+  .room-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px}
+  .room-card.occupied::before{background:#F26B33}
+  .room-card.available::before{background:#329937}
+  .room-card.housekeeping::before{background:#F4A11A}
+  .room-card.ooo::before{background:#EF4444}
+  .room-card.booked::before{background:#F4A11A}
+
+  /* Status badge — small */
+  .badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:1px 7px;border-radius:12px;white-space:nowrap;letter-spacing:.02em}
+  .badge.occupied{background:rgba(242,107,51,.1);color:#C4501A}
+  .badge.available{background:rgba(50,153,55,.1);color:#217A28}
+  .badge.housekeeping{background:rgba(244,161,26,.12);color:#966800}
+  .badge.ooo{background:#FEE2E2;color:#B91C1C}
+  .badge.booked{background:rgba(244,161,26,.1);color:#966800}
+
+  /* Action buttons */
+  .card-btn{height:26px;padding:0 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;border:1px solid #E5E5E5;background:#fff;color:#555;transition:background .12s}
+  .card-btn:hover{background:#F7F7F7}
+  .card-btn.primary{background:#329937;color:#fff;border-color:#329937}
+  .card-btn.primary:hover{background:#2a7e2f}
+  .card-btn.amber{background:#F4A11A;color:#fff;border-color:#F4A11A}
+  .card-btn.amber:hover{background:#d4880a}
+
+  /* Filter pills */
+  .filter-btn{height:30px;padding:0 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;transition:background .12s;border:none}
+  .filter-btn.active{background:#1A1A1A;color:#fff}
+  .filter-btn:not(.active){background:#fff;color:#666;border:1px solid #E5E5E5}
+
+  /* Section header */
+  .section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .section-hdr::after{content:'';flex:1;height:1px;background:#EEEEEE}
+
+  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- SIDEBAR (collapsed) -->
+<aside class="sb">
+  <div style="padding:12px 0 10px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:28px;width:28px;object-fit:contain">
+    <button class="sb-icon" title="Expand"><i data-lucide="panel-left" style="width:18px;height:18px"></i></button>
+  </div>
+  <div style="padding:8px 0;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:4px">
+    <button class="sb-icon" style="color:#F26B33;background:rgba(242,107,51,.08)"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></button>
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)"><i data-lucide="columns" style="width:18px;height:18px"></i></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:6px 0;display:flex;flex-direction:column;align-items:center">
+    <button class="sb-nav-item" title="Dashboard"><i data-lucide="home" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Day Closure"><i data-lucide="banknote" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item active" title="Rooms"><i data-lucide="bed-double" style="width:18px;height:18px"></i></button>
+    <div class="sb-nav-section"></div>
+    <button class="sb-nav-item" title="Daily Report"><i data-lucide="bar-chart-3" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Settings"><i data-lucide="settings" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Insights"><i data-lucide="line-chart" style="width:18px;height:18px"></i></button>
+  </nav>
+  <div style="padding:8px 0 10px;border-top:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:2px">
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)"><i data-lucide="bell" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon" style="color:#F26B33"><i data-lucide="refresh-cw" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon"><div style="width:28px;height:28px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div></button>
+    <button class="sb-icon" style="color:#EF4444"><i data-lucide="log-out" style="width:17px;height:17px"></i></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+
+  <!-- Header -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div>
+      <h1 style="font-size:18px;font-weight:700">Room Status Board</h1>
+      <p style="font-size:12px;color:#888;margin-top:1px">The Palm House · 20 rooms · Last updated: now</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="filter-btn active" onclick="filterRooms('all',this)">All (20)</button>
+      <button class="filter-btn" onclick="filterRooms('available',this)">Available (6)</button>
+      <button class="filter-btn" onclick="filterRooms('occupied',this)">Occupied (11)</button>
+      <button class="filter-btn" onclick="filterRooms('housekeeping',this)">HK (2)</button>
+      <button class="filter-btn" onclick="filterRooms('ooo',this)">OOO (1)</button>
+    </div>
+  </div>
+
+  <div style="padding:16px 24px;display:flex;flex-direction:column;gap:20px">
+
+    <!-- Legend -->
+    <div style="display:flex;align-items:center;gap:16px;font-size:11px;color:#666;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#F26B33"></div><span>Occupied — <em>View = open guest folio</em></span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#329937"></div><span>Available — Book new guest</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#F4A11A"></div><span>Housekeeping — blocked until marked clean</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#EF4444"></div><span>Out of Order — blocked until resolved</span></div>
+    </div>
+
+    <!-- STANDARD DOUBLE -->
+    <div>
+      <div class="section-hdr">Standard Double &nbsp;<span style="font-weight:500;color:#bbb">12 rooms · 7 occupied, 3 available, 1 HK, 1 OOO</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px" id="grid-standard">
+
+        <!-- 101 OCCUPIED -->
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">101</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:#1A1A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sharma, R.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 29 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Rahul Sharma','101','₹7,064','27 Aug','29 Aug','Booking.com','Standard Double','₹3,600')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <!-- 102 OCCUPIED -->
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">102</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Kumar, R.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 29 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Raj Kumar','102','₹0','31 Aug','29 Aug','Booking.com','Standard Double','₹3,600')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <!-- 103 OCCUPIED -->
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">103</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Gupta, N.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 29 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Neha Gupta','103','₹6,528','27 Aug','29 Aug','Walk-in','Standard Double','₹3,600')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <!-- 104 HOUSEKEEPING -->
+        <div class="room-card housekeeping" data-status="housekeeping">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">104</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge housekeeping">HK</span>
+          </div>
+          <div style="font-size:12px;color:#666">Vacated 08:45 AM</div>
+          <div style="font-size:11px;color:#999;margin-top:1px">Phase 2: checklist</div>
+          <div style="margin-top:8px"><button class="card-btn amber" onclick="markClean(this,104)"><i data-lucide="check" style="width:11px;height:11px"></i>Mark Clean</button></div>
+        </div>
+
+        <!-- 105 HOUSEKEEPING -->
+        <div class="room-card housekeeping" data-status="housekeeping">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">105</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge housekeeping">HK</span>
+          </div>
+          <div style="font-size:12px;color:#666">Vacated 10:12 AM</div>
+          <div style="font-size:11px;color:#999;margin-top:1px">Phase 2: checklist</div>
+          <div style="margin-top:8px"><button class="card-btn amber" onclick="markClean(this,105)"><i data-lucide="check" style="width:11px;height:11px"></i>Mark Clean</button></div>
+        </div>
+
+        <!-- 106 AVAILABLE -->
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">106</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge available">Available</span>
+          </div>
+          <div style="font-size:11px;color:#888">Floor 1 · Clean</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <!-- 107 AVAILABLE -->
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">107</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge available">Available</span>
+          </div>
+          <div style="font-size:11px;color:#888">Floor 2 · Pool view</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <!-- 108 OOO -->
+        <div class="room-card ooo" data-status="ooo">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1;color:#EF4444">108</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge ooo">OOO</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:#EF4444">Plumbing</div>
+          <div style="font-size:11px;color:#999;margin-top:1px">Since 26 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" style="color:#EF4444;border-color:rgba(239,68,68,.3)" onclick="resolveOOO(this,108)"><i data-lucide="wrench" style="width:11px;height:11px"></i>Resolve</button></div>
+        </div>
+
+        <!-- 109 BOOKED (upcoming) -->
+        <div class="room-card booked" data-status="booked">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">109</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge booked">Booked</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Joshi, A.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Arrives: 30 Aug</div>
+          <div style="margin-top:8px"><a href="reservations.html" class="card-btn" style="text-decoration:none"><i data-lucide="calendar" style="width:11px;height:11px"></i>Reservation</a></div>
+        </div>
+
+        <!-- 110 AVAILABLE -->
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">110</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge available">Available</span>
+          </div>
+          <div style="font-size:11px;color:#888">Floor 2 · Clean</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <!-- 111 OCCUPIED -->
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">111</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Iyer, P.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 28 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Priya Iyer','111','₹4,320','26 Aug','28 Aug','Direct','Standard Double','₹3,600')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <!-- 112 OCCUPIED (checkout today) -->
+        <div class="room-card occupied" data-status="occupied" style="border-color:rgba(244,161,26,.4)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">112</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge housekeeping">Due Today</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nair, S.</div>
+          <div style="font-size:11px;color:#F4A11A;margin-top:1px;font-weight:600">Out: Today · 11am</div>
+          <div style="margin-top:8px;display:flex;gap:4px">
+            <button class="card-btn" onclick="openFolio('Suresh Nair','112','₹9,800','25 Aug','27 Aug','Booking.com','Standard Double','₹4,900')"><i data-lucide="file-text" style="width:11px;height:11px"></i>Folio</button>
+            <a href="departures.html" class="card-btn" style="text-decoration:none;color:#1A1A1A;background:#F7F7F7">Out</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DELUXE -->
+    <div>
+      <div class="section-hdr">Deluxe &nbsp;<span style="font-weight:500;color:#bbb">6 rooms · 2 occupied, 4 available</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">201</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge occupied">Occupied</span></div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Singh, A.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 2 Sep</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Amit Singh','201','₹30,492','27 Aug','2 Sep','Airbnb','Deluxe','₹5,400')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">202</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge occupied">Occupied</span></div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Reddy, V.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 30 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Vikram Reddy','202','₹0','27 Aug','30 Aug','Direct','Deluxe','₹5,400')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">203</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge available">Available</span></div>
+          <div style="font-size:11px;color:#888">Pool view · Balcony</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">204</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge available">Available</span></div>
+          <div style="font-size:11px;color:#888">Floor 2 · Clean</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">205</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge available">Available</span></div>
+          <div style="font-size:11px;color:#888">Floor 3 · Clean</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">206</span><div style="font-size:10px;color:#999;margin-top:1px">Deluxe</div></div><span class="badge available">Available</span></div>
+          <div style="font-size:11px;color:#888">Floor 3 · Garden</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUITE -->
+    <div>
+      <div class="section-hdr">Suite &nbsp;<span style="font-weight:500;color:#bbb">2 rooms · 1 occupied, 1 available</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+
+        <div class="room-card occupied" data-status="occupied">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">301</span><div style="font-size:10px;color:#999;margin-top:1px">Suite</div></div><span class="badge occupied">Occupied</span></div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mehta, S.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 1 Sep</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="openFolio('Sunita Mehta','301','₹21,798','28 Aug','1 Sep','Expedia','Suite','₹9,800')"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+        </div>
+
+        <div class="room-card available" data-status="available">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px"><div><span style="font-size:18px;font-weight:700;line-height:1">302</span><div style="font-size:10px;color:#999;margin-top:1px">Suite</div></div><span class="badge available">Available</span></div>
+          <div style="font-size:11px;color:#888">Presidential</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════
+     FOLIO SLIDE-OVER PANEL (shows when View Folio clicked)
+═══════════════════════════════════════════════════════════ -->
+<div id="folio-overlay" onclick="closeFolio(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100"></div>
+
+<div id="folio-panel" style="display:none;position:fixed;right:0;top:0;bottom:0;width:380px;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:101;display:none;flex-direction:column;overflow:hidden">
+  <!-- Panel header -->
+  <div style="padding:16px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:14px;font-weight:600" id="folio-title">Guest Folio</div>
+      <div style="font-size:12px;color:#888;margin-top:1px" id="folio-sub">Room 101 · Standard Double</div>
+    </div>
+    <button onclick="closeFolioPanel()" style="width:32px;height:32px;border-radius:8px;border:1px solid #E5E5E5;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666">
+      <i data-lucide="x" style="width:16px;height:16px"></i>
+    </button>
+  </div>
+
+  <!-- Guest info strip -->
+  <div style="padding:12px 20px;border-bottom:1px solid #F0F0F0;background:#FAFAFA">
+    <div style="font-size:14px;font-weight:600" id="folio-guest">—</div>
+    <div style="font-size:12px;color:#888;margin-top:2px" id="folio-dates">—</div>
+  </div>
+
+  <!-- Charges -->
+  <div style="flex:1;overflow-y:auto;padding:16px 20px">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:10px">Charges</div>
+
+    <div id="folio-charges" style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+      <!-- filled by JS -->
+    </div>
+
+    <div style="border-top:1px solid #E5E5E5;margin-top:14px;padding-top:14px;display:flex;flex-direction:column;gap:7px;font-size:13px">
+      <div style="display:flex;justify-content:space-between"><span style="color:#666">Sub-total</span><span id="folio-subtotal">—</span></div>
+      <div style="display:flex;justify-content:space-between;color:#329937"><span>Advance Paid</span><span id="folio-advance">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid #E5E5E5;padding-top:8px;margin-top:2px">
+        <span>Balance Due</span>
+        <span id="folio-balance" style="color:#EF4444">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div style="padding:14px 20px;border-top:1px solid #E5E5E5;display:flex;gap:8px">
+    <button style="flex:1;height:38px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px">
+      <i data-lucide="printer" style="width:14px;height:14px"></i> Print Bill
+    </button>
+    <button style="flex:1;height:38px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;color:#329937">
+      <i data-lucide="send" style="width:14px;height:14px"></i> WhatsApp
+    </button>
+    <a href="departures.html" style="flex:1;height:38px;background:#1A1A1A;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;text-decoration:none">
+      <i data-lucide="log-out" style="width:14px;height:14px"></i> Check Out
+    </a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+function openFolio(guest, room, balance, checkin, checkout, source, type, rate) {
+  document.getElementById('folio-title').textContent = 'Guest Folio · Rm ' + room;
+  document.getElementById('folio-sub').textContent = room + ' · ' + type + ' · ' + source;
+  document.getElementById('folio-guest').textContent = guest;
+  document.getElementById('folio-dates').textContent = checkin + ' → ' + checkout;
+  
+  const rateNum = parseInt(rate.replace(/[₹,]/g,''));
+  // Calculate nights from mock data
+  const nights = type === 'Suite' ? 4 : (type === 'Deluxe' ? 3 : 2);
+  const roomTotal = rateNum * nights;
+  const gst = Math.round(roomTotal * 0.12);
+  const food = Math.round(roomTotal * 0.18);
+  const subtotal = roomTotal + gst + food;
+  const advance = 1000;
+  
+  document.getElementById('folio-charges').innerHTML = `
+    <div style="display:flex;justify-content:space-between"><span style="color:#666">Room (${rate} × ${nights}n)</span><span>₹${roomTotal.toLocaleString('en-IN')}</span></div>
+    <div style="display:flex;justify-content:space-between"><span style="color:#666">GST (12%)</span><span>₹${gst.toLocaleString('en-IN')}</span></div>
+    <div style="display:flex;justify-content:space-between"><span style="color:#666">Food & Beverages</span><span>₹${food.toLocaleString('en-IN')}</span></div>
+  `;
+  document.getElementById('folio-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
+  document.getElementById('folio-advance').textContent = '− ₹1,000';
+  document.getElementById('folio-balance').textContent = balance === '₹0' ? '₹0' : '₹' + (subtotal - advance).toLocaleString('en-IN');
+  
+  const overlay = document.getElementById('folio-overlay');
+  const panel = document.getElementById('folio-panel');
+  overlay.style.display = 'block';
+  panel.style.display = 'flex';
+  lucide.createIcons();
+}
+
+function closeFolioPanel() {
+  document.getElementById('folio-overlay').style.display = 'none';
+  document.getElementById('folio-panel').style.display = 'none';
+}
+
+function closeFolio(e) {
+  if (e.target === document.getElementById('folio-overlay')) closeFolioPanel();
+}
+
+function markClean(btn, room) {
+  const card = btn.closest('.room-card');
+  card.className = 'room-card available';
+  card.dataset.status = 'available';
+  card.querySelector('.badge').className = 'badge available';
+  card.querySelector('.badge').textContent = 'Available';
+  card.querySelector('[style*="font-size:12px;color:#666"]').textContent = 'Cleaned · Just now';
+  card.querySelector('[style*="font-size:11px;color:#999"]').textContent = 'Floor 1';
+  btn.parentElement.innerHTML = '<a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a>';
+  lucide.createIcons();
+}
+
+function resolveOOO(btn, room) {
+  const card = btn.closest('.room-card');
+  card.className = 'room-card available';
+  card.dataset.status = 'available';
+  card.querySelector('.badge').className = 'badge available';
+  card.querySelector('.badge').textContent = 'Available';
+  card.querySelector('span[style*="color:#EF4444"]').style.color = '#888';
+  card.querySelector('span[style*="color:#EF4444"]').textContent = 'Issue resolved';
+  btn.parentElement.innerHTML = '<a href="new-booking.html" class="card-btn primary" style="text-decoration:none"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a>';
+  lucide.createIcons();
+}
+
+function filterRooms(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.room-card').forEach(card => {
+    if (status === 'all' || card.dataset.status === status) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
