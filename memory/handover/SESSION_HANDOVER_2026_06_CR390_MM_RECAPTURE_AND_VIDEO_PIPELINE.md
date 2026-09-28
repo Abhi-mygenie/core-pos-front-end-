@@ -1,6 +1,6 @@
 # SESSION HANDOVER — CR-390 MM: Screenshot Re-capture, External Validation Loop & FAQ Video Pipeline
 
-**Current handover — read first:** `SESSION_HANDOVER_2026_09_28_CR390_STEP1_GATE2_REVIEW.md`. Step 1 complete; OD-390-16…22 LOCKED FOR PLANNING. Palm House Normal; Kunafa Mahal Aggregator; Palm House Premium for switching/comparison only; no Party setup. **Await separate Step 2 instruction; Gate 3 NOT STARTED; no new Gate 4 GO.** Historical hold/recapture instructions below are preserved, not current status or execution permission. Do not re-ask the seven accepted general decisions.
+**Current handover — read first:** `SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Owner “begin step 2”; recovery draft in `../plans/CR-390_IMPLEMENTATION_PLAN.md` + `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW, no Gate 4 GO.** OD-390-16…22 stay locked: Palm House Normal, Kunafa Mahal Aggregator, Premium switching/comparison only, no Party. OD-390-23/24/25 pending. Historical hold/recapture/video instructions below are not current dispatch or implementation permission. No source/capture/live/data/video changes.
 **Date:** June 2026  
 **For:** Next agent (respond to user in **English only**)  
 **Supersedes:** `SESSION_HANDOVER_2026_09_27_CR390_MM_PHASE2_COMPLETE.md` (its "50 unique screens, all valid" claim is FALSE — see §2)

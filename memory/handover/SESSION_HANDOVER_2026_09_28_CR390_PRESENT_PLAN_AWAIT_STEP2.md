@@ -1,5 +1,7 @@
 # CR-390 MM — next agent: present the complete picture, then ask for Step 2
 
+> **SUPERSEDED stage dispatch — later 2026-09-28:** Owner “begin step 2”. Recovery plan draft is now written: `../plans/CR-390_IMPLEMENTATION_PLAN.md` + `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW, no Gate 4 GO.** Current handover: `SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Preserve this prior presentation request as history; do not ask to restart Step 2 or infer implementation permission. OD-390-16…22 remain locked, OD-390-23/24/25 are new pending details.
+
 **Date:** 2026-09-28. **Language:** plain English. **Role:** 2 — PLANNING under `memory/control/AGENT_PROMPT_ALPHA.md`.
 **CURRENT STOP:** Step 1 / Gate 2 assessment complete; OD-390-16…22 accepted FOR PLANNING. **Step 2 / Gate 3 NOT STARTED. No new Gate 4 GO.**
 **Code reality:** PARTIAL. **Recovery risk:** CRITICAL. **Sprint:** `modules_pdf`.

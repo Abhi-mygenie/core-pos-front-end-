@@ -78,3 +78,14 @@ These dated entries were moved verbatim from PRD.md on 2026-09-28 to keep that f
 - Clearly distinguishes the overall agreed approach from the **detailed Gate 3 plan, which is NOT yet written**. No new capture list, narration rewrite, verification matrix, code, live probe, data changes or video work.
 - Updated current discovery pointers without changing parent status/gate/sprint or approved decisions. **Next agent must present first, ask for Step 2 ONLY, and wait.**
 - Handover verification **24/24 PASS**: references/pointers, complete accepted decision set, explicit ask-and-wait boundary, unchanged protected hashes, secret-pattern check and PRD length. No Gate 3 or implementation started.
+
+## 2026-09-28 — CR-390 Step 2 / Gate 3 plan draft written
+
+- Owner “begin step 2”, after choosing Planning with “donot jump gates”. Plan amendment written in existing `plans/CR-390_IMPLEMENTATION_PLAN.md`; foundation retained as historical.
+- New `plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`: all-70 ordered evidence/correction chains, original script anchors, disposable data aliases and current request/mutation inventory; no executable capture manifest or narration rewrite.
+- 8 proposed edit groups / 5 existing + 2 new tooling/test files, 34 future verification checks, T0–T6 sequence, scope/risk/permission/cleanup and registry checklist. No code/API/source asset/env/capture/live/business-data change.
+- Source and tooling hashes still match Step 1. Refined category-reorder full-vector scope, item filtered-vector scope, immediate stock/add-on/import actions, local-setting context isolation and source-grounded selectors.
+- OD-390-23/24/25 OPEN (category reorder scope, exact constrained FAQ adaptations, data readiness); OD-390-16…22/menu/video choices retained. **Gate 3 OPEN / OWNER REVIEW, not closed; no Gate 4 GO.**
+- Ledger `evidence/CR-390/GATE3_2026_09_28/PLANNING_EVIDENCE.md`; handover `handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. Frontend .env current hash preserved despite differing from historical Step 1; credentials file absent, no guesses/login.
+- Next: owner reviews open details and plan; separate scoped Gate 4 GO before implementation. All-70 external/owner acceptance still required before storyboard/translation/TTS/video; EM later.
+- Final documentation/preservation checks **50/50 PASS**; 72 original binary evidence/deliverable files unchanged from entry commit, all 70 FAQ anchors verified. Initial wrong-heading assertion corrected to compare actual preserved foundation suffix; final suite rerun green. No application QA/capture/live requests. See Gate 3 ledger for method and limits.

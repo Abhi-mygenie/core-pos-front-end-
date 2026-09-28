@@ -1,6 +1,10 @@
 # Layer 7 — File Ownership Map
 
-## 2026-09-28 — CR-390 Step 1 / Gate 2 (documentation ownership only)
+## 2026-09-28 — CR-390 Step 2 / Gate 3 (documentation ownership only)
+
+Owner “begin step 2”. Planning amended `memory/plans/CR-390_IMPLEMENTATION_PLAN.md` in place; authored `memory/plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`, `memory/evidence/CR-390/GATE3_2026_09_28/PLANNING_EVIDENCE.md` and `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. CR-390 status/discovery/PRD/ROADMAP/CHANGELOG synchronized. **Gate 3 OPEN / OWNER REVIEW; OD-390-23/24/25 OPEN; no Gate 4 GO.** No runtime or tooling ownership claimed: 8 edit groups/5 existing+2 new files are PROPOSALS, not code changes. Existing source, original scripts/mappings/assets/env protected; no live/data operation.
+
+## Historical 2026-09-28 — CR-390 Step 1 / Gate 2 (documentation ownership only)
 
 Presentation-ready handover added on owner request: `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_PRESENT_PLAN_AWAIT_STEP2.md`. Current discovery/status pointers updated. Next agent presents first, asks for Step 2 only, then waits; no new source/tooling ownership or gate advancement.
 

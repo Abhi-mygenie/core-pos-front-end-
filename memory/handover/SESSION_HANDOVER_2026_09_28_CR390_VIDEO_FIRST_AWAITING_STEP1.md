@@ -1,6 +1,6 @@
 **Session:** 2026-09-28 — CR-390 MM — Role 2 PLANNING (documentation and handover only)
 
-> **SUPERSEDED STATUS — later 2026-09-28 decisions:** Step 1 complete; OD-390-16…22 LOCKED FOR PLANNING. Owner chose Palm House Normal, Kunafa Mahal Aggregator and Palm House Premium for switching/comparison only; no Party setup. **Await separate Step 2 instruction; Gate 3 NOT STARTED; no new Gate 4 GO.** Current handover: `SESSION_HANDOVER_2026_09_28_CR390_STEP1_GATE2_REVIEW.md`; decisions: `../impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` §7. Historical text below preserved; do not ask owner to repeat accepted choices. No code/capture/data/video changes or asset acceptance.
+> **SUPERSEDED STATUS — later 2026-09-28:** Owner “begin step 2”; plan draft written in `../plans/CR-390_IMPLEMENTATION_PLAN.md` + `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW; no Gate 4 GO.** Current handover: `SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. OD-390-16…22/menu/video decisions remain locked; OD-390-23/24/25 are new pending details. Historical instructions below are not current stage dispatch. No code/capture/live/data/video or original asset changes; none externally accepted.
 **Registry synced:** YES — OD-390-15 recorded; existing lifecycle status, gate and sprint unchanged
 **Scope drift:** NONE — no application code, automation, captures, preprod data or generated deliverables changed
 **Next:** Present the complete scenario in English, then ask owner approval for Step 1 ONLY; Step 1 NOT STARTED

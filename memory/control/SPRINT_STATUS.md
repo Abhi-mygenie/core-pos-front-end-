@@ -1,6 +1,8 @@
 # Layer 6 — Sprint Status Board
 
-**CR-390 next-agent presentation:** `handover/SESSION_HANDOVER_2026_09_28_CR390_PRESENT_PLAN_AWAIT_STEP2.md`. Present the complete agreed approach, Step 1 results and accepted decisions, then ask for Step 2 ONLY and wait. Gate 3 NOT STARTED; the handover request is not planning/execution GO.
+**CR-390 current Step 2 (2026-09-28):** Owner “begin step 2” authorized Planning only. **Gate 3 plan DRAFT WRITTEN / OWNER REVIEW; Gate 3 OPEN, no Gate 4 GO.** `plans/CR-390_IMPLEMENTATION_PLAN.md`, `plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`; current handover `handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. OD-390-23/24/25 OPEN. All accepted menu/video decisions retained; no code, source assets, capture, live or business-data changes. Parent milestone/sprint unchanged.
+
+> **Historical Step 1 decision notice, superseded for stage dispatch:**
 
 > **CR-390 update 2026-09-28:** Step 1 complete; **OD-390-16…22 LOCKED FOR PLANNING**. Palm House Normal for standard MM; Kunafa Mahal Aggregator; Palm House Premium only for switching/comparison. No Party setup. Await separate Step 2 instruction; **Gate 3 NOT STARTED; no new Gate 4 GO**. Risk CRITICAL/code reality PARTIAL; parent Gate 5A and `modules_pdf` retained. Baseline 34 blocked/36 partial unchanged, none externally accepted. See `impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md` §7. Prior notices remain historical; no code/capture/data changes.
 

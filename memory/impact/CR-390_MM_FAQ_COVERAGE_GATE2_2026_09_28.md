@@ -1,7 +1,7 @@
 # CR-390 — MM FAQ coverage / impact-analysis amendment
 
 **Role:** 2 — PLANNING. **Stage:** Step 1 / Gate 2 ONLY. **Date:** 2026-09-28.
-**Status:** Analysis complete; OD-390-16…22 LOCKED FOR PLANNING by owner, with menu-selection amendment below. Await separate Step 2 instruction. Step 2 / Gate 3 NOT STARTED; no new Gate 4 GO. Decision acceptance does not certify screenshots or authorize execution.
+**Current progression (later 2026-09-28):** Owner “begin step 2” → Gate 3 plan DRAFT WRITTEN at `../plans/CR-390_IMPLEMENTATION_PLAN.md`, with all-70/data annex `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW; no Gate 4 GO.** OD-390-23/24/25 are new detail questions; OD-390-16…22 remain LOCKED. Current handover: `../handover/SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. This Step 1 assessment/matrix remains the unchanged historical evidence baseline; later-stage stop text below describes the completed Step 1 session, not a new instruction to restart it.
 **Code Reality:** PARTIAL — existing capture/PDF pipeline and 50 PNGs exist; recovery checks and video pipeline do not. Do not rebuild the existing foundation.
 **Conflict Pre-Check:** Documentation-only now; no runtime-file conflict. Future evidence must be revalidated against BUG-359/390/391/392/394, CR-373/374/376/FU-A/FU-B and CR-140/144/155/158/159; these have existing implementation/QA history, some awaiting owner smoke. No approval to modify their code.
 **Risk:** CRITICAL for the recovery item: unsafe automated selectors, immediate imports, deletion, prices/tax, printing and restaurant-wide stock effects. This upgrades the original LOW tooling-only assessment under Alpha R21; current read-only/documentation activity does not authorize those mutations.

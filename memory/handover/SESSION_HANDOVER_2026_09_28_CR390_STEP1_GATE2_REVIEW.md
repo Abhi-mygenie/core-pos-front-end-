@@ -1,6 +1,6 @@
 # CR-390 MM — Step 1 complete / Gate 2 owner review
 
-> **Owner-requested next-agent presentation:** read `SESSION_HANDOVER_2026_09_28_CR390_PRESENT_PLAN_AWAIT_STEP2.md` first. Present the complete agreed sequence, Step 1 findings and accepted decisions in plain English, then ask for **Step 2 / Gate 3 ONLY** and wait. This existing report remains supporting evidence. No Gate 3 authorization follows from the handover request.
+> **CURRENT progression — later 2026-09-28:** Owner “begin step 2”; plan draft now at `../plans/CR-390_IMPLEMENTATION_PLAN.md` + `../plans/CR-390_MM_RECOVERY_EVIDENCE_SPEC.md`. **Gate 3 OPEN / OWNER REVIEW; no Gate 4 GO.** Current handover: `SESSION_HANDOVER_2026_09_28_CR390_STEP2_GATE3_REVIEW.md`. This Step 1 handover and prior presentation request remain historical supporting evidence; do not restart Step 1/2 or infer code/capture approval.
 
 **Date:** 2026-09-28. **Role:** 2 PLANNING. **Risk:** CRITICAL (recovery), code reality PARTIAL.
 **Owner approval:** “start step 1 follow gates”. The owner separately supplied standard-MM and aggregator-MM accounts; no credentials in this handover.
