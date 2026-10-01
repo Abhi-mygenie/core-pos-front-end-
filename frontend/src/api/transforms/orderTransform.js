@@ -1502,6 +1502,13 @@ export const toAPI = {
 
     const gstTax = Math.round((sgst + cgst) * 100) / 100;
 
+    // BUG-484: handover_5 §2 — payment_amount / grant_amount / order_amount must be
+    // F&B-only on room stays. `roomBalance` (passed via CollectPaymentPanel L1115) is
+    // the room-rent carve-out. Non-room orders: roomBalance===0 → fbOnlyTotal===finalTotal
+    // (byte-identical to pre-fix behavior for all non-room flows).
+    const fbOnlyTotal = Math.max(0, (finalTotal || 0) - (roomBalance || 0));
+
+
     // BUG-252: Detect TAB payment (can arrive as 'credit' internal ID or 'tab'/'TAB' API name)
     const isTab = method === 'credit' || (typeof method === 'string' && method.toLowerCase() === 'tab');
 
@@ -1627,7 +1634,7 @@ export const toAPI = {
       // sends 'postpaid' so backend treats prepaid-hold orders as postpaid).
       ...(paymentType ? { payment_type: paymentType } : {}),
       payment_mode:                 splitPayments?.length > 0 ? 'partial' : method,
-      payment_amount:               finalTotal || 0,
+      payment_amount:               fbOnlyTotal,   // BUG-484: F&B-only (room rent collected via paid_room)
       payment_status:               isPayLater ? 'sucess' : (isTab ? 'success' : 'paid'),
       transaction_id:               transactionId || '',
       billing_auto_bill_print:      autoBill ? 'Yes' : 'No',
@@ -1643,14 +1650,14 @@ export const toAPI = {
       total_gst_tax_amount:         gstTax,
       gst_tax:                      gstTax,
       vat_tax:                      vatAmount || 0,
-      grant_amount:                 finalTotal || 0,
+      grant_amount:                 fbOnlyTotal,   // BUG-484: F&B-only
       // ROOM_CHECKIN_GAP3 (Stage 2, revised 2026-04-25): `order_amount` carries
       // the full payable amount (food + associated + room balance) for room
       // orders with a pending room balance. User-confirmed field name on
       // 2026-04-25 (replaces earlier `grand_total` candidate). Emitted only
       // when roomBalance > 0 to keep non-room flows byte-identical to
       // pre-Stage-2 payloads.
-      ...(roomBalance > 0 ? { order_amount: finalTotal || 0 } : {}),
+      ...(roomBalance > 0 ? { order_amount: fbOnlyTotal } : {}),  // BUG-484: F&B-only
       // CR-029 G1 (Gate 3, 2026-06-12): real food-only round-off ₹ — replaces
       // the hardcoded 0 that was masking BILL_PAYMENT round-off persistence.
       // Q-BE-1 confirmed NUMERIC type on BILL_PAYMENT (live screenshot of

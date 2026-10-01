@@ -28848,12 +28848,12 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "CRITICAL",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "sprint_key": "oct_cr_batch",
       "area": "Room / PMS Billing / Collect Bill",
       "source": "AGENT-DISCOVERED",
       "registered": "2026-10-01",
-      "notes": "Backend handover_5.md (2026-10-01) \u00a72 proves payment_amount/order_amount/grant_amount must be F&B-only on room stays. FE may be sending rent+F&B combined \u2192 DB order_amount inflated \u2192 revenue report errors. Needs CollectPaymentPanel + PmsCheckoutDrawer + orderTransform audit. Related: CR-405 (room folio features). Intake: change_requests/BUG-484_ROOM_BILL_PAYMENT_AMOUNT_FB_ONLY_CONTRACT_INTAKE.md | IA complete 2026-10-01. Root cause CONFIRMED: orderTransform.js:1630 payment_amount=effectiveTotal (F&B+roomBalance). Fix: 4 lines in orderTransform.js. Hotspot R5. Full gate required (R6 financial). IA: impact/BUG-484_IMPACT_ANALYSIS.md | Gate 3 Plan complete 2026-10-01. 4 edits / 1 file (orderTransform.js). Insert fbOnlyTotal after L1503; fix L1630/L1646/L1653. 12 verification checks. Awaiting Gate 4 GO. Plan: plans/BUG-484_IMPLEMENTATION_PLAN.md"
+      "notes": "Backend handover_5.md (2026-10-01) \u00a72 proves payment_amount/order_amount/grant_amount must be F&B-only on room stays. FE may be sending rent+F&B combined \u2192 DB order_amount inflated \u2192 revenue report errors. Needs CollectPaymentPanel + PmsCheckoutDrawer + orderTransform audit. Related: CR-405 (room folio features). Intake: change_requests/BUG-484_ROOM_BILL_PAYMENT_AMOUNT_FB_ONLY_CONTRACT_INTAKE.md | IA complete 2026-10-01. Root cause CONFIRMED: orderTransform.js:1630 payment_amount=effectiveTotal (F&B+roomBalance). Fix: 4 lines in orderTransform.js. Hotspot R5. Full gate required (R6 financial). IA: impact/BUG-484_IMPACT_ANALYSIS.md | Gate 3 Plan complete 2026-10-01. 4 edits / 1 file (orderTransform.js). Insert fbOnlyTotal after L1503; fix L1630/L1646/L1653. 12 verification checks. Awaiting Gate 4 GO. Plan: plans/BUG-484_IMPLEMENTATION_PLAN.md | IMPLEMENTED 2026-10-01. 4 edits / orderTransform.js. fbOnlyTotal=max(0,finalTotal-roomBalance). Tests 8/8 PASS (orderTransform.bug484.test.js). yarn build exit 0. EXIT GATE 5/5."
     },
     {
       "id": "CR-405",
