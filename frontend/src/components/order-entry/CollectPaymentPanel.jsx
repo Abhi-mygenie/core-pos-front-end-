@@ -1186,7 +1186,8 @@ const CollectPaymentPanel = ({
     // Transfer to Room — attach room selection
     if (paymentMethod === 'transferToRoom' && selectedRoom) {
       paymentData.isTransferToRoom = true;
-      paymentData.roomId = selectedRoom.tableId;
+      paymentData.roomId      = selectedRoom.tableId;   // kept for legacy compat
+      paymentData.roomOrderId = selectedRoom.orderId;   // CR-405-B: source_order_id for v1 contract
     }
 
     onPaymentComplete(paymentData);

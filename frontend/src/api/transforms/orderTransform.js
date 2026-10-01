@@ -1752,35 +1752,16 @@ export const toAPI = {
    * @param {Object} paymentData - { method, finalTotal, sgst, cgst, vatAmount, tip, discounts }
    * @param {number|string} roomId - Destination room ID
    */
-  transferToRoom: (table, paymentData, roomId) => {
-    const {
-      method = 'cash', finalTotal = 0,
-      sgst = 0, cgst = 0, vatAmount = 0,
-      tip = 0, discounts = {}, serviceCharge = 0,
-      // CR-013 Phase 1.5 D-GST-3 (May-2026): SC GST + Tip GST ₹.
-      serviceGstTaxAmount = 0,
-      tipTaxAmount = 0,
-    } = paymentData;
-
-    return {
-      order_id:                 String(table.orderId),
-      payment_mode:             method,
-      payment_amount:           finalTotal,
-      payment_status:           'paid',
-      room_id:                  String(roomId),
-      // BUG-138: order_discount + self_discount = manual + preset only (old POS parity)
-      order_discount:           (discounts.manual || 0) + (discounts.preset || 0),
-      self_discount:            (discounts.manual || 0) + (discounts.preset || 0),
-      comm_discount:            discounts.preset || 0,
-      tip_amount:               tip,
-      vat_tax:                  vatAmount,
-      gst_tax:                  Math.round(((sgst || 0) + (cgst || 0)) * 100) / 100,
-      service_tax:              serviceCharge || 0,
-      // CR-013 Phase 1.5 D-GST-3 (May-2026): real values (was hardcoded 0).
-      service_gst_tax_amount:   Math.round((serviceGstTaxAmount || 0) * 100) / 100,
-      tip_tax_amount:           Math.round((tipTaxAmount || 0) * 100) / 100,
-    };
-  },
+  // CR-405-B: order-shifted-room v1 contract (handover_5 §6)
+  // Moves active F&B lines from target (dine-in/walk-in) onto source (open room order).
+  // Does NOT settle — settlement happens separately on the source room order.
+  // v1 = { source_order_id, target_order_id, transfer_note } only.
+  // v2 (old contract) required order_id + payment_mode — no longer used.
+  transferToRoom: (table, paymentData, _roomId) => ({
+    source_order_id: String(paymentData.roomOrderId || ''), // room order (receives items)
+    target_order_id: String(table.orderId),                  // dine-in order (loses items)
+    transfer_note:   'Yes',
+  }),
 
   // ==========================================================================
   // Update Order Status (Ready / Served)
