@@ -28848,12 +28848,12 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "CRITICAL",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "sprint_key": "oct_cr_batch",
       "area": "Room / PMS Billing / Collect Bill",
       "source": "AGENT-DISCOVERED",
       "registered": "2026-10-01",
-      "notes": "Backend handover_5.md (2026-10-01) \u00a72 proves payment_amount/order_amount/grant_amount must be F&B-only on room stays. FE may be sending rent+F&B combined \u2192 DB order_amount inflated \u2192 revenue report errors. Needs CollectPaymentPanel + PmsCheckoutDrawer + orderTransform audit. Related: CR-405 (room folio features). Intake: change_requests/BUG-484_ROOM_BILL_PAYMENT_AMOUNT_FB_ONLY_CONTRACT_INTAKE.md"
+      "notes": "Backend handover_5.md (2026-10-01) \u00a72 proves payment_amount/order_amount/grant_amount must be F&B-only on room stays. FE may be sending rent+F&B combined \u2192 DB order_amount inflated \u2192 revenue report errors. Needs CollectPaymentPanel + PmsCheckoutDrawer + orderTransform audit. Related: CR-405 (room folio features). Intake: change_requests/BUG-484_ROOM_BILL_PAYMENT_AMOUNT_FB_ONLY_CONTRACT_INTAKE.md | IA complete 2026-10-01. Root cause CONFIRMED: orderTransform.js:1630 payment_amount=effectiveTotal (F&B+roomBalance). Fix: 4 lines in orderTransform.js. Hotspot R5. Full gate required (R6 financial). IA: impact/BUG-484_IMPACT_ANALYSIS.md"
     },
     {
       "id": "CR-405",
@@ -28861,12 +28861,12 @@
       "type": "CR",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE_2_READY",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "sprint_key": "oct_cr_batch",
       "area": "Room / PMS Billing / POS Order Flow",
       "source": "AGENT-DISCOVERED",
       "registered": "2026-10-01",
-      "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md | OD-405-01..06 ALL LOCKED 2026-10-01. Execution A\u2192B\u2192D\u2192C. Evidence: evidence/CR-405/."
+      "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md | OD-405-01..06 ALL LOCKED 2026-10-01. Execution A\u2192B\u2192D\u2192C. Evidence: evidence/CR-405/. | IA complete 2026-10-01. 6 files ~76 lines. Phase A: FolioCheckoutPanel+orderTransform (enable greyed button). Phase B: constants v2\u2192v1 + rewrite transferToRoom payload. Phase D: pmsService+CheckInPage discount. Phase C: partial_payments_room. All ODs locked. IA: impact/CR-405_IMPACT_ANALYSIS.md"
     }
   ],
   "meta": {
