@@ -1,0 +1,23 @@
+{
+  "_comment": "CR-390: Insights Basic module manifest (OD-390-12 locked \u2014 13 daily-use reports)",
+  "module_code": "IN-Basic",
+  "module_name": "Insights Basic",
+  "eyebrow": "INSIGHTS \u2014 BASIC REPORTS",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    { "route": "/reports-module/dashboard", "section": "Sales Dashboard", "states": [ { "slug": "insights-dashboard", "title": "Sales Dashboard", "description": "Sales KPIs, charts and top items for the selected period.", "pre_actions": [] } ] },
+    { "route": "/reports-module/sales", "section": "Sales Overview", "states": [ { "slug": "sales-overview", "title": "Sales Overview", "description": "Revenue by channel, payment mode and order type.", "pre_actions": [] } ] },
+    { "route": "/reports-module/daily-sales", "section": "Daily Sales", "states": [ { "slug": "daily-sales", "title": "Daily Sales Summary", "description": "Day-by-day revenue trend with order count and average ticket.", "pre_actions": [] } ] },
+    { "route": "/reports-module/hourly-sales", "section": "Hourly Sales", "states": [ { "slug": "hourly-sales", "title": "Hourly Sales Curve", "description": "Revenue and order volume distributed across hours of the day.", "pre_actions": [] } ] },
+    { "route": "/reports-module/day-of-week", "section": "Day of Week", "states": [ { "slug": "day-of-week", "title": "Day-of-Week Trend", "description": "Busiest days of the week by revenue and order count.", "pre_actions": [] } ] },
+    { "route": "/reports-module/items-hybrid", "section": "Items Ledger", "states": [ { "slug": "items-ledger", "title": "Items Ledger", "description": "Item-wise sales: quantity sold, revenue and contribution percentage.", "pre_actions": [] } ] },
+    { "route": "/reports-module/item-sales", "section": "Item Sales", "states": [ { "slug": "item-sales", "title": "Item Sales", "description": "Detailed item-level sales with GST breakdown.", "pre_actions": [] } ] },
+    { "route": "/reports-module/payments", "section": "Payments Overview", "states": [ { "slug": "payments-overview", "title": "Payments Overview", "description": "Revenue split by payment mode: Cash, Card, UPI, Online.", "pre_actions": [] } ] },
+    { "route": "/reports-module/cashier-settlement", "section": "Cashier Settlement", "states": [ { "slug": "cashier-settlement-insights", "title": "Cashier Settlement", "description": "Per-cashier settlement with collection totals and variance.", "pre_actions": [] } ] },
+    { "route": "/reports-module/discounts", "section": "Discount Report", "states": [ { "slug": "discount-report", "title": "Discount Report", "description": "Discount usage by type, amount and percentage of revenue.", "pre_actions": [] } ] },
+    { "route": "/reports-module/cancellations", "section": "Cancellations", "states": [ { "slug": "cancellations", "title": "Cancellations", "description": "Cancelled orders and items with reason and waiter details.", "pre_actions": [] } ] },
+    { "route": "/reports-module/locations-tables", "section": "Table-wise Sales", "states": [ { "slug": "table-wise-sales", "title": "Table-wise Sales", "description": "Revenue and order count per table over the selected period.", "pre_actions": [] } ] },
+    { "route": "/reports-module/expense-report", "section": "Expense Report", "states": [ { "slug": "expense-report-insights", "title": "Expense Report", "description": "Expense breakdown by category with trend over time.", "pre_actions": [] } ] }
+  ]
+}

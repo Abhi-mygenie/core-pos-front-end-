@@ -1,0 +1,16 @@
+[
+  {
+    "phase": "req",
+    "method": "POST",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+    "post": "------WebKitFormBoundarys0AKZDciVT5wBPxO\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}\r\n------WebKitFormBoundarys0AKZDciVT5wBPxO--\r\n",
+    "t": 1790015393.6275218
+  },
+  {
+    "phase": "req",
+    "method": "GET",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+    "post": "",
+    "t": 1790015394.6351047
+  }
+]

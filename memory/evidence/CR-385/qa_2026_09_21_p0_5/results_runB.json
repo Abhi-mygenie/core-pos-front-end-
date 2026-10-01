@@ -1,0 +1,45 @@
+{
+  "LOGIN": "PASS",
+  "NAV_FDv2": "FAIL: tab-strip missing",
+  "R1_nav": "PASS",
+  "R2_tiles": "FAIL: rooms_free_vs_available: tile=None truth=0",
+  "R2_debug": {
+    "rooms_free_vs_available": [
+      null,
+      0
+    ]
+  },
+  "R3_tabs": "FAIL {'ls_after_deeplink': None, 'rooms_after_reload': False}",
+  "R4_expansion": "PASS",
+  "R5_sticky": "PASS",
+  "R6_groupby": "PASS",
+  "R7_roomdetail": "details_open=2 mark_clean_ok=True request_hk_ok=True",
+  "R8_rooms_retry": "err=False retry_btn=False tile_dash=False inflight=False recovery=False",
+  "R9_alerts": "{'bar': True, 'visible_items': 3, 'more_btn': True, 'popover_items': 0}",
+  "R10_header": "greet= bd= sync=synced just now nb_dis= ok=False",
+  "R11_money": "PASS",
+  "R12_dupes": "FAIL: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid='fd-tab-in-house']\")\n",
+  "R13_overflow": "FAIL: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid='fd-tab-in-house']\")\n",
+  "R14_legacy": {
+    "/pms/front-desk": {
+      "chars": 253,
+      "new_errs": 0
+    },
+    "/pms/arrivals": {
+      "chars": 194,
+      "new_errs": 0
+    },
+    "/pms/in-house": {
+      "chars": 310,
+      "new_errs": 0
+    },
+    "/pms/room-status": {
+      "chars": 1029,
+      "new_errs": 0
+    }
+  },
+  "R15_screens": "FAIL: Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid='fd-tab-in-house']\")\n",
+  "R7_restore_check": "8525_final_text=housekeeping\nr4\nsuite \u00b7 2nd floor\nneeds housekeeping\nsince 21 sep, 18:32",
+  "console_errors_non_ignored": [],
+  "console_errors_count": 0
+}

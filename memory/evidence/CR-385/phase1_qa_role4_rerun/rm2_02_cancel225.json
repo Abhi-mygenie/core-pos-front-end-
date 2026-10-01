@@ -1,0 +1,30 @@
+{
+  "R-M2-02_audit": {
+    "outcome_total": "\u20b937,170",
+    "outcome_prepaid": "\u20b90",
+    "outcome_advance": "\u20b90",
+    "phase2_ribbon": true,
+    "dialog_class": "w-full",
+    "dialog_has_fixed": false,
+    "reason_opts": [
+      "Select reason\u2026",
+      "guest cancelled"
+    ],
+    "confirm_disabled": true,
+    "header_greeting": "Good morning"
+  },
+  "R-M2-02_post_body": [
+    {
+      "t": 1790016029.0528493,
+      "phase": "req",
+      "method": "POST",
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/225/cancel",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"notify_cm\":true}"
+    }
+  ],
+  "R-M2-02_post_status": [
+    200
+  ],
+  "R-M2-02_row_gone": true,
+  "R-M2-02_late_after": "Late 12"
+}

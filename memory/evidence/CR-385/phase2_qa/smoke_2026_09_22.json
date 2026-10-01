@@ -1,0 +1,52 @@
+{
+  "run_at": "2026-09-22T16:07Z",
+  "tester": "Role-4 QA sub-agent",
+  "scope": "smoke only — no sandbox mutations (single-session credential, no idempotent path for full T1-T9 within one session budget)",
+  "login": {"path": "/ (LoginPage; task said /login but that route 404s — pre-existing X-06-adjacent)", "user": "owner@thegoankitchen.com", "result": "200 OK -> /dashboard -> /pms/front-desk-v2"},
+  "front_desk_beta": {
+    "url": "/pms/front-desk-v2?tab=arrivals",
+    "fd_header_date_testid_text_at_read_time": "— (em-dash while meta was still loading; visible greeting shows 'Tuesday, 22 September 2026' once loaded)",
+    "kpi_tiles": {"arrivals": "0 · 10 late 0 tomorrow", "departures": "0 · 2 overdue", "in_house": "2", "rooms": "2 free · 0 HK · 20% occupancy"},
+    "fd_new_booking_btn": "present, opens booking-form top-of-tab (D81 PASS)"
+  },
+  "new_booking_form": {
+    "opens": true,
+    "D82_pre_save_absent_testids": {
+      "booking-bill-total": 0,
+      "booking-bill-sgst": 0,
+      "booking-bill-cgst": 0,
+      "booking-bill-advance": 0,
+      "booking-bill-balance": 0
+    },
+    "present_testids": ["booking-form","booking-summary","booking-summary-plan","booking-summary-rate","booking-summary-nights","booking-summary-advance","booking-bill-pending","booking-guest-name","booking-guest-phone","booking-checkin","booking-checkout","booking-adults","booking-children","booking-rate-grid","booking-advance-toggle","booking-save-btn","booking-save-checkin-btn","booking-close-btn","booking-missing","booking-b2b-note"],
+    "rate_grid_snapshot": "executive sold out · executive-s-ep ₹7,400 · executive-s-cp ₹2,500 · executive-d-cp ₹2,500 · executive-d-ep ₹2,000 · suite 3 free · suite-s-ep ₹31,500 · suite-d-cp ₹4,000 · suite-d-ep ₹3,500 · suite-s-cp ₹4,000",
+    "AC-09_upi_ref_gate": "Save disabled when method=upi + amount=1000 + ref empty (PASS); enabled after ref='QAREF1' + suite selected (PASS)",
+    "read_side_effects_batch_C7": "observed exactly 1 rates+availability batch on open (GET room-availability?checkin=2026-09-22&checkout=2026-09-23 and GET restaurant-settings/settings-list); no duplicate concurrent batches observed at 1x settle (not stress-tested with rapid toggles)",
+    "duplicate_testids_with_form_open": []
+  },
+  "chips": {"late": 1, "today": 1, "tomorrow": 1, "upcoming": 1, "tomorrow_checkin_btn_rows": 0},
+  "legacy_pages": {
+    "/pms/check-in": "reachable (screenshot ok); title = 'The Goan Kitchen · MyGenie POS' (unchanged shell)",
+    "/pms/new-booking": "reachable (screenshot ok)"
+  },
+  "channel_manager": {
+    "/pms/channel-manager": "loaded but 'Front Desk Rules' tab not opened; testids toggle-allow-early-checkin/radio-extend-rate-mode-calendar/frontdesk-rules-save-btn count=0 on default tab. Requires tab switch (not performed in smoke)."
+  },
+  "console_errors": 0,
+  "api_requests_captured_pms_reads_only": [
+    "GET /api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-23&end_date=2026-11-21&view=all",
+    "GET /api/v2/vendoremployee/restaurant-settings/settings-list",
+    "GET /api/v2/vendoremployee/aiosell/room-availability?checkin=2026-09-22&checkout=2026-09-23"
+  ],
+  "NOT_TESTED": [
+    "T1 booking save (no POST /aiosell/direct-reservation issued — no sandbox mutation performed)",
+    "T2 Executive booking (server-side executive shows sold out on the grid — booking-type-executive-free='sold out' — expected NOTE per handover if attempted)",
+    "T3 early check-in guard live toggle round-trip (no CM tab switched, no rules mutated)",
+    "T4 check-in with upgrade + collect (no POST /pos/user-group-check-in issued)",
+    "T5 legacy pages byte-identical screenshot-diff (loaded only)",
+    "T6 1366×768 RIGHT-pane scroll audit",
+    "T7 debounce stress (rapid date toggles), F1 row-collapse, E13 rooms-tile check-in",
+    "T8 regression (Modify preview, Cancel Direct, No-Show visibility, CM tabs, keyboard/search, legacy /pms/arrivals overlay)",
+    "T9 end-state read-back (no bookings created, so no cleanup needed; owner sandbox untouched)"
+  ]
+}

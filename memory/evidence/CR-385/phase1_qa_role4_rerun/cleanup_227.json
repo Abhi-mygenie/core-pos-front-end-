@@ -1,0 +1,45 @@
+{
+  "R-M2-06_audit": {
+    "outcome_total": "\u20b974,340",
+    "scrollwidth": 1366,
+    "client_width": 1366
+  },
+  "R-M2-06_posts": [
+    [
+      "req",
+      null
+    ],
+    [
+      "resp",
+      200
+    ]
+  ],
+  "R-M2-06_row_gone": true,
+  "R-LEGACY_kebab": "arr-kebab-MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8",
+  "R-LEGACY_dialog_class": "fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4",
+  "R-LEGACY_posts": [
+    [
+      "req",
+      "POST",
+      null,
+      "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8/cancel"
+    ],
+    [
+      "resp",
+      "POST",
+      500,
+      "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/MG-69-DD9A2965-CACC-454B-903A-0919C9F644C8/cancel"
+    ]
+  ],
+  "CLEANUP_227": [
+    [
+      "req",
+      null
+    ],
+    [
+      "resp",
+      200
+    ]
+  ],
+  "CLEANUP_227_gone": true
+}
