@@ -28861,12 +28861,12 @@
       "type": "CR",
       "severity": "P2",
       "risk": "HIGH",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_PHASE_A_IMPLEMENTED",
       "sprint_key": "oct_cr_batch",
       "area": "Room / PMS Billing / POS Order Flow",
       "source": "AGENT-DISCOVERED",
       "registered": "2026-10-01",
-      "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md | OD-405-01..06 ALL LOCKED 2026-10-01. Execution A\u2192B\u2192D\u2192C. Evidence: evidence/CR-405/. | IA complete 2026-10-01. 6 files ~76 lines. Phase A: FolioCheckoutPanel+orderTransform (enable greyed button). Phase B: constants v2\u2192v1 + rewrite transferToRoom payload. Phase D: pmsService+CheckInPage discount. Phase C: partial_payments_room. All ODs locked. IA: impact/CR-405_IMPACT_ANALYSIS.md | Gate 3 Plan complete 2026-10-01. 4 phases A\u2192B\u2192D\u2192C / 6 files / ~75 lines. R11 probes PASS (v1 NEW contract confirmed). All ODs locked. Plan: plans/CR-405_IMPLEMENTATION_PLAN.md. Awaiting Gate 4 GO."
+      "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md | OD-405-01..06 ALL LOCKED 2026-10-01. Execution A\u2192B\u2192D\u2192C. Evidence: evidence/CR-405/. | IA complete 2026-10-01. 6 files ~76 lines. Phase A: FolioCheckoutPanel+orderTransform (enable greyed button). Phase B: constants v2\u2192v1 + rewrite transferToRoom payload. Phase D: pmsService+CheckInPage discount. Phase C: partial_payments_room. All ODs locked. IA: impact/CR-405_IMPACT_ANALYSIS.md | Gate 3 Plan complete 2026-10-01. 4 phases A\u2192B\u2192D\u2192C / 6 files / ~75 lines. R11 probes PASS (v1 NEW contract confirmed). All ODs locked. Plan: plans/CR-405_IMPLEMENTATION_PLAN.md. Awaiting Gate 4 GO. | Phase A IMPLEMENTED 2026-10-01: FolioCheckoutPanel.jsx 8 edits \u2014 roomDiscount state, RoomSection/Statement props, enabled discount UI, handlePaid injection. Tests 8/8 PASS. yarn build exit 0."
     }
   ],
   "meta": {

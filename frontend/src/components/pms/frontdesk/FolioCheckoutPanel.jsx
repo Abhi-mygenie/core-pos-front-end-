@@ -36,7 +36,7 @@ const Line = ({ label, value, testId, bold, muted }) => (
 );
 const Heading = ({ children, testId }) => <div className="text-[10px] uppercase font-semibold text-[#767676] mt-3 mb-1" data-testid={testId}>{children}</div>;
 
-const RoomSection = ({ row, upgrade }) => { // CR-385 M6 · BUG-418 (two GST lines)
+const RoomSection = ({ row, upgrade, roomDiscount, setRoomDiscount, roomDiscountReason, setRoomDiscountReason }) => { // CR-385 M6 · BUG-418 · CR-405-A
   const c = row.charge ?? {};
   const [open, setOpen] = useState(true);
   return (
@@ -49,7 +49,29 @@ const RoomSection = ({ row, upgrade }) => { // CR-385 M6 · BUG-418 (two GST lin
           <NightsLines charge={c} testId="bill-nights" />
           <Line label="Booking amount" value={fmtINR(c.booking_charge)} testId="bill-room-booking" />
           {Number(c.upgrade_amount) > 0 && <Line label={upgrade?.reason ? `Room upgrade: ${upgrade.reason}` : 'Room upgrade'} value={fmtINR(c.upgrade_amount)} testId="bill-room-upgrade" />}
-          <div className="flex justify-between py-0.5 text-[#767676]"><span>Room discount</span><button type="button" disabled data-testid="bill-room-discount-btn" title="needs BQ-385-07" className="fd-btn text-[11px] underline disabled:opacity-40 disabled:cursor-not-allowed">Apply…</button></div>
+          {/* CR-405-A: room discount at checkout — enabled (BQ-385-07 answered by handover_5 §4.4) */}
+          <div className="py-0.5">
+            <div className="flex justify-between text-[#767676]">
+              <span>Room discount</span>
+              {roomDiscount > 0 && <span className="tabular-nums font-medium text-[#329937]" data-testid="bill-room-discount-applied">−{fmtINR(roomDiscount)}</span>}
+            </div>
+            <div className="flex gap-1 mt-0.5">
+              <input
+                type="number" min="0" placeholder="₹ amount"
+                value={roomDiscount || ''}
+                onChange={e => setRoomDiscount(Math.max(0, parseFloat(e.target.value) || 0))}
+                className="w-24 h-6 border border-[#E5E5E5] rounded px-1 text-[11px] text-[#1A1A1A]"
+                data-testid="bill-room-discount-input"
+              />
+              <input
+                type="text" placeholder="Reason (optional)"
+                value={roomDiscountReason}
+                onChange={e => setRoomDiscountReason(e.target.value)}
+                className="flex-1 h-6 border border-[#E5E5E5] rounded px-1 text-[11px] text-[#1A1A1A]"
+                data-testid="bill-room-discount-reason"
+              />
+            </div>
+          </div>
           <Line label="SGST" value={fmtINR(c.sgst)} testId="bill-room-sgst" /> {/* BUG-418: two lines, never merged */}
           <Line label="CGST" value={fmtINR(c.cgst)} testId="bill-room-cgst" />
           <Line label="Already paid" value={fmtINR(c.advance_payment)} testId="bill-room-paid" muted />
@@ -60,7 +82,7 @@ const RoomSection = ({ row, upgrade }) => { // CR-385 M6 · BUG-418 (two GST lin
   );
 };
 
-const Statement = ({ row, folio }) => {
+const Statement = ({ row, folio, roomDiscount, setRoomDiscount, roomDiscountReason, setRoomDiscountReason }) => {
   const { upgrade, orders } = splitUpgradeLine(folio?.roomOrders);
   return (
     <div className="text-[12px]">
@@ -68,7 +90,10 @@ const Statement = ({ row, folio }) => {
         <div className="text-[14px] font-semibold">{row.guestName} <span className="text-[#767676] font-normal">· {row.bookingId}</span></div>
         <div className="text-[#767676] mt-0.5">{channelLabel(row.channel)} · {fmtDate(row.checkin)} → {fmtDate(row.checkout)} · {plural(row.nights ?? 0, 'night')} · Room {row.roomNo ?? '—'} · {row.adults ?? 0}A{row.children ? ` ${row.children}C` : ''}{row.phone ? ` · ${maskPhone(row.phone)}` : ''}</div>
       </div>
-      <RoomSection row={row} upgrade={upgrade} />
+      <RoomSection row={row} upgrade={upgrade}
+        roomDiscount={roomDiscount} setRoomDiscount={setRoomDiscount}
+        roomDiscountReason={roomDiscountReason} setRoomDiscountReason={setRoomDiscountReason}
+      />
       <Heading testId="bill-orders-heading">Room orders</Heading>
       {orders.length === 0 ? <div className="text-[#767676]" data-testid="bill-orders-empty">No room-service orders</div>
         : orders.map((o, i) => <Line key={i} label={`${o.name} × ${o.qty}${o.gstPercent ? ` · GST ${o.gstPercent}%` : ''}`} value={fmtINR(o.totalAmount)} testId={`bill-orders-${i}`} />)}
@@ -87,6 +112,9 @@ export const FolioCheckoutPanel = ({ row, meta, onDone, onClose }) => {
   const [state, setState] = useState({ loading: true, error: null, data: null });
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState(null);
+  // CR-405-A: room discount at checkout (handover_5 §4.4)
+  const [roomDiscount, setRoomDiscount] = useState(0);
+  const [roomDiscountReason, setRoomDiscountReason] = useState('');
   const stop = (e) => e.stopPropagation();
 
   const load = useCallback(async () => {
@@ -114,13 +142,21 @@ export const FolioCheckoutPanel = ({ row, meta, onDone, onClose }) => {
         { autoBill: settings?.autoBill || false, waiterId: user?.employeeId || '', restaurantName: restaurant?.name || '' });
       const roomGstTax = order.roomInfo?.gstTax ?? 0;
       if (roomGstTax > 0) payload.room_gst_tax = roomGstTax; // BUG-386 (server value passthrough)
+      // CR-405-A: room discount at checkout (handover_5 §4.4) — apply_to='room' cuts UID balance
+      if (roomDiscount > 0) {
+        payload.room_discount          = roomDiscount;
+        payload.room_discount_apply_to = 'room';
+        payload.room_discount_type     = 'Amount';
+        payload.room_discount_value    = roomDiscount;
+        payload.room_discount_reason   = roomDiscountReason || null;
+      }
       const data = await payBill(payload);
       if (data?.status === 'already_paid') { toast.info('Already checked out'); await onDone?.(null); return; }
       await onDone?.(`Checked out · Room ${row.roomNo ?? ''}`.trim());
     } catch (err) {
       setPayError(err?.readableMessage ?? err?.response?.data?.message ?? 'Checkout failed');
     } finally { setPaying(false); }
-  }, [order, row.orderId, row.roomNo, paying, settings?.autoBill, user?.employeeId, restaurant?.name, onDone]);
+  }, [order, row.orderId, row.roomNo, paying, settings?.autoBill, user?.employeeId, restaurant?.name, onDone, roomDiscount, roomDiscountReason]);
 
   return (
     <div ref={rootRef} className="px-5 py-4" data-testid={`bill-panel-${row.id}`} onClick={stop} onKeyDown={stop}>
@@ -139,7 +175,12 @@ export const FolioCheckoutPanel = ({ row, meta, onDone, onClose }) => {
       {!state.loading && !state.error && order && order.isRoom !== true && <div className="py-6 text-center text-[12px] text-[#B91C1C]" data-testid="bill-error">This order is not a room order</div>}
       {!state.loading && !state.error && order && order.isRoom === true && (
         <div className="fd-bill-grid gap-4">
-          <div className="bill-left overflow-auto pr-2" data-testid="bill-left"><Statement row={row} folio={state.data.folio} /></div>
+          <div className="bill-left overflow-auto pr-2" data-testid="bill-left">
+            <Statement row={row} folio={state.data.folio}
+              roomDiscount={roomDiscount} setRoomDiscount={setRoomDiscount}
+              roomDiscountReason={roomDiscountReason} setRoomDiscountReason={setRoomDiscountReason}
+            />
+          </div>
           <div className={`frontdesk-bill bill-right rounded-xl border border-[#E5E5E5]${tabPrefilled(billCustomer(order, row)) ? ' fd-bill-tab-prefilled' : ''}`} data-testid="bill-right"> {/* CR-385 BUG-448 / OD-385-21 */}
             <Suspense fallback={<div className="flex items-center gap-2 p-4 text-[12px] text-[#767676]" data-testid="bill-panel-loading"><Loader2 className="w-4 h-4 animate-spin" /> Loading payment panel…</div>}>
             <CollectPaymentPanel
