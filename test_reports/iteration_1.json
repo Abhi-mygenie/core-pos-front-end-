@@ -1,0 +1,49 @@
+{
+  "summary": "First QA run for BUG-484 and CR-405 Phase A+B. All 3 unit test suites passed 8/8. yarn build exit 0. Source code verified against all checklist items.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "src/__tests__/api/transforms/orderTransform.bug484.test.js",
+    "src/__tests__/api/transforms/orderTransform.cr405b.test.js",
+    "src/__tests__/components/pms/FolioCheckoutPanel.cr405a.test.jsx"
+  ],
+  "unit_test_results": {
+    "orderTransform.bug484.test.js": "8/8 PASS",
+    "FolioCheckoutPanel.cr405a.test.jsx": "8/8 PASS",
+    "orderTransform.cr405b.test.js": "8/8 PASS"
+  },
+  "code_verification": {
+    "BUG-484 fbOnlyTotal at L1509": "CONFIRMED — `const fbOnlyTotal = Math.max(0, (finalTotal || 0) - (roomBalance || 0));`",
+    "BUG-484 payment_amount uses fbOnlyTotal at L1637": "CONFIRMED",
+    "BUG-484 grant_amount uses fbOnlyTotal at L1653": "CONFIRMED",
+    "BUG-484 order_amount uses fbOnlyTotal at L1660": "CONFIRMED",
+    "BUG-484 paid_room at L1719": "CONFIRMED — `table?.isRoom ? 'yes' : ''`",
+    "CR-405-A roomDiscount/roomDiscountReason state at L115-117": "CONFIRMED",
+    "CR-405-A bill-room-discount-input testid (L64)": "CONFIRMED — NOT disabled",
+    "CR-405-A bill-room-discount-reason testid (L71)": "CONFIRMED — NOT disabled",
+    "CR-405-A bill-room-discount-applied testid (L56)": "CONFIRMED — shown only when roomDiscount > 0",
+    "CR-405-A old disabled button with title='needs BQ-385-07'": "GONE — replaced by two input fields",
+    "CR-405-A handlePaid injection at L145-152": "CONFIRMED — injects room_discount fields when roomDiscount > 0",
+    "CR-405-A deps array at L159": "CONFIRMED — roomDiscount, roomDiscountReason in deps",
+    "CR-405-B constants.js ORDER_SHIFTED_ROOM at L96": "CONFIRMED — `/api/v1/vendoremployee/order/order-shifted-room`",
+    "CR-405-B CollectPaymentPanel paymentData.roomOrderId at L1190": "CONFIRMED — `paymentData.roomOrderId = selectedRoom.orderId`",
+    "CR-405-B transferToRoom returns only 3 keys at L1760-1764": "CONFIRMED — {source_order_id, target_order_id, transfer_note} only",
+    "CR-405-B OrderEntry.jsx L2096 still calls transferToRoom(effectiveTable, paymentData, paymentData.roomId)": "CONFIRMED — 3-arg call, compatible with _roomId ignored param"
+  },
+  "build_check": "yarn build exit 0, 0 errors, bundle size warning is pre-existing (not new)",
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-484 and CR-405-A+B all verified. All 24 unit tests (3×8) PASS. Build clean. CR-405 phases C and D are NOT yet implemented — do not test those.",
+  "seed_data_creation": "None"
+}
