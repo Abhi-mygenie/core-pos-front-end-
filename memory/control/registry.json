@@ -28841,6 +28841,32 @@
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "notes": "Menu needs restructuring with better add-on grouping. Requires Menu Management UI changes and potentially backend category/addon schema changes."
+    },
+    {
+      "id": "BUG-484",
+      "title": "Room bill-pay payment_amount / order_amount / grant_amount may include room rent \u2014 contract requires F&B-only",
+      "type": "BUG",
+      "severity": "P1",
+      "risk": "CRITICAL",
+      "status": "GATE_1_INTAKE",
+      "sprint_key": "oct_cr_batch",
+      "area": "Room / PMS Billing / Collect Bill",
+      "source": "AGENT-DISCOVERED",
+      "registered": "2026-10-01",
+      "notes": "Backend handover_5.md (2026-10-01) \u00a72 proves payment_amount/order_amount/grant_amount must be F&B-only on room stays. FE may be sending rent+F&B combined \u2192 DB order_amount inflated \u2192 revenue report errors. Needs CollectPaymentPanel + PmsCheckoutDrawer + orderTransform audit. Related: CR-405 (room folio features). Intake: change_requests/BUG-484_ROOM_BILL_PAYMENT_AMOUNT_FB_ONLY_CONTRACT_INTAKE.md"
+    },
+    {
+      "id": "CR-405",
+      "title": "Room Folio \u2014 Discount at Checkout + Check-in, Partial Room Payments, Shift Dine-in to Room",
+      "type": "CR",
+      "severity": "P2",
+      "risk": "HIGH",
+      "status": "GATE_1_INTAKE",
+      "sprint_key": "oct_cr_batch",
+      "area": "Room / PMS Billing / POS Order Flow",
+      "source": "AGENT-DISCOVERED",
+      "registered": "2026-10-01",
+      "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md"
     }
   ],
   "meta": {
