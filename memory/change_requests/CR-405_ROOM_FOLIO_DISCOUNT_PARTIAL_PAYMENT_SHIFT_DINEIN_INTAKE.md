@@ -156,14 +156,25 @@ Hotspots touched: **YES** — CollectPaymentPanel + orderTransform on R5 list.
 
 ---
 
-## Owner Decisions Needed (Gate 2)
+## Owner Decisions — ALL LOCKED 2026-10-01
 
-- **OD-405-01:** Phase order — which sub-item first? (Recommended: A → B → D → C, or A+B together since both are discount UI)
-- **OD-405-02:** Room discount UI in Front Desk Bill — ungreys existing greyed control (CR-385 M6) or new widget?
-- **OD-405-03:** Check-in discount — % input (FE converts → ₹) or flat ₹ input only?
-- **OD-405-04:** `partial_payments_room` — is this FU-385-D scope, or separate? (Recommended: treat C as blocked-on-FU-385-D; unblock separately)
-- **OD-405-05:** `order-shifted-room` UI — where is the trigger? (Room order card? Front Desk Bill? Separate "Shift" button on dine-in card?)
-- **OD-405-06:** Fast Lane approved for version fix `ORDER_SHIFTED_ROOM` `/v2/` → `/v1/`? (1 line, constants.js only)
+| OD | Decision | Status |
+|---|---|---|
+| **OD-405-01** | Execution order: **A → B → D → C**. A=checkout discount (V2 bill-pay), B=shift dine-in (V1 URL), D=check-in bake+read-back, C=partial_payments_room. A must not block on B/C. | ✅ LOCKED |
+| **OD-405-02** | **Existing greyed control** — ungreys the CR-385 M6 room discount widget; no new widget. | ✅ LOCKED |
+| **OD-405-03** | **% input OK in UI; wire always sends ₹.** Optional `room_discount_type` / `room_discount_value` / `room_discount_reason` for audit. Flat-₹-only UI also acceptable. | ✅ LOCKED |
+| **OD-405-04** | **C stays in CR-405**, sequenced last. Not deferred to FU-385-D. Backend shipped additive on V2. Planning agent to declare FU-385-D ownership at Gate 2 if needed. | ✅ LOCKED |
+| **OD-405-05** | **Existing "To Room" button in Collect Payment panel** (screenshot `evidence/CR-405/OD_SCREENSHOT_COLLECT_PAYMENT_TO_ROOM_2026_10_01.md`). UI keeps as-is: To Room button → room chips → "Transfer ₹X to Room" CTA. Sub-item B = fix endpoint version + contract align only. | ✅ LOCKED |
+| **OD-405-06** | **Fast Lane approved** — 1-line version fix `ORDER_SHIFTED_ROOM` `/api/v2/` → `/api/v1/` in `constants.js`. | ✅ LOCKED |
+
+### Corrected Phase Labels (owner's execution naming)
+
+| Phase | Owner label | Scope | Key files |
+|---|---|---|---|
+| 1 | **A** | Checkout room discount (`room_discount_apply_to`, V2 bill-pay) | FolioCheckoutPanel, PmsCheckoutDrawer, orderTransform |
+| 2 | **B** | Shift dine-in to room — fix V1 URL + handover_5 §6 contract alignment | constants.js (Fast Lane) + orderTransform.js:1743 |
+| 3 | **D** | Check-in discount bake + read-back | CheckInPage.jsx |
+| 4 | **C** | `partial_payments_room` multi-leg room payment | FolioCheckoutPanel, CollectPaymentPanel |
 
 ---
 
