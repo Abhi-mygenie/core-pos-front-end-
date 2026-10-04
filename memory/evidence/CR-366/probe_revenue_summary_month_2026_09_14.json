@@ -1,0 +1,685 @@
+{
+  "status": true,
+  "message": "Revenue summary fetched successfully",
+  "data": {
+    "generated_at": "2026-09-15T09:35:03+05:30",
+    "currency": "INR",
+    "range": {
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31",
+      "days": 365,
+      "group_by": "month"
+    },
+    "totals": {
+      "rooms_available": 1825,
+      "rooms_sold": 0,
+      "rooms_complimentary": 0,
+      "occupancy_percent": 0,
+      "occupancy_percent_physical": 0,
+      "room_revenue_booked": 0,
+      "room_revenue_collected": 0,
+      "fnb_revenue_posted": 0,
+      "other_revenue_posted": 0,
+      "tax_collected": 0,
+      "adr_booked": null,
+      "adr_collected": null,
+      "revpar_booked": 0,
+      "revpar_collected": 0,
+      "trevpar": 0,
+      "bookings_count": null,
+      "arrivals": 0,
+      "departures": 0,
+      "cancellations_count": 0,
+      "no_show_count": 0,
+      "avg_los_nights": null,
+      "avg_lead_time_days": null,
+      "outstanding_balance": null,
+      "room_revenue_collected_by_tender": {
+        "cash": 0,
+        "card": 0,
+        "upi": 0,
+        "tab": 0,
+        "ota_remittance": 0,
+        "other": 0
+      },
+      "by_channel": [],
+      "by_booking_payment_type": [],
+      "by_room_type": [
+        {
+          "room_code": "suite",
+          "capacity_nights": 1460,
+          "available_nights": 1460,
+          "sold_nights": 0,
+          "room_revenue_booked": 0,
+          "room_revenue_collected": 0,
+          "occupancy_percent": 0,
+          "adr_booked": null,
+          "revpar_booked": 0
+        },
+        {
+          "room_code": "executive",
+          "capacity_nights": 365,
+          "available_nights": 365,
+          "sold_nights": 0,
+          "room_revenue_booked": 0,
+          "room_revenue_collected": 0,
+          "occupancy_percent": 0,
+          "adr_booked": null,
+          "revpar_booked": 0
+        }
+      ]
+    },
+    "series": [
+      {
+        "bucket_start": "2025-01-01",
+        "bucket_end": "2025-01-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-02-01",
+        "bucket_end": "2025-02-28",
+        "is_forecast": false,
+        "rooms_available": 140,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 112,
+            "available_nights": 112,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 28,
+            "available_nights": 28,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-03-01",
+        "bucket_end": "2025-03-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-04-01",
+        "bucket_end": "2025-04-30",
+        "is_forecast": false,
+        "rooms_available": 150,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 120,
+            "available_nights": 120,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 30,
+            "available_nights": 30,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-05-01",
+        "bucket_end": "2025-05-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-06-01",
+        "bucket_end": "2025-06-30",
+        "is_forecast": false,
+        "rooms_available": 150,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 120,
+            "available_nights": 120,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 30,
+            "available_nights": 30,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-07-01",
+        "bucket_end": "2025-07-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-08-01",
+        "bucket_end": "2025-08-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-09-01",
+        "bucket_end": "2025-09-30",
+        "is_forecast": false,
+        "rooms_available": 150,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 120,
+            "available_nights": 120,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 30,
+            "available_nights": 30,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-10-01",
+        "bucket_end": "2025-10-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-11-01",
+        "bucket_end": "2025-11-30",
+        "is_forecast": false,
+        "rooms_available": 150,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 120,
+            "available_nights": 120,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 30,
+            "available_nights": 30,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      },
+      {
+        "bucket_start": "2025-12-01",
+        "bucket_end": "2025-12-31",
+        "is_forecast": false,
+        "rooms_available": 155,
+        "rooms_sold": 0,
+        "rooms_complimentary": 0,
+        "occupancy_percent": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "fnb_revenue_posted": 0,
+        "other_revenue_posted": 0,
+        "adr_booked": null,
+        "revpar_booked": 0,
+        "by_room_type": [
+          {
+            "room_code": "suite",
+            "capacity_nights": 124,
+            "available_nights": 124,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          },
+          {
+            "room_code": "executive",
+            "capacity_nights": 31,
+            "available_nights": 31,
+            "sold_nights": 0,
+            "room_revenue_booked": 0,
+            "room_revenue_collected": 0,
+            "occupancy_percent": 0,
+            "adr_booked": null,
+            "revpar_booked": 0
+          }
+        ],
+        "by_channel": [],
+        "room_revenue_collected_by_tender": {
+          "cash": 0,
+          "card": 0,
+          "upi": 0,
+          "tab": 0,
+          "ota_remittance": 0,
+          "other": 0
+        }
+      }
+    ],
+    "by_channel": [],
+    "by_booking_payment_type": [],
+    "by_room_type": [
+      {
+        "room_code": "suite",
+        "capacity_nights": 1460,
+        "available_nights": 1460,
+        "sold_nights": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "occupancy_percent": 0,
+        "adr_booked": null,
+        "revpar_booked": 0
+      },
+      {
+        "room_code": "executive",
+        "capacity_nights": 365,
+        "available_nights": 365,
+        "sold_nights": 0,
+        "room_revenue_booked": 0,
+        "room_revenue_collected": 0,
+        "occupancy_percent": 0,
+        "adr_booked": null,
+        "revpar_booked": 0
+      }
+    ],
+    "by_booking_status": {
+      "confirmed_pending_arrival": 0,
+      "checked_in": 0,
+      "checked_out": 0,
+      "cancelled": 0,
+      "no_show": 0,
+      "modified": 0
+    }
+  }
+}

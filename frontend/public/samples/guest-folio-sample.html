@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Guest Folio — Sample (CR-364)</title>
+<style>
+  :root {
+    --ink:      #111827;
+    --muted:    #6b7280;
+    --line:     #d1d5db;
+    --hair:     #e5e7eb;
+    --bg-soft:  #f9fafb;
+    --accent:   #0f4c81;
+    --paid:     #047857;
+    --unpaid:   #b91c1c;
+    --partial:  #a16207;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #eef1f5;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toolbar {
+    max-width: 900px;
+    margin: 20px auto 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .toolbar .info { font-size: 12px; }
+  .toolbar button {
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .toolbar button:hover { background: #0c3d68; }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 24px;
+    padding: 14mm 14mm 16mm;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    font-size: 10pt;
+    line-height: 1.4;
+    position: relative;
+  }
+
+  /* ─── Header ─── */
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .hdr .brand {
+    max-width: 60%;
+  }
+  .hdr .logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .hdr .brand h1 {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    font-size: 18pt;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+  .hdr .brand .meta {
+    margin-top: 6px;
+    font-size: 9pt;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .hdr .docname {
+    text-align: right;
+  }
+  .hdr .docname .title {
+    font-size: 16pt;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+  .hdr .docname .subline {
+    font-size: 9pt;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ─── Meta strip ─── */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px 16px;
+    margin: 10px 0 6px;
+    font-size: 9pt;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .meta-grid .k { color: var(--muted); text-transform: uppercase; font-size: 7.5pt; letter-spacing: 0.05em; }
+  .meta-grid .v { font-weight: 600; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .b-paid    { background: #d1fae5; color: var(--paid); }
+  .b-partial { background: #fef3c7; color: var(--partial); }
+  .b-unpaid  { background: #fee2e2; color: var(--unpaid); }
+  .b-channel { background: #dbeafe; color: #1e40af; }
+  .b-pah     { background: #fce7f3; color: #9d174d; }
+
+  /* ─── Section titles ─── */
+  .section {
+    margin-top: 14px;
+  }
+  .section h2 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  /* ─── Two column guest/stay ─── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .kv {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 3px 8px;
+    font-size: 9pt;
+  }
+  .kv .k { color: var(--muted); }
+  .kv .v { font-weight: 500; }
+
+  /* ─── Tables ─── */
+  table.charges {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    margin-top: 6px;
+  }
+  table.charges th {
+    background: var(--bg-soft);
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+  }
+  table.charges td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--hair);
+    vertical-align: top;
+  }
+  table.charges td.num, table.charges th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.charges tr.subtotal td {
+    border-top: 1px solid var(--line);
+    border-bottom: none;
+    background: var(--bg-soft);
+    font-weight: 600;
+  }
+  table.charges tr.section-head td {
+    padding-top: 10px;
+    background: transparent;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ─── Totals block ─── */
+  .totals-wrap {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 20px;
+  }
+  .totals-notes {
+    font-size: 8.5pt;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .totals {
+    font-size: 9.5pt;
+  }
+  .totals .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+  .totals .row .k { color: var(--muted); }
+  .totals .row .v { font-variant-numeric: tabular-nums; }
+  .totals .sep { border-top: 1px solid var(--hair); margin: 4px 0; }
+  .totals .grand {
+    background: var(--ink);
+    color: #fff;
+    padding: 8px 10px;
+    margin-top: 6px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .totals .balance {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 6px 10px;
+    margin-top: 4px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    font-weight: 700;
+  }
+  .totals .balance.paid { background: #d1fae5; color: var(--paid); }
+
+  /* ─── Footer ─── */
+  .footer {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hair);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    font-size: 8.5pt;
+    color: var(--muted);
+  }
+  .sig-line {
+    margin-top: 34px;
+    border-top: 1px solid var(--ink);
+    padding-top: 3px;
+    font-size: 8pt;
+    color: var(--ink);
+  }
+  .qr-block {
+    text-align: right;
+  }
+  .qr-box {
+    width: 74px;
+    height: 74px;
+    background: #fff;
+    border: 1px solid var(--line);
+    display: inline-block;
+    padding: 4px;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+  .qr-box svg { display: block; }
+
+  .fine {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 7.5pt;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+
+  .watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-24deg);
+    font-size: 96pt;
+    color: rgba(220, 38, 38, 0.06);
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    pointer-events: none;
+    display: none;
+  }
+  .page.duplicate .watermark { display: block; }
+
+  /* ─── Print ─── */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @media print {
+    body { background: #fff; }
+    .toolbar { display: none; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      page-break-after: always;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="info">
+    <strong>Sample — CR-364 Guest Folio Print</strong> ·
+    Not a live document · Uses fictional data · Rendered from spec in
+    <code>BACKEND_BRIEF_CR364_FOLIO_PRINT_2026_09_16.md</code>
+  </div>
+  <button onclick="window.print()">🖨 Print / Save as PDF</button>
+</div>
+
+<div class="page">
+  <div class="watermark">DUPLICATE COPY</div>
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="brand">
+      <div>
+        <span class="logo">W</span>
+        <h1>Welcome Resort &amp; Spa</h1>
+      </div>
+      <div class="meta">
+        123 Palm Avenue, Anjuna, Goa 403509, India<br />
+        GSTIN: 30AABCU9603R1ZM &nbsp;·&nbsp; HSN 996311 (Lodging) &nbsp;·&nbsp; Phone: +91 98 7654 3210<br />
+        welcome@welcome-resort.com &nbsp;·&nbsp; www.welcome-resort.com
+      </div>
+    </div>
+    <div class="docname">
+      <div class="title">GUEST FOLIO</div>
+      <div class="subline">Tax Invoice — Accommodation &amp; Services</div>
+      <div class="subline" style="margin-top:6px;">Folio No: <strong>F-1232218</strong></div>
+      <div class="subline">Booking ID: <strong>BK-88421</strong></div>
+      <div class="subline">Order ID: 1232218 · Reprint No: 1</div>
+    </div>
+  </div>
+
+  <!-- Meta strip -->
+  <div class="meta-grid">
+    <div><div class="k">Printed</div><div class="v">23 Sep 2026, 14:32</div></div>
+    <div><div class="k">Cashier</div><div class="v">Anita Rao</div></div>
+    <div><div class="k">Channel</div><div class="v"><span class="badge b-channel">MakeMyTrip</span></div></div>
+    <div><div class="k">Booking Type</div><div class="v"><span class="badge b-pah">Pay At Hotel</span></div></div>
+  </div>
+
+  <!-- Guest + Stay -->
+  <div class="two-col section">
+    <div>
+      <h2>Guest Details</h2>
+      <div class="kv">
+        <div class="k">Name</div>          <div class="v">Mr. John Kumar</div>
+        <div class="k">Phone</div>         <div class="v">+91 98 xxxx 7712</div>
+        <div class="k">Email</div>         <div class="v">john.kumar@example.com</div>
+        <div class="k">Address</div>       <div class="v">4B, Rose Apartments, Bengaluru 560001</div>
+        <div class="k">Country</div>       <div class="v">India</div>
+        <div class="k">Company</div>       <div class="v">Acme Retail Pvt Ltd</div>
+        <div class="k">GSTIN</div>         <div class="v">29AABCA1234F1Z5</div>
+        <div class="k">ID Proof</div>      <div class="v">Aadhaar · **** **** 4421</div>
+        <div class="k">Special Req.</div>  <div class="v">Late checkout requested; hypoallergenic pillow</div>
+      </div>
+    </div>
+    <div>
+      <h2>Stay Details</h2>
+      <div class="kv">
+        <div class="k">Room No.</div>       <div class="v">204</div>
+        <div class="k">Room Type</div>      <div class="v">Deluxe AC — Sea View (DLX-SV)</div>
+        <div class="k">Nights</div>         <div class="v">3</div>
+        <div class="k">Check-In</div>       <div class="v">20 Sep 2026, 14:05 &nbsp;<span style="color:var(--muted);font-size:8pt">(booked 14:00)</span></div>
+        <div class="k">Check-Out</div>      <div class="v">23 Sep 2026, 12:00 &nbsp;<span style="color:var(--muted);font-size:8pt">(booked 12:00)</span></div>
+        <div class="k">Pax</div>            <div class="v">2 Adults · 1 Child</div>
+        <div class="k">Children</div>       <div class="v">Aarav (age 6)</div>
+        <div class="k">Meal Plan</div>      <div class="v">CP — Continental Plan (Breakfast Incl.)</div>
+        <div class="k">Rate Plan</div>      <div class="v">MMT-CP-STD</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charges -->
+  <div class="section">
+    <h2>Charges</h2>
+    <table class="charges">
+      <thead>
+        <tr>
+          <th style="width:80px">Date</th>
+          <th>Description</th>
+          <th style="width:50px" class="num">Qty</th>
+          <th style="width:80px" class="num">Rate (₹)</th>
+          <th style="width:90px" class="num">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="section-head"><td colspan="5">Room Charges — Room 204 · Deluxe AC · 3 Nights</td></tr>
+        <tr>
+          <td>20 Sep 26</td>
+          <td>Night 1 · Room Tariff (DLX-SV)</td>
+          <td class="num">1</td>
+          <td class="num">4,000.00</td>
+          <td class="num">4,000.00</td>
+        </tr>
+        <tr>
+          <td>21 Sep 26</td>
+          <td>Night 2 · Room Tariff (DLX-SV)</td>
+          <td class="num">1</td>
+          <td class="num">4,000.00</td>
+          <td class="num">4,000.00</td>
+        </tr>
+        <tr>
+          <td>22 Sep 26</td>
+          <td>Night 3 · Room Tariff (DLX-SV)</td>
+          <td class="num">1</td>
+          <td class="num">4,000.00</td>
+          <td class="num">4,000.00</td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>Extra Bed · Night 1</td>
+          <td class="num">1</td>
+          <td class="num">500.00</td>
+          <td class="num">500.00</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="4">Room Charges Subtotal</td>
+          <td class="num">12,500.00</td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>Loyalty Discount — <em>"MMT Silver 5%"</em></td>
+          <td class="num" colspan="2"></td>
+          <td class="num">-500.00</td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>Lodging GST @ 12% (CGST 6% + SGST 6%) · HSN 996311</td>
+          <td class="num" colspan="2"></td>
+          <td class="num">1,440.00</td>
+        </tr>
+
+        <tr class="section-head"><td colspan="5">Food &amp; Beverage / Extras Posted to Room</td></tr>
+        <tr>
+          <td>20 Sep 26</td>
+          <td>
+            <strong>TB-4471</strong> · Dinner — In-Room Dining<br />
+            <span style="color:var(--muted);font-size:8.5pt">Butter Chicken, Naan (2), Jeera Rice · 3 items · Waiter: Ramesh</span>
+          </td>
+          <td class="num" colspan="2"></td>
+          <td class="num">1,250.00</td>
+        </tr>
+        <tr>
+          <td>21 Sep 26</td>
+          <td>
+            <strong>TB-4498</strong> · Lunch — Coral Restaurant<br />
+            <span style="color:var(--muted);font-size:8.5pt">Prawn Curry, Steamed Rice, Kokum Sherbet · 3 items · Waiter: Sunil</span>
+          </td>
+          <td class="num" colspan="2"></td>
+          <td class="num">820.00</td>
+        </tr>
+        <tr>
+          <td>22 Sep 26</td>
+          <td>
+            <strong>SVC-0121</strong> · Laundry Service<br />
+            <span style="color:var(--muted);font-size:8.5pt">4 shirts + 2 trousers · Attendant: Priya</span>
+          </td>
+          <td class="num" colspan="2"></td>
+          <td class="num">300.00</td>
+        </tr>
+        <tr>
+          <td>22 Sep 26</td>
+          <td>
+            <strong>BAR-0088</strong> · Poolside Bar<br />
+            <span style="color:var(--muted);font-size:8.5pt">2× Kingfisher, 1× Mojito · Waiter: Kiran</span>
+          </td>
+          <td class="num" colspan="2"></td>
+          <td class="num">640.00</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="4">F&amp;B / Extras Subtotal</td>
+          <td class="num">3,010.00</td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>F&amp;B GST @ 5% (CGST 2.5% + SGST 2.5%)</td>
+          <td class="num" colspan="2"></td>
+          <td class="num">150.50</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Totals -->
+  <div class="totals-wrap section">
+    <div class="totals-notes">
+      <h2 style="margin-top:0">Tax Summary</h2>
+      <table class="charges" style="margin-top:2px">
+        <thead>
+          <tr>
+            <th>Tax</th><th class="num">Taxable (₹)</th><th class="num">Rate</th><th class="num">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>CGST — Lodging (HSN 996311)</td><td class="num">12,000.00</td><td class="num">6%</td><td class="num">720.00</td></tr>
+          <tr><td>SGST — Lodging (HSN 996311)</td><td class="num">12,000.00</td><td class="num">6%</td><td class="num">720.00</td></tr>
+          <tr><td>CGST — F&amp;B</td><td class="num">3,010.00</td><td class="num">2.5%</td><td class="num">75.25</td></tr>
+          <tr><td>SGST — F&amp;B</td><td class="num">3,010.00</td><td class="num">2.5%</td><td class="num">75.25</td></tr>
+          <tr class="subtotal"><td colspan="3">Total Tax</td><td class="num">1,590.50</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px">
+        Prices are inclusive of shown taxes.<br />
+        Cancellation policy applies per booking terms.<br />
+        Any disputes subject to Panaji jurisdiction only.
+      </div>
+    </div>
+
+    <div class="totals">
+      <div class="row"><span class="k">Item Total</span><span class="v">₹ 15,510.00</span></div>
+      <div class="row"><span class="k">Discount</span><span class="v">−₹ 500.00</span></div>
+      <div class="row"><span class="k">Sub Total (after discount)</span><span class="v">₹ 15,010.00</span></div>
+      <div class="sep"></div>
+      <div class="row"><span class="k">CGST</span><span class="v">₹ 795.25</span></div>
+      <div class="row"><span class="k">SGST</span><span class="v">₹ 795.25</span></div>
+      <div class="row"><span class="k">Service Charge</span><span class="v">₹ 0.00</span></div>
+      <div class="row"><span class="k">Round-Off</span><span class="v">₹ 0.00</span></div>
+      <div class="grand"><span>GRAND TOTAL</span><span>₹ 16,600.50</span></div>
+
+      <div class="row" style="margin-top:10px"><span class="k"><strong>Payments Received</strong></span><span class="v"></span></div>
+      <div class="row"><span class="k">20 Sep · Advance · UPI (OTA prepay)</span><span class="v">₹ 5,000.00</span></div>
+      <div class="row"><span class="k">22 Sep · Interim · Cash</span><span class="v">₹ 3,000.00</span></div>
+      <div class="row"><span class="k">23 Sep · Checkout · Card **** 4421</span><span class="v">₹ 8,600.50</span></div>
+      <div class="sep"></div>
+      <div class="row"><span class="k">Total Received</span><span class="v"><strong>₹ 16,600.50</strong></span></div>
+      <div class="balance paid"><span>BALANCE DUE</span><span>₹ 0.00 · <span class="badge b-paid">PAID</span></span></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>
+      <strong style="color:var(--ink)">Terms &amp; Conditions</strong><br />
+      1. Check-out by 12:00 PM. Late checkout beyond 14:00 = ½-day tariff; beyond 18:00 = full-day tariff.<br />
+      2. Damages / missing items chargeable to guest folio.<br />
+      3. All complaints must be raised within 24 hrs of checkout.<br />
+      <div class="sig-line">Guest Signature</div>
+    </div>
+    <div class="qr-block">
+      <strong style="color:var(--ink)">Thank you for staying with us.</strong><br />
+      We hope to welcome you again soon.<br /><br />
+      <span style="font-size:8pt">Scan for stay receipt / feedback:</span>
+      <span class="qr-box">
+        <!-- Simple decorative QR-like pattern -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 21 21">
+          <rect width="21" height="21" fill="#fff"/>
+          <g fill="#111827">
+            <rect x="0" y="0" width="7" height="7"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3"/>
+            <rect x="14" y="0" width="7" height="7"/><rect x="15" y="1" width="5" height="5" fill="#fff"/><rect x="16" y="2" width="3" height="3"/>
+            <rect x="0" y="14" width="7" height="7"/><rect x="1" y="15" width="5" height="5" fill="#fff"/><rect x="2" y="16" width="3" height="3"/>
+            <rect x="8" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/><rect x="12" y="0" width="1" height="1"/>
+            <rect x="8" y="2" width="1" height="1"/><rect x="9" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/>
+            <rect x="8" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="12" y="4" width="1" height="1"/>
+            <rect x="9" y="6" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/>
+            <rect x="0" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/>
+            <rect x="6" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/>
+            <rect x="12" y="8" width="1" height="1"/><rect x="14" y="8" width="1" height="1"/><rect x="16" y="8" width="1" height="1"/>
+            <rect x="18" y="8" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/>
+            <rect x="1" y="10" width="1" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/>
+            <rect x="7" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="11" y="10" width="1" height="1"/>
+            <rect x="13" y="10" width="1" height="1"/><rect x="15" y="10" width="1" height="1"/><rect x="17" y="10" width="1" height="1"/>
+            <rect x="19" y="10" width="1" height="1"/>
+            <rect x="0" y="12" width="1" height="1"/><rect x="2" y="12" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/>
+            <rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/>
+            <rect x="14" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/>
+            <rect x="20" y="12" width="1" height="1"/>
+            <rect x="9" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/><rect x="13" y="14" width="1" height="1"/>
+            <rect x="15" y="14" width="1" height="1"/><rect x="17" y="14" width="1" height="1"/><rect x="19" y="14" width="1" height="1"/>
+            <rect x="8" y="16" width="1" height="1"/><rect x="10" y="16" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/>
+            <rect x="14" y="16" width="1" height="1"/><rect x="16" y="16" width="1" height="1"/><rect x="18" y="16" width="1" height="1"/>
+            <rect x="20" y="16" width="1" height="1"/>
+            <rect x="9" y="18" width="1" height="1"/><rect x="11" y="18" width="1" height="1"/><rect x="13" y="18" width="1" height="1"/>
+            <rect x="15" y="18" width="1" height="1"/><rect x="17" y="18" width="1" height="1"/><rect x="19" y="18" width="1" height="1"/>
+            <rect x="8" y="20" width="1" height="1"/><rect x="10" y="20" width="1" height="1"/><rect x="12" y="20" width="1" height="1"/>
+            <rect x="14" y="20" width="1" height="1"/><rect x="16" y="20" width="1" height="1"/><rect x="18" y="20" width="1" height="1"/>
+            <rect x="20" y="20" width="1" height="1"/>
+          </g>
+        </svg>
+      </span>
+      <div class="sig-line" style="margin-top:20px">Cashier · Anita Rao</div>
+    </div>
+  </div>
+
+  <div class="fine">
+    This is a computer-generated folio · No manual signature required from the hotel · Reprint No: 1 ·
+    Folio F-1232218 · CR-364 sample layout (2026-09-16)
+  </div>
+</div>
+
+</body>
+</html>

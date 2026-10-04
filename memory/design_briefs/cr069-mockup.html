@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-069 Mockup — Employee & Role Management</title>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: { green: '#329937', orange: '#F26B33', amber: '#F4A11A' },
+        pos: { dark: '#1A1A1A', gray: '#666666', border: '#E5E5E5', bg: '#F7F7F7', error: '#EF4444' }
+      }
+    }
+  }
+}
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+body { font-family: 'IBM Plex Sans', system-ui, sans-serif; margin: 0; }
+h1, h2, h3, .heading-font { font-family: 'Manrope', sans-serif; }
+.coverage-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: #f1f5f9; gap: 1px; }
+.coverage-bar .seg { transition: width 0.3s ease; min-width: 0; }
+.role-row { transition: background-color 0.15s ease; }
+.role-row:hover { background-color: #f8fafc; }
+.role-row td { border-bottom: 1px solid rgba(229,231,235,0.5); }
+.emp-count-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; background: #f0fdf4; color: #15803d; cursor: pointer; transition: background 0.15s; }
+.emp-count-pill:hover { background: #dcfce7; }
+.template-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+.system-badge { background: #f1f5f9; color: #64748b; }
+.template-tag { background: #fff7ed; color: #c2410c; }
+.view-transition { animation: fadeIn 0.15s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseGreen { 0%,100% { background: rgba(50,153,55,0.06); } 50% { background: rgba(50,153,55,0.14); } }
+.new-row { animation: pulseGreen 1.2s ease-in-out 1; }
+.accordion-chevron { transition: transform 0.2s; }
+.accordion-chevron.open { transform: rotate(180deg); }
+.perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px; }
+.sidebar-item:hover { background: rgba(0,0,0,0.04); }
+.inline-input { border: 1px solid #E5E5E5; border-radius: 6px; padding: 5px 8px; font-size: 13px; outline: none; width: 100%; color: #1A1A1A; background: #fff; transition: border-color 0.15s; }
+.inline-input:focus { border-color: #F26B33; box-shadow: 0 0 0 2px rgba(242,107,51,0.1); }
+.inline-select { border: 1px solid #E5E5E5; border-radius: 6px; padding: 5px 6px; font-size: 13px; outline: none; width: 100%; color: #1A1A1A; background: #fff; }
+.inline-select:focus { border-color: #F26B33; }
+.grid-table { display: grid; width: 100%; }
+.grid-header { display: contents; }
+.grid-header > div { padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #666; background: #FAFAFA; border-bottom: 1px solid #E5E5E5; position: sticky; top: 0; z-index: 2; }
+.grid-row { display: contents; }
+.grid-row > div { padding: 8px 12px; border-bottom: 1px solid #E5E5E5; display: flex; align-items: center; min-height: 48px; }
+.grid-row:hover > div { background: #FAFAFA; }
+.grid-row.editing > div { background: rgba(242,107,51,0.04); }
+.grid-row.is-new > div { background: rgba(50,153,55,0.04); }
+</style>
+</head>
+<body class="bg-pos-bg">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ===== SIDEBAR (collapsed 70px) ===== -->
+  <aside class="h-full flex-shrink-0 flex flex-col border-r bg-white" style="width:70px; border-color:#E5E5E5;">
+    <div class="flex items-center justify-center py-4 px-2 border-b" style="border-color:#E5E5E5; min-height:60px;">
+      <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" class="w-8 h-8" alt="MyGenie">
+    </div>
+    <nav class="flex-1 overflow-y-auto py-2">
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Dashboard"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Day Closure"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Expenses"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Menu"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Credit"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Reports"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+      <div class="flex items-center justify-center py-3 cursor-pointer" title="Settings" style="border-left:3px solid #329937; background:rgba(50,153,55,0.06);"><svg class="w-5 h-5" style="color:#329937" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+      <div class="sidebar-item flex items-center justify-center py-3 cursor-pointer" title="Insights"><svg class="w-5 h-5 text-pos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
+    </nav>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="flex-1 overflow-auto bg-pos-bg">
+    <div class="p-6 min-h-full" data-testid="employee-management-page">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" style="color:#F26B33" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <h1 class="text-xl font-bold" style="color:#1A1A1A; font-family:Poppins,sans-serif;">Employee Management</h1>
+        </div>
+        <button class="p-1.5 rounded-lg border hover:bg-gray-50" style="border-color:#E5E5E5" title="Refresh">
+          <svg class="w-4 h-4" style="color:#666" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+
+      <!-- Tab Strip -->
+      <div class="flex gap-0 mb-4 border-b" style="border-color:#E5E5E5" data-testid="tab-strip">
+        <button id="tab-employees" onclick="switchTab('employees')" class="px-4 py-2.5 text-sm font-medium border-b-2" style="border-color:#F26B33; color:#F26B33;">Employees</button>
+        <button id="tab-roles" onclick="switchTab('roles')" class="px-4 py-2.5 text-sm font-medium border-b-2" style="border-color:transparent; color:#666;">Roles</button>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- EMPLOYEES TAB — Inline Editable Grid                             -->
+      <!-- ================================================================ -->
+      <div id="employee-list-view" class="view-transition" data-testid="employee-list-view">
+        <!-- Toolbar -->
+        <div class="flex items-center gap-3 mb-4">
+          <div class="relative flex-1 max-w-xs">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:#666" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search employees..." class="w-full border rounded-lg px-3 py-2 text-sm pl-9 outline-none focus:ring-1 focus:ring-orange-200 bg-white" style="border-color:#E5E5E5;color:#1A1A1A" data-testid="employee-search">
+          </div>
+          <div class="flex items-center gap-2 ml-auto">
+            <button class="p-1.5 rounded-lg border hover:bg-gray-50" style="border-color:#E5E5E5" title="Download CSV"><svg class="w-4 h-4" style="color:#666" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg></button>
+            <button id="save-all-btn" onclick="flashSaved()" class="hidden items-center gap-1.5 px-3 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-colors" style="background:#329937" data-testid="employee-save-all-btn">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Save All
+            </button>
+            <button onclick="addEmployeeRow()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-colors" style="background:#329937" data-testid="employee-add-btn">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add Employee
+            </button>
+          </div>
+        </div>
+
+        <!-- Spreadsheet Grid -->
+        <div class="bg-white rounded-xl border overflow-hidden" style="border-color:#E5E5E5">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left" style="min-width:1050px" data-testid="employee-grid">
+              <thead>
+                <tr style="background:#FAFAFA">
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:150px">First Name</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:120px">Last Name</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:140px">Phone</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:160px">Email</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:140px">Password</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b" style="color:#666;border-color:#E5E5E5;width:120px">Role</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b text-center" style="color:#666;border-color:#E5E5E5;width:80px">Status</th>
+                  <th class="py-2.5 px-3 text-xs font-semibold uppercase tracking-wider border-b text-center" style="color:#666;border-color:#E5E5E5;width:50px"></th>
+                </tr>
+              </thead>
+              <tbody id="employee-grid-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-2 text-xs" style="color:#666" id="dirty-count"></div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- ROLES TAB — Redesigned Rich View                                -->
+      <!-- ================================================================ -->
+      <div id="role-list-view" class="hidden view-transition" data-testid="role-list-view">
+
+        <!-- System Roles Banner -->
+        <div class="flex items-center gap-2 mb-5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="flex items-center gap-1.5 text-xs font-medium" style="color:#64748b">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              System Roles:
+            </span>
+            <span class="template-badge system-badge">STATION</span>
+            <span class="template-badge system-badge">Waiter</span>
+            <span class="template-badge system-badge">Manager</span>
+            <span class="template-badge system-badge">Billing</span>
+            <span class="template-badge system-badge">Server Waiter</span>
+            <span class="template-badge system-badge">Delivery</span>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="flex items-center gap-3 mb-4">
+          <div class="relative flex-1 max-w-xs">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color:#94a3b8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search roles..." class="w-full border rounded-lg px-3 py-2.5 text-sm pl-9 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-400 bg-white" style="border-color:#e2e8f0;color:#0f172a" data-testid="role-search">
+          </div>
+          <div class="flex items-center gap-2 ml-auto">
+            <div class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium" style="background:#f8fafc;color:#64748b;border:1px solid #e2e8f0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span id="role-summary-count">6 roles</span>
+            </div>
+            <button onclick="showView('role-form-view','add')" class="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-colors" style="background:#329937" data-testid="create-role-button">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Create Role
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Legend (mini) -->
+        <div class="flex items-center gap-3 mb-3 flex-wrap" id="category-legend">
+          <span class="text-xs font-medium" style="color:#94a3b8">Coverage:</span>
+        </div>
+
+        <!-- Rich Roles Table -->
+        <div class="bg-white rounded-xl border overflow-hidden" style="border-color:#e2e8f0">
+          <table class="w-full text-left" style="min-width:900px" data-testid="role-table">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th class="py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#64748b;border-bottom:1px solid #e2e8f0;width:220px">Role</th>
+                <th class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#64748b;border-bottom:1px solid #e2e8f0;width:110px">Employees</th>
+                <th class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#64748b;border-bottom:1px solid #e2e8f0">Permission Coverage</th>
+                <th class="py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#64748b;border-bottom:1px solid #e2e8f0;width:120px">Last Modified</th>
+                <th class="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-center" style="color:#64748b;border-bottom:1px solid #e2e8f0;width:80px">Status</th>
+                <th class="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-center" style="color:#64748b;border-bottom:1px solid #e2e8f0;width:60px"></th>
+              </tr>
+            </thead>
+            <tbody id="role-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- ROLE FORM — Redesigned Permission UX                            -->
+      <!-- ================================================================ -->
+      <div id="role-form-view" class="hidden view-transition" data-testid="role-form-view">
+        <div class="flex items-center gap-2 mb-5">
+          <button onclick="showView('role-list-view')" class="p-1 rounded hover:bg-orange-50"><svg class="w-5 h-5" style="color:#F26B33" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+          <h2 id="role-form-title" class="text-lg font-semibold" style="color:#329937">Edit Role</h2>
+        </div>
+
+        <!-- Role Details Card -->
+        <div class="bg-white rounded-xl border p-5 mb-5" style="border-color:#E5E5E5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-3">
+            <div><label class="block text-xs font-medium mb-1.5" style="color:#666">Role Name <span class="text-red-500">*</span></label><input type="text" value="Manager" class="inline-input"></div>
+            <div><label class="block text-xs font-medium mb-1.5" style="color:#666">Role Type</label><select class="inline-select"><option>Manager</option><option>STATION</option><option>Waiter</option><option>Billing</option><option>Server Waiter</option><option>Delivery</option></select></div>
+            <div><label class="block text-xs font-medium mb-1.5" style="color:#666">Start from Template</label><select class="inline-select" onchange="applyTemplate(this.value)"><option value="">Build from scratch</option><option>Manager</option><option>Owner</option><option>Captain</option><option>Cashier</option><option>Waiter(S)</option><option>Waiter(T)</option><option>Station (Chef)</option><option>Billing User</option><option>Accountant</option><option>Delivery Boy</option></select></div>
+          </div>
+        </div>
+
+        <!-- Section header -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold" style="color:#1A1A1A">Permissions</span>
+            <span id="perm-counter" class="text-xs px-2 py-0.5 rounded-full" style="background:rgba(242,107,51,0.1);color:#F26B33">22 / 52 selected</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="clearAllPerms()" class="text-xs px-2.5 py-1 rounded border hover:bg-gray-50" style="border-color:#E5E5E5;color:#666">Clear All</button>
+            <button onclick="selectAllPermsGlobal()" class="text-xs px-2.5 py-1 rounded border hover:bg-gray-50" style="border-color:#E5E5E5;color:#666">Select All</button>
+          </div>
+        </div>
+
+        <!-- Permission Cards by Business Function -->
+        <div id="perm-cards" class="space-y-3"></div>
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-3 mt-6 mb-8">
+          <button onclick="showView('role-list-view')" class="px-5 py-2 rounded-lg border text-sm font-medium hover:bg-gray-50" style="border-color:#E5E5E5;color:#666">Cancel</button>
+          <button class="px-6 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90" style="background:#329937">Save Role</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────
+const ROLES_LIST = ['Owner','Manager','Captain','Waiter','KDS','Report','BAR'];
+const EMPLOYEES = [
+  { id: 4784, fname: 'Rajesh', lname: 'Kumar', phone: '9876543210', email: 'rajesh@cafe103.com', role: 'Owner', active: true, isNew: false },
+  { id: 4801, fname: 'Priya', lname: 'Sharma', phone: '8765432109', email: 'priya@cafe103.com', role: 'Manager', active: true, isNew: false },
+  { id: 4815, fname: 'Amit', lname: 'Verma', phone: '7654321098', email: '', role: 'Captain', active: true, isNew: false },
+  { id: 4823, fname: 'Suresh', lname: 'M', phone: '6543210987', email: '', role: 'Waiter', active: false, isNew: false },
+  { id: 4830, fname: 'Deepak', lname: 'K', phone: '5432109876', email: '', role: 'KDS', active: true, isNew: false },
+  { id: 4837, fname: 'Meena', lname: 'R', phone: '4321098765', email: 'meena@cafe103.com', role: 'Waiter', active: true, isNew: false },
+];
+
+const ROLE_DATA = [
+  { name: 'Owner', modules: 50, active: true, employeeCount: 2, templateName: 'Owner', isSystem: false, isEditable: true, updatedAt: '2025-12-10',
+    categories: { orders: 12, discounts: 5, tables: 5, delivery: 5, menu: 3, customers: 2, settings: 8, reports: 10 } },
+  { name: 'Manager', modules: 42, active: true, employeeCount: 3, templateName: 'Manager', isSystem: false, isEditable: true, updatedAt: '2026-06-22',
+    categories: { orders: 10, discounts: 3, tables: 5, delivery: 4, menu: 2, customers: 2, settings: 6, reports: 10 } },
+  { name: 'Captain', modules: 28, active: true, employeeCount: 4, templateName: 'Captain', isSystem: false, isEditable: true, updatedAt: '2026-05-15',
+    categories: { orders: 9, discounts: 1, tables: 5, delivery: 0, menu: 0, customers: 1, settings: 2, reports: 10 } },
+  { name: 'Waiter', modules: 15, active: true, employeeCount: 6, templateName: 'Waiter(S)', isSystem: false, isEditable: true, updatedAt: '2026-07-01',
+    categories: { orders: 7, discounts: 0, tables: 3, delivery: 0, menu: 0, customers: 0, settings: 2, reports: 3 } },
+  { name: 'KDS', modules: 8, active: true, employeeCount: 2, templateName: 'Station (Chef)', isSystem: false, isEditable: true, updatedAt: '2026-03-18',
+    categories: { orders: 4, discounts: 0, tables: 0, delivery: 0, menu: 1, customers: 0, settings: 3, reports: 0 } },
+  { name: 'Report', modules: 12, active: false, employeeCount: 1, templateName: null, isSystem: false, isEditable: true, updatedAt: '2026-01-05',
+    categories: { orders: 0, discounts: 0, tables: 0, delivery: 0, menu: 0, customers: 0, settings: 0, reports: 12 } },
+  { name: 'BAR', modules: 6, active: true, employeeCount: 0, templateName: null, isSystem: true, isEditable: false, updatedAt: '2024-08-12',
+    categories: { orders: 3, discounts: 0, tables: 0, delivery: 0, menu: 1, customers: 0, settings: 2, reports: 0 } },
+];
+
+const PERMS_BY_FUNCTION = [
+  { id: 'orders', icon: '&#x1F4CB;', title: 'Orders & Billing', desc: 'Place, edit, cancel orders and manage payments',
+    perms: [
+      { key: 'pos', label: 'Access POS', desc: 'Can open the POS screen' },
+      { key: 'order', label: 'Place Orders', desc: 'Create new orders' },
+      { key: 'order_edit', label: 'Edit Orders', desc: 'Modify items in existing orders' },
+      { key: 'order_cancel', label: 'Cancel Orders', desc: 'Cancel entire orders or items' },
+      { key: 'bill', label: 'Generate Bills', desc: 'Create and view bills' },
+      { key: 'confirm_order', label: 'Confirm Orders', desc: 'Confirm pending orders' },
+      { key: 'order_unpaid', label: 'Mark Unpaid', desc: 'Mark orders as unpaid / pay later' },
+      { key: 'update_payment', label: 'Update Payment', desc: 'Change payment method after billing' },
+      { key: 'clear_payment', label: 'Clear Payment', desc: 'Clear or void a payment' },
+      { key: 'serve', label: 'Mark Served', desc: 'Mark items as served to customer' },
+      { key: 'ready', label: 'Mark Ready', desc: 'Mark items as ready in kitchen' },
+      { key: 'food', label: 'View Menu Items', desc: 'See food items on POS' },
+    ]},
+  { id: 'discounts', icon: '&#x1F3F7;', title: 'Discounts & Offers', desc: 'Apply discounts, coupons, loyalty, and complimentary items',
+    perms: [
+      { key: 'discount', label: 'Apply Discounts', desc: 'Apply order or item level discounts' },
+      { key: 'complementary_food', label: 'Mark Complimentary', desc: 'Mark items or orders as complimentary' },
+      { key: 'coupon', label: 'Manage Coupons', desc: 'Create and manage coupon codes' },
+      { key: 'loyalty', label: 'Loyalty Program', desc: 'Access loyalty points and rewards' },
+      { key: 'virtual_wallet', label: 'Virtual Wallet', desc: 'Manage customer wallet balance' },
+    ]},
+  { id: 'tables', icon: '&#x1FA91;', title: 'Tables & Rooms', desc: 'Manage dine-in tables, room assignments, and transfers',
+    perms: [
+      { key: 'table_view', label: 'View Tables', desc: 'See table layout and status' },
+      { key: 'transfer_table', label: 'Transfer Table', desc: 'Move orders between tables' },
+      { key: 'merge_table', label: 'Merge Tables', desc: 'Combine tables for a single bill' },
+      { key: 'food_transfer', label: 'Transfer Items', desc: 'Move items between orders' },
+      { key: 'table_management', label: 'Table Settings', desc: 'Add, edit, delete tables and rooms' },
+    ]},
+  { id: 'delivery', icon: '&#x1F6F5;', title: 'Delivery & Online', desc: 'Manage delivery orders, riders, and aggregator integration',
+    perms: [
+      { key: 'delivery_man', label: 'Assign Riders', desc: 'Assign delivery riders to orders' },
+      { key: 'delivery_management', label: 'Delivery Settings', desc: 'Configure delivery zones and charges' },
+      { key: 'aggregator', label: 'Aggregator Orders', desc: 'Manage Swiggy/Zomato integration' },
+      { key: 'show_online_order', label: 'View Online Orders', desc: 'See incoming online orders' },
+      { key: 'assign_online_order', label: 'Accept Online Orders', desc: 'Accept or reject online orders' },
+    ]},
+  { id: 'menu', icon: '&#x1F372;', title: 'Menu & Inventory', desc: 'Manage menu items, categories, pricing, and stock',
+    perms: [
+      { key: 'menu', label: 'Menu Management', desc: 'Add, edit, delete menu items' },
+      { key: 'inventory', label: 'Inventory', desc: 'Track stock levels and quantities' },
+      { key: 'physicalqty_master', label: 'Physical Qty Master', desc: 'Manage physical quantity records' },
+    ]},
+  { id: 'customers', icon: '&#x1F465;', title: 'Customers', desc: 'Customer data, CRM, and communication',
+    perms: [
+      { key: 'customer_management', label: 'Customer Management', desc: 'View and manage customer records' },
+      { key: 'whatsapp_icon', label: 'WhatsApp Messaging', desc: 'Send messages via WhatsApp' },
+    ]},
+  { id: 'settings', icon: '&#x2699;', title: 'Setup & Admin', desc: 'Restaurant settings, employees, printers, and configuration',
+    perms: [
+      { key: 'employee', label: 'Employee Management', desc: 'Add, edit, manage staff members' },
+      { key: 'restaurant_setup', label: 'Restaurant Setup', desc: 'Configure restaurant profile' },
+      { key: 'restaurant_settings', label: 'General Settings', desc: 'Operating hours, payment methods, etc.' },
+      { key: 'printer', label: 'Print Bills', desc: 'Print KOT and bills' },
+      { key: 'printer_management', label: 'Printer Settings', desc: 'Configure printer assignments' },
+      { key: 'print_icon', label: 'Show Print Button', desc: 'Print button visible on order cards' },
+      { key: 'token_display', label: 'Token Display', desc: 'Show token numbers on screen' },
+      { key: 'expence', label: 'Expense Management', desc: 'Record and manage daily expenses' },
+    ]},
+  { id: 'reports', icon: '&#x1F4CA;', title: 'Reports & Analytics', desc: 'Access sales, revenue, settlement, and operational reports',
+    perms: [
+      { key: 'report', label: 'View Reports', desc: 'Access the reports section' },
+      { key: 'sales_report', label: 'Sales Report', desc: 'Daily and period sales data' },
+      { key: 'revenue_report', label: 'Revenue Report', desc: 'Revenue breakdown by channel' },
+      { key: 'revenue_report_average', label: 'Revenue Averages', desc: 'Average order value metrics' },
+      { key: 'report_summery', label: 'Summary Report', desc: 'Overview dashboard with KPIs' },
+      { key: 'sattle_report', label: 'Settlement Report', desc: 'Cash settlement and day-close data' },
+      { key: 'waiter_revenue_report', label: 'Waiter Revenue', desc: 'Revenue broken down by waiter' },
+      { key: 'room_report', label: 'Room Report', desc: 'Room billing and occupancy data' },
+      { key: 'consumption_report', label: 'Consumption Report', desc: 'Inventory consumption tracking' },
+      { key: 'cancellation_report', label: 'Cancellation Report', desc: 'Cancelled orders and reasons' },
+      { key: 'pl_report', label: 'P&L Report', desc: 'Profit and loss statement' },
+      { key: 'wastage_report', label: 'Wastage Report', desc: 'Food wastage tracking' },
+    ]},
+];
+
+// Pre-checked permissions for "Manager" demo
+const CHECKED_PERMS = new Set(['food','pos','order','bill','serve','order_edit','ready','discount','confirm_order','transfer_table','merge_table','food_transfer','print_icon','employee','menu','restaurant_settings','table_management','report','revenue_report','sales_report','cancellation_report','table_view']);
+
+const SECTION_COLORS = {
+  orders: '#329937', discounts: '#F4A11A', tables: '#3B82F6', delivery: '#8B5CF6',
+  menu: '#F26B33', customers: '#EC4899', settings: '#666666', reports: '#0EA5E9'
+};
+
+function renderPermCards() {
+  const container = document.getElementById('perm-cards');
+  container.innerHTML = PERMS_BY_FUNCTION.map(section => {
+    const checkedCount = section.perms.filter(p => CHECKED_PERMS.has(p.key)).length;
+    const allChecked = checkedCount === section.perms.length;
+    const someChecked = checkedCount > 0 && !allChecked;
+    const color = SECTION_COLORS[section.id] || '#666';
+
+    return `<div class="bg-white rounded-xl border overflow-hidden" style="border-color:#E5E5E5" data-section="${section.id}">
+      <!-- Section Header -->
+      <div class="flex items-center justify-between px-5 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection(this)">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center text-base" style="background:${color}12;color:${color}">${section.icon}</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-semibold" style="color:#1A1A1A">${section.title}</span>
+              <span class="text-xs px-1.5 py-0.5 rounded-full font-medium" style="background:${checkedCount>0 ? color+'18' : '#F7F7F7'};color:${checkedCount>0 ? color : '#999'}">${checkedCount}/${section.perms.length}</span>
+            </div>
+            <div class="text-xs mt-0.5" style="color:#999">${section.desc}</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-1.5 text-xs cursor-pointer" style="color:#666" onclick="event.stopPropagation()">
+            <input type="checkbox" ${allChecked?'checked':''} ${someChecked?'style="opacity:0.5"':''} onchange="toggleSectionAll(this,'${section.id}')" class="w-3.5 h-3.5 rounded cursor-pointer accent-green-600"> All
+          </label>
+          <svg class="accordion-chevron w-4 h-4" style="color:#999" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </div>
+      <!-- Section Body (hidden by default, expanded for first 2) -->
+      <div class="border-t px-5 py-3 hidden" style="border-color:#E5E5E5" data-body="${section.id}">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-1">
+          ${section.perms.map(p => `<label class="flex items-start gap-2.5 rounded-lg px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors group" data-perm="${p.key}">
+            <input type="checkbox" ${CHECKED_PERMS.has(p.key)?'checked':''} value="${p.key}" onchange="updatePermCounter()" class="w-4 h-4 rounded cursor-pointer accent-green-600 mt-0.5 perm-cb flex-shrink-0">
+            <div class="min-w-0">
+              <div class="text-sm font-medium" style="color:#1A1A1A">${p.label}</div>
+              <div class="text-xs mt-0.5" style="color:#999">${p.desc}</div>
+            </div>
+          </label>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Auto-expand first two sections
+  const firstTwo = container.querySelectorAll('[data-section]');
+  [0,1].forEach(i => { if(firstTwo[i]) { firstTwo[i].querySelector('[data-body]').classList.remove('hidden'); firstTwo[i].querySelector('.accordion-chevron').classList.add('open'); }});
+
+  updatePermCounter();
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.accordion-chevron');
+  body.classList.toggle('hidden');
+  chevron.classList.toggle('open');
+}
+
+function toggleSectionAll(masterCb, sectionId) {
+  const body = document.querySelector(`[data-body="${sectionId}"]`);
+  body.querySelectorAll('.perm-cb').forEach(cb => { cb.checked = masterCb.checked; });
+  updatePermCounter();
+}
+
+function selectAllPermsGlobal() {
+  document.querySelectorAll('#perm-cards .perm-cb').forEach(cb => cb.checked = true);
+  document.querySelectorAll('#perm-cards input[type="checkbox"]').forEach(cb => cb.checked = true);
+  updatePermCounter();
+}
+
+function clearAllPerms() {
+  document.querySelectorAll('#perm-cards .perm-cb').forEach(cb => cb.checked = false);
+  document.querySelectorAll('#perm-cards input[type="checkbox"]').forEach(cb => cb.checked = false);
+  updatePermCounter();
+}
+
+function updatePermCounter() {
+  const total = document.querySelectorAll('#perm-cards .perm-cb').length;
+  const checked = document.querySelectorAll('#perm-cards .perm-cb:checked').length;
+  document.getElementById('perm-counter').textContent = `${checked} / ${total} selected`;
+  // Update section "All" checkboxes
+  PERMS_BY_FUNCTION.forEach(section => {
+    const card = document.querySelector(`[data-section="${section.id}"]`);
+    if (!card) return;
+    const cbs = card.querySelectorAll('.perm-cb');
+    const allCb = card.querySelector('input[type="checkbox"]:not(.perm-cb)');
+    const checkedInSection = [...cbs].filter(c => c.checked).length;
+    if (allCb) {
+      allCb.checked = checkedInSection === cbs.length;
+      allCb.style.opacity = (checkedInSection > 0 && checkedInSection < cbs.length) ? '0.5' : '1';
+    }
+    // Update badge
+    const badge = card.querySelector('.rounded-full.font-medium');
+    const color = SECTION_COLORS[section.id] || '#666';
+    if (badge) {
+      badge.textContent = `${checkedInSection}/${cbs.length}`;
+      badge.style.background = checkedInSection > 0 ? color+'18' : '#F7F7F7';
+      badge.style.color = checkedInSection > 0 ? color : '#999';
+    }
+  });
+}
+
+function applyTemplate(val) {
+  // Simulate template pre-fill
+  clearAllPerms();
+  if (!val) return;
+  const templates = {
+    'Owner': null, // all
+    'Manager': ['pos','order','bill','order_edit','order_cancel','serve','ready','confirm_order','food','discount','complementary_food','table_view','transfer_table','merge_table','food_transfer','delivery_man','show_online_order','assign_online_order','menu','employee','restaurant_settings','printer','print_icon','customer_management','report','sales_report','revenue_report','sattle_report','cancellation_report','waiter_revenue_report'],
+    'Captain': ['pos','order','bill','serve','ready','confirm_order','food','table_view','transfer_table','merge_table','food_transfer','print_icon','customer_management'],
+    'Cashier': ['pos','order','bill','confirm_order','food','discount','update_payment','clear_payment','print_icon','report','sales_report','sattle_report'],
+    'Waiter(S)': ['pos','order','food','serve','ready','table_view','print_icon'],
+    'Waiter(T)': ['pos','order','food','serve','ready','table_view','transfer_table','print_icon'],
+  };
+  const perms = templates[val];
+  if (perms === null) { selectAllPermsGlobal(); return; }
+  if (perms) { perms.forEach(k => { const cb = document.querySelector(`.perm-cb[value="${k}"]`); if(cb) cb.checked = true; }); }
+  updatePermCounter();
+}
+
+let nextId = 9000;
+
+// ── Render Employee Grid ──────────────────────────────────────────────
+function renderEmployeeGrid() {
+  const body = document.getElementById('employee-grid-body');
+  const roleOpts = ROLES_LIST.map(r => `<option value="${r}">${r}</option>`).join('');
+  const newCount = EMPLOYEES.filter(e => e.isNew).length;
+
+  body.innerHTML = EMPLOYEES.map((e, idx) => {
+    const rowCls = e.isNew ? 'new-row' : '';
+    const bgStyle = e.isNew ? 'background:rgba(50,153,55,0.04)' : '';
+    const delBtn = e.isNew
+      ? `<button onclick="removeRow(${idx})" title="Remove" class="p-1 rounded hover:bg-red-50"><svg class="w-4 h-4" style="color:#EF4444" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`
+      : `<button onclick="toggleActive(${idx})" title="${e.active?'Deactivate':'Activate'}" class="p-1 rounded hover:bg-gray-100"><svg class="w-4 h-4" style="color:${e.active?'#329937':'#999'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${e.active?'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z':'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg></button>`;
+
+    return `<tr class="${rowCls} border-b hover:bg-gray-50 transition-colors" style="border-color:#E5E5E5;${bgStyle}" data-testid="employee-row-${e.id}">
+      <td class="py-2 px-3"><input class="inline-input" value="${e.fname}" placeholder="First name *" onchange="markDirty(${idx},'fname',this.value)" data-testid="emp-fname-${e.id}"></td>
+      <td class="py-2 px-3"><input class="inline-input" value="${e.lname}" placeholder="Last name" onchange="markDirty(${idx},'lname',this.value)"></td>
+      <td class="py-2 px-3"><input class="inline-input" value="${e.phone}" placeholder="Phone *" onchange="markDirty(${idx},'phone',this.value)"></td>
+      <td class="py-2 px-3"><input class="inline-input" value="${e.email}" placeholder="Email" onchange="markDirty(${idx},'email',this.value)"></td>
+      <td class="py-2 px-3"><input class="inline-input" type="password" value="${e.isNew?'':'••••••'}" placeholder="${e.isNew?'Password *':'••••••'}" ${e.isNew?'':'disabled style="background:#F7F7F7;color:#999;border-color:#E5E5E5;border-radius:6px;padding:5px 8px;font-size:13px;width:100%"'}></td>
+      <td class="py-2 px-3"><select class="inline-select" onchange="markDirty(${idx},'role',this.value)"><option value="">Select...</option>${roleOpts.replace('value="'+e.role+'"','value="'+e.role+'" selected')}</select></td>
+      <td class="py-2 px-3 text-center"><span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full" style="background:${e.active?'rgba(50,153,55,0.1)':'rgba(239,68,68,0.1)'};color:${e.active?'#329937':'#EF4444'}">${e.active?'Active':'Off'}</span></td>
+      <td class="py-2 px-3 text-center">${delBtn}</td>
+    </tr>`;
+  }).join('');
+
+  // Show/hide Save All button
+  const saveBtn = document.getElementById('save-all-btn');
+  if (newCount > 0) {
+    saveBtn.style.display = 'flex';
+    document.getElementById('dirty-count').textContent = `${newCount} unsaved row${newCount>1?'s':''}`;
+  } else {
+    saveBtn.style.display = 'none';
+    document.getElementById('dirty-count').textContent = '';
+  }
+}
+
+function addEmployeeRow() {
+  nextId++;
+  EMPLOYEES.unshift({ id: nextId, fname: '', lname: '', phone: '', email: '', role: '', active: true, isNew: true });
+  renderEmployeeGrid();
+  // Focus first input of new row
+  setTimeout(() => {
+    const firstInput = document.querySelector(`[data-testid="emp-fname-${nextId}"]`);
+    if (firstInput) firstInput.focus();
+  }, 50);
+}
+
+function removeRow(idx) {
+  EMPLOYEES.splice(idx, 1);
+  renderEmployeeGrid();
+}
+
+function toggleActive(idx) {
+  EMPLOYEES[idx].active = !EMPLOYEES[idx].active;
+  renderEmployeeGrid();
+}
+
+function markDirty(idx, field, value) {
+  EMPLOYEES[idx][field] = value;
+  EMPLOYEES[idx]._dirty = true;
+  const saveBtn = document.getElementById('save-all-btn');
+  saveBtn.style.display = 'flex';
+}
+
+function flashSaved() {
+  // Simulate save — remove isNew flags
+  EMPLOYEES.forEach(e => { e.isNew = false; e._dirty = false; });
+  renderEmployeeGrid();
+  // Flash success
+  const saveBtn = document.getElementById('save-all-btn');
+  saveBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Saved!';
+  saveBtn.style.background = '#16A34A';
+  setTimeout(() => { saveBtn.style.display = 'none'; saveBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Save All'; saveBtn.style.background = '#329937'; }, 1200);
+}
+
+// ── Roles ─────────────────────────────────────────────────────────────
+const CAT_META = [
+  { key: 'orders', label: 'Orders & Billing', color: '#329937', max: 12 },
+  { key: 'discounts', label: 'Discounts & Offers', color: '#F4A11A', max: 5 },
+  { key: 'tables', label: 'Tables & Rooms', color: '#3B82F6', max: 5 },
+  { key: 'delivery', label: 'Delivery & Online', color: '#8B5CF6', max: 5 },
+  { key: 'menu', label: 'Menu & Inventory', color: '#F26B33', max: 3 },
+  { key: 'customers', label: 'Customers', color: '#EC4899', max: 2 },
+  { key: 'settings', label: 'Setup & Admin', color: '#64748b', max: 8 },
+  { key: 'reports', label: 'Reports & Analytics', color: '#0EA5E9', max: 12 },
+];
+
+function renderCategoryLegend() {
+  const el = document.getElementById('category-legend');
+  el.innerHTML = '<span class="text-xs font-medium" style="color:#94a3b8">Coverage:</span>' +
+    CAT_META.map(c => `<span class="flex items-center gap-1.5 text-xs" style="color:#64748b">
+      <span class="inline-block w-2.5 h-2.5 rounded-sm" style="background:${c.color}"></span>${c.label}
+    </span>`).join('');
+}
+
+function buildCoverageBar(categories) {
+  const total = 52;
+  let segments = CAT_META.map(c => {
+    const count = categories[c.key] || 0;
+    const pct = (count / total) * 100;
+    return count > 0
+      ? `<div class="seg" style="background:${c.color};width:${pct}%;opacity:0.85" title="${c.label}: ${count}/${c.max}"></div>`
+      : '';
+  }).join('');
+  // Fill remaining as empty
+  const used = Object.values(categories).reduce((a, b) => a + b, 0);
+  const emptyPct = ((total - used) / total) * 100;
+  if (emptyPct > 0) segments += `<div class="seg" style="background:#e2e8f0;width:${emptyPct}%"></div>`;
+  return `<div class="coverage-bar" style="width:100%">${segments}</div>`;
+}
+
+function buildCategoryDots(categories) {
+  return CAT_META.map(c => {
+    const count = categories[c.key] || 0;
+    const ratio = count / c.max;
+    const opacity = count === 0 ? '0.15' : ratio >= 0.8 ? '1' : ratio >= 0.4 ? '0.6' : '0.35';
+    return `<span class="inline-block w-2 h-2 rounded-full" style="background:${c.color};opacity:${opacity}" title="${c.label}: ${count}/${c.max}"></span>`;
+  }).join('');
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderRoles() {
+  renderCategoryLegend();
+  document.getElementById('role-summary-count').textContent = `${ROLE_DATA.length} roles`;
+
+  document.getElementById('role-tbody').innerHTML = ROLE_DATA.map((r, idx) => {
+    const totalPerms = Object.values(r.categories).reduce((a, b) => a + b, 0);
+    const coveragePct = Math.round((totalPerms / 52) * 100);
+
+    // Role info column
+    const systemBadge = r.isSystem
+      ? `<span class="template-badge system-badge" style="margin-left:6px"><svg class="w-2.5 h-2.5 inline -mt-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Protected</span>`
+      : '';
+    const templateBadge = r.templateName && !r.isSystem
+      ? `<span class="template-badge template-tag">From: ${r.templateName}</span>`
+      : '';
+
+    // Action button
+    const actionBtn = r.isEditable
+      ? `<button onclick="showView('role-form-view','edit')" class="p-1.5 rounded-lg hover:bg-green-50 transition-colors" style="color:#329937" title="Edit role" data-testid="role-edit-button-${idx}">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+         </button>`
+      : `<button class="p-1.5 rounded-lg hover:bg-slate-50 transition-colors" style="color:#94a3b8" title="View role (protected)" data-testid="role-view-button-${idx}">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+         </button>`;
+
+    // Status switch
+    const switchDisabled = r.isSystem ? 'pointer-events:none;opacity:0.4' : 'cursor:pointer';
+
+    return `<tr class="role-row" data-testid="role-row-${idx}" style="${r.isSystem ? 'background:#fafbfc' : ''}">
+      <!-- Role Info -->
+      <td class="py-4 px-5">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-semibold heading-font" style="color:${r.isSystem ? '#64748b' : '#0f172a'}">${r.name}</span>
+          ${systemBadge}
+        </div>
+        <div class="mt-1 flex items-center gap-2">
+          ${templateBadge}
+        </div>
+      </td>
+
+      <!-- Employee Count -->
+      <td class="py-4 px-4">
+        <span class="emp-count-pill" title="Employees with this role">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          ${r.employeeCount} ${r.employeeCount === 1 ? 'employee' : 'employees'}
+        </span>
+      </td>
+
+      <!-- Permission Coverage -->
+      <td class="py-4 px-4">
+        <div class="flex items-center gap-3 mb-1.5">
+          <span class="text-sm font-semibold heading-font" style="color:#0f172a">${totalPerms}<span class="text-xs font-normal" style="color:#94a3b8">/52</span></span>
+          <span class="text-xs font-medium px-1.5 py-0.5 rounded" style="background:${coveragePct >= 80 ? '#f0fdf4' : coveragePct >= 40 ? '#fffbeb' : '#fef2f2'};color:${coveragePct >= 80 ? '#15803d' : coveragePct >= 40 ? '#a16207' : '#dc2626'}">${coveragePct}%</span>
+          <div class="flex items-center gap-1 ml-1">${buildCategoryDots(r.categories)}</div>
+        </div>
+        ${buildCoverageBar(r.categories)}
+      </td>
+
+      <!-- Last Modified -->
+      <td class="py-4 px-4">
+        <span class="text-xs" style="color:#94a3b8">${formatDate(r.updatedAt)}</span>
+      </td>
+
+      <!-- Status -->
+      <td class="py-4 px-4 text-center">
+        <button data-testid="role-status-switch-${idx}" class="relative w-11 h-6 rounded-full transition-colors" style="background:${r.active ? '#329937' : '#e2e8f0'};${switchDisabled}" onclick="toggleRoleStatus(${idx})">
+          <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-all" style="left:${r.active ? '22px' : '2px'}"></span>
+        </button>
+      </td>
+
+      <!-- Action -->
+      <td class="py-4 px-4 text-center">
+        ${actionBtn}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleRoleStatus(idx) {
+  if (ROLE_DATA[idx].isSystem) return;
+  ROLE_DATA[idx].active = !ROLE_DATA[idx].active;
+  renderRoles();
+}
+
+// ── Permission Accordions — now rendered by renderPermCards() ──────
+
+// ── Navigation ────────────────────────────────────────────────────────
+const ALL_VIEWS = ['employee-list-view','role-list-view','role-form-view'];
+function showView(viewId, mode) {
+  ALL_VIEWS.forEach(id => document.getElementById(id).classList.add('hidden'));
+  const el = document.getElementById(viewId);
+  el.classList.remove('hidden');
+  el.classList.remove('view-transition'); void el.offsetWidth; el.classList.add('view-transition');
+  if (viewId === 'role-form-view') document.getElementById('role-form-title').textContent = mode === 'edit' ? 'Edit Role' : 'Add Role';
+}
+
+function switchTab(tab) {
+  const empTab = document.getElementById('tab-employees');
+  const roleTab = document.getElementById('tab-roles');
+  if (tab === 'employees') {
+    empTab.style.borderColor = '#F26B33'; empTab.style.color = '#F26B33';
+    roleTab.style.borderColor = 'transparent'; roleTab.style.color = '#666';
+    showView('employee-list-view');
+  } else {
+    roleTab.style.borderColor = '#F26B33'; roleTab.style.color = '#F26B33';
+    empTab.style.borderColor = 'transparent'; empTab.style.color = '#666';
+    showView('role-list-view');
+  }
+}
+
+function toggleAccordion(btn) {
+  const body = btn.nextElementSibling;
+  btn.querySelector('.accordion-chevron').classList.toggle('open');
+  body.classList.toggle('hidden');
+}
+
+function selectAllPerms(cb, grid) {
+  grid.querySelectorAll('.perm-cb').forEach(c => c.checked = cb.checked);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+renderEmployeeGrid();
+renderRoles();
+renderPermCards();
+</script>
+</body>
+</html>

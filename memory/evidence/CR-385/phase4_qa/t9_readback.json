@@ -1,0 +1,31 @@
+{
+  "generated_at": "iteration_26 Session C",
+  "login_status": 200,
+  "rsb_status": 200,
+  "lr_status": 200,
+  "settings_status": 200,
+  "rooms_summary": [
+    {"table_no": "r1", "is_occupied": false},
+    {"table_no": "r2", "is_occupied": true},
+    {"table_no": "r3", "is_occupied": true},
+    {"table_no": "r4", "is_occupied": false},
+    {"table_no": "r5", "is_occupied": false}
+  ],
+  "in_house_reservations": [
+    {"id": 155, "guest_first_name": "blpi", "room_code": "suite", "checkin": "2026-09-20", "checkout": "2026-09-21", "operational_status": "in_house"},
+    {"id": 174, "guest_first_name": "bkol", "room_code": "executive", "checkin": "2026-09-20", "checkout": "2026-09-21", "operational_status": "in_house"}
+  ],
+  "pending_reservations_total": 4,
+  "pending_qa_first_name_starts_with_QA": [],
+  "settings_basic": {
+    "allow_early_checkin": false,
+    "extend_rate_mode": "calendar",
+    "auto_print_checkin_receipt": false
+  },
+  "checks": {
+    "in_house_only_r2_r3_owner_174_155": "PASS",
+    "no_pending_QA_rows": "PASS",
+    "rooms_r4_r5_r1_not_in_house": "PASS",
+    "settings_at_defaults": "PASS"
+  }
+}

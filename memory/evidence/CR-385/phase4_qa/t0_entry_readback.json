@@ -1,0 +1,100 @@
+{
+ "ts": "2026-09-22T18:38:56.705793Z",
+ "purpose": "OG-PMS-041 read-back at P4 entry (pre-QA baseline)",
+ "business_date": "2026-09-23",
+ "board": [
+  {
+   "table_no": "r3",
+   "room_type": null,
+   "display_status": "occupied",
+   "status": null,
+   "room_operational_status": null,
+   "is_occupied": true,
+   "guest": {
+    "name": "blpi",
+    "phone": "8887765723",
+    "email": "temp_6aaf6686a7b054.23521246@mygenie.online",
+    "booking_id": "MG-69-7B7B8D9F-C72D-46DE-AE90-6DDAAE8C4413",
+    "order_id": 1232583
+   }
+  },
+  {
+   "table_no": "r4",
+   "room_type": null,
+   "display_status": "booked",
+   "status": null,
+   "room_operational_status": null,
+   "is_occupied": false,
+   "guest": null
+  },
+  {
+   "table_no": "r2",
+   "room_type": null,
+   "display_status": "occupied",
+   "status": null,
+   "room_operational_status": null,
+   "is_occupied": true,
+   "guest": {
+    "name": "bkol",
+    "phone": "7778821345",
+    "email": "temp_6aafb0495ee463.71308431@mygenie.online",
+    "booking_id": "MG-69-E2CD8B67-04B8-46BA-A999-B5C326E9B8C4",
+    "order_id": 1232602
+   }
+  },
+  {
+   "table_no": "r5",
+   "room_type": null,
+   "display_status": "available",
+   "status": null,
+   "room_operational_status": null,
+   "is_occupied": false,
+   "guest": null
+  },
+  {
+   "table_no": "r1",
+   "room_type": null,
+   "display_status": "hk",
+   "status": null,
+   "room_operational_status": null,
+   "is_occupied": false,
+   "guest": null
+  }
+ ],
+ "lr_status": 200,
+ "counts": {
+  "arrivals_today": 0,
+  "arrivals_late": 2,
+  "arrivals_tomorrow": 0,
+  "departures_today": 0,
+  "departures_overdue": 2,
+  "in_house": 2,
+  "leaving_today": 0,
+  "arrived_today": 0
+ },
+ "in_house": [
+  [
+   155,
+   "r3",
+   "suite",
+   "2026-09-20",
+   "2026-09-21",
+   950,
+   1232583
+  ],
+  [
+   174,
+   "r2",
+   "executive",
+   "2026-09-20",
+   "2026-09-21",
+   950,
+   1232602
+  ]
+ ],
+ "settings": {
+  "allow_early_checkin": false,
+  "extend_rate_mode": "calendar",
+  "auto_print_checkin_receipt": false
+ }
+}

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUG-311 Layer 1 — Ingredient Typeahead Design</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+    .page-header { background: #0f172a; color: #fff; padding: 20px 32px; }
+    .page-header h1 { font-size: 18px; font-weight: 700; }
+    .page-header p  { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+
+    .section { padding: 32px; max-width: 1300px; margin: 0 auto; }
+    .section-title { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+    .section-sub   { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+    .divider { height: 2px; background: linear-gradient(90deg, #f26b33, transparent); border-radius: 2px; margin-bottom: 28px; }
+
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+    .panel { background: #fff; border-radius: 12px; overflow: visible; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .panel-head { padding: 12px 16px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .panel-head.before { background: #fef2f2; color: #ef4444; border-bottom: 1px solid #fee2e2; border-radius: 12px 12px 0 0; }
+    .panel-head.after  { background: #f0fdf4; color: #16a34a; border-bottom: 1px solid #bbf7d0; border-radius: 12px 12px 0 0; }
+    .panel-body { padding: 20px; overflow: visible; }
+
+    /* Table mockup */
+    .table-wrap { border: 1px solid #e2e8f0; border-radius: 10px; overflow: visible; }
+    .table-head { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr; gap: 0; background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+    .th { padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; border-right: 1px solid #e2e8f0; }
+    .th:last-child { border-right: none; }
+    .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr; gap: 0; background: #f0fdf4; border-bottom: 1px solid #e2e8f0; align-items: start; }
+    .td { padding: 10px 12px; border-right: 1px solid #e2e8f0; font-size: 12px; color: #1e293b; }
+    .td:last-child { border-right: none; }
+
+    /* Input */
+    .input-box { height: 32px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0 10px; font-size: 13px; width: 100%; background: #fff; display: flex; align-items: center; color: #1e293b; }
+    .input-box.amber { border-color: #fbbf24; background: #fffbeb; }
+    .input-box.plain { color: #94a3b8; }
+    .select-box { height: 32px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0 8px; font-size: 12px; width: 100%; background: #fff; display: flex; align-items: center; color: #64748b; }
+
+    /* Dropdown */
+    .dropdown-wrap { position: relative; }
+    .dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.12); z-index: 10; min-width: 260px; overflow: hidden; }
+    .dropdown-header { padding: 6px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #94a3b8; border-bottom: 1px solid #f1f5f9; }
+    .drop-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 13px; gap: 8px; }
+    .drop-row.normal { color: #1e293b; }
+    .drop-row.normal:hover { background: #f8fafc; }
+    .drop-row.exact { background: #fffbeb; color: #92400e; }
+    .drop-row.partial { color: #1e293b; background: #f8fafc; }
+    .cat-badge { font-size: 10px; padding: 2px 8px; border-radius: 99px; background: #fff7ed; color: #f26b33; white-space: nowrap; flex-shrink: 0; }
+    .exists-badge { font-size: 9px; padding: 2px 8px; border-radius: 99px; background: #fef3c7; color: #92400e; font-weight: 700; flex-shrink: 0; white-space: nowrap; }
+    .new-badge { font-size: 10px; padding: 2px 8px; border-radius: 99px; background: #f0fdf4; color: #16a34a; font-weight: 600; flex-shrink: 0; }
+
+    /* Buttons */
+    .btn { height: 28px; padding: 0 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-save { background: #fff; color: #1e293b; }
+    .btn-save.disabled { opacity: 50%; cursor: not-allowed; }
+    .btn-cancel { background: transparent; color: #64748b; border-color: transparent; }
+
+    /* States grid */
+    .states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 0; }
+    .state-card { background: #fff; border-radius: 10px; overflow: visible; border: 1px solid #e2e8f0; }
+    .state-head { padding: 10px 14px; font-size: 11px; font-weight: 700; border-bottom: 1px solid #f1f5f9; }
+    .state-body { padding: 14px; overflow: visible; }
+
+    .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-top: 14px; }
+    .note strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>BUG-311 Layer 1 — Ingredient Name Typeahead</h1>
+  <p>Before vs After · Impact Analysis Gate 2 · Add form only · Partial match · Block on exact</p>
+</div>
+
+<div class="section">
+
+  <!-- ── BEFORE vs AFTER ── -->
+  <div class="section-title">Before vs After — Ingredient Add Form</div>
+  <div class="section-sub">The name input in the "+ Add Ingredient" inline row. Everything else stays identical.</div>
+  <div class="divider"></div>
+
+  <div class="compare">
+
+    <!-- BEFORE -->
+    <div class="panel">
+      <div class="panel-head before">❌ BEFORE — Plain text input, no duplicate awareness</div>
+      <div class="panel-body">
+        <div class="table-wrap">
+          <div class="table-head">
+            <div class="th">Ingredient Name</div>
+            <div class="th">Base Unit</div>
+            <div class="th">Conversion</div>
+            <div class="th">Small Unit</div>
+            <div class="th">Actions</div>
+          </div>
+          <div class="table-row">
+            <div class="td">
+              <div class="input-box">Tomato</div>
+              <!-- No warning, no dropdown -->
+            </div>
+            <div class="td"><div class="select-box">kg ▾</div></div>
+            <div class="td"><div class="input-box plain">—</div></div>
+            <div class="td"><div class="input-box plain">gm</div></div>
+            <div class="td">
+              <div style="display:flex; gap:4px;">
+                <button class="btn btn-save">Save</button>
+                <button class="btn btn-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note"><strong>Problem:</strong> User types "Tomato" — no warning. Clicks Save → Layer 2 guard fires a toast error. But user had no visual clue before clicking Save.</div>
+      </div>
+    </div>
+
+    <!-- AFTER — exact match state -->
+    <div class="panel">
+      <div class="panel-head after">✅ AFTER — Dropdown + Save blocked on exact match</div>
+      <div class="panel-body">
+        <div class="table-wrap" style="overflow:visible">
+          <div class="table-head">
+            <div class="th">Ingredient Name</div>
+            <div class="th">Base Unit</div>
+            <div class="th">Conversion</div>
+            <div class="th">Small Unit</div>
+            <div class="th">Actions</div>
+          </div>
+          <div class="table-row" style="overflow:visible">
+            <div class="td" style="overflow:visible; position:relative;">
+              <div class="dropdown-wrap">
+                <div class="input-box amber">Tomato</div>
+                <div class="dropdown">
+                  <div class="dropdown-header">Existing ingredients</div>
+                  <div class="drop-row exact">
+                    <span style="font-weight:600">Tomato</span>
+                    <div style="display:flex;gap:4px;align-items:center;">
+                      <span class="cat-badge">Vegetables</span>
+                      <span class="exists-badge">Already exists</span>
+                    </div>
+                  </div>
+                  <div class="drop-row partial">
+                    <span>Tomato Paste</span>
+                    <span class="cat-badge">Sauces</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="td"><div class="select-box">kg ▾</div></div>
+            <div class="td"><div class="input-box plain">—</div></div>
+            <div class="td"><div class="input-box plain">gm</div></div>
+            <div class="td">
+              <div style="display:flex; gap:4px;">
+                <button class="btn btn-save disabled" disabled>Save</button>
+                <button class="btn btn-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note"><strong>Fixed:</strong> Name turns amber, dropdown shows "Already exists" badge, Save is disabled. User knows immediately — no wasted click.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 3 STATES ── -->
+  <div class="section-title">All 3 States of the Typeahead</div>
+  <div class="section-sub">What the user sees depending on what they type.</div>
+  <div class="divider"></div>
+
+  <div class="states">
+
+    <!-- State 1: Partial match only -->
+    <div class="state-card">
+      <div class="state-head" style="color:#3b82f6; background:#eff6ff;">State 1 — Partial match (no exact)</div>
+      <div class="state-body" style="overflow:visible;">
+        <div style="margin-bottom:8px; font-size:12px; color:#64748b;">User typed: <strong>"Tom"</strong> — partial matches shown</div>
+        <div class="dropdown-wrap">
+          <div class="input-box" style="margin-bottom:4px;">Tom</div>
+          <div class="dropdown" style="position:relative; top:auto; box-shadow:none; margin-top:4px;">
+            <div class="dropdown-header">Existing ingredients</div>
+            <div class="drop-row normal">
+              <span>Tomato</span>
+              <span class="cat-badge">Vegetables</span>
+            </div>
+            <div class="drop-row normal">
+              <span>Tomato Paste</span>
+              <span class="cat-badge">Sauces</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:4px;">
+          <button class="btn btn-save">Save</button>
+          <span style="font-size:11px; color:#16a34a; align-self:center;">✓ Enabled — "Tom" is new</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Exact match -->
+    <div class="state-card">
+      <div class="state-head" style="color:#d97706; background:#fffbeb;">State 2 — Exact match (blocked)</div>
+      <div class="state-body" style="overflow:visible;">
+        <div style="margin-bottom:8px; font-size:12px; color:#64748b;">User typed: <strong>"Tomato"</strong> — exact match found</div>
+        <div class="dropdown-wrap">
+          <div class="input-box amber" style="margin-bottom:4px;">Tomato</div>
+          <div class="dropdown" style="position:relative; top:auto; box-shadow:none; margin-top:4px;">
+            <div class="dropdown-header">Existing ingredients</div>
+            <div class="drop-row exact">
+              <span style="font-weight:600">Tomato</span>
+              <div style="display:flex;gap:4px;">
+                <span class="cat-badge">Vegetables</span>
+                <span class="exists-badge">Already exists</span>
+              </div>
+            </div>
+            <div class="drop-row partial">
+              <span>Tomato Paste</span>
+              <span class="cat-badge">Sauces</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:4px; align-items:center;">
+          <button class="btn btn-save disabled" disabled>Save</button>
+          <span style="font-size:11px; color:#ef4444; align-self:center;">✗ Disabled — already exists</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: No match -->
+    <div class="state-card">
+      <div class="state-head" style="color:#16a34a; background:#f0fdf4;">State 3 — No match (new ingredient)</div>
+      <div class="state-body" style="overflow:visible;">
+        <div style="margin-bottom:8px; font-size:12px; color:#64748b;">User typed: <strong>"Saffron"</strong> — no existing match</div>
+        <div class="dropdown-wrap">
+          <div class="input-box" style="margin-bottom:4px;">Saffron</div>
+          <!-- No dropdown shown (filtered.length === 0) -->
+          <div style="margin-top:4px; font-size:11px; color:#16a34a; display:flex; align-items:center; gap:4px; padding: 4px 8px; background:#f0fdf4; border-radius:6px; border:1px solid #bbf7d0;">
+            ✓ New ingredient — not in existing list
+          </div>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:4px; align-items:center;">
+          <button class="btn btn-save">Save</button>
+          <span style="font-size:11px; color:#16a34a; align-self:center;">✓ Enabled — unique name</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Summary ── -->
+  <div style="background:#fff; border-radius:12px; padding:24px; margin-top:32px; box-shadow:0 1px 4px rgba(0,0,0,.08);">
+    <div style="font-size:15px; font-weight:700; margin-bottom:16px;">Implementation Summary</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; text-align:center;">
+      <div style="background:#f0fdf4; border-radius:8px; padding:14px;">
+        <div style="font-size:22px; font-weight:800; color:#16a34a;">1</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">File changed</div>
+        <div style="font-size:12px; font-weight:600; margin-top:2px;">InventorySetupPanel.jsx</div>
+      </div>
+      <div style="background:#f0fdf4; border-radius:8px; padding:14px;">
+        <div style="font-size:22px; font-weight:800; color:#16a34a;">0</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">New files</div>
+        <div style="font-size:12px; font-weight:600; margin-top:2px;">Local component</div>
+      </div>
+      <div style="background:#f0fdf4; border-radius:8px; padding:14px;">
+        <div style="font-size:22px; font-weight:800; color:#16a34a;">~73</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">Lines net</div>
+        <div style="font-size:12px; font-weight:600; margin-top:2px;">Component + 4 edits</div>
+      </div>
+      <div style="background:#f0fdf4; border-radius:8px; padding:14px;">
+        <div style="font-size:22px; font-weight:800; color:#16a34a;">LOW</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">Risk</div>
+        <div style="font-size:12px; font-weight:600; margin-top:2px;">UI only, no API</div>
+      </div>
+    </div>
+    <div style="margin-top:16px; font-size:12px; color:#64748b; background:#f8fafc; border-radius:8px; padding:12px;">
+      <strong>Scope: Add form only.</strong> Edit form (rename) has same duplicate risk but deferred per owner decision. Layer 2 pre-save guard (already implemented) remains as defence-in-depth even after Layer 1 ships.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+BUG-434 evidence → memory/evidence/CR-385/qa_2026_09_21_p0/qa_reruns/20260921_095343 (LR-500 → Retry, network log: error panel static for 1.8 s), 20260921_095509 (board-500 → Rooms Retry 3.3 s), runner iteration_6.json ui_bugs[0..1] (false "does not repopulate" within 6 s).

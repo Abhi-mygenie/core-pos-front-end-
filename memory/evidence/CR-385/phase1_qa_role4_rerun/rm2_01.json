@@ -1,0 +1,127 @@
+{
+  "R-M2-01_late_rows": [
+    {
+      "id": "15",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "17",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "21",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "18",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "7",
+      "source": "booking.com",
+      "has_cancel": false,
+      "has_noshow": true,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "13",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "22",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "23",
+      "source": "booking.com",
+      "has_cancel": false,
+      "has_noshow": true,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "54",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "86",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "225",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "226",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    },
+    {
+      "id": "227",
+      "source": "Direct",
+      "has_cancel": true,
+      "has_noshow": false,
+      "checkin_disabled": true,
+      "checkin_title": "Available in Phase 2",
+      "modify_disabled": false
+    }
+  ],
+  "R-M2-01_row226_expanded": {
+    "fd-row-226-exp-checkin-btn": true,
+    "fd-row-226-exp-modify-btn": true,
+    "fd-row-226-exp-cancel-btn": true,
+    "fd-row-226-exp-noshow-btn": false
+  }
+}

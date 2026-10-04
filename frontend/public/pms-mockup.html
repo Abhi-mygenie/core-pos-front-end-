@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PMS Mockup — Night Audit + Revenue Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+
+/* ─── SIDEBAR ─── */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#fff;border-right:1px solid #E5E5E5;flex-shrink:0;padding:16px 0}
+.sidebar-logo{padding:8px 20px 20px;font-size:18px;font-weight:700;color:#F26B33;display:flex;align-items:center;gap:8px}
+.sidebar-logo span{color:#1A1A1A}
+.sidebar-section{padding:6px 12px 4px;font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.7px;margin-top:8px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:8px 20px;font-size:12px;color:#444;cursor:pointer;border-radius:0;transition:background .15s}
+.sidebar-item:hover{background:#FFF4F0;color:#F26B33}
+.sidebar-item.active{background:#FFF4F0;color:#F26B33;font-weight:600;border-right:3px solid #F26B33}
+.sidebar-sub{padding:6px 20px 6px 36px;font-size:12px;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px}
+.sidebar-sub:hover{color:#F26B33}
+.sidebar-sub.active{color:#F26B33;font-weight:600}
+.sidebar-icon{width:16px;height:16px;opacity:.7}
+
+/* ─── MAIN ─── */
+.main{flex:1;overflow:auto}
+.topbar{background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-sub{font-size:11px;color:#888;margin-top:1px}
+.content{padding:20px 24px;max-width:1200px}
+
+/* ─── PAGE TABS ─── */
+.page-tabs{display:flex;gap:0;border-bottom:2px solid #E5E5E5;margin-bottom:20px}
+.page-tab{padding:10px 20px;font-size:12px;font-weight:500;cursor:pointer;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.page-tab.active{color:#F26B33;border-bottom-color:#F26B33;font-weight:600}
+.page-tab:hover:not(.active){color:#1A1A1A}
+.tab-page{display:none}
+.tab-page.active{display:block}
+
+/* ─── PAGE HEADER ─── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-header-left h1{font-size:18px;font-weight:700}
+.page-header-left p{font-size:11px;color:#888;margin-top:2px}
+.page-header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.btn-primary{background:#329937;color:#fff;border-color:#329937}
+.btn-primary:hover{background:#2B8230}
+.btn-outline{background:#fff;color:#1A1A1A;border-color:#E5E5E5}
+.btn-outline:hover{border-color:#F26B33;color:#F26B33}
+.btn-orange{background:#F26B33;color:#fff;border-color:#F26B33}
+.btn-orange:hover{background:#E05A22}
+.btn-sm{padding:5px 10px;font-size:11px}
+input[type=date]{padding:7px 10px;border:1px solid #E5E5E5;border-radius:6px;font-family:'Poppins',sans-serif;font-size:12px;color:#1A1A1A;background:#fff;outline:none}
+input[type=date]:focus{border-color:#F26B33}
+
+/* ─── CARDS ─── */
+.card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow:hidden;margin-bottom:14px}
+.card-header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid #F5F5F5}
+.card-header-left{display:flex;align-items:center;gap:10px}
+.card-accent{width:4px;height:18px;background:#F26B33;border-radius:2px}
+.card-title{font-size:13px;font-weight:600}
+.card-badge{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:500}
+.card-body{padding:16px}
+.chevron{font-size:10px;color:#888;transition:transform .2s}
+.collapsed .chevron{transform:rotate(-90deg)}
+
+/* ─── KPI TILES ─── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.kpi-tile{background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:12px 14px}
+.kpi-label{font-size:10px;color:#888;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-value{font-size:20px;font-weight:700;color:#1A1A1A;line-height:1.1}
+.kpi-value.orange{color:#F26B33}
+.kpi-value.green{color:#329937}
+.kpi-sub{font-size:10px;color:#888;margin-top:2px}
+
+/* ─── DUAL KPI (Option A) ─── */
+.kpi-tile-dual{background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:12px 14px}
+.kpi-dual-row{display:flex;gap:12px;margin-top:6px}
+.kpi-dual-col{flex:1}
+.kpi-dual-label{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.dot-orange{width:6px;height:6px;border-radius:50%;background:#F26B33;display:inline-block}
+.dot-green{width:6px;height:6px;border-radius:50%;background:#329937;display:inline-block}
+.kpi-dual-value{font-size:15px;font-weight:700}
+.kpi-dual-value.orange{color:#F26B33}
+.kpi-dual-value.green{color:#329937}
+
+/* ─── TOGGLE (Option B) ─── */
+.toggle-row{display:flex;align-items:center;gap:6px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:20px;padding:3px;width:fit-content;margin-bottom:14px}
+.toggle-opt{padding:4px 12px;border-radius:14px;font-size:11px;font-weight:500;cursor:pointer;color:#888;transition:all .2s}
+.toggle-opt.active{background:#F26B33;color:#fff}
+.toggle-opt.active.green-toggle{background:#329937}
+
+/* ─── TABLES ─── */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid #E5E5E5}
+table{width:100%;border-collapse:collapse}
+thead tr{background:#FAFAFA}
+th{padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid #E5E5E5}
+td{padding:9px 12px;font-size:12px;color:#1A1A1A;border-bottom:1px solid #F0F0F0;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#FFF8F5}
+tr.total-row td{background:#FAFAFA;font-weight:600;border-top:2px solid #E5E5E5}
+td.null-val{color:#ccc;font-style:italic}
+td.amount{font-weight:600;font-variant-numeric:tabular-nums}
+td.red{color:#EF4444;font-weight:600}
+td.green{color:#329937;font-weight:600}
+td.orange{color:#F26B33;font-weight:600}
+
+/* ─── BADGES ─── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600}
+.badge-paid{background:#F0F9F0;color:#329937;border:1px solid rgba(50,153,55,.2)}
+.badge-unpaid{background:#FEE2E2;color:#EF4444;border:1px solid rgba(239,68,68,.2)}
+.badge-partial{background:#FFFBEB;color:#D97706;border:1px solid rgba(245,158,11,.3)}
+.badge-now{background:#FFF4F0;color:#F26B33;border:1px solid rgba(242,107,51,.3)}
+.badge-info{background:#EFF6FF;color:#2563EB;border:1px solid rgba(37,99,235,.15)}
+
+/* ─── DATE PILLS ─── */
+.date-pills{display:flex;gap:4px}
+.pill{padding:6px 14px;border:1px solid #E5E5E5;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;color:#666;background:#fff;transition:all .15s}
+.pill.active{background:#F26B33;color:#fff;border-color:#F26B33}
+.pill:hover:not(.active){border-color:#F26B33;color:#F26B33}
+
+/* ─── CHART CONTAINER ─── */
+.chart-container{position:relative;height:220px}
+
+/* ─── GRID 2-COL ─── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}}
+
+/* ─── OD BANNER ─── */
+.od-banner{background:#FFFBEB;border:1px solid #F4A11A;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.od-banner-icon{font-size:16px;margin-top:1px}
+.od-banner-text strong{font-size:12px;font-weight:600;color:#92400E}
+.od-banner-text p{font-size:11px;color:#78350F;margin-top:2px}
+
+/* ─── OPTION SWITCHER ─── */
+.option-tabs{display:flex;gap:6px;margin-bottom:16px}
+.opt-tab{padding:7px 16px;border:1px solid #E5E5E5;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;color:#666;background:#fff;transition:all .15s}
+.opt-tab.active{background:#FFF4F0;color:#F26B33;border-color:#F26B33;font-weight:600}
+
+.section-separator{height:1px;background:#F0F0F0;margin:14px 0}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.stat-block{flex:1;min-width:100px;background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px}
+.stat-block .stat-val{font-size:16px;font-weight:700;color:#1A1A1A}
+.stat-block .stat-lbl{font-size:10px;color:#888;margin-top:1px}
+.orange-val{color:#F26B33!important}
+.green-val{color:#329937!important}
+.red-val{color:#EF4444!important}
+
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:8px}
+.room-cell{border:1px solid #E5E5E5;border-radius:6px;padding:6px 4px;text-align:center;font-size:10px;font-weight:500}
+.room-cell.occ{background:#FFF4F0;border-color:#F26B33;color:#F26B33}
+.room-cell.avail{background:#F0F9F0;border-color:#329937;color:#329937}
+.room-cell.hk{background:#FFFBEB;border-color:#F4A11A;color:#D97706}
+.room-cell.ooo{background:#F5F5F5;border-color:#ccc;color:#888}
+
+.tender-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tender-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#FAFAFA;border:1px solid #E5E5E5;border-radius:6px}
+.tender-name{font-size:11px;font-weight:500;color:#444}
+.tender-val{font-size:13px;font-weight:700;color:#1A1A1A}
+.tender-val.highlight{color:#F26B33}
+
+.recon-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #F0F0F0}
+.recon-row:last-child{border-bottom:none}
+.recon-label{font-size:12px;color:#444}
+.recon-val{font-size:13px;font-weight:700}
+
+.delta-ok{font-size:11px;background:#F0F9F0;color:#329937;border:1px solid rgba(50,153,55,.2);border-radius:6px;padding:6px 12px;text-align:center;font-weight:600}
+.delta-warn{font-size:11px;background:#FEE2E2;color:#EF4444;border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:6px 12px;text-align:center;font-weight:600}
+
+.trail-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F5F5F5;align-items:flex-start}
+.trail-row:last-child{border-bottom:none}
+.trail-dot{width:8px;height:8px;border-radius:50%;background:#329937;margin-top:4px;flex-shrink:0}
+.trail-dot.in{background:#329937}.trail-dot.out{background:#F26B33}.trail-dot.pay{background:#2563EB}.trail-dot.tx{background:#D97706}
+.trail-time{font-size:10px;color:#888;min-width:60px}
+.trail-type{font-size:11px;font-weight:600;color:#1A1A1A}
+.trail-detail{font-size:10px;color:#888;margin-top:1px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="#F26B33"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="10" font-family="Poppins">m</text></svg>
+    my<span>genie</span>
+  </div>
+  <div class="sidebar-section">POS</div>
+  <div class="sidebar-item">
+    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="sidebar-item">
+    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Orders
+  </div>
+  <div class="sidebar-section">ROOMS &amp; RESERVATIONS</div>
+  <div class="sidebar-item">
+    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Front Desk
+  </div>
+  <div class="sidebar-item">
+    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    In-House Guests
+  </div>
+  <div class="sidebar-sub active">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Night Audit <span class="badge badge-paid" style="margin-left:4px">NEW</span>
+  </div>
+  <div class="sidebar-sub">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Revenue Dashboard <span class="badge badge-paid" style="margin-left:4px">NEW</span>
+  </div>
+  <div class="sidebar-sub">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+    Housekeeping
+  </div>
+  <div class="sidebar-section">REPORTS</div>
+  <div class="sidebar-item">
+    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Insights
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">PMS — Mockup Preview</div>
+      <div class="topbar-sub">CR-363 Night Audit · CR-366 Revenue Dashboard · design_guidelines v1</div>
+    </div>
+    <div style="font-size:11px;color:#888">Goank Kitchen · Preprod</div>
+  </div>
+
+  <div class="content">
+    <!-- PAGE TABS -->
+    <div class="page-tabs">
+      <div class="page-tab active" onclick="switchTab('night-audit',this)">Night Audit Report</div>
+      <div class="page-tab" onclick="switchTab('revenue',this)">Revenue Dashboard</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PAGE 1: NIGHT AUDIT                                     -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div id="page-night-audit" class="tab-page active">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Night Audit Report</h1>
+          <p>End-of-day hotel financial &amp; room reconciliation</p>
+        </div>
+        <div class="page-header-right">
+          <input type="date" value="2026-09-14" data-testid="night-audit-date-picker" />
+          <button class="btn btn-outline btn-sm" data-testid="export-excel-button">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Excel
+          </button>
+          <button class="btn btn-orange btn-sm" data-testid="export-pdf-button">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Section A: Occupancy -->
+      <div class="card" data-testid="section-occupancy">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent"></div>
+            <div class="card-title">A. Occupancy Summary</div>
+            <span class="badge badge-info">Business Day: 14 Sep 2026</span>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <div class="stat-block"><div class="stat-val">19</div><div class="stat-lbl">Rooms Available</div></div>
+            <div class="stat-block"><div class="stat-val orange-val">14</div><div class="stat-lbl">Rooms Sold</div></div>
+            <div class="stat-block"><div class="stat-val orange-val">73.7%</div><div class="stat-lbl">Occupancy %</div></div>
+            <div class="stat-block"><div class="stat-val">15</div><div class="stat-lbl">In-House</div></div>
+            <div class="stat-block"><div class="stat-val green-val">4</div><div class="stat-lbl">Arrivals (actual)</div></div>
+            <div class="stat-block"><div class="stat-val">3</div><div class="stat-lbl">Departures</div></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Room Type</th><th>Capacity</th><th>Available</th><th>Sold</th><th>Occupancy %</th></tr></thead>
+              <tbody>
+                <tr><td>Deluxe</td><td>8</td><td>7</td><td>6</td><td class="orange">75.0%</td></tr>
+                <tr><td>Executive</td><td>1</td><td>1</td><td>2</td><td class="red" title="Capacity mapping issue — bar clamped at 100%">200.0% ⚠</td></tr>
+                <tr><td>Suite</td><td>6</td><td>6</td><td>4</td><td class="orange">66.7%</td></tr>
+                <tr><td>Standard</td><td>5</td><td>5</td><td>2</td><td>40.0%</td></tr>
+                <tr class="total-row"><td>Total</td><td>20</td><td>19</td><td>14</td><td class="orange">73.7%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B: Revenue -->
+      <div class="card" data-testid="section-revenue">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent"></div>
+            <div class="card-title">B. Room Revenue</div>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="grid-2">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">By Tender Type</div>
+              <div class="tender-split">
+                <div class="tender-item"><span class="tender-name">Cash</span><span class="tender-val">₹14,500</span></div>
+                <div class="tender-item"><span class="tender-name">Card</span><span class="tender-val">₹12,000</span></div>
+                <div class="tender-item"><span class="tender-name">UPI</span><span class="tender-val">₹9,000</span></div>
+                <div class="tender-item"><span class="tender-name">OTA Remittance</span><span class="tender-val">₹6,000</span></div>
+                <div class="tender-item" style="grid-column:span 2;background:#FFF4F0;border-color:#F26B33">
+                  <span class="tender-name" style="color:#F26B33;font-weight:600">Total Collected</span>
+                  <span class="tender-val highlight">₹41,500</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">By Stage</div>
+              <div class="tender-split">
+                <div class="tender-item"><span class="tender-name">Advance (booking)</span><span class="tender-val">₹6,000</span></div>
+                <div class="tender-item"><span class="tender-name">Advance (check-in)</span><span class="tender-val">₹10,500</span></div>
+                <div class="tender-item"><span class="tender-name">Mid-stay</span><span class="tender-val">₹0</span></div>
+                <div class="tender-item"><span class="tender-name">Checkout</span><span class="tender-val">₹25,000</span></div>
+                <div class="tender-item" style="grid-column:span 2">
+                  <span class="tender-name">Room Sales (booked)</span><span class="tender-val">₹52,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="section-separator"></div>
+          <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">F&amp;B Posted to Rooms (separate — OD-363-03)</div>
+          <div class="stat-row">
+            <div class="stat-block"><div class="stat-val">9</div><div class="stat-lbl">F&amp;B Orders</div></div>
+            <div class="stat-block"><div class="stat-val">₹7,200</div><div class="stat-lbl">Amount</div></div>
+            <div class="stat-block"><div class="stat-val green-val">₹7,200</div><div class="stat-lbl">Collected</div></div>
+            <div class="stat-block"><div class="stat-val">₹0</div><div class="stat-lbl">Outstanding</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section C: Outstanding -->
+      <div class="card" data-testid="section-outstanding">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent"></div>
+            <div class="card-title">C. Outstanding Guest Balances</div>
+            <span class="badge badge-unpaid">₹14,772 total</span>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div style="font-size:11px;color:#888;background:#FFFBEB;border:1px solid #F4A11A;border-radius:6px;padding:7px 10px;margin-bottom:10px">
+            ⚠ Guest name, room code, check-in/checkout currently null from backend (BN-1). Showing "—" per OD-363-08. Backend brief filed.
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Room</th><th>Guest</th><th>Check-in</th><th>Check-out</th><th>Channel</th><th>Room Balance</th><th>F&amp;B Balance</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>204</td>
+                  <td class="null-val">—</td>
+                  <td class="null-val">—</td>
+                  <td class="null-val">—</td>
+                  <td>booking.com</td>
+                  <td class="amount red">₹13,922</td>
+                  <td class="amount red">₹850</td>
+                  <td><span class="badge badge-unpaid">Unpaid</span></td>
+                </tr>
+                <tr>
+                  <td>101</td>
+                  <td class="null-val">—</td>
+                  <td class="null-val">—</td>
+                  <td class="null-val">—</td>
+                  <td>Direct</td>
+                  <td class="amount">₹0</td>
+                  <td class="amount">₹0</td>
+                  <td><span class="badge badge-paid">Paid</span></td>
+                </tr>
+                <tr class="total-row"><td colspan="5">Total Outstanding</td><td class="amount red">₹13,922</td><td class="amount red">₹850</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section D: No-Shows -->
+      <div class="card" data-testid="section-no-shows">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent" style="background:#EF4444"></div>
+            <div class="card-title">D. No-Shows &amp; Late Arrivals</div>
+            <span class="badge badge-unpaid">1 no-show</span>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Reservation</th><th>Guest</th><th>Channel</th><th>Check-in</th><th>Nights</th><th>Booked Value</th><th>Advance</th><th>Fee Charged</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>AIO-9920</td>
+                  <td>*** (masked)</td>
+                  <td>Direct</td>
+                  <td>14 Sep 2026</td>
+                  <td>2</td>
+                  <td class="amount">₹8,000</td>
+                  <td class="amount">₹0</td>
+                  <td class="amount">₹0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section E: Departures -->
+      <div class="card" data-testid="section-departures">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent" style="background:#329937"></div>
+            <div class="card-title">E. Departures Reconciliation</div>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px">Checked Out — Paid (3)</div>
+          <div class="table-wrap" style="margin-bottom:12px">
+            <table>
+              <thead><tr><th>Room</th><th>Guest</th><th>Room Revenue</th><th>Tender</th><th>Checked Out</th></tr></thead>
+              <tbody>
+                <tr><td>305</td><td>*** (masked)</td><td class="amount green">₹24,000</td><td>Card</td><td>14 Sep 08:42</td></tr>
+                <tr><td>102</td><td>*** (masked)</td><td class="amount green">₹8,000</td><td>UPI</td><td>14 Sep 11:15</td></tr>
+                <tr><td>201</td><td>*** (masked)</td><td class="amount green">₹12,000</td><td>Cash</td><td>14 Sep 12:00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:#EF4444;margin-bottom:8px">Overdue In-House (1)</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Room</th><th>Guest</th><th>Original Checkout</th><th>Days Overdue</th><th>Room Balance</th></tr></thead>
+              <tbody>
+                <tr><td>407</td><td>*** (masked)</td><td class="red">13 Sep 2026</td><td class="red">1 day</td><td class="amount">₹0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section F: Room Status Close -->
+      <div class="card" data-testid="section-room-status-close">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent"></div>
+            <div class="card-title">F. Room Status Close Board</div>
+            <span class="badge badge-now">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Room status as of now
+            </span>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="stat-row" style="margin-bottom:14px">
+            <div class="stat-block"><div class="stat-val orange-val">14</div><div class="stat-lbl">Occupied</div></div>
+            <div class="stat-block"><div class="stat-val green-val">4</div><div class="stat-lbl">Available</div></div>
+            <div class="stat-block"><div class="stat-val" style="color:#D97706">1</div><div class="stat-lbl">HK / Dirty</div></div>
+            <div class="stat-block"><div class="stat-val" style="color:#888">1</div><div class="stat-lbl">Out of Order</div></div>
+          </div>
+          <div class="room-grid">
+            <div class="room-cell occ">101<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell occ">102<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell avail">103<br><span style="font-size:9px">AVL</span></div>
+            <div class="room-cell occ">201<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell occ">202<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell avail">203<br><span style="font-size:9px">AVL</span></div>
+            <div class="room-cell occ">204<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell hk">205<br><span style="font-size:9px">HK</span></div>
+            <div class="room-cell occ">301<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell occ">302<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell avail">303<br><span style="font-size:9px">AVL</span></div>
+            <div class="room-cell ooo">304<br><span style="font-size:9px">OOO</span></div>
+            <div class="room-cell occ">305<br><span style="font-size:9px">OCC</span></div>
+            <div class="room-cell avail">401<br><span style="font-size:9px">AVL</span></div>
+            <div class="room-cell occ">402<br><span style="font-size:9px">OCC</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section G: Audit Trail -->
+      <div class="card" data-testid="section-audit-trail">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent" style="background:#888"></div>
+            <div class="card-title">G. Order-Level Audit Trail</div>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="trail-row"><div class="trail-dot in"></div><div class="trail-time">07:42</div><div><div class="trail-type">Check-in — Room 204</div><div class="trail-detail">Res AIO-9911 · by Reception · Booking.com</div></div></div>
+          <div class="trail-row"><div class="trail-dot pay"></div><div class="trail-time">08:10</div><div><div class="trail-type">Payment — Room 305</div><div class="trail-detail">₹24,000 · Card · Checkout</div></div></div>
+          <div class="trail-row"><div class="trail-dot out"></div><div class="trail-time">08:42</div><div><div class="trail-type">Check-out — Room 305</div><div class="trail-detail">Res AIO-9905 · by Reception</div></div></div>
+          <div class="trail-row"><div class="trail-dot tx"></div><div class="trail-time">14:30</div><div><div class="trail-type">Room Transfer — Order #90221</div><div class="trail-detail">Detail not available (BN-3 — backend fix pending)</div></div></div>
+          <div class="trail-row"><div class="trail-dot pay"></div><div class="trail-time">20:15</div><div><div class="trail-type">F&amp;B Posted to Room 204</div><div class="trail-detail">₹850 · Order #90445</div></div></div>
+        </div>
+      </div>
+
+      <!-- Section H: Reconciliation -->
+      <div class="card" data-testid="section-reconciliation">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-accent" style="background:#329937"></div>
+            <div class="card-title">H. Reconciliation to Day Closure</div>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body">
+          <div style="font-size:11px;color:#888;background:#FFFBEB;border:1px solid #F4A11A;border-radius:6px;padding:7px 10px;margin-bottom:12px">
+            ⚠ Settlement total &amp; F&amp;B share null from backend (BN-2). Showing available fields only.
+          </div>
+          <div class="grid-2">
+            <div>
+              <div class="recon-row"><span class="recon-label">Room Settlement Share</span><span class="recon-val orange">₹35,500</span></div>
+              <div class="recon-row"><span class="recon-label">Night Audit Room (Cash+Card+UPI)</span><span class="recon-val">₹35,500</span></div>
+              <div class="recon-row"><span class="recon-label">Settlement Total (all)</span><span class="recon-val null-val">— (BN-2)</span></div>
+              <div class="recon-row"><span class="recon-label">F&amp;B Share</span><span class="recon-val null-val">— (BN-2)</span></div>
+              <div style="margin-top:12px" class="delta-ok">Delta: ₹0.00 — Balanced ✓</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Per Waiter</div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Waiter</th><th>Name</th><th>Room Share</th><th>Total</th></tr></thead>
+                  <tbody>
+                    <tr><td>W-01</td><td class="null-val">—</td><td class="amount">₹18,000</td><td class="null-val">—</td></tr>
+                    <tr><td>W-02</td><td class="null-val">—</td><td class="amount">₹17,500</td><td class="null-val">—</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /night-audit -->
+
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PAGE 2: REVENUE DASHBOARD                              -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div id="page-revenue" class="tab-page">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Revenue Dashboard</h1>
+          <p>Hotel financial performance &amp; occupancy analytics</p>
+        </div>
+        <div class="page-header-right">
+          <div class="date-pills" data-testid="date-pills">
+            <div class="pill" onclick="setPill(this)">Today</div>
+            <div class="pill active" onclick="setPill(this)">7D</div>
+            <div class="pill" onclick="setPill(this)">30D</div>
+            <div class="pill" onclick="setPill(this)">Custom</div>
+          </div>
+          <button class="btn btn-outline btn-sm">Excel</button>
+          <button class="btn btn-orange btn-sm">PDF</button>
+        </div>
+      </div>
+
+      <!-- OD-366-08 DECISION BANNER -->
+      <div class="od-banner">
+        <div class="od-banner-icon">⚠</div>
+        <div class="od-banner-text">
+          <strong>OD-366-08 — Your decision needed</strong>
+          <p>How should KPI tiles show Booked (Sales) vs Collected (Revenue)?  Select the option you prefer below.</p>
+        </div>
+      </div>
+
+      <!-- OPTION SWITCHER -->
+      <div style="margin-bottom:6px">
+        <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">OD-366-08 — KPI Display Option</div>
+        <div class="option-tabs">
+          <div class="opt-tab active" onclick="switchOD(this,'opt-a')" data-testid="od-option-a">Option A: Side-by-Side (always visible)</div>
+          <div class="opt-tab" onclick="switchOD(this,'opt-b')" data-testid="od-option-b">Option B: Toggle Switch</div>
+        </div>
+      </div>
+
+      <!-- OPTION A: SIDE BY SIDE -->
+      <div id="opt-a">
+        <div style="font-size:11px;color:#888;margin-bottom:10px">Both figures always visible. Orange = Booked (Sales). Green = Collected (Revenue).</div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+          <div class="kpi-tile-dual" data-testid="kpi-occupancy">
+            <div class="kpi-label">Occupancy Rate</div>
+            <div class="kpi-value orange" style="font-size:22px">73.7%</div>
+            <div class="kpi-sub">19 available · 14 sold</div>
+          </div>
+          <div class="kpi-tile-dual" data-testid="kpi-adr">
+            <div class="kpi-label">ADR</div>
+            <div class="kpi-dual-row">
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-orange"></span>Sales</div>
+                <div class="kpi-dual-value orange">₹3,714</div>
+              </div>
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-green"></span>Revenue</div>
+                <div class="kpi-dual-value green">₹2,964</div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-tile-dual" data-testid="kpi-revpar">
+            <div class="kpi-label">RevPAR</div>
+            <div class="kpi-dual-row">
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-orange"></span>Sales</div>
+                <div class="kpi-dual-value orange">₹2,736</div>
+              </div>
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-green"></span>Revenue</div>
+                <div class="kpi-dual-value green">₹2,184</div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-tile-dual" data-testid="kpi-room-revenue">
+            <div class="kpi-label">Room Revenue</div>
+            <div class="kpi-dual-row">
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-orange"></span>Booked</div>
+                <div class="kpi-dual-value orange">₹3.64L</div>
+              </div>
+              <div class="kpi-dual-col">
+                <div class="kpi-dual-label"><span class="dot-green"></span>Collected</div>
+                <div class="kpi-dual-value green">₹2.91L</div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-tile-dual" data-testid="kpi-trevpar">
+            <div class="kpi-label">TRevPAR</div>
+            <div class="kpi-value" style="font-size:20px;font-weight:700;margin-top:6px">₹3,116</div>
+            <div class="kpi-sub">incl. F&amp;B posted</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION B: TOGGLE -->
+      <div id="opt-b" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;color:#888">Switch between Booked and Collected across all tiles.</div>
+          <div class="toggle-row" data-testid="booked-collected-toggle">
+            <div class="toggle-opt active" id="t-booked" onclick="toggleBasis('booked')">Booked (Sales)</div>
+            <div class="toggle-opt" id="t-collected" onclick="toggleBasis('collected')">Collected (Revenue)</div>
+          </div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <div class="kpi-tile" data-testid="kpi-b-occupancy"><div class="kpi-label">Occupancy</div><div class="kpi-value orange">73.7%</div><div class="kpi-sub">14 of 19 rooms</div></div>
+          <div class="kpi-tile" data-testid="kpi-b-adr"><div class="kpi-label">ADR</div><div class="kpi-value orange" id="b-adr">₹3,714</div><div class="kpi-sub" id="b-adr-basis">Booked (Sales)</div></div>
+          <div class="kpi-tile" data-testid="kpi-b-revpar"><div class="kpi-label">RevPAR</div><div class="kpi-value orange" id="b-revpar">₹2,736</div><div class="kpi-sub" id="b-revpar-basis">Booked</div></div>
+          <div class="kpi-tile" data-testid="kpi-b-revenue"><div class="kpi-label">Room Revenue</div><div class="kpi-value orange" id="b-rev">₹3.64L</div><div class="kpi-sub" id="b-rev-basis">Booked</div></div>
+          <div class="kpi-tile" data-testid="kpi-b-trevpar"><div class="kpi-label">TRevPAR</div><div class="kpi-value">₹3,116</div><div class="kpi-sub">incl. F&amp;B</div></div>
+        </div>
+      </div>
+
+      <div class="section-separator" style="margin:20px 0"></div>
+
+      <!-- CHARTS -->
+      <div class="grid-2">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-header-left"><div class="card-accent"></div><div class="card-title">Occupancy Trend — Last 7 Days</div></div>
+          </div>
+          <div class="card-body"><div class="chart-container"><canvas id="chartOcc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-header-left"><div class="card-accent"></div><div class="card-title">Revenue — Booked vs Collected</div></div>
+          </div>
+          <div class="card-body"><div class="chart-container"><canvas id="chartRev"></canvas></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px" class="card">
+        <div class="card-header">
+          <div class="card-header-left"><div class="card-accent"></div><div class="card-title">ADR &amp; RevPAR Trend</div></div>
+        </div>
+        <div class="card-body"><div class="chart-container" style="height:180px"><canvas id="chartADR"></canvas></div></div>
+      </div>
+
+      <div class="section-separator" style="margin:20px 0"></div>
+
+      <!-- BREAKDOWN TABLES -->
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header"><div class="card-header-left"><div class="card-accent"></div><div class="card-title">By Booking Channel</div></div></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap" style="border:none;border-radius:0">
+              <table>
+                <thead><tr><th>Channel</th><th>Room Nights</th><th>Revenue Booked</th><th>Share %</th></tr></thead>
+                <tbody>
+                  <tr><td>Direct</td><td>24</td><td class="amount">₹89,600</td><td class="orange">39%</td></tr>
+                  <tr><td>Booking.com</td><td>18</td><td class="amount">₹72,000</td><td class="orange">31%</td></tr>
+                  <tr><td>Walk-In</td><td>12</td><td class="amount">₹43,200</td><td>19%</td></tr>
+                  <tr><td>Other OTA</td><td>8</td><td class="amount">₹25,600</td><td>11%</td></tr>
+                  <tr class="total-row"><td>Total</td><td>62</td><td class="amount orange">₹2.30L</td><td>100%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header"><div class="card-header-left"><div class="card-accent"></div><div class="card-title">By Room Type</div></div></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap" style="border:none;border-radius:0">
+              <table>
+                <thead><tr><th>Type</th><th>Sold Nights</th><th>Revenue Booked</th><th>ADR</th><th>Occupancy</th></tr></thead>
+                <tbody>
+                  <tr><td>Deluxe</td><td>28</td><td class="amount">₹1.12L</td><td>₹4,000</td><td class="orange">58.3%</td></tr>
+                  <tr><td>Suite</td><td>18</td><td class="amount">₹90,000</td><td>₹5,000</td><td class="orange">42.9%</td></tr>
+                  <tr><td>Standard</td><td>10</td><td class="amount">₹30,000</td><td>₹3,000</td><td>28.6%</td></tr>
+                  <tr><td>Executive</td><td>6</td><td class="amount">₹24,000</td><td>₹4,000</td><td class="red">>100%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-header-left"><div class="card-accent"></div><div class="card-title">By Payment Type</div></div></div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap" style="border:none;border-radius:0">
+            <table>
+              <thead><tr><th>Payment Type</th><th>Room Nights</th><th>Revenue Booked</th><th>Collected</th><th>Outstanding</th></tr></thead>
+              <tbody>
+                <tr><td>Pay at Hotel</td><td>32</td><td class="amount">₹1.28L</td><td class="amount green">₹1.02L</td><td class="amount red">₹26,000</td></tr>
+                <tr><td>OTA Pay at Hotel</td><td>18</td><td class="amount">₹72,000</td><td class="amount green">₹60,000</td><td class="amount red">₹12,000</td></tr>
+                <tr><td>Prepaid / OTA Collect</td><td>12</td><td class="amount">₹48,000</td><td class="amount green">₹48,000</td><td class="amount">₹0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /revenue -->
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ── Tab switching ──
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'revenue') { setTimeout(initCharts, 50); }
+}
+
+// ── Date pills ──
+function setPill(el) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── OD-366-08 Option switcher ──
+function switchOD(el, show) {
+  document.querySelectorAll('.opt-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['opt-a','opt-b'].forEach(id => {
+    document.getElementById(id).style.display = id === show ? 'block' : 'none';
+  });
+}
+
+// ── Toggle Booked/Collected (Option B) ──
+function toggleBasis(basis) {
+  const booked = basis === 'booked';
+  document.getElementById('t-booked').className = 'toggle-opt' + (booked ? ' active' : '');
+  document.getElementById('t-collected').className = 'toggle-opt' + (!booked ? ' active green-toggle' : '');
+  const color = booked ? '#F26B33' : '#329937';
+  const adr = booked ? '₹3,714' : '₹2,964';
+  const revpar = booked ? '₹2,736' : '₹2,184';
+  const rev = booked ? '₹3.64L' : '₹2.91L';
+  const lbl = booked ? 'Booked (Sales)' : 'Collected (Revenue)';
+  document.getElementById('b-adr').textContent = adr;
+  document.getElementById('b-revpar').textContent = revpar;
+  document.getElementById('b-rev').textContent = rev;
+  ['b-adr','b-revpar','b-rev'].forEach(id => {
+    document.getElementById(id).style.color = color;
+  });
+  ['b-adr-basis','b-revpar-basis','b-rev-basis'].forEach(id => {
+    document.getElementById(id).textContent = booked ? 'Booked (Sales)' : 'Collected (Revenue)';
+  });
+}
+
+// ── Charts ──
+let chartsInit = false;
+function initCharts() {
+  if (chartsInit) return;
+  chartsInit = true;
+  const labels = ['8 Sep','9 Sep','10 Sep','11 Sep','12 Sep','13 Sep','14 Sep'];
+  Chart.defaults.font.family = 'Poppins';
+  Chart.defaults.font.size = 10;
+
+  new Chart(document.getElementById('chartOcc'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Occupancy %', data: [68,72,65,78,81,74,73.7], borderColor:'#F26B33', backgroundColor:'rgba(242,107,51,.08)', fill:true, tension:.4, pointRadius:3, borderWidth:2 },
+        { label: 'Rooms Sold', data: [13,14,12,15,16,14,14], borderColor:'#329937', backgroundColor:'transparent', tension:.4, pointRadius:3, borderWidth:2, yAxisID:'y2' }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}, scales:{x:{grid:{color:'#F5F5F5'}},y:{grid:{color:'#F5F5F5'},ticks:{callback:v=>v+'%'}},y2:{position:'right',grid:{display:false}}} }
+  });
+
+  new Chart(document.getElementById('chartRev'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Booked (Sales)', data: [48000,52000,44000,61000,67000,55000,52000], backgroundColor:'rgba(242,107,51,.8)', borderRadius:4 },
+        { label: 'Collected (Revenue)', data: [38000,41500,36000,51000,58000,46000,41500], backgroundColor:'rgba(50,153,55,.7)', borderRadius:4 },
+        { label: 'F&B Posted', data: [6200,7200,5800,8100,9200,7600,7200], backgroundColor:'rgba(244,161,26,.6)', borderRadius:4 }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}, scales:{x:{grid:{display:false}},y:{grid:{color:'#F5F5F5'},ticks:{callback:v=>'₹'+(v/1000)+'k'}}} }
+  });
+
+  new Chart(document.getElementById('chartADR'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'ADR Booked', data: [3692,3714,3667,4067,4188,3929,3714], borderColor:'#F26B33', tension:.4, pointRadius:3, borderWidth:2 },
+        { label: 'ADR Collected', data: [2923,2964,3000,3400,3625,3286,2964], borderColor:'#E05A22', tension:.4, pointRadius:3, borderWidth:2, borderDash:[4,4] },
+        { label: 'RevPAR Booked', data: [2527,2736,2386,3168,3382,2909,2736], borderColor:'#329937', tension:.4, pointRadius:3, borderWidth:2 },
+        { label: 'RevPAR Collected', data: [2000,2184,1947,2653,2926,2432,2184], borderColor:'#2B8230', tension:.4, pointRadius:3, borderWidth:2, borderDash:[4,4] }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}, scales:{x:{grid:{color:'#F5F5F5'}},y:{grid:{color:'#F5F5F5'},ticks:{callback:v=>'₹'+(v/1000).toFixed(1)+'k'}}} }
+  });
+}
+</script>
+</body>
+</html>

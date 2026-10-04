@@ -1,0 +1,60 @@
+{
+  "settings": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019311605.4177,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019311605.5254,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+      "method": "POST",
+      "post": "------WebKitFormBoundaryAjv06nnLuXQcn6Iv\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"held\"}}\r\n------WebKitFormBoundaryAjv06nnLuXQcn6Iv--\r\n",
+      "ts": 1790019314283.0251,
+      "ct": "multipart/form-data; boundary=----WebKitFormBoundaryAjv06nnLuXQcn6Iv"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019315303.117,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019323104.8967,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019323105.0144,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019329904.5806,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019329904.689,
+      "ct": ""
+    }
+  ]
+}
