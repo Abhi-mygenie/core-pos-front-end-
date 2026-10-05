@@ -28867,11 +28867,49 @@
       "source": "AGENT-DISCOVERED",
       "registered": "2026-10-01",
       "notes": "Four sub-items from backend handover_5.md (2026-10-01): A) room_discount_apply_to at checkout (0 hits in src/, ungreyes CR-385 M6 greyed control); B) room discount at check-in (CheckInPage); C) partial_payments_room multi-leg room payment (0 hits, blocks FU-385-D); D) order-shifted-room UI (constant v2\u2192v1 mismatch, transform stub only). All live on preprod, proof orders 1232910\u20131232917. Related: BUG-484, FU-385-D, OG-PMS-048, BQ-385-07. Intake: change_requests/CR-405_ROOM_FOLIO_DISCOUNT_PARTIAL_PAYMENT_SHIFT_DINEIN_INTAKE.md | OD-405-01..06 ALL LOCKED 2026-10-01. Execution A\u2192B\u2192D\u2192C. Evidence: evidence/CR-405/. | IA complete 2026-10-01. 6 files ~76 lines. Phase A: FolioCheckoutPanel+orderTransform (enable greyed button). Phase B: constants v2\u2192v1 + rewrite transferToRoom payload. Phase D: pmsService+CheckInPage discount. Phase C: partial_payments_room. All ODs locked. IA: impact/CR-405_IMPACT_ANALYSIS.md | Gate 3 Plan complete 2026-10-01. 4 phases A\u2192B\u2192D\u2192C / 6 files / ~75 lines. R11 probes PASS (v1 NEW contract confirmed). All ODs locked. Plan: plans/CR-405_IMPLEMENTATION_PLAN.md. Awaiting Gate 4 GO. | Phase A IMPLEMENTED 2026-10-01: FolioCheckoutPanel.jsx 8 edits \u2014 roomDiscount state, RoomSection/Statement props, enabled discount UI, handlePaid injection. Tests 8/8 PASS. yarn build exit 0. | Phase B IMPLEMENTED 2026-10-01: E-B1 constants.js v2\u2192v1; E-B2 CollectPaymentPanel +roomOrderId; E-B3 orderTransform transferToRoom rewritten to {source_order_id,target_order_id,transfer_note}. Tests 8/8 PASS. | QA PASSED (Phase A+B) 2026-10-01: testing_agent iteration_1.json \u2014 24/24 unit tests PASS (3\u00d78), all code checks PASS, build clean. Phase D+C not yet implemented."
+    },
+    {
+      "id": "CR-406",
+      "type": "CR",
+      "title": "Google Sheets Two-Way Sync \u2014 Registry Export/Import via OAuth2",
+      "status": "GATE_1_INTAKE",
+      "priority": "P2",
+      "risk": "LOW",
+      "gate": "1",
+      "completeness": "1/7",
+      "sprint_key": "tooling_oct1",
+      "area": "Control Layer / Tooling",
+      "category": "TOOLING",
+      "code_reality": "PARTIAL",
+      "blast_radius": "SMALL",
+      "fast_lane": "ELIGIBLE (owner approval required)",
+      "backend_blocked": false,
+      "files": "memory/reports/sheets_sync.py (NEW)",
+      "related": [
+        "CR-371",
+        "CR-389"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-406_GOOGLE_SHEETS_TWOWAY_SYNC_REGISTRY_INTAKE.md",
+          "type": "intake"
+        }
+      ],
+      "notes": "OAuth2 credentials confirmed working (2026-10-04). Sheet ID confirmed accessible. Push: registry.json \u2192 All Items tab. Pull: Sheet edits \u2192 registry.json for status/priority/notes/sprint_key fields. Standalone Python script only \u2014 zero app code impact.",
+      "created_at": "2026-10-05",
+      "status_history": [
+        {
+          "date": "2026-10-05",
+          "status": "GATE_1_INTAKE",
+          "note": "Intake registered. OAuth2 + sheet connection already validated. Zero frontend blast radius."
+        }
+      ]
     }
   ],
   "meta": {
-    "last_updated": "2026-09-27",
-    "last_action": "PLANNING Gate 2 2026-09-25: Impact Analyses written for BUG-459 (P0/CRITICAL) + CR-387 (P1/HIGH) \u2192 GATE_2_IMPACT_ANALYSIS. ODs open; Gate 3 not started. Zero code.",
+    "last_updated": "2026-10-05",
+    "last_action": "INTAKE: CR-406 registered (P2/LOW, sprint tooling_oct1, Gate 1). Google Sheets Two-Way Sync. OAuth2 validated. Sheet confirmed. Zero app code impact. Registry now 766 items.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
