@@ -28872,11 +28872,11 @@
       "id": "CR-406",
       "type": "CR",
       "title": "Google Sheets Two-Way Sync \u2014 Registry Export/Import via OAuth2",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "priority": "P2",
       "risk": "LOW",
-      "gate": "5A",
-      "completeness": "5/7",
+      "gate": "2",
+      "completeness": "2/7",
       "sprint_key": "tooling_oct1",
       "area": "Control Layer / Tooling",
       "category": "TOOLING",
@@ -28918,16 +28918,21 @@
           "date": "2026-10-05",
           "status": "GATE_5A_IMPLEMENTED",
           "note": "Implementation complete. sheets_sync.py created (290 lines). py_compile exit 0. V-1..V-9 PASS: dry-run validated, --push wrote 766 items across 8 tabs (Open Only deleted), --pull no-op confirmed. Awaiting QA Gate 5b."
+        },
+        {
+          "date": "2026-10-05",
+          "status": "GATE_2_IMPACT_ANALYSIS",
+          "note": "Gate 2 redo: IA v2 written. Tab structure redesigned to 9 tabs. QA/Smoke split into QA'd + Smoke Test. Blocked/Parked \u2192 Blockers (relationship view). Parked/Deferred folds into Closed. No open ODs. Awaiting Gate 3 GO \u2192 Implementation Plan."
         }
       ],
-      "impact_analysis": "impact/CR-406_IMPACT_ANALYSIS.md",
+      "impact_analysis": "impact/CR-406_IMPACT_ANALYSIS_V2.md",
       "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN.md",
       "implemented": "2026-10-05"
     }
   ],
   "meta": {
     "last_updated": "2026-10-05",
-    "last_action": "IMPLEMENTATION: CR-406 GATE_5A_IMPLEMENTED (2026-10-04). memory/reports/sheets_sync.py created. Push 766 items \u2192 8 tabs PASS. Pull no-op PASS. py_compile exit 0. Awaiting QA Gate 5b.",
+    "last_action": "PLANNING: CR-406 GATE_2_IMPACT_ANALYSIS v2 (2026-10-05). 9-tab redesign: QA'd + Smoke Test split, Blockers relationship tab, Parked\u2192Closed. All ODs resolved. Awaiting Gate 3 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
