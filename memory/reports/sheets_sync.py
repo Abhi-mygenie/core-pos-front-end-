@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # CR-406: Google Sheets Two-Way Sync
-# Push: registry.json → Google Sheet (8 tabs)
+# Push: registry.json → Google Sheet (9 tabs)
 # Pull: Sheet All Items edits → registry.json (editable fields only)
 # Auth: OAuth2 with stored refresh token (no service account key)
 #
 # Usage:
 #   python3 sheets_sync.py --dry-run          # validate credentials + sheet, no writes
-#   python3 sheets_sync.py --push             # registry.json → all 8 Sheet tabs
+#   python3 sheets_sync.py --push             # registry.json → all 9 Sheet tabs
 #   python3 sheets_sync.py --pull             # Sheet All Items edits → registry.json
 #   python3 sheets_sync.py --push --pull      # push then pull
 
@@ -46,38 +46,42 @@ COLS = [
 # OD-406-01: fields editable via Sheet pull (owner-locked defaults)
 PULL_EDITABLE = ['status', 'priority', 'notes', 'sprint_key']
 
-# ── Tab definitions (owner-locked 2026-10-04, OD-406-03) ──────────────────
+# ── Tab definitions (owner-locked 2026-10-05, OD-406-03 v2) ──────────────
 TABS = [
     'All Items',
     'Intake',
     'Planning',
     'Implementation',
-    'QA / Smoke',
+    "QA'd",
+    'Smoke Test',
     'Closed',
-    'Blocked / Parked',
+    'Blockers',
     'Summary',
 ]
 
 # ── Status → tab classifier ────────────────────────────────────────────────
 def classify_tab(status):
-    """Map a registry status string to its sheet tab. Returns None for All Items only."""
+    """Map a registry status string to its workflow tab. Returns None = All Items only."""
     s = str(status).upper()
+    # Closed: includes Parked + Deferred (owner decision OD-406-03 v2)
     if any(k in s for k in ['CLOSED', 'OWNER VERIFIED', 'SUBSUMED', 'RETIRED',
-                              'RESOLVED', 'ABSORBED', 'FOLDED', 'FROZEN']):
+                              'RESOLVED', 'ABSORBED', 'FOLDED', 'FROZEN',
+                              'PARKED', 'DEFERRED', 'BACKEND-BLOCKED', 'CRM-BLOCKED']):
         return 'Closed'
     if any(k in s for k in ['GATE_1', 'INTAKE', 'REGISTERED', 'NOT STARTED']):
         return 'Intake'
+    # Planning = Gate 2 + Gate 3 combined (owner decision OD-406-03 v2)
     if any(k in s for k in ['GATE_2', 'GATE_3', 'IMPACT_ANALYSIS', 'PLAN_COMPLETE']):
         return 'Planning'
     if any(k in s for k in ['GATE_4', 'GATE_5A', 'IMPLEMENTED']):
         return 'Implementation'
-    if any(k in s for k in ['GATE_5B', 'QA PASS', 'QA_PASS',
-                              'AWAITING OWNER SMOKE', 'GATE_6']):
-        return 'QA / Smoke'
-    if any(k in s for k in ['BLOCKED', 'PARKED', 'DEFERRED',
-                              'BACKEND-BLOCKED', 'CRM-BLOCKED', 'PARK']):
-        return 'Blocked / Parked'
-    return None   # item appears in All Items only, no status tab
+    # Smoke Test first (catches "QA PASS — AWAITING OWNER SMOKE" correctly)
+    if any(k in s for k in ['AWAITING OWNER SMOKE', 'GATE_6', 'OWNER SMOKE']):
+        return 'Smoke Test'
+    # QA'd: Gate 5B passed, not yet in smoke
+    if any(k in s for k in ['GATE_5B', 'QA PASS', 'QA_PASS']):
+        return "QA'd"
+    return None   # item appears in All Items only
 
 # ── OAuth2 token refresh ───────────────────────────────────────────────────
 def get_access_token():
@@ -128,18 +132,22 @@ def get_sheet_meta(token):
     return r.json()
 
 # ── Tab management ─────────────────────────────────────────────────────────
+# v1 tabs replaced in v2 redesign (OD-406-03 v2)
+_OBSOLETE_TABS = ['Open Only', 'QA / Smoke', 'Blocked / Parked']
+
 def sync_tabs(token, meta, dry_run=False):
-    """Delete 'Open Only' if present; create any missing required tabs."""
+    """Delete obsolete v1 tabs; create any missing v2 required tabs."""
     existing = {s['properties']['title']: s['properties']['sheetId']
                 for s in meta.get('sheets', [])}
     reqs = []
 
-    # Delete Open Only (OD-406-03)
-    if 'Open Only' in existing:
-        reqs.append({'deleteSheet': {'sheetId': existing['Open Only']}})
-        print("  🗑  Queued delete: Open Only")
+    # Delete obsolete v1 tabs if still present
+    for old_tab in _OBSOLETE_TABS:
+        if old_tab in existing:
+            reqs.append({'deleteSheet': {'sheetId': existing[old_tab]}})
+            print(f"  🗑  Queued delete: {old_tab}")
 
-    # Create missing tabs
+    # Create any missing v2 tabs
     for tab in TABS:
         if tab not in existing:
             reqs.append({'addSheet': {'properties': {'title': tab}}})
@@ -169,6 +177,8 @@ def _flatten(v):
 def build_tab_rows(items, tab_name):
     if tab_name == 'Summary':
         return _build_summary(items)
+    if tab_name == 'Blockers':
+        return build_blockers_tab(items)
     subset = items if tab_name == 'All Items' else [
         i for i in items if classify_tab(i.get('status', '')) == tab_name
     ]
@@ -203,6 +213,64 @@ def _range_url(tab_name, cell_range):
     """URL-encode a Sheets A1 range for use in URL path (handles / and spaces)."""
     raw = f"'{tab_name}'!{cell_range}"
     return urllib.parse.quote(raw, safe='')
+
+
+def build_blockers_tab(items):
+    """Build the Blockers relationship tab.
+
+    Shows both sides of every dependency:
+      BLOCKED BY  — item has a blocker or blocked_by field
+      DEPENDS ON  — item has a depends_on list of IDs
+      BLOCKING    — item has a blocks list of IDs
+
+    The same item can appear in multiple rows (once per relationship).
+    Items also appear in their workflow tab — no exclusion here.
+    """
+    BLOCKER_COLS = [
+        'id', 'type', 'title', 'status', 'sprint_key',
+        'relationship', 'related_id', 'related_context',
+    ]
+    rows = [BLOCKER_COLS]
+
+    for item in items:
+        i_id     = _flatten(item.get('id', ''))
+        i_type   = _flatten(item.get('type', ''))
+        i_title  = _flatten(item.get('title', ''))
+        i_status = _flatten(item.get('status', ''))
+        i_sprint = _flatten(item.get('sprint_key', ''))
+
+        def _row(rel, rel_id, ctx):
+            return [i_id, i_type, i_title, i_status, i_sprint, rel, rel_id, ctx]
+
+        # 1. blocker field (free-text) → BLOCKED BY
+        blocker = item.get('blocker', '')
+        if blocker and str(blocker).strip().upper() not in ('', 'NONE', '[]'):
+            rows.append(_row('BLOCKED BY', '', str(blocker)[:200]))
+
+        # 2. blocked_by field (structured ID) → BLOCKED BY
+        blocked_by = item.get('blocked_by', '')
+        if blocked_by and str(blocked_by).strip():
+            rows.append(_row('BLOCKED BY', str(blocked_by), ''))
+
+        # 3. depends_on (list or comma-string of IDs) → DEPENDS ON
+        depends = item.get('depends_on', [])
+        if isinstance(depends, str):
+            depends = [d.strip() for d in depends.split(',') if d.strip()]
+        for dep_id in (depends if isinstance(depends, list) else []):
+            dep_id = str(dep_id).strip()
+            if dep_id:
+                rows.append(_row('DEPENDS ON', dep_id, ''))
+
+        # 4. blocks field (list of IDs) → BLOCKING
+        blocks = item.get('blocks', [])
+        if isinstance(blocks, str):
+            blocks = [b.strip() for b in blocks.split(',') if b.strip()]
+        for blockee_id in (blocks if isinstance(blocks, list) else []):
+            blockee_id = str(blockee_id).strip()
+            if blockee_id:
+                rows.append(_row('BLOCKING', blockee_id, ''))
+
+    return rows
 
 # ── Tab writer ─────────────────────────────────────────────────────────────
 def write_tab(token, tab_name, rows, dry_run=False):
@@ -266,7 +334,7 @@ def cmd_push(dry_run=False):
         write_tab(token, tab, rows, dry_run)
 
     label = "(dry-run) " if dry_run else ""
-    print(f"\n  PUSH {label}COMPLETE. {len(items)} items → 8 tabs.")
+    print(f"\n  PUSH {label}COMPLETE. {len(items)} items → 9 tabs.")
 
 # ── PULL command ───────────────────────────────────────────────────────────
 def cmd_pull(dry_run=False):
