@@ -28896,13 +28896,18 @@
           "type": "intake"
         }
       ],
-      "notes": "OAuth2 credentials confirmed working (2026-10-04). Sheet ID confirmed accessible. Push: registry.json \u2192 All Items tab. Pull: Sheet edits \u2192 registry.json for status/priority/notes/sprint_key fields. Standalone Python script only \u2014 zero app code impact.",
+      "notes": "OAuth2 credentials confirmed working (2026-10-04). Sheet ID confirmed accessible. Push: registry.json \u2192 8 tabs (All Items / Intake / Planning / Implementation / QA-Smoke / Closed / Blocked-Parked / Summary). Pull: Sheet edits \u2192 registry.json for status/priority/notes/sprint_key fields. Open Only tab DROPPED (owner decision 2026-10-04). Planning + Implementation split into separate tabs (owner decision 2026-10-04). Standalone Python script only \u2014 zero app code impact.",
       "created_at": "2026-10-05",
       "status_history": [
         {
           "date": "2026-10-05",
           "status": "GATE_1_INTAKE",
           "note": "Intake registered. OAuth2 + sheet connection already validated. Zero frontend blast radius."
+        },
+        {
+          "date": "2026-10-05",
+          "status": "GATE_1_INTAKE",
+          "note": "Owner decisions locked: (1) Drop Open Only tab. (2) Split Planning + Implementation into separate tabs. 8-tab structure confirmed."
         }
       ]
     }

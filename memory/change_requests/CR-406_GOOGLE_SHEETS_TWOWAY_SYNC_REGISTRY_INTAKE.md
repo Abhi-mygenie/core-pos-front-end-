@@ -26,10 +26,23 @@ This replaces the current manual workflow: run `registry_export.py` → download
 ## 3. Expected Behaviour
 
 ### Push (registry.json → Google Sheet)
-- Export all 765+ items from `registry.json` to the Google Sheet (`All Items` tab)
+- Export all 766+ items from `registry.json` to the Google Sheet
 - Columns match existing `registry_export.py` format (id, type, title, status, priority, severity, sprint_key, area, category, risk, phase, current_gate, blast_radius, files, notes, blocked_by, depends_on, intake_doc, qa_report, qa_result)
 - Overwrite entire sheet on push (header row + data rows)
-- Preserve existing tabs: `All Items`, `Open Only`, `Summary`
+- **8 tabs (owner-locked 2026-10-04):**
+
+| Tab | ~Items | Filter Logic |
+|---|---|---|
+| All Items | 766 | No filter — all CRs + BUGs |
+| Intake | 92 | Gate 1 / INTAKE / REGISTERED / NOT STARTED |
+| Planning | 1 | Gate 2–3 / IMPACT_ANALYSIS / PLAN_COMPLETE |
+| Implementation | 63 | Gate 4–5A / IMPLEMENTED |
+| QA / Smoke | 287 | Gate 5B / QA PASS / AWAITING OWNER SMOKE |
+| Closed | 274 | CLOSED / OWNER VERIFIED / SUBSUMED / RETIRED |
+| Blocked / Parked | 15 | BACKEND-BLOCKED / PARKED / DEFERRED |
+| Summary | — | Pivot stats: by type, sprint, area, status |
+
+- `Open Only` tab **dropped** (owner decision 2026-10-04 — covered by status tabs)
 
 ### Pull (Google Sheet → registry.json)
 - Read `All Items` tab from Sheet
@@ -93,12 +106,12 @@ This replaces the current manual workflow: run `registry_export.py` → download
 
 ## 8. Open Decisions (ODs)
 
-| # | Question | Default if not answered |
-|---|---|---|
-| OD-406-01 | Pull direction: which fields should be owner-editable from Sheet? | status, priority, notes, sprint_key |
-| OD-406-02 | On conflict (registry.json newer than Sheet row): who wins? | registry.json wins (push first, pull second) |
-| OD-406-03 | Should the script update `Open Only` and `Summary` tabs on push, or just `All Items`? | All 3 tabs |
-| OD-406-04 | Should CR_REGISTRY.md and BUG_TRACKER.md be auto-updated on pull, or registry.json only? | registry.json only |
+| # | Question | Decision | Locked |
+|---|---|---|---|
+| OD-406-01 | Pull: which fields owner-editable from Sheet? | `status`, `priority`, `notes`, `sprint_key` | OPEN |
+| OD-406-02 | Conflict resolution: registry.json vs Sheet — who wins? | registry.json wins (push first, pull second) | OPEN |
+| OD-406-03 | Tab structure — drop Open Only, split Planning + Implementation? | **DROP Open Only. SPLIT Planning + Implementation. 8 tabs total.** | **LOCKED 2026-10-04** |
+| OD-406-04 | Auto-update CR_REGISTRY.md + BUG_TRACKER.md on pull, or registry.json only? | registry.json only | OPEN |
 
 ---
 
