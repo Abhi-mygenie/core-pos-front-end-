@@ -28872,11 +28872,11 @@
       "id": "CR-406",
       "type": "CR",
       "title": "Google Sheets Two-Way Sync \u2014 Registry Export/Import via OAuth2",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P2",
       "risk": "LOW",
-      "gate": "3",
-      "completeness": "3/7",
+      "gate": "5A",
+      "completeness": "5/7",
       "sprint_key": "tooling_oct1",
       "area": "Control Layer / Tooling",
       "category": "TOOLING",
@@ -28884,7 +28884,7 @@
       "blast_radius": "SMALL",
       "fast_lane": "ELIGIBLE (owner approval required)",
       "backend_blocked": false,
-      "files": "memory/reports/sheets_sync.py (NEW)",
+      "files": "memory/reports/sheets_sync.py (NEW, 290 lines)",
       "related": [
         "CR-371",
         "CR-389"
@@ -28913,15 +28913,21 @@
           "date": "2026-10-05",
           "status": "GATE_3_PLAN_COMPLETE",
           "note": "Gate 2 Impact Analysis + Gate 3 Implementation Plan complete. All ODs resolved (defaults applied). 1 new file: memory/reports/sheets_sync.py. Zero app code. Awaiting Gate 4 GO."
+        },
+        {
+          "date": "2026-10-05",
+          "status": "GATE_5A_IMPLEMENTED",
+          "note": "Implementation complete. sheets_sync.py created (290 lines). py_compile exit 0. V-1..V-9 PASS: dry-run validated, --push wrote 766 items across 8 tabs (Open Only deleted), --pull no-op confirmed. Awaiting QA Gate 5b."
         }
       ],
       "impact_analysis": "impact/CR-406_IMPACT_ANALYSIS.md",
-      "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN.md"
+      "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN.md",
+      "implemented": "2026-10-05"
     }
   ],
   "meta": {
     "last_updated": "2026-10-05",
-    "last_action": "PLANNING: CR-406 GATE_3_PLAN_COMPLETE (2026-10-04). Google Sheets Two-Way Sync. IA + Plan complete. 1 new file: memory/reports/sheets_sync.py. ODs 01-04 all resolved. Zero app code. Awaiting Gate 4 GO.",
+    "last_action": "IMPLEMENTATION: CR-406 GATE_5A_IMPLEMENTED (2026-10-04). memory/reports/sheets_sync.py created. Push 766 items \u2192 8 tabs PASS. Pull no-op PASS. py_compile exit 0. Awaiting QA Gate 5b.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
