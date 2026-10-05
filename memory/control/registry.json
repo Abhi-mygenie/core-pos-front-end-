@@ -28872,11 +28872,11 @@
       "id": "CR-406",
       "type": "CR",
       "title": "Google Sheets Two-Way Sync \u2014 Registry Export/Import via OAuth2",
-      "status": "GATE_2_IMPACT_ANALYSIS",
+      "status": "GATE_3_PLAN_COMPLETE",
       "priority": "P2",
       "risk": "LOW",
-      "gate": "2",
-      "completeness": "2/7",
+      "gate": "3",
+      "completeness": "3/7",
       "sprint_key": "tooling_oct1",
       "area": "Control Layer / Tooling",
       "category": "TOOLING",
@@ -28923,16 +28923,21 @@
           "date": "2026-10-05",
           "status": "GATE_2_IMPACT_ANALYSIS",
           "note": "Gate 2 redo: IA v2 written. Tab structure redesigned to 9 tabs. QA/Smoke split into QA'd + Smoke Test. Blocked/Parked \u2192 Blockers (relationship view). Parked/Deferred folds into Closed. No open ODs. Awaiting Gate 3 GO \u2192 Implementation Plan."
+        },
+        {
+          "date": "2026-10-05",
+          "status": "GATE_3_PLAN_COMPLETE",
+          "note": "Gate 3 v2 plan written. 8 targeted edits (E-1..E-8) on sheets_sync.py. 9-tab structure: QA'd + Smoke Test + Blockers (relationship view). 12-check verification matrix. No open decisions. Awaiting Gate 4 GO."
         }
       ],
       "impact_analysis": "impact/CR-406_IMPACT_ANALYSIS_V2.md",
-      "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN.md",
+      "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN_V2.md",
       "implemented": "2026-10-05"
     }
   ],
   "meta": {
     "last_updated": "2026-10-05",
-    "last_action": "PLANNING: CR-406 GATE_2_IMPACT_ANALYSIS v2 (2026-10-05). 9-tab redesign: QA'd + Smoke Test split, Blockers relationship tab, Parked\u2192Closed. All ODs resolved. Awaiting Gate 3 GO.",
+    "last_action": "PLANNING: CR-406 GATE_3_PLAN_COMPLETE v2 (2026-10-05). 8 edits on sheets_sync.py. 9 tabs. Blockers relationship tab. Awaiting Gate 4 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
