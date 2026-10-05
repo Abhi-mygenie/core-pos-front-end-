@@ -28872,11 +28872,11 @@
       "id": "CR-406",
       "type": "CR",
       "title": "Google Sheets Two-Way Sync \u2014 Registry Export/Import via OAuth2",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "priority": "P2",
       "risk": "LOW",
-      "gate": "1",
-      "completeness": "1/7",
+      "gate": "3",
+      "completeness": "3/7",
       "sprint_key": "tooling_oct1",
       "area": "Control Layer / Tooling",
       "category": "TOOLING",
@@ -28908,13 +28908,20 @@
           "date": "2026-10-05",
           "status": "GATE_1_INTAKE",
           "note": "Owner decisions locked: (1) Drop Open Only tab. (2) Split Planning + Implementation into separate tabs. 8-tab structure confirmed."
+        },
+        {
+          "date": "2026-10-05",
+          "status": "GATE_3_PLAN_COMPLETE",
+          "note": "Gate 2 Impact Analysis + Gate 3 Implementation Plan complete. All ODs resolved (defaults applied). 1 new file: memory/reports/sheets_sync.py. Zero app code. Awaiting Gate 4 GO."
         }
-      ]
+      ],
+      "impact_analysis": "impact/CR-406_IMPACT_ANALYSIS.md",
+      "implementation_plan": "plans/CR-406_IMPLEMENTATION_PLAN.md"
     }
   ],
   "meta": {
     "last_updated": "2026-10-05",
-    "last_action": "INTAKE: CR-406 registered (P2/LOW, sprint tooling_oct1, Gate 1). Google Sheets Two-Way Sync. OAuth2 validated. Sheet confirmed. Zero app code impact. Registry now 766 items.",
+    "last_action": "PLANNING: CR-406 GATE_3_PLAN_COMPLETE (2026-10-04). Google Sheets Two-Way Sync. IA + Plan complete. 1 new file: memory/reports/sheets_sync.py. ODs 01-04 all resolved. Zero app code. Awaiting Gate 4 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
