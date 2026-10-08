@@ -711,3 +711,4 @@ OD-401-01..04 · OD-400-01..02 · OD-NEW-01..03
 - Next: Gate 6 Owner Smoke for CR-376 + FU-A + FU-B (SMOKE FACILITATOR). Suggest smoking Normal↔Premium on preprod + a TakeAway/Walk-in order (R13) + FU-A live cross-menu customer if available.
 
 - 2026-10-08: User updated frontend/.env with real values (preprod API, socket, Firebase, CRM keys, Maps). Cleared webpack cache, rebuilt via supervisor restart. Compiles with 1 ESLint warning; login page renders at preview URL. Phase 2 (env values) DONE; Phase 3 (login + E2E verification) pending user test.
+- 2026-10-08: Removed duplicate REACT_APP_BACKEND_URL line from frontend/.env; frontend restarted, compiles successfully, HTTP 200.
