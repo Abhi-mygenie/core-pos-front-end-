@@ -551,7 +551,7 @@ def diff_sheet(sheet_all, snapshot_rows, existing_keys):
             elif col in DASHBOARD_COLS and new in ('P0', 'P1', 'P2', 'P3'):
                 decision, note = 'APPLIED', 'SOURCE=DASHBOARD'
             else:
-                decision, note = 'REJECTED', 'column not accepted from sheet (contract §5.5); reverted'
+                decision, note = 'REJECTED', 'column not editable in Phase 1'
             new_rows.append([now, item_id, col, old, new, decision,
                              now if decision != 'PENDING' else '', note])
             existing_keys.add((item_id, col, new))
