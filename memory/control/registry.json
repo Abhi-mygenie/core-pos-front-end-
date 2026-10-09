@@ -29559,7 +29559,7 @@
         "memory/reports/sheets_sync.py",
         "memory/control/registry.json"
       ],
-      "notes": "Rewrites sheets_sync.py to comply with shared contract v1.4: 22 columns, 10 tabs (renamed), Status 8-value enum classifier, Change Log diff mechanism, disable direct pull-back (REGISTRAR role). One-off registry cleanup: type casing (~55 rows), timestamp fields, category cleanup, blockers reconciliation. Supersedes CR-406 push behavior. Blocks CR-417 (Session Log tab) until Gate 5A.",
+      "notes": "ALL ODs LOCKED 2026-10-09. OD-418-01:A cleanup same step as push. OD-418-02:C --pull = read-only diff (no writes). OD-418-03: SHIPPED/VERIFIED->IMPLEMENTED, BACKEND_BLOCKED->stage+Blocked on, ambiguous->blank. OD-418-04: code markers skipped (no on first push). OD-418-05: CR-417 deferred until Gate 5A. Supersedes CR-406 push. Blocks CR-417. 22-column/10-tab contract v1.4 compliance + REGISTRAR role + Change Log.",
       "blocked_by": "",
       "depends_on": [
         "CR-406"
@@ -29577,7 +29577,13 @@
         "CR-389"
       ],
       "fast_lane": false,
-      "source": "brief-pos-agent.md (FROZEN 2026-10-09) + registry-sheet-contract-v1.4.md (FROZEN 2026-10-07)"
+      "source": "brief-pos-agent.md (FROZEN 2026-10-09) + registry-sheet-contract-v1.4.md (FROZEN 2026-10-07)",
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "event": "INTAKE: CR-418 registered. All 5 ODs locked same session. Ready for Gate 2 GO."
+        }
+      ]
     }
   ],
   "meta": {

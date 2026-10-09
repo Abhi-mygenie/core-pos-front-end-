@@ -5,11 +5,21 @@
 **Date:** 2026-10-09
 **Sprint:** oct_release
 **Gate:** 1 — INTAKE
-**Status:** GATE_1_INTAKE
+**Status:** GATE_1_INTAKE — ALL ODs LOCKED (2026-10-09)
 **Registered by:** E1 (Emergent Agent) — owner-directed
 **Source documents:**
 - Brief: `memory/design_briefs/brief-pos-agent.md` (FROZEN 2026-10-09)
 - Contract: `memory/reports/registry-sheet-contract-v1.4.md` (FROZEN 2026-10-07)
+
+## Open Decisions — ALL LOCKED
+
+| # | Question | Decision | Locked |
+|---|---|---|---|
+| OD-418-01 | Cleanup timing? | **A — Same step as `--push`** (dry-run printed first, then live in same command) | ✅ LOCKED |
+| OD-418-02 | `--pull` behaviour after disable? | **C — Read-only diff** (`--pull` reads sheet, prints pending Change Log rows, writes nothing) | ✅ LOCKED |
+| OD-418-03 | Unrouted status strings? | **Best-guess + blank remainder** — SHIPPED/VERIFIED/CARRY-FORWARD → IMPLEMENTED; BACKEND_BLOCKED → real stage + Blocked on = BACKEND; genuinely ambiguous → blank (Unrouted) | ✅ LOCKED |
+| OD-418-04 | Code markers scan? | **Skip** — write `no` for all items on first push. Future CR can add scan. | ✅ LOCKED |
+| OD-418-05 | CR-417 Session Log tab? | **Defer** — CR-418 delivers exactly 10 tabs per contract. CR-417 lands after Gate 5A. | ✅ LOCKED |
 
 ---
 
@@ -96,46 +106,72 @@ Old tabs deleted on push: "Open Only", "QA / Smoke", "Blocked / Parked", "QA'd",
 | 21 | Notes | `notes` | Direct. Append "PRIORITY DEFAULTED" if col 7 was defaulted |
 | 22 | Money path | computed from area/title/files | `YES` if area in {Payments, PMS Folio, Smart Purchase} or title/files mention billing/invoice/folio/checkout; `no` otherwise |
 
-### 3.3 Status classifier (8 enum values, contract §4)
+### 3.3 Status classifier — LOCKED (OD-418-03)
+
+Full best-guess mapping before falling back to blank (Unrouted):
 
 ```python
 def classify_status(raw):
     s = str(raw).upper()
-    if any(k in s for k in ['DUPLICATE','DUPE']):                                  return 'DUPLICATE'
-    if any(k in s for k in ['PARKED','DEFERRED']):                                 return 'PARKED'
-    if any(k in s for k in ['CLOSED','OWNER VERIFIED','SUBSUMED','RETIRED',
-                              'RESOLVED','ABSORBED','FOLDED','FROZEN','SHIPPED',
-                              'VERIFIED']):                                          return 'CLOSED'
-    if any(k in s for k in ['AWAITING OWNER SMOKE','GATE_6','OWNER SMOKE',
-                              'AWAITING SMOKE']):                                   return 'SMOKE'
-    if any(k in s for k in ['GATE_5B','QA PASS','QA_PASS','GATE 5B']):             return 'QA'
-    if any(k in s for k in ['GATE_5A','GATE_4','GATE 5A','GATE 4',
-                              'IMPLEMENTED','GATE_5A_IMPLEMENTED',
-                              'IN PROGRESS','IN_PROGRESS']):                        return 'IMPLEMENTED'
-    if any(k in s for k in ['GATE_2','GATE_3','GATE 2','GATE 3',
-                              'IMPACT_ANALYSIS','PLAN_COMPLETE',
-                              'GATE_2_READY','GATE_3_PLAN_COMPLETE']):              return 'PLANNING'
-    if any(k in s for k in ['GATE_1','INTAKE','REGISTERED','NOT STARTED',
-                              'GATE 1','GATE_1_INTAKE']):                           return 'INTAKE'
+    # Explicit duplicates first
+    if any(k in s for k in ['DUPLICATE', 'DUPE']):
+        return 'DUPLICATE'
+    # Parked — deliberate owner decision only
+    if any(k in s for k in ['PARKED', 'DEFERRED']):
+        return 'PARKED'
+    # Closed / fully done
+    if any(k in s for k in ['CLOSED', 'OWNER VERIFIED', 'SUBSUMED', 'RETIRED',
+                              'RESOLVED', 'ABSORBED', 'FOLDED', 'FROZEN']):
+        return 'CLOSED'
+    # Shipped/Verified → IMPLEMENTED (OD-418-03 owner decision)
+    if any(k in s for k in ['SHIPPED', 'VERIFIED', 'CARRY-FORWARD',
+                              'RE-INVESTIGATE', 'NEEDS_MORE_DATA',
+                              'INVESTIGATION COMPLETE']):
+        return 'IMPLEMENTED'
+    # Awaiting owner smoke test
+    if any(k in s for k in ['AWAITING OWNER SMOKE', 'GATE_6', 'OWNER SMOKE',
+                              'AWAITING SMOKE']):
+        return 'SMOKE'
+    # QA passed
+    if any(k in s for k in ['GATE_5B', 'QA PASS', 'QA_PASS', 'GATE 5B']):
+        return 'QA'
+    # Implemented / in progress
+    if any(k in s for k in ['GATE_5A', 'GATE_4', 'GATE 5A', 'GATE 4',
+                              'IMPLEMENTED', 'GATE_5A_IMPLEMENTED',
+                              'IN PROGRESS', 'IN_PROGRESS']):
+        return 'IMPLEMENTED'
+    # Planning
+    if any(k in s for k in ['GATE_2', 'GATE_3', 'GATE 2', 'GATE 3',
+                              'IMPACT_ANALYSIS', 'PLAN_COMPLETE',
+                              'GATE_2_READY', 'GATE_3_PLAN_COMPLETE']):
+        return 'PLANNING'
+    # Intake
+    if any(k in s for k in ['GATE_1', 'INTAKE', 'REGISTERED', 'NOT STARTED',
+                              'GATE 1', 'GATE_1_INTAKE']):
+        return 'INTAKE'
+    # Backend/CRM blocked → keep blank Status; Blocked on set separately
+    # (BACKEND_BLOCKED is not a Status per contract §4)
     return ''   # blank = Unrouted (back-catalogue interim, contract §4)
 ```
 
-**Current distribution (pre-push estimate from 770-item registry):**
+**Blocked on derivation for BACKEND/CRM-blocked items (OD-418-03):**
+- Status contains `BACKEND-BLOCKED` or `BACKEND_BLOCKED` → `Blocked on = BACKEND`, Status derived from rest of string (or INTAKE if unclear)
+- Status contains `CRM-BLOCKED` → `Blocked on = CRM`, Status from rest
+
+**Pre-push distribution estimate (771 items with new classifier):**
 
 | Status | Count |
 |---|---|
 | CLOSED | ~259 |
 | SMOKE | ~170 |
 | QA | ~156 |
+| IMPLEMENTED | ~64 (was 24 + ~40 SHIPPED/VERIFIED mapped here) |
 | INTAKE | ~86 |
-| UNROUTED (blank) | ~40 |
 | PARKED | ~28 |
-| IMPLEMENTED | ~24 |
 | PLANNING | ~6 |
 | DUPLICATE | ~0 |
-| **Total** | **770** |
-
-Target: zero unrouted. Unrouted count reported in run summary.
+| Unrouted (blank) | ~2 (genuinely ambiguous) |
+| **Total** | **771** |
 
 ### 3.4 POS Area list (normalisation map)
 
@@ -183,13 +219,28 @@ Derivation logic:
 
 ## 4. Track B — REGISTRAR role + Change Log (disable pull-back)
 
-### 4.1 Disable `--pull` mode
+### 4.1 Disable `--pull` write-back — replace with read-only diff (OD-418-02: C)
 
-The current `cmd_pull()` function writes sheet edits (status, priority, notes, sprint_key)
-directly to `registry.json`. **This is disabled.** New behavior:
+The current `cmd_pull()` writes sheet edits directly to `registry.json`. **This is replaced.**
 
-- `--pull` flag is removed (or prints deprecation message: "Pull-back disabled. Use Change Log approval flow.")
-- Sheet → registry only via Change Log with owner approval
+New `--pull` behaviour (read-only diff, no writes):
+```
+python3 sheets_sync.py --pull
+
+── READ-ONLY DIFF: Sheet → registry ─────────────────────
+  Reading All Items tab from sheet...
+  Comparing 771 rows against registry.json...
+
+  Pending Change Log rows (3):
+    CR-405  status:  'GATE_5B_QA_PASS' → 'CLOSED'          [PENDING]
+    BUG-412 registered: '' → '2026-09-15'                   [PENDING]
+    CR-380  closed: '' → '2026-09-20'                       [PENDING]
+
+  No writes made. Run --push to log these to the Change Log tab.
+──────────────────────────────────────────────────────────
+```
+
+`--pull` never writes to `registry.json` or the sheet. It only prints what it finds.
 
 ### 4.2 Change Log tab (contract §5)
 
@@ -363,17 +414,17 @@ Category field with lifecycle values: present
 
 ---
 
-## 12. Open Decisions
+## 12. Open Decisions — ALL LOCKED (2026-10-09)
 
-| # | Question | Recommended Default | Status |
+| # | Question | Decision | Source |
 |---|---|---|---|
-| OD-418-01 | Run Track C cleanup before first push, or as a separate session? | Run in same step as first push (dry-run first, live on owner GO) | **PROPOSED** |
-| OD-418-02 | Should `--pull` flag be removed entirely or print a deprecation message? | Print deprecation: "Pull disabled — use Change Log" | **PROPOSED** |
-| OD-418-03 | Unrouted items (~40): leave blank Status or default to INTAKE? | Leave blank (contract back-catalogue interim rule) | **LOCKED** (contract §4) |
-| OD-418-04 | Code markers scan: scan full codebase or `frontend/src/` only? | `frontend/src/` only (that's where all markers live) | **PROPOSED** |
-| OD-418-05 | CR-417 (Session Log tab): add as tab 11 after this CR or wait? | Defer — CR-417 lands after CR-418 Gate 5A | **PROPOSED** |
+| OD-418-01 | Cleanup timing | **A — same step as `--push`** (dry-run output first, then live) | Owner |
+| OD-418-02 | `--pull` after disable | **C — read-only diff** (prints pending Change Log rows, writes nothing) | Owner |
+| OD-418-03 | Unrouted status strings | **Best-guess + blank** (SHIPPED/VERIFIED/CARRY-FORWARD → IMPLEMENTED; BACKEND_BLOCKED → stage + Blocked on; ambiguous → blank) | Owner |
+| OD-418-04 | Code markers scan | **Skip** — write `no` for all items on first push | Owner |
+| OD-418-05 | CR-417 Session Log | **Defer** — CR-418 = exactly 10 tabs per contract; CR-417 after Gate 5A | Owner |
 
-> All ODs have recommended defaults. Owner can GO without answering; defaults apply.
+No open decisions remain. Ready for Gate 2 GO.
 
 ---
 
