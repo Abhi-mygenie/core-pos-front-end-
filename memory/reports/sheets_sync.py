@@ -225,8 +225,11 @@ def _flatten(v):
         return str(v)
     return str(v) if v is not None else ''
 
+_TYPE_MAP = {'INVESTIGATION': 'INV', 'BUGFIX': 'BUG', 'CHANGE REQUEST': 'CR'}
+
 def _build_type(item):
     t = str(item.get('type', '')).upper().strip()
+    t = _TYPE_MAP.get(t, t)
     if not t:
         id_ = str(item.get('id', ''))
         if id_.startswith('CR-'):    t = 'CR'
@@ -251,6 +254,8 @@ def _build_priority(item):
 
 def _build_notes(item):
     n = _flatten(item.get('notes', ''))
+    if item.get('_date_approx'):
+        n = (f"DATE APPROXIMATED ({', '.join(item['_date_approx'])}: month only → day 01). " + n).strip()
     if item.get('_priority_defaulted'):
         n = ('PRIORITY DEFAULTED. ' + n).strip()
     return n
@@ -488,14 +493,33 @@ def _backfill_dates(item):
         + _dates(item.get('status'))
     item['last_updated'] = max(pool) if pool else item.get('registered', '')
 
+def _clean_date_fields(item):
+    """Force registered / last_updated / closed to plain YYYY-MM-DD (contract §3)."""
+    for f in ('registered', 'last_updated', 'closed'):
+        v = str(item.get(f) or '').strip()
+        if not v or re.fullmatch(r'\d{4}-\d{2}-\d{2}', v):
+            continue
+        m = _DATE_RE.search(v)
+        if m:
+            item[f] = m.group(0)
+        else:
+            mm = re.search(r'\b(\d{4}-\d{2})\b', v)
+            item[f] = f'{mm.group(1)}-01' if mm else ''
+            if mm and f not in item.setdefault('_date_approx', []):
+                item['_date_approx'].append(f)
+        item.setdefault('_date_raw', {})[f] = v   # original text kept off-sheet
+
 def prepare_registry(registry, snapshot_hashes):
     """Schema upkeep: one-off backfill per item, then bump last_updated on content change."""
     for item in registry['items']:
         t = item.get('type', '')
         if t and t != t.upper():
             item['type'] = t.upper()
+        if item.get('type') in _TYPE_MAP:
+            item['type'] = _TYPE_MAP[item['type']]
         for f in ('registered', 'last_updated', 'closed'):
             item.setdefault(f, '')
+        _clean_date_fields(item)
         if not item.get('_dates_v2'):
             _backfill_dates(item)
             item['_dates_v2'] = True

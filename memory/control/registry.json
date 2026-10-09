@@ -23368,7 +23368,7 @@
     },
     {
       "id": "INV-ROOM-001",
-      "type": "INVESTIGATION",
+      "type": "INV",
       "title": "Room Module: Partial Payment Mid-Stay + Food-to-Table Transfer",
       "area": "Room Module \u2014 Checkout / Transfer",
       "priority": "P1",
@@ -23394,14 +23394,14 @@
         "OQ-4: room balance auto-reduce on item move?"
       ],
       "registered": "2026-08-17",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
       "_dates_v2": true
     },
     {
       "id": "INV-OE-001",
-      "type": "INVESTIGATION",
+      "type": "INV",
       "title": "Order Entry: Default Walk-In + Pre-Place Table Switch Cart Reset",
       "area": "Order Entry \u2014 DashboardPage / OrderEntry",
       "priority": "P1",
@@ -23421,7 +23421,7 @@
       ],
       "fast_lane_eligible": true,
       "registered": "2026-08-17",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
       "_dates_v2": true
@@ -23560,7 +23560,7 @@
     },
     {
       "id": "INV-PG-001",
-      "type": "INVESTIGATION",
+      "type": "INV",
       "title": "PG Link: OrderEntry Closes After Send + No Payment Link in Daily Reports",
       "area": "CollectPaymentPanel / OrderEntry / AllOrdersReportPage",
       "priority": "P1",
@@ -23582,7 +23582,7 @@
         "OQ-1..OQ-4 documented in report"
       ],
       "registered": "2026-08-17",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
       "_dates_v2": true
@@ -23660,7 +23660,7 @@
     },
     {
       "id": "INV-GST-001",
-      "type": "INVESTIGATION",
+      "type": "INV",
       "title": "GST Disable Not Working + Full Settings Gate Audit",
       "area": "CollectPaymentPanel / RestaurantSettingsPage / ProfileTransform",
       "priority": "P0",
@@ -23694,7 +23694,7 @@
         "BUG-338 (room GST not gated)"
       ],
       "registered": "2026-08-17",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
       "_dates_v2": true
@@ -23830,7 +23830,7 @@
     },
     {
       "id": "INV-BACKEND-001",
-      "type": "INVESTIGATION",
+      "type": "INV",
       "title": "Aggregator Socket + Razorpay Refund + Station Config + Food Court Endpoint",
       "area": "Aggregator / Payment / Printer Config / Food Court / Restaurant Settings",
       "priority": "P1",
@@ -23854,7 +23854,7 @@
         "CR-161 update: station_gst field gated by food_court type"
       ],
       "registered": "2026-08-17",
-      "last_updated": "2026-08-17",
+      "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
       "_dates_v2": true
@@ -30903,11 +30903,14 @@
         "BUG-449"
       ],
       "qa_severity": "MAJOR (QA)",
-      "registered": "2026-09-24 (registered retroactively by the P5 closure agent \u2014 item existed in BUG_TRACKER.md since 2026-09-22; registry item was missing)",
+      "registered": "2026-09-24",
       "last_updated": "2026-09-24",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (registered retroactively by the P5 closure agent \u2014 item existed in BUG_TRACKER.md since 2026-09-22; registry item was missing)"
+      }
     },
     {
       "id": "BUG-449",
@@ -30931,11 +30934,14 @@
         "FU-385-C"
       ],
       "qa_severity": "MINOR",
-      "registered": "2026-09-24 (registered retroactively by the P5 closure agent \u2014 item existed in BUG_TRACKER.md since 2026-09-22; registry item was missing)",
+      "registered": "2026-09-24",
       "last_updated": "2026-09-24",
       "closed": "2026-09-24",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (registered retroactively by the P5 closure agent \u2014 item existed in BUG_TRACKER.md since 2026-09-22; registry item was missing)"
+      }
     },
     {
       "id": "BUG-451",
@@ -30972,7 +30978,7 @@
       "gate": 5,
       "gate_2_status": "CLOSED 2026-09-24 (owner)",
       "gate_3_status": "CLOSED 2026-09-24 (owner \"close gate 3\") \u2014 Gate 4 code gate OPEN; awaiting diff preview + owner \"Gate 4 GO\" (Wave 1 A+B+C first)",
-      "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)",
+      "registered": "2026-09-24",
       "completeness": "3/7",
       "gate_3_strategy": {
         "order": "CR-386 \u2192 BUG-453 \u2192 BUG-451 \u2192 BUG-452 (owner \"ok\" 2026-09-24)",
@@ -31006,7 +31012,10 @@
       "last_updated": "2026-09-24",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)"
+      }
     },
     {
       "id": "BUG-452",
@@ -31045,7 +31054,7 @@
       "gate": 5,
       "gate_2_status": "CLOSED 2026-09-24 (owner)",
       "gate_3_status": "CLOSED 2026-09-24 (owner \"close gate 3\") \u2014 Gate 4 code gate OPEN; awaiting diff preview + owner \"Gate 4 GO\" (Wave 1 A+B+C first)",
-      "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)",
+      "registered": "2026-09-24",
       "completeness": "3/7",
       "gate_3_strategy": {
         "order": "CR-386 \u2192 BUG-453 \u2192 BUG-451 \u2192 BUG-452 (owner \"ok\" 2026-09-24)",
@@ -31085,7 +31094,10 @@
       },
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)"
+      }
     },
     {
       "id": "BUG-453",
@@ -31124,7 +31136,7 @@
       "gate": 5,
       "gate_2_status": "CLOSED 2026-09-24 (owner)",
       "gate_3_status": "CLOSED 2026-09-24 (owner \"close gate 3\") \u2014 Gate 4 code gate OPEN; awaiting diff preview + owner \"Gate 4 GO\" (Wave 1 A+B+C first)",
-      "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)",
+      "registered": "2026-09-24",
       "completeness": "3/7",
       "gate_3_strategy": {
         "order": "CR-386 \u2192 BUG-453 \u2192 BUG-451 \u2192 BUG-452 (owner \"ok\" 2026-09-24)",
@@ -31162,7 +31174,10 @@
       "last_updated": "2026-09-24",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)"
+      }
     },
     {
       "id": "CR-386",
@@ -31198,7 +31213,7 @@
       "gate": 5,
       "gate_2_status": "CLOSED 2026-09-24 (owner)",
       "gate_3_status": "CLOSED 2026-09-24 (owner \"close gate 3\") \u2014 Gate 4 code gate OPEN; awaiting diff preview + owner \"Gate 4 GO\" (Wave 1 A+B+C first)",
-      "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)",
+      "registered": "2026-09-24",
       "completeness": "3/7",
       "gate_3_strategy": {
         "order": "CR-386 \u2192 BUG-453 \u2192 BUG-451 \u2192 BUG-452 (owner \"ok\" 2026-09-24)",
@@ -31232,7 +31247,10 @@
       "last_updated": "2026-09-24",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_raw": {
+        "registered": "2026-09-24 (re-registered by the Gate-2-close agent: the 2026-09-23 handover recorded these 4 items in registry.json at 710 items, but the remote memory/ synced on 2026-09-24 carries 708 items without them \u2014 registry drift, docs/evidence intact)"
+      }
     },
     {
       "id": "BUG-454",
@@ -32128,11 +32146,19 @@
           "event": "Sprint reassigned sep_bug_closure -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-391",
@@ -32163,11 +32189,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-392",
@@ -32198,11 +32232,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-393",
@@ -32234,11 +32276,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-394",
@@ -32267,11 +32317,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-395",
@@ -32302,11 +32360,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-396",
@@ -32340,11 +32406,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-397",
@@ -32373,11 +32447,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-398",
@@ -32408,11 +32490,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-399",
@@ -32441,11 +32531,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-400",
@@ -32474,11 +32572,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-401",
@@ -32510,11 +32616,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-402",
@@ -32543,11 +32657,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-403",
@@ -32578,11 +32700,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-404",
@@ -32614,11 +32744,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-405",
@@ -32650,11 +32788,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-406",
@@ -32683,11 +32829,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-407",
@@ -32716,11 +32870,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-408",
@@ -32751,11 +32913,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-409",
@@ -32784,11 +32954,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-467",
@@ -32819,11 +32997,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-468",
@@ -32854,11 +33040,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-469",
@@ -32889,11 +33083,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-470",
@@ -32924,11 +33126,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-471",
@@ -32959,11 +33169,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-472",
@@ -32992,11 +33210,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-473",
@@ -33027,11 +33253,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-474",
@@ -33060,11 +33294,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-475",
@@ -33093,11 +33335,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-476",
@@ -33126,11 +33376,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "BUG-477",
@@ -33161,11 +33419,19 @@
           "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-410",
@@ -33194,11 +33460,19 @@
           "event": "INTAKE (oct_release): registered CR-410 (P2/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-106 (UrbanPiper module), CR-408/CR-409. Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-411",
@@ -33226,11 +33500,19 @@
           "event": "INTAKE (oct_release): registered CR-411 (P1/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-017 (WhatsApp pay link), CR-165 (cancel/refund). Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-412",
@@ -33255,11 +33537,19 @@
           "event": "INTAKE (oct_release): registered CR-412 (P2/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-413",
@@ -33286,11 +33576,19 @@
           "event": "INTAKE (oct_release): registered CR-413 (P2/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-083 (expense split UPI). Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-414",
@@ -33317,11 +33615,19 @@
           "event": "INTAKE (oct_release): registered CR-414 (P2/HIGH). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-415",
@@ -33346,11 +33652,19 @@
           "event": "INTAKE (oct_release): registered CR-415 (P3/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-416",
@@ -33377,11 +33691,19 @@
           "event": "INTAKE (oct_release): registered CR-416 (P3/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT (BUG-072 only displays item notes). Route FULL PLANNING. Zero code."
         }
       ],
-      "registered": "2026-06",
-      "last_updated": "2026-06",
+      "registered": "2026-06-01",
+      "last_updated": "2026-06-01",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "_date_approx": [
+        "registered",
+        "last_updated"
+      ],
+      "_date_raw": {
+        "registered": "2026-06",
+        "last_updated": "2026-06"
+      }
     },
     {
       "id": "CR-417",
