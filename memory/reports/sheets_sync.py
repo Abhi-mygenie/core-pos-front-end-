@@ -24,7 +24,7 @@ except ImportError:
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 SCRIPT_DIR    = Path(__file__).parent
-ENV_PATH      = SCRIPT_DIR / '.env'
+ENV_PATH      = Path('/app/frontend/.env')   # CR-418: credentials in frontend env
 REGISTRY_PATH = SCRIPT_DIR.parent / 'control' / 'registry.json'
 
 load_dotenv(ENV_PATH)
