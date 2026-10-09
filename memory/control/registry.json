@@ -29569,15 +29569,15 @@
       "id": "CR-418",
       "type": "CR",
       "title": "Registry Sheet: Contract v1.4 Compliance + REGISTRAR Role",
-      "status": "GATE_2_IMPACT_ANALYSIS",
+      "status": "GATE_3_PLAN_COMPLETE",
       "priority": "P1",
       "severity": "P1",
       "sprint_key": "oct_release",
       "area": "Tooling",
       "category": "tooling",
       "risk": "MEDIUM",
-      "phase": "impact_analysis",
-      "current_gate": 2,
+      "phase": "implementation_plan",
+      "current_gate": 3,
       "blast_radius": "MEDIUM \u2014 sheets_sync.py full rewrite + registry.json one-off cleanup. Zero frontend/src.",
       "files": [
         "memory/reports/sheets_sync.py",
@@ -29610,12 +29610,17 @@
         {
           "date": "2026-10-09",
           "event": "GATE_2_IMPACT_ANALYSIS complete. Code Reality: PARTIAL (466-line baseline). Conflict: CLEAR. 20 verification checks. All ODs locked. Awaiting Gate 3 GO."
+        },
+        {
+          "date": "2026-10-09",
+          "event": "GATE_3_PLAN_COMPLETE. Full rewrite plan: E-1 sheets_sync.py (~820 lines), 20-check verification matrix, Track C atomic cleanup, --pull read-only diff. Awaiting Gate 4 GO."
         }
       ],
       "last_updated": "2026-10-09",
       "artifact_refs": {
         "intake": "change_requests/CR-418_REGISTRY_SHEET_CONTRACT_V14_COMPLIANCE_INTAKE.md",
-        "impact_analysis": "impact/CR-418_IMPACT_ANALYSIS.md"
+        "impact_analysis": "impact/CR-418_IMPACT_ANALYSIS.md",
+        "implementation_plan": "plans/CR-418_IMPLEMENTATION_PLAN.md"
       }
     }
   ],
