@@ -1,0 +1,1 @@
+{"success":true,"message":"Table list exported successfully","download_url":"https:\/\/preprod.mygenie.online\/storage\/TableList_1791458162.xlsx","total_records":84}

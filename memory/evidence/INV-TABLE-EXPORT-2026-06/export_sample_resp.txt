@@ -1,0 +1,1 @@
+{"success":true,"message":"Sample file generated successfully","download_url":"https:\/\/preprod.mygenie.online\/storage\/TableSample_1791458162.xlsx"}
