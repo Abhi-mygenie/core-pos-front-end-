@@ -1,0 +1,26 @@
+{
+  "summary": "Backend-only verification of POS registry → Google Sheet contract v1.4 compliance. 26/26 pytest tests passed. Verified: (a) live sheet 'All Items' — every non-blank Registered/Last updated/Closed cell matches ^\\d{4}-\\d{2}-\\d{2}$ (0 violations); (b) BUG-448..BUG-453 and CR-386 Registered are clean leading dates (no prose); (c) BUG-466 and CR-391..CR-399 show Registered='2026-06-01' with Notes starting 'DATE APPROXIMATED (...month only → day 01).'; (d) all 5 INV-* items show Type='INV' and Type column contains only {BUG,CR,INV,INCIDENT,GAP}; (e) 10 tabs in exact contract order; 22-column header matches CONTRACT_COLS; Status is from 8-enum with 0 blanks; Priority in P0-P3 for open items; stage-tab row counts equal All Items status counts; Blockers tab has 0 CLOSED/PARKED/DUPLICATE; Assignee blank everywhere; (f) registry.json has 0 malformed date fields, INV items have type 'INV', _date_raw preserved for most targeted items; (g) idempotency — `--dry-run` reports Unclassified=0 and Change Log new=0, `--diff` prints 'No sheet edits since last push', `--pull` exits with 'disabled' message; (h) offline unit tests on diff_sheet/apply_change_log confirm: Status→PENDING, Title→REJECTED ('column not editable in Phase 1'), Priority→APPLIED (SOURCE=DASHBOARD), Assignee ignored (no CL row, captured in assignees dict), invalid Registered→REJECTED, apply_change_log APPROVED → APPLIED with status mutated. No live-sheet writes performed; registry.json untouched; --push NOT invoked.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_report_links": [
+    "/app/backend/tests/test_sheets_sync_contract.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "sheets_sync.py is 737 lines — approaching the 700-line threshold; consider splitting classify_status/area normaliser/diff-apply into modules for maintainability.",
+    "diff_sheet treats a change log row where Decision=='APPLIED' + Note=='SOURCE=DASHBOARD' as 'fresh dashboard priority'; the check `not r[7].endswith('done')` relies on string suffix. A dedicated status (e.g., 'APPLIED_PENDING') would be clearer than overloading the Note column.",
+    "In `_clean_date_fields`, partial-date fallback silently drops any value that doesn't match either full date or YYYY-MM pattern (sets to ''). Consider warning/logging when dropped to catch future format drift.",
+    "`_build_type` upper-casing happens both in prepare_registry and _build_type; redundant but harmless.",
+    "No automated check that INV items added in future automatically map 'INVESTIGATION' → 'INV' at registry level (ensured only on prepare_registry run). Covered by _TYPE_MAP."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sheets_sync_contract.py"
+  ],
+  "success_rate": { "backend": "100%", "frontend": "N/A (skipped per request)" },
+  "test_credentials": "Google OAuth creds already in /app/frontend/.env; token refresh via sheets_sync.get_access_token() succeeded.",
+  "seed_data_creation": "None. Offline unit tests use in-memory dicts.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All contract v1.4 acceptance criteria currently green. Test file /app/backend/tests/test_sheets_sync_contract.py is a regression suite — runs in ~3s, reads live sheet read-only via sheets_sync.read_tab, invokes `python3 sheets_sync.py --dry-run/--diff/--pull`. Do NOT invoke --push from tests (quota, writes sheet). Live-sheet shape verified at Jan 2026."
+}

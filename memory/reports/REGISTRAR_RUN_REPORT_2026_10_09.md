@@ -18,4 +18,6 @@ Script: `memory/reports/sheets_sync.py --push` · baseline: `memory/reports/shee
 | Stale blockers dropped | 29 items (old Blockers tab: 16 legacy rows) |
 | Change Log | 0 new · 0 applied · 0 pending |
 
+**Follow-up push (dashboard audit fixes):** Registered/Last updated/Closed forced to plain YYYY-MM-DD (prose stripped → original kept in `_date_raw`; `YYYY-MM` → `YYYY-MM-01` + Notes "DATE APPROXIMATED"); Type `INVESTIGATION` → `INV` (5 items). Live sheet: 0 date-format violations, Type enum clean. 121 CLOSED rows without Closed date remain for owner to fill via Change Log.
+
 Tabs (contract §2 order): All Items · Intake · Planning · Implemented · QA · Smoke · Closed · Blockers · Change Log · Summary.
