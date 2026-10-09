@@ -1068,3 +1068,6 @@ All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate
 
 **BATCH-10 (Regression): ❌ FAIL — 53/56 PASS, 2 new bugs filed (BUG-400 MAJOR, BUG-401 BLOCKER). See `test_reports/QA_REPORT_BATCH10_2026_09_15.md`**
 | **CR-407** | Room Discount — check-in discount + checkout apply_to (food/both) + Percent type + partial_payments_room | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED.** Sub-scope A: CheckInPage.jsx (A-E1..A-E4) + pmsService.js (A-E5) — check-in discount UI + ₹/% toggle + FE computes ₹. Sub-scope B: FolioCheckoutPanel.jsx (B-E1..B-E6) — apply_to selector + Percent type + expanded handlePaid. Sub-scope C: FolioCheckoutPanel.jsx (C-E1..C-E3) — partial_payments_room split legs. Sprint: oct_cr_batch. | `CheckInPage.jsx` · `pmsService.js` · `FolioCheckoutPanel.jsx` |
+
+
+**2026-10-09 — CLOSURE pass (owner directive):** 17 items closed (11 legacy SHIPPED → CLOSED — OWNER VERIFIED; INV-ROOM-001/OE-001/PG-001/GST-001/BACKEND-001 → CLOSED — INVESTIGATION COMPLETE; BUG-267 → CLOSED — COULD NOT REPRODUCE). Registry is source of truth; table rows above may show prior status. Report: `control/CLOSURE_PASS_LEGACY_INV_CLOSURE_REPORT_2026_10_09.md`

@@ -352,7 +352,7 @@
       "sprint_key": "pos_2_0",
       "id": "POS2-005",
       "title": "f_status=8 Hold/Audit reroute",
-      "status": "SHIPPED + VERIFIED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "files": "DashboardPage.jsx, OrderTable.jsx",
       "notes": "Status columns exclude id:8",
       "artifact_refs": [
@@ -460,11 +460,17 @@
           "to": "SHIPPED + VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (CR Registry sync v2.7)"
+        },
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED + VERIFIED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
         }
       ],
       "registered": "2026-05-30",
-      "last_updated": "2026-05-30",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
       "_priority_defaulted": true
@@ -758,7 +764,7 @@
       "sprint_key": "crm_2_0",
       "id": "CR-002",
       "title": "Cross-Sell + Customer Intelligence",
-      "status": "SHIPPED + VERIFIED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "files": "4 new + 4 modified",
       "notes": "T-28/T-29 live regression PASS 2026-05-31 \u2192 CLOSED \u2014 OWNER VERIFIED",
       "artifact_refs": [
@@ -860,11 +866,17 @@
           "to": "SHIPPED + VERIFIED",
           "date": "2026-05-30",
           "reason": "Auto-promoted: 7/7 artifacts present incl. smoke_signoff (CR Registry sync v2.7)"
+        },
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED + VERIFIED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
         }
       ],
       "registered": "2026-05-30",
-      "last_updated": "2026-05-30",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
       "_priority_defaulted": true
@@ -1657,7 +1669,7 @@
       "sprint_key": "standalone",
       "id": "Audit Report Optimization",
       "title": "Transform rewrite + dual-mode sheet",
-      "status": "SHIPPED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "files": "reportTransform, reportService, OrderDetailSheet, FilterBar, FilterTags, AllOrdersReportPage",
       "notes": "",
       "artifact_refs": [
@@ -1681,11 +1693,19 @@
       "completeness": "3/7",
       "category": "",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "CR",
@@ -2609,7 +2629,7 @@
       "id": "BUG-095",
       "title": "Socket handler + dead code cleanup",
       "priority": "P2",
-      "status": "P3 HYGIENE \u2014 prerequisites shipped, dead code removal only",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "sprint": "POS 3.0",
       "blocker": "Reconciled to cr_registry authoritative status (was PLANNING COMPLETE) 2026-05-31",
       "artifact_refs": {
@@ -2619,10 +2639,18 @@
       "sprint_key": "pos_5_0",
       "notes": "BUG-088+089 shipped. handleUpdateOrder dead code. Intake updated 2026-06-15.",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "P3 HYGIENE \u2014 prerequisites shipped, dead code removal only",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -4687,7 +4715,7 @@
       ],
       "id": "BUG-058",
       "sprint": "POS 2.0",
-      "status": "CARRY-FORWARD",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "canonical_source": "POS2_0_FINAL_IMPLEMENTATION_SUMMARY_2026_05_18.md (Wave W7)",
       "completeness": "6/7",
       "artifact_refs": [
@@ -4781,11 +4809,19 @@
       "title": "Prepaid Pending Payment Fails When Collecting From Hold/Audit Report",
       "_section": "POS 2.0 \u2014 Closed (consolidated 2026-05-18)",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "CARRY-FORWARD",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12158,15 +12194,23 @@
       ],
       "id": "PROD-003",
       "title": "PayLater table clear",
-      "status": "FE-VERIFIED, BE-FOLLOWUP",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "date": "2026-05-21",
       "notes": "Backend should emit on update-order-paid",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "FE-VERIFIED, BE-FOLLOWUP",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12175,15 +12219,23 @@
       ],
       "id": "PROD-004",
       "title": "Walk-in cart not cleared on stay-on-order",
-      "status": "SHIPPED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "date": "2026-05-27",
       "notes": "+2 lines in DashboardPage.jsx",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12192,15 +12244,23 @@
       ],
       "id": "PROD-005",
       "title": "Prepaid screen clear delay",
-      "status": "SHIPPED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "date": "2026-05-27",
       "notes": "DashboardPage.jsx",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12348,7 +12408,7 @@
       "sprint": "POS 3.1",
       "id": "BUG-111 P1+P2",
       "title": "Grand Total + server-driven breakdown",
-      "status": "SHIPPED + VERIFIED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "files": "CartPanel.jsx, OrderEntry.jsx",
       "notes": "",
       "artifact_refs": [
@@ -12384,11 +12444,19 @@
       "completeness": "5/7",
       "category": "",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true,
-      "_priority_defaulted": true
+      "_priority_defaulted": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED + VERIFIED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12398,7 +12466,7 @@
       "id": "PROD-HOTFIX-004",
       "title": "Walk-in cart not cleared on stay-on-order",
       "priority": "P2",
-      "status": "SHIPPED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "sprint": "Production Hotfix",
       "blocker": "",
       "artifact_refs": [
@@ -12417,10 +12485,18 @@
       ],
       "completeness": "5/7",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "BUG",
@@ -12430,7 +12506,7 @@
       "id": "PROD-HOTFIX-005",
       "title": "Prepaid screen clear delay",
       "priority": "P2",
-      "status": "SHIPPED",
+      "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "sprint": "Production Hotfix",
       "blocker": "",
       "artifact_refs": [
@@ -12449,10 +12525,18 @@
       ],
       "completeness": "5/7",
       "registered": "",
-      "last_updated": "",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "SHIPPED",
+          "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "type": "CR",
@@ -19442,7 +19526,7 @@
       "type": "BUG",
       "severity": "P2",
       "risk": "LOW",
-      "status": "INVESTIGATION COMPLETE \u2014 NEEDS_MORE_DATA (cannot reproduce)",
+      "status": "CLOSED \u2014 COULD NOT REPRODUCE (closure pass 2026-10-09: NEEDS_MORE_DATA, no owner repro; owner-directed; re-open with repro steps)",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -19455,10 +19539,18 @@
       "created": "2026-07-28",
       "notes": "Cannot reproduce. Dropdown has 72 options, selection works in automation. Need owner repro steps/video.",
       "registered": "2026-07-28",
-      "last_updated": "2026-07-28",
-      "closed": "",
+      "last_updated": "2026-10-09",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE \u2014 NEEDS_MORE_DATA (cannot reproduce)",
+          "to": "CLOSED \u2014 COULD NOT REPRODUCE (closure pass 2026-10-09: NEEDS_MORE_DATA, no owner repro; owner-directed; re-open with repro steps)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "BUG-268",
@@ -23373,7 +23465,7 @@
       "area": "Room Module \u2014 Checkout / Transfer",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INVESTIGATION COMPLETE",
+      "status": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
       "created": "2026-08-17",
       "artifact_refs": [
         "/app/memory/investigation/INV-ROOM-001_PARTIAL_PAYMENT_FOOD_TRANSFER_INVESTIGATION.md"
@@ -23395,9 +23487,17 @@
       ],
       "registered": "2026-08-17",
       "last_updated": "2026-10-09",
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE",
+          "to": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "INV-OE-001",
@@ -23406,7 +23506,7 @@
       "area": "Order Entry \u2014 DashboardPage / OrderEntry",
       "priority": "P1",
       "risk": "LOW-MEDIUM",
-      "status": "INVESTIGATION COMPLETE",
+      "status": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
       "created": "2026-08-17",
       "artifact_refs": [
         "/app/memory/investigation/INV-OE-001_DEFAULT_WALKIN_TABLE_SWITCH_CART_RESET.md"
@@ -23422,9 +23522,17 @@
       "fast_lane_eligible": true,
       "registered": "2026-08-17",
       "last_updated": "2026-10-09",
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE",
+          "to": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "BUG-333",
@@ -23565,7 +23673,7 @@
       "area": "CollectPaymentPanel / OrderEntry / AllOrdersReportPage",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INVESTIGATION COMPLETE",
+      "status": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
       "created": "2026-08-17",
       "artifact_refs": [
         "/app/memory/investigation/INV-PG-001_PG_LINK_MODAL_CLOSE_REPORTS_PAYMENT_LINK.md"
@@ -23583,9 +23691,17 @@
       ],
       "registered": "2026-08-17",
       "last_updated": "2026-10-09",
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE",
+          "to": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "BUG-335",
@@ -23665,7 +23781,7 @@
       "area": "CollectPaymentPanel / RestaurantSettingsPage / ProfileTransform",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "INVESTIGATION COMPLETE",
+      "status": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
       "created": "2026-08-17",
       "artifact_refs": [
         "/app/memory/investigation/INV-GST-001_GST_DISABLE_SETTINGS_GATE_AUDIT.md"
@@ -23695,9 +23811,17 @@
       ],
       "registered": "2026-08-17",
       "last_updated": "2026-10-09",
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE",
+          "to": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "BUG-336",
@@ -23835,7 +23959,7 @@
       "area": "Aggregator / Payment / Printer Config / Food Court / Restaurant Settings",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INVESTIGATION COMPLETE",
+      "status": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
       "created": "2026-08-17",
       "artifact_refs": [
         "/app/memory/investigation/INV-BACKEND-001_AGGREGATOR_SOCKET_RAZORPAY_STATION_FOODCOURT.md"
@@ -23855,9 +23979,17 @@
       ],
       "registered": "2026-08-17",
       "last_updated": "2026-10-09",
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "from": "INVESTIGATION COMPLETE",
+          "to": "CLOSED \u2014 INVESTIGATION COMPLETE (closure pass 2026-10-09: findings delivered; owner-directed)",
+          "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        }
+      ]
     },
     {
       "id": "BUG-339",
