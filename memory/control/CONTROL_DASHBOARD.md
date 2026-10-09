@@ -1,3 +1,5 @@
+**Last Updated:** 2026-06 — **INTAKE: CR batch #2 (integrations & voice) → CR-410…CR-416 (7 CRs), sprint `oct_release`, Gate 1.** CR-410 Native Swiggy/Zomato (RELATED CR-106) · CR-411 Razorpay in-POS (RELATED CR-017/165) · CR-412 Barcode Inventory · CR-413 UPI/Card Settlement · CR-414 Dynamic QR (Razorpay) · CR-415 Voice→Menu Search · CR-416 Voice Item Notes. Integration flags: Razorpay keys, aggregator partner APIs, STT (Whisper). Open: OD-BATCH-03 Razorpay scope · OD-BATCH-04 native-vs-UrbanPiper · OD-BATCH-05 voice engine. Registry 769. Zero code.
+
 **Last Updated:** 2026-06 — **SPRINT `oct_release` created; all this-session intake moved into it** (31 items: BUG-466 + CR-391…CR-409 + BUG-467…BUG-477). Supersedes `jun_backlog_2026`/`sep_bug_closure` tagging for these items only. Zero code.
 
 **Last Updated:** 2026-06 — **BATCH INTAKE: 30-item owner backlog → CR-391…CR-409 (19) + BUG-467…BUG-477 (11), sprint `jun_backlog_2026`, all Gate 1.** Registry 762. 2 open decisions (OD-BATCH-01 BUG-473 dup-candidate of BUG-356; OD-BATCH-02 CR-399 CRM scope). Batch doc `change_requests/BATCH_INTAKE_2026-06_30ITEMS.md`. Zero code. Next: owner "Gate 2 GO: <IDs>".

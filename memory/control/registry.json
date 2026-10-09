@@ -29326,6 +29326,187 @@
      "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
+  },
+  {
+   "id": "CR-410",
+   "type": "CR",
+   "title": "Native Swiggy/Zomato Integration \u2014 direct aggregator API integration (not via UrbanPiper middleware)",
+   "severity": "P2",
+   "risk": "HIGH",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE_NEEDS_SCOPING",
+   "created": "2026-06",
+   "related": [
+    "CR-106",
+    "CR-408",
+    "CR-409"
+   ],
+   "fast_lane_eligible": false,
+   "duplicate_check": "RELATED CR-106 (UrbanPiper module), CR-408/CR-409",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "INTEGRATION: direct Swiggy/Zomato partner APIs. OD: native-direct vs existing UrbanPiper middleware (CR-106). Partner onboarding/credentials required.",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-410 (P2/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-106 (UrbanPiper module), CR-408/CR-409. Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-411",
+   "type": "CR",
+   "title": "Razorpay Integration \u2014 in-POS Razorpay payment collection",
+   "severity": "P1",
+   "risk": "HIGH",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE_NEEDS_SCOPING",
+   "created": "2026-06",
+   "related": [
+    "CR-017",
+    "CR-165"
+   ],
+   "fast_lane_eligible": false,
+   "duplicate_check": "RELATED CR-017 (WhatsApp pay link), CR-165 (cancel/refund)",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "INTEGRATION: Razorpay keys. OD: scope = in-POS card/UPI collection vs payment links (CR-017 already shipped link flow).",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-411 (P1/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-017 (WhatsApp pay link), CR-165 (cancel/refund). Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-412",
+   "type": "CR",
+   "title": "Barcode Inventory \u2014 barcode/SKU scanning for inventory operations",
+   "severity": "P2",
+   "risk": "MEDIUM",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE",
+   "created": "2026-06",
+   "related": [],
+   "fast_lane_eligible": false,
+   "duplicate_check": "DISTINCT",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "Barcode scan to identify ingredients/stock items. Hardware/camera scanner + SKU mapping.",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-412 (P2/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-413",
+   "type": "CR",
+   "title": "UPI/Card Settlement \u2014 settle payments via UPI/card modes",
+   "severity": "P2",
+   "risk": "HIGH",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE_NEEDS_SCOPING",
+   "created": "2026-06",
+   "related": [
+    "CR-083"
+   ],
+   "fast_lane_eligible": false,
+   "duplicate_check": "RELATED CR-083 (expense split UPI)",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "FINANCIAL: settlement by UPI/card. Scope/provider TBD (links to CR-411 Razorpay).",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-413 (P2/HIGH). Owner CR batch #2 (integrations/voice). RELATED CR-083 (expense split UPI). Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-414",
+   "type": "CR",
+   "title": "Dynamic QR Code Integration with Razorpay \u2014 generate dynamic QR for payment collection",
+   "severity": "P2",
+   "risk": "HIGH",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE",
+   "created": "2026-06",
+   "related": [
+    "CR-411"
+   ],
+   "fast_lane_eligible": false,
+   "duplicate_check": "DISTINCT",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "INTEGRATION: Razorpay dynamic QR API + keys. Depends on CR-411 Razorpay setup.",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-414 (P2/HIGH). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-415",
+   "type": "CR",
+   "title": "Voice to Menu Search \u2014 voice input to search menu items",
+   "severity": "P3",
+   "risk": "MEDIUM",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE",
+   "created": "2026-06",
+   "related": [],
+   "fast_lane_eligible": false,
+   "duplicate_check": "DISTINCT",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "INTEGRATION: speech-to-text (OpenAI Whisper via Emergent key) or browser SpeechRecognition.",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-415 (P3/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT. Route FULL PLANNING. Zero code."
+    }
+   ]
+  },
+  {
+   "id": "CR-416",
+   "type": "CR",
+   "title": "Voice Enablement for Item/Food-Level Notes \u2014 dictate item/food-level notes by voice",
+   "severity": "P3",
+   "risk": "MEDIUM",
+   "sprint_key": "oct_release",
+   "status": "GATE_1_INTAKE",
+   "created": "2026-06",
+   "related": [
+    "BUG-072"
+   ],
+   "fast_lane_eligible": false,
+   "duplicate_check": "DISTINCT (BUG-072 only displays item notes)",
+   "route": "FULL_PLANNING",
+   "artifact_refs": {
+    "intake": "change_requests/BATCH_INTAKE_2026-06_30ITEMS.md"
+   },
+   "notes": "INTEGRATION: speech-to-text for note entry at item level.",
+   "status_history": [
+    {
+     "date": "2026-06",
+     "event": "INTAKE (oct_release): registered CR-416 (P3/MEDIUM). Owner CR batch #2 (integrations/voice). DISTINCT (BUG-072 only displays item notes). Route FULL PLANNING. Zero code."
+    }
+   ]
   }
  ],
  "meta": {

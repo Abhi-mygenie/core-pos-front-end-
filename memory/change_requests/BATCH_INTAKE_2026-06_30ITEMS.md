@@ -57,3 +57,23 @@ Two items carry open decisions (see bottom). IDs assigned: **CR-391…CR-409** (
 
 ## Next
 Owner answers OD-BATCH-01/02 and picks which items to take into PLANNING first (recommend starting with the P1 financial/destructive BUGs: BUG-470, BUG-474, BUG-476, and CR-395 / CR-400). Then "Gate 2 GO: <IDs>".
+
+---
+
+## ADDENDUM — CR batch #2 (integrations & voice) — sprint `oct_release`
+All CRs, Gate 1, zero code.
+
+| Item | ID | Sev · Risk | Dup check | Integration |
+|------|----|-----------|-----------|-------------|
+| Native Swiggy/Zomato Integration | CR-410 | P2 · HIGH · NEEDS SCOPING | RELATED CR-106 (UrbanPiper) | Direct Swiggy/Zomato partner APIs |
+| Razorpay Integration (in-POS) | CR-411 | P1 · HIGH · NEEDS SCOPING | RELATED CR-017/CR-165 | Razorpay keys |
+| Barcode Inventory | CR-412 | P2 · MEDIUM | DISTINCT | Scanner/camera + SKU map |
+| UPI/Card Settlement | CR-413 | P2 · HIGH · NEEDS SCOPING | RELATED CR-083 | Payment provider (links CR-411) |
+| Dynamic QR with Razorpay | CR-414 | P2 · HIGH | DISTINCT (dep CR-411) | Razorpay dynamic-QR API |
+| Voice to Menu Search | CR-415 | P3 · MEDIUM | DISTINCT | STT (Whisper / browser speech) |
+| Voice Item/Food-Level Notes | CR-416 | P3 · MEDIUM | DISTINCT | STT |
+
+### Open decisions (CR batch #2)
+- **OD-BATCH-03 (CR-411):** Razorpay scope — full in-POS card/UPI collection, or payment links only (CR-017 already ships links)?
+- **OD-BATCH-04 (CR-410):** Native direct Swiggy/Zomato vs existing UrbanPiper middleware (CR-106) — which path?
+- **OD-BATCH-05 (CR-415/CR-416):** Voice engine — OpenAI Whisper (Emergent key) vs on-device browser SpeechRecognition?
