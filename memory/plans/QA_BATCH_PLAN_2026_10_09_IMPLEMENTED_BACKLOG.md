@@ -1,0 +1,39 @@
+# QA Batch Plan — IMPLEMENTED backlog (Role 4: QA) — 2026-10-09
+
+Source: registry.json, contract Status = IMPLEMENTED (54 items). Role: **QA (Role 4)** per AGENT_PROMPT_ALPHA v0.7.
+Code under test: branch `09_oct_gyan` @ `90d231e` (deployed in /app, preview).
+
+## A. QA-ready — 37 items in 6 batches (risk-first order)
+
+| Batch | Items | Risk | QA handover(s) | Regression scope (Role 4 rule) |
+|---|---|---|---|---|
+| **QA-B1 PMS Folio / GST balance** | BUG-422, 423, 424, 425, 426, 427, 428, 429, 430 (9) | CRITICAL (money/GST) | QA_HANDOVER_BATCHA_BUG422_423_424_425, QA_HANDOVER_BATCH2_BUG426-430, QA_HANDOVER_BUG427, AGENT_HANDOVER_QA_EXECUTION_BUG419-430 | Handover regression + full critical path (login → check-in → room order → folio → checkout → report) |
+| **QA-B2 Inventory / Stock** | BUG-459, CR-387, CR-388, BUG-461 (4) | CRITICAL (BUG-459) / HIGH | QA_HANDOVER_2026-09-25_BUG459_CR387_COMBINED, QA_HANDOVER_CR388_2026_09_25 · BUG-461 none (Fast Lane, derive 1-2 cases) | Handover regression + full critical path (stock audit → purchase → stock report) |
+| **QA-B3 PMS Check-in / payment** | BUG-410, 411, 401, 402, 415, 416 (6) | CRITICAL (401, 411) | QA_HANDOVER_BUG411_BUG410_2026_09_15 · 401/402/415/416 none → cases derived from registry fix notes | Handover regression + full critical path |
+| **QA-B4 New Check-In form** | BUG-419, 420, 421 (3) | HIGH | QA_HANDOVER_BATCH3_BUG419-421 | Handover regression + 2 cross-flow |
+| **QA-B5 Sep closure + Order Entry** | BUG-451, 453, CR-386, BUG-462, 464 (5) | HIGH (451 product list, 453 sound) | QA_HANDOVER_SEP_BUG_CLOSURE_WAVE1_2026_09_24, QA_HANDOVER_CR376_FU_B_2026_09_26 | Handover regression + 2 cross-flow (order → settle) |
+| **QA-B6 Reports / Aggregator / Tooling** | CR-377, CR-119, CR-418 (3) | MEDIUM | QA_HANDOVER_CR377_2026_09_11, QA_HANDOVER_CR418_2026_10_09 · CR-119 none → derive | Handover regression only (CR-377 touches reportService → +2 cross-flow) |
+| **QA-B7 Evidence reconcile (no re-test)** | BUG-433, 447, 450 (3) | HIGH | Status already says QA-VERIFIED (CR-385 P3.5/P4.5/M5) | Verify evidence files exist → promote to QA; no new test run |
+
+Per item QA agent will: precondition check (handover §4 EXIT GATE 5/5 + registry synced; if missing → REJECT back to Implementation), code-marker present in deployed branch, execute cases, severity (BLOCKER/MAJOR/MINOR/NOTE) + evidence, coverage N/N files, registry spot-check.
+Output per batch: `/app/memory/test_reports/<BATCH>_QA_REPORT_2026-10-09.md`; registry → QA (Gate 5b) on PASS; BUG_TRACKER updated for BLOCKER/MAJOR; sheet `--push` once at the end.
+
+## B. NOT QA-able — need owner routing (17 items, no QA run proposed)
+
+| Group | Items | Why | Proposed route |
+|---|---|---|---|
+| Legacy back-catalogue "SHIPPED / VERIFIED" | POS2-005, CR-002, Audit Report Optimization, BUG-095, BUG-058, PROD-003, PROD-004, PROD-005, BUG-111 P1+P2, PROD-HOTFIX-004, PROD-HOTFIX-005 (11) | Pre-gate-system items, already in production; no handover | CLOSURE (owner attests) or bulk → SMOKE |
+| Investigations complete | INV-ROOM-001, INV-OE-001, INV-PG-001, INV-GST-001, INV-BACKEND-001, BUG-267 (6) | No code to QA | CLOSED (findings delivered) or spawn CRs |
+| Backend-blocked | BUG-268 | Blocked on BACKEND (SQL AUTO_INCREMENT) | Stay; Blocked on = BACKEND |
+| In progress / incomplete | CR-053 (Training Academy, Phase 1 partial), CR-011 (Reports, awaiting Gate 2 review) | Implementation not finished | Back to IMPLEMENTATION / owner review |
+| Doc-only | CR-370 (5 doc corrections) | No runtime behaviour | Owner spot-check → CLOSED |
+
+## Owner decision (2026-10-09)
+- APPROVED: run all 7 batches in order QA-B1 → QA-B7.
+- Section B items: deferred to a separate CLOSURE pass.
+- Credentials: owner to supply QA login next message.
+
+## C. Blockers before QA can start
+1. **QA login credentials** for preprod (restaurant / role) — `memory/test_credentials.md` is empty in this branch. Need an alias + creds (stored masked).
+2. **PMS test data** (an active room booking / checkout-able stay) for QA-B1 and QA-B3.
+3. Owner approval of batch order (one batch at a time per STEP -1 §4b).
