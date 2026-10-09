@@ -1,5 +1,5 @@
 {
-"generated": "2026-10-09T10:31:57",
+"generated": "2026-10-09T10:34:40",
 "rows": {
 "POS2-001": [
 "POS",
@@ -18486,8 +18486,8 @@
 "CR-418",
 "CR",
 "Registry Sheet: Contract v1.4 Compliance + REGISTRAR Role",
-"QA",
-"QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
+"CLOSED",
+"CLOSED \u2014 OWNER VERIFIED",
 "P1",
 "MEDIUM",
 "Tooling",
@@ -18497,7 +18497,7 @@
 "",
 "2026-10-09",
 "2026-10-09",
-"",
+"2026-10-09",
 "CR-406, CR-406, CR-417, CR-389",
 "INTAKE, IMPACT_ANALYSIS, IMPLEMENTATION_PLAN, QA_REPORT",
 "no",
@@ -19276,7 +19276,7 @@
 "CR-414": "466c569850c6ed0e3ff729539819d51d00ae86b7",
 "CR-415": "1999bfb6fab8ef1171b348a0fb415bb7e874ec86",
 "CR-416": "b1c1ad75899cab2912460e8295f0f79eec3944e3",
-"CR-417": "1edb8981fa1c5143c5ab2201f6e1aabe64706f07",
-"CR-418": "fbfa74bc73712de0f8f7114f018054c59bfd6c54"
+"CR-417": "150f5bef4471ae14d7063147757313684adf5d8b",
+"CR-418": "e7ae34cd3a2c58b3448ab38651314822523f2d7e"
 }
 }

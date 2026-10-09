@@ -306,3 +306,5 @@ ng-only during Gate 2.5) |
 **2026-10-09 — CLOSURE pass:** 17 legacy/investigation items closed (owner directive). IMPLEMENTED 54 → 37. Report: `control/CLOSURE_PASS_LEGACY_INV_CLOSURE_REPORT_2026_10_09.md`
 
 **2026-10-09 — QA Gate 5b:** CR-418 QA PASS (44/44, 2 NOTE). Status → QA. Report: `test_reports/CR-418_QA_REPORT_2026-10-09.md`. Next: Gate 6 owner smoke.
+
+**2026-10-09 — CR-418 CLOSED — OWNER VERIFIED:** Gate 6 smoke PASS. Sheet live at contract v1.4. CR-417 (Session Log tab) unblocked → next: Gate 2 Impact Analysis.

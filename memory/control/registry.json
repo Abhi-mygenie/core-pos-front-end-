@@ -33877,13 +33877,19 @@
       "last_updated": "2026-10-09",
       "closed": "",
       "_cr418_cleaned": true,
-      "_dates_v2": true
+      "_dates_v2": true,
+      "status_history": [
+        {
+          "date": "2026-10-09",
+          "event": "Unblocked: CR-418 CLOSED \u2014 OWNER VERIFIED (Gate 6 PASS). Ready for Gate 2 (Impact Analysis)."
+        }
+      ]
     },
     {
       "id": "CR-418",
       "type": "CR",
       "title": "Registry Sheet: Contract v1.4 Compliance + REGISTRAR Role",
-      "status": "QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
+      "status": "CLOSED \u2014 OWNER VERIFIED",
       "priority": "P1",
       "severity": "P1",
       "sprint_key": "oct_release",
@@ -33891,7 +33897,7 @@
       "category": "tooling",
       "risk": "MEDIUM",
       "phase": "implemented",
-      "current_gate": 5,
+      "current_gate": 6,
       "blast_radius": "MEDIUM \u2014 sheets_sync.py full rewrite + registry.json one-off cleanup. Zero frontend/src.",
       "files": [
         "memory/reports/sheets_sync.py",
@@ -33946,6 +33952,12 @@
           "from": "GATE_5A_IMPLEMENTED",
           "to": "QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
           "event": "Gate 5b QA PASS \u2014 test_reports/CR-418_QA_REPORT_2026-10-09.md"
+        },
+        {
+          "date": "2026-10-09",
+          "from": "QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
+          "to": "CLOSED \u2014 OWNER VERIFIED",
+          "event": "CLOSED \u2014 OWNER VERIFIED. Gate 6 smoke PASS. Sheet live at contract v1.4."
         }
       ],
       "last_updated": "2026-10-09",
@@ -33955,7 +33967,7 @@
         "implementation_plan": "plans/CR-418_IMPLEMENTATION_PLAN.md",
         "implementation": "reports/sheets_sync.py"
       },
-      "closed": "",
+      "closed": "2026-10-09",
       "_cr418_cleaned": true,
       "_dates_v2": true
     }

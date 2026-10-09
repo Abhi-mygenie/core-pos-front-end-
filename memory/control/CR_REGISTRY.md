@@ -1073,3 +1073,5 @@ All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate
 **2026-10-09 — CLOSURE pass (owner directive):** 17 items closed (11 legacy SHIPPED → CLOSED — OWNER VERIFIED; INV-ROOM-001/OE-001/PG-001/GST-001/BACKEND-001 → CLOSED — INVESTIGATION COMPLETE; BUG-267 → CLOSED — COULD NOT REPRODUCE). Registry is source of truth; table rows above may show prior status. Report: `control/CLOSURE_PASS_LEGACY_INV_CLOSURE_REPORT_2026_10_09.md`
 
 **2026-10-09 — QA Gate 5b:** CR-418 QA PASS (44/44, 2 NOTE). Status → QA. Report: `test_reports/CR-418_QA_REPORT_2026-10-09.md`. Next: Gate 6 owner smoke.
+
+**2026-10-09 — CR-418 CLOSED — OWNER VERIFIED:** Gate 6 smoke PASS. Sheet live at contract v1.4. CR-417 (Session Log tab) unblocked → next: Gate 2 Impact Analysis.
