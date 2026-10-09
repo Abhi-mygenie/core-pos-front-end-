@@ -40,3 +40,25 @@ Output per batch: `/app/memory/test_reports/<BATCH>_QA_REPORT_2026-10-09.md`; re
 1. **QA login credentials** for preprod (restaurant / role) — `memory/test_credentials.md` is empty in this branch. Need an alias + creds (stored masked).
 2. **PMS test data** (an active room booking / checkout-able stay) for QA-B1 and QA-B3.
 3. Owner approval of batch order (one batch at a time per STEP -1 §4b).
+
+---
+## REVISION 2 (2026-10-09) — owner list of 49 items → Gate 5b QA, on PASS Status → QA (registry + sheet)
+
+Accounts: **CAFE103** (non-PMS, Owner, RID 644 — login PASS) · **PMS account** (owner to supply — CAFE103 has room=No).
+Order: P0 first, then by account availability. Every batch verified by testing agent; only PASS items move to QA.
+
+| Batch | Account | Items | P0 |
+|---|---|---|---|
+| R2-1 P0 non-PMS | CAFE103 | BUG-268, BUG-459 | both |
+| R2-2 PMS P0 | PMS | BUG-401, BUG-411 | both |
+| R2-3 Inventory | CAFE103 | CR-387, CR-388, BUG-461, BUG-267* | — |
+| R2-4 Order Entry / POS core | CAFE103 | BUG-451, BUG-453, BUG-462, BUG-464, CR-386, BUG-058*, BUG-095*, PROD-003*, PROD-004*, POS2-005* | — |
+| R2-5 Reports / Aggregator / Tooling | CAFE103 | CR-377, CR-119, CR-011, CR-418, CR-370, CR-002*, Audit Report Optimization* | — |
+| R2-6 Training Academy | CAFE103 | CR-053 | — |
+| R2-7 PMS Folio / GST | PMS | BUG-422, 423, 424, 425, 426, 427, 428, 429, 430 | — |
+| R2-8 PMS Check-in / Stay | PMS | BUG-402, 410, 419, 420, 421 | — |
+| R2-9 PMS UI / CR-385 follow-ups | PMS | BUG-415, 416, 433, 447, 450 | — |
+
+`*` = closed in closure pass 2026-10-09 → needs owner decision (re-open for QA or keep CLOSED).
+Notes: BUG-268 was Blocked on BACKEND — QA verifies whether backend fixed it; FAIL → stays IMPLEMENTED + BACKEND. BUG-267 still not reproducible → PARKED (per owner list). CR-053 Phase 1 only (Missions 1-3).
+Live-mutation risk: BUG-268, CR-388, BUG-459 (Save Adjustments), CR-387 (Update Stock), PROD-003/004, BUG-058 require saving on preprod — needs owner OK.
