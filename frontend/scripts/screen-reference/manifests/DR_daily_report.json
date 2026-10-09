@@ -1,0 +1,54 @@
+{
+  "_comment": "CR-390: Daily Report module manifest (OD-390-11 locked contents)",
+  "module_code": "DR",
+  "module_name": "Daily Report",
+  "eyebrow": "DAILY REPORT",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    {
+      "route": "/reports-module/profit-loss",
+      "section": "Profit & Loss",
+      "states": [
+        { "slug": "profit-loss", "title": "Profit & Loss Report", "description": "Daily P&L: revenue, cost of goods, gross profit and net profit.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/reports-module/expense-report",
+      "section": "Expense Report",
+      "states": [
+        { "slug": "expense-report", "title": "Expense Report", "description": "Daily expense breakdown by category and payment mode.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/reports-module/purchase-report",
+      "section": "Purchase Report",
+      "states": [
+        { "slug": "purchase-report", "title": "Purchase Report", "description": "Inventory purchases: vendor, item, quantity and amount.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/reports/summary",
+      "section": "Sales Summary",
+      "states": [
+        { "slug": "sales-summary-kpis", "title": "Sales Summary", "description": "Key metrics: total orders, revenue, average order value and payment breakdown.", "pre_actions": [] },
+        { "slug": "sales-summary-table", "title": "Sales Summary \u2014 Order List", "description": "Order-level detail below the summary KPIs.", "pre_actions": [ { "type": "wait", "ms": 1000 } ] }
+      ]
+    },
+    {
+      "route": "/reports/audit",
+      "section": "Order Report",
+      "states": [
+        { "slug": "order-report", "title": "Order Report", "description": "All orders for the day with status, payment mode and amounts.", "pre_actions": [] },
+        { "slug": "order-report-detail", "title": "Order Detail", "description": "Item-level breakdown for a single order.", "pre_actions": [ { "type": "click", "selector": "[data-testid='order-row']:first-child, tr:first-child" }, { "type": "wait", "ms": 600 } ] }
+      ]
+    },
+    {
+      "route": "/reports-module/settlement",
+      "section": "Settlement Report",
+      "states": [
+        { "slug": "daily-settlement-report", "title": "Settlement Report", "description": "End-of-day settlement breakdown by cashier and payment mode.", "pre_actions": [] }
+      ]
+    }
+  ]
+}

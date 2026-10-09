@@ -1,0 +1,57 @@
+{
+  "source_endpoints": {
+    "rooms": "GET  /api/v2/vendoremployee/aiosell/rooms",
+    "mapping": "POST /api/v2/vendoremployee/aiosell/room-mapping",
+    "fetch_rates": "POST /api/v2/vendoremployee/aiosell/fetch-rates"
+  },
+  "current_mappings": [
+    {
+      "restaurant_table_id": 8524,
+      "table_no": "r3",
+      "aiosell_room_code": "suite",
+      "aiosell_rateplan_code": null
+    },
+    {
+      "restaurant_table_id": 8525,
+      "table_no": "r4",
+      "aiosell_room_code": "suite",
+      "aiosell_rateplan_code": null
+    },
+    {
+      "restaurant_table_id": 8526,
+      "table_no": "r2",
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": null
+    },
+    {
+      "restaurant_table_id": 8527,
+      "table_no": "r5",
+      "aiosell_room_code": "suite",
+      "aiosell_rateplan_code": null
+    },
+    {
+      "restaurant_table_id": 8528,
+      "table_no": "r1",
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": null
+    }
+  ],
+  "rates_sample_2026_09_08": {
+    "suite": {
+      "suite-s-ep": 9000,
+      "suite-d-ep": 1800,
+      "suite-s-cp": 2688,
+      "suite-d-cp": 1920
+    },
+    "executive": {
+      "executive-s-ep": 5400,
+      "executive-d-ep": 5000,
+      "executive-s-cp": 2040,
+      "executive-d-cp": 1700
+    }
+  },
+  "probe_sources": [
+    "evidence/INV-PMS-ENH/probe_04_rooms.json",
+    "evidence/INV-PMS-ENH/probe_09_fetch_rates.json"
+  ]
+}

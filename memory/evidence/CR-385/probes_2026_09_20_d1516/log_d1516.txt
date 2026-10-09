@@ -1,0 +1,32 @@
+board before: {8524: ('occupied', 'blpi'), 8525: ('hk', None), 8526: ('occupied', 'bkol'), 8527: ('hk', None), 8528: ('hk', None)}
+[s0_settings] HTTP 200 
+[s1_direct] HTTP 201 
+ RES 199 charge {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'advance_payment': 1000, 'balance_due': 9148}
+[s2_checkin] HTTP 200 
+ ORDER 1232628 charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 1500, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 10918}
+[s3_extend] HTTP 200 
+ EXTEND {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688}
+[s4_move] HTTP 200 
+ MOVE(D16) {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} room 8528
+  board: ('hk', None) ('occupied', 'D15D16 Guest')
+[s5_shorten] HTTP 200 
+ SHORTEN(D15) {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 1000, 'balance_due': 10918} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}]
+  LR {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 1000, 'balance_due': 10918} checkout 2026-10-11
+[s6_reextend] HTTP 200 
+ REEXTEND {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} checkout 2026-10-12
+[s7_split] HTTP 201 
+ SPLIT advance_payment 1000 | 'split' in echo: False
+[s7_cancel] HTTP 200 
+[s7b_split_badsum] HTTP 422 {"status": false, "message": "advance.split_payments amounts must sum to advance.amount."}
+[s8_tab] HTTP 200 {"message": "Room payment received via TAB"}
+ after TAB: departed {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 19688, 'balance_due': 0}
+[s9_restore] HTTP 200 
+ settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+board after: {8524: ('occupied', 'blpi'), 8525: ('hk', None), 8526: ('occupied', 'bkol'), 8527: ('hk', None), 8528: ('hk', None)}

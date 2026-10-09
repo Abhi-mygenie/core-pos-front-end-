@@ -1,0 +1,193 @@
+{
+  "cases": {
+    "LOGIN_and_nav": "PASS",
+    "B439-1_arrivals": {
+      "tab": "fd-tab-arrivals",
+      "checks": {
+        "no_duplicate_testids": "PASS",
+        "checkin-btn_row_count": 1,
+        "checkin-btn_exp_count": 1,
+        "checkin-btn_exp_inside_expansion": true,
+        "checkin-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 2",
+          "text": "Check In"
+        },
+        "checkin-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 2",
+          "text": "Check In"
+        },
+        "checkin-btn_disabled_and_tooltip_ok": true,
+        "kebab_row_count": 1,
+        "kebab_exp_count": 1,
+        "kebab_exp_inside_expansion": true,
+        "kebab_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 1",
+          "text": "\u22ee"
+        },
+        "kebab_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 1",
+          "text": "\u22ee"
+        },
+        "kebab_disabled_and_tooltip_ok": true
+      },
+      "row_id": "15"
+    },
+    "B439-2_departures": {
+      "tab": "fd-tab-departures",
+      "checks": {
+        "no_duplicate_testids": "PASS",
+        "bill-btn_row_count": 1,
+        "bill-btn_exp_count": 1,
+        "bill-btn_exp_inside_expansion": true,
+        "bill-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 4",
+          "text": "Bill"
+        },
+        "bill-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 4",
+          "text": "Bill"
+        },
+        "bill-btn_disabled_and_tooltip_ok": true,
+        "hk-btn_row_count": 1,
+        "hk-btn_exp_count": 1,
+        "hk-btn_exp_inside_expansion": true,
+        "hk-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Request HK"
+        },
+        "hk-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Request HK"
+        },
+        "hk-btn_disabled_and_tooltip_ok": true,
+        "extend-btn_row_count": 1,
+        "extend-btn_exp_count": 1,
+        "extend-btn_exp_inside_expansion": true,
+        "extend-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Extend"
+        },
+        "extend-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Extend"
+        },
+        "extend-btn_disabled_and_tooltip_ok": true
+      },
+      "row_id": "155"
+    },
+    "B439-3_inhouse": {
+      "tab": "fd-tab-inhouse",
+      "checks": {
+        "no_duplicate_testids": "PASS",
+        "bill-btn_row_count": 1,
+        "bill-btn_exp_count": 1,
+        "bill-btn_exp_inside_expansion": true,
+        "bill-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 4",
+          "text": "Bill"
+        },
+        "bill-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 4",
+          "text": "Bill"
+        },
+        "bill-btn_disabled_and_tooltip_ok": true,
+        "hk-btn_row_count": 1,
+        "hk-btn_exp_count": 1,
+        "hk-btn_exp_inside_expansion": true,
+        "hk-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Request HK"
+        },
+        "hk-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Request HK"
+        },
+        "hk-btn_disabled_and_tooltip_ok": true,
+        "extend-btn_row_count": 1,
+        "extend-btn_exp_count": 1,
+        "extend-btn_exp_inside_expansion": true,
+        "extend-btn_row_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Extend"
+        },
+        "extend-btn_exp_info": {
+          "disabled": true,
+          "title": "Available in Phase 3",
+          "text": "Extend"
+        },
+        "extend-btn_disabled_and_tooltip_ok": true
+      },
+      "row_id": "174"
+    },
+    "B439-4_collapsed": {
+      "fd-tab-arrivals": {
+        "exp_elements": 0,
+        "duplicate_testids": {},
+        "pass": true
+      },
+      "fd-tab-departures": {
+        "exp_elements": 0,
+        "duplicate_testids": {},
+        "pass": true
+      },
+      "fd-tab-inhouse": {
+        "exp_elements": 0,
+        "duplicate_testids": {},
+        "pass": true
+      }
+    },
+    "B439-5_visual_arrivals": {
+      "total": 1,
+      "paid": 1,
+      "due": 1,
+      "close": 1,
+      "contains_Booking (incl. GST)": true,
+      "contains_Paid so far": true,
+      "contains_SGST": true,
+      "contains_CGST": true,
+      "contains_Balance due": true,
+      "contains_Check In": true,
+      "contains_\u22ee": true,
+      "contains_\u2715 Close": true
+    },
+    "B439-5_rooms_tile_8525": {
+      "duplicate_testids": {},
+      "pass": true
+    },
+    "ADJ-1_one_expansion_at_a_time": {
+      "expansions": [
+        "fd-row-17-expansion"
+      ],
+      "pass": true
+    },
+    "ADJ-2_keyboard_nav": {
+      "first": "fd-row-15",
+      "second_after_arrowdown": "fd-row-17",
+      "arrowdown_moved_focus": true,
+      "enter_opened_expansion": true,
+      "escape_closed_expansion": true,
+      "pass": true
+    }
+  },
+  "console_errors_non_ignored": [],
+  "duplicate_testids_per_case": {
+    "B439-1_arrivals": {},
+    "B439-2_departures": {},
+    "B439-3_inhouse": {}
+  }
+}

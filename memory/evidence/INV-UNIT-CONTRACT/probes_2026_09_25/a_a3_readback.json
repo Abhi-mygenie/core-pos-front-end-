@@ -1,0 +1,24 @@
+{
+ "id": 20326,
+ "stock_title": "UAT VIS SPICE PKT",
+ "unit": "pkt",
+ "small_unit": "gm",
+ "has_unit_conversion": true,
+ "converion_factor": 800,
+ "consumption_unit": "gm",
+ "quantity": "7.800",
+ "cal_quantity": "7800.00",
+ "display_qty": "9.75",
+ "display_unit": "kg",
+ "display_qty_text": "9 kg 750 gm",
+ "physical_qty": "7800",
+ "is_sub_recipe": false,
+ "subrecipe_id": null,
+ "display_qty_parts": {
+  "major": 9,
+  "major_unit": "kg",
+  "minor": 750,
+  "minor_unit": "gm",
+  "sign": ""
+ }
+}
