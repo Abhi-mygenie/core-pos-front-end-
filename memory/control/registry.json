@@ -29540,6 +29540,44 @@
         "CR-389"
       ],
       "fast_lane": true
+    },
+    {
+      "id": "CR-418",
+      "type": "CR",
+      "title": "Registry Sheet: Contract v1.4 Compliance + REGISTRAR Role",
+      "status": "GATE_1_INTAKE",
+      "priority": "P1",
+      "severity": "P1",
+      "sprint_key": "oct_release",
+      "area": "Tooling",
+      "category": "tooling",
+      "risk": "MEDIUM",
+      "phase": "intake",
+      "current_gate": 1,
+      "blast_radius": "MEDIUM \u2014 sheets_sync.py full rewrite + registry.json one-off cleanup. Zero frontend/src.",
+      "files": [
+        "memory/reports/sheets_sync.py",
+        "memory/control/registry.json"
+      ],
+      "notes": "Rewrites sheets_sync.py to comply with shared contract v1.4: 22 columns, 10 tabs (renamed), Status 8-value enum classifier, Change Log diff mechanism, disable direct pull-back (REGISTRAR role). One-off registry cleanup: type casing (~55 rows), timestamp fields, category cleanup, blockers reconciliation. Supersedes CR-406 push behavior. Blocks CR-417 (Session Log tab) until Gate 5A.",
+      "blocked_by": "",
+      "depends_on": [
+        "CR-406"
+      ],
+      "blocks": [
+        "CR-417"
+      ],
+      "intake_doc": "change_requests/CR-418_REGISTRY_SHEET_CONTRACT_V14_COMPLIANCE_INTAKE.md",
+      "qa_report": "",
+      "qa_result": "",
+      "registered": "2026-10-09",
+      "related": [
+        "CR-406",
+        "CR-417",
+        "CR-389"
+      ],
+      "fast_lane": false,
+      "source": "brief-pos-agent.md (FROZEN 2026-10-09) + registry-sheet-contract-v1.4.md (FROZEN 2026-10-07)"
     }
   ],
   "meta": {
