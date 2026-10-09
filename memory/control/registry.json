@@ -12401,7 +12401,9 @@
       "code_gate_doc": "/app/memory/memory/change_requests/code_gates/CR_035_CODE_GATE_2026_06_11.md",
       "implemented": "2026-06-11",
       "sprint_key": "pos_4_0",
-      "art6_owner_smoke": "PRESENT"
+      "art6_owner_smoke": "PRESENT",
+      "type": "CR",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "CR-037",
@@ -13199,7 +13201,7 @@
       "type": "BUG",
       "priority": "P2",
       "risk": "LOW",
-      "status": "SUPERSEDED by CR-052",
+      "status": "SUPERSEDED by CR-052 \u2014 owner confirmed CLOSED 2026-10-09",
       "sprint_key": "pos_5_0",
       "registered": "2026-06-18",
       "artifact_refs": [],
@@ -13209,7 +13211,9 @@
       "related": [
         "CR-052"
       ],
-      "notes": "1-line fix: auto-expand sidebar when clicking parent item in collapsed state. Sidebar.jsx L272."
+      "notes": "1-line fix: auto-expand sidebar when clicking parent item in collapsed state. Sidebar.jsx L272.",
+      "_contract_status": "CLOSED",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "CR-052",
@@ -14233,7 +14237,9 @@
       "reported_at": "2026-07-08",
       "file": "orderTransform.js:1932",
       "notes": "Code Reality Check 2026-07-17: L1946-1951 uses backend subtotalBeforeTax directly. Comment confirms previous double-SC fixed. No code change needed.",
-      "evidence": "/app/memory/evidence/BUG-168/order_940281.json (order #002386)"
+      "evidence": "/app/memory/evidence/BUG-168/order_940281.json (order #002386)",
+      "type": "BUG",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-170",
@@ -14255,7 +14261,9 @@
           "status": "GATE_5B_QA_PASS \u2014 BATCH-06",
           "note": "BATCH-06 QA PASS 2026-09-15. Code-verified. BUG-SCAN-DEDUP missing R18 marker. Ready Gate 6."
         }
-      ]
+      ],
+      "type": "BUG",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-171",
@@ -14268,7 +14276,9 @@
       "file": "possibly print-template / possibly orderTransform tax pipeline",
       "notes": "Symptom: 360+9+9+57.20 = 435.20 but printed Total = 445 (\u20b99.80 gap). Could be printer template concern. Deferred.",
       "investigation_report": "memory/investigation/BUG-171_INVESTIGATION_REPORT_2026_08_20.md",
-      "closed_at": "2026-08-20"
+      "closed_at": "2026-08-20",
+      "type": "BUG",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-172",
@@ -14528,14 +14538,17 @@
       "type": "BUG",
       "priority": "P1",
       "risk": "MEDIUM",
-      "status": "BACKEND_BLOCKED",
+      "status": "BACKEND_BLOCKED \u2014 owner confirmed INTAKE + Blocked on BACKEND 2026-10-09",
       "gate": "0-1",
       "sprint_key": "pos_5_0",
       "registered": "2026-07-11",
       "intake_doc": "change_requests/BUG_183_DAILY_REPORT_CREDIT_CUSTOMER_MISSING.md",
       "backend_brief": "/app/memory/backend_briefs/BACKEND_BRIEF_BUG-183_2026-08-19.md",
       "impact_analysis": "/app/memory/impact/BUG-183-184_FE_IMPACT_ANALYSIS.md",
-      "notes": "2026-08-20: Validated via curl on 18march account. Backend has NOT populated flat orders_table.user_name/cust_mobile. tap_customer nested object has data only for orders WITH a linked customer, not for walk-in TAB orders. Backend brief fix NOT delivered as specified."
+      "notes": "2026-08-20: Validated via curl on 18march account. Backend has NOT populated flat orders_table.user_name/cust_mobile. tap_customer nested object has data only for orders WITH a linked customer, not for walk-in TAB orders. Backend brief fix NOT delivered as specified.",
+      "_contract_status": "INTAKE",
+      "blocked_by": "BACKEND",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-184",
@@ -17581,7 +17594,7 @@
       "id": "CR-117",
       "title": "Order Report Beta \u2014 Combined Backend-Aggregated Daily Order Report",
       "type": "CR",
-      "status": "GATE_5_PENDING_QA",
+      "status": "GATE_5_PENDING_QA \u2014 owner confirmed QA 2026-10-09",
       "gate": "5a",
       "priority": "P1",
       "risk": "LOW",
@@ -17608,7 +17621,9 @@
       "qa_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
       "notes": " | Backend delivered all 9 fields (confirmed 2026-08-01 probe). 6 tabs + 2 filters unblocked. Planning addendum written. Awaiting Gate 4 GO for unblocked scope. | Gate 2 CLOSED 2026-08-01. Two restaurant probes complete. All 9 fields confirmed. Gate 4 GO: unlock 6 tabs + enable Status/PG filters in OrderReportBetaPage.jsx. | Gate 4 DONE 2026-08-01. OrderReportBetaPage.jsx: 6 tabs unlocked, BETA_TAB_FILTERS added (snake_case), Status+PG filters live. 1 file changed ~80 lines. Lock icon removed.",
       "gate2_closed": "2026-08-01",
-      "gate4_closed": "2026-08-01"
+      "gate4_closed": "2026-08-01",
+      "_contract_status": "QA",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "CR-118",
@@ -18886,7 +18901,7 @@
       "type": "CR",
       "priority": "P2",
       "risk": "MEDIUM",
-      "status": "HOLD \u2014 BACKEND PENDING",
+      "status": "HOLD BACKEND PENDING \u2014 owner confirmed INTAKE + Blocked on BACKEND 2026-10-09",
       "gate": 1,
       "sprint_key": "pos_5_1",
       "files": [
@@ -18899,7 +18914,10 @@
         "change_requests/CR-134_SETTINGS_TILES_WIZARD_MIRROR_INTAKE.md",
         "investigation/INV-SETTINGS-COVERAGE_2026_08_08.md"
       ],
-      "category": "Settings / UX"
+      "category": "Settings / UX",
+      "_contract_status": "INTAKE",
+      "blocked_by": "BACKEND",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "CR-135",
@@ -23887,7 +23905,7 @@
       "id": "CR-372",
       "title": "Security Remediation \u2014 Remove Internal Files from Public Surface",
       "type": "CR",
-      "status": "SPLIT \u2192 CR-372-A + CR-372-B",
+      "status": "SPLIT into CR-372-A + CR-372-B \u2014 owner confirmed CLOSED 2026-10-09",
       "priority": "P1",
       "risk": "HIGH",
       "gate": "1",
@@ -23931,7 +23949,9 @@
           "status": "SPLIT",
           "note": "Split into CR-372-A (no src/) and CR-372-B (App.js routing) on owner instruction."
         }
-      ]
+      ],
+      "_contract_status": "CLOSED",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "CR-372-A",
@@ -27650,7 +27670,7 @@
       "severity": "P1",
       "risk": "MEDIUM",
       "sprint_key": "sep_bug_closure",
-      "status": "INVESTIGATED_ROOT_CAUSE_UPSTREAM",
+      "status": "INVESTIGATED_ROOT_CAUSE_UPSTREAM \u2014 owner confirmed PLANNING 2026-10-09",
       "created": "2026-09-24",
       "related": [
         "BUG-453"
@@ -27679,7 +27699,9 @@
           "date": "2026-09-24",
           "event": "Revalidation session: docs synced (report \u00a71/\u00a76/HS, tracker, intake, dashboard), BACKEND_BRIEF_BUG-454 written + sent (Q1-Q5), OD-454-03/04/05 recorded. Blocked on backend reply + owner T1/T2."
         }
-      ]
+      ],
+      "_contract_status": "PLANNING",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-455",
@@ -28307,13 +28329,15 @@
       "type": "BUG",
       "severity": "P3",
       "risk": "LOW",
-      "status": "BACKEND_BRIEF_FILED",
+      "status": "BACKEND_BRIEF_FILED \u2014 owner confirmed PLANNING 2026-10-09",
       "sprint_key": "sep_bug_closure",
       "gate": "1",
       "file": "NONE (backend data)",
       "related": "CR-376",
       "registered": "2026-09-25",
-      "brief": "backend_briefs/BACKEND_BRIEF_BUG-463_2026_09_25.md"
+      "brief": "backend_briefs/BACKEND_BRIEF_BUG-463_2026_09_25.md",
+      "_contract_status": "PLANNING",
+      "last_updated": "2026-10-09"
     },
     {
       "id": "BUG-464",

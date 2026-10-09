@@ -17,7 +17,7 @@
 |---|---|---|---|
 | OD-418-01 | Cleanup timing? | **A — Same step as `--push`** (dry-run printed first, then live in same command) | ✅ LOCKED |
 | OD-418-02 | `--pull` behaviour after disable? | **C — Read-only diff** (`--pull` reads sheet, prints pending Change Log rows, writes nothing) | ✅ LOCKED |
-| OD-418-03 | Unrouted status strings? | **Best-guess + blank remainder** — SHIPPED/VERIFIED/CARRY-FORWARD → IMPLEMENTED; BACKEND_BLOCKED → real stage + Blocked on = BACKEND; genuinely ambiguous → blank (Unrouted) | ✅ LOCKED |
+| OD-418-03 | Unrouted status strings? | **Fully resolved by owner 2026-10-09 — zero unrouted remaining.** BUG-139→CLOSED · BUG-183→INTAKE+BACKEND · CR-117→QA · CR-134→INTAKE+BACKEND · CR-372→CLOSED · BUG-454→PLANNING · BUG-463→PLANNING. Blank-type fixes: CR-035/BUG-169/170/171→derived from ID prefix. Registry patched. | ✅ LOCKED |
 | OD-418-04 | Code markers scan? | **Skip** — write `no` for all items on first push. Future CR can add scan. | ✅ LOCKED |
 | OD-418-05 | CR-417 Session Log tab? | **Defer** — CR-418 delivers exactly 10 tabs per contract. CR-417 lands after Gate 5A. | ✅ LOCKED |
 
@@ -108,7 +108,68 @@ Old tabs deleted on push: "Open Only", "QA / Smoke", "Blocked / Parked", "QA'd",
 
 ### 3.3 Status classifier — LOCKED (OD-418-03)
 
-Full best-guess mapping before falling back to blank (Unrouted):
+All 7 previously unrouted items resolved by owner 2026-10-09. **Unrouted = 0.**
+
+Owner decisions applied directly to registry:
+
+| ID | Raw status | Owner decision | Applied |
+|---|---|---|---|
+| BUG-139 | `SUPERSEDED by CR-052` | CLOSED | ✅ |
+| BUG-183 | `BACKEND_BLOCKED` | INTAKE + Blocked on BACKEND | ✅ |
+| CR-117 | `GATE_5_PENDING_QA` | QA | ✅ |
+| CR-134 | `HOLD — BACKEND PENDING` | INTAKE + Blocked on BACKEND | ✅ |
+| CR-372 | `SPLIT → CR-372-A + CR-372-B` | CLOSED | ✅ |
+| BUG-454 | `INVESTIGATED_ROOT_CAUSE_UPSTREAM` | PLANNING | ✅ |
+| BUG-463 | `BACKEND_BRIEF_FILED` | PLANNING | ✅ |
+
+Blank-type items fixed from ID prefix: CR-035→CR · BUG-169/170/171→BUG.
+
+Full classifier (handles all remaining free-text statuses for future items):
+
+```python
+def classify_status(item):
+    # Use _contract_status override if owner-patched directly
+    if item.get('_contract_status'):
+        return item['_contract_status']
+    raw = str(item.get('status', '')).upper()
+    if any(k in raw for k in ['DUPLICATE', 'DUPE']):                          return 'DUPLICATE'
+    if any(k in raw for k in ['PARKED', 'DEFERRED']):                         return 'PARKED'
+    if any(k in raw for k in ['CLOSED', 'OWNER VERIFIED', 'SUBSUMED',
+                               'RETIRED', 'RESOLVED', 'ABSORBED',
+                               'FOLDED', 'FROZEN']):                           return 'CLOSED'
+    if any(k in raw for k in ['SHIPPED', 'VERIFIED', 'CARRY-FORWARD',
+                               'RE-INVESTIGATE', 'NEEDS_MORE_DATA',
+                               'INVESTIGATION COMPLETE']):                     return 'IMPLEMENTED'
+    if any(k in raw for k in ['AWAITING OWNER SMOKE', 'GATE_6',
+                               'OWNER SMOKE', 'AWAITING SMOKE']):              return 'SMOKE'
+    if any(k in raw for k in ['GATE_5B', 'QA PASS', 'QA_PASS',
+                               'GATE 5B']):                                    return 'QA'
+    if any(k in raw for k in ['GATE_5A', 'GATE_4', 'GATE 5A', 'GATE 4',
+                               'IMPLEMENTED', 'IN PROGRESS',
+                               'IN_PROGRESS']):                                return 'IMPLEMENTED'
+    if any(k in raw for k in ['GATE_2', 'GATE_3', 'GATE 2', 'GATE 3',
+                               'IMPACT_ANALYSIS', 'PLAN_COMPLETE',
+                               'GATE_2_READY']):                               return 'PLANNING'
+    if any(k in raw for k in ['GATE_1', 'INTAKE', 'REGISTERED',
+                               'NOT STARTED', 'GATE 1',
+                               'GATE_1_INTAKE']):                              return 'INTAKE'
+    return ''  # blank = Unrouted (should be zero after owner resolution)
+```
+
+**Final Status distribution (post-owner-resolution, 771 items):**
+
+| Status | Count |
+|---|---|
+| CLOSED | 257 |
+| IMPLEMENTED | 185 |
+| QA | 108 |
+| SMOKE | 93 |
+| INTAKE | 88 |
+| PARKED | 30 |
+| PLANNING | 8 |
+| DUPLICATE | 2 |
+| **Unrouted** | **0** ✅ |
+| **Total** | **771** |
 
 ```python
 def classify_status(raw):
