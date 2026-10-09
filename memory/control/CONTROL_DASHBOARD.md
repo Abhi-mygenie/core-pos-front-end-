@@ -304,3 +304,5 @@ ng-only during Gate 2.5) |
 **2026-09-10 — PLANNING Gate 2:** CR-374 Impact Analysis complete (`impact/CR-374_IMPACT_ANALYSIS.md`). Code reality: NONE. All 3 ODs locked. 1 file only (BulkEditor.jsx, ~66 lines, 4 edits). Conflict: BUG-392 parallel-safe (different section, line 1318 vs 244/425/958). BUG-391 declared Batch B (must wait for Batch A QA). OG-AUDIT-003 noted (line 682 marker, pre-release concern, do not touch). Zero blockers. Registry: 642 items. Next: Gate 3 Implementation Plan after owner Gate 4 GO.
 
 **2026-10-09 — CLOSURE pass:** 17 legacy/investigation items closed (owner directive). IMPLEMENTED 54 → 37. Report: `control/CLOSURE_PASS_LEGACY_INV_CLOSURE_REPORT_2026_10_09.md`
+
+**2026-10-09 — QA Gate 5b:** CR-418 QA PASS (44/44, 2 NOTE). Status → QA. Report: `test_reports/CR-418_QA_REPORT_2026-10-09.md`. Next: Gate 6 owner smoke.

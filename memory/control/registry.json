@@ -33883,7 +33883,7 @@
       "id": "CR-418",
       "type": "CR",
       "title": "Registry Sheet: Contract v1.4 Compliance + REGISTRAR Role",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
       "priority": "P1",
       "severity": "P1",
       "sprint_key": "oct_release",
@@ -33906,7 +33906,7 @@
         "CR-417"
       ],
       "intake_doc": "change_requests/CR-418_REGISTRY_SHEET_CONTRACT_V14_COMPLIANCE_INTAKE.md",
-      "qa_report": "",
+      "qa_report": "test_reports/CR-418_QA_REPORT_2026-10-09.md",
       "qa_result": "",
       "registered": "2026-10-09",
       "related": [
@@ -33940,6 +33940,12 @@
         {
           "date": "2026-10-09",
           "event": "GATE_5A rework: classifier rewritten (0 unclassified), severity\u2192priority, area normaliser for free-form values, Blockers tab = 22-col live Blocked-on rows only, schema dates backfilled (registered/last_updated/closed), Change Log diff vs last-push snapshot (runs before overwrite; Assignee preserved; non-accepted cols REJECTED; Priority SOURCE=DASHBOARD), --pull disabled (--diff read-only), tab order enforced. Full push: 771 rows."
+        },
+        {
+          "date": "2026-10-09",
+          "from": "GATE_5A_IMPLEMENTED",
+          "to": "QA PASS \u2014 Gate 5b (2026-10-09). 44/44 PASS, 0 BLOCKER/MAJOR/MINOR, 2 NOTE. Next: Gate 6 owner smoke.",
+          "event": "Gate 5b QA PASS \u2014 test_reports/CR-418_QA_REPORT_2026-10-09.md"
         }
       ],
       "last_updated": "2026-10-09",
