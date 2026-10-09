@@ -28406,7 +28406,7 @@
    "title": "Table Management Export (and Bulk Edit Export) does nothing in production \u2014 window.open(download_url) fired after await is blocked by the browser popup blocker; 'Exported' toast still shows success",
    "severity": "P1",
    "risk": "MEDIUM",
-   "sprint_key": "sep_bug_closure",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28437,6 +28437,10 @@
     {
      "date": "2026-06",
      "event": "INTAKE: registered BUG-466 (P1/MEDIUM, sprint sep_bug_closure). Owner-reported 'bulk export not working in table management'; investigation INV-TABLE-EXPORT-2026-06 done (HIGH confidence, FE_BUG, window.open-after-await popup block). DISTINCT, Related CR-060. Recommend FULL PLANNING route. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned sep_bug_closure -> oct_release (owner)."
     }
    ]
   },
@@ -28446,7 +28450,7 @@
    "title": "Table Reservations \u2014 add restaurant-table reservation capability directly in MyGenie POS",
    "severity": "P2",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28463,6 +28467,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-391 (P2/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not PMS room reservations). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28472,7 +28480,7 @@
    "title": "Aggregator Table Reservations \u2014 accept table reservations originating from supported aggregator channels",
    "severity": "P2",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28489,6 +28497,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-392 (P2/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28498,7 +28510,7 @@
    "title": "Fixed Room Charges \u2014 support fixed room charges within room/PMS workflow",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28516,6 +28528,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-393 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. RELATED CR-382/CR-384 (PMS rate). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28525,7 +28541,7 @@
    "title": "Larger POS Item Tiles \u2014 increase visual size of POS item tiles for easier selection",
    "severity": "P3",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28540,6 +28556,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-394 (P3/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route GATE2_FASTLANE_CANDIDATE. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28549,7 +28569,7 @@
    "title": "Role-Based Discount Permissions \u2014 incl complimentary transactions",
    "severity": "P1",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28566,6 +28586,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-395 (P1/HIGH, sprint jun_backlog_2026). Owner bulk backlog. RELATED CR-058 (comp order, parked). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28575,7 +28599,7 @@
    "title": "Clarify Duplicate Report Modules \u2014 consolidate/distinguish Order Report/Order Ledger/Order Report Beta and Item Sales/Item Report/Item Ledger",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28595,6 +28619,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-396 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28604,7 +28632,7 @@
    "title": "Direct Table and Printer Settings Links \u2014 Table Management & Printer Management links open their settings directly",
    "severity": "P3",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28619,6 +28647,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-397 (P3/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route GATE2_FASTLANE_CANDIDATE. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28628,7 +28660,7 @@
    "title": "Unified Restaurant Configuration \u2014 consolidate Restaurant Setup + Restaurant Settings into one page",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28645,6 +28677,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-398 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28654,7 +28690,7 @@
    "title": "CRM Features in POS \u2014 bring relevant CRM/customer features into POS",
    "severity": "P2",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE_NEEDS_SCOPING",
    "created": "2026-06",
    "related": [],
@@ -28669,6 +28705,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-399 (P2/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route BLOCKED_SCOPE. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28678,7 +28718,7 @@
    "title": "Resolve Credit Orders \u2014 remove/resolve a credit order from Credit, subject to permissions + audit",
    "severity": "P1",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28693,6 +28733,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-400 (P1/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28702,7 +28746,7 @@
    "title": "Bulk Ingredient Updates via Excel \u2014 bulk ingredient update through Excel import incl conversion factors",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28720,6 +28764,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-401 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. RELATED BUG-221 (bulk upload shipped), BUG-226. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28729,7 +28777,7 @@
    "title": "Future-Dated Stock Receipt \u2014 record purchase with future receipt date; available stock increases only on receipt",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28744,6 +28792,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-402 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not CR-018 schedule order). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28753,7 +28805,7 @@
    "title": "Automated End-of-Day Email Reports \u2014 automated email delivery of EOD reports",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28770,6 +28822,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-403 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not CR-363 night audit). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28779,7 +28835,7 @@
    "title": "B2B Invoice PDF Download \u2014 download bills/invoices as PDF for B2B customers",
    "severity": "P2",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28797,6 +28853,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-404 (P2/LOW, sprint jun_backlog_2026). Owner bulk backlog. RELATED CR-116 (B2B capture). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28806,7 +28866,7 @@
    "title": "macOS Printer Agent \u2014 printer-agent support for macOS",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28824,6 +28884,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-405 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. RELATED CR-352/CR-353 (agent). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28833,7 +28897,7 @@
    "title": "Configurable Printed Bill Fields \u2014 each printed bill field show/hide via individual Yes/No setting",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28848,6 +28912,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-406 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28857,7 +28925,7 @@
    "title": "EDC/Card Device Integration \u2014 integrate EDC/card payment devices with MyGenie",
    "severity": "P2",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28872,6 +28940,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-407 (P2/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28881,7 +28953,7 @@
    "title": "Reject Swiggy/Zomato Orders \u2014 option to reject incoming aggregator orders where supported",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28898,6 +28970,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-408 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28907,7 +28983,7 @@
    "title": "Timed Swiggy/Zomato Order Acceptance \u2014 toggle aggregator acceptance ON/OFF temporarily with auto timer",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -28922,6 +28998,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered CR-409 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28931,7 +29011,7 @@
    "title": "KDS Order Ticket Text Scaling \u2014 New POS KDS ticket font/text too small on target screen; staff cannot read details / mark prepared accurately",
    "severity": "P2",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28948,6 +29028,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-467 (P2/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not BUG-144 token). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28957,7 +29041,7 @@
    "title": "Aggregator Page Navigation \u2014 no clear back/navigation option on the aggregator page",
    "severity": "P2",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -28974,6 +29058,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-468 (P2/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not BUG-416). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -28983,7 +29071,7 @@
    "title": "Insights Chart Tooltips \u2014 tooltip/value display broken on hover over Insights visualizations",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -29000,6 +29088,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-469 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT; RELATED BUG-465 (recharts). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29009,7 +29101,7 @@
    "title": "Settlement Transfer Calculation \u2014 transferred amounts not included in expected amount",
    "severity": "P1",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -29026,6 +29118,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-470 (P1/HIGH, sprint jun_backlog_2026). Owner bulk backlog. RELATED BUG-426 / INV-ROOM-001. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29035,7 +29131,7 @@
    "title": "Partial Settlement Amount Field \u2014 do not prefill amount when Partial selected unless entered/required by rule",
    "severity": "P2",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -29052,6 +29148,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-471 (P2/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not CR-162). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29061,7 +29161,7 @@
    "title": "Hide Room Metrics Without Rooms \u2014 hide room metrics from Daily Report Summary when outlet has no rooms",
    "severity": "P3",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -29076,6 +29176,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-472 (P3/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route GATE2_FASTLANE_CANDIDATE. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29085,7 +29189,7 @@
    "title": "Preserve Customer Names \u2014 valid customer names replaced with 'Noname'",
    "severity": "P1",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE_DUP_CANDIDATE",
    "created": "2026-06",
    "related": [
@@ -29102,6 +29206,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-473 (P1/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DUPLICATE-CANDIDATE of BUG-356. Route OWNER_DECISION. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29111,7 +29219,7 @@
    "title": "Service Charge Input Disabled When Feature Off \u2014 disable % input even if Auto Service Charge on; prevent 5% showing on payment screen while final bill omits charge",
    "severity": "P1",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -29126,6 +29234,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-474 (P1/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29135,7 +29247,7 @@
    "title": "Bulk Edit Item Indexing \u2014 displayed item numbers offset by two rows; numbers must match correct items",
    "severity": "P1",
    "risk": "MEDIUM",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -29150,6 +29262,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-475 (P1/MEDIUM, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29159,7 +29275,7 @@
    "title": "Preserve Aggregator Category on Food Category Deletion \u2014 deleting a food category must not delete linked aggregator category unless explicitly confirmed",
    "severity": "P1",
    "risk": "HIGH",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [],
@@ -29174,6 +29290,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-476 (P1/HIGH, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT. Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   },
@@ -29183,7 +29303,7 @@
    "title": "Printer Station List Refresh \u2014 after configuring a new printer station, station options (Bill Printer/KDS/Bar/Bill) must update without page refresh",
    "severity": "P2",
    "risk": "LOW",
-   "sprint_key": "jun_backlog_2026",
+   "sprint_key": "oct_release",
    "status": "GATE_1_INTAKE",
    "created": "2026-06",
    "related": [
@@ -29200,6 +29320,10 @@
     {
      "date": "2026-06",
      "event": "BATCH INTAKE 2026-06: registered BUG-477 (P2/LOW, sprint jun_backlog_2026). Owner bulk backlog. DISTINCT (not BUG-288). Route FULL_PLANNING. Zero code."
+    },
+    {
+     "date": "2026-06",
+     "event": "Sprint reassigned jun_backlog_2026 -> oct_release (owner)."
     }
    ]
   }

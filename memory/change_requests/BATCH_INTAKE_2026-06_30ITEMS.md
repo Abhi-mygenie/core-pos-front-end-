@@ -1,6 +1,6 @@
 # BATCH INTAKE — 2026-06 — 30-item owner backlog
 
-**Sprint:** jun_backlog_2026
+**Sprint:** oct_release (reassigned from jun_backlog_2026 per owner; includes BUG-466)
 **Gate:** 1 (INTAKE) for all items
 **Source:** OWNER-REPORTED (bulk list)
 **Registered:** 2026-06
