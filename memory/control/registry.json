@@ -12196,7 +12196,7 @@
       "title": "PayLater table clear",
       "status": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
       "date": "2026-05-21",
-      "notes": "Backend should emit on update-order-paid",
+      "notes": "Backend should emit on update-order-paid \u00b7 BE follow-up kept alive via BACKEND_BRIEF_PROD-003_2026-10-09 (filed 2026-10-09).",
       "registered": "",
       "last_updated": "2026-10-09",
       "closed": "2026-10-09",
@@ -12209,8 +12209,13 @@
           "from": "FE-VERIFIED, BE-FOLLOWUP",
           "to": "CLOSED \u2014 OWNER VERIFIED (closure pass 2026-10-09: legacy pre-gate item, shipped to production; owner-directed)",
           "event": "CLOSURE pass (Role 11) \u2014 owner directive 2026-10-09"
+        },
+        {
+          "date": "2026-10-09",
+          "event": "Backend brief filed for BE follow-up (update-order-paid on PayLater settle). Item stays CLOSED; re-open if BE reply requires FE change."
         }
-      ]
+      ],
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_PROD-003_2026-10-09.md"
     },
     {
       "type": "BUG",

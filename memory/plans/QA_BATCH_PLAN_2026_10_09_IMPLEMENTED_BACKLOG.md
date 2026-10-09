@@ -31,7 +31,10 @@ Output per batch: `/app/memory/test_reports/<BATCH>_QA_REPORT_2026-10-09.md`; re
 ## Owner decision (2026-10-09)
 - APPROVED: run all 7 batches in order QA-B1 → QA-B7.
 - Section B items: deferred to a separate CLOSURE pass.
-- Credentials: owner to supply QA login next message.
+- Credentials: QA_CAFE103 supplied (alias in memory/test_credentials.md). Login PASS (Owner, RID 644).
+- Owner override: BATCH2 handover (BUG-426/428/429/430) accepted without §1 EXIT GATE line.
+- Test data: owner allows creating a fresh in-house guest on preprod.
+- **QA-B1 BLOCKED (2026-10-09):** CAFE 103 profile has `room=No`, `room_gst_applicable=No`, room list `[]`, Aiosell property not configured → PMS Folio/GST flows cannot be exercised on this account.
 
 ## C. Blockers before QA can start
 1. **QA login credentials** for preprod (restaurant / role) — `memory/test_credentials.md` is empty in this branch. Need an alias + creds (stored masked).

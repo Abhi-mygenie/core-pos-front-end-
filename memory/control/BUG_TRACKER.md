@@ -1571,3 +1571,5 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 
 
 **2026-10-09 — CLOSURE pass (owner directive):** 17 items closed (11 legacy SHIPPED → CLOSED — OWNER VERIFIED; INV-ROOM-001/OE-001/PG-001/GST-001/BACKEND-001 → CLOSED — INVESTIGATION COMPLETE; BUG-267 → CLOSED — COULD NOT REPRODUCE). Registry is source of truth; table rows above may show prior status. Report: `control/CLOSURE_PASS_LEGACY_INV_CLOSURE_REPORT_2026_10_09.md`
+
+**2026-10-09 — PROD-003:** Backend brief filed: `backend_briefs/BACKEND_BRIEF_PROD-003_2026-10-09.md` (PayLater settle must emit `update-order-paid`; `sucess` typo PAY-007).

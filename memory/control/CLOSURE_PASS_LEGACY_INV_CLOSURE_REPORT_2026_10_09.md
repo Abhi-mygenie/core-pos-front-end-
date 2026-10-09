@@ -34,6 +34,7 @@ Legacy items pre-date the gate system (no Intake/IA/Plan/QA Report/Smoke artefac
 
 ## Residual risk (re-open triggers)
 - **PROD-003** previous status "FE-VERIFIED, BE-FOLLOWUP" — backend follow-up was never tracked separately. Re-open / file backend brief if still pending.
+  - 2026-10-09: backend brief filed → `backend_briefs/BACKEND_BRIEF_PROD-003_2026-10-09.md`
 - **BUG-058** previous status "CARRY-FORWARD" — closed per directive; re-open if the Hold/Audit prepaid collect failure recurs.
 - **INV-*** findings not yet converted to CRs remain untracked; owner may spawn CRs (next ID CR-419).
 
