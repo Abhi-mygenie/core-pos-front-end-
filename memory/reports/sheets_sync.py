@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-# CR-418: Google Sheets — Contract v1.4 Compliance + REGISTRAR Role
+# CR-418: Google Sheets — Contract v1.4 REGISTRAR (push-only + Change Log diff)
 # Push: registry.json → Google Sheet (10 tabs, 22-column contract §3)
-# Pull: read-only diff — prints pending Change Log rows, writes nothing
-# Auth: OAuth2 with stored refresh token (no service account key)
+# Sheet → registry: NEVER direct. Human edits are diffed into Change Log (§5);
+# only owner-APPROVED rows are applied on the next push.
 #
 # Usage:
-#   python3 sheets_sync.py --dry-run          # validate credentials + sheet, no writes
-#   python3 sheets_sync.py --push             # registry → Sheet (10 tabs + Track C cleanup)
-#   python3 sheets_sync.py --pull             # read-only diff: show pending Change Log rows
-#   python3 sheets_sync.py --push --pull      # push then show diff
+#   python3 sheets_sync.py --dry-run   # full run in memory: diff + run report, no writes
+#   python3 sheets_sync.py --push      # REGISTRAR run: Change Log diff → registry → sheet
+#   python3 sheets_sync.py --diff      # read-only: print sheet edits vs last push
 
-import json, os, sys, argparse, time, shutil
+import json, os, re, sys, argparse, time, shutil, hashlib
 import urllib.parse
 from pathlib import Path
 from datetime import datetime
@@ -26,6 +25,7 @@ except ImportError:
 SCRIPT_DIR    = Path(__file__).parent
 ENV_PATH      = Path('/app/frontend/.env')   # CR-418: credentials in frontend env
 REGISTRY_PATH = SCRIPT_DIR.parent / 'control' / 'registry.json'
+SNAPSHOT_PATH = SCRIPT_DIR / 'sheet_push_snapshot.json'   # last values pushed per ID
 
 load_dotenv(ENV_PATH)
 
@@ -35,6 +35,8 @@ REFRESH_TOKEN = os.getenv('GOOGLE_REFRESH_TOKEN',      '').strip().strip('"').st
 _raw_id       = os.getenv('GOOGLE_SHEET_ID',           '').strip().strip('"').strip("'")
 SHEET_ID      = _raw_id.split('/')[0]
 
+TODAY = datetime.now().strftime('%Y-%m-%d')
+
 # ── 22-column contract §3 header (exact names, exact order) ───────────────
 CONTRACT_COLS = [
     'Project', 'ID', 'Type', 'Title', 'Status', 'Status note',
@@ -42,140 +44,177 @@ CONTRACT_COLS = [
     'Assignee', 'Registered', 'Last updated', 'Closed',
     'Related', 'Artefacts', 'Code markers', 'Files', 'Notes', 'Money path',
 ]
+COL = {c: i for i, c in enumerate(CONTRACT_COLS)}
 
-# ── Phase 1 accepted columns from sheet (contract §5.5) ───────────────────
-PHASE1_ACCEPTED = ['Status', 'Registered', 'Closed']
+PHASE1_ACCEPTED = ('Status', 'Registered', 'Closed')   # contract §5.5
+DASHBOARD_COLS  = ('Priority',)                         # contract §8 / §5.6
 
-# ── 10 tabs, contract §2 exact names and order ────────────────────────────
 TABS = [
     'All Items', 'Intake', 'Planning', 'Implemented',
     'QA', 'Smoke', 'Closed', 'Blockers', 'Change Log', 'Summary',
 ]
+_OBSOLETE_TABS = ['Open Only', 'QA / Smoke', 'Blocked / Parked', "QA'd",
+                  'Smoke Test', 'Implementation']
 
-# ── Obsolete tabs from all prior versions ─────────────────────────────────
-_OBSOLETE_TABS = [
-    'Open Only',        # v1
-    'QA / Smoke',       # v2
-    'Blocked / Parked', # v2
-    "QA'd",            # v2
-    'Smoke Test',       # v2
-    'Implementation',   # v2
-]
+CL_COLS = ['Logged at', 'ID', 'Column', 'Old value (registry)',
+           'New value (sheet)', 'Decision', 'Decided at', 'Note']
 
-# ── Change Log column headers (contract §5) ───────────────────────────────
-CL_COLS = [
-    'Logged at', 'ID', 'Column', 'Old value (registry)',
-    'New value (sheet)', 'Decision', 'Decided at', 'Note',
-]
+STATUS_ENUM = ['INTAKE', 'PLANNING', 'IMPLEMENTED', 'QA', 'SMOKE',
+               'CLOSED', 'PARKED', 'DUPLICATE']
+CLOSED_SET  = {'CLOSED', 'PARKED', 'DUPLICATE'}
+
+_DATE_RE = re.compile(r'\d{4}-\d{2}-\d{2}')
+_ITEMS_BY_ID = {}   # set per run; used for dependency-blocker resolution
+
+def _norm(s):
+    return re.sub(r'[_\-]+', ' ', str(s or '').upper())
+
+def _head(n):
+    # leading clause of a status string: stops at '(', '. ', '·' or a date
+    return re.split(r'\(|\. |·|\d{4} \d{2} \d{2}', n, maxsplit=1)[0]
 
 # ── Status classifier — 8-value contract enum (contract §4) ───────────────
+_SMOKE_KW = ('AWAITING OWNER SMOKE', 'OWNER SMOKE PENDING', 'AWAITING SMOKE',
+             'AWAITING GATE 6', 'GATE 6 PENDING', 'AWAITING OWNER SIGN OFF')
+
 def classify_status(item):
-    """Map registry item → one of 8 contract Status enum values (or blank = Unrouted).
-    Uses _contract_status override if owner-patched directly on the registry item."""
     if item.get('_contract_status'):
         return item['_contract_status']
-    s = str(item.get('status', '')).upper()
-    if any(k in s for k in ['DUPLICATE', 'DUPE']):
+    n = _norm(item.get('status', ''))
+    if n.strip() in STATUS_ENUM:
+        return n.strip()
+    h = _head(n).strip()
+    if 'DUPLICATE' in h or 'DUPE' in h:
         return 'DUPLICATE'
-    if any(k in s for k in ['PARKED', 'DEFERRED']):
-        return 'PARKED'
-    if any(k in s for k in ['CLOSED', 'OWNER VERIFIED', 'SUBSUMED', 'RETIRED',
-                              'RESOLVED', 'ABSORBED', 'FOLDED', 'FROZEN']):
+    if h.startswith(('CLOSED', 'RESOLVED', 'RETIRED', 'SUBSUMED', 'ABSORBED', 'FOLDED', 'OWNER VERIFIED')) \
+            or 'SUBSUMED' in h or 'ABSORBED' in h or 'SMOKE PASS' in n[:60] \
+            or 'SUBSUMED BY' in n[:80] or 'ABSORBED INTO' in n[:80]:
         return 'CLOSED'
-    # SHIPPED / VERIFIED → IMPLEMENTED (OD-418-03 owner decision)
-    if any(k in s for k in ['SHIPPED', 'VERIFIED', 'CARRY-FORWARD',
-                              'RE-INVESTIGATE', 'NEEDS_MORE_DATA',
-                              'INVESTIGATION COMPLETE']):
-        return 'IMPLEMENTED'
-    if any(k in s for k in ['AWAITING OWNER SMOKE', 'GATE_6', 'OWNER SMOKE',
-                              'AWAITING SMOKE']):
-        return 'SMOKE'
-    if any(k in s for k in ['GATE_5B', 'QA PASS', 'QA_PASS', 'GATE 5B']):
-        return 'QA'
-    if any(k in s for k in ['GATE_5A', 'GATE_4', 'GATE 5A', 'GATE 4',
-                              'IMPLEMENTED', 'IN PROGRESS', 'IN_PROGRESS']):
-        return 'IMPLEMENTED'
-    if any(k in s for k in ['GATE_2', 'GATE_3', 'GATE 2', 'GATE 3',
-                              'IMPACT_ANALYSIS', 'PLAN_COMPLETE', 'GATE_2_READY']):
+    if 'PARKED' in h or 'DEFERRED' in h:
+        return 'PARKED'
+    stage = ''
+    if 'QA PASS' in n[:60] or any(k in h for k in ('GATE 5B', 'QA VERIFIED', 'REGRESSION PASS')):
+        stage = 'QA'
+    elif any(k in h for k in ('GATE 5A', 'GATE 4', 'IMPLEMENTED', 'SHIPPED', 'FIXED',
+                              'VERIFIED', 'IN PROGRESS', 'CARRY FORWARD', 'HYGIENE',
+                              'INVESTIGATION COMPLETE')):
+        stage = 'IMPLEMENTED'   # SHIPPED / VERIFIED → IMPLEMENTED (OD-418-03)
+    if stage == 'IMPLEMENTED' and 'QA PASS' in n and not any(k in n for k in ('QA PENDING', 'AWAITING QA')):
+        stage = 'QA'
+    if stage:
+        return 'SMOKE' if any(k in n for k in _SMOKE_KW) else stage
+    if any(k in h for k in ('GATE 2', 'GATE 3', 'IMPACT ANALYSIS', 'PLAN COMPLETE', 'PLANNING')):
         return 'PLANNING'
-    if any(k in s for k in ['GATE_1', 'INTAKE', 'REGISTERED', 'NOT STARTED',
-                              'GATE 1', 'GATE_1_INTAKE']):
+    if any(k in h for k in ('GATE 1', 'INTAKE', 'REGISTERED', 'NOT STARTED', 'RE INVESTIGATE',
+                            'BACKEND BLOCKED', 'CRM BLOCKED', 'HOLD')):
         return 'INTAKE'
-    if 'BACKEND-BLOCKED' in s or 'BACKEND_BLOCKED' in s:
-        return 'INTAKE'
-    if 'CRM-BLOCKED' in s:
-        return 'INTAKE'
+    g = re.fullmatch(r'\s*(?:GATE\s*)?(\d)([AB]?)\s*', str(item.get('gate') or '').upper())
+    if g:
+        return {'1': 'INTAKE', '2': 'PLANNING', '3': 'PLANNING', '4': 'IMPLEMENTED',
+                '5': 'QA' if g.group(2) == 'B' else 'IMPLEMENTED', '6': 'SMOKE'}.get(g.group(1), '')
+    if 'DEFERRED TO' in n:
+        return 'PARKED'
+    if any(k in n for k in ('VERIFIED', 'SHIPPED')):
+        return 'IMPLEMENTED'
     return ''   # blank = Unrouted (contract §4 back-catalogue interim)
 
-# ── Status → tab name (contract §2) ───────────────────────────────────────
 _STATUS_TO_TAB = {
     'INTAKE': 'Intake', 'PLANNING': 'Planning', 'IMPLEMENTED': 'Implemented',
     'QA': 'QA', 'SMOKE': 'Smoke',
     'CLOSED': 'Closed', 'PARKED': 'Closed', 'DUPLICATE': 'Closed',
 }
 
-def _status_to_tab(contract_status):
-    return _STATUS_TO_TAB.get(contract_status)  # None = All Items only
-
-# ── POS area normaliser (contract §3 col 9) ────────────────────────────────
-_CANONICAL_AREAS = {
+# ── POS area normaliser (brief §3.4 / contract §3 col 9) ───────────────────
+_CANONICAL_AREAS = [
     'Printing', 'Reports', 'Inventory', 'Menu Management', 'Payments',
     'PMS Check-In', 'PMS Bookings', 'PMS Folio', 'CRM', 'Settings',
     'Auth / Permissions', 'Smart Purchase', 'Sidebar / Nav', 'Sockets',
     'Order Entry', 'Dashboard', 'Expense', 'Tooling',
-}
+]
 _AREA_MAP = {
     'printing': 'Printing', 'printer': 'Printing', 'kot': 'Printing', 'print': 'Printing',
-    'report': 'Reports', 'reports': 'Reports',
+    'report': 'Reports', 'reports': 'Reports', 'reports module': 'Reports',
     'inventory': 'Inventory', 'inv': 'Inventory', 'stock': 'Inventory',
-    'menu': 'Menu Management', 'product': 'Menu Management',
-    'payment': 'Payments', 'billing': 'Payments', 'pay': 'Payments',
+    'menu': 'Menu Management', 'menu mgmt': 'Menu Management', 'product': 'Menu Management',
+    'payment': 'Payments', 'payments': 'Payments', 'billing': 'Payments', 'pay': 'Payments',
+    'settlement': 'Payments',
     'check-in': 'PMS Check-In', 'checkin': 'PMS Check-In', 'check in': 'PMS Check-In',
     'pms booking': 'PMS Bookings', 'booking': 'PMS Bookings', 'reservation': 'PMS Bookings',
     'folio': 'PMS Folio', 'pms folio': 'PMS Folio',
     'crm': 'CRM', 'customer': 'CRM',
     'settings': 'Settings', 'config': 'Settings',
     'auth': 'Auth / Permissions', 'permission': 'Auth / Permissions',
-    'role': 'Auth / Permissions',
+    'permissions': 'Auth / Permissions', 'role': 'Auth / Permissions',
     'smart purchase': 'Smart Purchase', 'purchase': 'Smart Purchase',
     'sidebar': 'Sidebar / Nav', 'nav': 'Sidebar / Nav', 'navigation': 'Sidebar / Nav',
-    'socket': 'Sockets', 'websocket': 'Sockets', 'realtime': 'Sockets',
-    'order': 'Order Entry', 'order entry': 'Order Entry',
+    'socket': 'Sockets', 'sockets': 'Sockets', 'websocket': 'Sockets', 'realtime': 'Sockets',
+    'order': 'Order Entry', 'order entry': 'Order Entry', 'order management': 'Order Entry',
     'dashboard': 'Dashboard', 'insights': 'Dashboard',
     'expense': 'Expense',
     'tooling': 'Tooling', 'tool': 'Tooling', 'script': 'Tooling', 'control': 'Tooling',
     'room': 'PMS Bookings', 'pms': 'PMS Bookings',
 }
+_AREA_KEYS = sorted(_AREA_MAP, key=len, reverse=True)
+_PMS_SUB = ('folio', 'check-in', 'checkin', 'check in', 'booking')
+
+def _match_area(seg):
+    for c in _CANONICAL_AREAS:
+        if seg == c.lower():
+            return c
+    if seg in _AREA_MAP:
+        return _AREA_MAP[seg]
+    for k in _AREA_KEYS:
+        if re.search(r'\b' + re.escape(k) + r'\b', seg):
+            return _AREA_MAP[k]
+    return ''
 
 def _classify_area(raw):
-    if raw in _CANONICAL_AREAS:
-        return raw
-    k = str(raw).lower().strip()
-    return _AREA_MAP.get(k, '')
-
-# ── Blocked on party enum (contract §3 col 11) ────────────────────────────
-_PARTY_MAP = {
-    'backend': 'BACKEND', 'server': 'BACKEND',
-    'crm': 'CRM', 'owner': 'OWNER', 'ops': 'OPS',
-    'infra': 'INFRA', 'so': 'SO', 'inv': 'INV', 'pos': 'POS', 'internal': 'INTERNAL',
-}
-
-def _build_blocked_on(item, contract_status):
-    """Derive Blocked on party. Closed items → blank (contract §3 col 11)."""
-    if contract_status in ('CLOSED', 'PARKED', 'DUPLICATE'):
+    low = str(raw or '').strip().lower()
+    if not low:
         return ''
-    raw_status = str(item.get('status', '')).upper()
-    if 'BACKEND-BLOCKED' in raw_status or 'BACKEND_BLOCKED' in raw_status:
+    first = re.split(r'\s*(?:/|→|>|—|\+|,|\|)\s*', low)[0].strip()
+    if first in ('pms', 'room'):   # PMS sub-type if named, else PMS Bookings
+        for k in _PMS_SUB:
+            if k in low:
+                return _AREA_MAP[k]
+    return _match_area(first) or _match_area(low)
+
+# ── Blocked on party (contract §3 col 11) — live blockers only ─────────────
+_PARTY_ENUM  = {'BACKEND', 'POS', 'CRM', 'SO', 'INV', 'INFRA', 'OWNER', 'OPS', 'INTERNAL'}
+_PARTY_TEXT  = re.compile(r'\b(BACKEND|SERVER|CRM|OWNER|OPS|INFRA)\b')
+_ITEM_ID_RE  = re.compile(r'\b(?:CR|BUG|INV|GAP|PROD|INC)-\d[\w-]*', re.I)
+
+def _raw_blockers(item):
+    out = []
+    for f in ('blocked_by', 'blocker'):
+        txt = re.sub(r'\(origin:[^)]*\)', '', str(item.get(f) or '')).strip()
+        if txt and not txt.upper().startswith(('NONE', '[]')):
+            out.append((f, txt))
+    return out
+
+def _build_blocked_on(item, cs):
+    if cs in CLOSED_SET:
+        return ''   # stale: blockers on closed items dropped (brief §5)
+    n = _norm(item.get('status', ''))
+    if 'BACKEND BLOCKED' in n or 'HOLD BACKEND' in n:
         return 'BACKEND'
-    if 'CRM-BLOCKED' in raw_status:
+    if 'CRM BLOCKED' in n:
         return 'CRM'
-    bk = str(item.get('blocked_by', '') or item.get('blocker', '') or '')
-    if not bk.strip():
-        return ''
-    bk_lower = bk.lower()
-    for kw, party in _PARTY_MAP.items():
-        if kw in bk_lower:
-            return party
+    for field, txt in _raw_blockers(item):
+        up = txt.upper()
+        if field == 'blocked_by' and up in _PARTY_ENUM:
+            return up
+        ids = [i.upper() for i in _ITEM_ID_RE.findall(txt)]
+        if ids:
+            # dependency is live only while this item is pre-implementation and dep is open
+            if cs in ('INTAKE', 'PLANNING') and any(
+                    i in _ITEMS_BY_ID and classify_status(_ITEMS_BY_ID[i]) not in CLOSED_SET
+                    for i in ids):
+                return 'INTERNAL'
+            continue
+        m = _PARTY_TEXT.search(up)
+        if m:
+            return 'BACKEND' if m.group(1) == 'SERVER' else m.group(1)
     return ''
 
 # ── Contract row helper builders ───────────────────────────────────────────
@@ -196,10 +235,17 @@ def _build_type(item):
         t = 'BUG'
     return t
 
+_PRIO_MAP = {'P0': 'P0', 'P1': 'P1', 'P2': 'P2', 'P3': 'P3',
+             'BLOCKER': 'P0', 'CRITICAL': 'P0', 'MAJOR': 'P1', 'HIGH': 'P1',
+             'MEDIUM': 'P2', 'MINOR': 'P3', 'LOW': 'P3'}
+
 def _build_priority(item):
-    p = str(item.get('priority') or item.get('severity') or '').upper().strip()
-    if p in ('P0', 'P1', 'P2', 'P3'):
-        return p
+    # priority + severity → P0-P3; higher urgency wins (contract §4)
+    vals = [_PRIO_MAP.get(str(item.get(f) or '').upper().strip()) for f in ('priority', 'severity')]
+    vals = [v for v in vals if v]
+    if vals:
+        item.pop('_priority_defaulted', None)
+        return min(vals)
     item['_priority_defaulted'] = True
     return 'P2'
 
@@ -209,26 +255,25 @@ def _build_notes(item):
         n = ('PRIORITY DEFAULTED. ' + n).strip()
     return n
 
-def _build_owner_action(item, contract_status):
-    if contract_status == 'SMOKE':
+def _build_owner_action(item, cs, blocked_on):
+    if cs == 'SMOKE':
         return f"Smoke test {_flatten(item.get('title',''))}"[:200]
-    bk = str(item.get('blocked_by', '') or item.get('blocker', '') or '')
-    if 'OWNER' in bk.upper():
-        notes = str(item.get('notes', ''))
-        return (notes or 'Owner decision required')[:200]
+    if blocked_on == 'OWNER':
+        return (str(item.get('notes', '')) or 'Owner decision required')[:200]
     return ''
 
 def _build_related(item):
-    dep = item.get('depends_on', [])
-    if isinstance(dep, str): dep = [d.strip() for d in dep.split(',') if d.strip()]
-    rel = item.get('related', [])
-    if isinstance(rel, str): rel = [r.strip() for r in rel.split(',') if r.strip()]
-    parts = list(dep or []) + list(rel or [])
+    parts = []
+    for f in ('depends_on', 'related'):
+        v = item.get(f, [])
+        if isinstance(v, str):
+            v = [x.strip() for x in v.split(',') if x.strip()]
+        parts += list(v or [])
     return ', '.join(str(p) for p in parts if p)
 
 def _build_artefacts(item):
     raw  = item.get('artifact_refs', {})
-    refs = raw if isinstance(raw, dict) else {}   # guard: some items store a list
+    refs = raw if isinstance(raw, dict) else {}
     found = []
     if item.get('intake_doc') or refs.get('intake'):         found.append('INTAKE')
     if refs.get('impact_analysis'):                           found.append('IMPACT_ANALYSIS')
@@ -241,143 +286,76 @@ _MONEY_AREAS = {'Payments', 'PMS Folio', 'Smart Purchase'}
 _MONEY_KW = ('payment', 'billing', 'folio', 'smart purchase', 'invoice', 'checkout',
              'gst', 'tax', 'settle', 'collect', 'discount', 'wallet', 'coupon')
 
-def _build_money_path(item):
-    area = str(item.get('area', '') or '')
+def _build_money_path(item, area):
     if area in _MONEY_AREAS:
         return 'YES'
-    combined = (str(item.get('title', '')) + str(item.get('files', '')) + area).lower()
-    if any(k in combined for k in _MONEY_KW):
-        return 'YES'
-    return 'no'
+    combined = (str(item.get('title', '')) + str(item.get('files', '')) +
+                str(item.get('area', '') or '')).lower()
+    return 'YES' if any(k in combined for k in _MONEY_KW) else 'no'
 
-def _build_contract_row(item):
-    """Build one 22-column contract row from a registry item."""
-    cs    = classify_status(item)
-    today = datetime.now().strftime('%Y-%m-%d')
+def _build_contract_row(item, assignee=''):
+    cs   = classify_status(item)
+    area = _classify_area(item.get('area', ''))
+    bo   = _build_blocked_on(item, cs)
     return [
-        'POS',                                                           # 1  Project
-        _flatten(item.get('id', '')),                                    # 2  ID
-        _build_type(item),                                               # 3  Type
-        _flatten(item.get('title', '')),                                 # 4  Title
-        cs,                                                              # 5  Status
-        _flatten(item.get('status', '')),                                # 6  Status note
-        _build_priority(item),                                           # 7  Priority
-        _flatten(item.get('risk', '')),                                  # 8  Risk
-        _classify_area(_flatten(item.get('area', ''))),                  # 9  Area
-        _flatten(item.get('sprint_key', '')),                            # 10 Sprint
-        _build_blocked_on(item, cs),                                     # 11 Blocked on
-        _build_owner_action(item, cs),                                   # 12 Owner action
-        '',                                                              # 13 Assignee — NEVER written
-        _flatten(item.get('registered') or item.get('created') or
-                 item.get('created_at', '')),                            # 14 Registered
-        today,                                                           # 15 Last updated (agent-computed)
-        _flatten(item.get('closed', '')) if cs in
-            ('CLOSED', 'PARKED', 'DUPLICATE') else '',                   # 16 Closed
-        _build_related(item),                                            # 17 Related
-        _build_artefacts(item),                                          # 18 Artefacts
-        'no',                                                            # 19 Code markers (OD-418-04)
-        _flatten(item.get('files', '')),                                 # 20 Files
-        _build_notes(item),                                              # 21 Notes
-        _build_money_path(item),                                         # 22 Money path
+        'POS',                                                  # 1  Project
+        _flatten(item.get('id', '')),                           # 2  ID
+        _build_type(item),                                      # 3  Type
+        _flatten(item.get('title', '')),                        # 4  Title
+        cs,                                                     # 5  Status
+        _flatten(item.get('status', '')),                       # 6  Status note
+        _build_priority(item),                                  # 7  Priority
+        _flatten(item.get('risk', '')),                         # 8  Risk
+        area,                                                   # 9  Area
+        _flatten(item.get('sprint_key', '')),                   # 10 Sprint
+        bo,                                                     # 11 Blocked on
+        _build_owner_action(item, cs, bo),                      # 12 Owner action
+        assignee,                                               # 13 Assignee (preserved, never agent-written)
+        _flatten(item.get('registered', '')),                   # 14 Registered
+        _flatten(item.get('last_updated', '')),                 # 15 Last updated (agent-computed)
+        _flatten(item.get('closed', '')) if cs in CLOSED_SET else '',  # 16 Closed
+        _build_related(item),                                   # 17 Related
+        _build_artefacts(item),                                 # 18 Artefacts
+        'no',                                                   # 19 Code markers (OD-418-04)
+        _flatten(item.get('files', '')),                        # 20 Files
+        _build_notes(item),                                     # 21 Notes
+        _build_money_path(item, area),                          # 22 Money path
     ]
 
 # ── Tab row builders ───────────────────────────────────────────────────────
-def build_tab_rows(items, tab_name):
-    if tab_name == 'Summary':
-        return _build_summary(items)
-    if tab_name == 'Blockers':
-        return _build_blockers_tab(items)
-    if tab_name == 'Change Log':
-        return None  # Change Log is append-only — built separately
-    subset = items if tab_name == 'All Items' else [
-        i for i in items if _status_to_tab(classify_status(i)) == tab_name
-    ]
-    rows = [CONTRACT_COLS]
-    for item in subset:
-        rows.append(_build_contract_row(item))
-    return rows
+def build_all_rows(items, assignees):
+    return {i['id']: _build_contract_row(i, assignees.get(i['id'], '')) for i in items}
 
-def _build_summary(items):
-    """Summary tab — contract §6: 3 blocks + 2 trailing lines."""
-    STATUS_ENUM = ['INTAKE', 'PLANNING', 'IMPLEMENTED', 'QA', 'SMOKE',
-                   'CLOSED', 'PARKED', 'DUPLICATE']
-    OPEN_SET    = {'INTAKE', 'PLANNING', 'IMPLEMENTED', 'QA', 'SMOKE'}
+def build_tab_rows(rows_by_id, tab_name):
+    rows = list(rows_by_id.values())
+    if tab_name == 'All Items':
+        subset = rows
+    elif tab_name == 'Blockers':
+        subset = [r for r in rows if r[COL['Blocked on']]]
+    else:
+        subset = [r for r in rows if _STATUS_TO_TAB.get(r[COL['Status']]) == tab_name]
+    if tab_name != 'All Items':   # Assignee always blank on stage tabs
+        subset = [r[:COL['Assignee']] + [''] + r[COL['Assignee'] + 1:] for r in subset]
+    return [CONTRACT_COLS] + subset
 
-    status_counts   = Counter()
-    priority_counts = Counter()
-    blocked_counts  = Counter()
-
-    for item in items:
-        cs = classify_status(item)
-        if cs in STATUS_ENUM:
-            status_counts[cs] += 1
-        else:
-            status_counts['Unrouted'] += 1
-        if cs in OPEN_SET:
-            p = str(item.get('priority') or item.get('severity') or 'P2').upper().strip()
-            priority_counts[p if p in ('P0', 'P1', 'P2', 'P3') else 'P2'] += 1
-        bo = _build_blocked_on(item, cs)
-        if bo:
-            blocked_counts[bo] += 1
-
+def _build_summary(rows_by_id, pending_cl):
+    status_c, prio_c, block_c = Counter(), Counter(), Counter()
+    for r in rows_by_id.values():
+        cs = r[COL['Status']]
+        status_c[cs if cs in STATUS_ENUM else 'Unrouted'] += 1
+        if cs and cs not in CLOSED_SET:
+            prio_c[r[COL['Priority']]] += 1
+        if r[COL['Blocked on']]:
+            block_c[r[COL['Blocked on']]] += 1
     rows = [['Status', 'Count']]
-    for s in STATUS_ENUM:
-        rows.append([s, status_counts.get(s, 0)])
-    rows.append(['Unrouted', status_counts.get('Unrouted', 0)])
-    rows.append([])
-    rows.append(['Priority (open items)', 'Count'])
-    for p in ('P0', 'P1', 'P2', 'P3'):
-        if priority_counts.get(p, 0):
-            rows.append([p, priority_counts[p]])
-    rows.append([])
-    rows.append(['Blocked on', 'Count'])
-    for bo, cnt in blocked_counts.most_common():
-        rows.append([bo, cnt])
-    rows.append([])
-    rows.append([f'Generated: {datetime.now().strftime("%Y-%m-%dT%H:%M")}'])
-    rows.append(['Pending change-log rows: 0'])   # updated in cmd_push after CL diff
-    return rows
-
-def _build_blockers_tab(items):
-    """Blockers tab — live items only (closed items dropped per CR-418 brief §5)."""
-    BCOLS = ['id', 'type', 'title', 'status', 'sprint_key',
-             'relationship', 'related_id', 'related_context']
-    rows = [BCOLS]
-    for item in items:
-        cs = classify_status(item)
-        if cs in ('CLOSED', 'PARKED', 'DUPLICATE'):
-            continue   # CR-418: drop stale closed-item blocker rows
-        i_id     = _flatten(item.get('id', ''))
-        i_type   = _flatten(item.get('type', ''))
-        i_title  = _flatten(item.get('title', ''))
-        i_status = _flatten(item.get('status', ''))
-        i_sprint = _flatten(item.get('sprint_key', ''))
-
-        def _row(rel, rel_id, ctx):
-            return [i_id, i_type, i_title, i_status, i_sprint, rel, rel_id, ctx]
-
-        blocker = item.get('blocker', '')
-        if blocker and str(blocker).strip().upper() not in ('', 'NONE', '[]'):
-            rows.append(_row('BLOCKED BY', '', str(blocker)[:200]))
-
-        blocked_by = item.get('blocked_by', '')
-        if blocked_by and str(blocked_by).strip():
-            rows.append(_row('BLOCKED BY', str(blocked_by), ''))
-
-        depends = item.get('depends_on', [])
-        if isinstance(depends, str):
-            depends = [d.strip() for d in depends.split(',') if d.strip()]
-        for dep_id in (depends if isinstance(depends, list) else []):
-            if str(dep_id).strip():
-                rows.append(_row('DEPENDS ON', str(dep_id).strip(), ''))
-
-        blocks = item.get('blocks', [])
-        if isinstance(blocks, str):
-            blocks = [b.strip() for b in blocks.split(',') if b.strip()]
-        for blockee_id in (blocks if isinstance(blocks, list) else []):
-            if str(blockee_id).strip():
-                rows.append(_row('BLOCKING', str(blockee_id).strip(), ''))
-
+    rows += [[s, status_c.get(s, 0)] for s in STATUS_ENUM]
+    rows.append(['Unrouted', status_c.get('Unrouted', 0)])
+    rows += [[], ['Priority (open items)', 'Count']]
+    rows += [[p, prio_c.get(p, 0)] for p in ('P0', 'P1', 'P2', 'P3')]
+    rows += [[], ['Blocked on', 'Count']]
+    rows += [[b, c] for b, c in block_c.most_common()]
+    rows += [[], [f'Generated: {datetime.now().isoformat(timespec="seconds")}'],
+             [f'Pending change-log rows: {pending_cl}']]
     return rows
 
 # ── OAuth2 token refresh ───────────────────────────────────────────────────
@@ -429,390 +407,306 @@ def get_sheet_meta(token):
     return r.json()
 
 def _range_url(tab_name, cell_range):
-    raw = f"'{tab_name}'!{cell_range}"
-    return urllib.parse.quote(raw, safe='')
+    return urllib.parse.quote(f"'{tab_name}'!{cell_range}", safe='')
+
+def read_tab(token, tab_name, cols='A1:Z20000'):
+    r = sheets_get(token, f"/values/{_range_url(tab_name, cols)}")
+    return r.json().get('values', []) if r.status_code == 200 else []
 
 # ── Tab management ─────────────────────────────────────────────────────────
 def sync_tabs(token, meta, dry_run=False):
-    """Delete all obsolete tabs; create any missing contract tabs."""
     existing = {s['properties']['title']: s['properties']['sheetId']
                 for s in meta.get('sheets', [])}
-    reqs = []
-    for old in _OBSOLETE_TABS:
-        if old in existing:
-            reqs.append({'deleteSheet': {'sheetId': existing[old]}})
-            print(f"  🗑  Queued delete: {old}")
-    for tab in TABS:
-        if tab not in existing:
-            reqs.append({'addSheet': {'properties': {'title': tab}}})
-            print(f"  ➕ Queued create: {tab}")
+    reqs = [{'deleteSheet': {'sheetId': existing[o]}} for o in _OBSOLETE_TABS if o in existing]
+    reqs += [{'addSheet': {'properties': {'title': t}}} for t in TABS if t not in existing]
+    if reqs and not dry_run:
+        r = sheets_post(token, ':batchUpdate', {'requests': reqs})
+        if r.status_code != 200:
+            sys.exit(f"❌ Tab management failed: {r.json()}")
+        meta = get_sheet_meta(token)
+    order = [s['properties']['title'] for s in sorted(meta.get('sheets', []),
+                                                      key=lambda s: s['properties']['index'])]
+    if [t for t in order if t in TABS] != TABS:   # contract §2: exact tab order
+        ids = {s['properties']['title']: s['properties']['sheetId'] for s in meta.get('sheets', [])}
+        moves = [{'updateSheetProperties': {'properties': {'sheetId': ids[t], 'index': n},
+                                            'fields': 'index'}} for n, t in enumerate(TABS) if t in ids]
+        reqs += moves
+        if not dry_run:
+            sheets_post(token, ':batchUpdate', {'requests': moves})
     if not reqs:
         print("  ✅ All tabs already in correct state")
         return
-    if dry_run:
-        print(f"  [dry-run] Would apply {len(reqs)} tab operation(s)")
-        return
-    r = sheets_post(token, ':batchUpdate', {'requests': reqs})
-    if r.status_code != 200:
-        sys.exit(f"❌ Tab management failed: {r.json()}")
-    print(f"  ✅ Tab management done ({len(reqs)} operation(s))")
+    print(f"  {'[dry-run] Would apply' if dry_run else '✅ Applied'} {len(reqs)} tab operation(s)")
 
-# ── Tab writer ─────────────────────────────────────────────────────────────
 def write_tab(token, tab_name, rows, dry_run=False):
-    enc_clear = _range_url(tab_name, 'A1:Z10000')
-    enc_write = _range_url(tab_name, 'A1')
+    data_rows = max(len(rows) - 1, 0)
     if dry_run:
-        data_rows = len(rows) - 1 if rows else 0
-        print(f"  [dry-run] {tab_name}: would write {data_rows} data row(s)")
+        print(f"  [dry-run] {tab_name:<14} would write {data_rows:>4} data row(s)")
         return
-    r = sheets_post(token, f'/values/{enc_clear}:clear', {})
-    if r.status_code not in (200, 204):
-        print(f"  ⚠  Clear warning for '{tab_name}': {r.status_code}")
+    sheets_post(token, f"/values/{_range_url(tab_name, 'A1:Z20000')}:clear", {})
     time.sleep(0.3)
-    r = sheets_put(token, f'/values/{enc_write}', {'values': rows},
+    r = sheets_put(token, f"/values/{_range_url(tab_name, 'A1')}", {'values': rows},
                    valueInputOption='RAW')
     if r.status_code != 200:
-        try:
-            msg = r.json().get('error', {}).get('message', r.text[:120])
-        except Exception:
-            msg = r.text[:120]
-        print(f"  ⚠  Write failed for '{tab_name}': {msg}")
-    else:
-        data_rows = len(rows) - 1 if len(rows) > 1 else 0
-        print(f"  ✅ {tab_name:<22} {data_rows:>4} data row(s)")
+        sys.exit(f"❌ Write failed for '{tab_name}': {r.text[:200]}")
+    print(f"  ✅ {tab_name:<14} {data_rows:>4} data row(s)")
     time.sleep(0.3)
 
-# ── Track C — one-off registry cleanup (OD-418-01: runs inside --push) ────
-def _run_track_c(registry):
-    """Idempotent cleanup: type casing, timestamp fields, category hygiene.
-    Items already processed are skipped via _cr418_cleaned flag."""
-    items   = registry['items']
-    today   = datetime.now().strftime('%Y-%m-%d')
-    changed = 0
-    LIFECYCLE = ('NOT_STARTED', 'SHIPPED', 'SUBSUMED', 'ACTIVE', 'DONE',
-                 'RESOLVED', 'CLOSED', 'IMPLEMENTED')
-    for item in items:
-        if item.get('_cr418_cleaned'):
-            continue
+# ── Registry schema: registered / last_updated / closed ───────────────────
+_CREATED_FIELDS = ('registered', 'created', 'created_at', 'created_date', 'registered_at', 'intake_date')
+_ACTIVITY_FIELDS = ('updated', 'qa_date', 'implemented_date', 'closed')
+_CLOSE_KW = ('CLOSED', 'SUBSUMED', 'DUPLICATE', 'PARKED', 'DEFERRED', 'RESOLVED', 'RETIRED')
+
+def _dates(v):
+    return [d for d in _DATE_RE.findall(str(v or '')) if d <= TODAY]
+
+def _history(item):
+    h = item.get('status_history') or []
+    return [e for e in h if isinstance(e, dict)] if isinstance(h, list) else []
+
+def _content_hash(item):
+    body = {k: v for k, v in item.items()
+            if not k.startswith('_') and k not in ('registered', 'closed', 'last_updated')}
+    return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
+
+def _backfill_dates(item):
+    """Populate registered / closed / last_updated from existing data; blank if none."""
+    hist = _history(item)
+    hist_dates = [d for e in hist for d in _dates(e.get('date'))]
+    created = [d for f in _CREATED_FIELDS for d in _dates(item.get(f))[:1]]
+    if not item.get('registered'):
+        cand = created or hist_dates
+        item['registered'] = min(cand) if cand else ''
+    if classify_status(item) in CLOSED_SET and not item.get('closed'):
+        cd = [d for f in ('closed_date', 'closed_at', 'closed_on') for d in _dates(item.get(f))]
+        for e in hist:
+            if any(k in _norm(f"{e.get('to','')} {e.get('event','')}") for k in _CLOSE_KW):
+                cd += _dates(e.get('date'))
+        cd = cd or _dates(item.get('status'))
+        item['closed'] = max(cd) if cd else ''
+    pool = hist_dates + created + [d for f in _ACTIVITY_FIELDS for d in _dates(item.get(f))] \
+        + _dates(item.get('status'))
+    item['last_updated'] = max(pool) if pool else item.get('registered', '')
+
+def prepare_registry(registry, snapshot_hashes):
+    """Schema upkeep: one-off backfill per item, then bump last_updated on content change."""
+    for item in registry['items']:
         t = item.get('type', '')
         if t and t != t.upper():
             item['type'] = t.upper()
-            changed += 1
-        if 'registered' not in item:
-            item['registered'] = item.get('created', item.get('created_at', ''))
-        if 'last_updated' not in item:
-            item['last_updated'] = today
-        if 'closed' not in item:
-            item['closed'] = ''
-        cat = str(item.get('category', '') or '')
-        if any(k in cat.upper() for k in LIFECYCLE):
-            item['category'] = ''
-        item['_cr418_cleaned'] = True
-    if changed:
-        print(f"  Track C: normalised {changed} type value(s)")
-    else:
-        print("  Track C: nothing to normalise (all items already clean)")
-    return registry
+        for f in ('registered', 'last_updated', 'closed'):
+            item.setdefault(f, '')
+        if not item.get('_dates_v2'):
+            _backfill_dates(item)
+            item['_dates_v2'] = True
+        elif item['id'] not in snapshot_hashes or snapshot_hashes[item['id']] != _content_hash(item):
+            item['last_updated'] = TODAY
+        if not item.get('closed') and classify_status(item) in CLOSED_SET \
+                and item['id'] in snapshot_hashes and snapshot_hashes[item['id']] != _content_hash(item):
+            item['closed'] = TODAY   # newly closed since last push
 
 def _save_registry(registry):
-    """Atomic write to registry.json via tmp file."""
     tmp = REGISTRY_PATH.with_suffix('.json.tmp')
     with open(tmp, 'w') as f:
         json.dump(registry, f, indent=2)
     shutil.move(str(tmp), str(REGISTRY_PATH))
 
-# ── Change Log — diff sheet vs registry, append PENDING rows ──────────────
-def build_change_log_tab(token, items_by_id, dry_run=False):
-    """Read sheet All Items, diff against registry, append new PENDING rows.
-    Returns count of newly appended rows."""
-    r = sheets_get(token, f"/values/{_range_url('All Items', 'A1:Z10000')}")
-    if r.status_code != 200:
-        print(f"  ⚠  Change Log diff skipped: could not read All Items ({r.status_code})")
-        return 0
-    data = r.json().get('values', [])
-    if not data or len(data) < 2:
-        return 0
-    headers    = data[0]
-    sheet_rows = data[1:]
-    col_idx    = {h: i for i, h in enumerate(headers)}
-    if 'ID' not in col_idx:
-        return 0
+def _load_snapshot():
+    if SNAPSHOT_PATH.exists():
+        return json.load(open(SNAPSHOT_PATH))
+    return {'rows': {}, 'hashes': {}}
 
-    # Read existing Change Log to avoid duplicate rows
-    r2 = sheets_get(token, f"/values/{_range_url('Change Log', 'A1:H10000')}")
-    cl_existing = set()
-    if r2.status_code == 200:
-        cl_data = r2.json().get('values', [])
-        for row in cl_data[1:]:
-            if len(row) >= 5:
-                cl_existing.add((row[1], row[2], row[4]))  # (ID, Column, new value)
+# ── Change Log (contract §5) ───────────────────────────────────────────────
+def _pad(row, n):
+    return list(row) + [''] * (n - len(row))
 
+def diff_sheet(sheet_all, snapshot_rows, existing_keys):
+    """Compare live sheet All Items to what we last pushed. Returns (new CL rows, assignees)."""
+    if not sheet_all or 'ID' not in sheet_all[0]:
+        return [], {}
+    hdr = sheet_all[0]
+    idx = {h: i for i, h in enumerate(hdr)}
     now = datetime.now().strftime('%Y-%m-%dT%H:%M')
-    new_rows = []
-    field_map = {'Status': 'status', 'Registered': 'registered', 'Closed': 'closed'}
-
-    for row in sheet_rows:
-        id_col = col_idx.get('ID', 0)
-        if len(row) <= id_col:
+    new_rows, assignees = [], {}
+    for raw in sheet_all[1:]:
+        row = _pad(raw, len(hdr))
+        item_id = row[idx['ID']].strip()
+        if not item_id:
             continue
-        item_id = row[id_col].strip()
-        if not item_id or item_id not in items_by_id:
+        if 'Assignee' in idx and row[idx['Assignee']].strip():
+            assignees[item_id] = row[idx['Assignee']].strip()
+        pushed = snapshot_rows.get(item_id)
+        if pushed is None:
             continue
-        item = items_by_id[item_id]
-        for col_name in PHASE1_ACCEPTED:
-            if col_name not in col_idx:
+        for col in CONTRACT_COLS:
+            if col in ('Assignee', 'ID') or col not in idx:
                 continue
-            idx       = col_idx[col_name]
-            sheet_val = row[idx].strip() if idx < len(row) else ''
-            # For Status: compare against contract enum (not raw registry string)
-            if col_name == 'Status':
-                reg_val = classify_status(item)
+            old = str(pushed[COL[col]]).strip()
+            new = row[idx[col]].strip()
+            if new == old or (item_id, col, new) in existing_keys:
+                continue
+            if col in PHASE1_ACCEPTED:
+                ok = new in STATUS_ENUM if col == 'Status' else bool(re.fullmatch(r'\d{4}-\d{2}-\d{2}', new))
+                decision, note = ('PENDING', '') if ok else ('REJECTED', 'invalid value for column')
+            elif col in DASHBOARD_COLS and new in ('P0', 'P1', 'P2', 'P3'):
+                decision, note = 'APPLIED', 'SOURCE=DASHBOARD'
             else:
-                reg_field = field_map.get(col_name, col_name.lower())
-                reg_val   = str(item.get(reg_field, '') or '').strip()
-            if sheet_val and sheet_val != reg_val:
-                key = (item_id, col_name, sheet_val)
-                if key not in cl_existing:
-                    new_rows.append([
-                        now, item_id, col_name, reg_val, sheet_val,
-                        'PENDING', '', '',
-                    ])
+                decision, note = 'REJECTED', 'column not accepted from sheet (contract §5.5); reverted'
+            new_rows.append([now, item_id, col, old, new, decision,
+                             now if decision != 'PENDING' else '', note])
+            existing_keys.add((item_id, col, new))
+    return new_rows, assignees
 
-    if not new_rows:
-        print("  Change Log: no new human edits detected")
-        return 0
-
-    if dry_run:
-        print(f"  [dry-run] Change Log: would append {len(new_rows)} PENDING row(s)")
-        return len(new_rows)
-
-    # Write or append
-    r3 = sheets_get(token, f"/values/{_range_url('Change Log', 'A1:A2')}")
-    has_data = bool(r3.status_code == 200 and r3.json().get('values'))
-    if not has_data:
-        write_tab(token, 'Change Log', [CL_COLS] + new_rows)
-    else:
-        enc_append = _range_url('Change Log', 'A1')
-        r4 = sheets_post(
-            token,
-            f'/values/{enc_append}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS',
-            {'values': new_rows},
-        )
-        if r4.status_code not in (200, 201):
-            print(f"  ⚠  Change Log append failed: {r4.status_code}")
+def apply_change_log(cl_rows, items_by_id):
+    """Apply owner-APPROVED rows and fresh DASHBOARD Priority rows to registry."""
+    now, applied = datetime.now().strftime('%Y-%m-%dT%H:%M'), 0
+    for r in cl_rows:
+        is_dash = r[5] == 'APPLIED' and r[7] == 'SOURCE=DASHBOARD' and not r[7].endswith('done')
+        if r[5] != 'APPROVED' and not is_dash:
+            continue
+        item = items_by_id.get(r[1])
+        if not item:
+            r[5], r[6], r[7] = 'REJECTED', now, 'ID not in registry'
+            continue
+        col, val = r[2], r[4]
+        if col == 'Status':
+            item.setdefault('status_history', []).append(
+                {'date': TODAY, 'from': item.get('status', ''), 'to': val,
+                 'event': 'Status set via sheet Change Log (owner approved)'})
+            item['status'] = val
+            item.pop('_contract_status', None)
+        elif col == 'Registered':
+            item['registered'] = val
+        elif col == 'Closed':
+            item['closed'] = val
+        elif col == 'Priority':
+            item['priority'] = val
+        if r[5] == 'APPROVED':
+            r[5], r[6] = 'APPLIED', now
         else:
-            print(f"  ✅ Change Log: appended {len(new_rows)} PENDING row(s)")
-    return len(new_rows)
+            r[7] = 'SOURCE=DASHBOARD; done'
+        applied += 1
+    return applied
 
-# ── Run report (printed to console after every --push) ────────────────────
-def _print_run_report(items, cl_appended, live_blockers):
-    STATUS_ENUM = ['INTAKE', 'PLANNING', 'IMPLEMENTED', 'QA', 'SMOKE',
-                   'CLOSED', 'PARKED', 'DUPLICATE']
-    sc = Counter()
-    prio_defaulted = 0
-    no_registered  = 0
-    for item in items:
-        cs = classify_status(item)
-        sc[cs if cs else 'Unrouted'] += 1
-        if item.get('_priority_defaulted'):
-            prio_defaulted += 1
-        if not (item.get('registered') or item.get('created') or item.get('created_at')):
-            no_registered += 1
-
-    print("\n" + "═" * 55)
-    print(f"  POS REGISTRAR RUN — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print("═" * 55)
-    print(f"  Total rows pushed:        {sum(sc.values())}")
-    print("  " + "─" * 47)
+# ── Run report ─────────────────────────────────────────────────────────────
+def _print_run_report(items, rows_by_id, stats):
+    sc = Counter(r[COL['Status']] or 'Unrouted' for r in rows_by_id.values())
+    print("\n" + "═" * 60)
+    print(f"  POS REGISTRAR RUN — {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+          f"{'  (DRY-RUN)' if stats['dry_run'] else ''}")
+    print("═" * 60)
+    print(f"  Rows pushed (All Items):     {len(rows_by_id)}")
     print("  Status distribution:")
     for s in STATUS_ENUM:
-        c = sc.get(s, 0)
-        print(f"    {s:<18} {c:>4}")
-    unrouted = sc.get('Unrouted', 0)
-    flag = "  ← target zero" if unrouted else ""
-    print(f"    {'Unrouted':<18} {unrouted:>4}{flag}")
-    print("  " + "─" * 47)
-    print(f"  PRIORITY DEFAULTED rows:   {prio_defaulted}")
-    print(f"  Items with no Registered:  {no_registered}")
-    print(f"  Live blockers (open):      {live_blockers}")
-    print(f"  Change Log rows appended:  {cl_appended}  (PENDING)")
-    print("═" * 55 + "\n")
+        print(f"    {s:<16} {sc.get(s, 0):>4}")
+    print(f"    {'Unclassified':<16} {sc.get('Unrouted', 0):>4}   (target 0)")
+    print(f"  PRIORITY DEFAULTED rows:     {sum(1 for i in items if i.get('_priority_defaulted'))}")
+    print(f"  Missing Registered date:     {sum(1 for r in rows_by_id.values() if not r[COL['Registered']])}")
+    print(f"  Missing Last updated:        {sum(1 for r in rows_by_id.values() if not r[COL['Last updated']])}")
+    print(f"  Closed-type missing Closed:  {sum(1 for r in rows_by_id.values() if r[COL['Status']] in CLOSED_SET and not r[COL['Closed']])}")
+    print(f"  Area recognised:             {sum(1 for r in rows_by_id.values() if r[COL['Area']])}"
+          f"  (raw values dropped to blank: {stats['area_dropped']})")
+    print(f"  Live blockers (Blocked on):  {stats['live_blockers']}")
+    print(f"  Stale blockers dropped:      {stats['stale_blockers']} items"
+          f"  (old Blockers tab rows: {stats['old_blocker_rows']})")
+    print(f"  Change Log: new {stats['cl_new']} · applied {stats['cl_applied']} · pending {stats['cl_pending']}")
+    print("═" * 60 + "\n")
 
-# ── PUSH command (REGISTRAR run) ───────────────────────────────────────────
+# ── PUSH (REGISTRAR run) ───────────────────────────────────────────────────
 def cmd_push(dry_run=False):
-    print("\n── PUSH: registry.json → Google Sheets (CR-418 contract v1.4) " + "─" * 10)
-
+    print(f"\n── {'DRY-RUN' if dry_run else 'PUSH'}: registry.json → Google Sheets (contract v1.4) ──")
     registry = json.load(open(REGISTRY_PATH))
     items    = registry['items']
-    print(f"  Loaded {len(items)} items from registry.json")
-
-    # Track C cleanup (OD-418-01: runs in same step as push)
-    registry = _run_track_c(registry)
-    if not dry_run:
-        _save_registry(registry)
-        items = registry['items']
+    items_by_id = {i['id']: i for i in items}
+    _ITEMS_BY_ID.clear()
+    _ITEMS_BY_ID.update({k.upper(): v for k, v in items_by_id.items()})
+    snapshot = _load_snapshot()
+    print(f"  Loaded {len(items)} items · snapshot rows: {len(snapshot['rows'])}")
 
     token = get_access_token()
-    print("  ✅ Access token refreshed")
-
-    meta = get_sheet_meta(token)
+    meta  = get_sheet_meta(token)
     print(f"  Sheet: {meta['properties']['title']}")
-    existing_tabs = [s['properties']['title'] for s in meta.get('sheets', [])]
-    print(f"  Existing tabs ({len(existing_tabs)}): {existing_tabs}")
+    tabs  = [s['properties']['title'] for s in meta.get('sheets', [])]
 
+    # 1. Change Log diff BEFORE overwriting the sheet
+    sheet_all = read_tab(token, 'All Items') if 'All Items' in tabs else []
+    old_blk   = read_tab(token, 'Blockers') if 'Blockers' in tabs else []
+    cl_rows   = [_pad(r, 8)[:8] for r in (read_tab(token, 'Change Log', 'A1:H20000')
+                                          if 'Change Log' in tabs else [])[1:]]
+    keys      = {(r[1], r[2], r[4]) for r in cl_rows}
+    new_cl, assignees = diff_sheet(sheet_all, snapshot['rows'], keys)
+    cl_rows  += new_cl
+    cl_applied = apply_change_log(cl_rows, items_by_id)
+
+    # 2. Registry schema upkeep + rows
+    prepare_registry(registry, snapshot.get('hashes', {}))
+    rows_by_id = build_all_rows(items, assignees)
+    pending = sum(1 for r in cl_rows if r[5] == 'PENDING')
+
+    # 3. Write sheet
     sync_tabs(token, meta, dry_run)
-
-    if not dry_run:
-        time.sleep(1)
-        token = get_access_token()
-
-    # Write 9 tabs (all except Change Log — that's append-only)
     for tab in TABS:
         if tab == 'Change Log':
-            continue
-        rows = build_tab_rows(items, tab)
-        if rows is not None:
-            write_tab(token, tab, rows, dry_run)
+            write_tab(token, tab, [CL_COLS] + cl_rows, dry_run)
+        elif tab == 'Summary':
+            write_tab(token, tab, _build_summary(rows_by_id, pending), dry_run)
+        else:
+            write_tab(token, tab, build_tab_rows(rows_by_id, tab), dry_run)
 
-    # Change Log diff + append
-    items_by_id = {i['id']: i for i in items}
-    cl_appended = build_change_log_tab(token, items_by_id, dry_run)
-
-    # Update Summary with real pending CL count
-    if not dry_run and cl_appended:
-        summary_rows = _build_summary(items)
-        summary_rows[-1] = [f'Pending change-log rows: {cl_appended}']
-        write_tab(token, 'Summary', summary_rows, dry_run=False)
-
-    live_blockers = sum(
-        1 for i in items
-        if classify_status(i) not in ('CLOSED', 'PARKED', 'DUPLICATE')
-        and _build_blocked_on(i, classify_status(i))
-    )
-
-    label = "(dry-run) " if dry_run else ""
-    print(f"\n  PUSH {label}COMPLETE. {len(items)} items → 10 tabs.")
-
+    # 4. Persist registry + snapshot of exactly what was pushed
     if not dry_run:
-        _print_run_report(items, cl_appended, live_blockers)
+        _save_registry(registry)
+        json.dump({'generated': datetime.now().isoformat(timespec='seconds'),
+                   'rows': rows_by_id,
+                   'hashes': {i['id']: _content_hash(i) for i in items}},
+                  open(SNAPSHOT_PATH, 'w'), indent=0)
 
-# ── PULL command — read-only diff (OD-418-02 C) ───────────────────────────
-def cmd_pull(dry_run=False):
-    """Read-only diff: reads sheet All Items, prints pending Change Log rows.
-    Writes nothing to registry.json or the sheet."""
-    print("\n── READ-ONLY DIFF: Sheet → registry " + "─" * 38)
+    with_raw = [i for i in items if _raw_blockers(i) or 'BLOCKED' in _norm(i.get('status'))]
+    live = sum(1 for r in rows_by_id.values() if r[COL['Blocked on']])
+    _print_run_report(items, rows_by_id, {
+        'dry_run': dry_run, 'live_blockers': live,
+        'stale_blockers': sum(1 for i in with_raw if not rows_by_id[i['id']][COL['Blocked on']]),
+        'old_blocker_rows': max(len(old_blk) - 1, 0),
+        'area_dropped': sum(1 for i in items if str(i.get('area') or '').strip()
+                            and not rows_by_id[i['id']][COL['Area']]),
+        'cl_new': len(new_cl), 'cl_applied': cl_applied, 'cl_pending': pending,
+    })
 
+# ── DIFF (read-only) ───────────────────────────────────────────────────────
+def cmd_diff():
     token = get_access_token()
-    print("  ✅ Access token refreshed")
+    sheet_all = read_tab(token, 'All Items')
+    new_cl, _ = diff_sheet(sheet_all, _load_snapshot()['rows'], set())
+    if not new_cl:
+        print("  ✅ No sheet edits since last push")
+    for r in new_cl:
+        print(f"  {r[1]:<12} {r[2]:<12} '{r[3][:30]}' → '{r[4][:30]}'  [{r[5]}] {r[7]}")
+    print("  No writes made. Run --push to log these to the Change Log tab.")
 
-    r = sheets_get(token, f"/values/{_range_url('All Items', 'A1:Z10000')}")
-    if r.status_code != 200:
-        sys.exit(f"❌ Could not read All Items tab: "
-                 f"{r.json().get('error', {}).get('message', r.text)}")
-
-    data = r.json().get('values', [])
-    if not data:
-        sys.exit("❌ All Items tab is empty — run --push first")
-
-    headers    = data[0]
-    sheet_rows = data[1:]
-    col_idx    = {h: i for i, h in enumerate(headers)}
-    if 'ID' not in col_idx:
-        sys.exit("❌ 'ID' column not found — sheet may be in old format. Run --push first.")
-
-    registry    = json.load(open(REGISTRY_PATH))
-    items_by_id = {i['id']: i for i in registry['items']}
-    print(f"  Comparing {len(sheet_rows)} sheet rows against {len(items_by_id)} registry items...")
-
-    pending = []
-    field_map = {'Status': 'status', 'Registered': 'registered', 'Closed': 'closed'}
-    for row in sheet_rows:
-        id_col = col_idx.get('ID', 0)
-        if len(row) <= id_col:
-            continue
-        item_id = row[id_col].strip()
-        if not item_id or item_id not in items_by_id:
-            continue
-        item = items_by_id[item_id]
-        for col_name in PHASE1_ACCEPTED:
-            if col_name not in col_idx:
-                continue
-            idx       = col_idx[col_name]
-            sheet_val = row[idx].strip() if idx < len(row) else ''
-            # For Status: compare against contract enum (not raw registry string)
-            if col_name == 'Status':
-                reg_val = classify_status(item)
-            else:
-                reg_field = field_map.get(col_name, col_name.lower())
-                reg_val   = str(item.get(reg_field, '') or '').strip()
-            if sheet_val and sheet_val != reg_val:
-                pending.append((item_id, col_name, reg_val, sheet_val))
-
-    if not pending:
-        print("  ✅ No pending edits — sheet and registry are in sync")
-    else:
-        print(f"\n  Pending Change Log rows ({len(pending)}):")
-        for item_id, col, old, new in pending:
-            print(f"    {item_id:<12} {col}: '{old[:40]}' → '{new[:40]}'")
-        print(f"\n  No writes made. Run --push to log these to the Change Log tab.")
-
-# ── Main ───────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(
-        description='CR-418: MyGenie POS — Google Sheets Contract v1.4 REGISTRAR',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            'Examples:\n'
-            '  python3 sheets_sync.py --dry-run    # validate only, no writes\n'
-            '  python3 sheets_sync.py --push        # registry → Sheet (10 tabs)\n'
-            '  python3 sheets_sync.py --pull        # read-only diff (no writes)\n'
-            '  python3 sheets_sync.py --push --pull # push then show diff\n'
-        ),
-    )
-    parser.add_argument('--push',    action='store_true',
-                        help='Push registry.json → Sheet (22-col, 10-tab contract)')
-    parser.add_argument('--pull',    action='store_true',
-                        help='Read-only diff: show pending Change Log rows (no writes)')
-    parser.add_argument('--dry-run', action='store_true', dest='dry_run',
-                        help='Validate credentials + sheet access — no writes')
-    args = parser.parse_args()
-
-    if not any([args.push, args.pull, args.dry_run]):
-        parser.print_help()
-        sys.exit(0)
-
-    missing = [name for name, val in [
-        ('GOOGLE_OAUTH_CLIENT_ID',     CLIENT_ID),
-        ('GOOGLE_OAUTH_CLIENT_SECRET', CLIENT_SECRET),
-        ('GOOGLE_REFRESH_TOKEN',       REFRESH_TOKEN),
-        ('GOOGLE_SHEET_ID',            SHEET_ID),
-    ] if not val]
-    if missing:
-        sys.exit(f"❌ Missing env var(s) in {ENV_PATH}: {', '.join(missing)}")
-
-    print(f"Sheet ID : {SHEET_ID}")
-    print(f"Registry : {REGISTRY_PATH}")
-    print(f"Dry-run  : {args.dry_run}")
-
-    if args.dry_run:
-        print("\n── DRY-RUN: validating credentials + sheet access ──────────────────")
-        token = get_access_token()
-        print("✅ Access token refreshed")
-        meta = get_sheet_meta(token)
-        print(f"✅ Sheet accessible: '{meta['properties']['title']}'")
-        tabs = [s['properties']['title'] for s in meta.get('sheets', [])]
-        print(f"   Current tabs ({len(tabs)}): {tabs}")
-        registry = json.load(open(REGISTRY_PATH))
-        print(f"✅ registry.json readable: {len(registry['items'])} items")
-        print("\n✅ Dry-run PASS — all systems ready.")
-        return
-
-    if args.push:
-        cmd_push(dry_run=False)
+    p = argparse.ArgumentParser(description='MyGenie POS — Google Sheets REGISTRAR (contract v1.4)')
+    p.add_argument('--push', action='store_true', help='REGISTRAR run: Change Log diff + push')
+    p.add_argument('--dry-run', action='store_true', dest='dry_run', help='Full run, no writes')
+    p.add_argument('--diff', action='store_true', help='Read-only: list sheet edits since last push')
+    p.add_argument('--pull', action='store_true', help=argparse.SUPPRESS)
+    args = p.parse_args()
 
     if args.pull:
-        cmd_pull(dry_run=False)
-
+        sys.exit("⛔ --pull is disabled (contract §5): sheet → registry only via Change Log + "
+                 "owner approval. Use --diff to preview edits, --push to log them.")
+    if not (args.push or args.dry_run or args.diff):
+        p.print_help()
+        sys.exit(0)
+    missing = [n for n, v in [('GOOGLE_OAUTH_CLIENT_ID', CLIENT_ID),
+                              ('GOOGLE_OAUTH_CLIENT_SECRET', CLIENT_SECRET),
+                              ('GOOGLE_REFRESH_TOKEN', REFRESH_TOKEN),
+                              ('GOOGLE_SHEET_ID', SHEET_ID)] if not v]
+    if missing:
+        sys.exit(f"❌ Missing env var(s) in {ENV_PATH}: {', '.join(missing)}")
+    if args.diff:
+        cmd_diff()
+    else:
+        cmd_push(dry_run=args.dry_run)
 
 if __name__ == '__main__':
     main()
