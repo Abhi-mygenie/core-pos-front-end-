@@ -564,8 +564,12 @@ def build_change_log_tab(token, items_by_id, dry_run=False):
                 continue
             idx       = col_idx[col_name]
             sheet_val = row[idx].strip() if idx < len(row) else ''
-            reg_field = field_map.get(col_name, col_name.lower())
-            reg_val   = str(item.get(reg_field, '') or '').strip()
+            # For Status: compare against contract enum (not raw registry string)
+            if col_name == 'Status':
+                reg_val = classify_status(item)
+            else:
+                reg_field = field_map.get(col_name, col_name.lower())
+                reg_val   = str(item.get(reg_field, '') or '').strip()
             if sheet_val and sheet_val != reg_val:
                 key = (item_id, col_name, sheet_val)
                 if key not in cl_existing:
@@ -735,8 +739,12 @@ def cmd_pull(dry_run=False):
                 continue
             idx       = col_idx[col_name]
             sheet_val = row[idx].strip() if idx < len(row) else ''
-            reg_field = field_map.get(col_name, col_name.lower())
-            reg_val   = str(item.get(reg_field, '') or '').strip()
+            # For Status: compare against contract enum (not raw registry string)
+            if col_name == 'Status':
+                reg_val = classify_status(item)
+            else:
+                reg_field = field_map.get(col_name, col_name.lower())
+                reg_val   = str(item.get(reg_field, '') or '').strip()
             if sheet_val and sheet_val != reg_val:
                 pending.append((item_id, col_name, reg_val, sheet_val))
 
