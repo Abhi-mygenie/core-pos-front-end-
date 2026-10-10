@@ -410,7 +410,13 @@ export const FolioCheckoutPanel = ({ row, meta, onDone, onClose }) => {
               associatedOrders={order.associatedOrders || []}
               roomInfo={roomInfoFromCharge(order.roomInfo, { // BUG-494 Sub-C: folio-based balance
                 ...row.charge,
-                balance_due: Math.max(0, (baseBalance ?? Number(row.charge?.balance_due || 0)) - roomDiscountInfoRs) // BUG-498: roomDiscountInfoRs now baseBalance-based
+                // BUG-526: when room split legs exactly cover the room balance, pass balance_due=0
+                // so CPP's effectiveTotal = food-only and CPP split/cash disabled checks
+                // compare against food total (not food+room). CPP display = food-only per OD-INV2-01.
+                // !roomSplitOverBalance = legs total equals effectiveRoomBalance (BUG-525-FIX contract).
+                balance_due: (roomSplitEnabled && !roomSplitOverBalance && effectiveRoomBalance > 0)
+                  ? 0
+                  : Math.max(0, (baseBalance ?? Number(row.charge?.balance_due || 0)) - roomDiscountInfoRs) // BUG-498
               })}
               orderFinancials={{ subtotalBeforeTax: order.subtotalBeforeTax || 0, subtotalAmount: order.subtotalAmount || 0, serviceTax: order.serviceTax || 0, tipAmount: order.tipAmount || 0 }}
               hasPlacedItems={true}

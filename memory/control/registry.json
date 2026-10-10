@@ -29786,7 +29786,7 @@
       "id": "BUG-526",
       "type": "BUG",
       "title": "Folio Checkout button gray when room split + CPP split both active",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "HIGH",
       "area": "PMS / FolioCheckoutPanel",
