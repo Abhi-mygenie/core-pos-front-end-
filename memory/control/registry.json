@@ -29829,6 +29829,18 @@
         "src/components/order-entry/CartPanel.jsx"
       ],
       "related": "BUG-527"
+    },
+    {
+      "id": "BUG-529",
+      "title": "Folio CPP shows food-only (double-discount regression from BUG-527 E1)",
+      "status": "GATE_3_PLAN_COMPLETE",
+      "sprint_key": "oct_bug_batch",
+      "priority": "P0",
+      "risk": "HIGH",
+      "files": [
+        "src/api/services/frontDeskService.js"
+      ],
+      "related": "BUG-527"
     }
   ],
   "meta": {
