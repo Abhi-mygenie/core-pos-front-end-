@@ -29802,7 +29802,7 @@
       "id": "BUG-527",
       "type": "BUG",
       "title": "Dashboard CPP: check-in discount missing from Room section + split button gray",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5A_IMPLEMENTED (E1-E4) + GATE_3_PLAN_COMPLETE (F1-F4 awaiting Gate 4 GO)",
       "severity": "P1",
       "risk": "HIGH",
       "area": "PMS / Dashboard / CollectPaymentPanel (R5) + PmsCheckoutDrawer",
@@ -29811,14 +29811,16 @@
       "registered": "2026-10-10",
       "files": [
         "src/components/order-entry/CollectPaymentPanel.jsx",
-        "src/components/pms/PmsCheckoutDrawer.jsx"
+        "src/components/pms/PmsCheckoutDrawer.jsx",
+        "src/pages/DashboardPage.jsx",
+        "src/components/order-entry/CartPanel.jsx"
       ],
       "notes": "Sub-A: CPP roomBalance=remainingRoomBalance(1600) never subtracts discountAmount(1000) \u2192 wrong balance; no check-in discount line in Room section. Sub-B: split check uses effectiveTotal(food+room=848) not finalTotal(food=248) \u2192 disabled. OD-BUG527-01 LOCKED (check-in discount read-only). OD-BUG527-02 LOCKED (food-only split, discounted balance). Intake: change_requests/BUG-527_DASHBOARD_CPP_CHECKIN_DISCOUNT_SPLIT_GRAY_INTAKE.md. Investigation: BUG-527_INVESTIGATION_REPORT_V2_2026-10-09.md. 4 edits / 2 files / ~10 lines / R5 required. | IA: impact/BUG-527_IMPACT_ANALYSIS.md. Code Reality NONE. Conflict NONE. E1: CPP L200 subtract discountAmount. E2: CPP L1843 add check-in discount line. E3: CPP L3311 split check = effectiveTotal-roomBalance. E4: PmsCheckoutDrawer L278 subtract discountAmount. Backend payload unchanged (payment_amount=248 both cases). Ready Gate 3. | Plan: plans/BUG-527_IMPLEMENTATION_PLAN.md. E1: CPP L200 subtract discountAmount. E2: CPP L1843 add check-in discount line. E3: CPP L3311 split check = effectiveTotal-roomBalance. E4: PmsDrawer L278 subtract discountAmount. Awaiting Gate 4 GO."
     },
     {
       "id": "BUG-528",
       "title": "Dashboard tile + CartPanel Room show pre-discount balance (discountAmount not subtracted)",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "CLOSED_DUPLICATE \u2014 absorbed into BUG-527 scope revision 2026-10-10",
       "sprint_key": "oct_bug_batch",
       "priority": "P1",
       "risk": "HIGH",

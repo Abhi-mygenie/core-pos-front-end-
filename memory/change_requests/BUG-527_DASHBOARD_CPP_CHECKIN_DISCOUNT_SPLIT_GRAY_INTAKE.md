@@ -142,7 +142,7 @@ grep -n "remainingRoomBalance" /app/frontend/src/components/pms/PmsCheckoutDrawe
 
 ---
 
-## 8. Intake Summary
+## 8. Intake Summary (Original — E1-E4 IMPLEMENTED 2026-10-10)
 
 ```
 BUG-527: Dashboard CPP check-in discount missing + split button gray
@@ -157,5 +157,76 @@ Evidence: 5 owner screenshots + investigation BUG-527_INVESTIGATION_REPORT_V2_20
 Duplicate: DISTINCT (BUG-526 = folio; BUG-498 = folio check-in discount, already done)
 Related: BUG-526 (same symptom, folio path)
 Blast: SMALL-MEDIUM (2 files, ~10 lines, R5)
-Next: Gate 2 Impact Analysis
+Status: E1-E4 GATE_5A_IMPLEMENTED 2026-10-10
+```
+
+---
+
+## 9. SCOPE REVISION — 2026-10-10 (INTAKE addendum)
+
+**Trigger:** Post-implementation testing confirmed E1-E4 PASS in CPP/PmsDrawer. Owner reports SS-1 (Dashboard tile ₹1,827) and SS-2 (OrderEntry Room ₹1,600) STILL showing pre-discount values. These symptoms were in the ORIGINAL intake but the investigation traced only as far as CPP and missed two upstream call-sites.
+
+**Duplicate check:** BUG-528 (registered 2026-10-10) = DUPLICATE — same root, same fix pattern. CLOSED → absorbed into BUG-527 addendum.
+
+### Additional Break-Points (F1–F4)
+
+**SS-1 root cause — `DashboardPage.jsx:53-55` (R5)**
+```js
+// computeRoomCardAmount — called to populate room tile total
+const roomBal = Math.max(0,
+  Number(order?.roomInfo?.roomPaymentSummary?.remainingRoomBalance
+    ?? order?.roomInfo?.balancePayment) || 0);
+// MISSING: - (order?.roomInfo?.discountAmount || 0)
+// Result: roomBal = 1600 → tile total = food(200)+gst(27)+room(1600) = 1827 ✗
+```
+
+**SS-2 root cause — `CartPanel.jsx` (NOT R5) — 3 locations**
+```js
+// F2: roomBalance useMemo (L457-463) — feeds effectiveTotal
+const roomBalance = Math.max(0, null ?? remainingRoomBalance ?? balancePayment ?? 0)
+// MISSING: - (roomInfo.discountAmount || 0)
+
+// F3: Room display (L1482) — data-testid="cart-room-balance"
+₹{(roomSummaryOverride?.remainingRoomBalance ?? remainingRoomBalance ?? balancePayment ?? 0)}
+// MISSING: - (roomInfo.discountAmount || 0)
+
+// F4: Checkout button total (L1609)
+total + associatedTotal + Math.max(0, roomSummaryOverride?.remainingRoomBalance ?? remainingRoomBalance ?? balancePayment ?? 0)
+// MISSING: - (roomInfo?.discountAmount || 0)
+```
+
+**`discountAmount` availability:** Confirmed — `orderTransform.js:412` maps `room_discount_amount → discountAmount`. Available in `order.roomInfo` (DashboardPage) and `roomInfo` prop (CartPanel).
+
+### Revised Fix Scope
+
+| Edit | File | R5? | Lines | Status |
+|------|------|-----|-------|--------|
+| E1 | CollectPaymentPanel.jsx | YES | ~2 | ✅ IMPLEMENTED |
+| E2 | CollectPaymentPanel.jsx | YES | ~6 | ✅ IMPLEMENTED |
+| E3 | CollectPaymentPanel.jsx | YES | ~1 | ✅ IMPLEMENTED |
+| E4 | PmsCheckoutDrawer.jsx | NO | ~1 | ✅ IMPLEMENTED |
+| **F1** | **DashboardPage.jsx (R5)** | **YES** | **~2** | **GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO** |
+| **F2** | **CartPanel.jsx** | **NO** | **~3** | **GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO** |
+| **F3** | **CartPanel.jsx** | **NO** | **~1** | **GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO** |
+| **F4** | **CartPanel.jsx** | **NO** | **~1** | **GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO** |
+
+**Total remaining:** 2 files, ~7 lines. DashboardPage.jsx = R5.
+
+### ODs — unchanged (LOCKED)
+OD-BUG527-01 + OD-BUG527-02 still apply. No new owner decisions needed — F1-F4 are same pattern/intent as E1.
+
+### Evidence
+- **Original:** SS-1, SS-2 in §Evidence above — Dashboard tile ₹1,827, OrderEntry Room ₹1,600
+- **New (post-impl test):** `/app/test_reports/iteration_1.json` (2026-10-10) — confirmed F1/F2 FAIL, E1-E4 PASS
+
+```
+Intake revision complete: BUG-527
+Classification: BUG, P1, HIGH
+Scope expanded: +2 files (DashboardPage R5 + CartPanel), +4 locations, ~7 lines
+Code reality (F1-F4): NONE (not yet implemented)
+Duplicate: BUG-528 → CLOSED (absorbed here)
+Blast radius revised: 4 files total, ~17 lines, 2 R5 files
+Evidence: original 5 screenshots + iteration_1.json confirms failures
+Plan: plans/BUG-527_REVISED_IMPLEMENTATION_PLAN_F1F4_2026_10_10.md
+Next: Gate 4 GO → IMPLEMENTATION (F1-F4)
 ```
