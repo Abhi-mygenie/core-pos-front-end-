@@ -11,11 +11,22 @@ Presentation-ready handover added on owner request: `memory/handover/SESSION_HAN
 Planning authored `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`, `memory/evidence/CR-390/GATE2_2026_09_28/READ_ONLY_EVIDENCE.md` and `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP1_GATE2_REVIEW.md`; synchronized intake/registry/control/status/evidence pointers and older handover supersession notices. PRD/CHANGELOG/ROADMAP updated. **OD-390-16…22 LOCKED FOR PLANNING**: Palm House Normal; Kunafa Mahal Aggregator; Palm House Premium for switching/comparison only; no Party setup. Await separate Step 2 instruction; Gate 3 NOT STARTED. No runtime ownership, source, tooling, original scripts/mappings, PNGs or env changes. Existing BUG-359/390/391/392/394 and CR-376-family ownership remains authoritative.
 
 **Status:** POPULATED
-**Last Updated:** 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418 — see section below) — 2026-10-05 (BUG-490 + BUG-491 IMPL
+**Last Updated:** 2026-10-10 (BUG-527 IMPL — CollectPaymentPanel.jsx + PmsCheckoutDrawer.jsx — see section below) — 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418 — see section below) — 2026-10-05 (BUG-490 + BUG-491 IMPL
 
 ---
 
-## FILE_OWNERSHIP — BUG-526 IMPL (2026-10-10) — marker `// BUG-526`
+## FILE_OWNERSHIP — BUG-527 IMPL (2026-10-10) — markers `// BUG-527`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **E1 L200:** `roomBalance` useMemo — added `- (roomInfo.discountAmount \|\| 0)` to subtract check-in discount from remainingRoomBalance → 1600−1000=600. **E2 L1844:** inserted check-in discount JSX block (BUG-527 comment + conditional div `data-testid="checkout-room-checkin-discount"`, `−₹{discountAmount}`) between Lodging GST close and Advance Paid. **E3 L3318:** split threshold changed from `< effectiveTotal` to `< (isRoom ? effectiveTotal - roomBalance : effectiveTotal)` — food-only for room orders. | BUG-527 IMPL 2026-10-10 |
+| `src/components/pms/PmsCheckoutDrawer.jsx` | **E4 L281:** inserted `(detail.roomInfo.discountAmount ?? 0) -` line into `remainingRoomBalance` formula (between gstTax and advancePayment terms) → 3000+100−1000−1500−0=600. | BUG-527 IMPL 2026-10-10 |
+
+NOT touched: `OrderEntry.jsx` (R5), `orderTransform.js` (R5), `FolioCheckoutPanel.jsx` (folio path separate — BUG-526), `frontDeskService.js`, any test files.
+
+---
+
+
 
 | File | Change | CR/BUG |
 |---|---|---|

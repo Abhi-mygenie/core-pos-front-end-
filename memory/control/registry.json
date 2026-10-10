@@ -29802,7 +29802,7 @@
       "id": "BUG-527",
       "type": "BUG",
       "title": "Dashboard CPP: check-in discount missing from Room section + split button gray",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "HIGH",
       "area": "PMS / Dashboard / CollectPaymentPanel (R5) + PmsCheckoutDrawer",

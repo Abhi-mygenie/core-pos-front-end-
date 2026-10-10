@@ -278,6 +278,7 @@ const PmsCheckoutDrawer = ({
                   remainingRoomBalance: Math.max(0,
                     (detail.roomInfo.roomPrice       ?? 0) +
                     (detail.roomInfo.gstTax          ?? 0) -
+                    (detail.roomInfo.discountAmount  ?? 0) - // BUG-527: subtract check-in discount (mirrors E1 roomBalance fix)
                     (detail.roomInfo.advancePayment  ?? 0) -
                     (detail.roomInfo.receiveBalance  ?? 0)
                   ),

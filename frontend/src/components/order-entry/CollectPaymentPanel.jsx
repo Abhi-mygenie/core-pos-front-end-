@@ -197,7 +197,7 @@ const CollectPaymentPanel = ({
     // Fallback to balancePayment when no mid-stay payments exist (roomPaymentSummary null)
     // Math.max(0,...) clamp stays — per OD-1: pass 0 when balance <= 0 (no refund flow)
     () => (isRoom && roomInfo
-      ? Math.max(0, roomInfo.roomPaymentSummary?.remainingRoomBalance ?? roomInfo.balancePayment ?? 0)
+      ? Math.max(0, (roomInfo.roomPaymentSummary?.remainingRoomBalance ?? roomInfo.balancePayment ?? 0) - (roomInfo.discountAmount || 0)) // BUG-527: subtract check-in discount so balance reflects post-discount value
       : 0),
     [isRoom, roomInfo]
   );
@@ -1841,6 +1841,13 @@ const CollectPaymentPanel = ({
                       <span style={{ color: COLORS.darkText }}>+₹{(roomInfo.gstTax || 0).toLocaleString()}</span>
                     </div>
                   )}
+                  {/* BUG-527: check-in discount read-only line — mirrors Lodging GST conditional pattern (OD-BUG527-01) */}
+                  {(roomInfo.discountAmount || 0) > 0 && (
+                    <div className="flex justify-between" data-testid="checkout-room-checkin-discount">
+                      <span style={{ color: COLORS.grayText }}>Check-in Discount</span>
+                      <span style={{ color: COLORS.darkText }}>−₹{(roomInfo.discountAmount || 0).toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span style={{ color: COLORS.grayText }}>Advance Paid</span>
                     <span style={{ color: COLORS.darkText }} data-testid="checkout-room-advance">
@@ -3308,7 +3315,7 @@ const CollectPaymentPanel = ({
             (paymentMethod === 'cash' && !showSplit && (parseFloat(amountReceived || 0) < effectiveTotal)) ||
             (isTabPayment && !showSplit && (!tabName.trim() || tabPhone.replace(/\D/g, '').length !== 10)) ||
             (showSplit && splitType === 'payment' && splitPayments.some(sp => sp.method === 'card' && parseFloat(sp.amount) > 0 && (!sp.transactionId || sp.transactionId.length !== 4))) ||
-            (showSplit && splitType === 'payment' && splitPayments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0) < effectiveTotal) ||
+            (showSplit && splitType === 'payment' && splitPayments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0) < (isRoom ? effectiveTotal - roomBalance : effectiveTotal)) || // BUG-527: room orders — split covers food+associated; room settled via paid_room=yes
             isProcessingPayment
           }
           className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
