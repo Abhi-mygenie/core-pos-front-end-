@@ -1,0 +1,29 @@
+{
+  "order_id": 1232970,
+  "probe_date": "2026-10-05",
+  "room_info": {
+    "room_price": "6700.00",
+    "advance_payment": "1355.00",
+    "balance_payment": "2665.00",
+    "room_discount_amount": "2680.00",
+    "room_discount_type": "Percent",
+    "room_discount_reason": null,
+    "room_discount_at": "check_in",
+    "room_discount_detail": {
+      "check_in": {
+        "type": "Percent",
+        "value": "40",
+        "amount": 2680,
+        "reason": null
+      }
+    }
+  },
+  "order_amount": 0,
+  "total_service_tax_amount": "0.00",
+  "gst_tax_in_room_info": "ABSENT",
+  "notes": {
+    "balance_payment_formula": "room_price(6700) - discount(2680) - advance_paid(1355) = 2665 — no GST",
+    "fe_formula_result": "rp(6700) + gt(0 — gst_tax absent) - ap(1355) - rb(0 — receive_balance absent) = 5345",
+    "correct_balance_with_gst_and_discount": "2665 + 335(GST from booking charge) = 3000"
+  }
+}
