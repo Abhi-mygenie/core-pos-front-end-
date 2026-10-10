@@ -51,8 +51,9 @@ const computeRoomCardAmount = (order) => {
     .reduce((sum, o) => sum + (Number(o?.amount) || 0), 0);
   // CR-162: prefer live ledger balance over static check-in snapshot
   const roomBal = Math.max(0,
-    Number(order?.roomInfo?.roomPaymentSummary?.remainingRoomBalance
-      ?? order?.roomInfo?.balancePayment) || 0);
+    (Number(order?.roomInfo?.roomPaymentSummary?.remainingRoomBalance
+      ?? order?.roomInfo?.balancePayment) || 0)
+    - (order?.roomInfo?.discountAmount || 0)); // BUG-527: subtract check-in discount — mirrors CPP E1
   return food + transfers + roomBal;
 };
 

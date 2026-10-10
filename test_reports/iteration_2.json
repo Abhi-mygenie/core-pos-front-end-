@@ -1,0 +1,28 @@
+{
+  "summary": "BUG-527 F1-F4 fixes verified PASS. All 7 tests (F1-F4 new + E1-E3 regressions) now PASS. check-in discount (₹1,000) correctly subtracted everywhere.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "F1": "PASS — r4 Dashboard tile shows ₹827 (was ₹1,827)",
+    "F2_F3": "PASS — data-testid=cart-room-balance shows ₹600 (was ₹1,600)",
+    "F4": "PASS — Checkout button label shows 'Checkout ₹827' (was ₹1,827)",
+    "E1_regression": "PASS — CPP checkout-room-balance shows ₹600",
+    "E2_regression": "PASS — checkout-room-checkin-discount shows 'Check-in Discount −₹1,000' (visible after expanding ROOM accordion toggle)",
+    "E3_regression": "PASS — Checkout ₹848 shown in CPP footer (correct food total)",
+    "E4_regression": "Not retested (confirmed PASS in iteration_1, no changes to PmsCheckoutDrawer)"
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "7/7 (100%)" },
+  "test_credentials": "owner@thegoankitchen.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "All BUG-527 fixes confirmed PASS. F1-F4 (DashboardPage computeRoomCardAmount + CartPanel roomBalance useMemo) all working correctly. E1-E3 regressions intact. The checkout-room-checkin-discount testid is inside the ROOM accordion — need to click checkout-room-booking-toggle to expand before asserting the discount line."
+}

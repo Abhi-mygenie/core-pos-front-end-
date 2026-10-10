@@ -456,10 +456,10 @@ const QsrBillingSection = ({
   // roomSummaryOverride lives in CartPanel; QsrBillingSection uses null (no override at this level)
   const roomBalance = isRoom && roomInfo
     ? Math.max(0,
-        null
-        ?? roomInfo.roomPaymentSummary?.remainingRoomBalance
+        (roomInfo.roomPaymentSummary?.remainingRoomBalance
         ?? roomInfo.balancePayment
         ?? 0)
+        - (roomInfo.discountAmount || 0)) // BUG-527: subtract check-in discount; removes dead `null ??`
     : 0;
   const associatedTotal = associatedOrders.reduce((sum, o) => sum + (o.amount || 0), 0);
   // POS3.1 BUG-111 (2026-05-27): on placed orders, prefer the server-authoritative
@@ -1479,7 +1479,7 @@ const CartPanel = ({
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold" style={{ color: COLORS.primaryOrange }} data-testid="cart-room-balance">
-                ₹{(roomSummaryOverride?.remainingRoomBalance ?? roomInfo.roomPaymentSummary?.remainingRoomBalance ?? roomInfo.balancePayment ?? 0).toLocaleString()}
+                ₹{Math.max(0, (roomSummaryOverride?.remainingRoomBalance ?? roomInfo.roomPaymentSummary?.remainingRoomBalance ?? roomInfo.balancePayment ?? 0) - (roomSummaryOverride ? 0 : (roomInfo.discountAmount || 0))).toLocaleString() /* BUG-527 */}
               </span>
               {/* CR-357: mid-stay partial payment trigger — TEMPORARILY DISABLED
                   Payment attribution (room vs food) unresolved pending backend reply
@@ -1606,7 +1606,7 @@ const CartPanel = ({
         >
           {/* BUG-097 (2026-05-21): delivery orders now use "Collect Bill" (was "Delivered") */}
           <span>{isRoom ? 'Checkout' : 'Collect Bill'}</span>
-          <span>₹{(total + (isRoom ? associatedTotal + Math.max(0, roomSummaryOverride?.remainingRoomBalance ?? roomInfo?.roomPaymentSummary?.remainingRoomBalance ?? roomInfo?.balancePayment ?? 0) : 0)).toLocaleString()}</span>
+          <span>₹{(total + (isRoom ? associatedTotal + Math.max(0, (roomSummaryOverride?.remainingRoomBalance ?? roomInfo?.roomPaymentSummary?.remainingRoomBalance ?? roomInfo?.balancePayment ?? 0) - (roomSummaryOverride ? 0 : (roomInfo?.discountAmount || 0))) : 0)).toLocaleString() /* BUG-527 */}</span>
         </button>
         )}
       </div>

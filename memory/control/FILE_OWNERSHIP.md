@@ -11,7 +11,22 @@ Presentation-ready handover added on owner request: `memory/handover/SESSION_HAN
 Planning authored `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`, `memory/evidence/CR-390/GATE2_2026_09_28/READ_ONLY_EVIDENCE.md` and `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP1_GATE2_REVIEW.md`; synchronized intake/registry/control/status/evidence pointers and older handover supersession notices. PRD/CHANGELOG/ROADMAP updated. **OD-390-16…22 LOCKED FOR PLANNING**: Palm House Normal; Kunafa Mahal Aggregator; Palm House Premium for switching/comparison only; no Party setup. Await separate Step 2 instruction; Gate 3 NOT STARTED. No runtime ownership, source, tooling, original scripts/mappings, PNGs or env changes. Existing BUG-359/390/391/392/394 and CR-376-family ownership remains authoritative.
 
 **Status:** POPULATED
-**Last Updated:** 2026-10-10 (BUG-527 IMPL — CollectPaymentPanel.jsx + PmsCheckoutDrawer.jsx — see section below) — 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418 — see section below) — 2026-10-05 (BUG-490 + BUG-491 IMPL
+**Last Updated:** 2026-10-10 (BUG-527 F1-F4 IMPL — DashboardPage.jsx + CartPanel.jsx — see section below) — 2026-10-10 (BUG-527 E1-E4 IMPL — CollectPaymentPanel.jsx + PmsCheckoutDrawer.jsx) — 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418) — 2026-10-05 (BUG-490 + BUG-491 IMPL
+
+---
+
+## FILE_OWNERSHIP — BUG-527 F1-F4 IMPL (2026-10-10) — markers `// BUG-527` and `/* BUG-527 */`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/pages/DashboardPage.jsx` | **F1 L53-56:** `computeRoomCardAmount` — added `- (order?.roomInfo?.discountAmount \|\| 0)` to `roomBal` formula. Dashboard room tile now shows post-discount total (~₹827 not ₹1,827). | BUG-527 F1 IMPL 2026-10-10 |
+| `src/components/order-entry/CartPanel.jsx` | **F2 L457-463:** `roomBalance` useMemo — removed dead `null ??`, added `- (roomInfo.discountAmount \|\| 0)`. Feeds `effectiveTotal`, Hold/Pay buttons, QSR payment path (fbOnlyTotal algebraically invariant per Gate 2 IA). **F3 L1482:** `cart-room-balance` span — `Math.max(0, raw - (roomSummaryOverride ? 0 : discountAmount))`. **F4 L1609:** Checkout button label — same `roomSummaryOverride` strategy. | BUG-527 F2/F3/F4 IMPL 2026-10-10 |
+
+NOT touched: `CollectPaymentPanel.jsx` (R5, E1-E4 done), `PmsCheckoutDrawer.jsx` (E4 done), `OrderEntry.jsx` (R5), `orderTransform.js` (R5), any test files.
+
+---
+
+
 
 ---
 
