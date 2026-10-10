@@ -1,0 +1,48 @@
+{
+  "summary": "Frontend-only QA for BUG-527 (CPP + PmsCheckoutDrawer fixes) and 2 NEW unfixed issues (DashboardPage tile + CartPanel balance). All 4 BUG-527 scenarios PASS. Both NEW ISSUES confirmed FAIL as expected by main agent.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "DashboardPage / computeRoomCardAmount",
+        "issue": "NEW ISSUE 1: r4 tile shows pre-discount total ₹1,827 instead of post-discount ~₹827. Root cause: DashboardPage.jsx L48-57 computeRoomCardAmount uses raw remainingRoomBalance without subtracting discountAmount. Fix needed: add `- (order?.roomInfo?.discountAmount || 0)` in the roomBal calculation.",
+        "selector": "Room column r4 tile amount",
+        "priority": "HIGH"
+      },
+      {
+        "component": "CartPanel / roomBalance useMemo",
+        "issue": "NEW ISSUE 2: data-testid=cart-room-balance shows ₹1,600 instead of ₹600. Root cause: CartPanel.jsx L457-463 roomBalance useMemo does NOT subtract discountAmount (line 459 uses null ?? ... with no discount offset). Fix needed: subtract (roomInfo.discountAmount || 0) from remainingRoomBalance, mirroring CPP L200 fix.",
+        "selector": "[data-testid='cart-room-balance']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": [
+    "Fix DashboardPage.jsx L53-55: subtract discountAmount in computeRoomCardAmount → roomBal = Math.max(0, remainingRoomBalance - (order?.roomInfo?.discountAmount || 0))",
+    "Fix CartPanel.jsx L457-463: roomBalance useMemo should subtract (roomInfo.discountAmount || 0) from remainingRoomBalance, same pattern as CPP L200"
+  ],
+  "critical_code_review_comments": [
+    "CartPanel.jsx L459 has `null ??` which is dead code — always evaluates to roomPaymentSummary?.remainingRoomBalance. Clean this up when adding discountAmount fix.",
+    "DashboardPage.jsx computeRoomCardAmount comment mentions 'without discount sensitivity' intentionally but this is now incorrect per BUG-527 requirement."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only)",
+    "frontend": "4/6 tests pass (67%); 2 expected failures confirmed"
+  },
+  "test_credentials": "owner@thegoankitchen.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "BUG-527 E1-E4 all PASS (CPP shows ₹600, discount line visible, split Cash=200+UPI=48 → Remaining ₹0 → Checkout ₹848 green). Two NEW unfixed issues confirmed: (1) Dashboard r4 tile ₹1,827, (2) cart-room-balance ₹1,600. These need fixes in DashboardPage.jsx and CartPanel.jsx.",
+  "rca": {
+    "new_issue_1": "DashboardPage.jsx computeRoomCardAmount L53-55 reads roomPaymentSummary.remainingRoomBalance (pre-discount from backend) and adds it directly to food total. discountAmount is never subtracted. The fix in CollectPaymentPanel L200 was not replicated here.",
+    "new_issue_2": "CartPanel.jsx L457-463 roomBalance useMemo uses raw remainingRoomBalance without discountAmount offset, same gap as CPP had before BUG-527 fix. The CartPanel roomBalance feeds both the cart display (data-testid=cart-room-balance) and the Checkout button amount."
+  }
+}
