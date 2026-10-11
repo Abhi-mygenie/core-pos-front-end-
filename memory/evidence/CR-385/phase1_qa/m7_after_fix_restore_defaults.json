@@ -1,0 +1,48 @@
+{
+  "results": {
+    "initial_toggle": true,
+    "after_js_click": {
+      "state": false,
+      "status": "Unsaved changes",
+      "save_dis": false
+    },
+    "write_ct": "multipart/form-data; boundary=----WebKitFormBoundaryK6LXc6S6gDqzNs5X",
+    "write_is_multipart": true,
+    "write_data": {
+      "basic": {
+        "allow_early_checkin": false,
+        "extend_rate_mode": "calendar"
+      }
+    },
+    "write_preview": "------WebKitFormBoundaryK6LXc6S6gDqzNs5X\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}\r\n------WebKitFormBoundaryK6LXc6S6gDqzNs5X--\r\n",
+    "FINAL": {
+      "toggle": false,
+      "cal": true,
+      "held": false
+    }
+  },
+  "last_write": {
+    "headers": {
+      ":authority": "preprod.mygenie.online",
+      ":method": "POST",
+      ":path": "/api/v2/vendoremployee/restaurant-settings/update-settings",
+      ":scheme": "https",
+      "accept": "application/json",
+      "accept-encoding": "gzip, deflate, br, zstd",
+      "content-length": "204",
+      "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryK6LXc6S6gDqzNs5X",
+      "origin": "https://react-pos-frontend-28.preview.emergentagent.com",
+      "priority": "u=1, i",
+      "referer": "https://react-pos-frontend-28.preview.emergentagent.com/",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "sec-fetch-dest": "empty",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-site": "cross-site",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.0 Safari/537.36",
+      "x-localization": "en"
+    },
+    "post_data": "------WebKitFormBoundaryK6LXc6S6gDqzNs5X\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}\r\n------WebKitFormBoundaryK6LXc6S6gDqzNs5X--\r\n"
+  }
+}

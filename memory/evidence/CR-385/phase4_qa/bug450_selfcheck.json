@@ -1,0 +1,56 @@
+{
+ "console_errors": [
+  "In HTML, whitespace text nodes cannot be a child of <%s>. Make sure you don't have any extra whitespace between tags on each line of your source code.\nThis will cause a hydration error.%s tbody \n\n  .."
+ ],
+ "mutating_requests": [
+  "POST /api/v1/vendoremployee/station-order-list",
+  "POST /api/v1/vendoremployee/station-order-list",
+  "POST /api/v2/vendoremployee/aiosell/fetch-inventory",
+  "POST /api/v2/vendoremployee/aiosell/fetch-inventory",
+  "POST /api/v2/vendoremployee/aiosell/fetch-rates",
+  "POST /api/v2/vendoremployee/aiosell/fetch-rates",
+  "POST /api/v2/vendoremployee/aiosell/fetch-rates",
+  "POST /api/v2/vendoremployee/aiosell/fetch-rates"
+ ],
+ "labels_before_mapping": [
+  [
+   "rt-inv-label-executive",
+   "executive"
+  ],
+  [
+   "rt-inv-label-suite",
+   "suite"
+  ]
+ ],
+ "grid_headers_after_mapping": [
+  "EXECUTIVE",
+  "SUITE",
+  "EXECUTIVE",
+  "SUITE",
+  "EXECUTIVE",
+  "SUITE"
+ ],
+ "labels_after_mapping": [
+  [
+   "rt-inv-label-executive",
+   "EXECUTIVE"
+  ],
+  [
+   "rt-inv-label-suite",
+   "SUITE"
+  ]
+ ],
+ "push_btn_disabled": null,
+ "legacy_departures": {
+  "url": "/loading",
+  "h1": []
+ },
+ "legacy_new-booking": {
+  "url": "/loading",
+  "h1": []
+ },
+ "legacy_check-in": {
+  "url": "/loading",
+  "h1": []
+ }
+}

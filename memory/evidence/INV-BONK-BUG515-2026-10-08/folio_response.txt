@@ -1,0 +1,4 @@
+HTTP status: 200
+
+Error: 'list' object has no attribute 'get'
+body[:400]: {"orders":[{"id":1233012,"restaurant_order_id":"000361","user_id":42917,"employee_id":5118,"user_name":"bonk","order_amount":0,"order_sub_total_without_tax":0,"order_sub_total_amount":0,"total_service_tax_amount":"0.00","order_note":null,"print_kot":null,"print_bill_status":"No","order_type":"pos","checked":0,"restaurant_id":69,"table_id":8525,"waiter_id":5118,"daily_token":null,"tip_amount":"0.00

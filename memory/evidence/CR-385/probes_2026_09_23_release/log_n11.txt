@@ -1,0 +1,48 @@
+[n11] login OK · host https://preprod.mygenie.online
+== 0 defaults + board
+[s0_settings_list] HTTP 200 :: 
+  settings-list: {'allow_early_checkin': False, 'pms.allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'pms.extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[s0_profile] HTTP 200 :: 
+  profile.settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+   8525 ('hk', 'hk', False, None) | in-house: {8528: ('occupied_hk', 'hk', True, 'coke')}
+== 1 CALENDAR: expect per-night slab 8600@18% + 7400@5% + upgrade 1500@18% = GST 2188, nights_detail present
+[s1_set] HTTP 200 :: 
+  set {'allow_early_checkin': True, 'extend_rate_mode': 'calendar'} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[s1_direct] HTTP 201 :: {"status": true, "message": "Direct reservation created successfully", "data": {"reservation": {"id": 279, "booking_id": "MG-69-FCBE683A-1E73-4C97-A985-359612C56D4A", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-10", "checkout": "2026-10-11", "status":
+  RES 279 BOOKING MG-69-FCBE683A-1E73-4C97-A985-359612C56D4A charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+[s1_checkin] HTTP 200 :: {"message": "Group check-in completed successfully", "user_id": 42830, "cust_membership_id": null, "data": {"order_id": 1232698, "orders": [{"room_id": "8525", "room_no": "r4", "room_price": 10100, "advance_payment": 1000, "balance_payment": 9100, "order_id": 1232698, "gst_tax": 1818}], "charge": {"rate_per_night": 8600, "nights": 1, "rateplan_code": "executive-s-ep", "rateplan_name": "executive-s-ep", "upgrade_amount": 1500, "booking_charge": 10100, "sgst": 909, "cgst": 909, "total_with_gst": 1
+  check-in 200 order 1232698 | charge: {'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918} | nights_detail on check-in: False
+[s1_cal_extend] HTTP 200 :: 
+  extend HTTP 200 top-level charge? False data.charge: {'nights': 2, 'rate_per_night': 8000, 'upgrade_amount': 1500, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1500, 'balance_due': 18188}
+  charge: {'nights': 2, 'rate_per_night': 8000, 'upgrade_amount': 1500, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1500, 'balance_due': 18188}
+  nights_detail: [{"date": "2026-10-10", "rate": 8600, "source": "held", "gst_percent": 18, "gst": 1548}, {"date": "2026-10-11", "rate": 7400, "source": "calendar", "gst_percent": 5, "gst": 370}]
+  LR charge: {'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'rate_per_night': 8000, 'advance_payment': 1500, 'balance_due': 18188} | LR has nights_detail: True
+  MATCH backend claim: {'booking_charge': True, 'sgst': True, 'cgst': True, 'total_with_gst': True}
+  per-night check: [('2026-10-10', 8600, 'held', 18, 1548), ('2026-10-11', 7400, 'calendar', 5, 370)] | sum gst: 1918.0
+[s1_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+== 2 HELD control: expect 18700, GST 18% single-rate 1683+1683, no nights_detail
+[s2_set] HTTP 200 :: 
+  set {'extend_rate_mode': 'held'} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'held', 'auto_print_checkin_receipt': False}
+[s2_direct] HTTP 201 :: {"status": true, "message": "Direct reservation created successfully", "data": {"reservation": {"id": 280, "booking_id": "MG-69-340EA17A-A641-48A0-8F76-34E293C9BFC6", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-10", "checkout": "2026-10-11", "status":
+  RES 280 BOOKING MG-69-340EA17A-A641-48A0-8F76-34E293C9BFC6 charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+[s2_checkin] HTTP 200 :: {"message": "Group check-in completed successfully", "user_id": 42831, "cust_membership_id": null, "data": {"order_id": 1232699, "orders": [{"room_id": "8525", "room_no": "r4", "room_price": 10100, "advance_payment": 1000, "balance_payment": 9100, "order_id": 1232699, "gst_tax": 1818}], "charge": {"rate_per_night": 8600, "nights": 1, "rateplan_code": "executive-s-ep", "rateplan_name": "executive-s-ep", "upgrade_amount": 1500, "booking_charge": 10100, "sgst": 909, "cgst": 909, "total_with_gst": 1
+  check-in 200 order 1232699
+[s2_held_extend] HTTP 200 :: 
+  extend HTTP 200 top-level charge? False data.charge: {'nights': 2, 'rate_per_night': 8600, 'upgrade_amount': 1500, 'booking_charge': 18700, 'sgst': 1683, 'cgst': 1683, 'total_with_gst': 22066, 'advance_payment': 1500, 'balance_due': 20566}
+  charge: {'nights': 2, 'rate_per_night': 8600, 'upgrade_amount': 1500, 'booking_charge': 18700, 'sgst': 1683, 'cgst': 1683, 'total_with_gst': 22066, 'advance_payment': 1500, 'balance_due': 20566}
+  nights_detail: null
+  MATCH: True True nights_detail absent: True
+[s2_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+== 3 restore
+[s3_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[s3_settings_list] HTTP 200 :: 
+  settings-list: {'allow_early_checkin': False, 'pms.allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'pms.extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[s3_profile] HTTP 200 :: 
+  profile.settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+  board: ('hk', 'hk', False, None)
+== CLEANUP
+[cleanup_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+  board after: {8524: 'hk', 8525: 'hk', 8526: 'hk', 8527: 'hk', 8528: 'occupied_hk'}
+  business_date 2026-09-24 · counts {'arrivals_today': 0, 'arrivals_late': 10, 'arrivals_tomorrow': 0, 'departures_today': 1, 'departures_overdue': 0, 'in_house': 1, 'leaving_today': 1, 'arrived_today': 0} · qa_rows_left []

@@ -1,0 +1,18 @@
+{
+  "basis": "unit_accommodation_per_day",
+  "slabs": [
+    {
+      "itc": false,
+      "max": 7500,
+      "min": 0,
+      "gst_percent": 5
+    },
+    {
+      "itc": true,
+      "max": null,
+      "min": 7500.01,
+      "gst_percent": 18
+    }
+  ],
+  "currency": "INR"
+}

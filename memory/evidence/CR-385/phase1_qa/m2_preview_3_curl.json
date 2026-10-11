@@ -1,0 +1,89 @@
+{
+ "request": {
+  "method": "PATCH",
+  "url": "/api/v2/vendoremployee/aiosell/local-reservations/223",
+  "headers": {
+   "Authorization": "Bearer ***"
+  },
+  "body": {
+   "checkin": "2026-09-21",
+   "checkout": "2026-09-25",
+   "reason": "Modified from Front Desk",
+   "preview": true
+  }
+ },
+ "response": {
+  "status": true,
+  "message": "Reservation modify preview",
+  "data": {
+   "preview": true,
+   "reservation": {
+    "id": 223,
+    "booking_id": "MG-69-C5164D2D-F9B1-471A-8D1D-20774D3B2CB2",
+    "cm_booking_id": null,
+    "channel": "Direct",
+    "hotel_code": "sandbox-pms",
+    "checkin": "2026-09-21",
+    "checkout": "2026-09-25",
+    "status": "confirmed",
+    "cancelled_at": null,
+    "cancel_reason": null,
+    "cancelled_by": null,
+    "pah": true,
+    "operational_status": "pending",
+    "booked_on": "2026-09-21 22:40:56",
+    "amount_before_tax": 126000,
+    "amount_after_tax": 148680,
+    "advance_payment": 0,
+    "balance_payment": 31500,
+    "charge": {
+     "rate_per_night": 31500,
+     "nights": 4,
+     "rateplan_code": "suite-s-ep",
+     "rateplan_name": "suite-s-ep",
+     "upgrade_amount": 0,
+     "booking_charge": 126000,
+     "sgst": 11340,
+     "cgst": 11340,
+     "total_with_gst": 148680,
+     "prepaid_amount": 0,
+     "advance_payment": 0,
+     "balance_due": 148680
+    },
+    "currency": "INR",
+    "special_requests": null,
+    "user_id_document_id": 17245,
+    "guest": {
+     "first_name": "QA-P1-Modify",
+     "last_name": "",
+     "email": null,
+     "phone": "9999900002",
+     "address_city": null,
+     "address_state": null,
+     "address_country": null
+    },
+    "rooms": [
+     {
+      "id": 234,
+      "room_code": "suite",
+      "rateplan_code": "suite-s-ep",
+      "guest_name": null,
+      "adults": 1,
+      "children": 0,
+      "line_status": "pending",
+      "restaurant_table_id": null,
+      "table_no": null,
+      "table_title": null,
+      "order_id": null,
+      "user_id_document_id": null,
+      "order_f_order_status": null,
+      "order_payment_status": null,
+      "checked_in_at": null,
+      "checked_out_at": null
+     }
+    ]
+   },
+   "inventory_push": null
+  }
+ }
+}

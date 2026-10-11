@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-117 — Order Report Beta Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; font-size: 14px; line-height: 1.5; color: #09090b; }
+
+  /* ─── Layout ─── */
+  .app { display: flex; height: 100vh; }
+
+  /* ─── Sidebar (simplified) ─── */
+  .sidebar { width: 56px; background: #fff; border-right: 1px solid #e4e4e7; display: flex; flex-direction: column; align-items: center; padding: 14px 0; gap: 6px; flex-shrink: 0; }
+  .sb-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a; cursor: pointer; transition: all .15s; font-size: 18px; }
+  .sb-icon:hover { background: #f4f4f5; color: #09090b; }
+  .sb-icon.active { background: #09090b; color: #fff; }
+  .sb-logo { width: 32px; height: 32px; border-radius: 8px; background: #16a34a; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+
+  /* ─── Main ─── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fafafa; }
+
+  /* ─── Header ─── */
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; background: #fff; border-bottom: 1px solid #e4e4e7; }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .back-btn { width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #52525b; transition: background .15s; }
+  .back-btn:hover { background: #f4f4f5; }
+  .header h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; color: #09090b; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .date-picker { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid #e4e4e7; border-radius: 8px; font-size: 13px; font-weight: 500; color: #09090b; background: #fff; cursor: pointer; }
+  .date-picker:hover { border-color: #a1a1aa; }
+  .date-picker svg { width: 16px; height: 16px; color: #71717a; }
+  .export-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px solid #e4e4e7; border-radius: 8px; font-size: 13px; font-weight: 500; color: #52525b; background: #fff; cursor: pointer; transition: all .15s; }
+  .export-btn:hover { background: #f4f4f5; border-color: #a1a1aa; }
+  .export-btn svg { width: 16px; height: 16px; }
+
+  /* ─── Tabs ─── */
+  .tabs-bar { display: flex; align-items: center; gap: 6px; padding: 16px 32px 0; background: #fff; border-bottom: 1px solid #f4f4f5; overflow-x: auto; }
+  .tab { padding: 8px 16px; font-size: 13px; font-weight: 500; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; transition: all .15s; background: transparent; color: #52525b; }
+  .tab:hover { background: #f4f4f5; }
+  .tab.active { background: #09090b; color: #fff; }
+  .tab .count { margin-left: 4px; opacity: .7; }
+  .tab.blocked { background: #fef2f2; color: #b91c1c; border: 1px dashed #fca5a5; cursor: not-allowed; position: relative; }
+  .tab.blocked::after { content: '🔒'; font-size: 10px; margin-left: 4px; }
+  .tabs-spacer { height: 12px; background: #fff; }
+
+  /* ─── Content area ─── */
+  .content { flex: 1; overflow-y: auto; padding: 24px 32px; }
+
+  /* ─── KPI Strip ─── */
+  .kpi-strip { display: flex; gap: 16px; margin-bottom: 20px; }
+  .kpi-card { flex: 1; background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; padding: 16px 20px; }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #71717a; margin-bottom: 4px; }
+  .kpi-value { font-size: 28px; font-weight: 700; letter-spacing: -.02em; font-feature-settings: 'tnum'; }
+  .kpi-value.paid { color: #16a34a; }
+  .kpi-value.unpaid { color: #d97706; }
+  .kpi-value.cancel { color: #dc2626; }
+  .kpi-value.total { color: #09090b; }
+
+  /* ─── Filter Bar ─── */
+  .filter-bar { background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; margin-bottom: 16px; }
+  .filter-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; }
+  .filter-select { display: flex; align-items: center; gap: 5px; padding: 6px 10px; border: 1px solid #e4e4e7; border-radius: 6px; font-size: 12px; font-weight: 500; color: #52525b; background: #fff; cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .filter-select:hover { border-color: #a1a1aa; }
+  .filter-select.blocked { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; cursor: not-allowed; opacity: .6; }
+  .filter-select.blocked::after { content: ' 🔒'; font-size: 9px; }
+  .filter-select svg { width: 12px; height: 12px; }
+  .filter-spacer { flex: 1; }
+  .summary-stat { display: flex; align-items: baseline; gap: 4px; }
+  .summary-stat .val { font-size: 18px; font-weight: 700; color: #09090b; font-feature-settings: 'tnum'; font-family: 'JetBrains Mono', 'Fira Code', monospace, 'Inter'; }
+  .summary-stat .label { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #a1a1aa; font-weight: 500; }
+  .summary-divider { width: 1px; height: 20px; background: #e4e4e7; }
+  .filter-breakdown { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-top: 1px solid #f4f4f5; }
+  .breakdown-pill { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 8px; border-radius: 6px; background: #fafafa; font-size: 12px; }
+  .breakdown-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .breakdown-pill .num { font-weight: 700; font-feature-settings: 'tnum'; font-family: 'JetBrains Mono', monospace; }
+  .breakdown-pill .lbl { color: #a1a1aa; }
+  .breakdown-pill.blocked { background: #fef2f2; border: 1px dashed #fca5a5; }
+  .breakdown-pill.blocked .lbl { color: #b91c1c; }
+
+  /* ─── Day Section (collapsible) ─── */
+  .day-section { background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+  .day-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; transition: background .15s; }
+  .day-header:hover { background: #fafafa; }
+  .day-left { display: flex; align-items: center; gap: 12px; }
+  .day-date { font-size: 15px; font-weight: 600; color: #09090b; }
+  .day-weekday { font-size: 12px; color: #71717a; font-weight: 500; }
+  .day-stats { display: flex; align-items: center; gap: 16px; }
+  .day-stat { font-size: 12px; color: #52525b; }
+  .day-stat strong { font-weight: 600; color: #09090b; font-feature-settings: 'tnum'; }
+  .chevron { width: 18px; height: 18px; color: #a1a1aa; transition: transform .2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* ─── Order Table ─── */
+  .order-table { width: 100%; border-collapse: collapse; }
+  .order-table thead { position: sticky; top: 0; z-index: 1; }
+  .order-table th { padding: 8px 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #71717a; text-align: left; background: #fafafa; border-bottom: 1px solid #e4e4e7; white-space: nowrap; }
+  .order-table td { padding: 10px 12px; font-size: 13px; color: #09090b; border-bottom: 1px solid #f4f4f5; vertical-align: middle; }
+  .order-table tr:hover td { background: #fafafa; }
+  .order-table tr:last-child td { border-bottom: none; }
+  .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: 'tnum'; font-size: 12px; }
+  .text-muted { color: #71717a; }
+  .text-right { text-align: right; }
+
+  /* ─── Badges ─── */
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: .03em; white-space: nowrap; border: 1px solid; }
+  .badge-paid { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+  .badge-unpaid { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .badge-cancel { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .badge-cash { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+  .badge-card { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+  .badge-upi { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+  .badge-tab { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .badge-pending { background: #f4f4f5; color: #52525b; border-color: #e4e4e7; }
+  .badge-pos { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+  .badge-swiggy { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+  .badge-zomato { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .badge-blocked { background: #fef2f2; color: #b91c1c; border-color: #fca5a5; font-style: italic; }
+  .badge-dinein { background: #f0f9ff; color: #0369a1; border-color: #bae6fd; }
+  .badge-delivery { background: #fdf4ff; color: #86198f; border-color: #f0abfc; }
+
+  /* ─── Grand Total Footer ─── */
+  .grand-total { background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; padding: 20px 24px; margin-top: 8px; }
+  .gt-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #71717a; margin-bottom: 14px; }
+  .gt-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .gt-item { }
+  .gt-label { font-size: 11px; color: #a1a1aa; margin-bottom: 2px; }
+  .gt-value { font-size: 16px; font-weight: 700; color: #09090b; font-feature-settings: 'tnum'; font-family: 'JetBrains Mono', monospace, 'Inter'; }
+  .gt-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid #f4f4f5; }
+  .gt-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #a1a1aa; margin-bottom: 10px; }
+
+  /* ─── Blocked Overlay ─── */
+  .blocked-banner { background: #fef2f2; border: 1px dashed #fca5a5; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .blocked-banner .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .blocked-banner .text { font-size: 12px; color: #991b1b; line-height: 1.6; }
+  .blocked-banner .text strong { font-weight: 600; }
+  .blocked-banner .field-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .blocked-banner .field-tag { background: #fff; border: 1px solid #fca5a5; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #b91c1c; }
+
+  /* ─── Legend ─── */
+  .legend { display: flex; align-items: center; gap: 16px; padding: 8px 0; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #71717a; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-dot.green { background: #16a34a; }
+  .legend-dot.red { background: #dc2626; }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1200px) {
+    .gt-grid { grid-template-columns: repeat(3, 1fr); }
+    .kpi-strip { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar (collapsed) -->
+  <nav class="sidebar">
+    <div class="sb-logo">M</div>
+    <div class="sb-icon" title="Dashboard">🏠</div>
+    <div class="sb-icon" title="Orders">🛒</div>
+    <div class="sb-icon active" title="Reports">📊</div>
+    <div class="sb-icon" title="Settings">⚙️</div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <h1>Orders (Beta)</h1>
+      </div>
+      <div class="header-right">
+        <div class="date-picker" style="gap:10px">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#a1a1aa;font-weight:600">From</span>
+          <input type="date" value="2026-07-25" style="border:none;outline:none;font-size:13px;font-weight:500;color:#09090b;background:transparent;cursor:pointer;font-family:inherit" />
+          <span style="width:1px;height:16px;background:#e4e4e7"></span>
+          <span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#a1a1aa;font-weight:600">To</span>
+          <input type="date" value="2026-07-31" style="border:none;outline:none;font-size:13px;font-weight:500;color:#09090b;background:transparent;cursor:pointer;font-family:inherit" />
+          <button style="background:#09090b;color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;margin-left:4px">Apply</button>
+        </div>
+        <button class="export-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Excel
+        </button>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab active">All Orders <span class="count">33</span></button>
+      <button class="tab blocked" title="Blocked — needs f_order_status, payment_method from backend">Settled <span class="count">?</span></button>
+      <button class="tab blocked" title="Blocked — needs payment_method='Cancel' or f_order_status=3">Cancelled <span class="count">?</span></button>
+      <button class="tab blocked" title="Blocked — needs payment_method='TAB'">Credit <span class="count">?</span></button>
+      <button class="tab blocked" title="Blocked — needs f_order_status=8,9 or payment_method='paylater'">On Hold <span class="count">?</span></button>
+      <button class="tab blocked" title="Blocked — needs payment_status='Merge' or payment_method='Merge'">Merged <span class="count">?</span></button>
+      <button class="tab blocked" title="Blocked — needs order_status='running' + payment_status='unpaid'">Running <span class="count">?</span></button>
+      <button class="tab" style="background:#fff7ed;color:#c2410c;">Aggregator <span class="count">5</span></button>
+    </div>
+    <div class="tabs-spacer"></div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Backend Blocked Banner -->
+      <div class="blocked-banner">
+        <span class="icon">⚠️</span>
+        <div class="text">
+          <strong>6 tabs blocked at backend.</strong> The combined endpoint is missing status fields from <code>orders_table</code>. Until backend adds these fields, tabs show "?" counts and cannot filter.
+          <div class="field-list">
+            <span class="field-tag">f_order_status</span>
+            <span class="field-tag">order_status</span>
+            <span class="field-tag">payment_status</span>
+            <span class="field-tag">payment_method</span>
+          </div>
+          <div style="margin-top:4px;font-size:11px;color:#b91c1c;">Brief: <code>BACKEND_BLOCKERS_BRIEF_2026_07_22.html#cr-117</code></div>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value total">33</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Paid Orders</div>
+          <div class="kpi-value paid">20</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Unpaid Orders</div>
+          <div class="kpi-value unpaid">10</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Cancelled Orders</div>
+          <div class="kpi-value cancel">3</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-row">
+          <!-- Working Filters -->
+          <div class="filter-select">Pay Type <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select blocked" title="Blocked — needs f_order_status + payment_method">Status 🔒 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select">Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select">Channel <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select">Platform <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select blocked" title="Blocked — needs razorpay_order_id">PG Filter 🔒 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select">Punched By <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+          <div class="filter-select">Collected By <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+
+          <div class="filter-spacer"></div>
+
+          <!-- Summary Stats -->
+          <div class="summary-stat">
+            <span class="val">33</span>
+            <span class="label">orders</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <span class="val">₹20,047</span>
+            <span class="label">total</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <span class="val">₹607</span>
+            <span class="label">avg</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot green"></div> Available now</div>
+        <div class="legend-item"><div class="legend-dot red"></div> Blocked at backend (needs API fields)</div>
+      </div>
+
+      <!-- ═══ DAY SECTION: 28 Jul 2026 ═══ -->
+      <div class="day-section">
+        <div class="day-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'; this.querySelector('.chevron').classList.toggle('open')">
+          <div class="day-left">
+            <div class="day-date">28 Jul 2026</div>
+            <div class="day-weekday">Monday</div>
+          </div>
+          <div class="day-stats">
+            <div class="day-stat">Orders: <strong>14</strong></div>
+            <div class="day-stat">Paid Revenue: <strong>₹4,703</strong></div>
+            <div class="day-stat">Total Sales: <strong>₹8,247</strong></div>
+            <div class="day-stat">Discount: <strong>₹0</strong></div>
+            <svg class="chevron open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div>
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Time</th>
+                <th>Platform</th>
+                <th>Type</th>
+                <th>Waiter</th>
+                <th>Items</th>
+                <th class="text-right">Amount</th>
+                <th class="text-right">GST</th>
+                <th class="text-right">Service</th>
+                <th>Payment</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">#002388</td>
+                <td class="text-muted" style="font-size:12px">18:23</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td><span class="badge badge-dinein">Dine-in</span></td>
+                <td>Owner</td>
+                <td>2 PC Fried Chicken + Strips</td>
+                <td class="text-right mono">₹253</td>
+                <td class="text-right mono">₹11</td>
+                <td class="text-right mono">₹22</td>
+                <td><span class="badge badge-cash">Cash</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002387</td>
+                <td class="text-muted" style="font-size:12px">18:22</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td><span class="badge badge-dinein">Dine-in</span></td>
+                <td>Owner</td>
+                <td>Chicken Burger Combo</td>
+                <td class="text-right mono">₹345</td>
+                <td class="text-right mono">₹15</td>
+                <td class="text-right mono">₹30</td>
+                <td><span class="badge badge-cash">Cash</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002386</td>
+                <td class="text-muted" style="font-size:12px">18:20</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td><span class="badge badge-dinein">Dine-in</span></td>
+                <td>Manager</td>
+                <td>French Fries + Cola</td>
+                <td class="text-right mono">₹180</td>
+                <td class="text-right mono">₹9</td>
+                <td class="text-right mono">₹0</td>
+                <td><span class="badge badge-pending">Pending</span></td>
+                <td><span class="badge badge-unpaid">Unpaid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002385</td>
+                <td class="text-muted" style="font-size:12px">18:19</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td class="text-muted">pos</td>
+                <td>Manager</td>
+                <td>Paneer Tikka (2)</td>
+                <td class="text-right mono">₹420</td>
+                <td class="text-right mono">₹21</td>
+                <td class="text-right mono">₹42</td>
+                <td><span class="badge badge-cash">Cash</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002384</td>
+                <td class="text-muted" style="font-size:12px">18:15</td>
+                <td><span class="badge badge-swiggy">Swiggy</span></td>
+                <td><span class="badge badge-delivery">Delivery</span></td>
+                <td>—</td>
+                <td>Veg Biryani + Raita</td>
+                <td class="text-right mono">₹310</td>
+                <td class="text-right mono">₹15</td>
+                <td class="text-right mono">₹0</td>
+                <td><span class="badge" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa">Aggregator</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002383</td>
+                <td class="text-muted" style="font-size:12px">18:00</td>
+                <td><span class="badge badge-zomato">Zomato</span></td>
+                <td><span class="badge badge-delivery">Delivery</span></td>
+                <td>—</td>
+                <td>Butter Chicken + Naan (3)</td>
+                <td class="text-right mono">₹625</td>
+                <td class="text-right mono">₹31</td>
+                <td class="text-right mono">₹0</td>
+                <td><span class="badge" style="background:#fee2e2;color:#991b1b;border-color:#fecaca">Aggregator</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002382</td>
+                <td class="text-muted" style="font-size:12px">17:59</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td><span class="badge badge-dinein">Dine-in</span></td>
+                <td>Owner</td>
+                <td>Masala Dosa + Filter Coffee</td>
+                <td class="text-right mono">₹195</td>
+                <td class="text-right mono">₹10</td>
+                <td class="text-right mono">₹19</td>
+                <td><span class="badge badge-cash">Cash</span></td>
+                <td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr style="background:#fef2f2;">
+                <td class="mono">#002381</td>
+                <td class="text-muted" style="font-size:12px">17:45</td>
+                <td><span class="badge badge-pos">POS</span></td>
+                <td><span class="badge badge-dinein">Dine-in</span></td>
+                <td>Manager</td>
+                <td>Chicken Wings (6)</td>
+                <td class="text-right mono">₹350</td>
+                <td class="text-right mono">₹18</td>
+                <td class="text-right mono">₹35</td>
+                <td><span class="badge badge-blocked">cancel</span></td>
+                <td><span class="badge badge-cancel">Cancel</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ DAY SECTION: 27 Jul 2026 (collapsed) ═══ -->
+      <div class="day-section">
+        <div class="day-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'; this.querySelector('.chevron').classList.toggle('open')">
+          <div class="day-left">
+            <div class="day-date">27 Jul 2026</div>
+            <div class="day-weekday">Sunday</div>
+          </div>
+          <div class="day-stats">
+            <div class="day-stat">Orders: <strong>9</strong></div>
+            <div class="day-stat">Paid Revenue: <strong>₹3,120</strong></div>
+            <div class="day-stat">Total Sales: <strong>₹5,840</strong></div>
+            <div class="day-stat">Discount: <strong>₹150</strong></div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div style="display:none">
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Order #</th><th>Time</th><th>Platform</th><th>Type</th><th>Waiter</th><th>Items</th><th class="text-right">Amount</th><th class="text-right">GST</th><th class="text-right">Service</th><th>Payment</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">#002375</td><td class="text-muted" style="font-size:12px">12:05</td><td><span class="badge badge-pos">POS</span></td><td><span class="badge badge-dinein">Dine-in</span></td><td>Owner</td><td>Mutton Rogan Josh + Rice</td><td class="text-right mono">₹480</td><td class="text-right mono">₹24</td><td class="text-right mono">₹48</td><td><span class="badge badge-cash">Cash</span></td><td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002374</td><td class="text-muted" style="font-size:12px">11:19</td><td><span class="badge badge-swiggy">Swiggy</span></td><td><span class="badge badge-delivery">Delivery</span></td><td>—</td><td>Veg Thali</td><td class="text-right mono">₹220</td><td class="text-right mono">₹11</td><td class="text-right mono">₹0</td><td><span class="badge" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa">Aggregator</span></td><td><span class="badge badge-paid">Paid</span></td>
+              </tr>
+              <tr>
+                <td class="mono">#002373</td><td class="text-muted" style="font-size:12px">11:19</td><td><span class="badge badge-pos">POS</span></td><td class="text-muted">pos</td><td>Manager</td><td>Dal Makhani + Butter Naan (2)</td><td class="text-right mono">₹290</td><td class="text-right mono">₹14</td><td class="text-right mono">₹29</td><td><span class="badge badge-pending">Pending</span></td><td><span class="badge badge-unpaid">Unpaid</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ DAY SECTION: 25 Jul 2026 (collapsed) ═══ -->
+      <div class="day-section">
+        <div class="day-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'; this.querySelector('.chevron').classList.toggle('open')">
+          <div class="day-left">
+            <div class="day-date">25 Jul 2026</div>
+            <div class="day-weekday">Friday</div>
+          </div>
+          <div class="day-stats">
+            <div class="day-stat">Orders: <strong>10</strong></div>
+            <div class="day-stat">Paid Revenue: <strong>₹2,880</strong></div>
+            <div class="day-stat">Total Sales: <strong>₹5,960</strong></div>
+            <div class="day-stat">Discount: <strong>₹0</strong></div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div style="display:none">
+          <table class="order-table"><thead><tr><th>Order #</th><th>Time</th><th>Platform</th><th>Type</th><th>Waiter</th><th>Items</th><th class="text-right">Amount</th><th class="text-right">GST</th><th class="text-right">Service</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">#002357</td><td class="text-muted" style="font-size:12px">10:04</td><td><span class="badge badge-pos">POS</span></td><td class="text-muted">pos</td><td>Manager</td><td>choco cake (1)</td><td class="text-right mono">₹138</td><td class="text-right mono">₹6</td><td class="text-right mono">₹12</td><td><span class="badge badge-pending">Pending</span></td><td><span class="badge badge-unpaid">Unpaid</span></td></tr>
+            <tr><td class="mono">#002356</td><td class="text-muted" style="font-size:12px">10:04</td><td><span class="badge badge-pos">POS</span></td><td class="text-muted">pos</td><td>Manager</td><td>priti (1)</td><td class="text-right mono">₹115</td><td class="text-right mono">₹5</td><td class="text-right mono">₹10</td><td><span class="badge badge-pending">Pending</span></td><td><span class="badge badge-unpaid">Unpaid</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ═══ Grand Total Footer ═══ -->
+      <div class="grand-total">
+        <div class="gt-title">Grand Total (25 Jul – 31 Jul 2026)  <span style="font-size:10px;font-weight:400;color:#a1a1aa;margin-left:8px">Source: <code style="font-size:10px">grand_total</code> from API response</span></div>
+        <div class="gt-grid">
+          <div class="gt-item"><div class="gt-label">Total Sales</div><div class="gt-value">₹20,047</div></div>
+          <div class="gt-item"><div class="gt-label">Paid Revenue</div><div class="gt-value" style="color:#16a34a">₹4,703</div></div>
+          <div class="gt-item"><div class="gt-label">Total Discount</div><div class="gt-value">₹150</div></div>
+          <div class="gt-item"><div class="gt-label">GST Amount</div><div class="gt-value">₹982</div></div>
+        </div>
+
+        <div class="gt-section">
+          <div class="gt-section-title">Revenue by Payment Method</div>
+          <div class="gt-grid">
+            <div class="gt-item"><div class="gt-label">Cash</div><div class="gt-value">₹3,340</div></div>
+            <div class="gt-item"><div class="gt-label">Card</div><div class="gt-value">₹0</div></div>
+            <div class="gt-item"><div class="gt-label">UPI</div><div class="gt-value">₹0</div></div>
+            <div class="gt-item"><div class="gt-label">Cash on Delivery</div><div class="gt-value">₹0</div></div>
+          </div>
+        </div>
+
+        <div class="gt-section">
+          <div class="gt-section-title">TAB Revenue</div>
+          <div class="gt-grid">
+            <div class="gt-item"><div class="gt-label">TAB Cash</div><div class="gt-value">₹0</div></div>
+            <div class="gt-item"><div class="gt-label">TAB Card</div><div class="gt-value">₹0</div></div>
+            <div class="gt-item"><div class="gt-label">TAB UPI</div><div class="gt-value">₹0</div></div>
+          </div>
+        </div>
+
+        <div class="gt-section">
+          <div class="gt-section-title">Unpaid Revenue</div>
+          <div class="gt-grid">
+            <div class="gt-item"><div class="gt-label">Order TAB</div><div class="gt-value" style="color:#d97706">₹1,200</div></div>
+            <div class="gt-item"><div class="gt-label">Order Room</div><div class="gt-value" style="color:#d97706">₹0</div></div>
+          </div>
+        </div>
+
+        <div class="gt-section">
+          <div class="gt-section-title">Charges & Adjustments</div>
+          <div class="gt-grid">
+            <div class="gt-item"><div class="gt-label">Delivery Charge</div><div class="gt-value">₹80</div></div>
+            <div class="gt-item"><div class="gt-label">Packing Charge</div><div class="gt-value">₹40</div></div>
+            <div class="gt-item"><div class="gt-label">Service Tax</div><div class="gt-value">₹450</div></div>
+            <div class="gt-item"><div class="gt-label">Tip Amount</div><div class="gt-value">₹0</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+</body>
+</html>

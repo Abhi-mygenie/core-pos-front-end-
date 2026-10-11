@@ -1,0 +1,14 @@
+{
+ "count": 112,
+ "max_id": 235,
+ "counts": {
+  "arrivals_today": 0,
+  "arrivals_late": 10,
+  "arrivals_tomorrow": 0,
+  "departures_today": 0,
+  "departures_overdue": 2,
+  "in_house": 2,
+  "leaving_today": 0,
+  "arrived_today": 0
+ }
+}

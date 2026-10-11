@@ -1,0 +1,19 @@
+{
+  "store": {
+    "status": 200,
+    "body": "{\"recipe_id\":11224,\"name\":\"check in\",\"preparation_time\":\"0\",\"serve_time\":\"0\",\"unit\":\"plates\",\"serves_people\":1,\"is_manufactured\":false,\"ingredients\":[{\"id\":20287,\"name\":\"Chicken\",\"unit\":\"kg\",\"qty\":1}]}"
+  },
+  "no-body": {
+    "status": 200,
+    "body": "{\"status\":true,\"message\":\"Recipe deleted successfully.\"}"
+  },
+  "delete_reason": {
+    "status": 404,
+    "body": "{\"status\":false,\"message\":\"Recipe not found.\"}"
+  },
+  "reason": {
+    "status": 404,
+    "body": "{\"status\":false,\"message\":\"Recipe not found.\"}"
+  },
+  "still_listed": false
+}

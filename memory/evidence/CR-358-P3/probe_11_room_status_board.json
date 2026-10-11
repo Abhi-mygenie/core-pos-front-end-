@@ -1,0 +1,104 @@
+{
+ "request": {
+  "method": "GET",
+  "path": "/api/v2/vendoremployee/aiosell/room-status-board",
+  "params": {}
+ },
+ "status": 200,
+ "body": {
+  "status": true,
+  "message": "Room status board fetched successfully",
+  "data": {
+   "auto_hk_on_rm_checkout": true,
+   "rooms": [
+    {
+     "restaurant_table_id": 8524,
+     "table_no": "r3",
+     "title": null,
+     "aiosell_room_code": "suite",
+     "manual_status": null,
+     "display_status": "occupied",
+     "room_operational_status_at": null,
+     "guest": {
+      "name": "CR358P2 Probe",
+      "phone": "***",
+      "email": null,
+      "booking_id": "MG-69-A26BDA2F-9575-4D41-8FCE-C643FF242A3A",
+      "order_id": 1232205
+     },
+     "reservation": null
+    },
+    {
+     "restaurant_table_id": 8525,
+     "table_no": "r4",
+     "title": null,
+     "aiosell_room_code": "suite",
+     "manual_status": null,
+     "display_status": "booked",
+     "room_operational_status_at": null,
+     "guest": null,
+     "reservation": {
+      "booking_id": "BDC7497606",
+      "channel": "booking.com",
+      "checkin": "2026-09-07",
+      "checkout": "2026-09-09",
+      "guest_name": "Test Guest",
+      "room_code": "suite",
+      "reservation_room_id": 4
+     }
+    },
+    {
+     "restaurant_table_id": 8526,
+     "table_no": "r2",
+     "title": null,
+     "aiosell_room_code": "executive",
+     "manual_status": null,
+     "display_status": "occupied",
+     "room_operational_status_at": null,
+     "guest": {
+      "name": "WalkIn Probe Test",
+      "phone": "***",
+      "email": "***",
+      "booking_id": null,
+      "order_id": 1232176
+     },
+     "reservation": null
+    },
+    {
+     "restaurant_table_id": 8527,
+     "table_no": "r5",
+     "title": null,
+     "aiosell_room_code": "suite",
+     "manual_status": null,
+     "display_status": "occupied",
+     "room_operational_status_at": null,
+     "guest": {
+      "name": "Test Guest",
+      "phone": "***",
+      "email": null,
+      "booking_id": "BDC8899464",
+      "order_id": 1232181
+     },
+     "reservation": null
+    },
+    {
+     "restaurant_table_id": 8528,
+     "table_no": "r1",
+     "title": null,
+     "aiosell_room_code": "executive",
+     "manual_status": null,
+     "display_status": "occupied",
+     "room_operational_status_at": null,
+     "guest": {
+      "name": "Future Guest",
+      "phone": "***",
+      "email": "***",
+      "booking_id": "MG-69-69BCC4D3-3F9B-4432-AE17-867D826F16D8",
+      "order_id": 1232179
+     },
+     "reservation": null
+    }
+   ]
+  }
+ }
+}

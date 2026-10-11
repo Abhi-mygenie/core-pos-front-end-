@@ -1,0 +1,16 @@
+# CR-385 Phase 5 — §5.5 FINAL GUARDS on the release build — 2026-09-24
+
+Repeat of Session 0 (`SESSION0_GUARDS.md`) on the final build, after Sessions A′/B/C + §5.4 probe pack. Zero API calls, zero browser sessions, zero code changes. Workspace `frontend/src` git status: clean (0 modified files).
+
+| Guard | Command (plan note §7) | Expected | Actual | Verdict |
+|---|---|---|---|---|
+| 1 Money (D50 / G-02) | `grep -rn "balance_payment\|remaining_room_balance\|\* 0.05\|\* 0.18\|toISOString" frontend/src/components/pms/frontdesk frontend/src/api/services/frontDeskService.js frontend/src/api/transforms/frontDeskTransform.js \| grep -v __tests__` | exactly 2 lines | **2 lines**: `frontDeskService.js:70` (comment "Money: room_price/order_amount/gst_tax/balance_payment = 0 → the server prices…"), `frontDeskService.js:101` `fd.append('balance_payment', '0');` | **PASS** |
+| 2 BUG-450 hardcoded room type | `grep -rnE "'executive'\|\"executive\"\|'suite'\|\"suite\"\|Executive Room" frontend/src --include=*.js --include=*.jsx \| grep -v "__tests__\|/tests/\|__fixtures__\|\.test\."` | 0 lines | **0 lines** | **PASS** |
+| 3 Hotspot byte-identity | fresh `git clone --filter=blob:none --branch 21implement` of origin `Abhi-mygenie/core-pos-front-end-` → sha256 of the 4 hotspots vs Session 0 record + `diff -rq origin/frontend/src /app/frontend/src`; clone deleted after | 4 blobs == Session 0 (`642ccb8` content) · 0 diffs | **origin HEAD `b2db5a0`** · all four sha256 **identical** in origin, workspace and Session 0 record: CollectPaymentPanel `b8c1e91f7a17e5cc…` · orderTransform `065710fa63134dca…` · pmsService `b5f139c7361b0d3b…` · PmsCheckoutDrawer `14a7e12e5a3163dd…` · `diff -rq` → **0 differences**. ⚠ Note: origin `21implement` history was **rewritten/re-imported on 2026-09-23** (8 commits from `af312cc` "Initial commit" → `24ae8f6` platform import 14:30 UTC → `b2db5a0`); commit `642ccb8` **no longer exists** on origin, so `git log -1` now returns `24ae8f6` for all four files. Byte-identity (the guard's intent, plan note §7) is proven by the sha256 cross-check; the commit id is no longer a usable reference — QA report should cite the blob hashes, not `642ccb8`. | **PASS** (by blob sha256; commit-id reference obsolete) |
+| 4 Mockup sha lock | `sha256sum frontend/public/cr385-frontdesk-mockup.html` | starts `12fd0f4a343fc89d` | `12fd0f4a343fc89d506478db999092d7ca564545b5cb2fc82118ca14c1168b86` | **PASS** |
+| 5 cr385 + bug450 jest | `CI=true yarn test --watchAll=false --testPathPattern "cr385\|bug450"` | 128 passed, 0 failed | Test Suites **16/16** passed · Tests **128/128** passed · Snapshots 2/2 · 12.1 s · exit 0 (`final_guard5_jest.log`) | **PASS** |
+| 6 Production build | `yarn build` (plain, no `CI=true`) | exit 0 | `Compiled with warnings.` · `Done in 63.33s.` · **BUILD_EXIT=0** · main bundle 1.32 MB gzip (`final_guard6_build.log`). Warnings = 24 pre-existing `react-hooks/exhaustive-deps` lint notes in 12 non-CR-385 files (inventory widgets, OrderEntry, panels, reports-module mockups); **0 warnings in any CR-385 / front-desk / hotspot file**. `build/` is git-ignored. | **PASS** |
+
+**Result: 6 / 6 PASS.** No code changes. Sandbox untouched (guards are local only).
+
+Artifacts: `final_guard5_jest.log` · `final_guard6_build.log` · this file.

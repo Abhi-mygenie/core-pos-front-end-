@@ -1,0 +1,2 @@
+{"ts": 1790316716.104352, "method": "POST", "url": "/api/v2/vendoremployee/inventory/add-stock/20326", "body": {"quantity": 0, "unit": "pkt", "physicalqty_master": true, "physical_qty": 9.75, "waste_reason": "PROBE c1_restore_20326", "wastage_reason_id": null, "notes": ""}}
+{"ts": 1790316719.4888792, "method": "POST", "url": "/api/v2/vendoremployee/inventory/add-stock/20320", "body": {"quantity": 0, "unit": "pkt", "physicalqty_master": true, "physical_qty": 9.4, "waste_reason": "PROBE c2_repair_angara", "wastage_reason_id": null, "notes": ""}}
