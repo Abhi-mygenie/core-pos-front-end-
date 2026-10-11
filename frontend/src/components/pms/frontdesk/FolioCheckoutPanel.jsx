@@ -245,12 +245,12 @@ export const FolioCheckoutPanel = ({ row, meta, onDone, onClose }) => {
     if (bp === null) return { baseBalance: null, displaySgst: null, displayCgst: null, maxCheckoutDiscount: null }; // BUG-517
     const discountedPrice = Math.max(0, bc - discountAmt);
     const gst = (roomGstApplicable && discountedPrice > 0)
-      ? computeRoomGst(roomGstApplicable, roomGstSlabs, discountedPrice * nights, nights, 1)
+      ? computeRoomGst(roomGstApplicable, roomGstSlabs, discountedPrice, nights, 1)          // BUG-535: discountedPrice = total-stay; nights handled inside computeRoomGst
       : { gstTotal: 0, sgst: 0, cgst: 0 };
     const base = bp === 0 ? 0 : Math.max(0, bp + gst.gstTotal);
     // BUG-517 OD-517-01: gstRate = GST / (discountedPrice × nights); advance × gstRate = GST on paid advances
     const gstRate = (roomGstApplicable && discountedPrice > 0 && nights > 0)
-      ? gst.gstTotal / (discountedPrice * nights) : 0;                          // BUG-517
+      ? gst.gstTotal / discountedPrice : 0;                                     // BUG-517, BUG-535: discountedPrice = total-stay
     const maxCheckout = Math.max(0, base - Math.floor(advance * gstRate));       // BUG-517: bonk: 600 - floor(1500×0.05) = 525
     return {
       baseBalance: base,

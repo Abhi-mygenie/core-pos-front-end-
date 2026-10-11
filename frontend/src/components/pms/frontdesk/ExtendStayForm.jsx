@@ -75,6 +75,7 @@ export const ExtendStayForm = ({ row, meta, onDone, onClose }) => {
           </div>
           <div className="bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg p-4 text-[12px] grid grid-cols-2 gap-y-1 tabular-nums self-start">
             <span className="text-[#767676]">Booking charge</span><span className="text-right" data-testid="extend-bill-charge">{fmtINR(rc?.booking_charge)}</span>
+            {discountAmt > 0 && <><span className="text-[#767676]">Check-in discount</span><span className="text-right text-[#329937]" data-testid="extend-bill-discount">−{fmtINR(discountAmt)}</span></>} {/* BUG-534 */}
             <span className="text-[#767676]">SGST</span><span className="text-right" data-testid="extend-bill-sgst">{fmtINR(rc?.sgst)}</span>
             <span className="text-[#767676]">CGST</span><span className="text-right" data-testid="extend-bill-cgst">{fmtINR(rc?.cgst)}</span>
             <span className="text-[#767676] font-semibold">Total (incl. GST)</span><span className="text-right font-semibold" data-testid="extend-bill-total">{fmtINR(rc?.total_with_gst)}</span>

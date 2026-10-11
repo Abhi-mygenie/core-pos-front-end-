@@ -11,9 +11,31 @@ Presentation-ready handover added on owner request: `memory/handover/SESSION_HAN
 Planning authored `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`, `memory/evidence/CR-390/GATE2_2026_09_28/READ_ONLY_EVIDENCE.md` and `memory/handover/SESSION_HANDOVER_2026_09_28_CR390_STEP1_GATE2_REVIEW.md`; synchronized intake/registry/control/status/evidence pointers and older handover supersession notices. PRD/CHANGELOG/ROADMAP updated. **OD-390-16…22 LOCKED FOR PLANNING**: Palm House Normal; Kunafa Mahal Aggregator; Palm House Premium for switching/comparison only; no Party setup. Await separate Step 2 instruction; Gate 3 NOT STARTED. No runtime ownership, source, tooling, original scripts/mappings, PNGs or env changes. Existing BUG-359/390/391/392/394 and CR-376-family ownership remains authoritative.
 
 **Status:** POPULATED
-**Last Updated:** 2026-10-10 (BUG-527 F1-F4 IMPL — DashboardPage.jsx + CartPanel.jsx — see section below) — 2026-10-10 (BUG-527 E1-E4 IMPL — CollectPaymentPanel.jsx + PmsCheckoutDrawer.jsx) — 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418) — 2026-10-05 (BUG-490 + BUG-491 IMPL
+**Last Updated:** 2026-10-11 (BUG-534 IMPL — ExtendStayForm.jsx L78) — 2026-10-11 (BUG-535 IMPL — FolioCheckoutPanel.jsx L248+L253) — 2026-10-10 (BUG-527 F1-F4 IMPL — DashboardPage.jsx + CartPanel.jsx — see section below) — 2026-10-10 (BUG-527 E1-E4 IMPL — CollectPaymentPanel.jsx + PmsCheckoutDrawer.jsx) — 2026-10-10 (BUG-526 IMPL — FolioCheckoutPanel.jsx L413-418) — 2026-10-05 (BUG-490 + BUG-491 IMPL
 
 ---
+
+
+## FILE_OWNERSHIP — BUG-534 IMPL (2026-10-11) — marker `// BUG-534`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/components/pms/frontdesk/ExtendStayForm.jsx` | **L78:** inserted `{discountAmt > 0 && <><span className="text-[#767676]">Check-in discount</span><span className="text-right text-[#329937]" data-testid="extend-bill-discount">−{fmtINR(discountAmt)}</span></>} {/* BUG-534 */}` between Booking charge (L77) and SGST (L79) in result panel. Uses existing `discountAmt` (BUG-533 L33 = `row.roomDiscountAmount ?? 0`). `rc.balance_due` untouched (server authority). | BUG-534 IMPL 2026-10-11 |
+
+NOT touched: InHousePanel.jsx · DeparturesPanel.jsx · FolioCheckoutPanel.jsx · pmsService.js · frontDeskService.js · any other file.
+
+---
+
+## FILE_OWNERSHIP — BUG-535 IMPL (2026-10-11) — marker `// BUG-535`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/components/pms/frontdesk/FolioCheckoutPanel.jsx` | **L248:** `discountedPrice * nights` → `discountedPrice` in `computeRoomGst` call — removes double-count (`discountedPrice` is already the total-stay amount; `nights` handled inside `computeRoomGst`). **L253:** `gst.gstTotal / (discountedPrice * nights)` → `gst.gstTotal / discountedPrice` — corrects `gstRate` denominator for `maxCheckoutDiscount` cap. Fixes GST slab 18%→5% for multi-night discounted bookings. base ₹14,864→₹11,020 ✓. 1-night bookings: zero regression (`* 1` was no-op). | BUG-535 IMPL 2026-10-11 |
+
+NOT touched: ExtendStayForm.jsx · InHousePanel.jsx · DeparturesPanel.jsx · pmsService.js · frontDeskService.js · roomGstCalculator.js · CollectPaymentPanel.jsx (R5) · orderTransform.js (R5) · any other file.
+
+---
+
 
 ## FILE_OWNERSHIP — BUG-527 F1-F4 IMPL (2026-10-10) — markers `// BUG-527` and `/* BUG-527 */`
 
