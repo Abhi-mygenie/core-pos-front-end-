@@ -73,8 +73,7 @@ const CollectPaymentPanel = ({
   // method passed in `allowedMethods` only renders if it is ALSO configured
   // by the restaurant. When undefined (dashboard caller) → existing
   // behaviour is preserved verbatim.
-  // CR-409: pre-loaded coupon from scan & order. Null for regular POS orders → no change.
-  initialCoupon = null,
+  // CR-413: initialCoupon removed — cashier always chooses coupon (OD-INV-01=A)
   allowedMethods,
 }) => {
   const customer = passedCustomer;
@@ -330,16 +329,7 @@ const CollectPaymentPanel = ({
   const [discountValue, setDiscountValue] = useState("");
   const [discountFor, setDiscountFor] = useState('');     // CR-137: optional discount reason (max 50 chars)
 
-  // CR-409: seed selectedCoupon from pre-loaded scan & order coupon on mount.
-  // Fires once at panel open. initialCoupon = null for regular POS orders → no-op.
-  // OD-409-01 (B): cashier can remove this coupon — Remove button works as normal.
-  useEffect(() => {
-    if (initialCoupon?.code && !selectedCoupon) {
-      setSelectedCoupon(initialCoupon);
-      setCouponCode(initialCoupon.code || '');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // mount-only — initialCoupon is frozen at panel open
+  // CR-413: initialCoupon mount useEffect removed — cashier always chooses coupon (OD-INV-01=A)
 
   // BUG-276: Service charge toggle — default ON, staff can uncheck per order
   // BUG-028 (Apr-2026): Default service-charge toggle to OFF; cashier must

@@ -1932,21 +1932,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   ? (Number(deliveryCharge) || 0)
                   : (orderFinancials.deliveryCharge || (Number(deliveryCharge) || 0))
               }
-              // CR-409: pre-load coupon from existing scan & order.
-              // Guard: null when no coupon on order → zero regression on regular POS orders.
-              initialCoupon={
-                orderData?.couponCode
-                  ? {
-                      valid:                true,
-                      code:                 orderData.couponCode,
-                      title:                orderData.couponTitle || orderData.couponCode,
-                      computedDiscount:     orderData.couponDiscount || 0,
-                      couponType:           orderData.couponType   || 'order',
-                      stackableWithLoyalty: true,
-                      fromExistingOrder:    true,
-                    }
-                  : null
-              }
+              // CR-413: initialCoupon prop removed — cashier always chooses coupon (OD-INV-01=A)
               // BUG-004 (QA, Apr 2026): expose Split Bill trigger from the Collect
               // Payment screen. Only provided when eligible: postpaid placed
               // dine-in/walk-in order with 2+ placed items.

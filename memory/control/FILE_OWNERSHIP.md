@@ -15,6 +15,17 @@ Planning authored `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`, `m
 
 ---
 
+## FILE_OWNERSHIP — CR-413 IMPL (2026-10-12) — marker `// CR-413`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **E-CR413-1a L76–77:** deleted `initialCoupon = null,` prop + comment → replaced with `// CR-413` marker. **E-CR413-1b L333–342:** deleted 3-line comment + 7-line mount `useEffect` (`setSelectedCoupon(initialCoupon)`) → replaced with `// CR-413` marker. Total: −10 lines in CPP. | CR-413 IMPL 2026-10-12 |
+| `src/components/order-entry/OrderEntry.jsx` | **E-CR413-2 L1935–1949:** deleted 2-line comment + 13-line `initialCoupon={orderData?.couponCode ? {...} : null}` JSX prop → replaced with `// CR-413` marker. Total: −14 lines in OE. | CR-413 IMPL 2026-10-12 |
+
+NOT touched: `orderTransform.js` (CR-409 E-1 coupon fields kept) · `orderTransform.cr409.test.js` (kept) · `DashboardPage.jsx` (R5) · `CartPanel.jsx` (R5) · any service/context.
+
+---
+
 ## FILE_OWNERSHIP — CR-415 IMPL (2026-10-12) — marker `// CR-415`
 
 | File | Change | CR/BUG |

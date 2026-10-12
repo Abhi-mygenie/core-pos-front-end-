@@ -30151,7 +30151,7 @@
       "id": "CR-413",
       "title": "Remove CR-409 initialCoupon Pre-load from Collect Payment Panel",
       "type": "CR",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "oct_cr_batch",
@@ -30175,7 +30175,13 @@
       ],
       "impact_doc": "impact/CR-413_IMPACT_ANALYSIS.md",
       "open_decisions": [],
-      "plan_doc": "plans/CR-413_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-413_IMPLEMENTATION_PLAN.md",
+      "implemented": "2026-10-12",
+      "files_changed": [
+        "src/components/order-entry/CollectPaymentPanel.jsx",
+        "src/components/order-entry/OrderEntry.jsx"
+      ],
+      "edits": "E-CR413-1a: CPP L76-77 initialCoupon prop+comment deleted \u00b7 E-CR413-1b: CPP L333-342 mount useEffect deleted \u00b7 E-CR413-2: OE L1935-1949 initialCoupon prop pass deleted"
     },
     {
       "id": "BUG-537",
