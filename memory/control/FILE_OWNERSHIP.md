@@ -25,6 +25,17 @@ NOT touched: App.js · any page · any service · any transform.
 
 ---
 
+## FILE_OWNERSHIP — BUG-539 ml-64/ml-16 fix IMPL (2026-10-12) — marker `{/* BUG-539 */}`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/pages/reports-module/PLReportPage.jsx` | **E4 L172:** replaced `flex-1 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-16'}` with `flex-1 flex flex-col overflow-hidden` — removes 256px double-offset (sidebar is in-flow; ml-64/ml-16 was a redundant manual margin on top of flex-1). | BUG-539 IMPL (ml-64 fix) 2026-10-12 |
+| `src/pages/reports-module/ConsumptionReportPage.jsx` | **E5 L196:** same change. | BUG-539 IMPL (ml-64 fix) 2026-10-12 |
+
+NOT touched: `DashboardPage.jsx` (R5) · `Sidebar.jsx` · any service · any transform · any other file. Previous BUG-539 E1/E2/E3/W fixes at L173/L176/L266/L313/L197/L200 unaffected.
+
+---
+
 ## FILE_OWNERSHIP — BUG-539-W IMPL (2026-10-12) — marker `{/* BUG-539-W */}`
 
 | File | Change | CR/BUG |

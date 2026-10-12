@@ -193,7 +193,7 @@ export default function ConsumptionReportPage() {
   return (
     <div className="flex min-h-screen bg-slate-50" data-testid="consumption-report-page">
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={(v) => { setIsSidebarExpanded(v); localStorage.setItem('mygenie_sidebar_expanded', String(v)); }} />
-      <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-16'}`}>
+      <div className="flex-1 flex flex-col overflow-hidden"> {/* BUG-539 */}
         <div className="px-6 py-6"> {/* BUG-539-W: removed max-w-7xl mx-auto — content fills sidebar-to-edge */}
 
           {/* BUG-258+261: Header with preset pills (matches ExpenseReport pattern) */}

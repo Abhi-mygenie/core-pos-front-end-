@@ -30311,13 +30311,17 @@
         "src/pages/reports-module/PLReportPage.jsx",
         "src/pages/reports-module/ConsumptionReportPage.jsx",
         "src/pages/reports-module/PLReportPage.jsx(W)",
-        "src/pages/reports-module/ConsumptionReportPage.jsx(W)"
+        "src/pages/reports-module/ConsumptionReportPage.jsx(W)",
+        "src/pages/reports-module/PLReportPage.jsx(ml64)",
+        "src/pages/reports-module/ConsumptionReportPage.jsx(ml64)"
       ],
-      "edits": "E1: PLReport L176 flex-wrap \u00b7 E2a: overflow-x-auto open \u00b7 E2b: overflow-x-auto close \u00b7 E3: ConsumptionReport L200 flex-wrap",
+      "edits": "E1: PLReport L176 flex-wrap \u00b7 E2a: overflow-x-auto open \u00b7 E2b: overflow-x-auto close \u00b7 E3: ConsumptionReport L200 flex-wrap \u00b7 E4: PLReport L172 remove ml-64/ml-16 double-offset \u00b7 E5: ConsumptionReport L196 same",
       "impact_doc_width": "impact/BUG-539_IMPACT_ANALYSIS_WIDTH.md",
       "plan_doc_width": "plans/BUG-539-W_IMPLEMENTATION_PLAN.md",
       "investigation_doc_v2": "investigations/BUG-539_REINVESTIGATION_2026_10_12.md",
-      "root_cause_v2": "ml-64/ml-16 double-offset: sidebar is flex-flow (not fixed), flex-1 already positions content after sidebar, ml-64 adds 256px MORE = 256px gap. Fix: remove ml-64/ml-16 from PLReportPage L172 + ConsumptionReportPage L196."
+      "root_cause_v2": "ml-64/ml-16 double-offset: sidebar is flex-flow (not fixed), flex-1 already positions content after sidebar, ml-64 adds 256px MORE = 256px gap. Fix: remove ml-64/ml-16 from PLReportPage L172 + ConsumptionReportPage L196.",
+      "impact_doc_ml64": "impact/BUG-539_IMPACT_ANALYSIS_ML64.md",
+      "plan_doc_ml64": "plans/BUG-539_ML64_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-540",
