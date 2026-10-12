@@ -30151,7 +30151,7 @@
       "id": "CR-413",
       "title": "Remove CR-409 initialCoupon Pre-load from Collect Payment Panel",
       "type": "CR",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "oct_cr_batch",
@@ -30172,7 +30172,9 @@
         "CR-408",
         "CR-409",
         "CR-412"
-      ]
+      ],
+      "impact_doc": "impact/CR-413_IMPACT_ANALYSIS.md",
+      "open_decisions": []
     },
     {
       "id": "BUG-537",
