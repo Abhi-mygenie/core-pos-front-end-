@@ -1,0 +1,1 @@
+[x0_allow_on_set] HTTP 200 :: {"success": true, "message": "Restaurant settings updated successfully", "data": {"basic": {"name": "The Goan Kitchen", "phone": "7391826054", "address": "226F+QW6, Palolem Down St", "gst": {"status":

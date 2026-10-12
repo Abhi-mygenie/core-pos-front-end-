@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Setup - Edit Mode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primaryOrange: '#F97316', primaryGreen: '#22C55E', darkText: '#1F2937', grayText: '#6B7280', borderGray: '#E5E7EB', sectionBg: '#F9FAFB', errorText: '#EF4444', lightBg: '#FFFFFF'
+                    },
+                    fontFamily: { poppins: ['Poppins', 'sans-serif'], body: ['system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'system-ui', sans-serif; background-color: #e5e7eb; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex bg-black/40">
+    <div class="flex-1"></div>
+    
+    <div class="w-11/12 max-w-[1440px] h-full bg-sectionBg shadow-2xl flex flex-col" data-testid="expense-setup-panel">
+        
+        <header class="border-b border-borderGray px-8 py-5 bg-white flex items-center justify-between z-10">
+            <div>
+                <h1 class="text-2xl font-semibold text-darkText tracking-tight">Expense Setup</h1>
+                <p class="text-sm text-grayText mt-1">Manage stock categories, items, and track unit prices.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button data-testid="setup-refresh-btn" class="p-2 text-grayText hover:text-darkText hover:bg-sectionBg rounded-md transition-colors"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                <button data-testid="setup-bulk-btn" class="px-4 py-2 bg-white border border-borderGray text-darkText rounded-md hover:bg-sectionBg transition-colors flex items-center gap-2 font-medium text-sm shadow-sm"><i data-lucide="table" class="w-4 h-4"></i> Bulk Edit</button>
+                <div class="w-px h-6 bg-borderGray mx-2"></div>
+                <button class="p-2 text-grayText hover:bg-gray-100 rounded-md transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+        </header>
+        
+        <div class="px-8 border-b border-borderGray bg-white flex gap-6" data-testid="setup-tab-strip">
+            <button data-testid="tab-stock-master" class="py-3 border-b-2 border-primaryOrange text-primaryOrange font-medium text-sm">Stock Master</button>
+            <button data-testid="tab-unit-prices" class="py-3 border-b-2 border-transparent text-grayText hover:text-darkText font-medium text-sm transition-colors">Unit Prices</button>
+        </div>
+
+        <div class="flex-1 overflow-hidden flex bg-sectionBg p-6 gap-6">
+            
+            <div class="w-[30%] bg-white border border-borderGray rounded-lg flex flex-col shadow-sm overflow-hidden opacity-70 pointer-events-none">
+                <div class="p-4 border-b border-borderGray flex justify-between items-center bg-white">
+                    <h2 class="font-semibold text-darkText">Categories</h2>
+                    <button data-testid="add-category-btn" class="text-primaryOrange p-1.5 rounded-md"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                    <div data-testid="category-row-1" class="flex items-center justify-between p-2.5 rounded-md bg-orange-50 text-primaryOrange">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="folder" class="w-4 h-4 fill-orange-100"></i>
+                            <span class="text-sm font-semibold">Vegetables</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-md text-darkText">
+                        <div class="flex items-center gap-2.5"><i data-lucide="folder" class="w-4 h-4 text-grayText"></i><span class="text-sm font-medium">Dairy & Eggs</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 bg-white border border-borderGray rounded-lg shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-borderGray flex justify-between items-center bg-white">
+                    <h2 class="font-semibold text-darkText">Items in <span class="text-primaryOrange">Vegetables</span></h2>
+                    <div class="relative w-72">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-grayText"></i>
+                        <input data-testid="items-search" type="text" placeholder="Search items..." class="w-full pl-9 pr-3 py-2 text-sm border border-borderGray rounded-md bg-sectionBg" disabled>
+                    </div>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-white z-10 shadow-sm">
+                            <tr class="bg-sectionBg border-b border-borderGray text-xs uppercase tracking-wider text-grayText">
+                                <th class="p-4 font-semibold w-[40%]">Item Name</th>
+                                <th class="p-4 font-semibold w-[25%]">Category</th>
+                                <th class="p-4 font-semibold w-[20%]">Unit Price</th>
+                                <th class="p-4 font-semibold w-[15%] text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Edit Mode Row -->
+                            <tr class="border-b border-blue-200 bg-blue-50/50 relative shadow-[inset_4px_0_0_0_#3b82f6]">
+                                <td class="p-3">
+                                    <input data-testid="item-edit-name-input-1" type="text" value="Tomatoes" class="w-full px-3 py-2 text-sm border border-blue-300 rounded-md focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white shadow-inner font-medium text-darkText">
+                                </td>
+                                <td class="p-3">
+                                    <select data-testid="item-edit-cat-select-1" class="w-full px-3 py-2 text-sm border border-blue-300 rounded-md focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white text-darkText">
+                                        <option selected>Vegetables</option>
+                                        <option>Dairy & Eggs</option>
+                                        <option>Meats</option>
+                                    </select>
+                                </td>
+                                <td class="p-3">
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2 text-grayText text-sm font-medium">$</span>
+                                        <input type="number" value="2.50" class="w-full pl-7 pr-3 py-2 text-sm border border-blue-300 rounded-md focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white shadow-inner text-darkText">
+                                    </div>
+                                </td>
+                                <td class="p-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button data-testid="item-edit-cancel-btn-1" class="px-2.5 py-1.5 bg-white border border-borderGray text-grayText rounded hover:bg-gray-50 transition-colors shadow-sm"><i data-lucide="x" class="w-4 h-4"></i></button>
+                                        <button data-testid="item-edit-save-btn-1" class="px-2.5 py-1.5 bg-primaryGreen text-white rounded hover:bg-green-600 transition-colors shadow-sm"><i data-lucide="check" class="w-4 h-4"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Disabled Standard Rows -->
+                            <tr class="border-b border-borderGray opacity-50 pointer-events-none">
+                                <td class="p-4 text-sm font-medium text-darkText">Onions</td>
+                                <td class="p-4 text-sm text-grayText">Vegetables</td>
+                                <td class="p-4 text-sm text-darkText font-medium">$ 1.20</td>
+                                <td class="p-4 text-right"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

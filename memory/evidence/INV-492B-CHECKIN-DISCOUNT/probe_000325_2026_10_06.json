@@ -1,0 +1,37 @@
+{
+  "probe_date": "2026-10-06",
+  "order_number": "000325",
+  "order_id_numeric": 1232973,
+  "booking_id": "MG-69-8B24981E-8E59-4D39-9EC5-4FE4E4429356",
+  "restaurant": "RID 69 — The Goan Kitchen",
+
+  "lr_charge_object": {
+    "booking_charge": 1920,
+    "sgst": 48,
+    "cgst": 48,
+    "total_with_gst": 2016,
+    "advance_payment": 300,
+    "balance_due": 1716,
+    "note": "NO room_discount field — balance_due = booking_charge + GST - advance only"
+  },
+
+  "folio_room_info": {
+    "room_price": "1920.00",
+    "advance_payment": "300.00",
+    "balance_payment": "0.00",
+    "room_discount_amount": "1620.00",
+    "room_discount_type": "Percent",
+    "room_discount_at": "check_in",
+    "room_discount_detail": {
+      "check_in": { "type": "Percent", "value": "89", "amount": 1620, "reason": null }
+    }
+  },
+
+  "finding": {
+    "check_in_discount": 1620,
+    "correct_balance_payment": 0,
+    "charge_balance_due": 1716,
+    "discrepancy": 1716,
+    "root_cause": "charge.balance_due from LR API does not deduct check-in discount. Folio ri.balance_payment=0 is correct but FolioCheckoutPanel LEFT and RIGHT sections both derive from charge.balance_due"
+  }
+}

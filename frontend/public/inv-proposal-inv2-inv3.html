@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Inv 2 — Stock Audit Physical Qty</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
+.page{max-width:1360px;margin:0 auto;padding:20px}
+h2{font-size:16px;font-weight:800;color:#0f172a;margin-bottom:2px}
+.sub{font-size:11px;color:#64748b;margin-bottom:12px}
+.role{display:inline-flex;background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:5px 12px;font-size:11px;color:#92400e;font-weight:600;margin-bottom:16px}
+.card{background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden}
+.hdr{padding:11px 18px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;background:#fafafa;flex-wrap:wrap}
+.ht{font-size:13px;font-weight:700;color:#0f172a}
+.pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pr{background:#fee2e2;color:#dc2626}
+.pg{background:#dcfce7;color:#15803d}
+.pl{margin-left:auto;font-size:11px;color:#94a3b8;font-style:italic}
+.leg{display:flex;gap:14px;padding:8px 18px;background:#f8fafc;border-bottom:1px solid #f1f5f9;font-size:11px;color:#64748b;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:5px}
+.dot{width:10px;height:10px;border-radius:2px}
+.dr{background:#fecaca;border:2px solid #f87171}
+.dg{background:#bbf7d0;border:2px solid #34d399}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+th{background:#f8fafc;padding:8px 13px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #e2e8f0;text-align:left;white-space:nowrap}
+td{padding:14px 13px;border-bottom:1px solid #f8fafc;vertical-align:top}
+tr:last-child td{border-bottom:none}
+.cb{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:6px;position:relative}
+.cn{}
+.tg{position:absolute;top:-8px;right:5px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;color:#fff;background:#ef4444;white-space:nowrap}
+.nm{font-weight:700;color:#0f172a;font-size:13px}
+.mt{font-size:10px;color:#94a3b8;margin-top:2px}
+.lbad{font-size:10px;font-weight:700;color:#dc2626;margin-bottom:4px;display:flex;align-items:center;gap:3px}
+.lgood{font-size:10px;font-weight:700;color:#16a34a;margin:8px 0 5px;display:flex;align-items:center;gap:3px}
+.ohmain{font-size:14px;font-weight:700;color:#16a34a}
+.ohunit{font-size:12px;color:#16a34a;margin-left:2px}
+.ohsub{font-size:11px;color:#94a3b8;margin-left:4px}
+/* input mockup */
+.pstack{display:flex;flex-direction:column;width:185px}
+.pin{border:1.5px solid #cbd5e1;border-radius:7px 7px 0 0;padding:7px 10px;font-size:14px;font-weight:700;color:#0f172a;text-align:center;background:#fff;border-bottom:none}
+.pstatic{background:#f1f5f9;border:1.5px solid #cbd5e1;border-radius:0;border-top:none;border-bottom:none;padding:3px 8px;font-size:10px;color:#64748b;text-align:center}
+.pconv{background:#fef9c3;border:1.5px solid #fde68a;border-radius:0 0 7px 7px;border-top:none;padding:5px 8px;font-size:12px;font-weight:700;color:#854d0e;text-align:center}
+.pold{border:1.5px solid #e2e8f0;border-radius:7px;padding:7px 10px;font-size:14px;color:#94a3b8;text-align:center;background:#f8fafc;width:115px}
+/* drift */
+.dold{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 9px;border-radius:20px;text-decoration:line-through;opacity:.65}
+.dnew{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 9px;border-radius:20px}
+/* typing demo */
+.tdemo{background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:9px 11px;margin-top:8px}
+.tdemo-title{font-size:10px;font-weight:700;color:#475569;margin-bottom:6px}
+.trow{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.trow:last-child{margin-bottom:0}
+.tsim{border:1.5px solid #94a3b8;border-radius:4px;padding:3px 7px;font-size:12px;font-weight:600;color:#0f172a;background:#fff;width:88px;text-align:center}
+.tarr{color:#94a3b8;font-size:13px}
+.tres{font-size:11px;font-weight:700;color:#854d0e;background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:3px 8px}
+/* note */
+.note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 16px;margin:12px 18px;font-size:12px;color:#166534;line-height:1.6}
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 18px;border-top:1px solid #f1f5f9;background:#fafafa}
+.st{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:6px}
+.si{display:flex;gap:7px;margin-bottom:5px;font-size:11px}
+.sn{width:16px;height:16px;border-radius:50%;background:#e2e8f0;font-size:9px;font-weight:700;color:#64748b;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sf{font-family:monospace;font-size:11px;color:#7c3aed}
+.sd{color:#475569}
+.xrow{color:#dc2626;font-weight:700;text-decoration:line-through;font-size:12px;display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="page">
+<h2>Investigation 2 — Stock Audit · Physical Qty input + Investigation 3 · Drift badge</h2>
+<p class="sub">owner@yabyum.com · ANGARA GREAVY · BLACK OLIVE · UAT BAR BEER · Real live data</p>
+<div class="role">⚠️ INVESTIGATION ROLE — No code changed. Awaiting Gate 4 GO + backend unit clarification.</div>
+
+<div class="card">
+  <div class="hdr">
+    <span class="ht">Physical Qty input: unit label + live breakdown · Drift: breakdown format</span>
+    <span class="pill pr">Current — bare number</span>
+    <span class="pill pg">Proposed — unit + live conversion + breakdown drift</span>
+    <span class="pl">/inventory-audit</span>
+  </div>
+  <div class="leg">
+    <div class="li"><div class="dot dr"></div>Current (confusing)</div>
+    <div class="li"><div class="dot dg"></div>Proposed</div>
+    <div class="li" style="color:#94a3b8">System Qty ✅ no change · API payload ✅ no change</div>
+  </div>
+
+  <div class="tw">
+  <table>
+    <thead>
+      <tr>
+        <th>Ingredient</th>
+        <th style="color:#16a34a">System Qty ✅ no change</th>
+        <th style="color:#dc2626">Physical Qty input — CHANGES</th>
+        <th style="color:#dc2626">Drift badge — CHANGES (example values)</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ANGARA GREAVY -->
+      <tr>
+        <td>
+          <div class="nm">ANGARA GREAVY</div>
+          <div class="mt">displayUnit = pkt · smallUnit = gm · convFactor = 500</div>
+        </td>
+        <td class="cn">
+          <span class="ohmain">4600</span><span class="ohunit">pkt</span>
+          <span class="ohsub">(4599 pkt 500 gm)</span>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div class="lbad">❌ Current</div>
+          <div class="pold">2300000</div>
+          <div style="font-size:10px;color:#dc2626;margin:4px 0 10px">No unit — staff count pkts on shelf but see 2,300,000 with no hint</div>
+          <div class="lgood">✅ Proposed</div>
+          <div class="pstack">
+            <div class="pin">2300000</div>
+            <div class="pstatic">enter in <b>gm</b></div>
+            <div class="pconv">= 4600 pkt 0 gm</div>
+          </div>
+          <div class="tdemo">
+            <div class="tdemo-title">Live as user types (reactive):</div>
+            <div class="trow"><span class="tsim">2290000</span><span class="tarr">→</span><span class="tres">= 4580 pkt 0 gm</span></div>
+            <div class="trow"><span class="tsim">2299500</span><span class="tarr">→</span><span class="tres">= 4599 pkt 0 gm</span></div>
+            <div class="trow"><span class="tsim">2250000</span><span class="tarr">→</span><span class="tres">= 4500 pkt 0 gm</span></div>
+          </div>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;font-style:italic;margin-bottom:7px">Example: user types 2290000 (10,000 gm short = 20 pkt)</div>
+          <div class="lbad">❌ Current</div>
+          <span class="dold">↓ -10000.00 pkt</span>
+          <div style="font-size:10px;color:#dc2626;margin:3px 0 10px">-10,000 gm incorrectly labelled as "pkt"</div>
+          <div class="lgood">✅ Proposed</div>
+          <span class="dnew">↓ -20 pkt</span>
+          <div style="font-size:10px;color:#94a3b8;margin-top:3px">10,000 ÷ 500 = 20 pkt exactly · same breakdown format as System Qty</div>
+        </td>
+        <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:3px 6px"><option>Select reason...</option></select></td>
+      </tr>
+
+      <!-- BLACK OLIVE -->
+      <tr>
+        <td>
+          <div class="nm">BLACK OLIVE</div>
+          <div class="mt">displayUnit = tin · smallUnit = gm · convFactor ≈ 1598</div>
+        </td>
+        <td class="cn">
+          <span class="ohmain">4.9</span><span class="ohunit">tin</span>
+          <span class="ohsub">(4 tin 1440 gm)</span>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div class="lbad">❌ Current</div>
+          <div class="pold">7833</div>
+          <div style="font-size:10px;color:#dc2626;margin:4px 0 10px">Is 7833 in tins or grams?</div>
+          <div class="lgood">✅ Proposed</div>
+          <div class="pstack">
+            <div class="pin">7833</div>
+            <div class="pstatic">enter in <b>gm</b></div>
+            <div class="pconv">= 4 tin 1440 gm</div>
+          </div>
+          <div class="tdemo">
+            <div class="tdemo-title">Live as user types:</div>
+            <div class="trow"><span class="tsim">7333</span><span class="tarr">→</span><span class="tres">= 4 tin 940 gm</span></div>
+            <div class="trow"><span class="tsim">6393</span><span class="tarr">→</span><span class="tres">= 4 tin 0 gm</span></div>
+            <div class="trow"><span class="tsim">4794</span><span class="tarr">→</span><span class="tres">= 3 tin 0 gm</span></div>
+          </div>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;font-style:italic;margin-bottom:7px">Example: user types 7333 (500 gm short)</div>
+          <div class="lbad">❌ Current</div>
+          <span class="dold">↓ -500.00 tin</span>
+          <div style="font-size:10px;color:#dc2626;margin:3px 0 10px">-500 gm labelled as "tin"</div>
+          <div class="lgood">✅ Proposed</div>
+          <span class="dnew">↓ 0 tin 500 gm</span>
+          <div style="font-size:10px;color:#94a3b8;margin-top:3px">500 ÷ 1598 → 0 full tins, 500 gm remainder</div>
+        </td>
+        <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:3px 6px"><option>Select reason...</option></select></td>
+      </tr>
+
+      <!-- UAT BAR BEER -->
+      <tr>
+        <td>
+          <div class="nm">UAT BAR BEER</div>
+          <div class="mt">displayUnit = bottle · smallUnit = ml · convFactor ≈ 650</div>
+        </td>
+        <td class="cn">
+          <span class="ohmain">8.49</span><span class="ohunit">bottle</span>
+          <span class="ohsub">(8 bottle 319 ml)</span>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div class="lbad">❌ Current</div>
+          <div class="pold">5520</div>
+          <div style="font-size:10px;color:#dc2626;margin:4px 0 10px">5520 ml or 5520 bottles?</div>
+          <div class="lgood">✅ Proposed</div>
+          <div class="pstack">
+            <div class="pin">5520</div>
+            <div class="pstatic">enter in <b>ml</b></div>
+            <div class="pconv">= 8 bottle 320 ml</div>
+          </div>
+          <div class="tdemo">
+            <div class="tdemo-title">Live as user types:</div>
+            <div class="trow"><span class="tsim">4870</span><span class="tarr">→</span><span class="tres">= 7 bottle 320 ml</span></div>
+            <div class="trow"><span class="tsim">6500</span><span class="tarr">→</span><span class="tres">= 10 bottle 0 ml</span></div>
+            <div class="trow"><span class="tsim">1300</span><span class="tarr">→</span><span class="tres">= 2 bottle 0 ml</span></div>
+          </div>
+        </td>
+        <td class="cb" style="position:relative">
+          <span class="tg">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;font-style:italic;margin-bottom:7px">Example: user types 4870 (650 ml short = 1 bottle)</div>
+          <div class="lbad">❌ Current</div>
+          <span class="dold">↓ -650.00 bottle</span>
+          <div style="font-size:10px;color:#dc2626;margin:3px 0 10px">-650 ml labelled as "bottle"</div>
+          <div class="lgood">✅ Proposed</div>
+          <span class="dnew">↓ -1 bottle</span>
+          <div style="font-size:10px;color:#94a3b8;margin-top:3px">650 ÷ 650 = 1 bottle exactly</div>
+        </td>
+        <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:3px 6px"><option>Select reason...</option></select></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    ✅ <b>System Qty unchanged</b> — already shows breakdown. &nbsp;
+    ✅ <b>API payload unchanged</b> — <code>physical_qty</code> still sent as base unit. &nbsp;
+    Live conversion uses same <code>toBreakdownDisplay(typed_value, convFactor, displayUnit, smallUnit)</code> helper. &nbsp;
+    Hint + live strip appear only when <code>item.conversionFactor &gt; 0</code>. &nbsp;
+    <b>1 file: StockAuditPanel.jsx</b>
+  </div>
+
+  <div class="scope">
+    <div>
+      <div class="st">Files that CHANGE</div>
+      <div class="si"><div class="sn">1</div><div><span class="sf">components/inventory/StockAuditPanel.jsx</span><br/><span class="sd">① getDrift() line 53: use toBreakdownDisplay() for value + unit<br/>② Input area: add "enter in [unit]" strip + live conversion on onChange<br/>③ Drift badge: render breakdown string from getDrift()</span></div></div>
+    </div>
+    <div>
+      <div class="st">Files that do NOT change</div>
+      <div class="si"><div class="sn">—</div><span class="sf">inventoryTransform.js · inventoryService.js · handleSaveAll() payload</span></div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

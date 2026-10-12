@@ -1,0 +1,45 @@
+{
+  "settings": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    }
+  ],
+  "final": {
+    "early": false,
+    "cal": false,
+    "held": true
+  }
+}

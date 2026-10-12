@@ -1,0 +1,54 @@
+# BUG-452 code-reality grep — 2026-09-23 @ HEAD 1be4055
+453:  const [cartsByTable, setCartsByTable] = useState({});
+545:    setCartsByTable({}); // clear stale saved carts
+1540:    if (cartKey) setCartsByTable(prev => ({ ...prev, [cartKey]: [] }));
+2069:            savedCart={cartsByTable[orderEntryTable?.id || orderEntryType] || []}
+2070:            onCartChange={(key, items) => setCartsByTable(prev => ({ ...prev, [key]: items }))}
+
+## DashboardPage handlers
+  const handleOrderTypeChange = (newType) => {
+    // Walk-In orders don't use physical tables - they create dynamic tables
+    // TakeAway and Delivery also don't need physical tables
+    if (newType === "walkIn" || newType === "takeAway" || newType === "delivery") {
+      setOrderEntryTable(null);
+    }
+    setOrderEntryType(newType);
+  };
+
+  const handleCloseOrderEntry = () => {
+    setOrderEntryTable(null);
+    setOrderEntryType(null);
+    setInitialShowPayment(false);
+    setInitialTransferItem(null);
+    setInitialShowMerge(false); // BUG-372
+    setInitialShowShift(false); // BUG-372 Transfer
+  };
+
+## OrderEntry save/restore effect
+  // Per-table cart: save + restore on table/orderType switch
+  useEffect(() => {
+    const newKey = table?.id || orderType;
+    const oldKey = cartKeyRef.current;
+
+    // Save previous table's cart before switching
+    if (oldKey && oldKey !== newKey) {
+      onCartChange?.(oldKey, cartItems);
+    }
+    cartKeyRef.current = newKey;
+
+    // Restore: savedCart takes priority, then API orderData, then empty
+    if (savedCart && savedCart.length > 0) {
+      setCartItems(savedCart);
+      if (orderData?.customer || orderData?.phone) {
+...
+      }
+    } else if (oldKey !== null) {
+      // BUG-334: table/orderType switch mid-build (delivery→takeaway, table1→table2, etc.)
+      // oldKey is non-null on any real switch — only null on first mount.
+      // Carry current cartItems forward; staff is mid-order-build on a new destination.
+    } else {
+      setCartItems([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+blast: cartsByTable|savedCart|onCartChange refs: 12

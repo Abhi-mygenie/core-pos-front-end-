@@ -1,0 +1,86 @@
+{
+ "date": "2026-09-21",
+ "rid": 69,
+ "login_seconds": 1.45,
+ "samples": {
+  "LR -30/+60d view=all (workstation call)": {
+   "seconds": [
+    1.37,
+    0.93,
+    1.03
+   ],
+   "status": 200,
+   "payload_bytes": 149078,
+   "shape": {
+    "reservations": 111,
+    "by_operational_status": {
+     "pending": 14,
+     "departed": 95,
+     "in_house": 2
+    },
+    "counts": {
+     "arrivals_today": 0,
+     "arrivals_late": 10,
+     "arrivals_tomorrow": 0,
+     "departures_today": 2,
+     "departures_overdue": 0,
+     "in_house": 2,
+     "leaving_today": 2,
+     "arrived_today": 0
+    }
+   },
+   "timeouts": 0
+  },
+  "LR -7/+30d view=all": {
+   "seconds": [
+    0.65,
+    0.71,
+    0.63
+   ],
+   "status": 200,
+   "payload_bytes": 118856,
+   "shape": {
+    "reservations": 89,
+    "by_operational_status": {
+     "departed": 81,
+     "pending": 6,
+     "in_house": 2
+    },
+    "counts": {
+     "arrivals_today": 0,
+     "arrivals_late": 2,
+     "arrivals_tomorrow": 0,
+     "departures_today": 2,
+     "departures_overdue": 0,
+     "in_house": 2,
+     "leaving_today": 2,
+     "arrived_today": 0
+    }
+   },
+   "timeouts": 0
+  },
+  "room-status-board": {
+   "seconds": [
+    0.43,
+    0.43,
+    0.42
+   ],
+   "status": 200,
+   "payload_bytes": 1824,
+   "shape": null,
+   "timeouts": 0
+  },
+  "dashboard-kpis today": {
+   "seconds": [
+    0.6,
+    0.58,
+    0.65
+   ],
+   "status": 200,
+   "payload_bytes": 690,
+   "shape": null,
+   "timeouts": 0
+  }
+ },
+ "note": "3 samples per endpoint from the Emergent pod; 60 s client timeout; token redacted"
+}

@@ -1,0 +1,52 @@
+{
+  "investigation": "INV-SC-GST-PRINT",
+  "date": "2026-10-12",
+  "issue": "SC GST missing from manual bill print (Dashboard + Order Taking) but present in Collect Bill print",
+  "root_cause": {
+    "file": "src/api/transforms/orderTransform.js",
+    "function": "buildBillPrintPayload",
+    "collect_bill_path": {
+      "trigger": "overrides.orderItemTotal !== undefined (line 1882)",
+      "sc_gst_added": true,
+      "line": "L1954: gst_tax += serviceChargeAmount * scTaxRate (scTaxRate from overrides.serviceChargeTaxPct)"
+    },
+    "manual_print_path": {
+      "trigger": "overrides.orderItemTotal === undefined",
+      "sc_gst_added": false,
+      "gap": "serviceChargeAmount is read (L1969) but never multiplied by scTaxRate and added to gst_tax"
+    }
+  },
+  "callers": {
+    "OrderCard_dashboard": {
+      "passes": [
+        "serviceChargeTaxPct",
+        "deliveryChargeGstPct"
+      ],
+      "does_not_pass": "orderItemTotal",
+      "path": "manual (hasFinancialOverrides=false)",
+      "sc_gst_correct": false
+    },
+    "CollectPaymentPanel_print_bill": {
+      "passes": [
+        "orderItemTotal",
+        "gstTax (sgst+cgst including SC GST)"
+      ],
+      "path": "collect bill (hasFinancialOverrides=true), finalGstTax = overrides.gstTax",
+      "sc_gst_correct": true
+    },
+    "OrderEntry_auto_print": {
+      "passes": [
+        "orderItemTotal",
+        "gstTax from paymentData.printGstTax (sgst+cgst including SC GST)"
+      ],
+      "path": "collect bill path",
+      "sc_gst_correct": true
+    }
+  },
+  "fix": {
+    "file": "src/api/transforms/orderTransform.js",
+    "location": "buildBillPrintPayload manual print path, after L2010",
+    "change": "Add: const scTaxRateManual = (overrides.serviceChargeTaxPct || 0) / 100; gst_tax = Math.round((gst_tax + serviceChargeAmount * scTaxRateManual) * 100) / 100;",
+    "lines_added": 2
+  }
+}

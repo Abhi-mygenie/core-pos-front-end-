@@ -1,0 +1,42 @@
+async def run_test(page, output_dir, page_url):
+    import re, time
+    creds = open('/app/memory/test_credentials.md').read()
+    email = re.search(r'- email: (\S+)', creds).group(1); pw = re.search(r'- password: (\S+)', creds).group(1)
+    net = []
+    page.on("response", lambda r: net.append((round(time.time()%1000,1), r.status, r.url.split('/aiosell/')[-1][:70])) if "aiosell" in r.url else None)
+    page.on("console", lambda m: net.append(("console", m.text[:150])) if m.type == "error" else None)
+    await page.set_viewport_size({"width": 1920, "height": 800})
+    await page.goto("https://core-pos-deploy-20.preview.emergentagent.com/", wait_until="domcontentloaded")
+    await page.wait_for_selector("[data-testid=login-email]", timeout=45000)
+    await page.fill("[data-testid=login-email]", email); await page.fill("[data-testid=login-password]", pw)
+    await page.get_by_role("button", name=re.compile("log in", re.I)).click()
+    await page.wait_for_timeout(20000)
+    print("url after login:", page.url)
+    await page.goto("https://core-pos-deploy-20.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals", wait_until="domcontentloaded")
+    await page.wait_for_selector("[data-testid=fd-tab-strip]", timeout=90000)
+    net.clear()
+    await page.route("**/local-reservations*", lambda r: r.fulfill(status=500, body="{}"))
+    await page.click("[data-testid=fd-refresh-btn]"); await page.wait_for_selector("[data-testid=fd-page-error]", timeout=20000)
+    print("page-error msg:", (await page.locator("[data-testid=fd-page-error]").inner_text()).replace("\n"," | "))
+    await page.unroute("**/local-reservations*")
+    t0 = time.time(); await page.click("[data-testid=fd-retry-btn]")
+    try:
+        await page.wait_for_selector("[data-testid=fd-tab-strip]", timeout=30000); print("RETRY recovered after", round(time.time()-t0,1), "s")
+    except Exception:
+        print("RETRY did NOT recover in 30s"); await page.screenshot(path="/root/.emergent/automation_output/20260921_095343/qa_retry_fail.jpeg", type="jpeg", quality=40, full_page=False)
+    print("network:", net[-8:])
+    net.clear()
+    await page.route("**/room-status-board*", lambda r: r.fulfill(status=500, body="{}"))
+    await page.click("[data-testid=fd-refresh-btn]"); await page.wait_for_timeout(8000)
+    print("rooms tile during board 500:", await page.locator("[data-testid=fd-tab-rooms-count]").inner_text())
+    await page.click("[data-testid=fd-tab-rooms]"); await page.wait_for_selector("[data-testid=fd-rooms-error]", timeout=10000)
+    await page.unroute("**/room-status-board*")
+    t0 = time.time(); await page.click("[data-testid=fd-rooms-retry-btn]")
+    try:
+        await page.wait_for_selector("button[data-testid^=fd-room-tile-]", timeout=30000); print("ROOMS RETRY recovered after", round(time.time()-t0,1), "s; tile:", await page.locator("[data-testid=fd-tab-rooms-count]").inner_text())
+    except Exception:
+        print("ROOMS RETRY did NOT recover in 30s"); await page.screenshot(path="/root/.emergent/automation_output/20260921_095343/qa_rooms_retry_fail.jpeg", type="jpeg", quality=40, full_page=False)
+    print("network:", net[-8:])
+    cm = await page.evaluate("() => { const main=document.querySelector('[data-testid=fd-page] main'); return {mainHasCM: main.innerText.includes('Channel Manager'), pageHasCM: document.querySelector('[data-testid=fd-page]').innerText.includes('Channel Manager')}; }")
+    print("Channel Manager scope:", cm)
+    await page.screenshot(path="/root/.emergent/automation_output/20260921_095343/qa_retry_end.jpeg", type="jpeg", quality=40, full_page=False)
