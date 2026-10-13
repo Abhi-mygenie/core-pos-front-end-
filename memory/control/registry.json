@@ -30197,7 +30197,7 @@
       "id": "BUG-537",
       "title": "Dashboard Layout Broken on Android Tablets (Fixed Pixel Widths, No Responsive Design)",
       "type": "BUG",
-      "status": "PARKED",
+      "status": "GATE_3_PLAN_COMPLETE",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -30231,7 +30231,7 @@
       "id": "CR-414",
       "title": "Dashboard Tablet Responsive Redesign",
       "type": "CR",
-      "status": "GATE_2_IMPACT_ANALYSIS",
+      "status": "GATE_3_PLAN_COMPLETE",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -30245,17 +30245,14 @@
       "parent_bug": "BUG-537",
       "design_doc": "/app/design_guidelines.json",
       "code_reality": "NONE",
-      "open_decisions": [
-        "OD-414-01",
-        "OD-414-02"
-      ],
+      "open_decisions": [],
       "locked_decisions": {
-        "OD-537-01": "Both 600px + 768px+",
-        "OD-537-02": "Single row header, remove counters, channel dropdown multiselect",
-        "OD-537-03": "Channels stack vertically, auto-fill minmax(140px,1fr), desktop unchanged"
+        "OD-414-01": "A \u2014 downward overlay below header bar (owner 2026-10-12)",
+        "OD-414-02": "A \u2014 arrows + localStorage persist on tablet (owner 2026-10-12)"
       },
       "registered": "2026-10-12",
-      "impact_doc": "impact/CR-414_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/CR-414_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/CR-414_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "BUG-538",
