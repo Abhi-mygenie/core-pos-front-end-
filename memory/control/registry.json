@@ -30124,7 +30124,7 @@
       "id": "CR-412",
       "title": "Loyalty Pre-tick from Scan & Order When loyalty_info.redeemed=true",
       "type": "CR",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "oct_cr_batch",
@@ -30145,7 +30145,9 @@
       "related": [
         "CR-410",
         "CR-413"
-      ]
+      ],
+      "impact_doc": "impact/CR-412_IMPACT_ANALYSIS.md",
+      "open_decisions": []
     },
     {
       "id": "CR-413",
@@ -30221,7 +30223,7 @@
       "id": "CR-414",
       "title": "Dashboard Tablet Responsive Redesign",
       "type": "CR",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -30236,15 +30238,16 @@
       "design_doc": "/app/design_guidelines.json",
       "code_reality": "NONE",
       "open_decisions": [
-        "OD-414-01 (dropdown open direction)",
-        "OD-414-02 (tablet localStorage persist?)"
+        "OD-414-01",
+        "OD-414-02"
       ],
       "locked_decisions": {
         "OD-537-01": "Both 600px + 768px+",
         "OD-537-02": "Single row header, remove counters, channel dropdown multiselect",
         "OD-537-03": "Channels stack vertically, auto-fill minmax(140px,1fr), desktop unchanged"
       },
-      "registered": "2026-10-12"
+      "registered": "2026-10-12",
+      "impact_doc": "impact/CR-414_IMPACT_ANALYSIS.md"
     },
     {
       "id": "BUG-538",
