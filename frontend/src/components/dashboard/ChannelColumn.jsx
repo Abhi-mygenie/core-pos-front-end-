@@ -63,6 +63,7 @@ const ChannelColumn = ({
   searchQuery,
   matchingIds,
   onHideColumn,      // Handler to hide this column
+  isTablet = false,  // CR-414: full-width stacked column + fluid grid <1024px (OD-537-03)
 }) => {
   // Filter by search if applicable
   const filteredItems = useMemo(() => {
@@ -194,10 +195,10 @@ const ChannelColumn = ({
   return (
     <div
       data-testid={`channel-column-${channel.id}`}
-      className="flex flex-col h-full bg-white rounded-lg shadow-sm overflow-hidden flex-shrink-0"
+      className={`flex flex-col ${isTablet ? 'h-auto' : 'h-full'} bg-white rounded-lg shadow-sm overflow-hidden flex-shrink-0`} // CR-414
       style={{ 
-        width: `${columnWidth}px`,
-        minWidth: `${columnWidth}px`,
+        width: isTablet ? '100%' : `${columnWidth}px`,       // CR-414: fill row on tablet
+        minWidth: isTablet ? 0 : `${columnWidth}px`,         // CR-414
         borderRight: isLast ? 'none' : `1px solid ${COLORS.borderGray}`,
       }}
     >
@@ -280,9 +281,11 @@ const ChannelColumn = ({
                 <div 
                   className="grid gap-2"
                   style={{ 
-                    gridTemplateColumns: viewType === 'table' 
-                      ? `repeat(${actualColumns}, ${TABLE_CARD_WIDTH}px)` 
-                      : `repeat(${actualColumns}, 1fr)`,
+                    gridTemplateColumns: isTablet // CR-414: fluid auto-fill on tablet (OD-537-03)
+                      ? (viewType === 'table' ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(auto-fill, minmax(280px, 1fr))')
+                      : viewType === 'table' 
+                        ? `repeat(${actualColumns}, ${TABLE_CARD_WIDTH}px)` 
+                        : `repeat(${actualColumns}, 1fr)`,
                   }}
                 >
                   {group.items.map((item) => {

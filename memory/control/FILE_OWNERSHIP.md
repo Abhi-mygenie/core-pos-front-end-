@@ -1917,3 +1917,11 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/pms/frontdesk/frontdesk.css` | L32-33 deleted: D88 CSS hide rule removed (FU-385-D reversal). | FU-385-D IMPL 2026-10-09 |
 | `src/tests/cr385/hideSectionRows.cr385.test.js` | L8: payment-split-btn removed from TOGGLES. L25-27: D88 assertion flipped → reverse guard toHaveLength(0). L30-34: \/ 100 removed from banned regex (BUG-498/524 approved use). | FU-385-D IMPL 2026-10-09 |
 | `src/components/pms/frontdesk/FolioCheckoutPanel.jsx` | L45: +roomSplitOverBalance/Total props (E2). L137-144: over-balance alert (E3). L281-289: roomSplitTotal+roomSplitOverBalance useMemos (E1). L302: handlePaid guard (E4). L380: JSX props (E5). | BUG-525 IMPL 2026-10-09 |
+
+
+### CR-414 + BUG-537 — Dashboard Tablet Responsive Redesign (2026-10-13)
+| File | Change | Agent |
+|------|--------|-------|
+| `src/components/layout/Header.jsx` | E-1a tabletDropdownOpen state + tabletDropdownRef (L71-74). E-1b click-outside/touchstart handler useEffect. E-1c pills `<nav>` → `hidden lg:flex`. E-1d tablet filter dropdown (mirrors pill bar — status+Schedule in channel view, channels in status view; multi-select, cannot deselect last). E-1e PlatformDropdown wrapper → `hidden lg:flex`. E-1f search cluster padding `px-2 lg:px-4`. E-1g PlatformCounterChip wrapper → `hidden lg:flex`. E-1h search box fluid `flex-1 lg:flex-initial min-w-0 w-full lg:w-48/64`. E-1i results dropdown `right-0 w-80 lg:right-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-96`. | CR-414 IMPL 2026-10-13 |
+| `src/components/dashboard/ChannelColumn.jsx` | E-2a +`isTablet=false` prop. E-2b root div `h-auto` + `width:100% / minWidth:0` on tablet; desktop unchanged. E-2c gridTemplateColumns → `repeat(auto-fill, minmax(140px,1fr))` (table) / `minmax(280px,1fr)` (order) on tablet. | CR-414 IMPL 2026-10-13 |
+| `src/components/dashboard/ChannelColumnsLayout.jsx` | E-3a `isTablet` state via `window.matchMedia('(max-width: 1023px)')` synced to Tailwind `lg`. E-3b pass `isTablet` prop to each `<ChannelColumn/>`. E-3c layout root → `flex-col lg:flex-row gap-2 lg:gap-0`. | CR-414 IMPL 2026-10-13 |

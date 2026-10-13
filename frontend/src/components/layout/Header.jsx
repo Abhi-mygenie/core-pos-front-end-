@@ -68,8 +68,10 @@ const Header = ({
   posCount = 0
 }) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [tabletDropdownOpen, setTabletDropdownOpen] = useState(false); // CR-414: tablet filter dropdown
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
+  const tabletDropdownRef = useRef(null); // CR-414: tablet dropdown click-outside ref
 
   // Filter channels based on restaurant features
   const { features } = useRestaurant();
@@ -96,6 +98,21 @@ const Header = ({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // CR-414: close tablet filter dropdown on outside tap/click
+  useEffect(() => {
+    const handler = (e) => {
+      if (tabletDropdownRef.current && !tabletDropdownRef.current.contains(e.target)) {
+        setTabletDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
   }, []);
 
   // Req 2: Order Taking flag — when false, hide the Add button. Cross-tab sync
@@ -251,7 +268,7 @@ const Header = ({
 
           {/* Filter Pills - Swap based on dashboardView (max 6) */}
           {/* Status View → Channel filters | Channel View → Status filters */}
-          <nav className="flex items-center gap-1 ml-4">
+          <nav className="hidden lg:flex items-center gap-1 ml-4"> {/* CR-414: pills hidden <1024px */}
             {dashboardView === 'status' ? (
               /* Channel Filter Pills (for Status View - filter within status columns) */
               visibleChannelFilters.map((channel) => {
@@ -316,6 +333,91 @@ const Header = ({
               </>
             )}
           </nav>
+
+          {/* CR-414: Tablet filter dropdown — mirrors the pills nav (status filters in channel view,
+              channel filters in status view). Visible <1024px only (OD-537-02, OD-414-01=A, OD-414-05=A). */}
+          <div className="relative lg:hidden ml-2" ref={tabletDropdownRef}>
+            <button
+              data-testid="tablet-filter-dropdown-btn"
+              aria-expanded={tabletDropdownOpen}
+              onClick={() => setTabletDropdownOpen(prev => !prev)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+              style={{ backgroundColor: '#F5F5F5', color: COLORS.darkText }}
+            >
+              <span>{dashboardView === 'status' ? 'Channels' : 'Status'}</span>
+              <span
+                data-testid="tablet-filter-active-count"
+                className="text-xs px-1.5 py-0.5 rounded-full"
+                style={{ backgroundColor: COLORS.borderGray, color: COLORS.grayText }}
+              >
+                {dashboardView === 'status'
+                  ? activeChannels.length
+                  : activeStatuses.length + (tableFilter === 'schedule' ? 1 : 0)}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            {tabletDropdownOpen && (
+              <div
+                data-testid="tablet-filter-dropdown-menu"
+                className="absolute left-0 top-full mt-1 bg-white rounded-xl shadow-lg border z-50 min-w-[180px] py-1"
+                style={{ borderColor: COLORS.borderGray }}
+              >
+                {dashboardView === 'status' ? (
+                  visibleChannelFilters.map((channel) => {
+                    const Icon = channel.icon;
+                    const isActive = activeChannels.includes(channel.id);
+                    return (
+                      <button
+                        key={channel.id}
+                        data-testid={`tablet-filter-channel-${channel.id}`}
+                        onClick={() => {
+                          if (isActive) {
+                            const next = activeChannels.filter(c => c !== channel.id);
+                            if (next.length > 0) setActiveChannels(next);
+                          } else {
+                            setActiveChannels([...activeChannels, channel.id]);
+                          }
+                        }}
+                        className="w-full text-left px-3 py-2.5 text-sm flex items-center gap-2.5 hover:bg-slate-50 transition-colors"
+                        style={{ color: isActive ? COLORS.darkText : COLORS.grayText }}
+                      >
+                        <Check className="w-4 h-4 flex-shrink-0" style={{ visibility: isActive ? 'visible' : 'hidden', color: COLORS.primaryOrange }} />
+                        <Icon className="w-4 h-4 flex-shrink-0" />
+                        <span>{channel.fullLabel}</span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <>
+                    {visibleStatusFilters.map((status) => {
+                      const isActive = activeStatuses.includes(status.id);
+                      return (
+                        <button
+                          key={status.id}
+                          data-testid={`tablet-filter-status-${status.id}`}
+                          onClick={() => handleStatusToggle(status.id)}
+                          className="w-full text-left px-3 py-2.5 text-sm flex items-center gap-2.5 hover:bg-slate-50 transition-colors"
+                          style={{ color: isActive ? COLORS.darkText : COLORS.grayText }}
+                        >
+                          <Check className="w-4 h-4 flex-shrink-0" style={{ visibility: isActive ? 'visible' : 'hidden', color: COLORS.primaryOrange }} />
+                          <span>{status.label}</span>
+                        </button>
+                      );
+                    })}
+                    <button
+                      data-testid="tablet-filter-schedule"
+                      onClick={() => setTableFilter(tableFilter === 'schedule' ? null : 'schedule')}
+                      className="w-full text-left px-3 py-2.5 text-sm flex items-center gap-2.5 hover:bg-slate-50 transition-colors"
+                      style={{ color: tableFilter === 'schedule' ? '#1565C0' : COLORS.grayText }}
+                    >
+                      <Check className="w-4 h-4 flex-shrink-0" style={{ visibility: tableFilter === 'schedule' ? 'visible' : 'hidden', color: '#1565C0' }} />
+                      <span>Schedule</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* POS2-002 Phase 3 (May-2026): Platform filter — sits inline after
@@ -323,24 +425,24 @@ const Header = ({
             don't conflate the platform axis with the status axis.
             Cards are NOT modified — this dropdown is the only operator-visible
             affordance for the POS / Web / Scan distinction. */}
-        <div className="flex items-center pl-3 ml-1 border-l" style={{ borderColor: COLORS.borderGray }}>
+        <div className="hidden lg:flex items-center pl-3 ml-1 border-l" style={{ borderColor: COLORS.borderGray }}> {/* CR-414: hidden <1024px */}
           <PlatformDropdown value={platform} onChange={setPlatform} />
         </div>
 
         {/* Center Section - Search (flex-1 to take available space) */}
-        <div className="flex-1 flex justify-end px-4">
+        <div className="flex-1 flex justify-end px-2 lg:px-4"> {/* CR-414: tighter padding <1024px */}
           {/* POS2-002 Phase 3.1 (May-2026): live counter chip — sits to the
               left of the search box, inside the right-aligned cluster.
               Read-only pulse; respects status / channel / search but
               ignores the Platform dropdown (independence guarantee). */}
-          <div className="flex items-center mr-3">
+          <div className="hidden lg:flex items-center mr-3"> {/* CR-414: hidden <1024px */}
             <PlatformCounterChip webCount={webCount} posCount={posCount} />
           </div>
-          <div className="relative">
+          <div className="relative flex-1 lg:flex-initial min-w-0"> {/* CR-414: search takes remaining row width <1024px */}
             <div 
               ref={searchRef}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
-                isSearchFocused ? "w-64" : "w-48"
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all w-full ${
+                isSearchFocused ? "lg:w-64" : "lg:w-48"
               }`}
               style={{ 
                 backgroundColor: COLORS.sectionBg,
@@ -378,7 +480,7 @@ const Header = ({
               <div
                 ref={dropdownRef}
                 data-testid="search-dropdown"
-                className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-50 max-h-96 overflow-y-auto"
+                className="absolute top-full right-0 lg:right-auto lg:left-1/2 lg:-translate-x-1/2 mt-1 w-80 lg:w-96 bg-white rounded-lg shadow-lg border overflow-hidden z-50 max-h-96 overflow-y-auto" /* CR-414: right-anchored, narrower <1024px */
                 style={{ borderColor: COLORS.borderGray }}
               >
                 {/* Tables - Exact Matches */}

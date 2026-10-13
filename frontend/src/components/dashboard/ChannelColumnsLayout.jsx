@@ -102,6 +102,16 @@ const ChannelColumnsLayout = ({
     try { window.localStorage.removeItem('mygenie_channel_max_columns'); } catch (_) {}
   }, []);
 
+  // CR-414: tablet = below Tailwind `lg` (1024px). matchMedia keeps JS and CSS breakpoints in lockstep.
+  // CR-414 (OD-414-02=A): maxColumns/localStorage untouched on tablet.
+  const [isTablet, setIsTablet] = useState(() => window.matchMedia('(max-width: 1023px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const handler = (e) => setIsTablet(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   // Filter to only enabled channels
   const enabledChannels = useMemo(() => {
     return channels.filter(c => c.enabled !== false);
@@ -210,6 +220,8 @@ const ChannelColumnsLayout = ({
           searchQuery={searchQuery}
           matchingIds={matchingIds}
           onHideColumn={onHideColumn}
+          // CR-414: fluid grid + full-width column on tablet
+          isTablet={isTablet}
         />
       );
     });
@@ -245,7 +257,8 @@ const ChannelColumnsLayout = ({
     <div
       ref={containerRef}
       data-testid="channel-columns-layout"
-      className="flex h-full gap-0 overflow-x-auto"
+      // CR-414: stack channels vertically <1024px, side-by-side ≥1024px (OD-537-03)
+      className="flex flex-col lg:flex-row h-full gap-2 lg:gap-0 overflow-x-auto"
       style={{ 
         minHeight: '500px',
         backgroundColor: COLORS.sectionBg,
