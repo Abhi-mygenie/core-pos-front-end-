@@ -45,13 +45,12 @@
 
 | ID | Status | Priority | Notes |
 |----|--------|---------|-------|
-| **BUG-539 (ml-64 fix)** | INVESTIGATION_COMPLETE | **P0** | ml-64/ml-16 removes content 256px from sidebar. Gate 2 needed. |
+| **BUG-539 (ml-64 fix)** | GATE_5A_IMPLEMENTED (2026-10-12) | **P0** | PLReportPage + ConsumptionReportPage ml-64/ml-16 removed. testing_agent run PENDING. |
 | **BUG-538** | GATE_1_INTAKE | P1 | OD-538-01 OPEN (hide vs disable discount) |
-| **CR-413** | GATE_1_INTAKE | P1 | OD-INV-01=A LOCKED, ready for Gate 2 |
-| **CR-412** | GATE_1_INTAKE (blocked) | P1 | BLOCKED by CR-410 backend |
-| **BUG-537** | PARKED | — | Owner decision |
+| **CR-413** | GATE_5A_IMPLEMENTED (2026-10-12) | P1 | CR-409 initialCoupon pre-load removed from CPP + OrderEntry. testing_agent run PENDING. |
+| **CR-412** | GATE_5A_IMPLEMENTED (2026-10-12) | P1 | loyaltyRedeemed pre-tick (orderTransform/CPP/OrderEntry). Socket auto-heal path still waits on CR-410. testing_agent run PENDING. |
+| **BUG-537 + CR-414** | **GATE_3_PLAN_COMPLETE_V2 (2026-10-13)** | **P1** | Plan revalidated → v2 (15 edits, 3 files, `lg`=1024). All ODs locked (414-01..05). **Next agent: explain plan in plain English → ask Gate 4 GO → implement.** Handover: `handover/SESSION_HANDOVER_CR414_PLAN_REVALIDATION_2026_10_13.md` |
 | **CR-410** | BACKEND-BLOCKED | — | Backend must ship loyalty_info in socket |
-| **CR-414** | GATE_1_INTAKE | — | OD-414-01/02 open; parked with BUG-537 |
 
 ## Test Credentials
 
