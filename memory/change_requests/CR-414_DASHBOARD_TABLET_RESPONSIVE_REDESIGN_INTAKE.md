@@ -37,6 +37,12 @@ This CR converts the design decisions from the mockup review (OD-537-01/02/03) i
 - `< >` arrows still work as manual column override
 - **Desktop 1280px+ : completely unchanged** — side-by-side channels, 160px fixed cards
 
+**Revalidation addendum (2026-10-13, Planning Gate 3 v2) — new decisions locked:**
+- **OD-414-03 = A:** desktop/tablet threshold is **`lg` = 1024px** (not `md` = 768). Reason: header needs 1008px; at 768/800/960 the desktop header still overflows (evidence `INV-TABLET-001_layout_metrics.json`). Every "<768px" above now reads **"<1024px"**.
+- **OD-414-04 = A:** stacked channels on tablet use **natural height**; whole dashboard scrolls; every card visible.
+- **OD-414-05 = A:** tablet dropdown **mirrors the pill bar** — status filters + Schedule in channel view, channel filters in status view, multi-select with ticks, same handlers as the pills. (The "channel pills" wording in OD-537-02 described status view only; default channel view shows status pills.)
+- Additional gaps covered in plan v2: ChannelColumn inline px width → 100% on tablet; search box fluid + results panel right-anchored on tablet; order-view fluid grid `minmax(280px,1fr)`.
+
 ---
 
 ## Duplicate Check

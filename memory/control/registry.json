@@ -30197,7 +30197,7 @@
       "id": "BUG-537",
       "title": "Dashboard Layout Broken on Android Tablets (Fixed Pixel Widths, No Responsive Design)",
       "type": "BUG",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE_V2",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -30210,10 +30210,7 @@
       "intake_doc": "change_requests/BUG-537_DASHBOARD_LAYOUT_BROKEN_ANDROID_TABLETS_INTAKE.md",
       "investigation_doc": "evidence/BUG-537/INV-TABLET-001_INVESTIGATION_REPORT.md",
       "evidence": "evidence/BUG-537/INV-TABLET-001_layout_metrics.json",
-      "open_decisions": [
-        "OD-414-01 (tablet dropdown direction A/B)",
-        "OD-414-02 (tablet localStorage A/B)"
-      ],
+      "open_decisions": [],
       "code_reality": "FULL",
       "registered": "2026-10-12",
       "related": [
@@ -30222,16 +30219,21 @@
       "locked_decisions": {
         "OD-537-01": "Both \u2014 support 600px (7-8 inch portrait) and 768px+ (10 inch portrait)",
         "OD-537-02": "Single row on tablet \u2014 remove Web/POS order counters + collapse channel pills into compact multiselect dropdown (all channels selected by default, same toggle behaviour as current pills). NO second row.",
-        "OD-537-03": "Auto card count \u2014 channels stack VERTICALLY on tablet (<768px). Cards use minmax(140px,1fr) fluid width filling row automatically. User < > arrows still work as override. Desktop (1280px+) completely unchanged \u2014 channels still side-by-side, 160px cards."
+        "OD-537-03": "Auto card count \u2014 channels stack VERTICALLY on tablet (<768px). Cards use minmax(140px,1fr) fluid width filling row automatically. User < > arrows still work as override. Desktop (1280px+) completely unchanged \u2014 channels still side-by-side, 160px cards.",
+        "OD-414-03": "A \u2014 desktop/tablet threshold lg=1024px (owner 2026-10-13); supersedes md=768 wording in OD-537-01/02/03",
+        "OD-414-04": "A \u2014 stacked channels natural height, whole dashboard scrolls, every card visible (owner 2026-10-13)",
+        "OD-414-05": "A \u2014 tablet dropdown mirrors pill bar: status filters + Schedule in channel view, channel filters in status view, multi-select (agent rec accepted 2026-10-13; owner may override before Gate 4 GO)"
       },
       "impact_doc": "impact/BUG-537_IMPACT_ANALYSIS.md",
-      "park_reason": "Owner: park for now 2026-10-12"
+      "park_reason": "Owner: park for now 2026-10-12",
+      "plan_doc": "plans/CR-414_IMPLEMENTATION_PLAN.md",
+      "plan_version": "v2 (2026-10-13 revalidated: 15 edits, 3 files, lg=1024)"
     },
     {
       "id": "CR-414",
       "title": "Dashboard Tablet Responsive Redesign",
       "type": "CR",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE_V2",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -30240,7 +30242,7 @@
         "ChannelColumn.jsx",
         "ChannelColumnsLayout.jsx"
       ],
-      "description": "Tablet responsive redesign for Dashboard. Header: single row, remove Web/POS counters (sm:hidden), channel pills \u2192 multiselect dropdown on tablet. Grid: channels stack vertically (flex-col tablet), cards fluid minmax(140px,1fr). Desktop 1280px+ unchanged. Breakpoints: sm=640px, md=768px.",
+      "description": "Tablet responsive redesign for Dashboard. Header <1024px: single row, hide Web/POS chip + Platform dropdown, pills -> filter dropdown mirroring nav, fluid search. Grid <1024px: channels stack vertically full-width natural height, cards auto-fill minmax(140px,1fr) (order view 280px). Desktop >=1024px unchanged. Breakpoint lg=1024 (OD-414-03=A).",
       "intake_doc": "change_requests/CR-414_DASHBOARD_TABLET_RESPONSIVE_REDESIGN_INTAKE.md",
       "parent_bug": "BUG-537",
       "design_doc": "/app/design_guidelines.json",
@@ -30248,11 +30250,16 @@
       "open_decisions": [],
       "locked_decisions": {
         "OD-414-01": "A \u2014 downward overlay below header bar (owner 2026-10-12)",
-        "OD-414-02": "A \u2014 arrows + localStorage persist on tablet (owner 2026-10-12)"
+        "OD-414-02": "A \u2014 arrows + localStorage persist on tablet (owner 2026-10-12)",
+        "OD-414-03": "A \u2014 desktop/tablet threshold lg=1024px (owner 2026-10-13); supersedes md=768 wording in OD-537-01/02/03",
+        "OD-414-04": "A \u2014 stacked channels natural height, whole dashboard scrolls, every card visible (owner 2026-10-13)",
+        "OD-414-05": "A \u2014 tablet dropdown mirrors pill bar: status filters + Schedule in channel view, channel filters in status view, multi-select (agent rec accepted 2026-10-13; owner may override before Gate 4 GO)"
       },
       "registered": "2026-10-12",
       "impact_doc": "impact/CR-414_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/CR-414_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-414_IMPLEMENTATION_PLAN.md",
+      "plan_revalidation": "2026-10-13 v2 \u2014 v1 had 2 compile errors (JSX comment in opening tag), wrong breakpoint (md=768 leaves 768/800/960 tablets broken), column px width not handled, h-full stacking, dropdown ignored status filters, search w-48 overflow. 15 edits now. See plans/CR-414_IMPLEMENTATION_PLAN.md \u00a70.",
+      "plan_version": "v2 (2026-10-13 revalidated: 15 edits, 3 files, lg=1024)"
     },
     {
       "id": "BUG-538",

@@ -332,3 +332,24 @@ The `< >` arrows increment/decrement `maxColumns[channelId]` which is saved to l
 - **Gate 3 BLOCKED** on OD-414-01 (dropdown position) + OD-414-02 (localStorage on tablet)
 
 **Next:** Owner answers OD-414-01 + OD-414-02 → "Gate 3 GO" → Implementation Plan.
+
+---
+
+## 12. Gate 3 Revalidation Addendum (2026-10-13) — IA corrections
+
+Owner asked for a revalidation before Gate 4. Full re-trace of HEAD found the following inaccuracies in this IA; the authoritative design is now `plans/CR-414_IMPLEMENTATION_PLAN.md` **v2 §0**.
+
+| IA section | Was | Corrected to |
+|---|---|---|
+| §2 / §4 breakpoint | `md` = 768px; "<768px" tablet | **`lg` = 1024px** (OD-414-03=A). Evidence: header scrollWidth 1008 > clientWidth at 768 (698), 800 (730), 960 (890). `md` would leave all 10" tablets broken. |
+| §3 File B / §4 E-CR414-2 | Only `gridTemplateColumns` needs to change | **Also** `ChannelColumn.jsx` L191-202: root `width`/`minWidth` are inline px (`actualColumns×160+gap+16`) with `flex-shrink-0`. Must become `100%`/`0` on tablet or the grid still fills only 344px (the `empty_right_px:170` symptom). |
+| §4 E-CR414-3 | `flex-col md:flex-row` sufficient | ChannelColumn root `h-full` makes every stacked channel screen-tall. Tablet uses `h-auto` (OD-414-04=A) + `gap-2` separator. |
+| §4 E-CR414-1c | "compact channel multiselect dropdown" via `handleChannelToggle` | Pills nav is dual-mode (`Header.jsx` L255-317): **status pills + Schedule in channel view (default)**, channel pills in status view. `handleChannelToggle` is unused exclusive-select code. Dropdown must **mirror the nav** with the pills' own handlers (OD-414-05=A). |
+| §3 File A | Overflow attributed to pills + counters only | Search box `w-48`/`w-64` (L342-344) and results panel `w-96 left-1/2 -translate-x-1/2` (L381) also overflow at 600. Tablet: search `flex-1 w-full`, panel `right-0 w-80`. |
+| §4 E-CR414-3a | `window.innerWidth < 768` resize listener | `window.matchMedia('(max-width: 1023px)')` so JS and Tailwind `lg` never disagree. |
+| §8 totals | 6 edits · ~45 lines | **15 edits · ~120 lines**, same 3 files, scope lock unchanged. |
+| §9 V-9 (arrows) | "Tap `>` → more cards" | On tablet auto-fill ignores `actualColumns`; arrows change localStorage only (OD-414-02=A). Verify via console/localStorage, not visible columns. |
+
+Pre-existing, out of scope (documented, not changed): expanded sidebar (280px, `Sidebar.jsx` L493) already makes the desktop header overflow at 1280 today; 1024-1078 narrow desktop remains marginal.
+
+**Gate 2 status after addendum:** COMPLETE + CORRECTED. **Gate 3:** v2 plan complete, all ODs locked. **Next: Gate 4 GO.**
