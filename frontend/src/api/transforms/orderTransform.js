@@ -451,6 +451,7 @@ export const fromAPI = {
       couponDiscount: parseFloat(api.coupon_discount) || 0,
       couponTitle:    api.coupon_title    || '',
       couponType:     api.coupon_type     || 'order',
+      loyaltyRedeemed: api.loyalty_info?.redeemed === true, // CR-412: pre-tick loyalty when scan & order redeemed (OD-INV-02=B)
 
       // Raw orderDetails preserved for bill printing (order-temp-store API)
       rawOrderDetails: api.orderDetails || [],

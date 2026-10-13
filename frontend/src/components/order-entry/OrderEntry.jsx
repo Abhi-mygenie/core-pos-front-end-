@@ -1933,6 +1933,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   : (orderFinancials.deliveryCharge || (Number(deliveryCharge) || 0))
               }
               // CR-413: initialCoupon prop removed — cashier always chooses coupon (OD-INV-01=A)
+              // CR-412: pre-tick loyalty from scan & order when redeemed=true (OD-INV-02=B).
+              initialLoyalty={
+                orderData?.loyaltyRedeemed ? { redeemed: true } : null
+              }
               // BUG-004 (QA, Apr 2026): expose Split Bill trigger from the Collect
               // Payment screen. Only provided when eligible: postpaid placed
               // dine-in/walk-in order with 2+ placed items.

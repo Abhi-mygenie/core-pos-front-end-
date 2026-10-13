@@ -30124,7 +30124,7 @@
       "id": "CR-412",
       "title": "Loyalty Pre-tick from Scan & Order When loyalty_info.redeemed=true",
       "type": "CR",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "CRITICAL",
       "sprint_key": "oct_cr_batch",
@@ -30148,7 +30148,14 @@
       ],
       "impact_doc": "impact/CR-412_IMPACT_ANALYSIS.md",
       "open_decisions": [],
-      "plan_doc": "plans/CR-412_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-412_IMPLEMENTATION_PLAN.md",
+      "implemented": "2026-10-12",
+      "files_changed": [
+        "src/api/transforms/orderTransform.js",
+        "src/components/order-entry/CollectPaymentPanel.jsx",
+        "src/components/order-entry/OrderEntry.jsx"
+      ],
+      "edits": "E-CR412-1: orderTransform L454 +loyaltyRedeemed \u00b7 E-CR412-2a: CPP L78-79 +initialLoyalty prop \u00b7 E-CR412-2b: CPP L336-342 +mount useEffect setUseLoyalty \u00b7 E-CR412-3: OE L1936-1939 +initialLoyalty prop pass"
     },
     {
       "id": "CR-413",

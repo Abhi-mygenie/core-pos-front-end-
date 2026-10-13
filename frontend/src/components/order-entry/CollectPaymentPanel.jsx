@@ -75,6 +75,8 @@ const CollectPaymentPanel = ({
   // behaviour is preserved verbatim.
   // CR-413: initialCoupon removed — cashier always chooses coupon (OD-INV-01=A)
   allowedMethods,
+  // CR-412: pre-ticked loyalty from scan & order. Null for regular POS orders → no-op.
+  initialLoyalty = null,
 }) => {
   const customer = passedCustomer;
   const { discountTypes, paymentMethods: restaurantPaymentMethods, paymentTypes: restaurantPaymentTypes, restaurant, settings: restaurantSettings } = useRestaurant();
@@ -330,6 +332,14 @@ const CollectPaymentPanel = ({
   const [discountFor, setDiscountFor] = useState('');     // CR-137: optional discount reason (max 50 chars)
 
   // CR-413: initialCoupon mount useEffect removed — cashier always chooses coupon (OD-INV-01=A)
+
+  // CR-412: seed useLoyalty from scan & order pre-tick on mount.
+  // Fires once at panel open. initialLoyalty = null for regular POS orders → no-op.
+  // OD-INV-02=B: pre-tick when redeemed=true regardless of redeemed_amount.
+  useEffect(() => {
+    if (initialLoyalty?.redeemed === true) setUseLoyalty(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // mount-only — initialLoyalty is frozen at panel open
 
   // BUG-276: Service charge toggle — default ON, staff can uncheck per order
   // BUG-028 (Apr-2026): Default service-charge toggle to OFF; cashier must

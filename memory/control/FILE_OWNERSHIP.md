@@ -15,6 +15,18 @@ Planning authored `memory/impact/CR-390_MM_FAQ_COVERAGE_GATE2_2026_09_28.md`, `m
 
 ---
 
+## FILE_OWNERSHIP — CR-412 IMPL (2026-10-12) — marker `// CR-412`
+
+| File | Change | CR/BUG |
+|---|---|---|
+| `src/api/transforms/orderTransform.js` | **E-CR412-1 L454:** added `loyaltyRedeemed: api.loyalty_info?.redeemed === true` — reads loyalty redemption flag from API response into order data. Optional chain guards absent `loyalty_info` on non-scan orders and current socket payloads. | CR-412 IMPL 2026-10-12 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **E-CR412-2a L78-79:** added `initialLoyalty = null,` prop declaration (with comment). **E-CR412-2b L336-342:** added mount-only `useEffect` — calls `setUseLoyalty(true)` when `initialLoyalty?.redeemed === true`. No change to `useLoyalty` `useState(false)` at L310. | CR-412 IMPL 2026-10-12 |
+| `src/components/order-entry/OrderEntry.jsx` | **E-CR412-3 L1936-1939:** added `initialLoyalty={orderData?.loyaltyRedeemed ? {redeemed:true} : null}` JSX prop pass to CPP. | CR-412 IMPL 2026-10-12 |
+
+NOT touched: `socketHandlers.js` (OD-GAP3=B — backend to fix) · `DashboardPage.jsx` (R5) · `CartPanel.jsx` (R5) · `orderTransform.cr409.test.js` (kept, 4/4 PASS).
+
+---
+
 ## FILE_OWNERSHIP — CR-413 IMPL (2026-10-12) — marker `// CR-413`
 
 | File | Change | CR/BUG |
