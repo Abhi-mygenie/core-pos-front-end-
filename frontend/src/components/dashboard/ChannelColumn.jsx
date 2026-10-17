@@ -64,6 +64,7 @@ const ChannelColumn = ({
   matchingIds,
   onHideColumn,      // Handler to hide this column
   isTablet = false,  // CR-414: full-width stacked column + fluid grid <1024px (OD-537-03)
+  activeFirst = false,  // CR-429
 }) => {
   // Filter by search if applicable
   const filteredItems = useMemo(() => {
@@ -162,9 +163,14 @@ const ChannelColumn = ({
     for (const bucket of buckets.values()) {
       if (groupingMode === 'status') {
         bucket.items = sortByActiveFirst(bucket.items, TABLE_STATUS_PRIORITY);
+      } else if (activeFirst) {
+        // CR-429: Active First — occupied tables before available, label-numeric within each group
+        const isAvail = (it) => ['available', 'disabled', 'reserved'].includes(it.status);
+        const occ   = bucket.items.filter(it => !isAvail(it)).sort(compare);
+        const avail = bucket.items.filter(it =>  isAvail(it)).sort(compare);
+        bucket.items = [...occ, ...avail];
       } else {
-        // BUG-245: channel mode — sort ALL items by stable comparator (label-numeric / FIFO).
-        // No occupied-first bucketing — tables stay in their label position regardless of order status.
+        // BUG-245: channel mode — stable label-numeric sort, no occupied-first bucketing
         bucket.items.sort(compare);
       }
     }
@@ -177,7 +183,7 @@ const ChannelColumn = ({
       arr.unshift(ns);
     }
     return arr;
-  }, [filteredItems, groupingMode, viewType]);
+  }, [filteredItems, groupingMode, viewType, activeFirst]); // CR-429: add activeFirst dep
 
   // Count active orders (non-available, non-reserved)
   const activeCount = useMemo(() => {

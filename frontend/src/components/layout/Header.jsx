@@ -45,6 +45,8 @@ const Header = ({
   setActiveView,
   dashboardView = 'channel',
   setDashboardView,
+  channelActiveFirst,          // CR-429
+  onChannelActiveFirstToggle,  // CR-429
   hiddenChannels = [],
   hiddenStatuses = [],
   enabledStatuses = [],
@@ -333,6 +335,20 @@ const Header = ({
                 }}
               >
                 Schedule
+              </button>
+              {/* CR-429: Active First toggle — Channel View only */}
+              <div style={{ width: 1, height: 18, background: '#E5E5E5', margin: '0 4px' }} />
+              <button
+                data-testid="filter-active-first"
+                onClick={onChannelActiveFirstToggle}
+                className="py-2 px-2.5 rounded-lg text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: channelActiveFirst ? 'rgba(242,107,51,0.08)' : 'transparent',
+                  color: channelActiveFirst ? COLORS.primaryOrange : COLORS.grayText,
+                  border: channelActiveFirst ? `1.5px solid ${COLORS.primaryOrange}` : '1.5px solid transparent',
+                }}
+              >
+                Active First
               </button>
               </>
             )}

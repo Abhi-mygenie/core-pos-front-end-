@@ -31930,7 +31930,7 @@
       "id": "CR-429",
       "type": "CR",
       "title": "Active table toggle \u2014 show only occupied/active tables in table view",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",

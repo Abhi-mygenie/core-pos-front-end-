@@ -427,6 +427,9 @@ const DashboardPage = () => {
       'channel'  // Req 4: factory default changed from 'status' to 'channel'
     );
   });
+  const [channelActiveFirst, setChannelActiveFirst] = useState(
+    () => localStorage.getItem('mygenie_channel_active_first') === 'true'
+  ); // CR-429
   // VIEW_MODE_LOCK v2 (Task 1 revision, Step 4): lock flags drive whether
   // the Sidebar runtime toggle is shown for each axis. true = admin has
   // locked this axis; false (incl. 'both' / absent) = cashier may switch
@@ -1777,6 +1780,12 @@ const DashboardPage = () => {
           setPlatform={setPlatform}
           webCount={platformCounts.web}
           posCount={platformCounts.pos}
+          channelActiveFirst={channelActiveFirst}
+          onChannelActiveFirstToggle={() => { // CR-429
+            const next = !channelActiveFirst;
+            setChannelActiveFirst(next);
+            localStorage.setItem('mygenie_channel_active_first', String(next));
+          }}
         />
 
         <main className="flex-1 p-2 overflow-auto flex">
@@ -1803,6 +1812,7 @@ const DashboardPage = () => {
                 }
                 viewType={activeView === 'table' ? 'table' : 'order'}
                 groupingMode={dashboardView}
+                activeFirst={dashboardView === 'channel' && channelActiveFirst} // CR-429
                 onItemClick={handleTableClick}
                 onMarkReady={handleMarkReady}
                 onMarkServed={handleMarkServed}
