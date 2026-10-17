@@ -31930,7 +31930,7 @@
       "id": "CR-429",
       "type": "CR",
       "title": "Active table toggle \u2014 show only occupied/active tables in table view",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
@@ -31939,7 +31939,8 @@
       "investigation": "BUG-571_580_CR429_430_INVESTIGATION_2026_10_16.md",
       "intake_doc": "change_requests/CR-429_ACTIVE_TABLE_TOGGLE_INTAKE.md",
       "duplicate_check": "DISTINCT",
-      "od_429_01": "LOCKED: Toggle applies to TABLE VIEW + CHANNEL VIEW combination only. No changes to order view, delivery, takeaway etc. When ON: sort active/occupied tables first using existing sortByActiveFirst + TABLE_STATUS_PRIORITY (already in utils). Persists per session (state, optionally localStorage). Toggle lives in table view header toolbar."
+      "od_429_01": "LOCKED: Toggle applies to TABLE VIEW + CHANNEL VIEW combination only. No changes to order view, delivery, takeaway etc. When ON: sort active/occupied tables first using existing sortByActiveFirst + TABLE_STATUS_PRIORITY (already in utils). Persists per session (state, optionally localStorage). Toggle lives in table view header toolbar.",
+      "impact_analysis": "impact/CR-429_IMPACT_ANALYSIS_2026_10_17.md"
     },
     {
       "id": "BUG-571",
