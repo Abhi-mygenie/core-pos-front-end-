@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-429 Design Mockup — Active Only Toggle</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F5F5F5; padding: 24px; color: #1A1A1A; }
+
+  /* ── Section Labels ── */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #999; margin-bottom: 8px; margin-top: 28px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── App Chrome ── */
+  .app-frame {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10); margin-bottom: 32px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 16px; height: 52px; background: #fff;
+    border-bottom: 1px solid #E5E5E5;
+  }
+  .header-logo { width: 90px; height: 28px; background: #F26B33; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .header-tabs { display: flex; align-items: center; gap: 2px; margin-left: 8px; flex: 1; }
+
+  /* Status filter pills — existing style */
+  .pill {
+    padding: 5px 10px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; background: transparent; color: #666; white-space: nowrap;
+  }
+  .pill.active-status {
+    background: #F5F5F5; color: #1A1A1A;
+  }
+
+  /* ── NEW: Active Only pill ── */
+  .pill-active-only {
+    padding: 5px 10px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill-active-only.off {
+    background: transparent; color: #666; border-color: transparent;
+  }
+  .pill-active-only.on {
+    background: rgba(242,107,51,0.08); color: #F26B33; border-color: #F26B33;
+  }
+
+  .pill-divider {
+    width: 1px; height: 18px; background: #E5E5E5; margin: 0 4px; flex-shrink: 0;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0;
+  }
+  .dot-web { width: 8px; height: 8px; border-radius: 50%; background: #329937; }
+  .dot-pos { width: 8px; height: 8px; border-radius: 50%; background: #F26B33; }
+  .stat-text { font-size: 12px; color: #666; }
+  .search-bar { padding: 5px 12px; border: 1px solid #E5E5E5; border-radius: 8px; font-size: 12px; color: #999; width: 180px; }
+  .add-btn { background: #F26B33; color: #fff; border: none; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  /* ── Channel Grid ── */
+  .channel-grid {
+    display: flex; gap: 0; overflow-x: auto; min-height: 380px;
+    background: #F8F8F8;
+  }
+  .channel-col {
+    flex: 0 0 auto; border-right: 1px solid #E5E5E5;
+    padding: 12px 10px;
+  }
+  .channel-col:last-child { border-right: none; }
+
+  .channel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; padding: 0 2px;
+  }
+  .channel-name {
+    font-size: 13px; font-weight: 600; color: #1A1A1A;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .channel-count {
+    font-size: 11px; font-weight: 700; background: #F26B33;
+    color: #fff; border-radius: 10px; padding: 1px 7px; min-width: 18px; text-align: center;
+  }
+  .channel-count.green { background: #329937; }
+  .channel-arrows { display: flex; gap: 2px; }
+  .arrow-btn { width: 22px; height: 22px; border-radius: 5px; border: 1px solid #E5E5E5;
+    background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #666; }
+
+  .cards-grid { display: grid; grid-template-columns: repeat(2, 155px); gap: 8px; }
+  .cards-grid.single { grid-template-columns: repeat(1, 155px); }
+
+  /* Table Cards */
+  .table-card {
+    width: 155px; background: #fff; border-radius: 10px; border: 2px solid #E5E5E5;
+    padding: 10px; font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .table-card.orange { border-color: #F26B33; }
+  .table-card.green  { border-color: #329937; }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .card-table-no { font-size: 12px; font-weight: 600; color: #1A1A1A; display: flex; align-items: center; gap: 4px; }
+  .card-amount { font-size: 12px; font-weight: 600; color: #1A1A1A; }
+  .card-waiter { font-size: 11px; color: #666; margin-bottom: 2px; }
+  .card-time { font-size: 11px; color: #999; margin-bottom: 8px; }
+  .card-actions { display: flex; gap: 6px; }
+  .card-btn { flex: 1; padding: 5px 0; border-radius: 6px; font-size: 11px; font-weight: 600;
+    text-align: center; border: none; cursor: pointer; }
+  .card-btn.print { background: #fff; border: 1px solid #E5E5E5; color: #666; }
+  .card-btn.ready  { background: #fff; border: 1px solid #F26B33; color: #F26B33; }
+  .card-btn.serve  { background: #329937; color: #fff; }
+  .card-btn.bill   { background: #329937; color: #fff; }
+
+  /* Available card */
+  .table-card.available { border-color: #E5E5E5; }
+  .card-available-body { display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 68px; gap: 6px; color: #999; }
+  .card-plus { width: 26px; height: 26px; border-radius: 6px; border: 1.5px solid #E5E5E5;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; color: #ccc; }
+  .card-avail-label { font-size: 11px; color: #bbb; }
+
+  /* Icon placeholder */
+  .icon-fork { font-size: 11px; color: inherit; }
+
+  /* ── Annotation ── */
+  .annotation-box {
+    background: #FFF8F5; border: 1.5px dashed #F26B33; border-radius: 10px;
+    padding: 12px 14px; margin: 12px 10px 0; font-size: 12px; color: #c0440a;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .annotation-box.green-ann {
+    background: #F3FBF3; border-color: #329937; color: #256b28;
+  }
+  .ann-icon { font-size: 16px; flex-shrink: 0; margin-top: -1px; }
+
+  /* ── Comparison Layout ── */
+  .compare-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .compare-col { flex: 1; min-width: 560px; }
+  .compare-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 10px;
+  }
+  .compare-title.before { background: #FEE2D5; color: #c0440a; }
+  .compare-title.after  { background: #DCFCE7; color: #166534; }
+
+  /* ── Change callout ── */
+  .change-callout {
+    background: #fff; border: 1px solid #E5E5E5; border-radius: 10px;
+    padding: 16px 18px; margin-top: 12px;
+  }
+  .change-callout h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: #1A1A1A; }
+  .change-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #444; }
+  .change-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+    flex-shrink: 0; margin-top: 1px; }
+  .change-tag.new  { background: #DCFCE7; color: #166534; }
+  .change-tag.unchanged { background: #F3F4F6; color: #666; }
+</style>
+</head>
+<body>
+
+<div class="section-label">CR-429 Design Mockup — Active Only Toggle</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- BEFORE -->
+<!-- ═══════════════════════════════════════════════ -->
+
+<div class="compare-row">
+  <div class="compare-col">
+    <span class="compare-title before">BEFORE — Channel View (all tables)</span>
+
+    <div class="app-frame">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-logo">mygenie</div>
+        <div class="header-tabs">
+          <button class="pill active-status">YTC</button>
+          <button class="pill">Preparing</button>
+          <button class="pill">Ready</button>
+          <button class="pill">Serve</button>
+          <button class="pill">Schedule</button>
+          <!-- ← no Active Only pill -->
+        </div>
+        <div class="header-right">
+          <div class="dot-web"></div><span class="stat-text">Web 0</span>
+          <div class="dot-pos"></div><span class="stat-text">POS 28</span>
+          <input class="search-bar" placeholder="Search table, order…" readonly>
+          <button class="add-btn">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="channel-grid">
+        <!-- Dine-In: 2 occupied + 4 available -->
+        <div class="channel-col">
+          <div class="channel-header">
+            <span class="channel-name">🍽 Dine-In <span class="channel-count">15</span></span>
+            <div class="channel-arrows">
+              <button class="arrow-btn">‹</button>
+              <button class="arrow-btn">›</button>
+            </div>
+          </div>
+          <div class="cards-grid">
+            <!-- occupied -->
+            <div class="table-card orange">
+              <div class="card-top">
+                <div class="card-table-no">🍽 1 <span style="color:#F26B33">₹284</span></div>
+              </div>
+              <div class="card-waiter">Owner</div>
+              <div class="card-time">36d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">Bill</button>
+              </div>
+            </div>
+            <div class="table-card orange">
+              <div class="card-top">
+                <div class="card-table-no">🍽 2 <span style="color:#F26B33">₹546</span></div>
+              </div>
+              <div class="card-waiter">Owner</div>
+              <div class="card-time">14h</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn ready">Ready</button>
+              </div>
+            </div>
+            <!-- available -->
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🍽 C-1</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🍽 C-2</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🍽 3</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🍽 4</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room: 2 occupied + 2 available -->
+        <div class="channel-col">
+          <div class="channel-header">
+            <span class="channel-name">🏨 Room <span class="channel-count green">13</span></span>
+            <div class="channel-arrows">
+              <button class="arrow-btn">‹</button>
+              <button class="arrow-btn">›</button>
+            </div>
+          </div>
+          <div class="cards-grid single">
+            <div class="table-card green">
+              <div class="card-top">
+                <div class="card-table-no">🏨 106 <span style="color:#329937">₹7,208</span></div>
+              </div>
+              <div class="card-waiter">Mr. Abhijin</div>
+              <div class="card-time">62d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">C/Out</button>
+              </div>
+            </div>
+            <div class="table-card green">
+              <div class="card-top">
+                <div class="card-table-no">🏨 107 <span style="color:#329937">₹1,942</span></div>
+              </div>
+              <div class="card-waiter">Ms. Sunny</div>
+              <div class="card-time">69d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">C/Out</button>
+              </div>
+            </div>
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🏨 101</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+            <div class="table-card available">
+              <div class="card-top"><div class="card-table-no">🏨 102</div></div>
+              <div class="card-available-body">
+                <div class="card-plus">+</div>
+                <div class="card-avail-label">Available</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-box">
+        <span class="ann-icon">ℹ</span>
+        <span>Available tables are mixed in with occupied ones. Staff must scroll past empty tables to find active orders.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- AFTER -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <div class="compare-col">
+    <span class="compare-title after">AFTER — Active Only toggle ON</span>
+
+    <div class="app-frame">
+      <!-- Header with Active Only pill -->
+      <div class="header">
+        <div class="header-logo">mygenie</div>
+        <div class="header-tabs">
+          <button class="pill active-status">YTC</button>
+          <button class="pill">Preparing</button>
+          <button class="pill">Ready</button>
+          <button class="pill">Serve</button>
+          <button class="pill">Schedule</button>
+          <div class="pill-divider"></div>
+          <!-- ★ NEW PILL ★ -->
+          <button class="pill-active-only on">Active Only</button>
+        </div>
+        <div class="header-right">
+          <div class="dot-web"></div><span class="stat-text">Web 0</span>
+          <div class="dot-pos"></div><span class="stat-text">POS 28</span>
+          <input class="search-bar" placeholder="Search table, order…" readonly>
+          <button class="add-btn">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Grid — only occupied cards -->
+      <div class="channel-grid">
+        <!-- Dine-In: only 2 occupied shown -->
+        <div class="channel-col">
+          <div class="channel-header">
+            <span class="channel-name">🍽 Dine-In <span class="channel-count">2</span></span>
+            <div class="channel-arrows">
+              <button class="arrow-btn">‹</button>
+              <button class="arrow-btn">›</button>
+            </div>
+          </div>
+          <div class="cards-grid single">
+            <div class="table-card orange">
+              <div class="card-top">
+                <div class="card-table-no">🍽 1 <span style="color:#F26B33">₹284</span></div>
+              </div>
+              <div class="card-waiter">Owner</div>
+              <div class="card-time">36d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">Bill</button>
+              </div>
+            </div>
+            <div class="table-card orange">
+              <div class="card-top">
+                <div class="card-table-no">🍽 2 <span style="color:#F26B33">₹546</span></div>
+              </div>
+              <div class="card-waiter">Owner</div>
+              <div class="card-time">14h</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn ready">Ready</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room: only 2 occupied shown, available gone -->
+        <div class="channel-col">
+          <div class="channel-header">
+            <span class="channel-name">🏨 Room <span class="channel-count green">2</span></span>
+            <div class="channel-arrows">
+              <button class="arrow-btn">‹</button>
+              <button class="arrow-btn">›</button>
+            </div>
+          </div>
+          <div class="cards-grid single">
+            <div class="table-card green">
+              <div class="card-top">
+                <div class="card-table-no">🏨 106 <span style="color:#329937">₹7,208</span></div>
+              </div>
+              <div class="card-waiter">Mr. Abhijin</div>
+              <div class="card-time">62d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">C/Out</button>
+              </div>
+            </div>
+            <div class="table-card green">
+              <div class="card-top">
+                <div class="card-table-no">🏨 107 <span style="color:#329937">₹1,942</span></div>
+              </div>
+              <div class="card-waiter">Ms. Sunny</div>
+              <div class="card-time">69d</div>
+              <div class="card-actions">
+                <button class="card-btn print">🖨</button>
+                <button class="card-btn bill">C/Out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation-box green-ann">
+        <span class="ann-icon">✓</span>
+        <span>Available tables are hidden. Staff only see tables needing action. Channel count updates to reflect active tables only.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- CHANGE CALLOUT -->
+<!-- ═══════════════════════════════════════════════ -->
+
+<div style="margin-top:28px">
+  <div class="section-label">What changes</div>
+  <div class="change-callout">
+    <h3>CR-429 — Changes at a glance</h3>
+
+    <div class="change-row">
+      <span class="change-tag new">NEW</span>
+      <span><strong>"Active Only" pill</strong> — appears after a divider at the end of the Channel View status filter row. Orange outline when ON, grey when OFF. Persists via localStorage across sessions.</span>
+    </div>
+    <div class="change-row">
+      <span class="change-tag new">NEW</span>
+      <span><strong>Available table cards hidden</strong> when Active Only is ON — tables with status "available", "disabled", or "reserved" are filtered out of every channel column.</span>
+    </div>
+    <div class="change-row">
+      <span class="change-tag new">NEW</span>
+      <span><strong>Channel count badge updates</strong> — the number shown next to "Dine-In 15" / "Room 13" reflects only the active tables when toggle is ON.</span>
+    </div>
+    <div class="change-row">
+      <span class="change-tag new">NEW</span>
+      <span><strong>Empty channels auto-hide</strong> — if a channel has zero active tables, the column disappears entirely (existing auto-hide behaviour already handles this).</span>
+    </div>
+    <div class="change-row">
+      <span class="change-tag unchanged">UNCHANGED</span>
+      <span>Status View, order cards, search, status filter pills, column arrows — all untouched.</span>
+    </div>
+    <div class="change-row">
+      <span class="change-tag unchanged">UNCHANGED</span>
+      <span>Toggle OFF (default) = current behaviour — all tables shown.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle states side by side -->
+<div style="margin-top:28px">
+  <div class="section-label">Active Only pill — states</div>
+  <div style="display:flex; gap:16px; align-items:center; background:#fff; border:1px solid #E5E5E5; border-radius:10px; padding:16px 20px; width:fit-content;">
+    <div style="text-align:center;">
+      <button class="pill-active-only off" style="cursor:default;">Active Only</button>
+      <div style="font-size:11px; color:#999; margin-top:6px;">OFF (default)</div>
+    </div>
+    <div style="font-size:18px; color:#ccc;">→</div>
+    <div style="text-align:center;">
+      <button class="pill-active-only on" style="cursor:default;">Active Only</button>
+      <div style="font-size:11px; color:#F26B33; font-weight:600; margin-top:6px;">ON (active)</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
