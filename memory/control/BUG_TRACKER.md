@@ -42,6 +42,8 @@
 
 **Last Updated:** 2026-10-17 — **BUG-582 GATE_5A_IMPLEMENTED.** TableCard.jsx: removed 4 inline status label spans (• Preparing / • Ready / • Served / • Confirming) at L437-440. BUG-582 code marker added. Compile: 1 pre-existing warning, 0 new. EXIT GATE 5/5. Awaiting QA.
 
+**Last Updated:** 2026-10-17 — **BUG-583 REQUIREMENT UPDATED + BACKEND_BLOCKED.** Requirement clarified by owner: current colour behaviour is fine. New ask: when bill is printed (`print_bill_status = Yes`), both TableCard and OrderCard borders turn solid green. OD-583-01 CLOSED (no restaurant-type check needed). New blocker OD-583-02: backend must confirm `print_bill_status` is returned in employee-orders-list API response. FE cannot start until confirmed. Intake updated: `change_requests/BUG_583_BILL_CONFIG_CARD_COLOR_LOGIC_INTAKE.md`.
+
 **Last Updated:** 2026-10-17 — **BUG-582 + BUG-583 GATE_1_INTAKE_COMPLETE.** BUG-582 (P2/LOW): TableCard inline status text labels ("• Preparing / • Ready / • Served") — remove from table view. 1 file, 4 lines, Fast Lane eligible. BUG-583 (P1/MEDIUM): Card color logic broken for bill-config restaurants — dead condition (`defaultOrderStatus==='bill'` never matches), correct signal is `order.billPrinted`. OD-583-01 open (which field identifies bill-config restaurant?). Intakes: `change_requests/BUG_582_TABLECARD_STATUS_TEXT_LABELS_INTAKE.md` + `BUG_583_BILL_CONFIG_CARD_COLOR_LOGIC_INTAKE.md`.
 
 

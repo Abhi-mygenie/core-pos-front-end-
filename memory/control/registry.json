@@ -32294,27 +32294,28 @@
     {
       "id": "BUG-583",
       "type": "BUG",
-      "title": "Card color logic broken for bill-config restaurants: should stay ORANGE until bill printed, turn GREEN only on print",
-      "status": "GATE_1_INTAKE",
+      "title": "When bill is printed, table card and order card borders must turn solid green",
+      "status": "BACKEND_BLOCKED",
       "priority": "P1",
-      "risk": "MEDIUM",
+      "risk": "LOW-MEDIUM",
       "sprint_key": "nov_cr_batch",
       "area": "Dashboard \u2014 Order/Table Cards",
       "source": "OWNER_REPORTED_2026_10_17",
       "intake_doc": "change_requests/BUG_583_BILL_CONFIG_CARD_COLOR_LOGIC_INTAKE.md",
       "duplicate_check": "RELATED to CR-433 (Gap A) / DISTINCT registration",
-      "blast_radius": "MEDIUM (OrderCard.jsx R5 + TableCard.jsx + colors.js, 4-6 edits)",
+      "blast_radius": "SMALL-MEDIUM (OrderCard.jsx R5 + TableCard.jsx, border override only)",
       "files_affected": [
         "src/components/cards/OrderCard.jsx",
-        "src/components/cards/TableCard.jsx",
-        "src/constants/colors.js"
+        "src/components/cards/TableCard.jsx"
       ],
       "fast_lane_eligible": false,
       "open_questions": {
-        "OD-583-01": "Which profile field correctly identifies a bill-config restaurant? Options: A=restaurant.settings.autoBill, B=specific def_ord_status value, C=new backend field"
+        "OD-583-01": "CLOSED \u2014 no longer needed (requirement change: no restaurant-type check required)",
+        "OD-583-02": "OPEN \u2014 does employee-orders-list API return print_bill_status? Backend must confirm."
       },
       "related_to": "CR-433 Gap A",
-      "investigation_findings": "defaultOrderStatus==='bill' is dead condition; fOs!==6 on bill print; correct signal is order.billPrinted (print_bill_status)"
+      "investigation_findings": "Requirement clarified 2026-10-17: current colour behaviour fine. New ask: billPrinted=true \u2192 green border override on both cards. Backend blocker: print_bill_status must be in orders list API response.",
+      "backend_ask": "print_bill_status field required in /api/v1/vendoremployee/pos/employee-orders-list response"
     },
     {
       "id": "BUG-584",

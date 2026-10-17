@@ -1,73 +1,66 @@
-# BUG-583 — Card color logic broken for bill-config restaurants: should stay ORANGE until bill printed, turn GREEN only on bill print
+# BUG-583 — When bill is printed, table card and order card borders must turn solid green
 
 **ID:** BUG-583
 **Type:** BUG
 **Registered:** 2026-10-17
 **Registered by:** INTAKE agent (owner voice — session 2026-10-17)
 **Sprint:** nov_cr_batch
-**Status:** GATE_1_INTAKE
+**Status:** BACKEND_BLOCKED
 
 ---
 
 ## 1. Description
 
-For restaurants where `defaultOrderStatus` is configured as "bill" (bill-first flow), the card border and label colour logic is wrong.
+**Requirement (owner confirmed 2026-10-17 — supersedes earlier description):**
 
-**Owner's requirement:**
-> "For restaurants where defaultOrderStatus = 'bill', there is no preparation and serving stage — they directly bill. So colour will always be ORANGE for this configuration. Only when cashier prints bill should it become GREEN. fOrderStatus does not change when bill is printed."
+When a bill is physically printed, both the **table card border** and the **order card border** must turn **solid green** — regardless of the current order status colour.
 
-**Current behaviour:**
-- `getStatusColor(fOs)` in `colors.js` returns GREEN for both `fOs === 5` (served) and `fOs === 6` (billed/paid)
-- For bill-config restaurants, orders go directly to `fOs=5` and stay there
-- Card shows GREEN immediately — before the bill is printed
-- Card never correctly reflects "bill not yet printed" state
+Current behaviour: `billPrinted` flag exists in the FE order model but nothing on either card responds to it visually.
 
 **Expected behaviour:**
-- Bill-config restaurant → card shows ORANGE from order appearance until bill is printed
-- Card turns GREEN only when `order.billPrinted === true` (backend field: `print_bill_status === 'Yes'`)
+- `order.billPrinted === false` → borders follow existing colour logic (unchanged)
+- `order.billPrinted === true` → both TableCard and OrderCard borders override to solid green
+
+**No change to existing status colour logic.** One addition only: green border override when bill is printed.
 
 ---
 
-## 2. Investigation Findings (from Investigation session 2026-10-17)
+**BACKEND BLOCKER:** The `print_bill_status` field (`Yes` / `No`) must be present in the running orders API response. The FE transform already maps it (`orderTransform.js:301`). If the backend is not returning this field on the orders list endpoint, the FE will always see `billPrinted = false`. **Backend must confirm / ship the field before FE implementation can begin.**
 
-### Finding 1 — `defaultOrderStatus === 'bill'` is a DEAD CONDITION
-The proposed fix in the prior handover used `restaurant?.defaultOrderStatus === 'bill'` as the detection condition. This is wrong:
+---
 
+## 2. Investigation Findings (updated 2026-10-17)
+
+### Finding 1 — Requirement clarified (supersedes earlier findings)
+Original description was about bill-config restaurants needing orange. Owner confirmed 2026-10-17: **current colour behaviour is fine.** The only change needed is: bill printed → green border on both cards.
+
+### Finding 2 — `order.billPrinted` is the correct signal
 ```javascript
-// profileTransform.js line 233
-defaultOrderStatus: F_ORDER_STATUS_API[api.def_ord_status] || null
-
-// F_ORDER_STATUS_API (constants.js)
-{ 1:'cooking', 2:'ready', 3:'cancelled', 5:'serve', 6:'paid', 7:'pending', 8:'running', 9:'pendingPayment', 10:'reserved' }
-```
-
-`'bill'` does not exist in `F_ORDER_STATUS_API`. This condition can never be true. Any fix using it would silently never fire.
-
-### Finding 2 — `fOs === 6` ≠ bill printed
-`fOs === 6` maps to `'paid'` — meaning the cashier has completed payment via Collect Bill. This is NOT the same as printing the bill. Owner confirmed `fOrderStatus` does not change when a bill is printed.
-
-### Finding 3 — Correct signal: `order.billPrinted`
-```javascript
-// orderTransform.js line 301
+// orderTransform.js:301 — already implemented
 billPrinted: api.print_bill_status === 'Yes',
 ```
-`order.billPrinted` is already in the order transform, derived from `api.print_bill_status`. This is the correct field indicating that a bill has been physically printed. It is NOT currently used in `OrderCard.jsx` or `TableCard.jsx` for any colour logic.
+This is the field to drive the green border override.
 
-### Finding 4 — How to identify a bill-config restaurant (OPEN QUESTION)
-The correct condition for detecting a bill-config restaurant is NOT `defaultOrderStatus === 'bill'`. Two candidates:
-- **Option A:** `restaurant?.settings?.autoBill === true` — already in profileTransform
-- **Option B:** A specific `api.def_ord_status` value for bill-config restaurants (needs owner/backend to confirm what value the API sends for `owner@18march.com`)
+### Finding 3 — BACKEND BLOCKER
+`print_bill_status` must be returned by the running orders list API (`/api/v1/vendoremployee/pos/employee-orders-list`). If absent, `billPrinted` will always be `false`. FE cannot implement until backend confirms the field is returned.
 
-**Owner decision needed before implementation:** Which field correctly identifies a bill-config restaurant?
+### Finding 4 — OD-583-01 CLOSED (no longer needed)
+Original OD asked which field identifies a bill-config restaurant. Requirement change makes this irrelevant — the fix applies to ALL restaurants equally (no restaurant-type check needed). The condition is simply `order.billPrinted === true`.
+
+### Finding 5 — Investigation probe (2026-10-17)
+Probed `owner@18march.com` profile:
+- `billing_auto_bill_print: 'Yes'` → `restaurant.settings.autoBill = true`
+- `def_ord_status: 1` (same as palmhouse — cannot distinguish bill-config)
+- This data is now moot given requirement change but saved at `/app/memory/evidence/BUG-583/`
 
 ---
 
 ## 3. Classification
 
-- **Type:** BUG — color logic incorrect for a specific restaurant configuration
-- **Severity:** P1 — feature visually broken for all bill-config restaurants (they see GREEN when they should see ORANGE)
-- **Risk:** MEDIUM — touches `OrderCard.jsx` (R5 hotspot), `TableCard.jsx`, `colors.js`. Color display only, no financial/order logic.
-- **Fast Lane eligible:** NO — MEDIUM risk, R5 hotspot file (OrderCard.jsx)
+- **Type:** BUG — missing visual signal when bill is printed
+- **Severity:** P1 — every restaurant is affected (not just bill-config)
+- **Risk:** LOW-MEDIUM — border colour override only, no financial/order logic. Touches OrderCard.jsx (R5 hotspot) and TableCard.jsx.
+- **Fast Lane eligible:** NO — R5 hotspot (OrderCard.jsx)
 
 ---
 
@@ -99,14 +92,24 @@ The correct condition for detecting a bill-config restaurant is NOT `defaultOrde
 
 ---
 
-## 7. Open Questions (MUST resolve before Gate 3)
+## 7. Open Questions
 
-| # | Question | Options | Owner decision needed |
-|---|---|---|---|
-| OD-583-01 | Which profile field correctly identifies a bill-config restaurant? | A: `restaurant.settings.autoBill` · B: specific `api.def_ord_status` value · C: new backend field | YES |
+| # | Question | Status |
+|---|---|---|
+| OD-583-01 | ~~Which profile field identifies a bill-config restaurant?~~ | **CLOSED — no longer needed. Requirement change: fix applies to all restaurants. No restaurant-type check required.** |
+| **OD-583-02** | Does `/api/v1/vendoremployee/pos/employee-orders-list` currently return `print_bill_status` in each order? | **OPEN — BACKEND MUST CONFIRM before Gate 2 can start** |
 
 ---
 
-## 8. Next Step
+## 8. Backend Ask
 
-Gate 2 (Impact Analysis) — after OD-583-01 resolved by owner. Full gate flow required (MEDIUM risk, R5 hotspot).
+**Filed:** 2026-10-17
+**Recipient:** Backend team
+
+> BUG-583 requires the `print_bill_status` field (`"Yes"` / `"No"`) to be present on every order object returned by the running orders list endpoint (`/api/v1/vendoremployee/pos/employee-orders-list`). The FE transform already maps it at `orderTransform.js:301`. Please confirm whether this field is currently returned, and if not, add it. FE implementation cannot begin until this is confirmed.
+
+---
+
+## 9. Next Step
+
+**BLOCKED on backend.** Once backend confirms `print_bill_status` is in the orders list response → Gate 2 (Impact Analysis) can begin immediately. Scope will be small: `OrderCard.jsx` + `TableCard.jsx`, border colour override only.
