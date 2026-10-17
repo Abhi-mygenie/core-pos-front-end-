@@ -71,6 +71,10 @@ const QSR_DISCOUNT_FACTORY = false;
 const ACTIVE_MENU_TYPE_KEY = 'mygenie_active_menu_type';
 const ACTIVE_MENU_TYPE_DEFAULT = 'Normal';
 
+// CR-430: Served Items Auto-expand toggle
+const SERVED_AUTO_EXPAND_KEY = 'mygenie_served_auto_expand';
+const SERVED_AUTO_EXPAND_FACTORY = true; // default ON
+
 // Default column layout configs
 const DEFAULT_LAYOUT_TABLE = { dineIn: 2, takeAway: 2, delivery: 2, room: 2 };
 const DEFAULT_LAYOUT_ORDER = { dineIn: 1, takeAway: 1, delivery: 1, room: 1 };
@@ -201,6 +205,7 @@ const StatusConfigPage = () => {
 
   // CR-010: Weight Entry Prompt toggle state.
   const [weightPromptEnabled, setWeightPromptEnabled] = useState(true);
+  const [servedAutoExpand, setServedAutoExpand] = useState(SERVED_AUTO_EXPAND_FACTORY); // CR-430
 
   // CR-051: Customer field mandatoriness override states
   const [walkinNameReq, setWalkinNameReq] = useState(false);
@@ -353,6 +358,14 @@ const StatusConfigPage = () => {
       console.error('Failed to read Weight Prompt flag:', e);
     }
 
+    // CR-430: hydrate Served Items Auto-expand preference
+    try {
+      const storedServed = localStorage.getItem(SERVED_AUTO_EXPAND_KEY);
+      setServedAutoExpand(storedServed !== 'false'); // default ON
+    } catch (e) {
+      console.error('Failed to read served auto-expand flag:', e);
+    }
+
     // CR-051: hydrate customer field mandatoriness overrides
     try {
       setWalkinNameReq(localStorage.getItem('mygenie_walkin_name_required') === 'true');
@@ -433,6 +446,7 @@ const StatusConfigPage = () => {
     // CR-350: reset room ID upload (default: not required)
     setRoomIdUploadReq(false);
     setActiveMenuTypeSetting(ACTIVE_MENU_TYPE_DEFAULT); // CR-376
+    setServedAutoExpand(SERVED_AUTO_EXPAND_FACTORY); // CR-430
     setHasChanges(true);
   };
 
@@ -556,6 +570,7 @@ const StatusConfigPage = () => {
     localStorage.setItem(QSR_DISCOUNT_KEY, qsrDiscountEnabled ? 'true' : 'false');
     // CR-010: persist Weight Entry Prompt toggle
     localStorage.setItem('mygenie_weight_prompt_enabled', weightPromptEnabled ? 'true' : 'false');
+    localStorage.setItem(SERVED_AUTO_EXPAND_KEY, servedAutoExpand ? 'true' : 'false'); // CR-430
 
     // CR-051: persist customer field mandatoriness overrides
     localStorage.setItem('mygenie_walkin_name_required', walkinNameReq ? 'true' : 'false');
@@ -1009,6 +1024,46 @@ const StatusConfigPage = () => {
                   />
                 </button>
               </div>
+            </div>
+
+            {/* CR-430: Served Items Auto-expand toggle */}
+            <div
+              className="rounded-lg p-4 border-2 flex items-start justify-between gap-4 mt-3"
+              style={{
+                backgroundColor: servedAutoExpand ? `${COLORS.primaryGreen}05` : COLORS.lightBg,
+                borderColor: servedAutoExpand ? COLORS.primaryGreen : COLORS.borderGray,
+              }}
+            >
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium" style={{ color: COLORS.darkText }}>
+                    Auto-expand Served Items
+                  </span>
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{ backgroundColor: servedAutoExpand ? COLORS.primaryGreen : COLORS.borderGray, color: '#fff' }}
+                  >
+                    {servedAutoExpand ? 'ON' : 'OFF'}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: COLORS.grayText }}>
+                  When ON, served items automatically expand on an order card once all items are served.
+                  Turn OFF to keep served items collapsed by default. Per-device setting.
+                </p>
+              </div>
+              <button
+                data-testid="served-auto-expand-toggle"
+                onClick={() => { setServedAutoExpand(v => !v); setHasChanges(true); }}
+                className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors focus:outline-none"
+                style={{ backgroundColor: servedAutoExpand ? COLORS.primaryGreen : COLORS.borderGray }}
+                role="switch"
+                aria-checked={servedAutoExpand}
+              >
+                <span
+                  className="inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform"
+                  style={{ transform: servedAutoExpand ? 'translateX(22px)' : 'translateX(2px)', marginTop: '2px' }}
+                />
+              </button>
             </div>
 
             {/* ============== CR-376: ACTIVE MENU ============== */}

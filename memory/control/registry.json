@@ -32072,7 +32072,7 @@
       "id": "CR-430",
       "type": "CR",
       "title": "Served items: decrease card height (remove 44px touch target on static checkmark) + collapsible by default",
-      "status": "GATE_5B_QA_PASSED",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
