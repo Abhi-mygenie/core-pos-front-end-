@@ -183,3 +183,39 @@ New bordered card matching the existing `Order Taking` / `QSR Mode` pattern:
 ```
 
 *Gate 2 complete — 2026-10-17. Ready Gate 3 (Implementation Plan) on owner GO.*
+
+---
+
+## Addendum — Probe Transform Check (2026-10-17)
+
+**Status:** DONE — run after Gate 3 plan was written, triggered by owner query.
+
+### Transform chain verified end-to-end
+
+| Step | Source | Verified |
+|---|---|---|
+| API field | `api.orderDetails[].food_status` (integer) | ✅ |
+| Mapping | `F_ORDER_STATUS[5]` → `'served'` | ✅ |
+| Consumed at | `orderTransform.js:283` — `(api.orderDetails \|\| []).map(fromAPI.orderItem)` | ✅ |
+| Item field | `item.status` === `'served'` | ✅ |
+| Condition | `_allServed` in `OrderCard.jsx:70-71` | ✅ |
+
+### Live probe results — palmhouse (RID 541)
+
+Probed 10 live running orders. `food_status` values present: 1 (preparing), 2 (ready), 5 (served).
+
+| Order | f_order_status | Item statuses | _allServed |
+|---|---|---|---|
+| 1233292 | 1 | preparing×2, ready×2 | False |
+| 1233287 | 5 | served×2 | **True** |
+| 1233278 | 5 | served×1 | **True** |
+| 1233271 | 5 | served×4 | **True** |
+| 1232309 | 5 | served×1 | **True** |
+
+**4 of 10 live orders trigger `_allServed = True`** — the toggle gates a real, frequently-fired condition.
+
+### Findings
+- No null `food_status` values in live data
+- `serve_order_details` (present in API response) not referenced anywhere in FE — safe
+- Transform chain is sound — no gaps
+- **Plan CONFIRMED. No changes to Gate 3 plan required.**
