@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/api/v2/vendoremployee/aiosell/room-status/8528",
+    "body": {
+      "status": "bogus"
+    }
+  },
+  "http_status": 422,
+  "body": {
+    "status": false,
+    "errors": {
+      "status": [
+        "The selected status is invalid."
+      ]
+    }
+  }
+}

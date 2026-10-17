@@ -1,0 +1,41 @@
+AuditLogMockup.jsx presets@L103 L100 NOWRAP: flex items-center gap-3 | L94 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CancelDetailMockup.jsx presets@L110 L107 NOWRAP: flex items-center gap-3 | L101 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CancellationsMockup.jsx presets@L408 L368 NOWRAP: flex items-center gap-3 | L345 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CashierSettlementMockup.jsx presets@L92 L89 NOWRAP: flex items-center gap-3 | L84 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ChannelPivotMockup.jsx presets@L220 L212 NOWRAP: flex items-center gap-3 | L204 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ConsumptionReportPage.jsx presets@L254 L238 WRAP: bg-white rounded-xl border border-slate-200 p-4 mb-5 flex flex-wrap gap-3 items-end | L197 NOWRAP: px-6 py-6
+CouponUsageMockup.jsx presets@L95 L92 NOWRAP: flex items-center gap-3 | L87 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CustomersMixMockup.jsx presets@L97 L94 NOWRAP: flex items-center gap-3 | L89 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CustomersRfmMockup.jsx presets@L101 L98 NOWRAP: flex items-center gap-3 | L93 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DailySalesMockup.jsx presets@L229 L221 NOWRAP: flex items-center gap-3 | L211 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DashboardMockup.jsx presets@L359 L308 NOWRAP: flex items-center gap-3 | L284 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200
+DayOfWeekMockup.jsx presets@L205 L197 NOWRAP: flex items-center gap-3 | L189 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DeliveryChargeMockup.jsx presets@L90 L87 NOWRAP: flex items-center gap-3 | L82 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DiscountReportMockup.jsx presets@L103 L100 NOWRAP: flex items-center gap-3 | L95 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ExpenseReportPage.jsx presets@L322 L314 NOWRAP: flex items-center gap-3 | L304 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+FoodCourtBetaPage.jsx presets@L371 L370 NOWRAP: flex items-center gap-1 px-1.5 py-1 bg-zinc-100 rounded-lg | L323 NOWRAP: flex items-center gap-3
+FoodCourtMockup.jsx presets@L530 L492 NOWRAP: flex items-center gap-3 | L482 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+GatewayReconMockup.jsx presets@L70 L67 NOWRAP: flex items-center gap-3 | L65 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+HourlySalesMockup.jsx presets@L208 L200 NOWRAP: flex items-center gap-3 | L192 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ItemSalesHybridMockup.jsx presets@L968 L911 NOWRAP: flex items-center gap-3
+ItemSalesLedgerMockup.jsx presets@L407 L384 NOWRAP: flex items-center gap-2.5 | L375 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+KotVarianceMockup.jsx presets@L84 L81 NOWRAP: flex items-center gap-3 | L79 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+OrderLedgerMockup.jsx presets@L645 L623 NOWRAP: flex items-center gap-3 | L613 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+OrderNotesMockup.jsx presets@L100 L97 NOWRAP: flex items-center gap-3 | L91 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PLReportPage.jsx presets@L202 L186 NOWRAP: flex items-center gap-3 | L176 WRAP: flex items-center justify-between mb-6 flex-wrap gap-y-2
+PaymentsMockup.jsx presets@L407 L387 NOWRAP: flex items-center gap-3 | L370 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PrepServeTimeMockup.jsx presets@L346 L328 NOWRAP: flex items-center gap-3 | L313 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PurchaseReportPage.jsx presets@L297 L262 WRAP: bg-white border-b border-zinc-200 px-6 py-3 flex items-center gap-3 flex-wrap sticky top-0 z-10 | L259 NOWRAP: flex-1 overflow-y-auto
+RoomOrdersMockup.jsx presets@L530 L508 NOWRAP: flex items-center gap-3 | L498 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+RoomTransfersMockup.jsx presets@L87 L84 NOWRAP: flex items-center gap-3 | L79 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+RoundOffMockup.jsx presets@L50 L47 NOWRAP: flex items-center gap-3 | L45 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+SalesMockup.jsx presets@L337 L317 NOWRAP: flex items-center gap-3 | L300 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+SettlementReportMockup.jsx presets@L381 L359 NOWRAP: flex items-center gap-3 | L349 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+StaffCashiersMockup.jsx presets@L100 L97 NOWRAP: flex items-center gap-3 | L92 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+StaffServersMockup.jsx presets@L99 L96 NOWRAP: flex items-center gap-3 | L91 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TableSalesMockup.jsx presets@L96 L93 NOWRAP: flex items-center gap-3 | L88 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxCalcMockup.jsx presets@L95 L92 NOWRAP: flex items-center gap-3 | L87 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxDetailMockup.jsx presets@L102 L99 NOWRAP: flex items-center gap-3 | L94 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxSlabsMockup.jsx presets@L96 L93 NOWRAP: flex items-center gap-3 | L88 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TipReportMockup.jsx presets@L70 L67 NOWRAP: flex items-center gap-3 | L65 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+VariationAddonMockup.jsx presets@L265 L245 NOWRAP: flex items-center gap-2.5 | L237 NOWRAP: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0

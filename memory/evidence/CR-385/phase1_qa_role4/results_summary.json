@@ -1,0 +1,45 @@
+{
+  "P1-M7-02": {
+    "early_off": true,
+    "cal_on": true,
+    "held_off": true,
+    "status_saved": true,
+    "save_disabled": true
+  },
+  "P1-M7-03_on": {
+    "multipart": true,
+    "data": {
+      "basic": {
+        "allow_early_checkin": true,
+        "extend_rate_mode": "calendar"
+      }
+    },
+    "resp": null
+  },
+  "P1-M7-03_on_reload": {
+    "early_on": true
+  },
+  "P1-M7_error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"frontdesk-rules-save-btn\\\"]\")\n    - locator resolved to <button disabled type=\"button\" aria-busy=\"false\" data-testid=\"frontdesk-rules-save-btn\" class=\"inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#329937] hover:bg-[#287a2d] disabled:opacity-40 disabled:cursor-not-allowed\">Save</button>\n  - attempting click action\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not enabled\n    - retrying click action\n    - waiting 20ms\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is not enabled\n    - retrying click action\n      - waiting 100ms\n    58 \u00d7 waiting for element to be visible, enabled and stable\n       - element is not enabled\n     - retrying click action\n       - waiting 500ms\n",
+  "fd_rows_today": {
+    "225": 0,
+    "226": 0,
+    "227": 0
+  },
+  "P1-M2-02": "SKIP row 225 not present",
+  "P1-M2-03": "SKIP row 226 not present",
+  "P1-M2-06": "SKIP row 226 not present at 1366",
+  "P1-M2_error": "object Locator can't be used in 'await' expression",
+  "P1-REG-LEGACY": "SKIP QA-R4-Legacy not visible on /pms/arrivals",
+  "P1-CLEANUP": {
+    "before": {
+      "225": 0,
+      "226": 0,
+      "227": 0
+    },
+    "after": {
+      "225": 0,
+      "226": 0,
+      "227": 0
+    }
+  }
+}

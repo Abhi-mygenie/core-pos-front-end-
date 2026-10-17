@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-358-P2 v3 — New Booking + Check-In Design Mockup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:   #329937;
+      --green-lt: #E8F5E9;
+      --green-dk: #217a29;
+      --dark:    #1A1A1A;
+      --gray:    #666666;
+      --border:  #E5E5E5;
+      --bg:      #F7F7F7;
+      --white:   #FFFFFF;
+      --red:     #EF4444;
+      --red-lt:  #FEF2F2;
+      --blue:    #3B82F6;
+      --blue-lt: #EFF6FF;
+      --amber:   #F59E0B;
+      --amber-lt:#FFFBEB;
+      --purple:  #8B5CF6;
+      --purple-lt:#F5F3FF;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #E8EAED;
+      color: var(--dark);
+      font-size: 13px;
+    }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .nav-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: -0.3px;
+    }
+    .nav-badge {
+      background: var(--green);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.4px;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+    }
+    .nav-tab {
+      padding: 6px 16px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--gray);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .nav-tab.active {
+      background: var(--white);
+      color: var(--dark);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .nav-tab:hover:not(.active) { color: var(--dark); }
+
+    /* ── SCREEN WRAPPER ── */
+    .screen { display: none; animation: fadeIn 0.15s ease; }
+    .screen.active { display: flex; flex-direction: column; min-height: calc(100vh - 57px); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── PAGE SHELL (matches app) ── */
+    .page-shell {
+      display: flex;
+      flex: 1;
+      background: var(--bg);
+    }
+
+    /* Fake sidebar */
+    .fake-sidebar {
+      width: 56px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .sidebar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+    }
+    .sidebar-icon.active { background: var(--green-lt); color: var(--green); }
+    .sidebar-icon svg { width: 18px; height: 18px; }
+
+    /* Main content */
+    .page-main { flex: 1; overflow: auto; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark);
+      flex: 1;
+    }
+    .page-sub {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 1px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 14px;
+      height: 36px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+    .btn svg { width: 15px; height: 15px; }
+    .btn-primary { background: var(--green); color: white; }
+    .btn-primary:hover { background: var(--green-dk); transform: translateY(-1px); box-shadow: 0 3px 8px rgba(50,153,55,0.3); }
+    .btn-outline { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-ghost { background: transparent; color: var(--gray); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg); color: var(--dark); }
+    .btn-danger { background: var(--red); color: white; }
+    .btn-danger:hover { background: #DC2626; }
+    .btn-lg { height: 42px; padding: 0 20px; font-size: 14px; width: 100%; justify-content: center; border-radius: 10px; }
+    .btn-lg:active { transform: scale(0.98); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .card-p { padding: 16px; }
+
+    /* ── FORM ELEMENTS ── */
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field-label .req { color: var(--red); margin-left: 2px; }
+    .field-label .opt { font-weight: 400; text-transform: none; letter-spacing: 0; color: #aaa; }
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      transition: border-color 0.1s;
+    }
+    .input-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(50,153,55,0.08); }
+    .input-wrap svg { width: 14px; height: 14px; color: #aaa; flex-shrink: 0; }
+    .input-wrap input, .input-wrap select {
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--dark);
+      background: transparent;
+      width: 100%;
+    }
+    .input-wrap select { cursor: pointer; }
+    .phone-prefix {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+      border-right: 1px solid var(--border);
+      padding-right: 8px;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+    .textarea-wrap {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      height: 64px;
+    }
+    .textarea-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(50,153,55,0.08); }
+    .textarea-wrap textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--dark);
+      background: transparent;
+      resize: none;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+
+    /* ── GRID HELPERS ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .grid-nights { display: grid; grid-template-columns: 1fr 64px 1fr; gap: 12px; }
+
+    /* ── KPI STRIP ── */
+    .kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .kpi-tile {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .kpi-value { font-size: 22px; font-weight: 700; color: var(--dark); }
+    .kpi-value.red { color: var(--red); }
+    .kpi-value.green { color: var(--green); }
+    .kpi-key { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray); margin-top: 3px; }
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 1 — NEW BOOKING
+    ══════════════════════════════════════════════════ */
+
+    .new-booking-body {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      padding: 20px 24px;
+      max-width: 1200px;
+    }
+
+    .room-pill-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .room-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.12s;
+      background: var(--white);
+    }
+    .room-pill:hover { border-color: var(--green); background: var(--green-lt); }
+    .room-pill.selected { border-color: var(--green); background: var(--green-lt); }
+    .room-pill .pill-icon {
+      width: 32px; height: 32px;
+      background: var(--green-lt);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .room-pill.selected .pill-icon { background: rgba(50,153,55,0.15); }
+    .room-pill .pill-icon svg { width: 16px; height: 16px; color: var(--green); }
+    .room-pill .pill-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+    .room-pill .pill-sub { font-size: 11px; color: var(--gray); }
+    .room-pill .pill-check {
+      width: 18px; height: 18px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.12s;
+    }
+    .room-pill.selected .pill-check { opacity: 1; }
+    .room-pill .pill-check svg { width: 10px; height: 10px; color: white; }
+
+    /* Right panel */
+    .booking-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .summary-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .summary-header {
+      padding: 12px 14px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray);
+    }
+    .summary-body { padding: 14px; }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+    .summary-row + .summary-row { border-top: 1px solid #F5F5F5; }
+    .summary-row .s-key { color: var(--gray); }
+    .summary-row .s-val { font-weight: 600; color: var(--dark); }
+    .summary-row .s-val.green { color: var(--green); }
+    .summary-divider { border: none; border-top: 1px dashed var(--border); margin: 6px 0; }
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 700;
+      padding-top: 8px;
+    }
+
+    /* ── SUCCESS STATE ── */
+    .success-card {
+      background: var(--white);
+      border: 2px solid var(--green);
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+    }
+    .success-card.show { display: flex; flex-direction: column; gap: 12px; }
+    .success-icon-wrap {
+      width: 44px; height: 44px;
+      background: var(--green-lt);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto;
+    }
+    .success-icon-wrap svg { width: 22px; height: 22px; color: var(--green); }
+    .booking-id-chip {
+      display: inline-block;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--dark);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SCREEN 2 — CHECK-IN
+    ══════════════════════════════════════════════════ */
+
+    .checkin-body {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
+      padding: 20px 24px;
+    }
+
+    /* Arrival cards */
+    .arrivals-list { display: flex; flex-direction: column; gap: 8px; }
+    .arrival-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.12s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .arrival-card:hover { border-color: var(--green); box-shadow: 0 2px 8px rgba(50,153,55,0.1); }
+    .arrival-card.selected {
+      border-color: var(--green);
+      background: linear-gradient(135deg, #FAFFF8 0%, #F0FFF0 100%);
+      box-shadow: 0 2px 12px rgba(50,153,55,0.15);
+    }
+    .arrival-room-badge {
+      width: 40px; height: 40px;
+      background: var(--green-lt);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+    .arrival-room-badge.occ { background: var(--red-lt); color: var(--red); }
+    .arrival-card-body { flex: 1; min-width: 0; }
+    .arrival-guest-name { font-size: 14px; font-weight: 700; color: var(--dark); }
+    .arrival-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+    .channel-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 99px;
+      font-size: 10px; font-weight: 700;
+      border: 1px solid;
+    }
+    .channel-pill.direct  { background: var(--green-lt); color: var(--green); border-color: rgba(50,153,55,0.3); }
+    .channel-pill.ota     { background: var(--blue-lt);  color: var(--blue);  border-color: rgba(59,130,246,0.3); }
+    .channel-pill.walkin  { background: var(--amber-lt); color: var(--amber); border-color: rgba(245,158,11,0.3); }
+    .arrival-dates { font-size: 11px; color: var(--gray); }
+    .meal-pill {
+      display: inline-flex;
+      padding: 1px 7px; border-radius: 99px;
+      background: var(--purple-lt); color: var(--purple);
+      font-size: 10px; font-weight: 600;
+    }
+    .arrival-card-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .nights-badge {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray);
+    }
+    .select-chip {
+      font-size: 11px; font-weight: 600;
+      color: var(--green);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .select-chip svg { width: 13px; height: 13px; }
+
+    /* Right panel: check-in form */
+    .checkin-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .checkin-panel-header {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px 12px 0 0;
+      padding: 14px 16px;
+      border-bottom: none;
+    }
+    .checkin-panel-body {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 0 0 12px 12px;
+      padding: 16px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .empty-panel {
+      background: var(--white);
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--gray);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .empty-panel svg { width: 32px; height: 32px; color: #ccc; }
+    .empty-panel .e-title { font-size: 14px; font-weight: 600; color: #999; }
+    .empty-panel .e-sub { font-size: 12px; }
+
+    /* Walk-in banner */
+    .walkin-banner {
+      background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+      border: 1px solid #FDE68A;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .walkin-banner:hover { box-shadow: 0 2px 8px rgba(245,158,11,0.2); }
+    .walkin-banner svg { width: 18px; height: 18px; color: var(--amber); flex-shrink: 0; }
+    .walkin-banner .wb-title { font-size: 13px; font-weight: 700; color: #92400E; }
+    .walkin-banner .wb-sub { font-size: 11px; color: #B45309; }
+
+    /* Status tag */
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .status-dot.pending { background: var(--amber); }
+    .status-dot.in_house { background: var(--green); }
+
+    /* ── ANNOTATION NOTES ── */
+    .annotation-box {
+      background: #FFFDE7;
+      border: 1px solid #FDD835;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #5D4037;
+      line-height: 1.5;
+    }
+    .annotation-box strong { color: #3E2723; }
+
+    /* search bar */
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      width: 14px; height: 14px;
+      color: #aaa;
+    }
+    .search-wrap input {
+      width: 220px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px 0 32px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      color: var(--dark);
+    }
+    .search-wrap input:focus { border-color: var(--green); }
+
+    /* ── SPEC NOTES BAR ── */
+    .spec-bar {
+      background: #1E1E2E;
+      color: #CDD6F4;
+      padding: 10px 24px;
+      font-size: 11px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .spec-bar strong { color: #A6E3A1; }
+    .spec-sep { color: #45475A; }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<div class="top-nav">
+  <div class="nav-logo">myGenie POS</div>
+  <span class="nav-badge">CR-358-P2 v3</span>
+  <div style="font-size:11px;color:#aaa;margin-left:8px">Design Mockup — New Booking (S3) + Check-In (S4)</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchScreen('s3')">S3 — New Booking</div>
+    <div class="nav-tab" onclick="switchScreen('s4')">S4 — Check-In</div>
+    <div class="nav-tab" onclick="switchScreen('s3-success')">S3 — After Save</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  SCREEN: S3 — NEW BOOKING
+══════════════════════════════════════════════ -->
+<div class="screen active" id="screen-s3">
+  <div class="page-shell">
+    <!-- Fake sidebar -->
+    <div class="fake-sidebar">
+      <div class="sidebar-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      </div>
+      <div class="sidebar-icon active">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <div class="sidebar-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      </div>
+      <div class="sidebar-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+    </div>
+
+    <div class="page-main">
+      <!-- Page header -->
+      <div class="page-header">
+        <button class="btn btn-ghost" style="padding:0 10px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <div class="page-title">New Booking</div>
+          <div class="page-sub">Reserve a room · Walk-in or Save as Booking</div>
+        </div>
+      </div>
+
+      <div class="new-booking-body">
+
+        <!-- ── LEFT: FORM ── -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Guest Details -->
+          <div class="card card-p">
+            <div class="section-label">Guest Details</div>
+            <div class="grid-3" style="margin-bottom:12px">
+              <div class="form-group">
+                <label class="field-label">Guest Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" placeholder="Full name" value="Future Guest" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Phone <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <span class="phone-prefix">+91</span>
+                  <input type="tel" placeholder="98765 43210" value="98888 88888" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Email <span class="opt">(optional)</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+                  <input type="email" placeholder="guest@example.com" />
+                </div>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="field-label">Adults <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <input type="number" value="2" min="1" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Children</label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  <input type="number" value="0" min="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Selection -->
+          <div class="card card-p">
+            <div class="section-label">Room Selection <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:#aaa">— from Channel Manager mapping</span></div>
+            <div class="room-pill-grid">
+
+              <div class="room-pill" onclick="selectRoom(this,'r1','Executive','8528')">
+                <div class="pill-icon">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div>
+                  <div class="pill-name">r1</div>
+                  <div class="pill-sub">Executive · ID 8528</div>
+                </div>
+                <div class="pill-check">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <div class="room-pill selected" onclick="selectRoom(this,'r2','Suite','8526')">
+                <div class="pill-icon">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div>
+                  <div class="pill-name">r2</div>
+                  <div class="pill-sub">Suite · ID 8526</div>
+                </div>
+                <div class="pill-check">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <div class="room-pill" onclick="selectRoom(this,'r3','Executive','8524')">
+                <div class="pill-icon">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div>
+                  <div class="pill-name">r3</div>
+                  <div class="pill-sub">Executive · ID 8524</div>
+                </div>
+                <div class="pill-check">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <div class="room-pill" onclick="selectRoom(this,'r4','Executive','8525')">
+                <div class="pill-icon">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div>
+                  <div class="pill-name">r4</div>
+                  <div class="pill-sub">Executive · ID 8525</div>
+                </div>
+                <div class="pill-check">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+              <div class="room-pill" onclick="selectRoom(this,'r5','Executive','8527')">
+                <div class="pill-icon">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div>
+                  <div class="pill-name">r5</div>
+                  <div class="pill-sub">Executive · ID 8527</div>
+                </div>
+                <div class="pill-check">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Dates & Amount -->
+          <div class="card card-p">
+            <div class="section-label">Stay & Amount</div>
+            <div class="grid-nights" style="margin-bottom:12px">
+              <div class="form-group">
+                <label class="field-label">Check-in Date <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input type="date" value="2026-09-07" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Nights</label>
+                <div class="input-wrap" style="justify-content:center;background:#F9F9F9">
+                  <input type="number" value="2" min="1" style="text-align:center;font-weight:700;font-size:15px" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Check-out Date <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input type="date" value="2026-09-09" />
+                </div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-bottom:12px">
+              <div class="form-group">
+                <label class="field-label">Room Amount <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <span style="font-size:13px;font-weight:700;color:#aaa;flex-shrink:0">₹</span>
+                  <input type="number" value="5000" placeholder="0" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Meal Plan <span class="opt">(optional)</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;color:#aaa"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                  <select>
+                    <option value="">No preference</option>
+                    <option>Room Only (EP)</option>
+                    <option>Breakfast Included (CP)</option>
+                    <option>Half Board (MAP)</option>
+                    <option>Full Board (AP)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="field-label">Notes <span class="opt">(optional)</span></label>
+              <div class="textarea-wrap">
+                <textarea placeholder="Late arrival, special requests, anniversary setup…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <button class="btn btn-outline btn-lg" onclick="switchScreen('s3-success')" style="border-color:var(--green);color:var(--green)">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Save as Booking
+            </button>
+            <button class="btn btn-primary btn-lg" onclick="switchScreen('s4')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Walk-in · Check In Now
+            </button>
+          </div>
+
+          <div class="annotation-box">
+            <strong>OD-P2-05 (A) applied:</strong> Two CTAs — <em>Save as Booking</em> creates the reservation and shows a success card with "Check In Now" option. <em>Walk-in · Check In Now</em> skips the reservation step and checks the guest in directly with <code>booking_type: "WalkIn"</code>.
+          </div>
+        </div>
+
+        <!-- ── RIGHT: SUMMARY ── -->
+        <div class="booking-summary">
+          <div class="summary-card">
+            <div class="summary-header">Booking Summary</div>
+            <div class="summary-body">
+              <div class="summary-row"><span class="s-key">Guest</span><span class="s-val">Future Guest</span></div>
+              <div class="summary-row"><span class="s-key">Phone</span><span class="s-val">+91 98888 88888</span></div>
+              <div class="summary-row"><span class="s-key">Room</span><span class="s-val green">r2 (Suite)</span></div>
+              <div class="summary-row"><span class="s-key">Check-in</span><span class="s-val">07 Sep 2026</span></div>
+              <div class="summary-row"><span class="s-key">Check-out</span><span class="s-val">09 Sep 2026</span></div>
+              <div class="summary-row"><span class="s-key">Duration</span><span class="s-val">2 nights</span></div>
+              <div class="summary-row"><span class="s-key">Adults / Children</span><span class="s-val">2 / 0</span></div>
+              <hr class="summary-divider"/>
+              <div class="summary-total"><span>Room Amount</span><span style="color:var(--green)">₹5,000</span></div>
+            </div>
+          </div>
+
+          <div class="annotation-box" style="font-size:11px">
+            <strong>OD-P2-07 (B) applied:</strong> No advance payment field at booking time. Amount shown is the room rate only. Advance is collected at check-in.
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-header">Booking Type</div>
+            <div class="summary-body" style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--green);border-radius:8px;background:var(--green-lt)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:15px;height:15px;color:var(--green)"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:var(--green)">Direct Reservation</div>
+                  <div style="font-size:10px;color:var(--gray)">Save now · Check in later</div>
+                </div>
+                <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="width:14px;height:14px;color:var(--green);margin-left:auto"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:15px;height:15px;color:#aaa"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#aaa">Walk-in</div>
+                  <div style="font-size:10px;color:#aaa">Check in immediately</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  SCREEN: S3 — SUCCESS STATE (after Save as Booking)
+══════════════════════════════════════════════ -->
+<div class="screen" id="screen-s3-success">
+  <div class="page-shell">
+    <div class="fake-sidebar">
+      <div class="sidebar-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <div class="sidebar-icon active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+    </div>
+    <div class="page-main">
+      <div class="page-header">
+        <button class="btn btn-ghost" style="padding:0 10px" onclick="switchScreen('s3')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <div class="page-title">New Booking</div>
+          <div class="page-sub">Reserve a room · Walk-in or Save as Booking</div>
+        </div>
+      </div>
+
+      <div class="new-booking-body">
+        <!-- Greyed form (left) -->
+        <div style="opacity:0.35;pointer-events:none;display:flex;flex-direction:column;gap:16px;">
+          <div class="card card-p">
+            <div class="section-label">Guest Details</div>
+            <div class="grid-3">
+              <div class="form-group"><label class="field-label">Guest Name</label><div class="input-wrap"><input value="Future Guest" readonly /></div></div>
+              <div class="form-group"><label class="field-label">Phone</label><div class="input-wrap"><input value="+91 98888 88888" readonly /></div></div>
+              <div class="form-group"><label class="field-label">Email</label><div class="input-wrap"><input value="" placeholder="—" readonly /></div></div>
+            </div>
+          </div>
+          <div class="card card-p" style="min-height:80px;display:flex;align-items:center;justify-content:center;color:#aaa">Room selection locked</div>
+          <div class="card card-p" style="min-height:60px;display:flex;align-items:center;justify-content:center;color:#aaa">Dates &amp; Amount locked</div>
+        </div>
+
+        <!-- Right panel: SUCCESS CARD -->
+        <div class="booking-summary">
+          <!-- Success card -->
+          <div style="background:var(--white);border:2px solid var(--green);border-radius:14px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+            <div style="width:52px;height:52px;background:var(--green-lt);border-radius:50%;display:flex;align-items:center;justify-content:center">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:26px;height:26px;color:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--dark)">Booking Saved!</div>
+              <div style="font-size:12px;color:var(--gray);margin-top:3px">Direct reservation created successfully</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:monospace;font-size:12px;font-weight:700;color:var(--dark);letter-spacing:0.04em;width:100%;text-align:center">
+              MG-69-69BCC4D3-3F9B-4432
+            </div>
+            <div style="width:100%;background:var(--bg);border-radius:10px;padding:10px 12px">
+              <div class="summary-row"><span class="s-key">Guest</span><span class="s-val">Future Guest</span></div>
+              <div class="summary-row"><span class="s-key">Room</span><span class="s-val green">r2 (Suite)</span></div>
+              <div class="summary-row"><span class="s-key">Check-in</span><span class="s-val">07 Sep 2026</span></div>
+              <div class="summary-row"><span class="s-key">Check-out</span><span class="s-val">09 Sep 2026</span></div>
+              <div class="summary-row"><span class="s-key">Status</span><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--amber)"><span class="status-dot pending"></span>Pending</span></div>
+            </div>
+
+            <!-- OD-P2-05 (A): "Check In Now" CTA -->
+            <button class="btn btn-primary btn-lg" onclick="switchScreen('s4')" style="width:100%">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Check In Now
+            </button>
+            <button class="btn btn-ghost" style="width:100%;height:36px" onclick="switchScreen('s3')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Booking
+            </button>
+          </div>
+
+          <div class="annotation-box" style="font-size:11px">
+            <strong>OD-P2-05 (A):</strong> Staff stays on the page and sees a confirmation card. <em>"Check In Now"</em> passes the new <code>booking_id</code> to the Check-In page — form is pre-filled. <em>"New Booking"</em> resets the form for the next guest.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  SCREEN: S4 — CHECK-IN
+══════════════════════════════════════════════ -->
+<div class="screen" id="screen-s4">
+  <div class="page-shell">
+    <div class="fake-sidebar">
+      <div class="sidebar-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <div class="sidebar-icon active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+    </div>
+
+    <div class="page-main">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Check-In</div>
+          <div class="page-sub">Today's arrivals · 3 pending</div>
+        </div>
+        <div class="search-wrap">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search guest or booking ID…" />
+        </div>
+        <button class="btn btn-outline" onclick="switchScreen('s3')">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Booking
+        </button>
+        <button class="btn btn-primary" onclick="selectArrival(document.querySelectorAll('.arrival-card')[3])">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Walk-in
+        </button>
+      </div>
+
+      <div class="checkin-body">
+
+        <!-- LEFT: arrivals list -->
+        <div>
+          <!-- KPI strip -->
+          <div class="kpi-strip" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+            <div class="kpi-tile"><div class="kpi-value">3</div><div class="kpi-key">Arriving Today</div></div>
+            <div class="kpi-tile"><div class="kpi-value green">5</div><div class="kpi-key">In-House</div></div>
+            <div class="kpi-tile"><div class="kpi-value" style="color:var(--amber)">2</div><div class="kpi-key">Checkout Today</div></div>
+            <div class="kpi-tile"><div class="kpi-value red">₹18,922</div><div class="kpi-key">Outstanding</div></div>
+          </div>
+
+          <!-- Walk-in nudge -->
+          <div class="walkin-banner" style="margin-bottom:12px" onclick="selectArrival(document.querySelectorAll('.arrival-card')[3])">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="23" y2="8"/></svg>
+            <div>
+              <div class="wb-title">Guest arriving without a booking?</div>
+              <div class="wb-sub">Tap here for instant walk-in check-in →</div>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-bottom:8px">Today's Arrivals</div>
+
+          <div class="arrivals-list">
+
+            <!-- Arrival 1: Direct -->
+            <div class="arrival-card selected" onclick="selectArrival(this)" data-type="direct" data-name="Future Guest" data-phone="9888888888" data-booking="MG-69-69BCC4D3-3F9B" data-room="r2" data-roomid="8526" data-checkin="2026-09-07" data-checkout="2026-09-09">
+              <div class="arrival-room-badge">r2</div>
+              <div class="arrival-card-body">
+                <div class="arrival-guest-name">Future Guest</div>
+                <div class="arrival-meta">
+                  <span class="channel-pill direct">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:9px;height:9px"><polyline points="20 6 9 17 4 12"/></svg>
+                    Direct
+                  </span>
+                  <span class="arrival-dates">07 Sep → 09 Sep</span>
+                  <span class="meal-pill">Room Only</span>
+                </div>
+              </div>
+              <div class="arrival-card-actions">
+                <span class="nights-badge">2 nights</span>
+                <span class="select-chip" style="color:var(--green)">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Selected
+                </span>
+              </div>
+            </div>
+
+            <!-- Arrival 2: OTA -->
+            <div class="arrival-card" onclick="selectArrival(this)" data-type="online" data-name="Test Guest" data-phone="9876543210" data-booking="BDC8899464" data-room="r5" data-roomid="8527" data-checkin="2026-09-08" data-checkout="2026-09-10">
+              <div class="arrival-room-badge">r5</div>
+              <div class="arrival-card-body">
+                <div class="arrival-guest-name">Test Guest</div>
+                <div class="arrival-meta">
+                  <span class="channel-pill ota">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:9px;height:9px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    Booking.com
+                  </span>
+                  <span class="arrival-dates">08 Sep → 10 Sep</span>
+                  <span class="meal-pill">Breakfast Included</span>
+                </div>
+              </div>
+              <div class="arrival-card-actions">
+                <span class="nights-badge">2 nights</span>
+                <span class="select-chip">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="9 18 15 12 9 6"/></svg>
+                  Select
+                </span>
+              </div>
+            </div>
+
+            <!-- Arrival 3: Direct future -->
+            <div class="arrival-card" onclick="selectArrival(this)" data-type="direct" data-name="Priya Sharma" data-phone="9900123456" data-booking="MG-69-AB44CD12-5E78" data-room="r3" data-roomid="8524" data-checkin="2026-09-07" data-checkout="2026-09-14">
+              <div class="arrival-room-badge">r3</div>
+              <div class="arrival-card-body">
+                <div class="arrival-guest-name">Priya Sharma</div>
+                <div class="arrival-meta">
+                  <span class="channel-pill direct">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:9px;height:9px"><polyline points="20 6 9 17 4 12"/></svg>
+                    Direct
+                  </span>
+                  <span class="arrival-dates">07 Sep → 14 Sep</span>
+                  <span class="meal-pill">Half Board</span>
+                </div>
+              </div>
+              <div class="arrival-card-actions">
+                <span class="nights-badge">7 nights</span>
+                <span class="select-chip">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="9 18 15 12 9 6"/></svg>
+                  Select
+                </span>
+              </div>
+            </div>
+
+            <!-- Walk-in placeholder (hidden, used when walk-in button tapped) -->
+            <div class="arrival-card" id="walkin-card" style="display:none;border-color:var(--amber)" data-type="walkin" data-name="" data-phone="" data-booking="" data-room="" data-roomid="" data-checkin="" data-checkout="">
+              <div class="arrival-room-badge" style="background:var(--amber-lt);color:var(--amber)">WI</div>
+              <div class="arrival-card-body">
+                <div class="arrival-guest-name" style="color:var(--amber)">Walk-in Guest</div>
+                <div class="arrival-meta">
+                  <span class="channel-pill walkin">Walk-in</span>
+                  <span class="arrival-dates">No reservation</span>
+                </div>
+              </div>
+              <div class="arrival-card-actions">
+                <span class="select-chip" style="color:var(--amber)">
+                  <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+                  Active
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="annotation-box" style="margin-top:12px">
+            <strong>OD-P2-06 (B) applied:</strong> Arrivals list is the primary view. Staff taps a card → right panel pre-fills. Walk-in button above opens a blank form. No tab switcher — channel type is irrelevant to the operator's mental model.
+          </div>
+        </div>
+
+        <!-- RIGHT: check-in form -->
+        <div class="checkin-panel">
+          <div class="checkin-panel-header" id="panel-header">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+              <div style="width:8px;height:8px;background:var(--green);border-radius:50%;"></div>
+              <div style="font-size:14px;font-weight:700;color:var(--dark)" id="panel-guest-name">Future Guest</div>
+              <span class="channel-pill direct" id="panel-channel-pill">Direct</span>
+            </div>
+            <div style="font-size:11px;color:var(--gray);padding-left:16px" id="panel-booking-id">MG-69-69BCC4D3-3F9B</div>
+          </div>
+
+          <div class="checkin-panel-body" id="checkin-form">
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="field-label">Guest Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" id="ci-name" value="Future Guest" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Phone <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <span class="phone-prefix">+91</span>
+                  <input type="tel" id="ci-phone" value="9888888888" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label">Room Assignment <span class="req">*</span></label>
+              <div class="input-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <select id="ci-room">
+                  <option value="8526">r2 (Suite)</option>
+                  <option value="8524">r3 (Executive)</option>
+                  <option value="8525">r4 (Executive)</option>
+                  <option value="8527">r5 (Executive)</option>
+                  <option value="8528">r1 (Executive)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-nights">
+              <div class="form-group">
+                <label class="field-label">Check-in <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input type="date" id="ci-checkin" value="2026-09-07" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Nights</label>
+                <div class="input-wrap" style="background:#F9F9F9;justify-content:center">
+                  <input type="number" value="2" min="1" style="text-align:center;font-weight:700;font-size:14px" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Check-out <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input type="date" id="ci-checkout" value="2026-09-09" />
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="field-label">Room Amount <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <span style="font-size:13px;font-weight:700;color:#aaa;flex-shrink:0">₹</span>
+                  <input type="number" value="5000" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Advance Payment <span class="opt">(optional)</span></label>
+                <div class="input-wrap">
+                  <span style="font-size:13px;font-weight:700;color:#aaa;flex-shrink:0">₹</span>
+                  <input type="number" value="0" placeholder="0" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label">Note <span class="opt">(optional)</span></label>
+              <div class="input-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <input type="text" placeholder="Special requests…" />
+              </div>
+            </div>
+
+            <!-- Booking type indicator (read-only) -->
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:14px;height:14px;color:var(--gray)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span style="font-size:11px;color:var(--gray)">Booking type: <strong id="ci-type-label" style="color:var(--dark)">Direct</strong> &nbsp;·&nbsp; ID: <code id="ci-bid-label" style="font-size:10px;color:var(--dark)">MG-69-69BCC4D3-3F9B</code></span>
+            </div>
+
+            <button class="btn btn-primary btn-lg">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm Check-In
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SPEC BAR ── -->
+<div class="spec-bar">
+  <span><strong>v3 Mockup</strong> · CR-358-P2</span>
+  <span class="spec-sep">|</span>
+  <span>S3 New Booking: <strong>POST /aiosell/direct-reservation → 201</strong> + Walk-in via <strong>pmsService.pmsCheckIn()</strong></span>
+  <span class="spec-sep">|</span>
+  <span>S4 Check-In: <strong>GET /aiosell/local-reservations?view=arrivals</strong> → pre-fill form → <strong>POST /pos/user-group-check-in (JSON)</strong></span>
+  <span class="spec-sep">|</span>
+  <span>OD-P2-05(A) · OD-P2-06(B) · OD-P2-07(B) applied</span>
+</div>
+
+<script>
+  function switchScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    const tabMap = { 's3': 0, 's4': 1, 's3-success': 2 };
+    const tabs = document.querySelectorAll('.nav-tab');
+    if (tabMap[id] !== undefined) tabs[tabMap[id]].classList.add('active');
+  }
+
+  function selectRoom(el, name, type, id) {
+    document.querySelectorAll('.room-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  const channelLabels = { direct: 'Direct', online: 'Booking.com', walkin: 'Walk-in' };
+  const channelClasses = { direct: 'channel-pill direct', online: 'channel-pill ota', walkin: 'channel-pill walkin' };
+
+  function selectArrival(el) {
+    if (!el) return;
+    const type = el.dataset.type;
+    if (type === 'walkin') {
+      const wc = document.getElementById('walkin-card');
+      wc.style.display = 'flex';
+      document.querySelectorAll('.arrival-card').forEach(c => c.classList.remove('selected'));
+      wc.classList.add('selected');
+    } else {
+      document.getElementById('walkin-card').style.display = 'none';
+      document.querySelectorAll('.arrival-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    const name = el.dataset.name || '';
+    const phone = el.dataset.phone || '';
+    const booking = el.dataset.booking || '';
+    const room = el.dataset.room || '';
+    const roomid = el.dataset.roomid || '';
+    const checkin = el.dataset.checkin || '';
+    const checkout = el.dataset.checkout || '';
+
+    document.getElementById('panel-guest-name').textContent = name || 'Walk-in Guest';
+    document.getElementById('panel-booking-id').textContent = booking || 'No booking ID — Walk-in';
+    const pill = document.getElementById('panel-channel-pill');
+    pill.textContent = channelLabels[type] || type;
+    pill.className = channelClasses[type] || 'channel-pill walkin';
+
+    document.getElementById('ci-name').value = name;
+    document.getElementById('ci-phone').value = phone;
+    document.getElementById('ci-checkin').value = checkin;
+    document.getElementById('ci-checkout').value = checkout;
+    document.getElementById('ci-type-label').textContent = channelLabels[type] || 'Walk-in';
+    document.getElementById('ci-bid-label').textContent = booking || '—';
+
+    if (roomid) {
+      const sel = document.getElementById('ci-room');
+      for (let opt of sel.options) {
+        if (opt.value === roomid) { sel.value = roomid; break; }
+      }
+    }
+  }
+</script>
+</body>
+</html>

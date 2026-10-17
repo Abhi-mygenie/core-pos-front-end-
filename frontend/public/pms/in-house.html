@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — In-House Guests</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A}.nav-active{background:rgba(50,153,55,.1);border-left:3px solid #329937 !important;color:#329937}.nav-item{border-left:3px solid transparent;transition:background .15s}.nav-item:hover{background:#F7F7F7}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#E5E5E5;border-radius:4px}
+.src-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:#fff;border:1px solid #E5E5E5;box-shadow:0 1px 2px rgba(0,0,0,.04);flex-shrink:0}
+.src-badge img{width:15px;height:15px;border-radius:2px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+<!-- SIDEBAR -->
+<aside style="width:280px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0">
+  <div style="padding:16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between"><img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:40px"><button style="padding:8px;border-radius:8px;color:#666;background:transparent;border:none;cursor:pointer"><i data-lucide="panel-left-close" style="width:20px;height:20px"></i></button></div>
+  <div style="padding:12px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;gap:8px">
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(242,107,51,.08);color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="layout-grid" style="width:20px;height:20px;flex-shrink:0"></i><span>Table View</span></button>
+    <button style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:8px;background:rgba(50,153,55,.08);color:#329937;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500"><i data-lucide="columns" style="width:20px;height:20px;flex-shrink:0"></i><span>By Channel</span></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:8px 0">
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="home" style="width:20px;height:20px;flex-shrink:0"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="banknote" style="width:20px;height:20px;flex-shrink:0"></i><span>Day Closure</span></a>
+    <div>
+      <a href="front-desk.html" class="nav-active nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bed-double" style="width:20px;height:20px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:16px;height:16px;color:#666"></i></a>
+      <div style="margin-left:16px;border-left:1px solid #E5E5E5">
+        <a href="front-desk.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Front Desk</a>
+        <a href="reservations.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Reservations</a>
+        <a href="in-house.html" style="display:flex;padding:10px 16px;color:#329937;background:rgba(50,153,55,.06);font-size:13px;text-decoration:none;font-weight:500">In-House Guests</a>
+        <a href="room-status.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Room Status</a>
+        <a href="channel-manager.html" style="display:flex;padding:10px 16px;color:#666;font-size:13px;text-decoration:none">Channel Manager</a>
+      </div>
+    </div>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="bar-chart-3" style="width:20px;height:20px;flex-shrink:0"></i><span>Daily Report</span></a>
+    <a href="#" class="nav-item" style="display:flex;align-items:center;gap:12px;padding:12px 16px;color:#1A1A1A;text-decoration:none;font-size:13px;font-weight:500"><i data-lucide="settings" style="width:20px;height:20px;flex-shrink:0"></i><span>Settings</span></a>
+  </nav>
+  <div style="padding:16px;border-top:1px solid #E5E5E5">
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#F26B33;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="refresh-cw" style="width:20px;height:20px;flex-shrink:0"></i><span>Refresh</span></button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#1A1A1A;border:none;cursor:pointer;font-family:Poppins,sans-serif;font-size:13px;background:transparent;margin-top:4px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:16px;height:16px;color:white"></i></div>
+      <div style="text-align:left"><div style="font-size:13px;font-weight:500">Owner (Admin)</div><div style="font-size:11px;color:#666">#541</div></div>
+    </button>
+    <button style="width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;color:#EF4444;border:none;cursor:pointer;margin-top:4px;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;background:transparent"><i data-lucide="log-out" style="width:20px;height:20px;flex-shrink:0"></i><span>Logout</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div>
+      <h1 style="font-size:18px;font-weight:700">In-House Guests</h1>
+      <p style="font-size:12px;color:#666;margin-top:2px">11 guests currently staying · 27 Aug 2026</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;width:260px">
+        <i data-lucide="search" style="width:15px;height:15px;color:#999;flex-shrink:0"></i>
+        <input type="text" placeholder="Search guest, room..." style="flex:1;border:none;outline:none;font-size:13px;color:#1A1A1A;background:transparent;font-family:Poppins,sans-serif">
+      </div>
+      <button style="display:flex;align-items:center;gap:6px;height:38px;padding:0 14px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;color:#666;cursor:pointer;font-family:Poppins,sans-serif"><i data-lucide="filter" style="width:14px;height:14px"></i> Filter</button>
+    </div>
+  </div>
+
+  <div style="padding:20px 28px;display:flex;flex-direction:column;gap:16px">
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:16px;text-align:center"><div style="font-size:26px;font-weight:700">11</div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-top:4px">In-House</div></div>
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:16px;text-align:center"><div style="font-size:26px;font-weight:700;color:#F4A11A">3</div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-top:4px">Checkout Today</div></div>
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:16px;text-align:center"><div style="font-size:22px;font-weight:700;color:#EF4444">₹42,480</div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-top:4px">Outstanding Balance</div></div>
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:16px;text-align:center"><div style="font-size:26px;font-weight:700">2.4</div><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-top:4px">Avg Nights</div></div>
+    </div>
+
+    <!-- Table -->
+    <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;overflow:hidden">
+      <!-- Header -->
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;background:#F7F7F7;border-bottom:1px solid #E5E5E5;padding:10px 20px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666">Room</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666">Guest</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666">Source</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666">Check-in</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666">Check-out</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;text-align:right">Balance</div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#666;text-align:right">Actions</div>
+      </div>
+      <!-- DUE TODAY row -->
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;border-bottom:1px solid #FFF0CC;background:#FFFBF0;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">112</div><div style="font-size:11px;color:#999">Standard</div></div>
+        <div><div style="font-size:13px;font-weight:600">Suresh Nair</div><div style="font-size:11px;color:#666">+91 96543 21987</div></div>
+        <div><div class="src-badge"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=15"></div></div>
+        <div style="font-size:13px;color:#666">25 Aug</div>
+        <div><div style="font-size:13px;font-weight:600;color:#F4A11A">27 Aug (today)</div><div style="font-size:11px;color:#F4A11A">Due by 11 AM</div></div>
+        <div style="text-align:right;font-size:13px;font-weight:700;color:#EF4444">₹9,800</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Suresh Nair','112','₹9,800','25 Aug','27 Aug','Booking.com','Standard')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 14px;background:#1A1A1A;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap">Check Out</a>
+        </div>
+      </div>
+      <!-- Normal rows -->
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;border-bottom:1px solid #F5F5F5;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">101</div><div style="font-size:11px;color:#999">Standard</div></div>
+        <div><div style="font-size:13px;font-weight:600">Rahul Sharma</div><div style="font-size:11px;color:#666">+91 98765 43210</div></div>
+        <div><div class="src-badge"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=15"></div></div>
+        <div style="font-size:13px;color:#666">27 Aug</div>
+        <div style="font-size:13px;color:#666">29 Aug <span style="font-size:11px;color:#999">(2n)</span></div>
+        <div style="text-align:right;font-size:13px;font-weight:600;color:#EF4444">₹7,064</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Rahul Sharma','101','₹7,064','27 Aug','29 Aug','Booking.com','Standard')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#1A1A1A;background:#fff;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;font-family:Poppins,sans-serif">Check Out</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;border-bottom:1px solid #F5F5F5;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">103</div><div style="font-size:11px;color:#999">Standard</div></div>
+        <div><div style="font-size:13px;font-weight:600">Neha Gupta</div><div style="font-size:11px;color:#666">+91 65432 10987</div></div>
+        <div><div class="src-badge" style="background:rgba(50,153,55,.08);border-color:rgba(50,153,55,.2)"><i data-lucide="user-plus" style="width:13px;height:13px;color:#329937"></i></div></div>
+        <div style="font-size:13px;color:#666">27 Aug</div>
+        <div style="font-size:13px;color:#666">29 Aug <span style="font-size:11px;color:#999">(2n)</span></div>
+        <div style="text-align:right;font-size:13px;font-weight:600;color:#EF4444">₹6,528</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Neha Gupta','103','₹6,528','27 Aug','29 Aug','Walk-in','Standard')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#1A1A1A;background:#fff;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;font-family:Poppins,sans-serif">Check Out</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;border-bottom:1px solid #F5F5F5;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">201</div><div style="font-size:11px;color:#999">Deluxe</div></div>
+        <div><div style="font-size:13px;font-weight:600">Amit Singh</div><div style="font-size:11px;color:#666">+91 76543 21098</div></div>
+        <div><div class="src-badge"><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=15"></div></div>
+        <div style="font-size:13px;color:#666">27 Aug</div>
+        <div style="font-size:13px;color:#666">2 Sep <span style="font-size:11px;color:#999">(6n)</span></div>
+        <div style="text-align:right;font-size:13px;font-weight:600;color:#EF4444">₹30,492</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Amit Singh','201','₹30,492','27 Aug','2 Sep','Airbnb','Deluxe')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#1A1A1A;background:#fff;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;font-family:Poppins,sans-serif">Check Out</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;border-bottom:1px solid #F5F5F5;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">202</div><div style="font-size:11px;color:#999">Deluxe</div></div>
+        <div><div style="font-size:13px;font-weight:600">Vikram Reddy</div><div style="font-size:11px;color:#666">+91 87654 32108</div></div>
+        <div><div class="src-badge" style="background:rgba(242,107,51,.08);border-color:rgba(242,107,51,.2)"><i data-lucide="phone" style="width:13px;height:13px;color:#F26B33"></i></div></div>
+        <div style="font-size:13px;color:#666">27 Aug</div>
+        <div style="font-size:13px;color:#666">30 Aug <span style="font-size:11px;color:#999">(3n)</span></div>
+        <div style="text-align:right;font-size:13px;font-weight:600;color:#999">₹0</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Vikram Reddy','202','₹0','27 Aug','30 Aug','Direct','Deluxe')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#1A1A1A;background:#fff;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;font-family:Poppins,sans-serif">Check Out</a>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:80px 1fr 80px 108px 140px 90px 192px;gap:0;padding:12px 20px;align-items:center">
+        <div><div style="font-size:15px;font-weight:700">301</div><div style="font-size:11px;color:#999">Suite</div></div>
+        <div><div style="font-size:13px;font-weight:600">Sunita Mehta</div><div style="font-size:11px;color:#666">+91 54321 09876</div></div>
+        <div><div class="src-badge"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=15"></div></div>
+        <div style="font-size:13px;color:#666">28 Aug</div>
+        <div style="font-size:13px;color:#666">1 Sep <span style="font-size:11px;color:#999">(4n)</span></div>
+        <div style="text-align:right;font-size:13px;font-weight:600;color:#EF4444">₹21,798</div>
+        <div style="display:flex;justify-content:flex-end;gap:6px">
+          <button onclick="openFolioPanel(this,'Sunita Mehta','301','₹21,798','28 Aug','1 Sep','Expedia','Suite')" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#666;background:#fff;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;gap:5px;white-space:nowrap"><i data-lucide="file-text" style="width:13px;height:13px"></i>View Bill</button>
+          <a href="departures.html" style="height:32px;padding:0 12px;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;color:#1A1A1A;background:#fff;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;font-family:Poppins,sans-serif">Check Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+function openFolioPanel(btn, guest, room, balance, checkin, checkout, source, type) {
+  document.getElementById('fp-title').textContent = 'Bill · Room ' + room;
+  document.getElementById('fp-sub').textContent = type + ' · ' + source;
+  document.getElementById('fp-guest').textContent = guest;
+  document.getElementById('fp-dates').textContent = checkin + ' → ' + checkout;
+  const nights = type === 'Suite' ? 4 : (type === 'Deluxe' ? 3 : 2);
+  const rateMap = {'Standard':3600,'Deluxe':5400,'Suite':9800};
+  const rate = rateMap[type] || 3600;
+  const roomTotal = rate * nights;
+  const gst = Math.round(roomTotal * 0.12);
+  const food = Math.round(roomTotal * 0.15);
+  const subtotal = roomTotal + gst + food;
+  const adv = 1000;
+  document.getElementById('fp-charges').innerHTML =
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F5F5F5"><span style="color:#666">Room (₹${rate.toLocaleString('en-IN')} × ${nights}n)</span><span style="font-weight:500">₹${roomTotal.toLocaleString('en-IN')}</span></div>
+     <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F5F5F5"><span style="color:#666">GST (12%)</span><span style="font-weight:500">₹${gst.toLocaleString('en-IN')}</span></div>
+     <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:#666">Food & Beverages</span><span style="font-weight:500">₹${food.toLocaleString('en-IN')}</span></div>`;
+  document.getElementById('fp-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
+  document.getElementById('fp-advance').textContent = '− ₹1,000';
+  const balNum = balance === '₹0' ? 0 : (subtotal - adv);
+  document.getElementById('fp-balance').textContent = '₹' + balNum.toLocaleString('en-IN');
+  document.getElementById('fp-balance').style.color = balNum > 0 ? '#EF4444' : '#329937';
+  document.getElementById('fp-overlay').style.display = 'block';
+  document.getElementById('fp-panel').style.display = 'flex';
+  lucide.createIcons();
+}
+function closeFP() {
+  document.getElementById('fp-overlay').style.display = 'none';
+  document.getElementById('fp-panel').style.display = 'none';
+}
+</script>
+
+<!-- FOLIO SLIDE-OVER -->
+<div id="fp-overlay" onclick="closeFP()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100"></div>
+<div id="fp-panel" style="display:none;position:fixed;right:0;top:0;bottom:0;width:360px;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:101;flex-direction:column;overflow:hidden">
+  <div style="padding:14px 18px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-size:14px;font-weight:600" id="fp-title">Bill</div><div style="font-size:12px;color:#888;margin-top:1px" id="fp-sub"></div></div>
+    <button onclick="closeFP()" style="width:30px;height:30px;border-radius:8px;border:1px solid #E5E5E5;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#666"><i data-lucide="x" style="width:15px;height:15px"></i></button>
+  </div>
+  <div style="padding:12px 18px;background:#FAFAFA;border-bottom:1px solid #F0F0F0">
+    <div style="font-size:14px;font-weight:600" id="fp-guest"></div>
+    <div style="font-size:12px;color:#888;margin-top:2px" id="fp-dates"></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px 18px">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:10px">Charges</div>
+    <div id="fp-charges" style="font-size:13px"></div>
+    <div style="border-top:1px solid #E5E5E5;margin-top:12px;padding-top:12px;font-size:13px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;justify-content:space-between"><span style="color:#666">Sub-total</span><span id="fp-subtotal"></span></div>
+      <div style="display:flex;justify-content:space-between;color:#329937"><span>Advance Paid</span><span id="fp-advance"></span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid #E5E5E5;padding-top:8px"><span>Balance Due</span><span id="fp-balance"></span></div>
+    </div>
+  </div>
+  <div style="padding:12px 18px;border-top:1px solid #E5E5E5;display:flex;gap:8px">
+    <button style="flex:1;height:36px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="printer" style="width:13px;height:13px"></i>Print</button>
+    <button style="flex:1;height:36px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px;color:#329937"><i data-lucide="send" style="width:13px;height:13px"></i>WhatsApp</button>
+    <button style="flex:1;height:36px;background:#1A1A1A;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="log-out" style="width:13px;height:13px"></i>Check Out</button>
+  </div>
+</div>
+<style>
+aside:not([class]){width:64px!important;min-width:64px!important;overflow:hidden!important}
+aside:not([class])>div:first-child img{height:26px!important;width:26px!important;object-fit:contain!important}
+aside:not([class])>div:first-child>button:last-child{display:none!important}
+aside:not([class])>div:nth-child(2){flex-direction:column!important;align-items:center!important;padding:8px 0!important;gap:4px!important}
+aside:not([class])>div:nth-child(2) button{width:40px!important;height:40px!important;justify-content:center!important;padding:0!important}
+aside:not([class])>div:nth-child(2) button span{display:none!important}
+aside:not([class]) nav a,aside:not([class]) nav>button{justify-content:center!important;padding:10px 0!important}
+aside:not([class]) nav a span,aside:not([class]) nav>button span,aside:not([class]) nav i[data-lucide="chevron-down"]{display:none!important}
+aside:not([class]) nav>div>div[style*="margin-left"]{display:none!important}
+aside:not([class])>div:last-child{flex-direction:column!important;align-items:center!important;padding:6px 0!important;gap:2px!important}
+aside:not([class])>div:last-child button{width:40px!important;height:40px!important;justify-content:center!important;flex:none!important;padding:0!important}
+aside:not([class])>div:last-child button span,aside:not([class])>div:last-child button div[style*="text-align:left"]{display:none!important}
+</style>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "bug_id": "BUG-395",
+  "probe_date": "2026-09-10",
+  "account": "owner@thegoankitchen.com (RID: unknown \u2014 profile endpoint returned 404)",
+  "login_result": "SUCCESS (auth token obtained)",
+  "crm_token": "NULL \u2014 this restaurant has no CRM integration enabled",
+  "crm_probe_result": "CANNOT PROBE \u2014 crm_token=null, no matching CRM API key in .env for this restaurant",
+  "findings": {
+    "GAP_1": {
+      "location": "orderTransform.js buildDeliveryAddress L930-948",
+      "issue": "city and state absent from delivery_address payload sent to backend",
+      "status": "FIXED \u2014 added city: addr.city||'' and state: addr.state||''",
+      "impact": "All orders loaded from API had empty city/state in fallback path"
+    },
+    "GAP_2": {
+      "location": "CRM address data for customer Parth / 9696759712",
+      "issue": "overrides.deliveryAddress.city and .state are empty strings despite customerTransform mapping them correctly",
+      "possible_causes": [
+        "CRM address record for this customer has empty city/state fields",
+        "thegoankitchen has no CRM \u2014 address saved via POS buildDeliveryAddress (which previously excluded city/state)"
+      ],
+      "probe_status": "CANNOT VERIFY \u2014 crm_token=null for this restaurant, no CRM API key in .env",
+      "workaround": "Fix 1 (buildDeliveryAddress) now sends city/state to backend. Future address saves will persist city/state. Existing saved addresses in DB remain without city/state unless re-saved."
+    }
+  },
+  "conclusion": "Fix 1 (buildDeliveryAddress) is the primary FE fix. GAP 2 (CRM data) is a data/backend concern \u2014 existing saved addresses may not have city/state in the DB. New address saves after this fix will correctly persist city/state."
+}

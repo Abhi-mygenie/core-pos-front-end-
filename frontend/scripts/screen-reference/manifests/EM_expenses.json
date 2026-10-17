@@ -1,0 +1,52 @@
+{
+  "_comment": "CR-390: Expenses Management module manifest",
+  "module_code": "EM",
+  "module_name": "Expenses Management",
+  "eyebrow": "EXPENSES MANAGEMENT",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    {
+      "route": "/expense-setup",
+      "section": "Expense Categories",
+      "states": [
+        {
+          "slug": "expense-setup-list",
+          "title": "Expense Categories",
+          "description": "All configured expense categories and sub-categories.",
+          "pre_actions": []
+        },
+        {
+          "slug": "expense-setup-add",
+          "title": "Add Expense Category",
+          "description": "Create a new expense category with name and type.",
+          "pre_actions": [
+            { "type": "click", "selector": "button:has-text('Add'), [data-testid='add-category-btn']" },
+            { "type": "wait", "ms": 500 }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/expenses",
+      "section": "Expense Entry",
+      "states": [
+        {
+          "slug": "expense-log",
+          "title": "Expense Log",
+          "description": "List of all recorded expenses with date, category, amount and payment mode.",
+          "pre_actions": []
+        },
+        {
+          "slug": "expense-add-form",
+          "title": "Add Expense",
+          "description": "Record a new expense: category, amount, payment mode and remarks.",
+          "pre_actions": [
+            { "type": "click", "selector": "button:has-text('Add Expense'), [data-testid='add-expense-btn']" },
+            { "type": "wait", "ms": 500 }
+          ]
+        }
+      ]
+    }
+  ]
+}

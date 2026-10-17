@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Room UI — Before vs After</title>
+<style>
+  :root {
+    --orange: #f57b1d;
+    --green:  #2ea44f;
+    --dark:   #1f2937;
+    --gray:   #6b7280;
+    --light:  #f3f4f6;
+    --border: #e5e7eb;
+    --new:    #1d4ed8;
+    --new-bg: #dbeafe;
+    --warn:   #b91c1c;
+    --warn-bg:#fee2e2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 24px;
+    color: var(--dark);
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 13px; font-weight: 700; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .lede { color: var(--gray); margin-bottom: 24px; font-size: 13px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  .col { background: white; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; }
+  .col-head { padding: 8px 14px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: white; }
+  .col-head.before { background: var(--gray); }
+  .col-head.after  { background: var(--green); }
+  .phone-frame {
+    margin: 16px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+    font-size: 13px;
+  }
+  /* shared bits */
+  .room-badge { display: inline-block; padding: 6px 14px; background: var(--orange); color: white; border-radius: 20px; font-weight: 700; font-size: 14px; }
+  .cancel-btn { padding: 6px 12px; background: #fee2e2; color: var(--warn); border-radius: 8px; font-size: 13px; }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
+  .row.bordered + .row.bordered { border-top: 1px solid var(--border); }
+  .input { background: var(--light); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; flex: 1; font-size: 13px; color: var(--gray); }
+  .input.real { color: var(--dark); }
+  .grid-th { display: flex; padding: 8px 12px; font-size: 11px; color: var(--gray); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .grid-th > span:first-child { flex: 2; }
+  .grid-th > span { flex: 1; text-align: right; }
+  .empty-state { padding: 36px 12px; text-align: center; color: var(--gray); font-size: 13px; }
+  .empty-state .ico { font-size: 36px; opacity: 0.25; margin-bottom: 6px; }
+  .pill-section {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-top: 1px solid var(--border);
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+  }
+  .pill-section .label { display: flex; align-items: center; gap: 6px; color: var(--gray); }
+  .pill-section .label i { color: var(--orange); font-style: normal; }
+  .pill-section .amt { color: var(--orange); font-weight: 700; }
+  .pill-section .chev { color: var(--gray); margin-left: 6px; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+  .btn { padding: 10px 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 13px; }
+  .btn.update { background: #fed7aa; color: #c2410c; }
+  .btn.checkout { background: var(--green); color: white; }
+  /* Bill summary card */
+  .bs-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .bs-title { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+  .print-bill { padding: 4px 10px; border: 1px solid var(--orange); color: var(--orange); border-radius: 6px; font-size: 11px; }
+  .bs-total-h { color: var(--orange); font-weight: 700; font-size: 16px; }
+  .bs-card { padding: 12px; }
+  .bs-section { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; }
+  .bs-section.bordered + .bs-section.bordered { border-top: 1px solid var(--border); }
+  .bs-section .lbl { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--gray); }
+  .bs-section .lbl i { color: var(--orange); font-style: normal; }
+  .bs-section .amt { font-weight: 700; color: var(--orange); font-size: 13px; }
+  .bs-section .chev { color: var(--gray); }
+  .bs-total-row { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--border); margin-top: 6px; font-weight: 700; }
+  .bs-total-row .lbl { color: var(--dark); }
+  .bs-total-row .amt { color: var(--orange); }
+  /* Annotation */
+  .new-tag { display: inline-block; background: var(--new-bg); color: var(--new); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+  .changed { outline: 2px dashed var(--new); outline-offset: 2px; border-radius: 6px; position: relative; }
+  .changed::after {
+    content: attr(data-note);
+    position: absolute; right: -10px; top: -10px;
+    background: var(--new); color: white; font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 3px; text-transform: uppercase;
+  }
+  .added-block { background: var(--new-bg); padding: 6px; border-radius: 6px; margin: 6px 0; border: 1px dashed var(--new); }
+  .added-block-label { font-size: 9px; color: var(--new); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; padding-left: 4px; }
+  /* Sub-stack for Grand Total */
+  .gt-stack { padding: 8px 0; border-top: 1px solid var(--border); margin-top: 6px; }
+  .gt-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; color: var(--gray); }
+  .gt-row .amt { color: var(--dark); font-weight: 600; }
+  .gt-final { display: flex; justify-content: space-between; padding: 8px 0 4px; border-top: 1px solid var(--border); margin-top: 6px; font-weight: 700; font-size: 14px; }
+  .gt-final .lbl { color: var(--dark); }
+  .gt-final .amt { color: var(--orange); font-size: 16px; }
+  /* Payment block */
+  .pm-head { padding: 10px 12px 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+  .pm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 0 12px 8px; }
+  .pm-tile { padding: 14px 6px; border: 1px solid var(--border); border-radius: 8px; text-align: center; font-size: 12px; }
+  .pm-tile.active { border: 2px solid var(--green); color: var(--green); font-weight: 700; }
+  .pm-tile .ico { font-size: 16px; margin-bottom: 3px; opacity: 0.7; }
+  .cash-block { padding: 10px 12px; }
+  .cash-block .lbl { font-size: 11px; color: var(--gray); margin-bottom: 4px; }
+  .cash-input { padding: 10px 12px; background: var(--light); border-radius: 8px; color: var(--gray); font-size: 13px; }
+  .cash-chips { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 6px; }
+  .cash-chip { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 11px; color: var(--gray); }
+  .full-checkout { padding: 12px; }
+  .full-checkout .btn { padding: 14px; font-size: 14px; }
+  /* legend */
+  .legend { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; font-size: 12px; color: var(--gray); }
+  .legend .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+  .swatch.added { background: var(--new-bg); border: 1px dashed var(--new); }
+  .swatch.changed { background: white; outline: 2px dashed var(--new); outline-offset: -2px; }
+</style>
+</head>
+<body>
+
+<h1>Room UI — Before vs After (UX proposal)</h1>
+<p class="lede">
+  Two screens, two columns each. Left column = current production (matches your screenshots).
+  Right column = proposed change (Option A — Stack of Subtotals).
+  Test data: room <b>r2</b>, customer +91-7505242126, transferred orders ₹305, no food yet,
+  illustrative room balance ₹4,000 (advance ₹1,000 / room price ₹5,000).
+</p>
+
+<div class="legend">
+  <span><span class="swatch added"></span>New block</span>
+  <span><span class="swatch changed"></span>Existing block — content changed</span>
+</div>
+
+<!-- ============== ORDER ENTRY PAGE ============== -->
+<h2>1. Order Entry page (the screen behind the menu)</h2>
+
+<div class="pair">
+
+  <!-- BEFORE -->
+  <div class="col">
+    <div class="col-head before">Before — current production</div>
+    <div class="phone-frame">
+      <div class="row">
+        <span class="room-badge">r2 ▾</span>
+        <span class="cancel-btn">✕ Cancel</span>
+      </div>
+      <div class="row" style="gap: 8px;">
+        <div class="input">👤 Customer name</div>
+        <div class="input real">📞 +91 7505242126</div>
+      </div>
+      <div class="grid-th"><span>Items</span><span>Qty</span><span>Price</span></div>
+      <div class="empty-state">
+        <div class="ico">🍴</div>
+        No items in order<br/>
+        <span style="opacity:0.6;">Tap menu items to add</span>
+      </div>
+      <div class="pill-section">
+        <div class="label"><i>⇆</i> Transferred Orders (1)</div>
+        <div><span class="amt">₹305</span><span class="chev">▾</span></div>
+      </div>
+      <div class="actions">
+        <div class="btn update">Update Order</div>
+        <div class="btn checkout">Checkout&nbsp; ₹0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="col">
+    <div class="col-head after">After — proposed</div>
+    <div class="phone-frame">
+      <div class="row">
+        <span class="room-badge">r2 ▾</span>
+        <span class="cancel-btn">✕ Cancel</span>
+      </div>
+      <div class="row" style="gap: 8px;">
+        <div class="input">👤 Customer name</div>
+        <div class="input real">📞 +91 7505242126</div>
+      </div>
+      <div class="grid-th"><span>Items</span><span>Qty</span><span>Price</span></div>
+      <div class="empty-state">
+        <div class="ico">🍴</div>
+        No items in order<br/>
+        <span style="opacity:0.6;">Tap menu items to add</span>
+      </div>
+      <!-- NEW Room section -->
+      <div class="pill-section" style="background: var(--new-bg);">
+        <div class="label"><i>📄</i> Room <span class="new-tag">NEW</span></div>
+        <div><span class="amt">₹4,000</span><span class="chev">▾</span></div>
+      </div>
+      <div class="pill-section">
+        <div class="label"><i>⇆</i> Transferred Orders (1)</div>
+        <div><span class="amt">₹305</span><span class="chev">▾</span></div>
+      </div>
+      <div class="actions">
+        <div class="btn update">Update Order</div>
+        <div class="btn checkout changed" data-note="amt">Checkout&nbsp; ₹4,305</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="lede" style="margin-top:-12px;">
+  <b>Order Entry changes:</b><br/>
+  ① <b>NEW</b> "Room" collapsible pill (icon + balance). Expands to show Room Charge / Advance Paid / Balance.<br/>
+  ② Checkout button amount goes from <b>₹0</b> → <b>₹4,305</b> (transferred ₹305 + room balance ₹4,000), so the operator can leave the screen and settle the room without first adding food.<br/>
+  ③ Update Order button is unchanged. Item grid is unchanged.
+</p>
+
+<!-- ============== COLLECT BILL PAGE ============== -->
+<h2>2. Collect Bill / Checkout page</h2>
+
+<div class="pair">
+
+  <!-- BEFORE -->
+  <div class="col">
+    <div class="col-head before">Before — current production</div>
+    <div class="phone-frame">
+      <div class="bs-head">
+        <span class="bs-title">📋 Bill Summary</span>
+        <span class="print-bill">🖨 Print Bill</span>
+        <span class="bs-total-h">₹305</span>
+      </div>
+      <div class="bs-card">
+        <div class="bs-section bordered">
+          <div class="lbl"><i>⇆</i> Transferred Orders (1)</div>
+          <div><span class="amt">₹305</span> <span class="chev">▾</span></div>
+        </div>
+        <div class="bs-section bordered">
+          <div class="lbl"><i>🛎</i> Room Service</div>
+          <div><span class="amt">₹0</span> <span class="chev">▾</span></div>
+        </div>
+        <div class="bs-total-row">
+          <span class="lbl">Total</span>
+          <span class="amt">₹305</span>
+        </div>
+      </div>
+      <div class="pm-head">💳 Payment Method</div>
+      <div class="pm-grid">
+        <div class="pm-tile active"><div class="ico">💵</div>Cash</div>
+        <div class="pm-tile"><div class="ico">📱</div>UPI</div>
+        <div class="pm-tile"><div class="ico">💳</div>Card</div>
+      </div>
+      <div class="pm-grid">
+        <div class="pm-tile">Credit</div>
+        <div class="pm-tile">More… ▾</div>
+        <div></div>
+      </div>
+      <div class="cash-block">
+        <div class="lbl">Cash Received</div>
+        <div class="cash-input">Amount</div>
+        <div class="cash-chips">
+          <div class="cash-chip">₹0</div>
+          <div class="cash-chip">₹0</div>
+          <div class="cash-chip">₹0</div>
+        </div>
+      </div>
+      <div class="full-checkout">
+        <div class="btn checkout">Checkout&nbsp; ₹305</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="col">
+    <div class="col-head after">After — proposed (Option A)</div>
+    <div class="phone-frame">
+      <div class="bs-head">
+        <span class="bs-title">📋 Bill Summary</span>
+        <span class="print-bill">🖨 Print Bill</span>
+        <span class="bs-total-h changed" data-note="amt">₹4,305</span>
+      </div>
+      <div class="bs-card">
+        <!-- NEW Room section, FIRST -->
+        <div class="added-block">
+          <div class="added-block-label">▼ NEW BLOCK</div>
+          <div class="bs-section">
+            <div class="lbl"><i>📄</i> Room</div>
+            <div><span class="amt">₹4,000</span> <span class="chev">▾</span></div>
+          </div>
+          <!-- expanded preview -->
+          <div style="margin: 4px 8px 6px 8px; padding: 8px 10px; background: rgba(245,123,29,0.05); border-radius: 6px; font-size: 12px;">
+            <div class="bs-section" style="padding: 2px 0; border:0;">
+              <span style="color: var(--gray);">Room Charge</span>
+              <span>₹5,000</span>
+            </div>
+            <div class="bs-section" style="padding: 2px 0; border:0;">
+              <span style="color: var(--gray);">Advance Paid</span>
+              <span>−₹1,000</span>
+            </div>
+            <div class="bs-section" style="padding: 4px 0 0 0; border-top: 1px solid var(--border); font-weight: 700;">
+              <span>Balance</span>
+              <span style="color: var(--orange);">₹4,000</span>
+            </div>
+          </div>
+        </div>
+        <div class="bs-section bordered">
+          <div class="lbl"><i>⇆</i> Transferred Orders (1)</div>
+          <div><span class="amt">₹305</span> <span class="chev">▾</span></div>
+        </div>
+        <div class="bs-section bordered">
+          <div class="lbl"><i>🛎</i> Room Service</div>
+          <div><span class="amt">₹0</span> <span class="chev">▾</span></div>
+        </div>
+        <!-- NEW Grand Total stack -->
+        <div class="added-block">
+          <div class="added-block-label">▼ NEW GRAND-TOTAL STACK</div>
+          <div class="gt-row"><span>Food Total</span><span class="amt">₹0</span></div>
+          <div class="gt-row"><span>Transferred Total</span><span class="amt">₹305</span></div>
+          <div class="gt-row"><span>Room Balance</span><span class="amt">₹4,000</span></div>
+          <div class="gt-final"><span class="lbl">GRAND TOTAL</span><span class="amt">₹4,305</span></div>
+        </div>
+      </div>
+      <div class="pm-head">💳 Payment Method</div>
+      <div class="pm-grid">
+        <div class="pm-tile active"><div class="ico">💵</div>Cash</div>
+        <div class="pm-tile"><div class="ico">📱</div>UPI</div>
+        <div class="pm-tile"><div class="ico">💳</div>Card</div>
+      </div>
+      <div class="pm-grid">
+        <div class="pm-tile">Credit</div>
+        <div class="pm-tile">More… ▾</div>
+        <div></div>
+      </div>
+      <div class="cash-block">
+        <div class="lbl">Cash Received</div>
+        <div class="cash-input">Amount</div>
+        <div class="cash-chips">
+          <div class="cash-chip">₹4,305</div>
+          <div class="cash-chip">₹4,400</div>
+          <div class="cash-chip">₹4,500</div>
+        </div>
+      </div>
+      <div class="full-checkout">
+        <div class="btn checkout changed" data-note="amt">Checkout&nbsp; ₹4,305</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="lede" style="margin-top:-12px;">
+  <b>Collect Bill changes:</b><br/>
+  ① Sticky header total: <b>₹305 → ₹4,305</b> (now includes room balance).<br/>
+  ② <b>NEW</b> "Room" collapsible block at the very top of the bill summary (above Transferred Orders). Expanded view shows Room Charge / Advance Paid / Balance.<br/>
+  ③ Existing "Transferred Orders" + "Room Service" rows unchanged in shape; their order is unchanged.<br/>
+  ④ The single "Total" row is replaced by a <b>NEW Grand-Total Stack</b>: Food Total + Transferred Total + Room Balance → GRAND TOTAL. Lines auto-hide when 0 (so a non-room dine-in checkout shows only Food Total → GRAND TOTAL — no regression).<br/>
+  ⑤ Cash-Received quick-amount chips reflect the new combined total (₹4,305 / ₹4,400 / ₹4,500).<br/>
+  ⑥ Pay button: <b>Checkout ₹305 → Checkout ₹4,305</b>.<br/>
+  ⑦ Architecture rule L2 still holds: SC %, GST %, discount % only operate on the Food Total row — they never touch the Room Balance row.
+</p>
+
+<!-- ============== EDGE-CASE MATRIX ============== -->
+<h2>3. Behavior matrix (lines auto-hide when 0)</h2>
+
+<table style="width:100%; border-collapse: collapse; font-size: 12px;">
+  <thead style="background: var(--light);">
+    <tr>
+      <th style="text-align:left; padding: 8px;">Scenario</th>
+      <th style="text-align:left; padding: 8px;">Room section visible?</th>
+      <th style="text-align:left; padding: 8px;">Stack rows visible</th>
+      <th style="text-align:left; padding: 8px;">Pay button label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-top: 1px solid var(--border);">
+      <td style="padding: 8px;">Marker-only room, balance ₹X, no associated, no food</td>
+      <td style="padding: 8px;">Yes</td>
+      <td style="padding: 8px;">Room Balance → GRAND TOTAL</td>
+      <td style="padding: 8px;">Checkout ₹X</td>
+    </tr>
+    <tr style="border-top: 1px solid var(--border);">
+      <td style="padding: 8px;">Room with food + transferred + balance (illustrated)</td>
+      <td style="padding: 8px;">Yes</td>
+      <td style="padding: 8px;">Food + Transferred + Room → GRAND TOTAL</td>
+      <td style="padding: 8px;">Checkout ₹{combined}</td>
+    </tr>
+    <tr style="border-top: 1px solid var(--border);">
+      <td style="padding: 8px;">Room, balance ₹0 (advance covers room price)</td>
+      <td style="padding: 8px;">Yes (shows ₹0)</td>
+      <td style="padding: 8px;">Food → GRAND TOTAL (Room row hidden)</td>
+      <td style="padding: 8px;">Checkout ₹{food}</td>
+    </tr>
+    <tr style="border-top: 1px solid var(--border);">
+      <td style="padding: 8px;">Non-room dine-in / walk-in / takeaway / delivery</td>
+      <td style="padding: 8px;">No</td>
+      <td style="padding: 8px;">Food → GRAND TOTAL only</td>
+      <td style="padding: 8px;">Pay ₹{food}</td>
+    </tr>
+    <tr style="border-top: 1px solid var(--border);">
+      <td style="padding: 8px;">Room w/ balance + apply discount on food</td>
+      <td style="padding: 8px;">Yes (untouched)</td>
+      <td style="padding: 8px;">Food drops; Room unchanged; GRAND TOTAL recomputes</td>
+      <td style="padding: 8px;">Checkout ₹{new combined}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="lede" style="margin-top: 24px;">
+  <b>Implementation note:</b> Stage 1 (transform) + Stage 2 (UI math + payload) are already in place.
+  The Grand-Total Stack (item ④) above is the only piece of <b>Option A</b> not yet implemented —
+  the current code shows a single "Total" row. If Option A is approved, that's a single edit
+  in <code>CollectPaymentPanel.jsx</code> at the existing Total row.
+</p>
+
+</body>
+</html>

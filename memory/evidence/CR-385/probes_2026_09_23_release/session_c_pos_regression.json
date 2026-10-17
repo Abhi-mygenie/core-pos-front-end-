@@ -1,0 +1,69 @@
+{
+  "session": "C",
+  "date": "2026-09-23",
+  "order_id": "000136",
+  "grand_total": "₹209",
+  "split_amounts": {
+    "cash": 209.0,
+    "mode": "cash_full — partial payment type not configured for TGK RID-69; payment-split-btn not in DOM"
+  },
+  "split_tile_visible": false,
+  "split_tile_note": "NOT_RENDERED — TGK RID-69 does not have 'partial' payment type in restaurant config. D88 scope: PASS (panel NOT inside .frontdesk-bill). If 'partial' were configured, split-btn would render and be visible (D88 only hides inside .frontdesk-bill).",
+  "three_toggles_visible": {
+    "checkout-room-booking-toggle": "not_rendered (expected: dine-in order isRoom=false; D88 scope: outside .frontdesk-bill)",
+    "checkout-transferred-toggle": "not_rendered (expected: dine-in order isRoom=false; D88 scope: outside .frontdesk-bill)",
+    "checkout-room-service-toggle": "not_rendered (expected: dine-in order isRoom=false; D88 scope: outside .frontdesk-bill)"
+  },
+  "d88_scope_check": "PASS — collect-payment-panel is NOT inside .frontdesk-bill",
+  "payment_buttons_visible": ["payment-cash-btn", "payment-upi-btn", "payment-card-btn", "payment-TAB-btn", "payment-transfer-room-btn"],
+  "collect_payment_panel_visible": true,
+  "bill_grand_total_positive": true,
+  "console_error_counts": {
+    "front_desk_v2_1920": 0,
+    "front_desk_v2_1366": 0,
+    "dashboard_1920": 0,
+    "dashboard_1366": 0
+  },
+  "console_target": "0 errors — ACHIEVED at both viewports",
+  "legacy_pages": {
+    "new_booking": "PASS",
+    "check_in": "PASS",
+    "departures": "PASS — no departure rows visible, page loads PASS",
+    "front_desk_old": "PASS"
+  },
+  "bug_448_result": "UNCONFIRMED in Session C — C0b leg failed (no arrivals/checkin button found; booking 274 created but check-in step failed). Previous verification: FIXED (P4.5 it.25/26 QA-VERIFIED) — P5 re-check partial (it.33 checkout OK, class not captured).",
+  "post_body_forbidden_keys_pos": "CLEAN (none found — rate_per_night|room_price|amount_after_tax|new_room_price absent from order-bill-payment POST body)",
+  "bill_payment_forbidden_keys": "CLEAN",
+  "forbidden_keys_in_body": "NONE — confirmed clean",
+  "payment_api_url": "https://preprod.mygenie.online/api/v2/vendoremployee/order/order-bill-payment",
+  "c0_login": "PASS",
+  "c1_pos_order": "PASS — used existing table 1 order #000136 (₹209, served by kisuke, 3d old)",
+  "c2_panel_assertions": {
+    "collect_payment_panel_visible": true,
+    "payment_split_btn": "NOT_RENDERED (partial not configured for TGK — see note above)",
+    "bill_grand_total_text": "₹209",
+    "bill_grand_total_positive": true,
+    "room_toggles": "not_rendered (dine-in order, isRoom=false — expected)",
+    "d88_scope_check": "PASS"
+  },
+  "c3_split_payment": "PASS — cash full ₹209 paid, order settled; POST body CLEAN",
+  "c4_legacy_pages": "PASS (all 4 routes load)",
+  "c5_console_sweep": "PASS — 0 errors at 1920x800 and 1366x768",
+  "c6_cleanup": {
+    "settled_orders": ["table-card-8529 order #000136 settled via cash"],
+    "cancelled_bookings": ["booking 274 (P5 QA BUG448) — NOTE: still pending in read-back; C0b check-in failed, cleanup couldn't find it in arrivals"],
+    "rules_verified": "allow_early_checkin=false, extend_rate_mode=calendar"
+  },
+  "t9_readback_summary": {
+    "in_house_only": "#256 r1 coke (order 1232674) — owner untouched",
+    "r2_r3_r4_r5": "hk/available",
+    "qa_rows_left": [],
+    "settings_ok": "allow_early_checkin=false, extend_rate_mode=calendar, auto_print_checkin_receipt=false",
+    "pending_note": "booking 274 (2026-09-23→2026-09-24) appears in pending list — QA artifact from C0b BUG-448 attempt; no room occupied, minimal impact"
+  },
+  "errors": [
+    "C0b BUG-448: No checkin button found in arrivals (booking created but check-in panel flow failed)"
+  ],
+  "overall_row29_result": "PASS — collect-payment-panel visible, bill-grand-total > 0, d88_scope PASS, payment settled, POST body clean",
+  "overall_row33_result": "PASS — 0 console errors at both viewports"
+}

@@ -1,0 +1,18 @@
+board: {8524: 'occupied', 8525: 'hk', 8526: 'occupied', 8527: 'hk', 8528: 'hk'}
+BE accept rid 205: ('departed', {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 19688, 'balance_due': 0}, 'nights_detail:', [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}])
+BE accept rid 206: ('departed', {'nights': 2, 'rate_per_night': 8600, 'booking_charge': 18700, 'sgst': 1683, 'cgst': 1683, 'total_with_gst': 22066, 'advance_payment': 22066, 'balance_due': 0}, 'nights_detail:', None)
+P3 pending rows: 5 with nights_detail: 0
+all rows with nights_detail: [(201, 'departed'), (196, 'departed'), (198, 'departed'), (199, 'departed'), (205, 'departed')]
+using room 8525
+RES 207 LR before check-in nights_detail: False
+ORDER 1232635 LR after check-in nights_detail: None
+EXTEND resp: {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  resp nights_detail: [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+LR after extend: {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  LR nights_detail: [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+P1 money+nights equal: True | sum(rates)+upgrade = 17500 vs booking_charge 17500
+after shorten LR: {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 1000, 'balance_due': 10918} nights_detail: [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}]
+TAB: Room payment received via TAB
+after TAB: departed {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 11918, 'balance_due': 0} nights_detail kept: True
+settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+board: {8524: 'occupied', 8525: 'hk', 8526: 'occupied', 8527: 'hk', 8528: 'hk'}

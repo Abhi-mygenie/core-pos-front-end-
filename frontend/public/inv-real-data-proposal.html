@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Real Data Proposals — yabyum</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
+.page{max-width:1320px;margin:0 auto;padding:24px 20px}
+
+h1{font-size:22px;font-weight:800;color:#0f172a}
+.sub{color:#64748b;font-size:13px;margin:4px 0 28px}
+
+/* ── Section card ── */
+.card{background:#fff;border-radius:14px;border:1px solid #e2e8f0;margin-bottom:36px;overflow:visible}
+.card-header{padding:14px 20px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:700;color:#0f172a}
+.pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.pill-red{background:#fee2e2;color:#dc2626}
+.pill-green{background:#dcfce7;color:#15803d}
+.pill-blue{background:#dbeafe;color:#1d4ed8}
+.pill-amber{background:#fef3c7;color:#b45309}
+.page-label{margin-left:auto;font-size:11px;color:#94a3b8;font-style:italic}
+
+/* ── Legend ── */
+.legend{display:flex;gap:18px;padding:10px 20px;background:#f8fafc;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b}
+.dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.dot-r{background:#fecaca;border:2px solid #f87171}
+.dot-g{background:#bbf7d0;border:2px solid #34d399}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1000px}
+th{background:#f8fafc;padding:9px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#64748b;border-bottom:2px solid #e2e8f0;white-space:nowrap;text-align:left}
+td{padding:11px 14px;border-bottom:1px solid #f8fafc;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+
+/* ── Cell states ── */
+.bad{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:6px;position:relative}
+.good{background:#f0fdf4;border:1.5px solid #86efac;border-radius:6px}
+.neutral{background:#fff}
+
+.tag{position:absolute;top:-9px;right:6px;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;white-space:nowrap;color:#fff}
+.tag-c{background:#ef4444}
+.tag-n{background:#22c55e}
+
+/* ── Values ── */
+.name{font-weight:700;color:#0f172a;font-size:13px}
+.cat{font-size:11px;color:#94a3b8;margin-top:1px}
+.val-bad{color:#dc2626;font-weight:700;text-decoration:line-through;font-size:12px;display:block}
+.val-good{color:#16a34a;font-weight:700;font-size:13px;display:block}
+.val-neutral{color:#334155;font-weight:600;font-size:13px}
+.unit{color:#94a3b8;font-size:11px;margin-left:3px}
+.hint{color:#94a3b8;font-size:10px;margin-left:4px}
+.sub-calc{font-size:10px;color:#94a3b8;margin-top:2px;display:block}
+
+/* ── Input mockup ── */
+.input-old{width:110px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;color:#64748b;display:inline-block;text-align:center}
+.input-wrap{display:inline-flex;flex-direction:column;width:150px}
+.input-new{border:1.5px solid #e2e8f0;border-radius:6px 6px 0 0;padding:5px 8px;font-size:12px;color:#0f172a;text-align:center;background:#fff;border-bottom:none;font-weight:600}
+.input-hint{background:#fef9c3;border:1.5px solid #fde68a;border-radius:0 0 6px 6px;padding:2px 6px;font-size:10px;color:#854d0e;font-weight:600;text-align:center}
+
+/* ── Drift badge ── */
+.drift-old{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 10px;border-radius:20px}
+.drift-new-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.drift-new{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 10px;border-radius:20px}
+.drift-sub{font-size:10px;color:#94a3b8;padding-left:4px}
+
+/* ── Stock badge ── */
+.sb{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center}
+.sb-low{background:#fef3c7;color:#d97706}
+.sb-inf{background:#fee2e2;color:#dc2626}
+
+/* ── Status badge ── */
+.on-hand-val{font-weight:700;color:#16a34a;font-size:13px}
+
+/* ── Note box ── */
+.note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin:16px 20px;font-size:12px;color:#166534;line-height:1.6}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin:16px 20px;font-size:12px;color:#713f12;line-height:1.6}
+
+/* ── Scope footer ── */
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:16px 20px;border-top:1px solid #f1f5f9}
+.scope-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:8px}
+.scope-item{display:flex;gap:8px;margin-bottom:8px;font-size:12px;align-items:flex-start}
+.scope-num{width:18px;height:18px;border-radius:50%;background:#f1f5f9;font-size:9px;font-weight:700;color:#64748b;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.scope-f{font-family:monospace;font-size:11px;color:#7c3aed}
+.scope-d{color:#475569}
+
+/* ── Section divider ── */
+.sec-div{padding:10px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;background:#f8fafc;border-bottom:1px solid #f1f5f9}
+
+/* ── API box ── */
+.api-box{background:#1e293b;border-radius:10px;padding:16px;font-family:monospace;font-size:12px;line-height:1.9;color:#e2e8f0;margin:16px 20px}
+.api-key{color:#93c5fd}
+.api-val{color:#86efac}
+.api-val-bad{color:#f87171}
+.api-com{color:#64748b}
+.api-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:8px}
+.risk-box{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 20px 20px}
+.risk-item{border-radius:8px;padding:14px}
+.risk-bad{background:#fef2f2;border:1px solid #fecaca}
+.risk-good{background:#f0fdf4;border:1px solid #bbf7d0}
+.risk-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.risk-title-r{color:#dc2626}
+.risk-title-g{color:#16a34a}
+.risk-body{font-size:12px;color:#475569;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Unit Display Proposals — Real Data (yabyum)</h1>
+<p class="sub">Logged in as owner@yabyum.com · Ingredients: ANGARA GREAVY · BLACK OLIVE · UAT BAR BEER · No code changed yet</p>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  SECTION A: STOCK AUDIT  (/inventory-audit)                  -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Stock Audit — Physical Qty input (Investigations 2 & 3)</span>
+    <span class="pill pill-red">Current — confusing</span>
+    <span class="pill pill-green">Proposed — clear</span>
+    <span class="page-label">Page: /inventory-audit</span>
+  </div>
+  <div class="legend">
+    <div class="li"><div class="dot dot-r"></div>Current (wrong / confusing)</div>
+    <div class="li"><div class="dot dot-g"></div>Proposed (after fix)</div>
+    <div class="li" style="color:#94a3b8">System Qty column has NO change</div>
+  </div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Ingredient</th>
+        <th style="color:#16a34a">System Qty ✅ no change</th>
+        <th style="color:#dc2626">Physical Qty input — CHANGES</th>
+        <th style="color:#dc2626">Drift badge — CHANGES (example if user enters slightly less)</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ── ANGARA GREAVY ── -->
+      <tr>
+        <td>
+          <div class="name">ANGARA GREAVY</div>
+          <div class="cat">
+            System: displayQty=<b>4600</b>, displayUnit=<b>pkt</b><br/>
+            item.quantity=<b>2,300,000</b> (gm) | convFactor=<b>500 gm/pkt</b>
+          </div>
+        </td>
+        <td class="neutral">
+          <span class="val-neutral">4600</span><span class="unit">pkt</span>
+          <span class="hint">(4599 pkt 500 gm)</span>
+        </td>
+
+        <!-- Physical Qty input -->
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="margin-bottom:12px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <div class="input-old">2300000</div>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">Placeholder = 2,300,000 with no unit label<br/>Staff look at shelf, count pkt — don't know what to type</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED</div>
+            <div class="input-wrap">
+              <div class="input-new">2300000</div>
+              <div class="input-hint">enter in gm &nbsp;·&nbsp; shelf count: 4600 pkt</div>
+            </div>
+            <div style="font-size:10px;color:#16a34a;margin-top:3px">Unit label "gm" + shelf count "4600 pkt" shown in bracket</div>
+          </div>
+        </td>
+
+        <!-- Drift example -->
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;margin-bottom:8px">
+            <i>Example: user enters 2,290,000 (10,000 gm short)</i>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <span class="drift-old">↓ -10000.00 pkt</span>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">-10,000 gm shown as pkt — wrong unit label</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED (Option A)</div>
+            <div class="drift-new-wrap">
+              <span class="drift-new">↓ -10000.00 gm</span>
+              <span class="drift-sub">≈ -20.0 pkt on shelf</span>
+            </div>
+            <div style="font-size:10px;color:#16a34a;margin-top:3px">Correct base unit label + display unit hint below</div>
+          </div>
+        </td>
+
+        <td>
+          <select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px">
+            <option>Select reason...</option>
+          </select>
+        </td>
+      </tr>
+
+      <!-- ── BLACK OLIVE ── -->
+      <tr>
+        <td>
+          <div class="name">BLACK OLIVE</div>
+          <div class="cat">
+            System: displayQty=<b>4.9</b>, displayUnit=<b>tin</b><br/>
+            item.quantity=<b>7,833</b> (gm) | convFactor≈<b>1598 gm/tin</b>
+          </div>
+        </td>
+        <td class="neutral">
+          <span class="val-neutral">4.9</span><span class="unit">tin</span>
+          <span class="hint">(4 tin 1440 gm)</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="margin-bottom:12px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <div class="input-old">7833</div>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">No unit — is this "7833 tins" or "7833 gm"?</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED</div>
+            <div class="input-wrap">
+              <div class="input-new">7833</div>
+              <div class="input-hint">enter in gm &nbsp;·&nbsp; shelf count: 4.9 tin</div>
+            </div>
+          </div>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;margin-bottom:8px">
+            <i>Example: user enters 7,333 (500 gm short)</i>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <span class="drift-old">↓ -500.00 tin</span>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">-500 gm labelled as "tin" — completely wrong</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED</div>
+            <div class="drift-new-wrap">
+              <span class="drift-new">↓ -500.00 gm</span>
+              <span class="drift-sub">≈ -0.31 tin on shelf</span>
+            </div>
+          </div>
+        </td>
+
+        <td>
+          <select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px">
+            <option>Select reason...</option>
+          </select>
+        </td>
+      </tr>
+
+      <!-- ── UAT BAR BEER ── -->
+      <tr>
+        <td>
+          <div class="name">UAT BAR BEER</div>
+          <div class="cat">
+            System: displayQty=<b>8.49</b>, displayUnit=<b>bottle</b><br/>
+            item.quantity=<b>5,520</b> (ml) | convFactor≈<b>650 ml/bottle</b>
+          </div>
+        </td>
+        <td class="neutral">
+          <span class="val-neutral">8.49</span><span class="unit">bottle</span>
+          <span class="hint">(8 bottle 319 ml)</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="margin-bottom:12px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <div class="input-old">5520</div>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">5520 shown — is that ml or bottles?</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED</div>
+            <div class="input-wrap">
+              <div class="input-new">5520</div>
+              <div class="input-hint">enter in ml &nbsp;·&nbsp; shelf count: 8.49 bottle</div>
+            </div>
+          </div>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div style="font-size:10px;color:#64748b;margin-bottom:8px">
+            <i>Example: user enters 4,870 (650 ml short = 1 bottle)</i>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px">❌ CURRENT</div>
+            <span class="drift-old">↓ -650.00 bottle</span>
+            <div style="font-size:10px;color:#dc2626;margin-top:3px">-650 ml labelled as "bottle" — wrong</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#16a34a;font-weight:700;margin-bottom:4px">✅ PROPOSED</div>
+            <div class="drift-new-wrap">
+              <span class="drift-new">↓ -650.00 ml</span>
+              <span class="drift-sub">≈ -1.0 bottle on shelf</span>
+            </div>
+          </div>
+        </td>
+
+        <td>
+          <select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px">
+            <option>Select reason...</option>
+          </select>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    ✅ <b>System Qty column does not change.</b> &nbsp;
+    ✅ <b>API payload does not change</b> — <code>physical_qty</code> still sent as base unit value (gm/ml). &nbsp;
+    ✅ <b>Hint strip only appears</b> when <code>item.conversionFactor &gt; 0</code> (ingredients without conversion factor stay unchanged). &nbsp;
+    <b>1 file only:</b> <code>StockAuditPanel.jsx</code>
+  </div>
+
+  <div class="scope">
+    <div>
+      <div class="scope-title">Files that CHANGE</div>
+      <div class="scope-item"><div class="scope-num">1</div>
+        <div>
+          <span class="scope-f">components/inventory/StockAuditPanel.jsx</span><br/>
+          <span class="scope-d">① getDrift() line 53: <code>unit: item.smallUnit || item.unit</code> (was displayUnit)<br/>
+          ② Placeholder (line 184): add hint strip below input when convFactor present<br/>
+          ③ Drift badge (line 197): add "≈ X.XX pkt on shelf" as small grey text below badge</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="scope-title">Files that do NOT change</div>
+      <div class="scope-item"><div class="scope-num">—</div><span class="scope-f">inventoryTransform.js · inventoryService.js · handleSaveAll() API payload</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  SECTION B: SMART PURCHASE  (/inventory-smart-purchase)       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Smart Purchase (Stock Update) — Projected Need / Gap / Suggested Qty (Investigation 1, Option A)</span>
+    <span class="pill pill-red">Current — base units</span>
+    <span class="pill pill-green">Proposed — display units</span>
+    <span class="page-label">Page: /inventory-smart-purchase</span>
+  </div>
+  <div class="legend">
+    <div class="li"><div class="dot dot-r"></div>Current value (base unit — wrong for display)</div>
+    <div class="li"><div class="dot dot-g"></div>Proposed value (display unit — matches On-Hand)</div>
+    <div class="li" style="color:#64748b">ANGARA GREAVY not in this list (sufficient stock, by design)</div>
+  </div>
+
+  <!-- All Ingredients (lower table) -->
+  <div class="sec-div">Section: All Ingredients · 7-Day Horizon</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Ingredient</th>
+        <th>Category</th>
+        <th style="color:#16a34a">On-Hand ✅ no change</th>
+        <th>Status</th>
+        <th>Velocity</th>
+        <th style="color:#dc2626">Projected Need ❌ changes</th>
+        <th style="color:#dc2626">Suggested Qty ❌ changes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ── BLACK OLIVE ── -->
+      <tr>
+        <td>
+          <div class="name">BLACK OLIVE</div>
+          <span class="sb sb-low">Low stock</span>
+          <div class="cat" style="margin-top:3px">convFactor ≈ 1598 gm/tin</div>
+        </td>
+        <td style="font-size:11px;color:#64748b">Beverages / Grocery</td>
+        <td class="neutral"><span class="on-hand-val">4.90 tin</span><span class="hint">(4 tin 1440 gm)</span></td>
+        <td><span class="sb sb-inf">infinityd left</span></td>
+        <td style="font-size:11px;color:#64748b">—</td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">1600000 gm</span>
+          <span class="val-good">1001.1 tin</span>
+          <span class="sub-calc">1,600,000 ÷ 1598 = 1001.1</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">1592167 (no unit)</span>
+          <span class="val-good">997 tin</span>
+          <span class="sub-calc">1,592,167 ÷ 1598 = 996.3 → ceil 997</span>
+        </td>
+
+        <td><button style="background:#fff7ed;border:1px solid #fed7aa;color:#ea580c;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer">+ Add</button></td>
+      </tr>
+
+      <!-- ── UAT BAR BEER ── -->
+      <tr>
+        <td>
+          <div class="name">UAT BAR BEER</div>
+          <span class="sb sb-low">Low stock</span>
+          <div class="cat" style="margin-top:3px">convFactor ≈ 650 ml/bottle</div>
+        </td>
+        <td style="font-size:11px;color:#64748b">Bar / Beverages</td>
+        <td class="neutral"><span class="on-hand-val">8.49 bottle</span><span class="hint">(8 bottle 319 ml)</span></td>
+        <td><span class="sb sb-inf">infinityd left</span></td>
+        <td style="font-size:11px;color:#64748b">—</td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">422500 ml</span>
+          <span class="val-good">650.0 bottle</span>
+          <span class="sub-calc">422,500 ÷ 650 = 650.0</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">416980 (no unit)</span>
+          <span class="val-good">642 bottle</span>
+          <span class="sub-calc">416,980 ÷ 650 = 641.5 → ceil 642</span>
+        </td>
+
+        <td><button style="background:#fff7ed;border:1px solid #fed7aa;color:#ea580c;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer">+ Add</button></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Purchase List (upper table — after clicking + Add) -->
+  <div class="sec-div" style="margin-top:2px">Section: Purchase List (after clicking + Add) — Qty to Buy also changes</div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Ingredient</th>
+        <th style="color:#16a34a">On-Hand ✅ no change</th>
+        <th>Status</th>
+        <th style="color:#dc2626">Projected Need ❌ changes</th>
+        <th style="color:#dc2626">Gap ❌ changes</th>
+        <th style="color:#dc2626">Qty to Buy * ❌ changes</th>
+        <th>Total Price</th>
+        <th>Vendor *</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- BLACK OLIVE in purchase list -->
+      <tr>
+        <td><input type="checkbox"/></td>
+        <td>
+          <div class="name">BLACK OLIVE</div>
+          <span class="sb sb-low" style="font-size:9px">Low stock</span>
+        </td>
+        <td class="neutral"><span class="on-hand-val">4.90 tin</span></td>
+        <td><span class="sb sb-inf">infinityd left</span></td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">1600000 gm</span>
+          <span class="val-good">1001.1 tin</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">-1592167</span>
+          <span class="val-good" style="color:#dc2626">-996.3 tin</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div>
+            <span class="val-bad" style="font-size:11px">pre-fills: 1592167</span>
+            <input value="997" style="width:90px;border:1.5px solid #86efac;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;color:#0f172a;text-align:center;display:block;margin:4px 0"/>
+            <span style="font-size:10px;color:#16a34a;font-weight:600">suggest: 997 tin</span>
+          </div>
+        </td>
+
+        <td><input type="number" placeholder="₹" style="width:80px;border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:12px"/></td>
+        <td style="font-size:11px;color:#64748b">System Vendor</td>
+      </tr>
+
+      <!-- UAT BAR BEER in purchase list -->
+      <tr>
+        <td><input type="checkbox"/></td>
+        <td>
+          <div class="name">UAT BAR BEER</div>
+          <span class="sb sb-low" style="font-size:9px">Low stock</span>
+        </td>
+        <td class="neutral"><span class="on-hand-val">8.49 bottle</span></td>
+        <td><span class="sb sb-inf">infinityd left</span></td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">422500 ml</span>
+          <span class="val-good">650.0 bottle</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <span class="val-bad">-416980</span>
+          <span class="val-good" style="color:#dc2626">-641.5 bottle</span>
+        </td>
+
+        <td class="bad" style="position:relative">
+          <span class="tag tag-c">CHANGES</span>
+          <div>
+            <span class="val-bad" style="font-size:11px">pre-fills: 416980</span>
+            <input value="642" style="width:90px;border:1.5px solid #86efac;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:700;color:#0f172a;text-align:center;display:block;margin:4px 0"/>
+            <span style="font-size:10px;color:#16a34a;font-weight:600">suggest: 642 bottle</span>
+          </div>
+        </td>
+
+        <td><input type="number" placeholder="₹" style="width:80px;border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:12px"/></td>
+        <td style="font-size:11px;color:#64748b">System Vendor</td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    ✅ <b>On-Hand column unchanged</b> — already shows display unit correctly. &nbsp;
+    ✅ <b>API submit unchanged</b> — <code>quantity</code> sent to backend still in base units (ml/gm). &nbsp;
+    ✅ <b>ANGARA GREAVY not affected</b> — sufficient stock, not in purchase list (correct by design). &nbsp;
+    <b>2 files only: <code>purchasePlanner.js</code> + <code>AutoShoppingList.jsx</code></b>
+  </div>
+
+  <div class="scope">
+    <div>
+      <div class="scope-title">Files that CHANGE</div>
+      <div class="scope-item"><div class="scope-num">1</div>
+        <div>
+          <span class="scope-f">utils/purchasePlanner.js</span><br/>
+          <span class="scope-d">Add 3 display fields per row: <code>projected_need_display</code>, <code>gap_display</code>, <code>suggest_qty_display</code> (= value ÷ conversionFactor, guard for 0)</span>
+        </div>
+      </div>
+      <div class="scope-item"><div class="scope-num">2</div>
+        <div>
+          <span class="scope-f">components/inventory/smart/AutoShoppingList.jsx</span><br/>
+          <span class="scope-d">5 render sites: Projected Need ×2, Gap ×1, Qty-to-Buy input + suggest hint ×1, Suggested Qty column ×1</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="scope-title">Files that do NOT change</div>
+      <div class="scope-item"><div class="scope-num">—</div><span class="scope-f">SmartPurchasePanel.jsx</span> <span class="scope-d">API submit sends base units — correct, unchanged</span></div>
+      <div class="scope-item"><div class="scope-num">—</div><span class="scope-f">inventoryTransform.js · inventoryService.js</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  SECTION C: Investigation 3 — Backend payload question        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Investigation 3 — What FE sends to backend (Stock Audit save)</span>
+    <span class="pill pill-blue">API Payload Analysis</span>
+  </div>
+
+  <div style="padding:16px 20px 4px">
+    <div class="api-label">Current API payload — POST /api/v2/.../add-stock/{itemId}</div>
+    <div class="api-box">
+      <div>{</div>
+      <div style="padding-left:20px"><span class="api-key">"quantity"</span>: <span class="api-val">0</span>, <span class="api-com">// no stock being added — physical recount only</span></div>
+      <div style="padding-left:20px"><span class="api-key">"unit"</span>: <span class="api-val-bad">"pkt"</span>, <span class="api-com">// ← item.displayUnit e.g. "pkt" / "tin" / "bottle"</span></div>
+      <div style="padding-left:20px"><span class="api-key">"physicalqty_master"</span>: <span class="api-val">true</span>, <span class="api-com">// flags this as a physical count operation</span></div>
+      <div style="padding-left:20px"><span class="api-key">"physical_qty"</span>: <span class="api-val">4600</span>, <span class="api-com">// ← raw user-entered value (in gm, base units)</span></div>
+      <div style="padding-left:20px"><span class="api-key">"waste_reason"</span>: <span class="api-val">"Physical stock count"</span>,</div>
+      <div style="padding-left:20px"><span class="api-key">"wastage_reason_id"</span>: <span class="api-val">null</span>,</div>
+      <div style="padding-left:20px"><span class="api-key">"notes"</span>: <span class="api-val">""</span></div>
+      <div>}</div>
+    </div>
+  </div>
+
+  <div class="risk-box">
+    <div class="risk-item risk-bad">
+      <div class="risk-title risk-title-r">⚠️ The unit mismatch question</div>
+      <div class="risk-body">
+        <code>"unit": "pkt"</code> is sent alongside <code>"physical_qty": 4600</code> (which is in grams).<br/><br/>
+        If backend reads <code>unit</code> to interpret <code>physical_qty</code>, it would think <b>4600 packets</b> — completely wrong.<br/><br/>
+        <b>Before approving any fix, we need to confirm:</b><br/>
+        Does the backend use the <code>unit</code> field to interpret <code>physical_qty</code>?<br/>
+        Or does it ignore <code>unit</code> for physicalQty and always treat it as the ingredient's base unit?
+      </div>
+    </div>
+    <div class="risk-item risk-good">
+      <div class="risk-title risk-title-g">✅ What the drift fix (Option A) changes in the payload</div>
+      <div class="risk-body">
+        <b>Nothing in the API payload.</b> The drift fix only changes the display label in the UI badge.<br/><br/>
+        <code>"physical_qty": 4600</code> still goes to the backend unchanged.<br/><br/>
+        The FE never sends a "drift" field. The backend calculates drift internally by comparing <code>physical_qty</code> against its own stored quantity record.<br/><br/>
+        <b>If backend ignores unit for physicalQty</b> → only 1 file change (display fix).<br/>
+        <b>If backend uses unit to interpret physicalQty</b> → also need to change <code>unit: item.smallUnit</code> in save path.
+      </div>
+    </div>
+  </div>
+  <div class="warn" style="margin-top:0">
+    ⚠️ <b>Owner decision needed before Gate 4 GO:</b> Please confirm with backend team whether <code>"unit": "pkt"</code> in the add-stock payload is used to interpret <code>physical_qty</code>, or whether the backend always treats <code>physical_qty</code> as the ingredient's base unit (gm/ml/pieces) regardless of the <code>unit</code> field sent.
+  </div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,125 @@
+{
+ "top_keys": [
+  "property",
+  "mapping",
+  "aiosell",
+  "mappings",
+  "local_rooms",
+  "availability"
+ ],
+ "aiosell_keys": [
+  "success",
+  "http_status",
+  "body",
+  "error"
+ ],
+ "aiosell_body_rooms": [
+  {
+   "description": "Free Wifi",
+   "count": 25,
+   "active": true,
+   "type": "primary",
+   "rateplans": [
+    {
+     "description": "",
+     "occupancy": 1,
+     "rateplan_id": "executive-s-ep",
+     "rateplan_name": "Room Only",
+     "no_of_meals": 0,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 2,
+     "rateplan_id": "executive-d-ep",
+     "rateplan_name": "Room Only",
+     "no_of_meals": 0,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 1,
+     "rateplan_id": "executive-s-cp",
+     "rateplan_name": "Breakfast",
+     "no_of_meals": 1,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 2,
+     "rateplan_id": "executive-d-cp",
+     "rateplan_name": "Breakfast",
+     "no_of_meals": 2,
+     "extra_adult": 500
+    }
+   ],
+   "room_id": "executive",
+   "room_name": "EXECUTIVE",
+   "min_occ": 1,
+   "max_occ": 2
+  },
+  {
+   "description": "Free Wifi",
+   "count": 5,
+   "active": true,
+   "type": "primary",
+   "rateplans": [
+    {
+     "description": "",
+     "occupancy": 1,
+     "rateplan_id": "suite-s-ep",
+     "rateplan_name": "Room Only",
+     "no_of_meals": 0,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 2,
+     "rateplan_id": "suite-d-ep",
+     "rateplan_name": "Room Only",
+     "no_of_meals": 0,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 1,
+     "rateplan_id": "suite-s-cp",
+     "rateplan_name": "Breakfast",
+     "no_of_meals": 1,
+     "extra_adult": 500
+    },
+    {
+     "description": "",
+     "occupancy": 2,
+     "rateplan_id": "suite-d-cp",
+     "rateplan_name": "Breakfast",
+     "no_of_meals": 2,
+     "extra_adult": 500
+    }
+   ],
+   "room_id": "suite",
+   "room_name": "SUITE",
+   "min_occ": 1,
+   "max_occ": 3
+  }
+ ],
+ "mapping_by_aiosell_room_code": [
+  {
+   "aiosell_room_code": "suite",
+   "mapped_count": 4,
+   "restaurant_table_ids": [
+    8524,
+    8525,
+    8527,
+    8528
+   ]
+  },
+  {
+   "aiosell_room_code": "executive",
+   "mapped_count": 1,
+   "restaurant_table_ids": [
+    8526
+   ]
+  }
+ ]
+}

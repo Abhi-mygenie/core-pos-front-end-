@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BUG-397 — occupied_hk Design Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins', sans-serif; background: #F7F7F7; padding: 32px 24px; color: #1A1A1A; }
+
+  /* ── Page header ── */
+  .page-header { background: white; border-radius: 12px; padding: 20px 28px; border: 1px solid #E5E5E5; margin-bottom: 28px; }
+  .page-header h1 { font-size: 18px; font-weight: 600; color: #1A1A1A; }
+  .page-header p  { font-size: 13px; color: #666; margin-top: 4px; }
+  .bug-badge { display: inline-block; background: #FEE2E2; color: #EF4444; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; }
+  .cr-badge  { display: inline-block; background: #FEF3C7; color: #D97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+
+  /* ── Section headers ── */
+  .section-label { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; padding-left: 2px; }
+  .section-note  { font-size: 12px; color: #888; margin-top: 8px; }
+  .section { margin-bottom: 36px; }
+
+  /* ── Filter chips row (exact copy of app) ── */
+  .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .chip { padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 500; border: 1.5px solid #E5E5E5; background: white; color: #555; cursor: pointer; }
+  .chip.active { background: #1A1A1A; color: white; border-color: #1A1A1A; }
+  .chip.hk-style  { background: #FEF3C7; color: #D97706; border-color: transparent; }
+  .chip.ooo-style { background: #FEE2E2; color: #EF4444; border-color: transparent; }
+  /* NEW chip for occupied_hk */
+  .chip.ohk-a { background: #FFF7ED; color: #F26B33; border-color: transparent; }
+  .chip.ohk-b { background: linear-gradient(90deg, #FFF7ED 50%, #FEF3C7 50%); color: #C05621; border: 1.5px solid #F59E0B; }
+  .chip.ohk-c { background: #FFF1E6; color: #9A3412; border-color: transparent; }
+
+  /* ── Grid ── */
+  .tiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; max-width: 1200px; }
+  .col-wrap { flex: 1; min-width: 0; }
+
+  /* ── Room tile base (exact replica) ── */
+  .tile {
+    background: white; border-radius: 12px; border: 1px solid #E5E5E5;
+    overflow: hidden; position: relative; width: 200px;
+  }
+  .tile-bar-top { height: 4px; width: 100%; }
+
+  .tile-body { padding: 12px 14px 8px; }
+  .tile-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+  }
+  .tile-room-no   { font-size: 20px; font-weight: 700; color: #1A1A1A; }
+  .tile-room-meta { font-size: 11px; color: #888; margin-top: 2px; }
+  .tile-content   { margin-top: 8px; }
+  .tile-guest     { font-size: 13px; font-weight: 500; color: #1A1A1A; }
+  .tile-sub       { font-size: 11px; color: #888; margin-top: 2px; }
+  .tile-status-line { font-size: 11px; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+
+  .tile-actions { padding: 6px 14px 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 4px; transition: opacity .15s; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-hk       { background: #FEF3C7; color: #D97706; }
+  .btn-ooo      { background: white; border: 1px solid #EF4444; color: #EF4444; }
+  .btn-folio    { background: white; border: 1px solid #F26B33; color: #F26B33; }
+  .btn-clean    { background: #329937; color: white; }
+
+  /* ── Compare layout ── */
+  .compare-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .compare-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .compare-col .col-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; }
+  .arrow-col { display: flex; align-items: center; padding-top: 40px; color: #ccc; font-size: 28px; }
+
+  /* ── Option cards ── */
+  .option-card {
+    background: white; border-radius: 12px; border: 2px solid #E5E5E5;
+    padding: 20px; max-width: 480px;
+  }
+  .option-card.recommended { border-color: #329937; }
+  .option-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .option-title  { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+  .opt-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+  .opt-badge.rec  { background: #D1FAE5; color: #065F46; }
+  .opt-badge.alt  { background: #F3F4F6; color: #6B7280; }
+  .option-desc { font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.6; }
+  .option-tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+  .option-pros-cons { display: flex; gap: 20px; margin-top: 14px; }
+  .pros, .cons { flex: 1; }
+  .pros h4 { font-size: 11px; font-weight: 600; color: #329937; margin-bottom: 6px; }
+  .cons h4 { font-size: 11px; font-weight: 600; color: #EF4444; margin-bottom: 6px; }
+  .pros li, .cons li { font-size: 11px; color: #555; margin-left: 14px; margin-bottom: 3px; }
+
+  /* ── Colour swatches ── */
+  .swatch-row { display: flex; gap: 10px; margin: 12px 0; }
+  .swatch { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(0,0,0,.08); position: relative; }
+  .swatch-label { font-size: 10px; color: #888; margin-top: 4px; text-align: center; }
+  .swatch-wrap { display: flex; flex-direction: column; align-items: center; }
+
+  /* ── Full board preview ── */
+  .board-preview { background: white; border-radius: 12px; border: 1px solid #E5E5E5; padding: 20px; margin-top: 28px; }
+  .board-header  { font-size: 16px; font-weight: 600; color: #1A1A1A; margin-bottom: 4px; }
+  .board-date    { font-size: 12px; color: #888; margin-bottom: 16px; }
+  .board-tiles   { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .divider { border: none; border-top: 1px solid #E5E5E5; margin: 28px 0; }
+</style>
+</head>
+<body>
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <div style="margin-bottom:6px">
+    <span class="bug-badge">BUG-397</span>
+    <span class="cr-badge">Gate 3 → Design Review</span>
+  </div>
+  <h1>Room Status Board — <code>occupied_hk</code> Tile Design Options</h1>
+  <p>A room with a staying guest currently being cleaned shows as <strong style="color:#329937">Available</strong> (silent fallback bug). These options show how it should look after the fix. Pick the one that works best for your front-desk team.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 0  —  THE BUG (current state)
+════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">❌ Current state (the bug) — room with stayover guest + HK in progress</div>
+  <div class="compare-row">
+
+    <div class="compare-col">
+      <div class="col-label">What backend sends</div>
+      <div style="background:#1A1A1A;color:#A3E635;font-family:monospace;font-size:12px;padding:12px 16px;border-radius:8px;line-height:1.8">
+        display_status: <span style="color:#FCD34D">"occupied_hk"</span><br>
+        manual_status: <span style="color:#FCD34D">"hk"</span><br>
+        guest.name: <span style="color:#FCD34D">"Raj Sharma"</span>
+      </div>
+    </div>
+
+    <div class="arrow-col">→</div>
+
+    <div class="compare-col">
+      <div class="col-label" style="color:#EF4444">What FE renders (WRONG)</div>
+      <!-- BUG tile: falls through to 'available' -->
+      <div class="tile">
+        <div class="tile-bar-top" style="background:#329937"></div>
+        <div class="tile-body">
+          <span class="tile-badge" style="background:#32993718;color:#329937">Available</span>
+          <div class="tile-room-no">r3</div>
+          <div class="tile-room-meta">suite · id 8524</div>
+          <div class="tile-content">
+            <div class="tile-status-line" style="color:#329937">Ready</div>
+          </div>
+        </div>
+        <div class="tile-actions">
+          <button class="btn btn-clean">＋ Book Room</button>
+          <button class="btn btn-hk">Needs HK</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#EF4444;max-width:200px;text-align:center;margin-top:6px">
+        ⚠ Guest Raj Sharma hidden. Room looks free. Staff could assign new booking!
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1  —  OPTION A  (Recommended)
+════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="option-card recommended">
+    <div class="option-header">
+      <span class="option-title">Option A — Orange bar · Amber HK pill</span>
+      <span class="opt-badge rec">✓ Recommended</span>
+    </div>
+    <div class="option-desc">
+      Keeps the occupied orange (<code>#F26B33</code>) on the top bar — communicating "guest is here, do not reassign". An amber inline pill says "housekeeping in progress". Buttons are fully disabled. Instantly readable for front-desk without any new colour training.
+    </div>
+
+    <div class="option-tiles">
+      <!-- Option A tile -->
+      <div>
+        <div class="col-label" style="margin-bottom:8px">occupied_hk tile</div>
+        <div class="tile">
+          <div class="tile-bar-top" style="background:#F26B33"></div>
+          <div class="tile-body">
+            <span class="tile-badge" style="background:#F26B3318;color:#F26B33">Occupied · HK</span>
+            <div class="tile-room-no">r3</div>
+            <div class="tile-room-meta">suite · id 8524</div>
+            <div class="tile-content">
+              <div class="tile-guest">Raj Sharma</div>
+              <div class="tile-sub">BDC74976</div>
+              <div class="tile-status-line" style="color:#D97706">
+                <svg width="12" height="12" fill="none" stroke="#D97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Housekeeping in progress
+              </div>
+            </div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-hk" disabled>HK In Progress</button>
+            <button class="btn btn-ooo" disabled>OOO</button>
+            <button class="btn btn-folio">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              View Folio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compared to occupied -->
+      <div>
+        <div class="col-label" style="margin-bottom:8px">vs. pure occupied</div>
+        <div class="tile">
+          <div class="tile-bar-top" style="background:#F26B33"></div>
+          <div class="tile-body">
+            <span class="tile-badge" style="background:#F26B3318;color:#F26B33">Occupied</span>
+            <div class="tile-room-no">r4</div>
+            <div class="tile-room-meta">suite · id 8525</div>
+            <div class="tile-content">
+              <div class="tile-guest">Priya Nair</div>
+              <div class="tile-sub">BDC62639</div>
+              <div class="tile-sub">Checked in</div>
+            </div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-hk" disabled>HK</button>
+            <button class="btn btn-ooo" disabled>OOO</button>
+            <button class="btn btn-folio">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              View Folio
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- compared to hk -->
+      <div>
+        <div class="col-label" style="margin-bottom:8px">vs. vacant HK</div>
+        <div class="tile">
+          <div class="tile-bar-top" style="background:#F59E0B"></div>
+          <div class="tile-body">
+            <span class="tile-badge" style="background:#F59E0B18;color:#D97706">Housekeeping</span>
+            <div class="tile-room-no">r1</div>
+            <div class="tile-room-meta">executive · id 8528</div>
+            <div class="tile-content">
+              <div class="tile-status-line" style="color:#D97706">Needs housekeeping</div>
+              <div class="tile-sub">Since 10 Sep, 11:00 am</div>
+            </div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-clean">Mark Clean</button>
+            <button class="btn btn-ooo">Mark OOO</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option-pros-cons">
+      <div class="pros">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Orange = occupied = "don't reassign" — no retraining</li>
+          <li>Clear amber pill distinguishes it from pure occupied</li>
+          <li>Consistent with existing orange bar language</li>
+          <li>Filter chip sits under HK tab (no new chip needed)</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>× Cons</h4>
+        <ul>
+          <li>Quick glance could confuse occupied vs occupied_hk</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="swatch-row" style="margin-top:16px">
+      <div class="swatch-wrap"><div class="swatch" style="background:#F26B33"></div><div class="swatch-label">Bar<br>#F26B33</div></div>
+      <div class="swatch-wrap"><div class="swatch" style="background:#FEF3C7;border:1px solid #F59E0B"></div><div class="swatch-label">Pill bg<br>#FEF3C7</div></div>
+      <div class="swatch-wrap"><div class="swatch" style="background:#D97706"></div><div class="swatch-label">Pill text<br>#D97706</div></div>
+      <div class="swatch-wrap"><div class="swatch" style="background:#F26B3318;border:1px solid #F26B33"></div><div class="swatch-label">Badge bg<br>opacity 10%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2  —  OPTION B  (Split bar)
+════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-title">Option B — Split bar (orange + amber)</span>
+      <span class="opt-badge alt">Alternative</span>
+    </div>
+    <div class="option-desc">
+      The top border uses a CSS gradient: left half orange (occupied), right half amber (HK). Immediately distinct from both <em>occupied</em> and <em>hk</em>. Badge says "Occupied · HK". No ambiguity at a glance — but uses a new visual pattern not seen elsewhere in the board.
+    </div>
+
+    <div class="option-tiles">
+      <div>
+        <div class="col-label" style="margin-bottom:8px">occupied_hk tile</div>
+        <div class="tile">
+          <div class="tile-bar-top" style="background:linear-gradient(90deg,#F26B33 50%,#F59E0B 50%)"></div>
+          <div class="tile-body">
+            <span class="tile-badge" style="background:#FFF7ED;color:#C05621;border:1px solid #F59E0B">Occupied · HK</span>
+            <div class="tile-room-no">r3</div>
+            <div class="tile-room-meta">suite · id 8524</div>
+            <div class="tile-content">
+              <div class="tile-guest">Raj Sharma</div>
+              <div class="tile-sub">BDC74976</div>
+              <div class="tile-status-line" style="color:#D97706">
+                <svg width="12" height="12" fill="none" stroke="#D97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Housekeeping in progress
+              </div>
+            </div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-hk" disabled>HK In Progress</button>
+            <button class="btn btn-ooo" disabled>OOO</button>
+            <button class="btn btn-folio">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              View Folio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option-pros-cons">
+      <div class="pros">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>Instantly distinct — no confusion with occupied or hk</li>
+          <li>Communicates both states visually at a glance</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>× Cons</h4>
+        <ul>
+          <li>New visual pattern — slight retraining</li>
+          <li>CSS gradient bar is a new pattern in the UI system</li>
+          <li>Badge colour mixing (#C05621) needs new value in constants</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3  —  OPTION C  (Distinct amber-rust)
+════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-title">Option C — Distinct rust/amber bar (#EA580C)</span>
+      <span class="opt-badge alt">Alternative</span>
+    </div>
+    <div class="option-desc">
+      A single new colour — rust orange <code>#EA580C</code> — sits between occupied orange and HK amber, representing the combined state. One new colour token, clean and minimal. Badge text shows "Occupied · HK".
+    </div>
+
+    <div class="option-tiles">
+      <div>
+        <div class="col-label" style="margin-bottom:8px">occupied_hk tile</div>
+        <div class="tile">
+          <div class="tile-bar-top" style="background:#EA580C"></div>
+          <div class="tile-body">
+            <span class="tile-badge" style="background:#EA580C18;color:#EA580C">Occupied · HK</span>
+            <div class="tile-room-no">r3</div>
+            <div class="tile-room-meta">suite · id 8524</div>
+            <div class="tile-content">
+              <div class="tile-guest">Raj Sharma</div>
+              <div class="tile-sub">BDC74976</div>
+              <div class="tile-status-line" style="color:#D97706">
+                <svg width="12" height="12" fill="none" stroke="#D97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Housekeeping in progress
+              </div>
+            </div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-hk" disabled>HK In Progress</button>
+            <button class="btn btn-ooo" disabled>OOO</button>
+            <button class="btn btn-folio">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              View Folio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option-pros-cons">
+      <div class="pros">
+        <h4>✓ Pros</h4>
+        <ul>
+          <li>New distinct colour — no ambiguity</li>
+          <li>Simple single-colour bar (same pattern as all others)</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>× Cons</h4>
+        <ul>
+          <li>Adds one new colour token (#EA580C) to the design system</li>
+          <li>Very close to occupied orange — could still confuse at glance</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4  —  FULL BOARD PREVIEW (Option A, all 5 rooms)
+════════════════════════════════════════════════════════════ -->
+<div class="board-preview">
+  <div class="board-header">Room Status Board</div>
+  <div class="board-date">Saturday, 13 September 2026</div>
+
+  <!-- Filter chips -->
+  <div class="chip-row">
+    <button class="chip active">All (5)</button>
+    <button class="chip">Occupied (2)</button>
+    <button class="chip">Booked (1)</button>
+    <button class="chip hk-style">HK (2)</button>
+    <button class="chip ooo-style">OOO (0)</button>
+    <button class="chip">Available (0)</button>
+  </div>
+  <div style="font-size:11px;color:#888;margin-top:-8px;margin-bottom:16px">↑ HK filter shows both vacant HK + occupied_hk rooms (via manualStatus)</div>
+
+  <div class="board-tiles">
+
+    <!-- r1 — vacant HK -->
+    <div class="tile">
+      <div class="tile-bar-top" style="background:#F59E0B"></div>
+      <div class="tile-body">
+        <span class="tile-badge" style="background:#F59E0B18;color:#D97706">Housekeeping</span>
+        <div class="tile-room-no">r1</div>
+        <div class="tile-room-meta">executive · id 8528</div>
+        <div class="tile-content">
+          <div class="tile-status-line" style="color:#D97706">Needs housekeeping</div>
+          <div class="tile-sub">Since 13 Sep, 10:15 am</div>
+        </div>
+      </div>
+      <div class="tile-actions">
+        <button class="btn btn-clean">Mark Clean</button>
+        <button class="btn btn-ooo">Mark OOO</button>
+      </div>
+    </div>
+
+    <!-- r2 — occupied (no HK) -->
+    <div class="tile">
+      <div class="tile-bar-top" style="background:#F26B33"></div>
+      <div class="tile-body">
+        <span class="tile-badge" style="background:#F26B3318;color:#F26B33">Occupied</span>
+        <div class="tile-room-no">r2</div>
+        <div class="tile-room-meta">executive · id 8526</div>
+        <div class="tile-content">
+          <div class="tile-guest">Arjun Mehta</div>
+          <div class="tile-sub">MG-69-24CCA</div>
+          <div class="tile-sub">Checked in</div>
+        </div>
+      </div>
+      <div class="tile-actions">
+        <button class="btn btn-hk" disabled>HK</button>
+        <button class="btn btn-ooo" disabled>OOO</button>
+        <button class="btn btn-folio">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Folio
+        </button>
+      </div>
+    </div>
+
+    <!-- r3 — occupied_hk ← THE NEW TILE (Option A) -->
+    <div class="tile" style="border-color:#F26B33;border-width:1.5px">
+      <div class="tile-bar-top" style="background:#F26B33"></div>
+      <div class="tile-body">
+        <span class="tile-badge" style="background:#F26B3318;color:#F26B33">Occupied · HK</span>
+        <div class="tile-room-no">r3</div>
+        <div class="tile-room-meta">suite · id 8524</div>
+        <div class="tile-content">
+          <div class="tile-guest">Raj Sharma</div>
+          <div class="tile-sub">BDC74976</div>
+          <div class="tile-status-line" style="color:#D97706">
+            <svg width="11" height="11" fill="none" stroke="#D97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Housekeeping in progress
+          </div>
+        </div>
+      </div>
+      <div class="tile-actions">
+        <button class="btn btn-hk" disabled>HK In Progress</button>
+        <button class="btn btn-folio">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Folio
+        </button>
+      </div>
+    </div>
+
+    <!-- r4 — booked -->
+    <div class="tile">
+      <div class="tile-bar-top" style="background:#888;height:4px;border-top:4px dashed #888;margin-top:-4px"></div>
+      <div class="tile-body">
+        <span class="tile-badge" style="background:#88818;color:#888">Booked</span>
+        <div class="tile-room-no">r4</div>
+        <div class="tile-room-meta">suite · id 8525</div>
+        <div class="tile-content">
+          <div class="tile-guest">Priya Nair</div>
+          <div class="tile-sub">Booking.com · BDC62639</div>
+          <div class="tile-sub">13 Sep – 15 Sep (arriving)</div>
+        </div>
+      </div>
+      <div class="tile-actions">
+        <button class="btn btn-clean">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3H19a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2H9"/><polyline points="9 11 12 14 22 4"/></svg>
+          Check In
+        </button>
+      </div>
+    </div>
+
+    <!-- r5 — occupied_hk second example -->
+    <div class="tile">
+      <div class="tile-bar-top" style="background:#F26B33"></div>
+      <div class="tile-body">
+        <span class="tile-badge" style="background:#F26B3318;color:#F26B33">Occupied · HK</span>
+        <div class="tile-room-no">r5</div>
+        <div class="tile-room-meta">executive · id 8527</div>
+        <div class="tile-content">
+          <div class="tile-guest">Suresh Iyer</div>
+          <div class="tile-sub">GoMMT-7892</div>
+          <div class="tile-status-line" style="color:#D97706">
+            <svg width="11" height="11" fill="none" stroke="#D97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Housekeeping in progress
+          </div>
+        </div>
+      </div>
+      <div class="tile-actions">
+        <button class="btn btn-hk" disabled>HK In Progress</button>
+        <button class="btn btn-folio">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Folio
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:16px;padding:12px 16px;background:#ECFDF5;border-radius:8px;font-size:12px;color:#065F46;border:1px solid #A7F3D0">
+    ✓ Option A shown above. r3 and r5 are <strong>occupied_hk</strong> tiles — clearly different from r2 (occupied) and r1 (vacant HK). No room can be accidentally reassigned.
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- ── Design Agent Decision ── -->
+<div style="background:white;border-radius:12px;border:2px solid #1A1A1A;padding:20px;max-width:600px">
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px">Design Agent Recommendation</div>
+  <div style="font-size:13px;color:#444;line-height:1.7;margin-bottom:14px">
+    <strong>Option A</strong> is recommended. It reuses the established orange = occupied signal — critical for a hotel front-desk where staff build muscle memory fast. The amber "Housekeeping in progress" line inside the tile provides the secondary signal without needing a new bar colour.
+    <br><br>
+    Option B (split bar) is visually clever but introduces a new pattern to the design system that no other tile uses. Option C (#EA580C) is too similar to occupied orange to be reliably distinct at a glance.
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <button style="padding:8px 20px;border-radius:8px;border:2px solid #329937;background:#329937;color:white;font-weight:600;font-size:13px;cursor:default;font-family:Poppins,sans-serif">
+      ✓ Option A — APPROVED
+    </button>
+    <button style="padding:8px 20px;border-radius:8px;border:2px solid #E5E5E5;background:white;color:#ccc;font-size:13px;cursor:default;font-family:Poppins,sans-serif;text-decoration:line-through">
+      Option B — Split bar
+    </button>
+    <button style="padding:8px 20px;border-radius:8px;border:2px solid #E5E5E5;background:white;color:#ccc;font-size:13px;cursor:default;font-family:Poppins,sans-serif;text-decoration:line-through">
+      Option C — Rust #EA580C
+    </button>
+    <span style="font-size:12px;color:#329937;font-weight:600">Gate 4 GO · 2026-09-13</span>
+  </div>
+</div>
+
+<div style="margin-top:24px;font-size:11px;color:#aaa;text-align:center">BUG-397 Design Review · MyGenie POS · Generated by Design Agent 2026-09-13</div>
+
+</body>
+</html>

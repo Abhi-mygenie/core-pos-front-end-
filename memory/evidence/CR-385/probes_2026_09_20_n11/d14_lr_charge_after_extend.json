@@ -1,0 +1,14 @@
+{
+ "rate_per_night": 8000,
+ "nights": 2,
+ "rateplan_code": "executive-s-ep",
+ "rateplan_name": "executive-s-ep",
+ "upgrade_amount": 1500,
+ "booking_charge": 17500,
+ "sgst": 1094,
+ "cgst": 1094,
+ "total_with_gst": 19688,
+ "prepaid_amount": 0,
+ "advance_payment": 1500,
+ "balance_due": 18188
+}
