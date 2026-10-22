@@ -33139,7 +33139,7 @@
         "OD-608-02",
         "OD-608-03"
       ],
-      "notes": "from TT-032, TT-033"
+      "notes": "2026-10-22: IA Rev2 complete. Root cause: onFocus only clears zero values, non-zero fields cant be replaced (parseFloat(\"\")=NaN rejected by onChange guard). Affects ALL 11 number columns in BulkEditor + ProductForm InputField + variation min/max inputs. Fix: onFocus\u2192select(), onChange allow empty, onBlur reset to 0. 2 files, 5 edit locations. No blockers."
     },
     {
       "id": "CR-449",
