@@ -32673,10 +32673,10 @@
       "type": "BUG",
       "status": "GATE_2_COMPLETE",
       "priority": "P2",
-      "risk": "MEDIUM",
+      "risk": "HIGH",
       "sprint_key": "backlog",
       "area": "CRM / Customer",
-      "notes": "createCustomer payload sends empty/null name, CRM defaults to noname. Investigate customerService.js + customerTransform.js. OD-593-01: create vs update path."
+      "notes": "2026-10-22: IA Rev2 complete. Root cause CONFIRMED + REPRODUCED: enrichCustomerLoyaltyFromCRM (OrderEntry.jsx L244) merges id/tier/points/wallet/loyalty but NOT name from CRM lookup. On order re-open, customer.name=\"\" (from backend user_name:\"\") \u2192 collect-bill sends cust_name:\"\" \u2192 backend settlement syncs to CRM \u2192 name overwritten to Noname. Probe confirmed: settlement endpoint is the sync path. Fix: 1 line \u2014 add name merge to enrichment function. No blockers."
     },
     {
       "id": "CR-439",
