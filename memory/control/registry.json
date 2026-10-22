@@ -31267,7 +31267,7 @@
       "title": "Sidebar: remaining \"Coming Soon\" entry and PMS placeholder screens not accessible",
       "area": "PMS / Rooms",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_2_COMPLETE",
+      "status": "CLOSED",
       "description": "CR-415 removed most Coming Soon sidebar items but one remains (Sidebar.jsx L352). PMS Phase 2-5 screens show PmsPlaceholderPage \"Coming Soon\". Modules not yet accessible. Related: CR-415 (GATE_5A), PmsPlaceholderPage. Scope: (a) remaining sidebar entry + (b) PMS placeholder screens that should be available.",
       "registered": "2026-10-15",
       "related": [
@@ -31275,7 +31275,8 @@
       ],
       "registered_by": "INTAKE agent",
       "risk": "MEDIUM",
-      "priority": "P0"
+      "priority": "P0",
+      "notes": "2026-10-22: CLOSED. IA confirmed already resolved by CR-415 + PMS phase deliveries (CR-358 P2/P3/P4, CR-363, CR-366, CR-385). COMING_SOON_ITEMS set is empty, no comingSoon flags on any sidebar item, all 11 PMS routes point to real pages. PmsPlaceholderPage is dead code. Owner confirmed close."
     },
     {
       "id": "BUG-545",
