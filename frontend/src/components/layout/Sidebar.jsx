@@ -515,7 +515,7 @@ const Sidebar = ({
       </div>
     )}
     {isTablet && drawerOpen && (
-      <div data-testid="sidebar-drawer-backdrop" className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+      <div data-testid="sidebar-drawer-backdrop" className="fixed inset-0 z-[90] bg-black/50" onClick={() => setDrawerOpen(false)} />
     )}
     <aside
       data-testid={isTablet ? "sidebar-drawer" : "sidebar"}

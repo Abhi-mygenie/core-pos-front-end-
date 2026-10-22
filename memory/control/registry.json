@@ -31971,7 +31971,7 @@
       "id": "BUG-570",
       "title": "Sidebar drawer backdrop: main content background bleeds through when scrolling nav on Android tablet",
       "type": "BUG",
-      "status": "GATE_2_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "oct_cr_batch",
@@ -31984,7 +31984,8 @@
         "BUG-568",
         "BUG-555"
       ],
-      "intake_doc": "change_requests/BUG-570_SIDEBAR_BACKDROP_SCROLL_BLEEDTHROUGH_INTAKE.md"
+      "intake_doc": "change_requests/BUG-570_SIDEBAR_BACKDROP_SCROLL_BLEEDTHROUGH_INTAKE.md",
+      "notes": "2026-10-22: IMPLEMENTED. Removed backdrop-blur-sm from sidebar drawer backdrop (Sidebar.jsx L518). bg-black/50 solid overlay remains. Fixes Android tablet GPU repaint bleed-through during nav scroll. Webpack: 0 errors."
     },
     {
       "id": "CR-429",
