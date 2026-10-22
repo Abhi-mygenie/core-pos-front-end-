@@ -11,37 +11,19 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-po
 - **Auth**: Firebase
 
 ## What's Been Implemented
-- **2026-10-22 (Emergent Re-deploy)**: Fresh clone from `main` branch into /app
-  - Platform files preserved (.emergent/, .git/, .env, backend/)
-  - All env variables configured (Firebase, API, Socket, CRM, Google Maps, VAPID key)
-  - Memory dir fully synced (2,438 files — verified identical with repo)
-  - yarn install completed, craco start compiles with 0 errors (1 lint warning)
-  - App responds on port 3000 with MyGenie login page (HTTP 200)
-  - Backend supervisor process disabled (frontend-only deployment)
-  - Zero code edits — deployed as-is from repo
-- **2026-10-21**: Fresh clone from `main` branch (commit `8d26b678`) into /app
-  - Platform files preserved (.emergent/, .git/, .env files)
-  - All env variables configured (Firebase, API, Socket, CRM, Google Maps)
-  - Memory dir fully synced (2408 files, 14 subdirs)
-  - yarn install completed, webpack compiles with only lint warnings
-  - App responds on port 3000 with MyGenie login page
-- **2026-10-22**: CTO Google Sheet + registry cleanup (`pos-fixes-2026-10-22.csv`, 9 points)
-  - Registry (`/app/memory/control/registry.json`, 937 items) + CTO sheet reconciled; push shows **0 drift**.
-  - P1 — TT provenance: appended `from TT-NNN` to Notes for CR-443→449, BUG-605→608.
-  - P5 — applied owner's **sheet priorities as law** (9 items → P0) + 10 owner `Blocked on = BACKEND` edits.
-  - P2 — Tech Tasks write-back: TT-006/TT-030 reverted Done→In Progress (BUG-597 is IMPLEMENTED, not CLOSED).
-  - P3 — BUG-600/BUG-579 `GATE_2_CLOSED`→`GATE_2_COMPLETE`, BUG-598-B `INVESTIGATION_COMPLETE`→`GATE_2_PLANNING`; all now show PLANNING (were mis-shown as CLOSED).
-  - P4/P8 — set modules on 13 blank + 53 `Other` items; 9 kept as Other (sidebar/nav/training).
-  - P6 — `sheets_sync.build_summary_rows()` now counts from the **All Items** tab (Summary INTAKE 92 == All Items 92).
-  - P7 — "Neo " tab kept (owner created it). P9 — money_path left as-is per owner.
-  - `sheets_sync.py` hardened: exact `GATE_N_CLOSED` mapper guard, Summary-from-sheet, permanent `--tech-writeback <file.json>` CLI (CR-442 Part C).
-  - AGENT_PROMPT_ALPHA.md v0.9: added **REGISTRAR EXIT CHECKLIST** (7 items) so these gaps are not missed again.
-
-## sheets_sync.py CLI reference
-- `--push` — registry.json → all 10 tabs + post-push drift to Change Log (SHEET PUSH role)
-- `--pull --dry-run` — read-only drift incl. Tech Tasks POS inbox (SHEET DRIFT role)
-- `--tech-writeback <file.json>` — write `[{id,status,note,registry_id?}]` back to Tech Tasks `Tasks` tab (K/L/M/O by TT ID)
-- `--dry-run` alone — validate credentials + sheet access
+- **2026-10-22 (Emergent E1 Multi-Bug Session)**:
+  - BUG-600: Aggregator buzzer tone override (toneMapper.js + NotificationContext.jsx)
+  - BUG-601: Aggregator variations via food_info wrapper (menuManagementService.js)
+  - BUG-608: Number field last-char delete fix — 10 locations across 4 files
+  - BUG-570: Sidebar backdrop blur removed (Sidebar.jsx)
+  - BUG-593: CRM name merge on enrichment (OrderEntry.jsx)
+  - BUG-602: Backend confirmed — order_note persists (no FE changes)
+  - BUG-603: Backend confirmed — cancel_type kitchen stage preserved (no FE changes)
+  - BUG-544: CLOSED — already resolved by prior PMS deliveries
+  - 5 new bugs registered (BUG-609 through BUG-613)
+  - CR-423 IA complete (6 report pages need export fixes)
+  - BUG-604/605/606 reviewed (backend-blocked or needs owner input)
+- **2026-10-22 (Emergent Re-deploy)**: Fresh clone from main branch, memory synced (2,438 files)
 
 ## Preserved Platform Files
 - `/app/.emergent/` — platform config
@@ -49,19 +31,12 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-po
 - `/app/frontend/.env` — all env variables
 - `/app/backend/.env` — MongoDB, CORS config
 
-## Re-pull Procedure
-1. Backup: `.emergent/`, `.git/`, `frontend/.env`, `backend/.env`
-2. Wipe /app (keep .emergent, .git)
-3. Clone from `main` branch to staging dir
-4. Copy contents (excl .git, .emergent) to /app
-5. Restore .env files
-6. `yarn install` in /app/frontend
-7. `supervisorctl restart frontend`
-8. Verify: compilation + HTTP 200 + memory sync
-
 ## Backlog
-- P0: None
-- P1: BUG-601 aggregator menu variations dropped (awaiting backend confirm OD-601-02); BUG-600 → Gate 3 (Implementation Plan)
-- P1: New intakes CR-443→449, BUG-605→608 (all BACKEND-blocked) → Gate 2 planning when unblocked
-- P2: Production build optimization; BUG-400/BUG-401 carry prose "closed" in status text (mapper leaves them CLOSED — rename to leading `GATE_N_COMPLETE` if they should reopen)
-- Process: do NOT commit `.emergent/emergent.yml` to remote (pod-specific job_id breaks re-pulls)
+- P0: CR-423 (6 report export gaps), BUG-605 (Report Beta buttons — needs owner input)
+- P1: CR-441 (prep time timeline — needs owner decisions)
+- P2: BUG-609 (CRM dropdown — may be fixed by BUG-593), BUG-610-613 (backend performance)
+- Backend-blocked: BUG-604, BUG-606, BUG-610, BUG-611, BUG-612, BUG-613
+
+## Registry
+- Total items: 961
+- Source: `/app/memory/control/registry.json`
