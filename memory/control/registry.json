@@ -32671,7 +32671,7 @@
       "id": "BUG-593",
       "title": "CRM Sends noname as Customer Name for Newly Added Customer",
       "type": "BUG",
-      "status": "GATE_2_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "priority": "P2",
       "risk": "HIGH",
       "sprint_key": "backlog",
