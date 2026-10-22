@@ -32792,22 +32792,22 @@
       "title": "Aggregator orders play confirm_order sound instead of buzzer \u2014 aggregator_order_tone setting never read",
       "type": "BUG",
       "priority": "P1",
-      "status": "GATE_2_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Aggregator / Sockets",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
-      "notes": "2026-10-21: IA Rev2 complete. Live-tested: setting saves correctly but backend FCM ignores it \u2014 always sends forty_five_sec_buzzer. Same pattern as POS2-007 (confirm-order). Fix: FE override in NotificationContext + new mapAggregatorOrderTone in toneMapper.js. 2 files ~32 lines. OD-600-01 LOCKED: default\u2192new_order. IA: impact/BUG-600_IMPACT_ANALYSIS_REV2.md"
+      "notes": "2026-10-21: IA Rev2 complete. Live-tested: setting saves correctly but backend FCM ignores it \u2014 always sends forty_five_sec_buzzer. Same pattern as POS2-007 (confirm-order). Fix: FE override in NotificationContext + new mapAggregatorOrderTone in toneMapper.js. 2 files ~32 lines. OD-600-01 LOCKED: default\u2192new_order. IA: impact/BUG-600_IMPACT_ANALYSIS_REV2.md | Plan: plans/BUG-600_IMPLEMENTATION_PLAN.md. 2 files, 2 edits (~32 lines). Awaiting Gate 4 GO."
     },
     {
       "id": "BUG-601",
       "title": "Aggregator menu variations + addon_ids silently dropped on save \u2014 SKIP set in multipart FormData",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_2_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "HIGH",
-      "notes": "2026-10-22: IA complete. API probe confirmed: food_info wrapper works (variations persist). Bare JSON string rejected (validation: must be array). OD-601-01 LOCKED: Option A-revised (food_info wrapper). OD-601-02 RESOLVED: probe on preprod item 14247. Fix: 1 file (menuManagementService.js), ~12 lines, 2 edit locations. No blockers. IA: impact/BUG-601_IMPACT_ANALYSIS_2026_10_22.md. Probe evidence: evidence/BUG-601/API_PROBE_OD601_02_2026_10_22.md",
+      "notes": "2026-10-22: IA complete. API probe confirmed: food_info wrapper works (variations persist). Bare JSON string rejected (validation: must be array). OD-601-01 LOCKED: Option A-revised (food_info wrapper). OD-601-02 RESOLVED: probe on preprod item 14247. Fix: 1 file (menuManagementService.js), ~12 lines, 2 edit locations. No blockers. IA: impact/BUG-601_IMPACT_ANALYSIS_2026_10_22.md. Probe evidence: evidence/BUG-601/API_PROBE_OD601_02_2026_10_22.md | Plan: plans/BUG-601_IMPLEMENTATION_PLAN.md. 1 file, 2 edits (~24 lines). Awaiting Gate 4 GO.",
       "impact_doc": "impact/BUG-601_IMPACT_ANALYSIS_2026_10_22.md"
     },
     {
