@@ -38,4 +38,19 @@ export const mapConfirmOrderTone = (tone) => {
   return TONE_TO_SOUND_KEY[normalized] || 'confirm_order';
 };
 
+// BUG-600 — Aggregator order tone override (same pattern as confirm-order above).
+// Maps the per-restaurant `aggregator_order_tone` profile setting to a soundManager key.
+// OD-600-01 LOCKED: "default" → 'new_order' (generic chime, covers Swiggy + Zomato).
+const AGGREGATOR_TONE_MAP = {
+  silent: 'silent',
+  default: 'new_order',
+  buzzer: 'five_sec_buzzer',
+};
+
+export const mapAggregatorOrderTone = (tone) => {
+  if (!tone || typeof tone !== 'string') return 'new_order';
+  const normalized = tone.trim().toLowerCase();
+  return AGGREGATOR_TONE_MAP[normalized] || 'new_order';
+};
+
 export default mapConfirmOrderTone;

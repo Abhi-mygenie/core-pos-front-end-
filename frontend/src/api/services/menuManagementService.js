@@ -41,15 +41,25 @@ export const addFood = (foodInfo, image = null) => {
 export const addFoodAggregator = (payload) =>
   api.post(`${BASE_V2}/add-food-aggregator`, payload); // CR-140
 
-/** BUG-327: Add aggregator food with image upload — flat multipart (no food_info wrapper).
- *  ⚠ SKIP variations + addon_ids: multipart string value corrupts DB (cleanBindings TypeError). */
-export const addFoodAggregatorMultipart = (foodInfo, imageFile = null, swiggyImageFile = null) => { // BUG-327
+/** BUG-327 + BUG-601: Add aggregator food with image upload — flat multipart for scalars,
+ *  food_info JSON wrapper for arrays (variations, addon_ids).
+ *  BUG-601: variations/addon_ids were silently dropped by SKIP set. API probe confirms
+ *  food_info wrapper is accepted by backend (evidence/BUG-601/API_PROBE_OD601_02_2026_10_22.md). */
+export const addFoodAggregatorMultipart = (foodInfo, imageFile = null, swiggyImageFile = null) => { // BUG-327, BUG-601
   const formData = new FormData();
-  const SKIP = new Set(['variations', 'addon_ids']);
+  const FOOD_INFO_KEYS = new Set(['variations', 'addon_ids']); // BUG-601: route arrays through food_info wrapper
+  const foodInfoPayload = {};
   Object.entries(foodInfo).forEach(([key, val]) => {
-    if (SKIP.has(key) || val === undefined || val === null) return;
+    if (val === undefined || val === null) return;
+    if (FOOD_INFO_KEYS.has(key)) {
+      foodInfoPayload[key] = val; // BUG-601: collect for food_info JSON wrapper
+      return;
+    }
     formData.append(key, val);
   });
+  if (Object.keys(foodInfoPayload).length > 0) {
+    formData.append('food_info', JSON.stringify(foodInfoPayload)); // BUG-601: arrays via food_info
+  }
   if (imageFile)       formData.append('image',        imageFile);
   if (swiggyImageFile) formData.append('swiggy_image', swiggyImageFile);
   return api.post(`${BASE_V2}/add-food-aggregator`, formData, {
@@ -80,16 +90,25 @@ export const editFood = (foodId, foodInfo, image = null) => {
   });
 };
 
-/** BUG-327: Edit aggregator food — flat multipart fields (no food_info wrapper).
+/** BUG-327 + BUG-601: Edit aggregator food — flat multipart for scalars,
+ *  food_info JSON wrapper for arrays (variations, addon_ids).
  *  Files optional: omit = backend keeps existing file.
- *  ⚠ SKIP variations + addon_ids: multipart string value corrupts DB. */
-export const editFoodAggregator = (foodId, foodInfo, imageFile = null, swiggyImageFile = null) => { // BUG-327
+ *  BUG-601: API probe confirmed food_info wrapper persists variations correctly. */
+export const editFoodAggregator = (foodId, foodInfo, imageFile = null, swiggyImageFile = null) => { // BUG-327, BUG-601
   const formData = new FormData();
-  const SKIP = new Set(['variations', 'addon_ids']);
+  const FOOD_INFO_KEYS = new Set(['variations', 'addon_ids']); // BUG-601: route arrays through food_info wrapper
+  const foodInfoPayload = {};
   Object.entries(foodInfo).forEach(([key, val]) => {
-    if (SKIP.has(key) || val === undefined || val === null) return;
+    if (val === undefined || val === null) return;
+    if (FOOD_INFO_KEYS.has(key)) {
+      foodInfoPayload[key] = val; // BUG-601: collect for food_info JSON wrapper
+      return;
+    }
     formData.append(key, val);
   });
+  if (Object.keys(foodInfoPayload).length > 0) {
+    formData.append('food_info', JSON.stringify(foodInfoPayload)); // BUG-601: arrays via food_info
+  }
   if (imageFile)       formData.append('image',        imageFile);
   if (swiggyImageFile) formData.append('swiggy_image', swiggyImageFile);
   return api.post(`${BASE_V2}/foods/${foodId}`, formData, {

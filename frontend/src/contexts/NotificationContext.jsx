@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useMemo, u
 import { useAuth } from './AuthContext';
 import { onForegroundMessage } from '../config/firebase';
 import soundManager from '../utils/soundManager';
-import { mapConfirmOrderTone } from '../utils/toneMapper';
+import { mapConfirmOrderTone, mapAggregatorOrderTone } from '../utils/toneMapper'; // BUG-600
 import { getRestaurantRef } from '../utils/restaurantRef';
 
 const NotificationContext = createContext(null);
@@ -45,6 +45,22 @@ const isConfirmOrderNotification = (data, resolvedSound) => {
   const notifType = (data?.notification_type || '').toString().toLowerCase().replace(/[\s-]+/g, '_');
   if (CONFIRM_ORDER_TYPES.has(type) || CONFIRM_ORDER_TYPES.has(notifType)) return true;
   if (resolvedSound === 'confirm_order') return true;
+  return false;
+};
+
+// BUG-600 — detect aggregator order notifications.
+// Checks aggregator-specific fields that POS orders never carry.
+// Must run BEFORE isConfirmOrderNotification to prevent aggregator orders
+// from being caught by the confirm-order override.
+const AGGREGATOR_INDICATORS = ['aggregator', 'aggrigator', 'swiggy', 'zomato', 'urbanpiper'];
+
+const isAggregatorOrderNotification = (data, resolvedSound) => {
+  const type = (data?.type || '').toString().toLowerCase();
+  const notifType = (data?.notification_type || '').toString().toLowerCase();
+  const platform = (data?.order_plateform || data?.order_platform || data?.platform || '').toString().toLowerCase();
+  const source = (data?.source || '').toString().toLowerCase();
+  if (AGGREGATOR_INDICATORS.some(k => type.includes(k) || notifType.includes(k) || platform.includes(k) || source.includes(k))) return true;
+  if (resolvedSound === 'swiggy_new_order') return true;
   return false;
 };
 
@@ -101,6 +117,23 @@ export const NotificationProvider = ({ children }) => {
     // Determine sound: explicit key > inferred from content
     const soundKey = data.sound || data.notification_sound || '';
     let resolvedSound = soundKey || inferSoundFromContent(title, body);
+
+    // BUG-600 — Aggregator order tone override.
+    // Runs BEFORE confirm-order check so aggregator orders don't get caught
+    // by isConfirmOrderNotification. Reads aggregatorOrderTone from profile.
+    // Same override pattern as POS2-007 (confirm-order).
+    if (isAggregatorOrderNotification(data, resolvedSound)) {
+      const restaurant = getRestaurantRef();
+      const profileTone = restaurant?.settings?.aggregatorOrderTone;
+      if (profileTone !== undefined) {
+        const overriddenSound = mapAggregatorOrderTone(profileTone);
+        if (overriddenSound !== resolvedSound) {
+          console.log('[Notification] BUG-600 aggregator tone override:',
+            'profile=', profileTone, '| from=', resolvedSound, '→ to=', overriddenSound);
+        }
+        resolvedSound = overriddenSound;
+      }
+    }
 
     // POS2-007 Phase 1 — confirm-order tone override.
     // Only activates when the notification is unambiguously a confirm-order /
