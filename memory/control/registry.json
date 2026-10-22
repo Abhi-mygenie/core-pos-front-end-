@@ -32815,11 +32815,11 @@
       "title": "order_note sent in place-order payload but backend returns empty in employee-orders-list \u2014 notes pushed to food_level_notes instead",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "GATE_5A_IMPLEMENTED",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
-      "notes": "2026-10-21: Confirmed via API probe. FE sends order_note correctly (payload captured). Backend returns order_note=\"\" in employee-orders-list and employee-order-details. Notes appear at item food_level_notes level instead. FE chain complete \u2014 no FE fix needed. Discovered during BUG-573 investigation."
+      "notes": "2026-10-22: Backend fix confirmed live. API probe: order_note persists on create, updates correctly, preserved on null/empty update. FE rendering chain verified: OrderCard.jsx:636, CartPanel.jsx:1517, OrderDetailSheet.jsx:741, AggregatorOrderPopOut.jsx:270, ScanOrderPopOut.jsx:437, OrderEntry.jsx:432 (restore on re-engage). No FE code changes needed \u2014 backend fix unblocked the existing FE chain. Ready for QA."
     },
     {
       "id": "BUG-603",
