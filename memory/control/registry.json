@@ -32671,12 +32671,12 @@
       "id": "BUG-593",
       "title": "CRM Sends noname as Customer Name for Newly Added Customer",
       "type": "BUG",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P2",
       "risk": "HIGH",
       "sprint_key": "backlog",
       "area": "CRM / Customer",
-      "notes": "2026-10-22: IA Rev2 complete. Root cause CONFIRMED + REPRODUCED: enrichCustomerLoyaltyFromCRM (OrderEntry.jsx L244) merges id/tier/points/wallet/loyalty but NOT name from CRM lookup. On order re-open, customer.name=\"\" (from backend user_name:\"\") \u2192 collect-bill sends cust_name:\"\" \u2192 backend settlement syncs to CRM \u2192 name overwritten to Noname. Probe confirmed: settlement endpoint is the sync path. Fix: 1 line \u2014 add name merge to enrichment function. No blockers."
+      "notes": "2026-10-22: IMPLEMENTED. Added name merge to enrichCustomerLoyaltyFromCRM (OrderEntry.jsx L246): name: enriched.name || prev?.name. CRM name now flows into customer state on order re-open \u2192 collect-bill sends correct cust_name \u2192 CRM name preserved. Webpack: 0 new warnings (1 pre-existing exhaustive-deps on L1673). 1 file, 1 line."
     },
     {
       "id": "CR-439",

@@ -243,6 +243,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         if (!enriched) return;
         setCustomer((prev) => ({
           ...(prev || {}),
+          name:          enriched.name || prev?.name,  // BUG-593: merge CRM name so collect-bill sends correct cust_name
           id:            enriched.id || prev?.id || null,
           tier:          enriched.tier ?? prev?.tier,
           totalPoints:   enriched.totalPoints ?? prev?.totalPoints,
