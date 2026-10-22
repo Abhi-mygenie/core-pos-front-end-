@@ -1,0 +1,29 @@
+In-house count: 3
+
+Res 1: order_id=1232903
+  charge.booking_charge = 1050
+  charge.sgst           = 26.25
+  charge.cgst           = 26.25
+  charge.balance_due    = 1002.5
+  charge.advance_payment= 100
+  advance_payment (res) = 100
+  balance_payment (res) = 950
+
+Res 2: order_id=1232965
+  charge.booking_charge = 1050
+  charge.sgst           = 26.25
+  charge.cgst           = 26.25
+  charge.balance_due    = 1002.5
+  charge.advance_payment= 100
+  advance_payment (res) = 100
+  balance_payment (res) = 750
+
+Res 3: order_id=1232972
+  charge.booking_charge = 1500
+  charge.sgst           = 37.5
+  charge.cgst           = 37.5
+  charge.balance_due    = 1075
+  charge.advance_payment= 500
+  advance_payment (res) = 500
+  balance_payment (res) = 0
+

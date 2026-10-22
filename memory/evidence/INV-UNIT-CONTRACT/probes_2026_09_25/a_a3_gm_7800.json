@@ -1,0 +1,35 @@
+{
+ "http": 200,
+ "body": {
+  "stock_id": "20326",
+  "purchase_id": 7961,
+  "transaction_id": "PUR-835-20260925-7961",
+  "ingredient_id": "20326",
+  "ingredient_name": "UAT VIS SPICE PKT",
+  "added_quantity": 0,
+  "unit": "gm",
+  "price": 0,
+  "display_qty": 9.75,
+  "physical_qty": 7800,
+  "display_unit": "kg",
+  "min_qty_alert": "",
+  "min_unit_alert": "",
+  "vendor_id": null,
+  "purchase_date": "2026-09-25",
+  "payment_type": null,
+  "item_total": null,
+  "tot_amount": null,
+  "total_tax": null,
+  "total_fair": null,
+  "bill_pdf": null,
+  "source_restaurant_id": 835,
+  "origin_transfer_id": null,
+  "wastage": {
+   "type": "Gain (Found)",
+   "current_stock": 9,
+   "physical_count": 7800,
+   "difference": 0.75,
+   "unit": "kg"
+  }
+ }
+}

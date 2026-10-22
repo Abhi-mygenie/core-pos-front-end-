@@ -1,0 +1,32 @@
+{
+  "summary": "CR-422 regression retest. All 4 previously-failing items now fixed and verified: PurchaseReportPage initial dates correctly show Sep 1–30 (LM), Sales LM click returns Sep 1–30, Dashboard has LM (no 30D), Settlement has LM (no 30D). Code review confirms _lmFrom/_lmTo initialisation in all 4 changed files.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "purchase_report_initial_dates": "PASS — FROM=2026-09-01, TO=2026-09-30 (Sep 1–Sep 30, correct LM)",
+    "purchase_report_lm_button_active": "PASS — activePreset=LM, no 30D in preset bar (Today/7D/LM/MTD)",
+    "sales_lm_click": "PASS — date[0]=2026-09-01, date[1]=2026-09-30",
+    "sales_no_30D": "PASS — presets: Today/7D/LM/MTD",
+    "dashboard_lm_present": "PASS — presets: Today/7D/LM/MTD",
+    "dashboard_no_30D": "PASS",
+    "settlement_lm_present": "PASS — presets: Today/7D/LM/90D/365D/MTD/YTD",
+    "settlement_no_30D": "PASS",
+    "delivery_charge_lm_initial": "PASS (code review) — _lmFrom/_lmTo initialised at L34-39",
+    "tax_detail_lm_initial": "PASS (code review) — _lmFrom/_lmTo initialised at L44-49",
+    "tip_report_lm_initial": "PASS (code review) — _lmFrom/_lmTo initialised at L35-38",
+    "code_review_no_30D_in_preset_arrays": "PASS — grep returns 0 hits for '30D' in button/preset arrays across changed files"
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CR-422 LM replacement fully verified. All 4 fixed files initialise to LM correctly. No 30D button exists in any preset array. Sales/Dashboard/Settlement/PurchaseReport all confirmed via browser automation."
+}

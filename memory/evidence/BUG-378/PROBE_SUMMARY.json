@@ -1,0 +1,16 @@
+{
+  "probe_date": "2026-09-03",
+  "restaurant": "69",
+  "summary": {
+    "view_in_house_result": "RETURNS 0 \u2014 filters by today IN [checkin,checkout] range, not op_status. Early check-ins invisible.",
+    "view_all_total": 6,
+    "view_all_op_in_house": 2,
+    "join_hits_on_order_id": 2
+  },
+  "conclusions": {
+    "OD-1_answer": "Option C CONFIRMED \u2014 use view=all + filter op_status=in_house client-side, joined to GET_ROOM_LIST via order_id",
+    "phone_for_all_guests": "Available in GET_ROOM_LIST user.phone \u2014 NOT mapped in transform (fix in pmsService)",
+    "walk_in_guest": "NO local-res entry. Phone from user.phone. Dates/balance unavailable without detail fetch.",
+    "ota_direct_guests": "ALL columns available via local-res join: phone, checked_in_at, checkout, amount_after_tax, channel"
+  }
+}

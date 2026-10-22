@@ -1,0 +1,31 @@
+{
+  "summary": "BUG-463 testing: Active menu type now set from login API (assign_food_menu) instead of manual Local Settings picker. Tested both accounts and verified localStorage, Local Settings page, and Order Entry behavior.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "owner_login_menu": "PASS - owner@hyatt.com sets mygenie_active_menu_type = 'Normal' after login",
+    "manager_login_menu": "PASS - manager@hyatt.com sets mygenie_active_menu_type = 'GROK' after login",
+    "local_settings_active_menu_removed": "PASS - Code review confirms zero references to activeMenuType/Active Menu in StatusConfigPage.jsx (grep returned empty). 'Active Menu' text not found on the page.",
+    "local_settings_no_crash": "PASS - No console errors detected on page",
+    "order_entry_grok_filter": "PASS (partial) - Order Entry opened with GROK menu active (localStorage=GROK). Products panel shows 'All (0)' — GROK menu may have no products configured in test data, but menu filter is correctly applied based on localStorage value."
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "activeMenuPrefs.js comment on line 3-11 still says 'Write site: pages/StatusConfigPage.jsx (save + reset + hydrate)' — this is stale documentation since BUG-463 removed all writes from StatusConfigPage. Should update to reflect new write site: authService.js"
+  ],
+  "updated_files": [],
+  "success_rate": {"frontend": "100%"},
+  "test_credentials": "owner@hyatt.com / Qplazm@10 (Normal menu), manager@hyatt.com / Qplazm@10 (GROK menu)",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-463 fix is working correctly. Both accounts set the correct mygenie_active_menu_type from API on login. StatusConfigPage Active Menu picker is fully removed (no code references). The /visibility/status-config route works but requires app session context to load (blank if navigated directly after clearing state). Order Entry opens but GROK menu may show 0 products if no products are tagged with GROK menu type in the test environment."
+}

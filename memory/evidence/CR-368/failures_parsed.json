@@ -1,0 +1,332 @@
+[
+ {
+  "suite": "src/__tests__/api/transforms/updateOrderPayload.test.js",
+  "test": "toAPI.updateOrder() - Tax Calculation Breakup \u203a Other payload fields \u203a should include cust_name only (cust_mobile/cust_email captured at place-order time)",
+  "msg": "expect(received).not.toHaveProperty(path) | Expected path: not \"cust_mobile\" | Received value: \"1234567890\"",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/updateOrderPayload.test.js:334:27)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js",
+  "test": "QA Bucket 2 \u2014 Place Order outbound payload \u203a Case 2.4: Delivery place order (item \u20b9242 + delivery \u20b91999, item GST 5%, delivery GST 5%)",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 2354 | Received: 2353",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js:111:34)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js",
+  "test": "QA Bucket 2 \u2014 Place Order outbound payload \u203a Case 2.5b: Update order \u2014 delivery includes delivery in Subtotal",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 2354 | Received: 2353",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js:140:34)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js",
+  "test": "QA Bucket 2 \u2014 Place Order outbound payload \u203a Case 2.5d: placeOrderWithPayment \u2014 DELIVERY prepaid",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 2354 | Received: 2353",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js:166:34)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js",
+  "test": "QA Bucket 4 \u2014 buildBillPrintPayload (order-temp-store) \u203a Fallback path with TODAY-style socket echo (subtotalBeforeTax=items-only=242) \u2014 delivery order",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 2241 | Received: 242",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js:290:36)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js",
+  "test": "QA Bucket 4 \u2014 buildBillPrintPayload (order-temp-store) \u203a Non-delivery order through fallback \u2014 no delivery in subtotal, delivery_charge=0",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 126 | Received: 120",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/qa_subtotal_delivery_validation.test.js:321:36)"
+ },
+ {
+  "suite": "src/__tests__/integration/POS2_003_REOPEN_A_wire.test.js",
+  "test": "REOPEN-A regression | place-order behaviour unchanged (POS2-003) \u203a placeOrder still emits printer_agent for KOT stations (POS2-003)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/integration/POS2_003_REOPEN_A_wire.test.js:391:64)"
+ },
+ {
+  "suite": "src/__tests__/integration/POS2_003_REOPEN_A_wire.test.js",
+  "test": "REOPEN-A regression | place-order behaviour unchanged (POS2-003) \u203a placeOrder with print_kot:No still emits printer_agent: []",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  -  1 | + Received  + 13 | - Array []",
+  "loc": "at Object.<anonymous> (src/__tests__/integration/POS2_003_REOPEN_A_wire.test.js:405:35)"
+ },
+ {
+  "suite": "src/__tests__/components/layout/PlatformDropdown.test.jsx",
+  "test": "POS2-002 Phase 3 | PLATFORM_OPTIONS export \u203a exports exactly three options: All (null) / POS / Web / Scan",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 3 | Received: 4",
+  "loc": "at Object.<anonymous> (src/__tests__/components/layout/PlatformDropdown.test.jsx:31:37)"
+ },
+ {
+  "suite": "src/api/transforms/__tests__/printerAgentConfigTransform.test.js",
+  "test": "V2 \u2014 fromAPI maps all editable fields from live fixture \u203a style config normalized (sections, rows, bold as bool)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 2 | + Received  + 9 | Object {",
+  "loc": "at Object.<anonymous> (src/api/transforms/__tests__/printerAgentConfigTransform.test.js:56:63)"
+ },
+ {
+  "suite": "src/api/transforms/__tests__/printerAgentConfigTransform.test.js",
+  "test": "V2 \u2014 fromAPI maps all editable fields from live fixture \u203a options sourced from raw (never hardcoded)",
+  "msg": "expect(received).toHaveLength(expected) | Expected length: 20 | Received length: 11 | Received array:  [\"Montserrat\", \"Roboto\", \"Poppins\", \"Ubuntu\", \"Open Sans\", \"Lato\", \"Oswald\", \"Helvetica (Sans Serif)\", \"Times New Roman\", \"Courier\", \"Gujarati\"]",
+  "loc": "at Object.<anonymous> (src/api/transforms/__tests__/printerAgentConfigTransform.test.js:71:33)"
+ },
+ {
+  "suite": "src/api/transforms/__tests__/printerAgentConfigTransform.test.js",
+  "test": "V3 \u2014 HARD GATE: round-trip integrity (zero data loss) \u203a toAPI(fromAPI(fixture)) deep-equals fixture minus printer_configuration and top-level restaurant_id",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 2 | + Received  + 2 | @@ -435,12 +435,12 @@",
+  "loc": "at Object.<anonymous> (src/api/transforms/__tests__/printerAgentConfigTransform.test.js:87:20)"
+ },
+ {
+  "suite": "src/api/transforms/__tests__/printerAgentConfigTransform.test.js",
+  "test": "V4 \u2014 decimal font sizes survive round-trip as floats \u203a amount_section.paid_by 5.5 / 6.5 preserved",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 5.5 | Received: undefined",
+  "loc": "at Object.<anonymous> (src/api/transforms/__tests__/printerAgentConfigTransform.test.js:125:63)"
+ },
+ {
+  "suite": "src/api/transforms/__tests__/printerAgentConfigTransform.test.js",
+  "test": "process.exit called with \"0\"",
+  "msg": "",
+  "loc": "at Object.<anonymous> (src/api/services/__tests__/pmsService.tapeChart.cr358p4.test.js:188:9)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-3: renders a single panel when one web YTC order is queued",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-backdrop\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-4: renders \"Order 1 of 3\" when three web YTC orders are queued",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-queue-indicator\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-5: clicking Accept invokes onAccept with a tableEntry-shaped object for the active order",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-accept-btn-5001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-6: clicking Reject invokes onReject with the raw order object",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-reject-btn-6001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-7: clicking View invokes onEdit with a tableEntry derived from the order",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-view-btn-7001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-8: clicking Snooze calls onToggleSnooze with the id string, popup stays open",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-panel\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-9: snooze stops sound but popup remains visible (no 2-min hide)",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-panel\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-10: when an order flips out of YTC, it leaves the queue immediately regardless of snooze state",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-10001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-11: Next/Prev chevrons advance and retreat the active index with no wrap-around",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-order-number\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-12: panel class set carries full-screen behaviour by default with lg: overrides for desktop overlay",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-panel\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-15: pop-out auto-dismisses (renders null) when the queue drains",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-backdrop\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-16: dialog has role=\"dialog\", aria-modal=\"true\", and aria-labelledby pointing to a real title node",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-backdrop\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 unit \u203a T-2: popup stays visible after snooze (no hide-set)",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-2222\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 integration \u203a I-1: passes the exact handlers through \u2014 accept/reject/snooze/edit each receive their original references",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-view-btn-12345\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 integration \u203a I-2: a status flip on the active queued order via prop update auto-drops it",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"scan-order-popout-order-number\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 anti-tests \u203a A-3: snooze does not write to localStorage / sessionStorage",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-33001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 anti-tests \u203a A-4: snooze does not mutate order.fOrderStatus / order.status",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-44001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | ScanOrderPopOut \u2014 anti-tests \u203a A-5: when no handler props are supplied, clicking action buttons does not throw and does not call any global handler",
+  "msg": "expect(received).not.toThrow() | Error name:    \"TestingLibraryElementError\" | Error message: \"Unable to find an element by: [data-testid=\\\"popout-view-btn-55001\\\"]\u00b7 | Ignored nodes: comments, script, style",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "POS2-002 Phase 4 | pure helpers \u203a isUnconfirmedScanOrder predicate quadrants",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: true | Received: undefined",
+  "loc": "at Object.<anonymous> (src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx:518:75)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "CR SNOOZE_SOUND_STOP_AND_DURATION | ScanOrderPopOut \u2014 snooze sound-stop \u203a T-11: clicking Snooze calls soundManager.stop() exactly once",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-11001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "CR SNOOZE_SOUND_STOP_AND_DURATION | ScanOrderPopOut \u2014 snooze sound-stop \u203a T-12: Snooze does NOT call soundManager.setEnabled(false) and future play() still works",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-12001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/dashboard/ScanOrderPopOut.test.jsx",
+  "test": "CR SNOOZE_SOUND_STOP_AND_DURATION | ScanOrderPopOut \u2014 snooze sound-stop \u203a T-13: snooze stops sound, popup stays open, no soundManager.play() calls",
+  "msg": "TestingLibraryElementError: Unable to find an element by: [data-testid=\"popout-snooze-btn-13001\"] | Ignored nodes: comments, script, style | <body> | <div />",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrder \u2014 printer_agent injection \u203a print_kot:\"No\" \u2192 printer_agent: [] (OQ-PA-13)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  -  1 | + Received  + 13 | - Array []",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:44:35)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrder \u2014 printer_agent injection \u203a print_kot:\"Yes\" + matching cart stations \u2192 KDS+BAR agents (BILL excluded)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:53:57)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrder \u2014 printer_agent injection \u203a Dynamic non-canonical label (PASTRY) routes correctly (BE-PA8 / \u00a77.3)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:63:57)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrder \u2014 printer_agent injection \u203a Cart station with no agent match silently ignored (OQ-PA-14)",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:79:57)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrderWithPayment \u2014 printer_agent injection \u203a Prepaid + print_kot:\"Yes\" \u2192 KOT agents only",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:105:57)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrderWithPayment \u2014 printer_agent injection \u203a Prepaid + print_kot:\"No\" \u2192 printer_agent: []",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  -  1 | + Received  + 13 | - Array []",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:114:35)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrderWithPayment \u2014 printer_agent injection \u203a BILL excluded even when present in printerAgents",
+  "msg": "expect(received).toEqual(expected) // deep equality | - Expected  - 0 | + Received  + 1 | Array [",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:123:57)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/placeOrderPayload.test.js",
+  "test": "CR-POS2-003 | toAPI.placeOrderWithPayment \u2014 printer_agent injection \u203a Pre-existing prepaid payload fields preserved",
+  "msg": "expect(received).toBeDefined() | Received: undefined",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/placeOrderPayload.test.js:135:38)"
+ },
+ {
+  "suite": "src/__tests__/structure/barrelExports.test.js",
+  "test": "T-12: Barrel Exports for modals, panels, reports \u203a reports/index.js \u203a all report components match files in directory",
+  "msg": "expect(received).toMatch(expected) | Expected pattern: /ReportLoadingShield/ | Received string:  \"// Barrel export for reports \u2014 T-12 | export { default as DatePicker } from './DatePicker';",
+  "loc": "at forEach (src/__tests__/structure/barrelExports.test.js:99:24)"
+ },
+ {
+  "suite": "src/__tests__/structure/barrelExports.test.js",
+  "test": "T-14: Pages Barrel Export \u203a all page files are exported",
+  "msg": "expect(received).toMatch(expected) | Expected pattern: /AggregatorPreviewPage/ | Received string:  \"// Barrel export for pages \u2014 T-14 | export { default as LoginPage } from './LoginPage';",
+  "loc": "at forEach (src/__tests__/structure/barrelExports.test.js:134:22)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/rawField.test.js",
+  "test": "T-11: _raw fields gated behind development mode \u203a T2: Exactly 9 NODE_ENV development guards for _raw across both files",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 2 | Received: 1",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/rawField.test.js:31:27)"
+ },
+ {
+  "suite": "src/__tests__/api/transforms/rawField.test.js",
+  "test": "T-11: _raw fields gated behind development mode \u203a T3: No component or page file references ._raw or destructures _raw",
+  "msg": "expect(received).toBe(expected) // Object.is equality | Expected: 0 | Received: 1",
+  "loc": "at Object.<anonymous> (src/__tests__/api/transforms/rawField.test.js:64:29)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr027p3.test.jsx",
+  "test": "CR-027 Phase 3 | BulkEditor row-error trail \u203a \u22643 failures: rows store readableMessage, tooltip on red indicator, hover-hint toast",
+  "msg": "expect(element).toHaveAttribute(\"title\", \"Price exceeds category cap\") // element.getAttribute(\"title\") === \"Price exceeds category cap\" | Expected the element to have attribute: | title=\"Price exceeds category cap\" | Received:",
+  "loc": "at Object.<anonymous> (src/__tests__/components/menu/BulkEditor.cr027p3.test.jsx:81:57)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr027p3.test.jsx",
+  "test": "CR-027 Phase 3 | BulkEditor row-error trail \u203a >3 failures: [View errors] toast button opens drawer listing each row + message",
+  "msg": "TestingLibraryElementError: Unable to find an element with the text: Backend rejected item 1. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible. | Ignored nodes: comments, script, style ",
+  "loc": "at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr027p3.test.jsx",
+  "test": "CR-027 Phase 3 | BulkEditor row-error trail \u203a re-editing a failed row clears its _saveError (tooltip falls back)",
+  "msg": "expect(element).toHaveAttribute(\"title\", \"Duplicate product name\") // element.getAttribute(\"title\") === \"Duplicate product name\" | Expected the element to have attribute: | title=\"Duplicate product name\" | Received:",
+  "loc": ""
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr036.test.jsx",
+  "test": "CR-036-FU-01 G-Toast | toast surfaces specific failing row + error \u203a row with productName uses that as the identifier in toast",
+  "msg": "expect(received).toMatch(expected) | Expected pattern: /My Special Item \u2014 Category is required/ | Received string:  \"Bulk Editor4 items Columns12 Excel Import Add ItemValidate TaxSave 1 ChangeEditing:ImgNameCategoryPriceAdd-onsVariationsStatusTypeTax TypeTax %Packaged ItemInventory#ImgNameCategoryPr",
+  "loc": "at Object.<anonymous> (src/__tests__/components/menu/BulkEditor.cr036.test.jsx:288:18)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr036.test.jsx",
+  "test": "CR-036-FU-02 G-SoldBy | \"Sold By (Unit)\" visible by default + label aligned \u203a Sold By (Unit) header is rendered without enabling Tier 4 via column-picker",
+  "msg": "expect(received).toBeGreaterThanOrEqual(expected) | Expected: >= 0 | Received:    -1",
+  "loc": "at Object.<anonymous> (src/__tests__/components/menu/BulkEditor.cr036.test.jsx:503:23)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr036.test.jsx",
+  "test": "CR-036-FU-02 G-SoldBy | \"Sold By (Unit)\" visible by default + label aligned \u203a header label matches \"Sold By (Unit)\" exactly (matches ProductForm)",
+  "msg": "expect(received).toContain(expected) // indexOf | Expected value: \"Sold By (Unit)\" | Received array: [\"\", \"#\", \"Img\", \"Name\", \"Category\", \"Price\", \"Add-ons\", \"Variations\", \"Status\", \"Type\", \"Tax Type\", \"Tax %\", \"Packaged Item\", \"Inventory\", \"\"]",
+  "loc": "at Object.<anonymous> (src/__tests__/components/menu/BulkEditor.cr036.test.jsx:511:25)"
+ },
+ {
+  "suite": "src/__tests__/components/menu/BulkEditor.cr036.test.jsx",
+  "test": "CR-036-FU-02 G-SoldBy | \"Sold By (Unit)\" visible by default + label aligned \u203a cell renderer renders an itemUnit select for existing items",
+  "msg": "expect(received).toBeGreaterThan(expected) | Expected: > 0 | Received:   0",
+  "loc": "at Object.<anonymous> (src/__tests__/components/menu/BulkEditor.cr036.test.jsx:518:34)"
+ }
+]

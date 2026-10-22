@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only retest of the collapsed sidebar flyout z-index fix, desktop 1920x800, owner@palmhouse.com. On /dashboard, /reports/* and /expenses the fix works. Flyouts for Settings, Daily Report, Insights, Expenses and Aggregator render at x=70, w=240, on top of the main content (checked with elementFromPoint). Clicking outside closes them, clicking the parent again closes them, and sub-items navigate: Printers->/settings, Order Report->/reports/audit, Daily Sales->/reports-module/daily-sales, Add Expenses->/expenses. In expanded mode (280px) Settings opens inline children, no flyout appears, and inline Table Management navigates. Two problems remain: (1) on /settings the full-screen settings-panel (fixed z-50) covers the flyout; (2) the Insights flyout runs past the bottom of the viewport and its last items cannot be reached.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Sidebar flyout on /settings", "issue": "After Settings > Printers (or any settings sub-item), the settings-panel overlay (data-testid=settings-panel, 'fixed z-50') is open. Opening any collapsed-sidebar flyout (e.g. Daily Report) then renders BEHIND the panel. elementFromPoint at the flyout returns settings-tile-cancellation-reasons, and clicks on flyout items are blocked (Playwright reports that settings-panel intercepts pointer events). RCA: the flyout's z-[200] only applies inside the aside's stacking context, and the aside is z-20, so overall the flyout sits at z-20, below the z-50 fixed panel.", "selector": "[data-testid='sidebar-flyout']", "priority": "HIGH"},
+      {"component": "Insights flyout", "issue": "Insights has 38 children. The flyout's top is the button's Y (527px), and its height is maxHeight 70vh (560px), so its bottom is at ~1089px on an 800px viewport. Even after scrolling the inner list to the end, the last item (Food Court Beta) is at y=1049, off-screen and unreachable. The aside is sticky, so scrolling the page doesn't help. Settings and Reports end at ~785px, only just inside the viewport, and will clip on shorter screens.", "selector": "[data-testid='sidebar-flyout']", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Render the flyout through a React portal (createPortal to document.body) with position:fixed (left 70px, top = button rect.top) and a z-index above overlays like settings-panel (z-50). Alternatively raise the desktop aside z-index above 50, but check this doesn't put the aside over modals or dialogs. Retest by opening the flyout while on /settings with the panel open.",
+    "Clamp the flyout's vertical position to the viewport: top = min(buttonTop, window.innerHeight - flyoutHeight - 8), or anchor it to the bottom (bottom: 8px) when it would overflow. Also give the inner scroll area a max-height based on the space actually available, so every Insights item can be reached at 800px height."
+  ],
+  "critical_code_review_comments": [
+    "Sidebar.jsx L714-725: the flyout is position:absolute inside the aside. Its z-[200] cannot escape the aside's z-20 stacking context. A portal plus fixed positioning is more robust.",
+    "Sidebar.jsx L642-646: flyoutTop is computed from the button rect and never clamped to window.innerHeight.",
+    "Sidebar.jsx is 900 lines; consider extracting the flyout into its own component."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "80% (requested flows pass on dashboard; the flyout is hidden behind settings-panel on /settings; Insights bottom items can't be reached)"},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login via data-testid login-email/login-password/login-button, then wait for [data-testid=sidebar]. Collapsed is the default on desktop; expand with [data-testid=expand-sidebar]. Flyout: [data-testid=sidebar-flyout], items are [data-testid=flyout-<id>]. Check visibility with document.elementFromPoint, not only bounding box. Reproduce bug 1: Settings flyout > Printers (opens settings-panel on /settings), then click sidebar-reports. Reproduce bug 2: at 1920x800 open sidebar-insights; the flyout bottom is past 800px.",
+  "rca of the issue": "Original bug fixed: adding z-20 to the aside puts it above DashboardPage's 'overflow-hidden relative' main div. The remaining overlay issue happens because z-20 is lower than other fixed overlays (settings-panel z-50). The flyout is a descendant of the aside, so its z-[200] cannot lift it out."
+}

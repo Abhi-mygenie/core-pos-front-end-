@@ -1,0 +1,22 @@
+[d14] login OK · host https://preprod.mygenie.online
+== D14 repro: calendar extend + collect-now 500 -> is charge.advance_payment/balance_due stale in the response AND in the LR read-back?
+[set_set] HTTP 200 :: 
+  set {'allow_early_checkin': True, 'extend_rate_mode': 'calendar'} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[direct] HTTP 201 :: {"status": true, "message": "Direct reservation created successfully", "data": {"reservation": {"id": 281, "booking_id": "MG-69-94B09B06-7200-4862-8CF0-C496D59F29B9", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-10", "checkout": "2026-10-11", "status":
+  RES 281 charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 0, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 9148}
+[checkin] HTTP 200 :: {"message": "Group check-in completed successfully", "user_id": 42832, "cust_membership_id": null, "data": {"order_id": 1232700, "orders": [{"room_id": "8525", "room_no": "r4", "room_price": 10100, "advance_payment": 1000, "balance_payment": 9100, "order_id": 1232700, "gst_tax": 1818}], "charge": {"rate_per_night": 8600, "nights": 1, "rateplan_code": "executive-s-ep", "rateplan_name": "executive-s-ep", "upgrade_amount": 1500, "booking_charge": 10100, "sgst": 909, "cgst": 909, "total_with_gst": 1
+  after check-in: advance 1000 balance_due 10918 total 11918
+[cal_extend] HTTP 200 :: 
+  extend response: charge.advance_payment 1500 charge.balance_due 18188 | reservation.advance_payment (legacy) 1500 | payment_record_id 466
+  LR read-back: charge.advance_payment 1500 balance_due 18188 total 19688
+  folio ledger before TAB: [(1000, 'upi', 'advance'), (500, 'cash', 'advance')] total_paid 1500
+  true balance = 18188.0 | charge.balance_due = 18188 | RESPONSE STALE: False | LR STALE: False
+[_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+[restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+  board: ('hk', 'hk', False, None)
+== CLEANUP
+[cleanup_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+  board after: {8524: 'hk', 8525: 'hk', 8526: 'hk', 8527: 'hk', 8528: 'occupied_hk'}
+  business_date 2026-09-24 · counts {'arrivals_today': 0, 'arrivals_late': 10, 'arrivals_tomorrow': 0, 'departures_today': 1, 'departures_overdue': 0, 'in_house': 1, 'leaving_today': 1, 'arrived_today': 0} · qa_rows_left []

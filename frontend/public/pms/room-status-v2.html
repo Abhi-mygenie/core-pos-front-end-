@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Room Status v2 (HK/OOO Backend)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+.sb{width:64px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+.sb-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:#666;transition:background .15s}
+.sb-icon:hover{background:#F7F7F7}
+.sb-nav-item{width:100%;height:44px;display:flex;align-items:center;justify-content:center;border-left:3px solid transparent;cursor:pointer;border:none;background:transparent;color:#666}
+.sb-nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.08);color:#329937}
+.room-card{background:#fff;border:1px solid #E5E5E5;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:0;transition:box-shadow .15s,border-color .15s;cursor:pointer;position:relative;overflow:visible}
+.room-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.07);border-color:#D0D0D0}
+.room-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:8px 0 0 8px}
+.room-card.occupied::before{background:#F26B33}
+.room-card.available::before{background:#329937}
+.room-card.housekeeping::before{background:#F4A11A}
+.room-card.ooo::before{background:#EF4444}
+.room-card.booked::before{background:#6366F1}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:1px 7px;border-radius:12px;white-space:nowrap;letter-spacing:.02em}
+.badge.occupied{background:rgba(242,107,51,.1);color:#C4501A}
+.badge.available{background:rgba(50,153,55,.1);color:#217A28}
+.badge.housekeeping{background:rgba(244,161,26,.12);color:#966800}
+.badge.ooo{background:#FEE2E2;color:#B91C1C}
+.badge.booked{background:rgba(99,102,241,.1);color:#4338CA}
+.card-btn{height:26px;padding:0 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;border:1px solid #E5E5E5;background:#fff;color:#555;transition:background .12s}
+.card-btn:hover{background:#F7F7F7}
+.card-btn.primary{background:#329937;color:#fff;border-color:#329937}
+.card-btn.primary:hover{background:#2a7e2f}
+.filter-btn{height:30px;padding:0 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;transition:background .12s;border:none}
+.filter-btn.active{background:#1A1A1A;color:#fff}
+.filter-btn:not(.active){background:#fff;color:#666;border:1px solid #E5E5E5}
+.section-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#888;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.section-hdr::after{content:'';flex:1;height:1px;background:#EEEEEE}
+/* Status dropdown */
+.status-dropdown{position:absolute;top:calc(100% + 4px);right:0;left:0;background:#fff;border:1px solid #E5E5E5;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;display:none}
+.status-dropdown.open{display:block}
+.status-option{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .1s}
+.status-option:hover{background:#F7F7F7}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* OOO note panel */
+.ooo-note{display:none;padding:10px 12px;border-top:1px solid #F0F0F0}
+.saving-indicator{display:none;position:absolute;top:6px;right:6px;font-size:10px;color:#329937;font-weight:600;background:rgba(50,153,55,.1);padding:2px 8px;border-radius:12px}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}.pulse-dot{animation:pulse-dot 2s ease-in-out infinite}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- SIDEBAR collapsed -->
+<aside class="sb">
+  <div style="padding:12px 0 10px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:28px;width:28px;object-fit:contain">
+    <button class="sb-icon"><i data-lucide="panel-left" style="width:18px;height:18px"></i></button>
+  </div>
+  <div style="padding:8px 0;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:4px">
+    <button class="sb-icon" style="color:#F26B33;background:rgba(242,107,51,.08)"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></button>
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)"><i data-lucide="columns" style="width:18px;height:18px"></i></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:6px 0;display:flex;flex-direction:column;align-items:center">
+    <button class="sb-nav-item" title="Dashboard"><i data-lucide="home" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Day Closure"><i data-lucide="banknote" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item active" title="Rooms"><i data-lucide="bed-double" style="width:18px;height:18px"></i></button>
+    <div style="height:1px;background:#F0F0F0;margin:4px 8px;width:calc(100% - 16px)"></div>
+    <button class="sb-nav-item" title="Daily Report"><i data-lucide="bar-chart-3" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Settings"><i data-lucide="settings" style="width:18px;height:18px"></i></button>
+  </nav>
+  <div style="padding:8px 0 10px;border-top:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:2px">
+    <button class="sb-icon" style="color:#F26B33"><i data-lucide="refresh-cw" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon"><div style="width:28px;height:28px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div></button>
+    <button class="sb-icon" style="color:#EF4444"><i data-lucide="log-out" style="width:17px;height:17px"></i></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+
+  <!-- Header -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div>
+      <h1 style="font-size:18px;font-weight:700">Room Status Board</h1>
+      <p style="font-size:12px;color:#888;margin-top:1px">The Palm House · 20 rooms · HK/OOO states saved to backend</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="filter-btn active" onclick="filterRooms('all',this)">All (20)</button>
+      <button class="filter-btn" onclick="filterRooms('available',this)">Available (6)</button>
+      <button class="filter-btn" onclick="filterRooms('occupied',this)">Occupied (11)</button>
+      <button class="filter-btn" onclick="filterRooms('housekeeping',this)">HK (2)</button>
+      <button class="filter-btn" onclick="filterRooms('ooo',this)">OOO (1)</button>
+    </div>
+  </div>
+
+  <div style="padding:16px 24px;display:flex;flex-direction:column;gap:20px">
+
+    <!-- Design note banner -->
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:8px">
+      <i data-lucide="info" style="width:15px;height:15px;color:#6366F1;flex-shrink:0"></i>
+      <span style="font-size:12px;color:#4338CA"><strong>v2 — HK/OOO Backend Toggle:</strong> Click any room card to open the status change menu. HK and OOO states are saved via <code style="background:rgba(99,102,241,.1);padding:1px 5px;border-radius:4px">PATCH /aiosell/room-status/{table_id}</code> and persist across devices.</span>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;align-items:center;gap:16px;font-size:11px;color:#666;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#F26B33"></div><span>Occupied</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#329937"></div><span>Available</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#F4A11A"></div><span>HK — saving to backend</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#EF4444"></div><span>OOO — saving to backend</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:3px;border-radius:2px;background:#6366F1"></div><span>Booked (upcoming)</span></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:#329937;font-weight:500">
+        <i data-lucide="cloud" style="width:13px;height:13px"></i> HK/OOO states synced to server
+      </div>
+    </div>
+
+    <!-- STANDARD DOUBLE -->
+    <div>
+      <div class="section-hdr">Standard Double &nbsp;<span style="font-weight:500;color:#bbb">12 rooms</span></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px" id="grid-standard">
+
+        <!-- 101 OCCUPIED -->
+        <div class="room-card occupied" data-status="occupied" onclick="openStatusMenu(event,this)">
+          <div class="saving-indicator" id="save-101">Saved ✓</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">101</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sharma, R.</div>
+          <div style="font-size:11px;color:#888;margin-top:1px">Out: 29 Aug</div>
+          <div style="margin-top:8px"><button class="card-btn" onclick="event.stopPropagation()"><i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio</button></div>
+          <div class="status-dropdown" id="menu-101">
+            <div style="padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:#888">Change Status</div>
+            <div class="status-option" onclick="changeStatus(101,'housekeeping',this)">
+              <div class="status-dot" style="background:#F4A11A"></div>
+              <div><div style="font-size:12px;font-weight:500">Set Housekeeping</div><div style="font-size:11px;color:#888">Room cleaning in progress</div></div>
+            </div>
+            <div class="status-option" onclick="changeStatus(101,'ooo',this)">
+              <div class="status-dot" style="background:#EF4444"></div>
+              <div><div style="font-size:12px;font-weight:500">Out of Order</div><div style="font-size:11px;color:#888">Requires note / reason</div></div>
+            </div>
+            <div class="ooo-note" id="ooo-note-101">
+              <input placeholder="Reason (e.g. Plumbing issue)" style="width:100%;height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:11px;font-family:Poppins,sans-serif;margin-bottom:6px">
+              <button class="card-btn" style="width:100%;justify-content:center;background:#FEE2E2;color:#B91C1C;border-color:#FECACA" onclick="confirmOOO(101,this)">Confirm OOO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 104 HOUSEKEEPING — shows backend-saved state -->
+        <div class="room-card housekeeping" data-status="housekeeping" onclick="openStatusMenu(event,this)">
+          <div class="saving-indicator" id="save-104" style="display:flex">Saved ✓</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">104</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge housekeeping">HK</span>
+          </div>
+          <div style="font-size:12px;color:#666">Vacated 08:45 AM</div>
+          <div style="font-size:11px;color:#F4A11A;margin-top:1px;font-weight:500;display:flex;align-items:center;gap:4px">
+            <i data-lucide="cloud" style="width:11px;height:11px"></i> Saved to server
+          </div>
+          <div style="margin-top:8px;display:flex;gap:4px">
+            <button class="card-btn" style="color:#F4A11A;border-color:rgba(244,161,26,.3);background:#FFF8EC" onclick="event.stopPropagation();markClean(this,104)"><i data-lucide="check" style="width:11px;height:11px"></i>Mark Clean</button>
+          </div>
+          <div class="status-dropdown" id="menu-104">
+            <div style="padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:#888">Change Status</div>
+            <div class="status-option" onclick="changeStatus(104,'available',this)">
+              <div class="status-dot" style="background:#329937"></div>
+              <div><div style="font-size:12px;font-weight:500">Mark Available</div><div style="font-size:11px;color:#888">Room cleaned and ready</div></div>
+            </div>
+            <div class="status-option" onclick="changeStatus(104,'ooo',this)">
+              <div class="status-dot" style="background:#EF4444"></div>
+              <div><div style="font-size:12px;font-weight:500">Out of Order</div><div style="font-size:11px;color:#888">Requires note / reason</div></div>
+            </div>
+            <div class="ooo-note" id="ooo-note-104">
+              <input placeholder="Reason (e.g. Plumbing issue)" style="width:100%;height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:11px;font-family:Poppins,sans-serif;margin-bottom:6px">
+              <button class="card-btn" style="width:100%;justify-content:center;background:#FEE2E2;color:#B91C1C;border-color:#FECACA" onclick="confirmOOO(104,this)">Confirm OOO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 108 OOO — backend-saved with reason -->
+        <div class="room-card ooo" data-status="ooo" onclick="openStatusMenu(event,this)">
+          <div class="saving-indicator" id="save-108" style="display:flex">Saved ✓</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1;color:#EF4444">108</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge ooo">OOO</span>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:#EF4444">Plumbing issue</div>
+          <div style="font-size:11px;color:#999;margin-top:1px;display:flex;align-items:center;gap:4px">
+            <i data-lucide="cloud" style="width:11px;height:11px"></i> Since 26 Aug
+          </div>
+          <div style="margin-top:8px">
+            <button class="card-btn" style="color:#EF4444;border-color:rgba(239,68,68,.3)" onclick="event.stopPropagation();resolveOOO(this,108)"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Resolve</button>
+          </div>
+          <div class="status-dropdown" id="menu-108">
+            <div style="padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:#888">Change Status</div>
+            <div class="status-option" onclick="changeStatus(108,'available',this)">
+              <div class="status-dot" style="background:#329937"></div>
+              <div><div style="font-size:12px;font-weight:500">Mark Available</div><div style="font-size:11px;color:#888">Issue resolved</div></div>
+            </div>
+            <div class="status-option" onclick="changeStatus(108,'housekeeping',this)">
+              <div class="status-dot" style="background:#F4A11A"></div>
+              <div><div style="font-size:12px;font-weight:500">Set Housekeeping</div><div style="font-size:11px;color:#888">Needs cleaning after repair</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 106 AVAILABLE -->
+        <div class="room-card available" data-status="available" onclick="openStatusMenu(event,this)">
+          <div class="saving-indicator" id="save-106">Saved ✓</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">106</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge available">Available</span>
+          </div>
+          <div style="font-size:11px;color:#888">Floor 1 · Clean</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none" onclick="event.stopPropagation()"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+          <div class="status-dropdown" id="menu-106">
+            <div style="padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:#888">Change Status</div>
+            <div class="status-option" onclick="changeStatus(106,'housekeeping',this)">
+              <div class="status-dot" style="background:#F4A11A"></div>
+              <div><div style="font-size:12px;font-weight:500">Set Housekeeping</div><div style="font-size:11px;color:#888">Block for cleaning</div></div>
+            </div>
+            <div class="status-option" onclick="changeStatus(106,'ooo',this)">
+              <div class="status-dot" style="background:#EF4444"></div>
+              <div><div style="font-size:12px;font-weight:500">Out of Order</div><div style="font-size:11px;color:#888">Block for maintenance</div></div>
+            </div>
+            <div class="ooo-note" id="ooo-note-106">
+              <input placeholder="Reason (e.g. AC not working)" style="width:100%;height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:11px;font-family:Poppins,sans-serif;margin-bottom:6px">
+              <button class="card-btn" style="width:100%;justify-content:center;background:#FEE2E2;color:#B91C1C;border-color:#FECACA" onclick="confirmOOO(106,this)">Confirm OOO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 107 AVAILABLE -->
+        <div class="room-card available" data-status="available" onclick="openStatusMenu(event,this)">
+          <div class="saving-indicator" id="save-107">Saved ✓</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+            <div><span style="font-size:18px;font-weight:700;line-height:1">107</span><div style="font-size:10px;color:#999;margin-top:1px">Standard</div></div>
+            <span class="badge available">Available</span>
+          </div>
+          <div style="font-size:11px;color:#888">Floor 2 · Pool view</div>
+          <div style="margin-top:8px"><a href="new-booking.html" class="card-btn primary" style="text-decoration:none" onclick="event.stopPropagation()"><i data-lucide="plus" style="width:11px;height:11px"></i>Book</a></div>
+          <div class="status-dropdown" id="menu-107">
+            <div style="padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;color:#888">Change Status</div>
+            <div class="status-option" onclick="changeStatus(107,'housekeeping',this)">
+              <div class="status-dot" style="background:#F4A11A"></div>
+              <div><div style="font-size:12px;font-weight:500">Set Housekeeping</div></div>
+            </div>
+            <div class="status-option" onclick="changeStatus(107,'ooo',this)">
+              <div class="status-dot" style="background:#EF4444"></div>
+              <div><div style="font-size:12px;font-weight:500">Out of Order</div></div>
+            </div>
+            <div class="ooo-note" id="ooo-note-107">
+              <input placeholder="Reason" style="width:100%;height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:11px;font-family:Poppins,sans-serif;margin-bottom:6px">
+              <button class="card-btn" style="width:100%;justify-content:center;background:#FEE2E2;color:#B91C1C;border-color:#FECACA" onclick="confirmOOO(107,this)">Confirm OOO</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- How it works callout -->
+    <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px"><i data-lucide="cloud" style="width:16px;height:16px;color:#329937"></i>How HK / OOO persistence works</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:12px">
+        <div style="display:flex;gap:10px">
+          <div style="width:24px;height:24px;border-radius:50%;background:rgba(50,153,55,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="font-size:11px;font-weight:700;color:#329937">1</span></div>
+          <div><div style="font-weight:500">Staff clicks room card</div><div style="color:#888;margin-top:2px">Status dropdown opens — choose HK or OOO</div></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="width:24px;height:24px;border-radius:50%;background:rgba(50,153,55,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="font-size:11px;font-weight:700;color:#329937">2</span></div>
+          <div><div style="font-weight:500">FE calls backend</div><div style="color:#888;margin-top:2px">PATCH /aiosell/room-status/{table_id} with status + note</div></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="width:24px;height:24px;border-radius:50%;background:rgba(50,153,55,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="font-size:11px;font-weight:700;color:#329937">3</span></div>
+          <div><div style="font-weight:500">Persists across devices</div><div style="color:#888;margin-top:2px">Any staff refresh or new device load sees the saved state</div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:#F7F7F7;border-radius:8px;font-size:11px;font-family:monospace;color:#666">
+        PATCH /api/v2/vendoremployee/aiosell/room-status/8524
+        { "status": "housekeeping", "note": "" }  → 200 OK
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- Click-outside overlay -->
+<div id="click-outside" style="display:none;position:fixed;inset:0;z-index:40" onclick="closeAllMenus()"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+function closeAllMenus() {
+  document.querySelectorAll('.status-dropdown').forEach(m => m.classList.remove('open'));
+  document.querySelectorAll('.ooo-note').forEach(n => n.style.display = 'none');
+  document.getElementById('click-outside').style.display = 'none';
+}
+
+function openStatusMenu(e, card) {
+  e.stopPropagation();
+  const status = card.dataset.status;
+  if (status === 'booked') return;
+  closeAllMenus();
+  const menu = card.querySelector('.status-dropdown');
+  if (!menu) return;
+  menu.classList.add('open');
+  document.getElementById('click-outside').style.display = 'block';
+}
+
+function changeStatus(roomNo, newStatus, optionEl) {
+  if (newStatus === 'ooo') {
+    const note = document.getElementById('ooo-note-' + roomNo);
+    if (note) { note.style.display = 'block'; lucide.createIcons(); }
+    return;
+  }
+  applyStatus(roomNo, newStatus, '');
+  closeAllMenus();
+}
+
+function confirmOOO(roomNo, btn) {
+  const note = btn.closest('.ooo-note').querySelector('input');
+  applyStatus(roomNo, 'ooo', note ? note.value : '');
+  closeAllMenus();
+}
+
+function applyStatus(roomNo, newStatus, note) {
+  const card = document.querySelector('[onclick*="' + roomNo + '"]');
+  if (!card) return;
+  
+  // Show saving indicator
+  const saveInd = document.getElementById('save-' + roomNo);
+  if (saveInd) { saveInd.textContent = 'Saving...'; saveInd.style.display = 'flex'; }
+  
+  // Simulate API call delay
+  setTimeout(() => {
+    card.className = 'room-card ' + newStatus;
+    card.dataset.status = newStatus;
+    const badge = card.querySelector('.badge');
+    const statusLabels = { available: 'Available', housekeeping: 'HK', ooo: 'OOO', occupied: 'Occupied' };
+    badge.className = 'badge ' + newStatus;
+    badge.textContent = statusLabels[newStatus] || newStatus;
+    if (saveInd) { saveInd.textContent = 'Saved ✓'; setTimeout(() => { saveInd.style.display = 'none'; }, 2000); }
+    lucide.createIcons();
+  }, 600);
+}
+
+function markClean(btn, roomNo) {
+  applyStatus(roomNo, 'available', '');
+}
+
+function resolveOOO(btn, roomNo) {
+  applyStatus(roomNo, 'available', '');
+}
+
+function filterRooms(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.room-card').forEach(card => {
+    card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

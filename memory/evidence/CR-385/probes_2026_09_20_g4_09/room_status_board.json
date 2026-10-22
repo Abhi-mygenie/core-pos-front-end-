@@ -1,0 +1,91 @@
+{
+ "status": true,
+ "message": "Room status board fetched successfully",
+ "data": {
+  "meta": {
+   "business_date": "2026-09-20",
+   "server_time": "2026-09-20T19:44:01+05:30",
+   "timezone": "Asia/Kolkata"
+  },
+  "auto_hk_on_rm_checkout": true,
+  "rooms": [
+   {
+    "restaurant_table_id": 8524,
+    "table_no": "r3",
+    "title": "3rd floor",
+    "aiosell_room_code": "suite",
+    "manual_status": null,
+    "display_status": "occupied",
+    "is_occupied": true,
+    "hk_assignee": null,
+    "room_operational_status_at": null,
+    "guest": {
+     "name": "blpi",
+     "phone": "8887765723",
+     "email": "temp_6aaf6686a7b054.23521246@mygenie.online",
+     "booking_id": "MG-69-7B7B8D9F-C72D-46DE-AE90-6DDAAE8C4413",
+     "order_id": 1232583
+    },
+    "reservation": null
+   },
+   {
+    "restaurant_table_id": 8525,
+    "table_no": "r4",
+    "title": "2nd floor",
+    "aiosell_room_code": "suite",
+    "manual_status": "hk",
+    "display_status": "hk",
+    "is_occupied": false,
+    "hk_assignee": null,
+    "room_operational_status_at": "2026-09-20 18:17:48",
+    "guest": null,
+    "reservation": null
+   },
+   {
+    "restaurant_table_id": 8526,
+    "table_no": "r2",
+    "title": "first  floor",
+    "aiosell_room_code": "executive",
+    "manual_status": null,
+    "display_status": "occupied",
+    "is_occupied": true,
+    "hk_assignee": null,
+    "room_operational_status_at": null,
+    "guest": {
+     "name": "bkol",
+     "phone": "7778821345",
+     "email": "temp_6aafb0495ee463.71308431@mygenie.online",
+     "booking_id": "MG-69-E2CD8B67-04B8-46BA-A999-B5C326E9B8C4",
+     "order_id": 1232602
+    },
+    "reservation": null
+   },
+   {
+    "restaurant_table_id": 8527,
+    "table_no": "r5",
+    "title": "ground floor",
+    "aiosell_room_code": "suite",
+    "manual_status": "hk",
+    "display_status": "hk",
+    "is_occupied": false,
+    "hk_assignee": null,
+    "room_operational_status_at": "2026-09-20 13:51:00",
+    "guest": null,
+    "reservation": null
+   },
+   {
+    "restaurant_table_id": 8528,
+    "table_no": "r1",
+    "title": "patal lok",
+    "aiosell_room_code": "suite",
+    "manual_status": "hk",
+    "display_status": "hk",
+    "is_occupied": false,
+    "hk_assignee": null,
+    "room_operational_status_at": "2026-09-20 13:51:37",
+    "guest": null,
+    "reservation": null
+   }
+  ]
+ }
+}

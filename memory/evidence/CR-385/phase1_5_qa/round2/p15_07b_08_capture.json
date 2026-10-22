@@ -1,0 +1,76 @@
+{
+  "cancels": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/232/cancel",
+      "method": "POST",
+      "post": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}",
+      "ts": 1790019202992.0847,
+      "ct": "application/json"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/233/cancel",
+      "method": "POST",
+      "post": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}",
+      "ts": 1790019222086.6218,
+      "ct": "application/json"
+    }
+  ],
+  "settings": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019232375.7424,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019232375.8533,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019244008.4355,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019244008.529,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019255524.588,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019255524.6963,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019266207.2256,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ts": 1790019266207.33,
+      "ct": ""
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "forty_five_sec_buzzer": {
+    "cacheReadyState": 0,
+    "cacheNetworkState": 2,
+    "plays": [
+      {
+        "result": "TIMEOUT",
+        "readyState": 0,
+        "networkState": 1,
+        "ms": 20451
+      },
+      {
+        "result": "TIMEOUT",
+        "readyState": 0,
+        "networkState": 1,
+        "ms": 20001
+      },
+      {
+        "result": "TIMEOUT",
+        "readyState": 0,
+        "networkState": 1,
+        "ms": 20234
+      }
+    ]
+  },
+  "five_sec_buzzer": {
+    "cacheReadyState": 0,
+    "cacheNetworkState": 1,
+    "plays": [
+      {
+        "result": "TIMEOUT",
+        "readyState": 0,
+        "networkState": 1,
+        "ms": 20000
+      },
+      {
+        "result": "PLAY_OK",
+        "readyStateAtPlay": 4,
+        "ms": 11936
+      },
+      {
+        "result": "PLAY_OK",
+        "readyStateAtPlay": 4,
+        "ms": 1
+      }
+    ]
+  },
+  "sound_requests_observed": [
+    {
+      "url": "forty_five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    },
+    {
+      "url": "five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    },
+    {
+      "url": "forty_five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    },
+    {
+      "url": "forty_five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    },
+    {
+      "url": "forty_five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    },
+    {
+      "url": "forty_five_sec_buzzer.wav",
+      "status": 206,
+      "fromSW": false
+    }
+  ]
+}

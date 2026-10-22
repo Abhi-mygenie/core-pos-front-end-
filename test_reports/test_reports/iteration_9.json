@@ -1,0 +1,20 @@
+{
+  "summary": "BUG-557 TableCard gap verification: Fix confirmed in TableCard.jsx and working in browser. All 4 delivery cards in Delivery column show 'Assign' button (not 'Bill') for fOS=5 unassigned delivery orders. Non-delivery (Dine-In) cards show Bill/Settle/Serve unchanged.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "code_verification": {
+    "V1_bug557_grep": "PASS - 2 hits at L665 (Assign/Dispatch block) and L690 (gate on Bill)",
+    "V2_assign_block_before_bill": "PASS - isDelivery && !hasRiderAssigned block at L669-686 appears BEFORE Bill ternary at L691",
+    "V3_bill_gate": "PASS - Existing dispatched/prepaid/Bill ternary wrapped with (!isDelivery || hasRiderAssigned) at L691",
+    "V4_non_delivery_regression": "PASS - Dine-In cards at fOS=5 show Bill correctly (gate !isDelivery=true passes through)",
+    "V5_browser_delivery_assign": "PASS - 4 delivery cards all show 'Assign' button, 0 show 'Bill'",
+    "V6_no_errors": "PASS - No JS errors on page"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-557 fix verified in TableCard.jsx (L665-691). Delivery column shows 4 cards with Assign button at fOS=5 (deliveryAssign=Yes, def_ord_status=5). Non-delivery cards unaffected."
+}

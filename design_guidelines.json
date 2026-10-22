@@ -1,0 +1,89 @@
+{
+  "project_id": "BUG-580",
+  "app_type": "dashboard",
+  "theme": "light",
+  "color_archetype": "SWISS & HIGH-CONTRAST",
+  "colors": {
+    "primary_orange": "#F26B33",
+    "primary_green": "#329937",
+    "total_red": "#DC2626",
+    "blue_accent": "#3B82F6",
+    "purple_accent": "#8B5CF6",
+    "background_page": "#FAFAFA",
+    "background_card": "#FFFFFF",
+    "border_subtle": "#E4E4E7",
+    "text_heading": "#09090B",
+    "text_muted": "#71717A"
+  },
+  "typography": {
+    "heading_font": "Cabinet Grotesk, Inter, system-ui, sans-serif",
+    "body_font": "Inter, system-ui, -apple-system, sans-serif",
+    "h1": "text-2xl font-bold tracking-tight text-zinc-950",
+    "h2": "text-xs font-bold text-zinc-600 uppercase tracking-wider",
+    "h3": "text-sm font-semibold text-zinc-900",
+    "body": "text-sm text-zinc-700",
+    "caption": "text-xs text-zinc-500"
+  },
+  "components": {
+    "mockup_file_path": "/app/frontend/public/bug580-discount-report-mockup.html",
+    "report_page_component": "/app/frontend/src/pages/reports-module/DiscountReportMockup.jsx",
+    "kpi_strip": {
+      "selector": "data-testid='s26-kpi-strip'",
+      "cards": [
+        {"label": "Total Discount", "value": "₹1,22,821", "color": "text-red-600"},
+        {"label": "Manual", "value": "₹1,13,281", "color": "text-zinc-950"},
+        {"label": "Coupon", "value": "₹0", "color": "text-zinc-950"},
+        {"label": "Loyalty", "value": "₹0", "color": "text-zinc-950"},
+        {"label": "Complementary", "value": "₹9,540", "color": "text-zinc-950"}
+      ]
+    },
+    "discount_by_category_section": {
+      "selector": "data-testid='section-discount-by-category'",
+      "table": "data-testid='category-breakdown-table'",
+      "rows": [
+        {"category": "Thrive", "manual": "₹10,199", "coupon": "₹0", "loyalty": "₹0", "comp": "₹0", "total": "₹10,199"},
+        {"category": "Google Review", "manual": "₹896", "coupon": "₹0", "loyalty": "₹0", "comp": "₹0", "total": "₹896"},
+        {"category": "Complementary", "manual": "₹0", "coupon": "₹0", "loyalty": "₹0", "comp": "₹8,785", "total": "₹8,785"}
+      ],
+      "visual_bars": [
+        {"label": "Thrive", "percentage": "51.3%", "color": "#F26B33"},
+        {"label": "Complementary", "percentage": "44.2%", "color": "#329937"},
+        {"label": "Google Review", "percentage": "4.5%", "color": "#3B82F6"}
+      ]
+    },
+    "discount_orders_table_fix": {
+      "selector": "data-testid='section-discount-orders-fix'",
+      "before_card": "data-testid='before-comparison-card'",
+      "after_card": "data-testid='after-comparison-card'",
+      "sample_rows": [
+        {"order_id": "#016916", "date": "2026-10-16", "reason": "Thrive", "discount": "₹116", "total": "₹116"},
+        {"order_id": "#015887", "date": "2026-08-18", "reason": "Complementary", "discount": "₹400", "total": "₹400"},
+        {"order_id": "#014897", "date": "2026-07-22", "reason": "Google Review", "discount": "₹15", "total": "₹15"},
+        {"order_id": "#012499", "date": "2026-07-06", "reason": "— (Uncategorized)", "discount": "₹930", "total": "₹930"}
+      ]
+    },
+    "timeline_section": {
+      "selector": "data-testid='section-timeline'",
+      "events": [
+        {"date": "Before June 10, 2026", "title": "All Discount Orders Uncategorized", "desc": "354 orders uncategorized"},
+        {"date": "June 10, 2026", "title": "Thrive Activated", "desc": "84 orders, ₹10,199 total"},
+        {"date": "June 12, 2026", "title": "Complementary Activated", "desc": "18 orders, ₹8,785 total"},
+        {"date": "June 16, 2026", "title": "Google Review Activated", "desc": "13 orders, ₹896 total"}
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "Verify HTML mockup file at /app/frontend/public/bug580-discount-report-mockup.html is self-contained and renders properly.",
+    "Ensure DiscountReportMockup.jsx accurately handles new category fields sent by backend in discounts API payload.",
+    "Update discount reason column from fallback dashes to render 'Thrive', 'Complementary', 'Google Review', and handle uncategorized items cleanly.",
+    "Render the new 'Discount by Category' section with both category breakdown table and horizontal visual proportion chart.",
+    "Format date strings into readable YYYY-MM-DD strings rather than displaying dashes.",
+    "Add data-testid attributes to all interactive and data elements for automated testing."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never use dark colors as full page gradients; prefer clean zinc-50 surface with crisp zinc-200 card borders.",
+    "Maintain strict APCA contrast standards for legibility on white and zinc surfaces.",
+    "Every interactive button must have hover, focus, and active micro-interactions.",
+    "All interactive and key informational elements MUST include data-testid attribute in kebab-case."
+  ]
+}

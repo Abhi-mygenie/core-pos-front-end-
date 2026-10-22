@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-429 Design Mockup — Active First Toggle</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F5F5F5; padding: 24px; color: #1A1A1A; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #999; margin-bottom: 10px; margin-top: 28px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  .app-frame {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10); margin-bottom: 8px;
+  }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 14px; height: 50px; background: #fff;
+    border-bottom: 1px solid #E5E5E5;
+  }
+  .header-logo {
+    width: 82px; height: 26px; background: #F26B33; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .header-tabs { display: flex; align-items: center; gap: 2px; margin-left: 6px; flex: 1; }
+
+  .pill {
+    padding: 5px 9px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    border: none; background: transparent; color: #666; white-space: nowrap; cursor: pointer;
+  }
+  .pill.hi { background: #F5F5F5; color: #1A1A1A; }
+
+  .pill-af {
+    padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    white-space: nowrap; cursor: pointer; border: 1.5px solid transparent;
+  }
+  .pill-af.off { background: transparent; color: #666; border-color: transparent; }
+  .pill-af.on  { background: rgba(242,107,51,0.08); color: #F26B33; border-color: #F26B33; }
+
+  .divider { width: 1px; height: 16px; background: #E5E5E5; margin: 0 3px; flex-shrink: 0; }
+
+  .header-right { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.g { background: #329937; } .dot.o { background: #F26B33; }
+  .stat { font-size: 11px; color: #666; }
+  .search { padding: 4px 10px; border: 1px solid #E5E5E5; border-radius: 7px; font-size: 11px; color: #999; width: 160px; }
+  .add-btn { background: #F26B33; color: #fff; border: none; border-radius: 7px; padding: 5px 12px; font-size: 12px; font-weight: 600; }
+
+  /* Grid */
+  .channel-grid { display: flex; background: #F8F8F8; min-height: 420px; }
+  .ch-col { flex: 0 0 auto; border-right: 1px solid #E5E5E5; padding: 10px 8px; }
+  .ch-col:last-child { border-right: none; }
+
+  .ch-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; padding: 0 2px;
+  }
+  .ch-name { font-size: 12px; font-weight: 600; color: #1A1A1A; display: flex; align-items: center; gap: 5px; }
+  .ch-count {
+    font-size: 10px; font-weight: 700; background: #F26B33;
+    color: #fff; border-radius: 9px; padding: 1px 6px;
+  }
+  .ch-count.gn { background: #329937; }
+  .ch-arrows { display: flex; gap: 2px; }
+  .arr { width: 20px; height: 20px; border-radius: 5px; border: 1px solid #E5E5E5;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #666; }
+
+  .cards { display: grid; grid-template-columns: repeat(2, 148px); gap: 7px; }
+  .cards.w1 { grid-template-columns: 148px; }
+
+  /* Cards */
+  .card { width: 148px; background: #fff; border-radius: 9px; border: 2px solid #E5E5E5; padding: 9px; }
+  .card.or { border-color: #F26B33; }
+  .card.gn { border-color: #329937; }
+
+  .c-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .c-no { font-size: 11px; font-weight: 600; color: #1A1A1A; }
+  .c-amt { font-size: 11px; font-weight: 600; }
+  .c-amt.or { color: #F26B33; } .c-amt.gn { color: #329937; }
+  .c-waiter { font-size: 10px; color: #666; }
+  .c-time { font-size: 10px; color: #999; margin-bottom: 7px; }
+  .c-acts { display: flex; gap: 5px; }
+  .c-btn { flex: 1; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 600;
+    text-align: center; border: none; cursor: pointer; }
+  .c-btn.pr { background: #fff; border: 1px solid #E5E5E5; color: #666; flex: 0 0 26px; }
+  .c-btn.rd { background: #fff; border: 1px solid #F26B33; color: #F26B33; }
+  .c-btn.gn { background: #329937; color: #fff; }
+  .c-btn.bl { background: #329937; color: #fff; }
+
+  /* Available card */
+  .card.av { border-color: #E5E5E5; }
+  .c-av-body { display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 62px; gap: 5px; }
+  .c-plus { width: 22px; height: 22px; border-radius: 5px; border: 1.5px solid #E5E5E5;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; color: #ccc; }
+  .c-av-lbl { font-size: 10px; color: #bbb; }
+
+  /* Divider line between occupied and available */
+  .section-divider {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; color: #bbb; font-weight: 500; margin: 2px 0;
+  }
+  .section-divider::before, .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: #E5E5E5;
+  }
+
+  /* Annotation */
+  .ann {
+    margin: 10px 8px 8px;
+    background: #FFF8F5; border: 1.5px dashed #F26B33; border-radius: 8px;
+    padding: 10px 12px; font-size: 11px; color: #c0440a;
+    display: flex; align-items: flex-start; gap: 7px;
+  }
+  .ann.gn { background: #F3FBF3; border-color: #329937; color: #256b28; }
+  .ann-ico { font-size: 14px; flex-shrink: 0; }
+
+  /* Compare layout */
+  .compare { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .col { flex: 1; min-width: 520px; }
+  .badge {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 4px 10px; border-radius: 5px; display: inline-block; margin-bottom: 8px;
+  }
+  .badge.be { background: #FEE2D5; color: #c0440a; }
+  .badge.af { background: #DCFCE7; color: #166534; }
+
+  /* Change summary */
+  .summary {
+    background: #fff; border: 1px solid #E5E5E5; border-radius: 10px;
+    padding: 16px 18px; margin-top: 4px;
+  }
+  .summary h3 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .s-row { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 8px; font-size: 12px; color: #444; }
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+  .tag.new { background: #DCFCE7; color: #166534; }
+  .tag.nc  { background: #F3F4F6; color: #666; }
+
+  /* Pill states panel */
+  .pill-states {
+    display: flex; gap: 14px; align-items: center;
+    background: #fff; border: 1px solid #E5E5E5; border-radius: 9px;
+    padding: 14px 18px; width: fit-content;
+  }
+  .ps-item { text-align: center; }
+  .ps-lbl { font-size: 10px; color: #999; margin-top: 5px; }
+  .ps-lbl.active { color: #F26B33; font-weight: 600; }
+  .arrow-mid { font-size: 16px; color: #ddd; }
+</style>
+</head>
+<body>
+
+<div class="section-label">CR-429 — Active First Toggle · Design Mockup</div>
+
+<div class="compare">
+
+  <!-- ══════════════ BEFORE ══════════════ -->
+  <div class="col">
+    <span class="badge be">BEFORE — Toggle OFF (default)</span>
+    <div class="app-frame">
+      <div class="header">
+        <div class="header-logo">mygenie</div>
+        <div class="header-tabs">
+          <button class="pill hi">YTC</button>
+          <button class="pill">Preparing</button>
+          <button class="pill">Ready</button>
+          <button class="pill">Serve</button>
+          <button class="pill">Schedule</button>
+          <div class="divider"></div>
+          <button class="pill-af off">Active First</button>
+        </div>
+        <div class="header-right">
+          <div class="dot g"></div><span class="stat">Web 0</span>
+          <div class="dot o"></div><span class="stat">POS 28</span>
+          <input class="search" placeholder="Search table, order…" readonly>
+          <button class="add-btn">+ Add</button>
+        </div>
+      </div>
+
+      <div class="channel-grid">
+
+        <!-- Dine-In — label-numeric order, available mixed in -->
+        <div class="ch-col">
+          <div class="ch-hdr">
+            <span class="ch-name">🍽 Dine-In <span class="ch-count">15</span></span>
+            <div class="ch-arrows"><div class="arr">‹</div><div class="arr">›</div></div>
+          </div>
+          <div class="cards">
+            <!-- Table 1 — occupied -->
+            <div class="card or">
+              <div class="c-top"><span class="c-no">🍽 1</span><span class="c-amt or">₹284</span></div>
+              <div class="c-waiter">Owner</div><div class="c-time">36d</div>
+              <div class="c-acts">
+                <button class="c-btn pr">🖨</button>
+                <button class="c-btn bl">Bill</button>
+              </div>
+            </div>
+            <!-- Table 2 — occupied -->
+            <div class="card or">
+              <div class="c-top"><span class="c-no">🍽 2</span><span class="c-amt or">₹546</span></div>
+              <div class="c-waiter">Owner</div><div class="c-time">14h</div>
+              <div class="c-acts">
+                <button class="c-btn pr">🖨</button>
+                <button class="c-btn rd">Ready</button>
+              </div>
+            </div>
+            <!-- C-1 — available (mixed between occupied) -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 C-1</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <!-- C-2 — available -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 C-2</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <!-- Table 3 — available -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 3</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <!-- Table 4 — available -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 4</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room -->
+        <div class="ch-col">
+          <div class="ch-hdr">
+            <span class="ch-name">🏨 Room <span class="ch-count gn">13</span></span>
+            <div class="ch-arrows"><div class="arr">‹</div><div class="arr">›</div></div>
+          </div>
+          <div class="cards w1">
+            <div class="card gn">
+              <div class="c-top"><span class="c-no">🏨 101</span><span class="c-amt gn">₹7,208</span></div>
+              <div class="c-waiter">Mr. Abhijin</div><div class="c-time">62d</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn gn">C/Out</button></div>
+            </div>
+            <!-- 102 available — label-numeric order, comes right after 101 -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🏨 102</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <!-- 103 available -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🏨 103</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <div class="card gn">
+              <div class="c-top"><span class="c-no">🏨 107</span><span class="c-amt gn">₹1,942</span></div>
+              <div class="c-waiter">Ms. Sunny</div><div class="c-time">69d</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn gn">C/Out</button></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ann">
+        <span class="ann-ico">ℹ</span>
+        <span>Tables in label-numeric order. Occupied and available are mixed. Staff must scan through empty tables to find active ones.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ AFTER ══════════════ -->
+  <div class="col">
+    <span class="badge af">AFTER — Active First ON</span>
+    <div class="app-frame">
+      <div class="header">
+        <div class="header-logo">mygenie</div>
+        <div class="header-tabs">
+          <button class="pill hi">YTC</button>
+          <button class="pill">Preparing</button>
+          <button class="pill">Ready</button>
+          <button class="pill">Serve</button>
+          <button class="pill">Schedule</button>
+          <div class="divider"></div>
+          <!-- ★ NEW — Active First ON ★ -->
+          <button class="pill-af on">Active First</button>
+        </div>
+        <div class="header-right">
+          <div class="dot g"></div><span class="stat">Web 0</span>
+          <div class="dot o"></div><span class="stat">POS 28</span>
+          <input class="search" placeholder="Search table, order…" readonly>
+          <button class="add-btn">+ Add</button>
+        </div>
+      </div>
+
+      <div class="channel-grid">
+
+        <!-- Dine-In — occupied first, available after divider -->
+        <div class="ch-col">
+          <div class="ch-hdr">
+            <span class="ch-name">🍽 Dine-In <span class="ch-count">15</span></span>
+            <div class="ch-arrows"><div class="arr">‹</div><div class="arr">›</div></div>
+          </div>
+          <div class="cards">
+            <!-- Occupied at top -->
+            <div class="card or">
+              <div class="c-top"><span class="c-no">🍽 1</span><span class="c-amt or">₹284</span></div>
+              <div class="c-waiter">Owner</div><div class="c-time">36d</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn bl">Bill</button></div>
+            </div>
+            <div class="card or">
+              <div class="c-top"><span class="c-no">🍽 2</span><span class="c-amt or">₹546</span></div>
+              <div class="c-waiter">Owner</div><div class="c-time">14h</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn rd">Ready</button></div>
+            </div>
+            <!-- Divider between occupied and available -->
+            <div class="section-divider">Available</div>
+            <!-- Available pushed below -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 C-1</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 C-2</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 3</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🍽 4</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Room — occupied first, available after divider -->
+        <div class="ch-col">
+          <div class="ch-hdr">
+            <span class="ch-name">🏨 Room <span class="ch-count gn">13</span></span>
+            <div class="ch-arrows"><div class="arr">‹</div><div class="arr">›</div></div>
+          </div>
+          <div class="cards w1">
+            <!-- Occupied first -->
+            <div class="card gn">
+              <div class="c-top"><span class="c-no">🏨 101</span><span class="c-amt gn">₹7,208</span></div>
+              <div class="c-waiter">Mr. Abhijin</div><div class="c-time">62d</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn gn">C/Out</button></div>
+            </div>
+            <div class="card gn">
+              <div class="c-top"><span class="c-no">🏨 107</span><span class="c-amt gn">₹1,942</span></div>
+              <div class="c-waiter">Ms. Sunny</div><div class="c-time">69d</div>
+              <div class="c-acts"><button class="c-btn pr">🖨</button><button class="c-btn gn">C/Out</button></div>
+            </div>
+            <!-- Divider -->
+            <div class="section-divider">Available</div>
+            <!-- Available after -->
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🏨 102</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+            <div class="card av">
+              <div class="c-top"><span class="c-no">🏨 103</span></div>
+              <div class="c-av-body"><div class="c-plus">+</div><div class="c-av-lbl">Available</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ann gn">
+        <span class="ann-ico">✓</span>
+        <span>Occupied tables float to the top. Available tables are still visible but pushed below a clear divider. All tables remain accessible.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHANGE SUMMARY ══════════ -->
+<div class="section-label" style="margin-top:28px">What changes</div>
+<div class="summary">
+  <h3>CR-429 — Active First · Changes at a glance</h3>
+  <div class="s-row">
+    <span class="tag new">NEW</span>
+    <span><strong>"Active First" pill</strong> — appears after a divider at the end of the Channel View filter row (same row as YTC / Preparing / Ready). Orange outline when ON, grey when OFF. Persists via localStorage.</span>
+  </div>
+  <div class="s-row">
+    <span class="tag new">NEW</span>
+    <span><strong>Occupied tables float to top</strong> — when ON, each channel column shows occupied/active tables first, available tables below. Sort within each group unchanged (label-numeric).</span>
+  </div>
+  <div class="s-row">
+    <span class="tag new">NEW</span>
+    <span><strong>"Available" section label</strong> (optional) — a subtle divider line between the occupied group and the available group so the boundary is clear.</span>
+  </div>
+  <div class="s-row">
+    <span class="tag nc">UNCHANGED</span>
+    <span>Available tables are still shown and clickable — nothing is hidden. Total table count in the channel header stays the same.</span>
+  </div>
+  <div class="s-row">
+    <span class="tag nc">UNCHANGED</span>
+    <span>Status View, order cards, search, column arrows, column counts — all untouched.</span>
+  </div>
+  <div class="s-row">
+    <span class="tag nc">UNCHANGED</span>
+    <span>Toggle OFF (default) = current label-numeric order with no occupied-first sort.</span>
+  </div>
+</div>
+
+<!-- Pill states -->
+<div class="section-label" style="margin-top:24px">Active First pill — states</div>
+<div class="pill-states">
+  <div class="ps-item">
+    <button class="pill-af off" style="cursor:default; display:block;">Active First</button>
+    <div class="ps-lbl">OFF — default<br>label-numeric order</div>
+  </div>
+  <span class="arrow-mid">→</span>
+  <div class="ps-item">
+    <button class="pill-af on" style="cursor:default; display:block;">Active First</button>
+    <div class="ps-lbl active">ON — occupied first<br>available below</div>
+  </div>
+</div>
+
+</body>
+</html>

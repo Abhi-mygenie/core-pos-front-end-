@@ -1,0 +1,52 @@
+GET /api/v2/vendoremployee/aiosell/assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/reservation-assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/reservation-assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/local-reservations/15/assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/local-reservations/15/assign-room -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/local-reservations/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/local-reservations/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/reservations/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/reservations/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/reservation/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/reservation/15 -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/cancel-reservation -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/cancel-reservation -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/modify-reservation -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/modify-reservation -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/local-reservations/15/cancel -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/local-reservations/15/cancel -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/reservation/15/cancel -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/reservation/15/cancel -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/mark-no-show -> 405 | The GET method is not supported for this route. Supported methods: POST.
+POST /api/v2/vendoremployee/aiosell/mark-no-show -> 422 | {'booking_id': ['The booking id field is required when aiosell reservation id is not present.'], 'aiosell_reservation_id
+GET /api/v2/vendoremployee/aiosell/night-audit -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/night-audit -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/folio -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/folio -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/guest-folio -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/guest-folio -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/housekeeping -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/housekeeping -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/hk-tasks -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/hk-tasks -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/revenue -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/revenue -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/analytics -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/analytics -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/send-notification -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/send-notification -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/notify-guest -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/notify-guest -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/push-rates -> 405 | The GET method is not supported for this route. Supported methods: POST.
+POST /api/v2/vendoremployee/aiosell/push-rates -> 422 | {'start_date': ['The start date field is required.'], 'end_date': ['The end date field is required.'], 'rates': ['The ra
+GET /api/v2/vendoremployee/aiosell/fetch-rates -> 405 | The GET method is not supported for this route. Supported methods: POST.
+POST /api/v2/vendoremployee/aiosell/fetch-rates -> 422 | {'start_date': ['The start date field is required.'], 'end_date': ['The end date field is required.']}
+GET /api/v2/vendoremployee/aiosell/push-inventory-restrictions -> 405 | The GET method is not supported for this route. Supported methods: POST.
+POST /api/v2/vendoremployee/aiosell/push-inventory-restrictions -> 422 | {'start_date': ['The start date field is required.'], 'end_date': ['The end date field is required.'], 'to_channels': ['
+GET /api/v2/vendoremployee/aiosell/push-rate-restrictions -> 405 | The GET method is not supported for this route. Supported methods: POST.
+POST /api/v2/vendoremployee/aiosell/push-rate-restrictions -> 422 | {'start_date': ['The start date field is required.'], 'end_date': ['The end date field is required.'], 'to_channels': ['
+GET /api/v2/vendoremployee/aiosell/sync-logs -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/sync-logs -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+GET /api/v2/vendoremployee/aiosell/reservation-logs -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/
+POST /api/v2/vendoremployee/aiosell/reservation-logs -> 404 | {'message': '', 'exception': 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException', 'file': '/var/www/html/

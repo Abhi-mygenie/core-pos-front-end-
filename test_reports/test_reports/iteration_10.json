@@ -1,0 +1,36 @@
+{
+  "summary": "BUG-538 E2E test on e1c7f05f deployment. Cashier login now works. CPP opened correctly via Order Entry → Collect Bill. FAIL: discount-section IS PRESENT for cashier even though roleBaseDiscount=Yes is set on backend. Root cause identified: profileTransform.js settings() function is missing `roleBaseDiscount` field, so restaurantSettings.roleBaseDiscount is always undefined in CPP → discountAllowed = !undefined || canDiscount = true → discount always shown.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "CollectPaymentPanel / profileTransform",
+        "issue": "discount-section IS visible to cashier (role without discount permission) even when roleBaseDiscount=Yes. Root cause: profileTransform.js settings() function does NOT include `roleBaseDiscount` field, so restaurantSettings.roleBaseDiscount is always undefined in CPP. The CPP fix code (L89) is correct but never activates because the gate value is never set.",
+        "selector": "[data-testid='discount-section']",
+        "priority": "CRITICAL"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_10.json"],
+  "action_items": [
+    "Fix: Add `roleBaseDiscount: toBoolean(apiSettings.settings?.role_base_discount ?? apiSettings.role_base_discount)` to the `settings` function in /app/frontend/src/api/transforms/profileTransform.js (around line 423, before closing brace). This will make restaurantSettings.roleBaseDiscount=true for kunafamahal, activating the BUG-538 gate in CPP.",
+    "After fix: Re-test cashier CPP — discount-section should be ABSENT. Owner CPP — discount-section present + Apply button visible."
+  ],
+  "critical_code_review_comments": [
+    "profileTransform.js settings() (L341-424): Missing `roleBaseDiscount: toBoolean(apiSettings.settings?.role_base_discount ?? apiSettings.role_base_discount)`. All other settings fields that live in `restaurants[0].settings.*` use the dual-path pattern (settings-nested first, root fallback). Same fix needed here.",
+    "CollectPaymentPanel.jsx L89-90: Code logic is correct. discountAllowed = !restaurantSettings?.roleBaseDiscount || canDiscount. showApplyButton = !!roleBaseDiscount && canDiscount && !!orderId. These are sound — just gated on the missing transform field.",
+    "Note: Apply button is NOT present for cashier (correct), NOT present for owner either (owner CPP not tested yet, but showApplyButton requires roleBaseDiscount=true which is also never set)"
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "20%"},
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CRITICAL BUG FOUND: profileTransform.js settings() function is missing roleBaseDiscount field. Fix: add `roleBaseDiscount: toBoolean(apiSettings.settings?.role_base_discount ?? apiSettings.role_base_discount)` to the return object in profileTransform.js settings() function. After fix, test: (1) cashier CPP - discount-section absent, (2) owner CPP - discount-section present + Apply button visible. Cashier login NOW works with Qplazm@10. Navigation: click card text (e.g. 'Sachu') to open OrderEntry, then click 'Collect Bill' button at bottom right.",
+  "rca_of_issue": "BUG-538 fix in CollectPaymentPanel.jsx (L89) is correct but ineffective because the gate value `restaurantSettings.roleBaseDiscount` is always undefined. The profile API returns `role_base_discount: 'Yes'` for kunafamahal in `restaurants[0].settings.role_base_discount`, but profileTransform.js settings() function (L341-424) never maps this field to the `roleBaseDiscount` camelCase key. Therefore CPP always sees `restaurantSettings.roleBaseDiscount = undefined`, making `discountAllowed = !undefined || false = true` for ALL users regardless of role. Fix: add the missing mapping to profileTransform.js."
+}

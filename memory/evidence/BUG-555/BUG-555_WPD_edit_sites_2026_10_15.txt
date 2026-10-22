@@ -1,0 +1,43 @@
+AuditLogMockup.jsx	INNER L100: flex items-center gap-3	OUTER L94: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CancelDetailMockup.jsx	INNER L107: flex items-center gap-3	OUTER L101: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CancellationsMockup.jsx	INNER L368: flex items-center gap-3	OUTER L345: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CashierSettlementMockup.jsx	INNER L89: flex items-center gap-3	OUTER L84: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ChannelPivotMockup.jsx	INNER L212: flex items-center gap-3	OUTER L204: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ConsumptionReportPage.jsx	INNER L238: bg-white rounded-xl border border-slate-200 p-4 mb-5 flex flex-wrap gap-3 items-end	OUTER L-: -
+CouponUsageMockup.jsx	INNER L92: flex items-center gap-3	OUTER L87: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CustomersMixMockup.jsx	INNER L94: flex items-center gap-3	OUTER L89: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+CustomersRfmMockup.jsx	INNER L98: flex items-center gap-3	OUTER L93: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DailySalesMockup.jsx	INNER L221: flex items-center gap-3	OUTER L211: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DashboardMockup.jsx	INNER L308: flex items-center gap-3	OUTER L284: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200
+DayOfWeekMockup.jsx	INNER L197: flex items-center gap-3	OUTER L189: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DeliveryChargeMockup.jsx	INNER L87: flex items-center gap-3	OUTER L82: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+DiscountReportMockup.jsx	INNER L100: flex items-center gap-3	OUTER L95: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+EdgeStatesMockup.jsx	INNER L97: flex items-center gap-3	OUTER L75: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200
+ExpenseReportPage.jsx	INNER L314: flex items-center gap-3	OUTER L304: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+FoodCourtBetaPage.jsx	INNER L370: flex items-center gap-1 px-1.5 py-1 bg-zinc-100 rounded-lg	OUTER L308: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+FoodCourtMockup.jsx	INNER L492: flex items-center gap-3	OUTER L482: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+GatewayReconMockup.jsx	INNER L67: flex items-center gap-3	OUTER L65: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+HourlySalesMockup.jsx	INNER L200: flex items-center gap-3	OUTER L192: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+ItemSalesHybridMockup.jsx	INNER L911: flex items-center gap-3	OUTER L881: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200
+ItemSalesLedgerMockup.jsx	INNER L384: flex items-center gap-2.5	OUTER L375: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+KotVarianceMockup.jsx	INNER L81: flex items-center gap-3	OUTER L79: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+OrderLedgerMockup.jsx	INNER L623: flex items-center gap-3	OUTER L613: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+OrderNotesMockup.jsx	INNER L97: flex items-center gap-3	OUTER L91: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PLReportPage.jsx	INNER L186: flex items-center gap-3	OUTER L176: flex items-center justify-between mb-6 flex-wrap gap-y-2
+PaymentsMockup.jsx	INNER L387: flex items-center gap-3	OUTER L370: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PrepServeTimeMockup.jsx	INNER L328: flex items-center gap-3	OUTER L313: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+PurchaseReportPage.jsx	INNER L262: bg-white border-b border-zinc-200 px-6 py-3 flex items-center gap-3 flex-wrap sticky top-0 z-10	OUTER L-: -
+RoomOrdersMockup.jsx	INNER L508: flex items-center gap-3	OUTER L498: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+RoomTransfersMockup.jsx	INNER L84: flex items-center gap-3	OUTER L79: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+RoundOffMockup.jsx	INNER L47: flex items-center gap-3	OUTER L45: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+SalesMockup.jsx	INNER L317: flex items-center gap-3	OUTER L300: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+SettlementReportMockup.jsx	INNER L359: flex items-center gap-3	OUTER L349: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+StaffCashiersMockup.jsx	INNER L97: flex items-center gap-3	OUTER L92: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+StaffServersMockup.jsx	INNER L96: flex items-center gap-3	OUTER L91: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TableSalesMockup.jsx	INNER L93: flex items-center gap-3	OUTER L88: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxCalcMockup.jsx	INNER L92: flex items-center gap-3	OUTER L87: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxDetailMockup.jsx	INNER L99: flex items-center gap-3	OUTER L94: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TaxSlabsMockup.jsx	INNER L93: flex items-center gap-3	OUTER L88: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+TipReportMockup.jsx	INNER L67: flex items-center gap-3	OUTER L65: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+VariationAddonMockup.jsx	INNER L245: flex items-center gap-2.5	OUTER L237: flex items-center justify-between px-8 py-5 bg-white border-b border-zinc-200 shrink-0
+42

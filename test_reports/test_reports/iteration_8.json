@@ -1,0 +1,27 @@
+{
+  "summary": "BUG-536 verification: SC GST fix in manual print path confirmed present and working. All 6 code verification checks PASS. Browser test PASS - login successful, dashboard loaded, 17 print buttons found, print click triggered without errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "code_verification": {
+    "V1_bug536_grep": "PASS - 2 hits at lines 2021-2022",
+    "V2_else_branch_placement": "PASS - scTaxRateManual at L2021, after forEach close at L2019, in else branch",
+    "V3_collect_bill_untouched": "PASS - scTaxRateManual NOT present in if-branch (L1896-L1993). Collect-bill uses scTaxRate (different var)",
+    "V4_safety_guard": "PASS - '|| 0' guard present: (overrides.serviceChargeTaxPct || 0) / 100",
+    "V5_browser_print": "PASS - Login OK, dashboard loaded, 17 print buttons clicked without JS errors",
+    "V6_no_new_errors": "PASS - No error elements found on page after print click"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-536 fix verified and confirmed. 2 lines at L2021-2022 in else branch of buildBillPrintPayload in orderTransform.js. scTaxRateManual only in manual print path. Collect-bill path (if-branch) untouched."
+}

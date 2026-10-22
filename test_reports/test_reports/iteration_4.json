@@ -1,0 +1,48 @@
+{
+  "summary": "CR-422: LM preset replacement across 13 report pages. Code review + UI browser tests confirm LM button is present on all tested pages with no 30D. LM click on Sales returns Sep 1-Sep 30. One functional bug found: PurchaseReportPage initial dates are daysAgoISO(29)/todayISO() despite activePreset='LM'.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "PurchaseReportPage",
+        "issue": "Initial date range on mount is daysAgoISO(29)→todayISO() (30D) but activePreset='LM'. The visual 'LM' button appears active, but the data loaded on first render covers the wrong 30-day rolling window instead of the full prior calendar month (Sep 1–Sep 30). Verified via screenshot: FROM 09/19/2026 → TO 10/18/2026.",
+        "selector": "lines 75–78 in PurchaseReportPage.jsx",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "DeliveryChargeMockup / TipReportMockup / TaxDetailMockup default load",
+        "issue": "activePreset='LM' is set but dates inherit sharedFrom/sharedTo from InsightsCacheContext which initialises to today/today (single day). So on the very first page visit the LM button looks active but the fetched data is for 'today only', not the last calendar month. Subsequent visits share whatever dates the previous report page left.",
+        "affected_selectors": ["s30-presets", "s21-presets", "s23-presets"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "sales_lm_button_present": "PASS — LM=1, 30D=0",
+    "sales_lm_click_date_range": "PASS — from=2026-09-01, to=2026-09-30 (correct)",
+    "dashboard_lm_button_present": "PASS — LM=1, 30D=0",
+    "settlement_lm_button_present": "PASS — LM=1, 30D=0",
+    "purchase_report_lm_button_present": "PASS — LM=1, 30D=0, LM visually active",
+    "purchase_report_lm_initial_dates": "FAIL — initial applied range is 09/19/2026–10/18/2026 (30D), not Sep 1–30",
+    "delivery_charge_lm_button": "INCONCLUSIVE — playwright networkidle resolved before page buttons rendered (0 detected), but code confirms LM in preset array",
+    "code_review_all_13_files": "PASS — grep confirms 'LM' present, '30D' absent in all 13 files"
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [
+    "Fix PurchaseReportPage: replace lines 75–78 initial useState for pendingFrom/pendingTo/appliedFrom/appliedTo from daysAgoISO(29)/todayISO() to the LM computed values (new Date(d.getFullYear(),d.getMonth()-1,1) and new Date(d.getFullYear(),d.getMonth(),0)) so the initial fetch uses the actual last calendar month.",
+    "Consider: for DeliveryChargeMockup, TipReportMockup, TaxDetailMockup — on first visit sharedFrom/sharedTo is today/today not LM. Either initialise InsightsCacheContext to LM, or add a mount-time useEffect that calls handlePreset('LM') once if sharedFrom===sharedTo===todayISO (i.e. never set by another page)."
+  ],
+  "critical_code_review_comments": [
+    "PurchaseReportPage L75-78: initial state uses daysAgoISO(29)/todayISO() — this was the pre-CR-422 30D default. Only activePreset was changed to 'LM'; the actual initial date values were not updated to match LM semantics.",
+    "InsightsCacheContext initialises sharedFrom/sharedTo to 'today' — when a 'default LM' report is the first page opened, shared dates are today/today not Sep 1–30."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "85%" },
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CR-422 LM replacement is largely done. Main blocker: PurchaseReportPage initial date mismatch (30D range on mount despite LM being visually active). 13/13 files have LM button in preset arrays and no 30D. Sales LM click gives correct Sep 1-30. Settlement LM present alongside 90D/365D/MTD/YTD as required.",
+  "rca_of_issue": "PurchaseReportPage: when E1 changed activePreset default from '30D' to 'LM' (line 79), the corresponding initial date state (lines 75-78: pendingFrom=daysAgoISO(29), pendingTo=todayISO(), appliedFrom=daysAgoISO(29), appliedTo=todayISO()) was not updated. Fix: initialise those 4 state values using the same LM calculation: const _lmFrom = new Date(d.getFullYear(),d.getMonth()-1,1) and const _lmTo = new Date(d.getFullYear(),d.getMonth(),0)."
+}

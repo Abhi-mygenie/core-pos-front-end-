@@ -1,0 +1,35 @@
+{
+  "summary": "BUG-463 REVISED: Verified fix where activeMenuType is now derived from loaded products instead of localStorage. Tested cafe103 and palmhouse accounts.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "cafe103_localStorage_not_written": "PASS - mygenie_active_menu_type=null after login for owner@cafe103.com",
+    "cafe103_order_entry_products": "PASS - Order Entry shows All (396) — products loaded correctly, no 'All (0)' bug",
+    "cafe103_no_menu_chip_in_header": "PASS - No 'Normal'/'GROK' chip visible in header",
+    "palmhouse_localStorage_not_written": "PASS - mygenie_active_menu_type=null after login for owner@palmhouse.com",
+    "palmhouse_order_entry_products": "PASS - Order Entry shows All (312) — products loaded correctly",
+    "local_settings_active_menu_removed": "PASS - No 'Active Menu' text on StatusConfigPage, no errors",
+    "code_review_activeMenuPrefs": "PASS - activeMenuPrefs.js is 4 lines, only exports ACTIVE_MENU_TYPE_DEFAULT",
+    "code_review_authService": "PASS - No setActiveMenuType call or localStorage write in authService.js login()",
+    "code_review_MenuContext": "PASS - activeMenuType derived via useMemo([products]) from products.find(p => p.foodFor !== 'Aggregator')"
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "StatusConfigPage.jsx still has availableMenuTypes in its context consumption (from MenuContext) — no functional issue since the UI picker was removed, but stale code comment in MenuContext line 115-124 still mentions 'Used by StatusConfigPage to render the Active Menu selector' which is outdated documentation."
+  ],
+  "updated_files": [],
+  "success_rate": {"frontend": "100%"},
+  "test_credentials": "owner@cafe103.com / Qplazm@10, owner@palmhouse.com / Qplazm@10",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-463 REVISED fix is verified and working. (1) localStorage mygenie_active_menu_type is NOT written on login for both accounts. (2) cafe103 shows All (396) and palmhouse shows All (312) in Order Entry — no 'All (0)' bug. (3) Local Settings has no Active Menu picker. (4) activeMenuPrefs.js is 4 lines only. (5) MenuContext derives activeMenuType from products via useMemo."
+}

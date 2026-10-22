@@ -1,0 +1,34 @@
+{
+  "ingredient": "ANGARA GREAVY",
+  "item_quantity_raw": 4700,
+  "item_displayQty": 9.4,
+  "item_displayUnit": "pkt",
+  "item_smallUnit": "gm",
+  "item_conversionFactor": 500,
+  "physical_entered_by_user": 4600,
+  "getDrift_computation": {
+    "physical": 4600,
+    "system": "4700 (item.quantity = base unit gm)",
+    "diff": -100,
+    "unit_assigned": "pkt (item.displayUnit)",
+    "unit_correct": "gm (item.smallUnit)",
+    "displayed": "-100.00 pkt  WRONG",
+    "should_be": "-100.00 gm  OR  -0.20 pkt"
+  },
+  "bbjumbo_wings_check": {
+    "displayQty": 8.5,
+    "displayUnit": "pkt",
+    "quantity": 170,
+    "physical": 170,
+    "diff": 0,
+    "result": "No drift shown - coincidence (base matches base)"
+  },
+  "big_box_check": {
+    "displayQty": 4.96,
+    "displayUnit": "bundle",
+    "quantity": 248,
+    "physical": 248,
+    "diff": 0,
+    "result": "No drift shown - coincidence"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "summary": "Retest of collapsed-sidebar flyout fix (portal to document.body + position:fixed + viewport clamping) at 1920x800 with owner@palmhouse.com. All 7 requested scenarios PASS. Flyout is a direct child of BODY; elementFromPoint at flyout center hits flyout items in all cases, including on /settings with settings-panel (fixed, z-50) open. Insights flyout (38 items) bounded to viewport (bottom 792 < 800), inner list scrollable (scrollHeight 1960 / clientHeight 344), last item 'Food Court Beta' reachable after scroll. Only a minor UX issue found: clicking the same parent icon again does not close the flyout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Sidebar flyout toggle", "issue": "Clicking the same parent icon while its flyout is open does not close it (stays open). RCA: the document mousedown click-outside handler fires first (parent button is outside flyoutRef) and sets flyoutItem=null; then onClick -> handleItemClick sees flyoutItem null and reopens it. So the toggle branch at Sidebar.jsx L391 never runs. Fix: in the mousedown handler, ignore targets inside the aside / any [data-testid^='sidebar-'] parent button (e.g. keep an asideRef and skip if asideRef.current.contains(e.target)), or check e.target.closest('[data-flyout-trigger]').", "selector": "[data-testid='sidebar-reports']", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(LOW) Make re-clicking the same collapsed-sidebar parent icon close its flyout (click-outside handler should ignore sidebar parent buttons).",
+    "(LOW, optional) top clamp Math.min(flyoutTop, innerHeight-400) becomes negative if viewport height < 400; wrap in Math.max(8, ...)."
+  ],
+  "critical_code_review_comments": [
+    "Sidebar.jsx L721/L723/L735: window.innerHeight computed only at render; resizing the window while the flyout is open won't reposition it (minor).",
+    "Sidebar.jsx L721: fixed 400px clamp means short flyouts (e.g. Expenses) opened from lower icons get shifted up even if they'd fit — acceptable but could use measured height instead.",
+    "Sidebar.jsx is 901 lines (>700) — consider extracting the flyout into its own component."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% of requested scenarios (7/7)"},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login testids: login-email, login-password, login-button; wait ~20s after login. Collapse/expand button testid 'expand-sidebar' when collapsed (changes when expanded). Flyout child testids: flyout-<childId> e.g. flyout-printers, flyout-profit-loss (-> /reports-module/profit-loss). Settings > Printers navigates to /settings with [data-testid=settings-panel] fixed z-50. Verified at 1920x800: Settings flyout top 400 bottom 731; Reports bottom 771; Insights bottom 792 with internal scroll; Reports on /settings overlay top 305, on top. Switching Settings->Insights directly works. Expanded (280px) shows inline children, no flyout."
+}

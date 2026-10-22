@@ -1,0 +1,38 @@
+{
+  "summary": "BUG-538 final fix verified. profileTransform.js now correctly maps roleBaseDiscount. All 3 test scenarios passed: cashier CPP has no discount section, owner CPP has discount + Apply button, cafe103 regression shows discount section (no Apply button as roleBaseDiscount=false).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_11.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-538 is fully resolved. Fix: profileTransform.js settings() function now includes `roleBaseDiscount: toBoolean(apiSettings.settings?.role_base_discount ?? apiSettings.role_base_discount)`. Test results: (1) cashier@kunafamahal.com CPP - data-testid='discount-section' ABSENT ✅, (2) owner@kunafamahal.com CPP - discount-section PRESENT + discount-apply-btn PRESENT ✅, (3) owner@cafe103.com CPP - discount-section PRESENT (roleBaseDiscount=false so gate open for all) + No Apply button ✅.",
+  "test_scenarios": [
+    {
+      "scenario": "CASHIER kunafamahal.com",
+      "result": "PASS",
+      "details": "discount-section ABSENT from DOM as expected (roleBaseDiscount=true + no discount permission)"
+    },
+    {
+      "scenario": "OWNER kunafamahal.com",
+      "result": "PASS",
+      "details": "discount-section PRESENT, discount-apply-btn PRESENT (roleBaseDiscount=true + has discount permission)"
+    },
+    {
+      "scenario": "REGRESSION cafe103.com owner",
+      "result": "PASS",
+      "details": "discount-section PRESENT (Discount dropdown visible), No Apply button (roleBaseDiscount=false, gate always open)"
+    }
+  ]
+}

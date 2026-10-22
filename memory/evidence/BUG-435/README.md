@@ -1,0 +1,1 @@
+BUG-435 evidence → memory/evidence/CR-385/qa_2026_09_21_p0/qa_reruns/20260921_095509/console_*.log + QA report row A4 / N-2: after one ↻ click the network shows two snapshot batches (board 500, LR 200, board 200, kpis 200, LR 200) — window 'focus' listener + click both call refresh().

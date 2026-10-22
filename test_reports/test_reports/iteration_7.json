@@ -1,0 +1,38 @@
+{
+  "summary": "BUG-538 Role-Based Discount feature testing. Regression case (roleBaseDiscount=false) fully verified for owner@kunafamahal.com. Cashier path could not be tested due to invalid credentials for cashier@kunafamahal.com.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Cashier login",
+        "issue": "cashier@kunafamahal.com / Qplazm@10 returns 'Invalid credentials' — cashier account may not exist in preprod backend",
+        "affected_selectors": ["input[placeholder='Email']"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json"],
+  "action_items": [
+    "Verify cashier@kunafamahal.com account exists in preprod backend (login fails with Qplazm@10)",
+    "If cashier account exists, verify the roleBaseDiscount=true scenario by enabling it for kunafamahal in restaurant settings, then test gated paths (owner sees Apply button, cashier sees NO discount section)"
+  ],
+  "critical_code_review_comments": [
+    "Logic is correct: discountAllowed = !restaurantSettings?.roleBaseDiscount || canDiscount (L89) — false || true = true for all when feature off",
+    "showApplyButton = !!roleBaseDiscount && canDiscount && !!orderId (L90) — all three gates required, correct",
+    "orderTransform.js E1 (L237-243): orderDiscountJson correctly maps 'fixed'→'flat' for CPP's internal type",
+    "OrderEntry.jsx L1952-1954: canDiscount, orderId, initialDiscount properly passed to CPP",
+    "applyOrderDiscount service (orderService.js L196-204): maps 'flat'→'fixed' back for API, correct",
+    "Auto-unapply on amount change: NOT seen in code — there is no useEffect watching discountValue to auto-POST discount_amount=0. The spec says 'Auto-unapply fires when amount field is changed while apply is active' but the code only has the Apply/Unapply button toggling. This may be a missing feature."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "60%"},
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "kunafamahal does NOT have roleBaseDiscount enabled in backend — so owner sees full discount section with no Apply button (correct regression). Cashier login fails. To test gated paths (owner Apply/Unapply, cashier no discount section), need: 1) Working cashier credentials, 2) Restaurant with roleBaseDiscount=true. Code review confirms logic is sound. Missing auto-unapply useEffect — see critical_code_review_comments.",
+  "rca_of_issue": "cashier@kunafamahal.com credentials invalid in preprod. roleBaseDiscount is not enabled for kunafamahal restaurant so owner/cashier gated paths cannot be verified via UI. Code review confirms implementation is correct for both paths. Auto-unapply (when user changes amount while applied) appears NOT implemented — only manual Apply/Unapply button exists."
+}
