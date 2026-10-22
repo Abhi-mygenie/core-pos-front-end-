@@ -51,9 +51,10 @@ export default function VariationExpandPanel({ foodName, foodImage, variations =
                           min="0"
                           step="0.01"
                           value={val.price ?? 0}
-                          onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) onPriceChange(gIdx, vIdx, n); }} // BUG-394
+                          onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) onPriceChange(gIdx, vIdx, n); }} // BUG-394 // BUG-608
                           data-testid={`var-price-${gIdx}-${vIdx}`}
-                          onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} // BUG-394
+                          onFocus={e => e.target.select()} // BUG-608: select-all on focus
+                          onBlur={e => { if (e.target.value === '') onPriceChange(gIdx, vIdx, 0); }} // BUG-608: reset on blur
                           onWheel={e => e.target.blur()} // BUG-392
                           style={{ width: 65, border: '1px solid #e9d5ff', borderRadius: 6,
                                    padding: '3px 7px', fontSize: 12, color: '#6b21a8',

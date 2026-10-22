@@ -153,9 +153,9 @@ export default function AddonManagementPanel({ addons = [], currencySymbol = 'â‚
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <input value={addForm.name} onChange={e => setAddForm(p => ({ ...p, name: e.target.value }))}
                       placeholder="Name" style={{ ...inputStyle, width: 150 }} autoFocus />
-                    <input type="number" value={addForm.price} onWheel={e => e.target.blur()} onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, price: n })); }} // BUG-392 // BUG-394
+                    <input type="number" value={addForm.price} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, price: n })); }} onBlur={e => { if (e.target.value === '') setAddForm(p => ({ ...p, price: 0 })); }} // BUG-392 // BUG-394 // BUG-608
                       placeholder="Price" style={{ ...inputStyle, width: 70 }} min={0} />
-                    <input type="number" value={addForm.weight} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, weight: n })); }} // BUG-392 // BUG-394
+                    <input type="number" value={addForm.weight} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, weight: n })); }} onBlur={e => { if (e.target.value === '') setAddForm(p => ({ ...p, weight: 0 })); }} // BUG-392 // BUG-394 // BUG-608
                       placeholder="Weight g" style={{ ...inputStyle, width: 80 }} min={0} />
                     <select value={addForm.veg} onChange={e => setAddForm(p => ({ ...p, veg: Number(e.target.value) }))}
                       style={selectStyle}>
@@ -234,9 +234,9 @@ export default function AddonManagementPanel({ addons = [], currencySymbol = 'â‚
                         <input value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
                           style={{ ...inputStyle, width: 150 }} />
                         <span style={{ fontSize: 12, color: COLORS.grayText }}>â‚¹</span>
-                        <input type="number" value={editForm.price} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setEditForm(p => ({ ...p, price: n })); }} // BUG-392 // BUG-394
+                        <input type="number" value={editForm.price} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setEditForm(p => ({ ...p, price: n })); }} onBlur={e => { if (e.target.value === '') setEditForm(p => ({ ...p, price: 0 })); }} // BUG-392 // BUG-394 // BUG-608
                           style={{ ...inputStyle, width: 70 }} min={0} />
-                        <input type="number" value={editForm.weight} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setEditForm(p => ({ ...p, weight: n })); }} // BUG-392 // BUG-394
+                        <input type="number" value={editForm.weight} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setEditForm(p => ({ ...p, weight: n })); }} onBlur={e => { if (e.target.value === '') setEditForm(p => ({ ...p, weight: 0 })); }} // BUG-392 // BUG-394 // BUG-608
                           placeholder="g" style={{ ...inputStyle, width: 70 }} min={0} />
                         <select value={editForm.veg ?? 1} onChange={e => setEditForm(p => ({ ...p, veg: Number(e.target.value) }))}
                           style={selectStyle}>

@@ -33120,7 +33120,7 @@
       "id": "BUG-608",
       "title": "Menu Management: GST Fields Not Editable (New Restaurant Setup)",
       "type": "BUG",
-      "status": "GATE_2_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -33139,7 +33139,7 @@
         "OD-608-02",
         "OD-608-03"
       ],
-      "notes": "2026-10-22: IA Rev2 complete. Root cause: onFocus only clears zero values, non-zero fields cant be replaced (parseFloat(\"\")=NaN rejected by onChange guard). Affects ALL 11 number columns in BulkEditor + ProductForm InputField + variation min/max inputs. Fix: onFocus\u2192select(), onChange allow empty, onBlur reset to 0. 2 files, 5 edit locations. No blockers."
+      "notes": "2026-10-22: IMPLEMENTED. Root cause: onFocus only cleared zero values, non-zero fields could not be cleared (parseFloat empty=NaN rejected). Fix: onFocus\u2192select(), onChange allows empty, onBlur resets to 0. Applied to all 10 number input locations across 4 files: BulkEditor.jsx (11 columns), ProductForm.jsx (InputField + VariationOptionRow + min/max), AddonManagementPanel.jsx (add/edit price+weight), VariationExpandPanel.jsx (option price). Webpack: 0 errors. Audit: no other modules affected (PMS, Reports, Settings clean)."
     },
     {
       "id": "CR-449",

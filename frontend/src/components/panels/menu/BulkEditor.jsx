@@ -1400,7 +1400,7 @@ const CellRenderer = React.memo(function CellRenderer({ col, row, updateCell, ca
       className={base} style={{ color: COLORS.darkText, borderColor: bc }} placeholder={col.label + "..."} data-testid={`cell-${col.key}-${row._id}`} />;
   }
   if (col.type === "number") {
-    return <input type="number" value={row[col.key] ?? 0} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={e => { const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) updateCell(row._id, col.key, n); }} // BUG-392 // BUG-394
+    return <input type="number" value={row[col.key] ?? 0} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) updateCell(row._id, col.key, n); }} onBlur={e => { if (e.target.value === '') updateCell(row._id, col.key, 0); }} // BUG-392 // BUG-394 // BUG-608: select-all on focus + allow empty during edit + reset on blur
       className={`${base} text-right font-mono`} style={{ color: COLORS.darkText, borderColor: bc }} min={0}
       step={col.key.includes("tax") || col.key.includes("Price") || col.key.includes("Charge") || col.key.includes("charge") ? 0.01 : 1}
       data-testid={`cell-${col.key}-${row._id}`} />;

@@ -15,12 +15,13 @@ const InputField = ({ label, value, onChange, type = "text", required, placehold
     <input
       type={type}
       value={value ?? ""}
-      onChange={(e) => { // BUG-394: block special chars — silent reject (Option A)
+      onChange={(e) => { // BUG-394: block special chars — silent reject (Option A) // BUG-608: allow empty during edit
         if (type !== "number") { onChange(e.target.value); return; }
+        if (e.target.value === '') return; // BUG-608: let user clear field, onBlur resets to 0
         const n = parseFloat(e.target.value);
         if (!isNaN(n) && n >= 0) onChange(n);
       }}
-      onFocus={(e) => { if (type === "number" && (e.target.value === "0" || e.target.value === 0)) e.target.value = ""; }}
+      onFocus={(e) => { if (type === "number") e.target.select(); }} // BUG-608: select-all on focus (was: clear only zeros)
       onBlur={(e) => { if (type === "number" && e.target.value === "") onChange(0); }}
       placeholder={placeholder}
       className="w-full px-3 py-2 text-sm rounded-lg border outline-none focus:ring-2 focus:ring-orange-100 focus:border-orange-300"
@@ -100,11 +101,13 @@ const VariationOptionRow = ({ option, onChange, onDelete }) => (
       <input
         type="number"
         value={option.optionPrice}
-        onChange={(e) => { // BUG-394: block special chars + keep optionPrice as numeric string
+        onChange={(e) => { // BUG-394: block special chars + keep optionPrice as numeric string // BUG-608
+          if (e.target.value === '') return; // BUG-608: allow empty during edit
           const n = parseFloat(e.target.value);
           if (!isNaN(n) && n >= 0) onChange({ ...option, optionPrice: String(n) });
         }}
-        onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} // BUG-394
+        onFocus={e => e.target.select()} // BUG-608: select-all on focus
+        onBlur={e => { if (e.target.value === '') onChange({ ...option, optionPrice: '0' }); }} // BUG-608: reset on blur
         onWheel={e => e.target.blur()} // BUG-392: VariationOptionRow price — missed in original BUG-392 impl (separate component from InputField)
         placeholder="0"
         className="w-full pl-7 pr-3 py-2 text-sm rounded-lg border outline-none text-right focus:ring-2 focus:ring-orange-100"
@@ -175,12 +178,12 @@ const VariationGroup = ({ variation, index, onChange, onDelete }) => {
               <>
                 <div className="flex items-center gap-1">
                   <span className="text-xs" style={{ color: COLORS.grayText }}>Min:</span>
-                  <input type="number" value={variation.min || 0} min={0} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={(e) => { const n = parseInt(e.target.value); if (!isNaN(n) && n >= 0) updateField('min', n); }} // BUG-392 // BUG-394
+                  <input type="number" value={variation.min || 0} min={0} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={(e) => { if (e.target.value === '') return; const n = parseInt(e.target.value); if (!isNaN(n) && n >= 0) updateField('min', n); }} onBlur={e => { if (e.target.value === '') updateField('min', 0); }} // BUG-392 // BUG-394 // BUG-608
                     className="w-12 px-2 py-1 text-xs rounded border outline-none text-center" style={{ borderColor: COLORS.borderGray }} />
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="text-xs" style={{ color: COLORS.grayText }}>Max:</span>
-                  <input type="number" value={variation.max || 0} min={0} onWheel={e => e.target.blur()} onFocus={e => { if (e.target.value === '0' || e.target.value === 0) e.target.value = ''; }} onChange={(e) => { const n = parseInt(e.target.value); if (!isNaN(n) && n >= 0) updateField('max', n); }} // BUG-392 // BUG-394
+                  <input type="number" value={variation.max || 0} min={0} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={(e) => { if (e.target.value === '') return; const n = parseInt(e.target.value); if (!isNaN(n) && n >= 0) updateField('max', n); }} onBlur={e => { if (e.target.value === '') updateField('max', 0); }} // BUG-392 // BUG-394 // BUG-608
                     className="w-12 px-2 py-1 text-xs rounded border outline-none text-center" style={{ borderColor: COLORS.borderGray }} />
                 </div>
               </>
