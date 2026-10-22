@@ -32826,11 +32826,11 @@
       "title": "cancel_type=\"Order\" overwrites real item kitchen stage on full-order cancels",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "GATE_5A_IMPLEMENTED",
       "area": "Reports / Analytics",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
-      "notes": "2026-10-21: Palm House 39 items, Pav2 18 items affected. Backend sets cancel_type=\"Order\" on every item losing actual kitchen stage (preparing/serve/ready). scope field already distinguishes order vs item cancel. Discovered during BUG-579 6-month probe."
+      "notes": "2026-10-22: Backend fix verified on preprod (restaurant 478). Orders 002629 (mixed ready+serve) and 002631 (all preparing) both retain individual kitchen stages on full-order cancel. FE CancellationsMockup.jsx already handles correct data: stage field preferred (L251), normalizeStage maps preparing/ready/serve/Pre-Serve/Post-Serve correctly (L71-78), scope read for order vs item (L253), Order bucket kept for historical unfixed data. No FE code changes needed. Historical backfill is separate task. Ready for QA."
     },
     {
       "id": "BUG-604",
