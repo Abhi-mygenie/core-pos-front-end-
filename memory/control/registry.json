@@ -33039,7 +33039,7 @@
       "id": "BUG-606",
       "title": "Role-Based Discount: Socket Not Delivering Discount Data to Cashier",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_2_COMPLETE_BACKEND_BLOCKED",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -33057,7 +33057,7 @@
         "OD-606-01",
         "OD-606-02"
       ],
-      "notes": "from TT-026",
+      "notes": "2026-10-22: IA complete. Root cause: get-single-order-new endpoint does not include order_discount_json in response. Socket refetch uses this endpoint so discount never reaches FE. employee-orders-list (boot) has the field. FE chain is fully wired (orderTransform L237, OrderContext L342, OrderEntry L1954, CPP L84). Backend must include order_discount_json in get-single-order-new response. No FE changes needed.",
       "priority": "P0",
       "blocked_by": "BACKEND"
     },
