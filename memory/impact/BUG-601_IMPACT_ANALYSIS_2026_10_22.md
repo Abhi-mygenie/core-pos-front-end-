@@ -87,14 +87,28 @@ formData.append('variations', [{group_name: 'Dip', options: [...]}])
 
 ---
 
-## 4. Fix Options & Analysis
+## 4. Fix Options & Analysis (UPDATED after API probe 2026-10-22)
 
-### Option A — JSON.stringify per field in FormData (RECOMMENDED)
+### API Probe Results (OD-601-02 RESOLVED)
 
-**Change:** In both `addFoodAggregatorMultipart` (L48-51) and `editFoodAggregator` (L88-91), remove SKIP for variations/addon_ids, instead stringify arrays/objects before appending:
+| # | Method | Result |
+|---|--------|--------|
+| Bare JSON string `--form 'variations=[...]'` | **REJECTED** — "The variations must be an array" |
+| `food_info` wrapper `--form 'food_info={"variations":[...]}'` | **ACCEPTED** — 200, variations persisted |
+| Bracket notation `--form 'variations[0][name]=...'` | **ACCEPTED** — 200, variations persisted |
+
+Evidence: `evidence/BUG-601/API_PROBE_OD601_02_2026_10_22.md`
+
+### ~~Option A — JSON.stringify per field~~ ❌ ELIMINATED
+
+A standalone `--form 'variations=<JSON string>'` fails backend validation ("must be an array"). This option is dead.
+
+### Option A-revised — `food_info` wrapper for arrays only (OWNER SELECTED)
+
+**Change:** In both `addFoodAggregatorMultipart` and `editFoodAggregator`, remove `variations` and `addon_ids` from the SKIP set. Instead, collect them separately and append as a `food_info` JSON string field:
 
 ```js
-// BEFORE (L48-51):
+// BEFORE:
 const SKIP = new Set(['variations', 'addon_ids']);
 Object.entries(foodInfo).forEach(([key, val]) => {
     if (SKIP.has(key) || val === undefined || val === null) return;
@@ -102,42 +116,39 @@ Object.entries(foodInfo).forEach(([key, val]) => {
 });
 
 // AFTER:
+const FOOD_INFO_KEYS = new Set(['variations', 'addon_ids']); // BUG-601
+const foodInfoPayload = {};
 Object.entries(foodInfo).forEach(([key, val]) => {
     if (val === undefined || val === null) return;
-    formData.append(key, Array.isArray(val) || typeof val === 'object'
-        ? JSON.stringify(val)
-        : val);
+    if (FOOD_INFO_KEYS.has(key)) {
+        foodInfoPayload[key] = val;  // collect for food_info wrapper
+        return;
+    }
+    formData.append(key, val);
 });
+if (Object.keys(foodInfoPayload).length > 0) {
+    formData.append('food_info', JSON.stringify(foodInfoPayload)); // BUG-601
+}
 ```
 
-- **File:** `menuManagementService.js` only — **1 file, ~6 lines changed** (2 edit locations)
-- **Call sites:** `ProductForm.jsx`, `BulkEditor.jsx`, `ProductList.jsx` — **NO changes needed** (payload already includes variations)
-- **Backend requirement:** Aggregator endpoint must parse `variations` and `addon_ids` as JSON strings from FormData
-- **Risk:** MEDIUM — clean FE fix; BLOCKED on backend confirmation (OD-601-02)
-- **Regression risk:** LOW — the "cleanBindings TypeError" was caused by `[object Object]` serialisation, not JSON strings. JSON strings are a valid string value for FormData.
+- **File:** `menuManagementService.js` only — **1 file, ~12 lines changed** (2 edit locations)
+- **Call sites:** `ProductForm.jsx`, `BulkEditor.jsx`, `ProductList.jsx` — **NO changes needed**
+- **Backend:** ✅ CONFIRMED — `food_info` wrapper accepted and persisted (probe #1)
+- **Risk:** LOW — `food_info` is the documented approach in the owner's API reference
+- **Regression risk:** LOW — simple values still go as flat FormData; only arrays route through `food_info`
 
-### Option B — Two-step save (separate JSON call for variations)
+### ~~Option B — Two-step save~~ (not selected)
 
-- Multipart save first (existing behaviour), then immediate JSON PATCH/POST with `{item_id, variations, addon_ids}`
-- **Files:** `menuManagementService.js` + `ProductForm.jsx` + `BulkEditor.jsx` + `ProductList.jsx` — 4 files
-- **Backend requirement:** New or existing endpoint to accept variations update separately
-- **Risk:** HIGH — race condition if first call succeeds but second fails; partial save state
-- **Recommendation:** Only if backend cannot accept JSON strings in FormData (Option A fails)
-
-### Option C — Revert to `food_info` JSON wrapper
-
-- Replace FormData loop with `formData.append('food_info', JSON.stringify(foodInfo))`
-- **Files:** `menuManagementService.js` only
-- **Risk:** HIGH — BUG-327 was introduced because this exact approach caused "cleanBindings TypeError" on the aggregator endpoint. High probability of re-introducing BUG-327.
-- **Recommendation:** Do not use unless backend confirms the aggregator endpoint now handles `food_info` wrapper.
+### ~~Option C — Full food_info revert~~ (not selected — too risky, BUG-327 history)
 
 ---
 
 ## 5. Recommendation
 
-**Option A** — only 1 file, 6 lines. The only blocker is OD-601-02: backend must confirm JSON strings for `variations`/`addon_ids` in FormData are acceptable. This is a low-effort backend verification.
+**Option A-revised (`food_info` wrapper)** — owner selected, backend confirmed via live probe. 1 file, ~12 lines, 2 edit locations. No backend changes needed. No blockers remaining.
 
-If Option A is confirmed: **Fast Lane eligible** — 1 file, ≤10 lines, no hotspot, no financial logic. Requires owner Fast Lane approval.
+**OD-601-01: LOCKED** — Option A-revised (food_info wrapper)
+**OD-601-02: RESOLVED** — Backend accepts `food_info` JSON string with variations array. Probe confirmed on preprod (item 14247, RID 69).
 
 ---
 
@@ -159,12 +170,12 @@ If Option A is confirmed: **Fast Lane eligible** — 1 file, ≤10 lines, no hot
 
 ---
 
-## 7. Owner Decisions Required Before Gate 3
+## 7. Owner Decisions — RESOLVED
 
-| ID | Question | Blocking |
-|---|---|---|
-| **OD-601-01** | Which approach — A (JSON.stringify in FormData), B (two-step), or C (food_info revert)? | Gate 3 |
-| **OD-601-02** | Backend team to confirm: can the aggregator add/edit endpoints parse `variations` and `addon_ids` as JSON strings from FormData? (Required for Option A) | Gate 3 |
+| ID | Question | Answer | Status |
+|---|---|---|---|
+| **OD-601-01** | Which approach? | **Option A-revised** — `food_info` wrapper for arrays | **LOCKED** |
+| **OD-601-02** | Backend accepts variations via food_info? | **YES** — probe confirmed on preprod | **RESOLVED** |
 
 ---
 
@@ -197,6 +208,6 @@ If Option A is confirmed: **Fast Lane eligible** — 1 file, ≤10 lines, no hot
 
 ## 10. Scope Lock
 
-**Files WILL change (Option A):** `src/api/services/menuManagementService.js`
+**Files WILL change (Option A-revised):** `src/api/services/menuManagementService.js`
 **Files WILL NOT touch:** `ProductForm.jsx` · `BulkEditor.jsx` · `ProductList.jsx` · all order/payment/report files
-**BLOCKED on:** OD-601-01 (approach choice) + OD-601-02 (backend confirmation)
+**BLOCKERS: NONE** — OD-601-01 locked, OD-601-02 resolved via probe. Ready for Gate 3.
