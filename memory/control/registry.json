@@ -33378,6 +33378,84 @@
       "area": "Menu / Order Entry",
       "registered": "2026-10-22",
       "notes": "2026-10-22: Old POS \u2014 implemented by the external Old POS team (separate codebase, not this app). Registered for owner smoke. Team status: DONE."
+    },
+    {
+      "id": "BUG-609",
+      "title": "CRM search dropdown flashes on order re-open (edit/collect-bill)",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "CRM / Customer",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "notes": "2026-10-22: Intake. CartPanel L879 isCustomerSelected=false when order restored with phone-only (no id, empty name) \u2192 search fires \u2192 dropdown flashes. FE fix: 1 line. Related BUG-593.",
+      "intake_doc": "change_requests/BUG-609_CRM_DROPDOWN_FLASH_ON_REOPEN_INTAKE.md",
+      "registered": "2026-10-22",
+      "related": [
+        "BUG-593"
+      ]
+    },
+    {
+      "id": "BUG-610",
+      "title": "Menu Management: Bulk Editor + Card View slow to load (424 items, 616KB payload)",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "area": "Menu / Order Entry",
+      "sprint_key": "backlog",
+      "risk": "LOW",
+      "notes": "2026-10-22: Intake. foods-list returns 616KB/2.8s for 424 items. Backend: lighter endpoint needed. FE: virtual scrolling in BulkEditor.",
+      "intake_doc": "change_requests/BUG-610_MENU_MANAGEMENT_SLOW_LOAD_INTAKE.md",
+      "registered": "2026-10-22",
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "BUG-611",
+      "title": "Inventory Dashboard (Stock Intelligence) stuck on loading skeletons \u2014 stock-inventory 2s+",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "area": "Inventory",
+      "sprint_key": "backlog",
+      "risk": "LOW",
+      "notes": "2026-10-22: Intake. stock-inventory API takes 2.07s for 36KB. Backend query optimization needed. FE loading states correct.",
+      "intake_doc": "change_requests/BUG-611_INVENTORY_DASHBOARD_SLOW_LOAD_INTAKE.md",
+      "registered": "2026-10-22",
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "BUG-612",
+      "title": "Reports slow for long date ranges (year+) \u2014 backend query performance",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "area": "Reports / Analytics",
+      "sprint_key": "backlog",
+      "risk": "LOW",
+      "notes": "2026-10-22: Intake. Year+ date ranges cause slow reports. FE chunking exists (BUG-353) for Order Report Beta. Backend query optimization needed for all report endpoints.",
+      "intake_doc": "change_requests/BUG-612_REPORTS_SLOW_LONG_DATE_RANGES_INTAKE.md",
+      "registered": "2026-10-22",
+      "related": [
+        "BUG-353"
+      ],
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "BUG-613",
+      "title": "Login boot slow \u2014 Products API bottleneck (2.4s / 616KB)",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "area": "Other",
+      "sprint_key": "backlog",
+      "risk": "LOW",
+      "notes": "2026-10-22: Intake. Products API is boot bottleneck: 2.36s/616KB. Backend: lighter boot endpoint. FE: could defer full product load. Related BUG-610 (same endpoint, different context).",
+      "intake_doc": "change_requests/BUG-613_LOGIN_BOOT_SLOW_PRODUCTS_API_INTAKE.md",
+      "registered": "2026-10-22",
+      "related": [
+        "BUG-610"
+      ],
+      "blocked_by": "BACKEND"
     }
   ],
   "meta": {
