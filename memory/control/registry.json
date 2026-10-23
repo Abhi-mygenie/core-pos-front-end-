@@ -14855,15 +14855,14 @@
       "type": "BUG",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "gate": "0-1",
       "sprint_key": "pos_5_0",
       "registered": "2026-07-11",
       "intake_doc": "change_requests/BUG_190_CUSTOMER_NOTES_CRM_SYNC_BROKEN.md",
       "area": "CRM / Customer Intelligence",
       "severity": "P0",
-      "notes": " 2026-10-19: backend block removed by owner. FE pipeline confirmed wired. Ready for Gate 2 GO.",
-      "blocked_by": "BACKEND"
+      "notes": " 2026-10-19: backend block removed by owner. FE pipeline confirmed wired. Ready for Gate 2 GO. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-191",
@@ -20518,7 +20517,7 @@
       "area": "Payments / Coupons / Credit",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "completeness": "1/7",
       "code_reality": "NONE (BUG-328 markers belong to BUG-346 fix)",
       "blast_radius": "MEDIUM",
@@ -20531,7 +20530,7 @@
       "owner_decisions_status": "DEFERRED TO GATE 2 \u2014 owner confirmed answers at Planning",
       "intake_status": "COMPLETE",
       "last_updated": "2026-08-17",
-      "notes": "WARNING: code markers labeled BUG-328 in the codebase (orderTransform.js, CollectPaymentPanel.jsx, OrderEntry.jsx) are fixing the phone-on-bill issue (BUG-346), NOT this discount-type-config issue. Developer used wrong bug number. Discount Type Configuration Not Accessible is still OPEN. \u26a0 TITLE DRIFT: registry title (Discount Type Config) differs from BUG_TRACKER title (Phone on Bill: Wrong Number). Verify correct title at Gate 2.",
+      "notes": "WARNING: code markers labeled BUG-328 in the codebase (orderTransform.js, CollectPaymentPanel.jsx, OrderEntry.jsx) are fixing the phone-on-bill issue (BUG-346), NOT this discount-type-config issue. Developer used wrong bug number. Discount Type Configuration Not Accessible is still OPEN. \u26a0 TITLE DRIFT: registry title (Discount Type Config) differs from BUG_TRACKER title (Phone on Bill: Wrong Number). Verify correct title at Gate 2. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification.",
       "severity": "P0"
     },
     {
