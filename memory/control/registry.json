@@ -29321,12 +29321,12 @@
       "type": "CR",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Printing / Printer Agent",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Print one KOT per order (all stations combined) rather than per-station KOTs. New print mode needed."
+      "notes": "Print one KOT per order (all stations combined) rather than per-station KOTs. New print mode needed. | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-396",
@@ -29334,12 +29334,12 @@
       "type": "CR",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Permissions / Security",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Waiter should be able to take orders but only serve items assigned to their tables/sections. Separate from BUG-470 (which is about edit permission missing). This is a new permission scope feature."
+      "notes": "Waiter should be able to take orders but only serve items assigned to their tables/sections. Separate from BUG-470 (which is about edit permission missing). This is a new permission scope feature. | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-397",
@@ -29364,12 +29364,12 @@
       "type": "CR",
       "severity": "P0",
       "risk": "LOW",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Menu / Order Entry",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Old POS needs time-based food item deactivation (e.g. breakfast items inactive after 11 AM). Currently only available in New POS."
+      "notes": "Old POS needs time-based food item deactivation (e.g. breakfast items inactive after 11 AM). Currently only available in New POS. | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-399",
@@ -31196,11 +31196,12 @@
       "title": "Old POS \u2014 Report graphs display incorrect data (do not match actual figures)",
       "area": "Reports / Analytics",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "In the Old POS (legacy application), the report graphs display incorrect data that does not match actual figures. Scope: Old POS only \u2014 investigation needed to determine if New POS has the same data issue.",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "notes": " | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-548",
@@ -31209,14 +31210,15 @@
       "title": "Old POS \u2014 Weekly, Monthly, 6-Month Report Summary graphs show incorrect data",
       "area": "Reports / Analytics",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "In the Old POS (legacy application), the Weekly, Monthly, and 6-Month Report Summary graphs show incorrect data. Related to BUG-542 (same Old POS reporting data issue, different graph set).",
       "registered": "2026-10-15",
       "related": [
         "BUG-542"
       ],
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "notes": " | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-553",
@@ -31225,11 +31227,12 @@
       "title": "Old POS \u2014 Android ringer for aggregator orders does not stop after order acknowledged",
       "area": "Aggregator / Sockets",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "In the Old POS (legacy application), the Android ringer for aggregator orders continues to play and does not stop even after the order is acknowledged. Different from BUG-453 (mute not stopping ringer in New POS).",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "notes": " | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-543",
@@ -31360,11 +31363,12 @@
       "title": "Settlement option intermittently disappears from side menu \u2014 requires re-login",
       "area": "Permissions / Security",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "The Settlement option intermittently disappears from the side menu. The user has to log in again and again to access Settlement. Likely a permission refresh or route guard issue.",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "notes": " | 2026-10-22: External team reports DONE. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-421",
@@ -31673,10 +31677,11 @@
       "title": "Old POS \u2014 Loyalty and Coupon functionality not working correctly",
       "area": "Payments / Coupons / Credit",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "In the Old POS (legacy application), Loyalty and Coupon functionality is not working correctly. Scope and exact symptom to be confirmed at Gate 2.",
       "registered": "2026-10-15",
-      "registered_by": "INTAKE agent"
+      "registered_by": "INTAKE agent",
+      "notes": " | 2026-10-22: External team reports TESTING PENDING. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-428",
