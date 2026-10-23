@@ -12776,7 +12776,7 @@
       "id": "CR-043",
       "title": "Credit Per-Customer Totals in Reports + Portfolio Export Optimization",
       "type": "cr",
-      "status": "REGISTERED \u2014 GATE 1 ONLY",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "priority": "P0",
       "area": "PMS / Rooms",
       "sprint_key": "pos_5_0",
@@ -12791,7 +12791,7 @@
       "artifact_refs": "memory/change_requests/CR_043_CREDIT_PER_CUSTOMER_TOTALS_REPORTS.md",
       "category": "Credit Management / Reports",
       "severity": "P0",
-      "blocked_by": "BACKEND"
+      "notes": " | 2026-10-22: Backend reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-020",
@@ -29016,15 +29016,14 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Reports / Analytics",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "classification": "BACKEND_BUG | DATA_ISSUE",
-      "notes": "Requires live R11 probe. FE has no date cutoffs \u2014 if data is absent it is a backend/data issue. Probe with affected account needed.",
-      "priority": 1,
-      "blocked_by": "BACKEND"
+      "notes": "Requires live R11 probe. FE has no date cutoffs \u2014 if data is absent it is a backend/data issue. Probe with affected account needed. | 2026-10-22: Backend reports CLOSED. Moved to SMOKE for owner verification.",
+      "priority": 1
     },
     {
       "id": "BUG-468",
@@ -29060,14 +29059,13 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_bug_batch",
       "area": "Permissions / Security",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "classification": "FE_BUG",
-      "notes": "CONFIRMED FE_BUG \u2014 no edit_order permission key exists in OrderEntry.jsx. updateQuantity / cart mutations are not permission-gated. Permissions checked: cancel, food, transfer_table, merge_table, food_transfer, customer_management, bill, discount, print_icon. Edit is missing.",
-      "blocked_by": "BACKEND"
+      "notes": "CONFIRMED FE_BUG \u2014 no edit_order permission key exists in OrderEntry.jsx. updateQuantity / cart mutations are not permission-gated. Permissions checked: cancel, food, transfer_table, merge_table, food_transfer, customer_management, bill, discount, print_icon. Edit is missing. | 2026-10-22: Backend reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-471",
@@ -29164,12 +29162,12 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_bug_batch",
       "area": "Settings / Configuration",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "System clock wrong \u2192 outlet shows as closed. FE uses system time to check operating hours. Need to check if operating hours check is FE-side (localStorage/local time) or backend-side. FE-side check using device clock is the likely root cause.",
+      "notes": "System clock wrong \u2192 outlet shows as closed. FE uses system time to check operating hours. Need to check if operating hours check is FE-side (localStorage/local time) or backend-side. FE-side check using device clock is the likely root cause. | 2026-10-22: Backend reports CLOSED. Moved to SMOKE for owner verification.",
       "priority": "P0"
     },
     {
@@ -30667,7 +30665,7 @@
       "id": "CR-410",
       "title": "Scan Order Loyalty Not Pre-Loaded in Collect Payment",
       "type": "CR",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "severity": "P0",
       "risk": "CRITICAL",
       "sprint_key": "oct_cr_batch",
@@ -30693,8 +30691,7 @@
       "backend_brief": "backend_briefs/BACKEND_BRIEF_CR-410_LOYALTY_KEY_2026_10_11.md",
       "area": "Payments / Coupons / Credit",
       "priority": "P0",
-      "notes": " BACKEND DELIVERED 2026-10-19: loyalty key now available in socket payload. FE unblocked. Ready for Gate 2 GO.",
-      "blocked_by": "BACKEND"
+      "notes": " BACKEND DELIVERED 2026-10-19: loyalty key now available in socket payload. FE unblocked. Ready for Gate 2 GO. | 2026-10-22: Backend reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-411",
