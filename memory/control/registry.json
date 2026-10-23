@@ -16178,7 +16178,7 @@
       "type": "CR",
       "severity": "P0",
       "risk": "LOW",
-      "status": "INTAKE \u2014 BACKEND-BLOCKED (covered by CR-100)",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "pos_5_0",
       "module": "inventory",
       "files_to_change": [
@@ -16191,7 +16191,8 @@
         "intake": "/app/memory/change_requests/CR-091_PURCHASE_TRANSACTION_ID_BANK_TRANSFER_INTAKE.md"
       },
       "gate": "0-1",
-      "area": "Payments / Coupons / Credit"
+      "area": "Payments / Coupons / Credit",
+      "notes": " | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-092",
@@ -16859,7 +16860,7 @@
       "type": "BUG",
       "priority": 0,
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "gate": "0-1",
       "sprint_key": "oct_cr_batch",
       "source": "INVESTIGATION",
@@ -16870,7 +16871,7 @@
         "investigation": "impact/INVESTIGATION_SMART_PURCHASE_STOCK_DISCREPANCY_2026_07_24.md",
         "backend_brief": "BACKEND_BLOCKERS_BRIEF_2026_07_22.html"
       },
-      "notes": "BACKEND-BLOCKED confirmed. add-purchase API records the purchase transaction but does not credit quantity/cal_quantity/display_qty in inventory. BUG-244 (wrong payload keys) was fixed \u2014 FE now sends correct payload. Backend SQL/logic for stock credit not executing. Backend brief filed 2026-07-22. Needs backend team to investigate add-purchase trigger. Sprint: oct_cr_batch.",
+      "notes": "BACKEND-BLOCKED confirmed. add-purchase API records the purchase transaction but does not credit quantity/cal_quantity/display_qty in inventory. BUG-244 (wrong payload keys) was fixed \u2014 FE now sends correct payload. Backend SQL/logic for stock credit not executing. Backend brief filed 2026-07-22. Needs backend team to investigate add-purchase trigger. Sprint: oct_cr_batch. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification.",
       "area": "Inventory / Stock"
     },
     {
@@ -29090,13 +29091,13 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_bug_batch",
       "area": "Reports / Analytics",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "classification": "BACKEND_BUG",
-      "notes": "Sub-issue of BUG-471 \u2014 consumption path sends display_unit (packets) to backend instead of base unit (grams). Related: CR-387 IMPL fixed smart-purchase display-unit payload but order-time deduction path may be untouched."
+      "notes": "Sub-issue of BUG-471 \u2014 consumption path sends display_unit (packets) to backend instead of base unit (grams). Related: CR-387 IMPL fixed smart-purchase display-unit payload but order-time deduction path may be untouched. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "BUG-473",
@@ -29104,13 +29105,13 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Inventory / Stock",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "classification": "UNKNOWN \u2014 needs investigation",
-      "notes": "PARKED 2026-10-17 pending more info from owner. Likely related to BUG-243 (stock not credited after add-purchase). Owner to confirm: (1) numbers wrong before submit, or (2) submit does not credit stock. If (2) \u2192 close as duplicate of BUG-243. Test: owner@thegoankitchen.com. Sprint: oct_cr_batch.",
+      "notes": "PARKED 2026-10-17 pending more info from owner. Likely related to BUG-243 (stock not credited after add-purchase). Owner to confirm: (1) numbers wrong before submit, or (2) submit does not credit stock. If (2) \u2192 close as duplicate of BUG-243. Test: owner@thegoankitchen.com. Sprint: oct_cr_batch. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification.",
       "priority": 1
     },
     {
@@ -29292,12 +29293,12 @@
       "type": "CR",
       "severity": "P0",
       "risk": "CRITICAL",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "sprint_key": "oct_cr_batch",
       "area": "Settings / Configuration",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Property needs separate GST config for food items vs room charges. Currently GST may be applied uniformly. Requires backend config key + FE settings UI + calculation path changes. HIGH risk \u2014 financial logic.",
+      "notes": "Property needs separate GST config for food items vs room charges. Currently GST may be applied uniformly. Requires backend config key + FE settings UI + calculation path changes. HIGH risk \u2014 financial logic. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification.",
       "priority": "P0"
     },
     {
@@ -31389,13 +31390,13 @@
       "title": "Inventory \u2014 Advance Purchase option investigation (details TBD)",
       "area": "Inventory / Stock",
       "sprint_key": "oct_cr_batch",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "GATE_6_AWAITING_OWNER_SMOKE",
       "description": "An issue or request related to the Advance Purchase option in Inventory was raised. Full details not yet available \u2014 to be investigated and scoped at Gate 2.",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
       "risk": "MEDIUM",
       "priority": 2,
-      "notes": "Owner confirmed 2026-10-17: BACKEND_BLOCKED. No frontend code for Advance Purchase exists. Awaiting backend API design/delivery before FE scoping can begin."
+      "notes": "Owner confirmed 2026-10-17: BACKEND_BLOCKED. No frontend code for Advance Purchase exists. Awaiting backend API design/delivery before FE scoping can begin. | 2026-10-22: Owner reports CLOSED. Moved to SMOKE for owner verification."
     },
     {
       "id": "CR-422",
@@ -33458,6 +33459,51 @@
       "related": [
         "BUG-610"
       ],
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "CR-469",
+      "title": "When restaurant is created, POS should auto-login on CRM via API and store token",
+      "type": "CR",
+      "priority": "P0",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "CRM / Customer",
+      "sprint_key": "nov_cr_batch",
+      "risk": "HIGH",
+      "notes": "2026-10-22: from TT-040. High priority per owner. New restaurant setup must auto-create CRM session and store token so customer features work immediately.",
+      "intake_doc": "change_requests/CR-469_AUTO_CRM_LOGIN_ON_RESTAURANT_CREATE_INTAKE.md",
+      "registered": "2026-10-22",
+      "tt_source": "TT-040",
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "CR-470",
+      "title": "Payment config (Cash, Card, UPI) should be default for new restaurants",
+      "type": "CR",
+      "priority": "P0",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Payments / Coupons / Credit",
+      "sprint_key": "nov_cr_batch",
+      "risk": "MEDIUM",
+      "notes": "2026-10-22: from TT-041. High priority per owner. New restaurant should have Cash/Card/UPI payment methods enabled by default.",
+      "intake_doc": "change_requests/CR-470_DEFAULT_PAYMENT_CONFIG_NEW_RESTAURANT_INTAKE.md",
+      "registered": "2026-10-22",
+      "tt_source": "TT-041",
+      "blocked_by": "BACKEND"
+    },
+    {
+      "id": "CR-471",
+      "title": "Application loading in Old POS \u2014 key missing",
+      "type": "CR",
+      "priority": "P0",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Other",
+      "sprint_key": "nov_cr_batch",
+      "risk": "HIGH",
+      "notes": "2026-10-22: from TT-042. High priority per owner. Old POS application loading fails due to missing key.",
+      "intake_doc": "change_requests/CR-471_OLD_POS_LOADING_KEY_MISSING_INTAKE.md",
+      "registered": "2026-10-22",
+      "tt_source": "TT-042",
       "blocked_by": "BACKEND"
     }
   ],
