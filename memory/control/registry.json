@@ -18759,14 +18759,14 @@
       "id": "CR-126",
       "title": "Backdated Billing Date \u2014 User-selectable billing date on order punch (backend-config gated)",
       "type": "CR",
-      "priority": "P1",
+      "priority": "P3",
       "risk": "MEDIUM",
       "status": "INTAKE",
       "sprint_key": "pos_5_1",
       "files": [],
       "notes": "INTAKE ONLY. User can set billing date (incl. backdate) during order punch. Backend configuration controls feature availability. No implementation yet.",
       "area": "Payments / Coupons / Credit",
-      "severity": "P2"
+      "severity": "P3"
     },
     {
       "id": "CR-127",
@@ -19303,7 +19303,7 @@
       "id": "CR-134",
       "title": "Settings Tiles \u2014 Mirror All Restaurant Setup Wizard Fields (tile-wizard parity)",
       "type": "CR",
-      "priority": "P2",
+      "priority": "P3",
       "risk": "MEDIUM",
       "status": "HOLD \u2014 BACKEND PENDING",
       "gate": 1,
@@ -19541,7 +19541,7 @@
       "type": "CR",
       "title": "Dual Excel Download \u2014 Add Backend Excel Endpoint to CR-136 Screens",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": 2,
+      "priority": "P0",
       "risk": "MEDIUM",
       "sprint_key": "oct_cr_batch",
       "artifact_refs": [
@@ -24241,7 +24241,7 @@
       "title": "Write AGENT_PROMPT_ALPHA_v0.8.md",
       "type": "CR",
       "status": "INTAKE",
-      "priority": "P1",
+      "priority": "P3",
       "risk": "LOW",
       "gate": "1",
       "completeness": "1/7",
@@ -24519,7 +24519,7 @@
       "title": "Security: Add ProtectedRoute to 23 Unguarded Routes (App.js only)",
       "type": "CR",
       "status": "INTAKE",
-      "priority": "P1",
+      "priority": "P3",
       "risk": "MEDIUM",
       "gate": "1",
       "completeness": "1/7",
@@ -24560,7 +24560,7 @@
         }
       ],
       "notes": "INVESTIGATION 2026-10-14: ~90% done. 86 ProtectedRoute usages in App.js; all core routes guarded. Remaining: preview sub-routes in reports-module (order-ledger/preview, kitchen-ops/preview, room-orders/preview) are unguarded but mockup-only. Low risk. Can close with targeted Gate 2-3 for preview routes.",
-      "severity": "P2"
+      "severity": "P3"
     },
     {
       "id": "BUG-383",
@@ -31450,7 +31450,7 @@
     {
       "id": "CR-425",
       "type": "CR",
-      "severity": "P2",
+      "severity": "P3",
       "title": "Wallet recharge functionality",
       "area": "Payments / Coupons / Credit",
       "sprint_key": "oct_cr_batch",
@@ -31458,7 +31458,8 @@
       "description": "Wallet recharge (top-up) functionality required. CollectPaymentPanel has wallet display but wallet debit CR is also pending. This CR covers the recharge/top-up path specifically. Scope to be defined at Gate 2.",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "priority": "P3"
     },
     {
       "id": "CR-426",
@@ -31644,7 +31645,7 @@
     {
       "id": "CR-427",
       "type": "CR",
-      "severity": "P1",
+      "severity": "P3",
       "risk": "HIGH",
       "title": "Move Loyalty, Coupon Code, E-Invoice and WhatsApp configuration from CRM to POS via CRM API",
       "area": "CRM / Customer Intelligence",
@@ -31652,7 +31653,8 @@
       "status": "GATE_1_INTAKE",
       "description": "Loyalty configuration, Coupon Code configuration, E-Invoice configuration, and WhatsApp configuration currently live in the CRM system. These need to be surfaced/managed within the POS application through the CRM API, so owners can configure them from POS without switching to CRM.",
       "registered": "2026-10-15",
-      "registered_by": "INTAKE agent"
+      "registered_by": "INTAKE agent",
+      "priority": "P3"
     },
     {
       "id": "BUG-558",
@@ -32651,7 +32653,7 @@
       "title": "New Settings Keys Including Menu Master",
       "type": "CR",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P2",
+      "priority": "P0",
       "risk": "MEDIUM",
       "sprint_key": "backlog",
       "area": "Settings / Profile",
