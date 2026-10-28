@@ -51,6 +51,9 @@ const getStatusBadge = (pt) => {
     Unpaid: { label: 'Unpaid', cls: 'bg-yellow-100 text-yellow-800' },
     Cancel: { label: 'Cancel', cls: 'bg-red-100 text-red-800' },
     Partial: { label: 'Partial', cls: 'bg-blue-100 text-blue-800' },
+    TAB: { label: 'TAB', cls: 'bg-amber-100 text-amber-800' },           // BUG-354
+    prepaid: { label: 'Prepaid', cls: 'bg-green-100 text-green-800' },    // BUG-354
+    postpaid: { label: 'Postpaid', cls: 'bg-zinc-200 text-zinc-700' },    // BUG-354
   };
   return map[pt] || { label: pt || '—', cls: 'bg-zinc-100 text-zinc-600' };
 };

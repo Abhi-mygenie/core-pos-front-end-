@@ -22158,10 +22158,10 @@
       "sprint_key": "oct_cr_batch",
       "id": "BUG-354",
       "title": "OrderReportBetaPage: Status column null for some order types",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "gate": "1",
       "files": "OrderReportBetaPage.jsx:467,487",
-      "notes": "getStatusBadge maps only Cash/Unpaid/Cancel/Partial. Missing: TAB, prepaid, postpaid, null. Fix: 4 lines in OrderReportBetaPage.jsx. Fast Lane eligible. | 2026-10-28: INVESTIGATION confirmed IA doc contains full Gate 3 plan (exact fix, verification matrix, registry checklist). 3-line fix to getStatusBadge adding TAB/prepaid/postpaid. Fast Lane eligible. Registry corrected GATE_2 \u2192 GATE_3_PLAN_COMPLETE. Awaiting Gate 4 GO.",
+      "notes": "getStatusBadge maps only Cash/Unpaid/Cancel/Partial. Missing: TAB, prepaid, postpaid, null. Fix: 4 lines in OrderReportBetaPage.jsx. Fast Lane eligible. | 2026-10-28: INVESTIGATION confirmed IA doc contains full Gate 3 plan (exact fix, verification matrix, registry checklist). 3-line fix to getStatusBadge adding TAB/prepaid/postpaid. Fast Lane eligible. Registry corrected GATE_2 \u2192 GATE_3_PLAN_COMPLETE. Awaiting Gate 4 GO. | 2026-10-28: IMPLEMENTATION \u2014 3 entries added to getStatusBadge map (TAB/prepaid/postpaid). 1 file, 3 lines. Compile clean. Fast Lane.",
       "artifact_refs": [
         {
           "label": "Intake",
