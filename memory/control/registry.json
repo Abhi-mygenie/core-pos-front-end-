@@ -22158,10 +22158,10 @@
       "sprint_key": "oct_cr_batch",
       "id": "BUG-354",
       "title": "OrderReportBetaPage: Status column null for some order types",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "gate": "1",
       "files": "OrderReportBetaPage.jsx:467,487",
-      "notes": "getStatusBadge maps only Cash/Unpaid/Cancel/Partial. Missing: TAB, prepaid, postpaid, null. Fix: 4 lines in OrderReportBetaPage.jsx. Fast Lane eligible. | 2026-10-28: INVESTIGATION confirmed IA doc contains full Gate 3 plan (exact fix, verification matrix, registry checklist). 3-line fix to getStatusBadge adding TAB/prepaid/postpaid. Fast Lane eligible. Registry corrected GATE_2 \u2192 GATE_3_PLAN_COMPLETE. Awaiting Gate 4 GO. | 2026-10-28: IMPLEMENTATION \u2014 3 entries added to getStatusBadge map (TAB/prepaid/postpaid). 1 file, 3 lines. Compile clean. Fast Lane.",
+      "notes": "getStatusBadge maps only Cash/Unpaid/Cancel/Partial. Missing: TAB, prepaid, postpaid, null. Fix: 4 lines in OrderReportBetaPage.jsx. Fast Lane eligible. | 2026-10-28: INVESTIGATION confirmed IA doc contains full Gate 3 plan (exact fix, verification matrix, registry checklist). 3-line fix to getStatusBadge adding TAB/prepaid/postpaid. Fast Lane eligible. Registry corrected GATE_2 \u2192 GATE_3_PLAN_COMPLETE. Awaiting Gate 4 GO. | 2026-10-28: IMPLEMENTATION \u2014 3 entries added to getStatusBadge map (TAB/prepaid/postpaid). 1 file, 3 lines. Compile clean. Fast Lane. | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
       "artifact_refs": [
         {
           "label": "Intake",
@@ -31999,7 +31999,7 @@
       "id": "CR-429",
       "type": "CR",
       "title": "Active table toggle \u2014 show only occupied/active tables in table view",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
@@ -32017,7 +32017,8 @@
         "src/components/layout/Header.jsx",
         "src/components/dashboard/ChannelColumnsLayout.jsx",
         "src/components/dashboard/ChannelColumn.jsx"
-      ]
+      ],
+      "notes": " | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-571",
@@ -32056,7 +32057,7 @@
       "id": "BUG-573",
       "type": "BUG",
       "title": "Order card variation: selected option not shown (shows group name only, e.g. 'Choice of milk' not 'Oat milk')",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
@@ -32065,7 +32066,7 @@
       "intake_doc": "change_requests/BUG-573_VARIATION_SELECTED_OPTION_NOT_SHOWN_INTAKE.md",
       "duplicate_check": "DISTINCT",
       "od_573_01": "BACKEND_BLOCKED: backend not returning selected option value in item.variation array. Backend team to add selected option label field.",
-      "notes": "2026-10-21: Gate 2 IA closed. TWO gaps found: (1) FE \u2014 OrderCard v.values[].label not mapped, shows group name only. Ready for Gate 3. (2) BACKEND \u2014 order_note sent in place-order payload but backend returns empty in employee-orders-list. Notes pushed to food_level_notes at item level instead. Backend brief needed. IA: impact/BUG-573_IMPACT_ANALYSIS_2026_10_21.md"
+      "notes": "2026-10-21: Gate 2 IA closed. TWO gaps found: (1) FE \u2014 OrderCard v.values[].label not mapped, shows group name only. Ready for Gate 3. (2) BACKEND \u2014 order_note sent in place-order payload but backend returns empty in employee-orders-list. Notes pushed to food_level_notes at item level instead. Backend brief needed. IA: impact/BUG-573_IMPACT_ANALYSIS_2026_10_21.md | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-574",
@@ -32152,7 +32153,7 @@
       "id": "CR-430",
       "type": "CR",
       "title": "Served items: decrease card height (remove 44px touch target on static checkmark) + collapsible by default",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
@@ -32198,7 +32199,8 @@
         "E-5a L885: py-0.5",
         "E-5b+c L897-900: removed Cancelled label + X w-3 icon"
       ],
-      "qa_report_e3_e4_e5": "test_reports/iteration_5.json"
+      "qa_report_e3_e4_e5": "test_reports/iteration_5.json",
+      "notes": " | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-578",
@@ -32781,22 +32783,22 @@
       "title": "assign_food_menu lost between login and MenuContext \u2014 menu type derived from product data instead of auth assignment",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "HIGH",
-      "notes": "2026-10-21: Investigation complete (8/10 steps, HIGH confidence). 4-point gap: authService never stores assignFoodMenu, AuthContext has no field, MenuContext derives from first product. Fix: thread assignFoodMenu from login through AuthContext to MenuContext. Report: evidence/BUG-598/BUG-598_INVESTIGATION_REPORT_2026_10_21.md | 2026-10-28: INVESTIGATION validated code-as-truth \u2014 full implementation confirmed across 4 files (AuthContext.jsx, MenuContext.jsx, authService.js, authTransform.js). 9 BUG-598 markers. Chain: login\u2192authTransform\u2192sessionStorage\u2192AuthContext\u2192MenuContext\u2192activeMenuType. Registry advanced GATE_2_PLANNING \u2192 GATE_5A_IMPLEMENTED. Needs retroactive QA \u2192 closure."
+      "notes": "2026-10-21: Investigation complete (8/10 steps, HIGH confidence). 4-point gap: authService never stores assignFoodMenu, AuthContext has no field, MenuContext derives from first product. Fix: thread assignFoodMenu from login through AuthContext to MenuContext. Report: evidence/BUG-598/BUG-598_INVESTIGATION_REPORT_2026_10_21.md | 2026-10-28: INVESTIGATION validated code-as-truth \u2014 full implementation confirmed across 4 files (AuthContext.jsx, MenuContext.jsx, authService.js, authTransform.js). 9 BUG-598 markers. Chain: login\u2192authTransform\u2192sessionStorage\u2192AuthContext\u2192MenuContext\u2192activeMenuType. Registry advanced GATE_2_PLANNING \u2192 GATE_5A_IMPLEMENTED. Needs retroactive QA \u2192 closure. | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-599",
       "title": "Aggregator orders vanish on page refresh \u2014 useRefreshAllData replaces all orders with POS-only list",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Aggregator / Sockets",
       "sprint_key": "nov_cr_batch",
       "risk": "HIGH",
-      "notes": "2026-10-21: IMPLEMENTED Rev2. Aggregator orders added to LoadingPage boot (Tier 2 parallel) with loading/error/retry UI. POS+aggregator combined in post-batch before setOrders. DashboardPage boot fetch removed. Refresh fetches both POS+aggregator in parallel via Promise.allSettled. 4 files: constants.js, LoadingPage.jsx, DashboardPage.jsx, useRefreshAllData.js. Plan: plans/BUG-599_IMPLEMENTATION_PLAN_REV2.md | 2026-10-24: Hardened \u2014 aggregator boot failure now non-blocking (SUCCESS instead of ERROR in LoadingPage). useRefreshAllData rethrows on POS failure to preserve existing orders.",
+      "notes": "2026-10-21: IMPLEMENTED Rev2. Aggregator orders added to LoadingPage boot (Tier 2 parallel) with loading/error/retry UI. POS+aggregator combined in post-batch before setOrders. DashboardPage boot fetch removed. Refresh fetches both POS+aggregator in parallel via Promise.allSettled. 4 files: constants.js, LoadingPage.jsx, DashboardPage.jsx, useRefreshAllData.js. Plan: plans/BUG-599_IMPLEMENTATION_PLAN_REV2.md | 2026-10-24: Hardened \u2014 aggregator boot failure now non-blocking (SUCCESS instead of ERROR in LoadingPage). useRefreshAllData rethrows on POS failure to preserve existing orders. | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
       "code_reality": "FULL",
       "last_updated": "2026-10-24"
     },
@@ -32805,22 +32807,22 @@
       "title": "Aggregator orders play confirm_order sound instead of buzzer \u2014 aggregator_order_tone setting never read",
       "type": "BUG",
       "priority": "P1",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Aggregator / Sockets",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
-      "notes": "2026-10-22: IMPLEMENTED. toneMapper.js: +AGGREGATOR_TONE_MAP + mapAggregatorOrderTone(). NotificationContext.jsx: +isAggregatorOrderNotification() + override block before confirm-order. Webpack: 0 errors, 0 new warnings. Self-test: all V-checks PASS. Plan: plans/BUG-600_IMPLEMENTATION_PLAN.md"
+      "notes": "2026-10-22: IMPLEMENTED. toneMapper.js: +AGGREGATOR_TONE_MAP + mapAggregatorOrderTone(). NotificationContext.jsx: +isAggregatorOrderNotification() + override block before confirm-order. Webpack: 0 errors, 0 new warnings. Self-test: all V-checks PASS. Plan: plans/BUG-600_IMPLEMENTATION_PLAN.md | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-601",
       "title": "Aggregator menu variations + addon_ids silently dropped on save \u2014 SKIP set in multipart FormData",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "HIGH",
-      "notes": "2026-10-22: IMPLEMENTED. menuManagementService.js: SKIP set replaced with FOOD_INFO_KEYS + food_info JSON wrapper in both addFoodAggregatorMultipart and editFoodAggregator. Webpack: 0 errors, 0 new warnings. Self-test: all V-checks PASS. Plan: plans/BUG-601_IMPLEMENTATION_PLAN.md | 2026-10-24: Revalidated. FOOD_INFO_KEYS replaces SKIP set in both add and edit functions in menuManagementService.js.",
+      "notes": "2026-10-22: IMPLEMENTED. menuManagementService.js: SKIP set replaced with FOOD_INFO_KEYS + food_info JSON wrapper in both addFoodAggregatorMultipart and editFoodAggregator. Webpack: 0 errors, 0 new warnings. Self-test: all V-checks PASS. Plan: plans/BUG-601_IMPLEMENTATION_PLAN.md | 2026-10-24: Revalidated. FOOD_INFO_KEYS replaces SKIP set in both add and edit functions in menuManagementService.js. | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
       "impact_doc": "impact/BUG-601_IMPACT_ANALYSIS_2026_10_22.md",
       "code_reality": "FULL",
       "last_updated": "2026-10-24"
@@ -33169,7 +33171,7 @@
       "id": "CR-449",
       "title": "Item Level Station Mapping",
       "type": "CR",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "oct_cr_batch",
@@ -33189,7 +33191,7 @@
         "OD-449-03",
         "OD-449-04"
       ],
-      "notes": "from TT-028 | 2026-10-28: INVESTIGATION validated code-as-truth \u2014 full implementation confirmed across 6 files (productTransform.js, menuManagementTransform.js, ProductList.jsx, ProductForm.jsx, BulkEditor.jsx, ProductCard.jsx). 27 CR-449 markers. Station mapping: transforms + form UI + grid editor + card display. Registry advanced GATE_1_INTAKE_COMPLETE \u2192 GATE_5A_IMPLEMENTED. Needs retroactive QA \u2192 closure.",
+      "notes": "from TT-028 | 2026-10-28: INVESTIGATION validated code-as-truth \u2014 full implementation confirmed across 6 files (productTransform.js, menuManagementTransform.js, ProductList.jsx, ProductForm.jsx, BulkEditor.jsx, ProductCard.jsx). 27 CR-449 markers. Station mapping: transforms + form UI + grid editor + card display. Registry advanced GATE_1_INTAKE_COMPLETE \u2192 GATE_5A_IMPLEMENTED. Needs retroactive QA \u2192 closure. | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
       "priority": "P0"
     },
     {
@@ -33633,11 +33635,12 @@
       "id": "BUG-618",
       "title": "Prepaid Order + Discount \u2192 Something Went Wrong (ErrorBoundary) \u2014 null variation entry in getItemLinePrice",
       "type": "BUG",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "priority": "P0",
       "risk": "MEDIUM",
       "sprint_key": "nov_cr_batch",
-      "qa_date": null
+      "qa_date": null,
+      "notes": " | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-619",
@@ -33673,10 +33676,11 @@
       "id": "CR-475",
       "title": "Item Consumption Report \u2014 Add food_for menu label column + addons[] drill-down in expandable row (backend API additions to CR-472)",
       "type": "CR",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5B_QA_PASS",
       "priority": "P2",
       "risk": "LOW",
-      "sprint_key": "nov_cr_batch"
+      "sprint_key": "nov_cr_batch",
+      "notes": " | 2026-10-28: QA PASS \u2014 retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified."
     },
     {
       "id": "BUG-622",
@@ -33697,6 +33701,91 @@
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-28"
+    },
+    {
+      "id": "BUG-623",
+      "title": "Null variation entry crashes orderTransform.reduce + BUG-618 markers labelled BUG-NEW",
+      "type": "BUG",
+      "priority": "P1",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Order Entry / Transforms",
+      "sprint_key": "nov_cr_batch",
+      "risk": "MEDIUM",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent (QA finding F1)",
+      "related": [
+        "BUG-618"
+      ],
+      "intake_doc": "change_requests/BUG-623_NULL_VARIATION_ORDERTRANSFORM_CRASH_INTAKE.md",
+      "notes": "QA batch 2026-10-28: orderTransform.js L722 reduce on possibly-null v. BUG-618 fix incomplete \u2014 guarded symptom not source. Also: CollectPaymentPanel markers say BUG-NEW not BUG-618."
+    },
+    {
+      "id": "BUG-624",
+      "title": "CR-430 OFF badge unreadable \u2014 white text on light grey background",
+      "type": "BUG",
+      "priority": "P3",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Settings / Display",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent (QA finding F2)",
+      "related": [
+        "CR-430"
+      ],
+      "intake_doc": "change_requests/BUG-624_CR430_OFF_BADGE_CONTRAST_INTAKE.md",
+      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix."
+    },
+    {
+      "id": "BUG-625",
+      "title": "CR-429 Active First pill missing from tablet dropdown (<1280px)",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Dashboard / Responsive",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent (QA finding F3)",
+      "related": [
+        "CR-429"
+      ],
+      "intake_doc": "change_requests/BUG-625_CR429_ACTIVE_FIRST_TABLET_MISSING_INTAKE.md",
+      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle."
+    },
+    {
+      "id": "BUG-626",
+      "title": "getStatusBadge missing Upi/Card/Room \u2014 ~148 rows show raw strings in Order Report Beta",
+      "type": "BUG",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Reports",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent (QA finding F4)",
+      "related": [
+        "BUG-354"
+      ],
+      "intake_doc": "change_requests/BUG-626_STATUS_BADGE_UPI_CARD_ROOM_MISSING_INTAKE.md",
+      "notes": "QA batch 2026-10-28: Same pattern as BUG-354. 3 more entries needed. ~148 rows affected on Palm House."
+    },
+    {
+      "id": "BUG-627",
+      "title": "CR-449 banner shows item station as 'Category default' when override active \u2014 misleading text",
+      "type": "BUG",
+      "priority": "P3",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Menu Management",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent (QA finding F5)",
+      "related": [
+        "CR-449"
+      ],
+      "intake_doc": "change_requests/BUG-627_CR449_BANNER_STATION_NAME_MISLEADING_INTAKE.md",
+      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station."
     }
   ],
   "meta": {
