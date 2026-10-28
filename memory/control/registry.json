@@ -33707,7 +33707,7 @@
       "title": "Null variation entry crashes orderTransform.reduce + BUG-618 markers labelled BUG-NEW",
       "type": "BUG",
       "priority": "P1",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Order Entry / Transforms",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
@@ -33717,14 +33717,14 @@
         "BUG-618"
       ],
       "intake_doc": "change_requests/BUG-623_NULL_VARIATION_ORDERTRANSFORM_CRASH_INTAKE.md",
-      "notes": "QA batch 2026-10-28: orderTransform.js L722 reduce on possibly-null v. BUG-618 fix incomplete \u2014 guarded symptom not source. Also: CollectPaymentPanel markers say BUG-NEW not BUG-618."
+      "notes": "QA batch 2026-10-28: orderTransform.js L722 reduce on possibly-null v. BUG-618 fix incomplete \u2014 guarded symptom not source. Also: CollectPaymentPanel markers say BUG-NEW not BUG-618. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
     },
     {
       "id": "BUG-624",
       "title": "CR-430 OFF badge unreadable \u2014 white text on light grey background",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Settings / Display",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33734,14 +33734,14 @@
         "CR-430"
       ],
       "intake_doc": "change_requests/BUG-624_CR430_OFF_BADGE_CONTRAST_INTAKE.md",
-      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix."
+      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
     },
     {
       "id": "BUG-625",
       "title": "CR-429 Active First pill missing from tablet dropdown (<1280px)",
       "type": "BUG",
       "priority": "P2",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Dashboard / Responsive",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33751,14 +33751,14 @@
         "CR-429"
       ],
       "intake_doc": "change_requests/BUG-625_CR429_ACTIVE_FIRST_TABLET_MISSING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle."
+      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
     },
     {
       "id": "BUG-626",
       "title": "getStatusBadge missing Upi/Card/Room \u2014 ~148 rows show raw strings in Order Report Beta",
       "type": "BUG",
       "priority": "P2",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Reports",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33768,14 +33768,14 @@
         "BUG-354"
       ],
       "intake_doc": "change_requests/BUG-626_STATUS_BADGE_UPI_CARD_ROOM_MISSING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: Same pattern as BUG-354. 3 more entries needed. ~148 rows affected on Palm House."
+      "notes": "QA batch 2026-10-28: Same pattern as BUG-354. 3 more entries needed. ~148 rows affected on Palm House. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
     },
     {
       "id": "BUG-627",
       "title": "CR-449 banner shows item station as 'Category default' when override active \u2014 misleading text",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Menu Management",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33785,7 +33785,7 @@
         "CR-449"
       ],
       "intake_doc": "change_requests/BUG-627_CR449_BANNER_STATION_NAME_MISLEADING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station."
+      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
     }
   ],
   "meta": {
