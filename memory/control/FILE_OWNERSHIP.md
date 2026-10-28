@@ -2209,3 +2209,5 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/panels/menu/ProductList.jsx` | **CR-476:** E1: handleDragEnd stripped to sync local-only (no API). E2: handleSaveOrder useCallback added. E3: Check icon imported. E4: Save Order + Discard buttons in toolbar (conditional on localProducts). | CR-476 IMPL 2026-10-28 |
 | `src/components/panels/menu/CategoryList.jsx` | **CR-476:** E5: handleDragEnd stripped to sync local-only. E6: handleSaveOrder added (uses cats — OD-476-06). E7: Save Order + Discard buttons below search bar (conditional on localCategories). | CR-476 IMPL 2026-10-28 |
 | `src/pages/reports-module/OrderReportBetaPage.jsx` | **L50-52:** Added TAB/prepaid/postpaid entries to `getStatusBadge` map. 3 new status badge mappings. | BUG-354 IMPL 2026-10-28 |
+| `src/pages/StatusConfigPage.jsx` | **L1026:** OFF badge text color conditional (white ON, dark OFF). | BUG-624 IMPL 2026-10-28 |
+| `src/components/panels/menu/ProductForm.jsx` | **L511:** Banner text reworded — removed misleading 'Category default' reference. | BUG-627 IMPL 2026-10-28 |

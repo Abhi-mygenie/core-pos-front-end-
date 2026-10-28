@@ -1023,7 +1023,7 @@ const StatusConfigPage = () => {
                   </span>
                   <span
                     className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ backgroundColor: servedAutoExpand ? COLORS.primaryGreen : COLORS.borderGray, color: '#fff' }}
+                    style={{ backgroundColor: servedAutoExpand ? COLORS.primaryGreen : COLORS.borderGray, color: servedAutoExpand ? '#fff' : COLORS.darkText }} // BUG-624: OFF badge contrast fix
                   >
                     {servedAutoExpand ? 'ON' : 'OFF'}
                   </span>

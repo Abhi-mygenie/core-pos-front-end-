@@ -508,7 +508,7 @@ const ProductForm = ({ product, categories, addons: allAddons, stations, currenc
             {form.restaurantPrinterId && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 8, background: '#EFF6FF', border: '1px solid #BFDBFE', marginBottom: 12 }}>
                 <span style={{ fontSize: 12, color: '#1D4ED8', fontWeight: 500, flex: 1 }}>
-                  Item-level station override active. Category default: {product?.stationName || 'KDS'}
+                  Item-level station override active. KOTs will route to the selected station. {/* BUG-627: removed misleading "Category default" — stationName is effective, not category */}
                 </span>
                 <button onClick={() => setForm(p => ({ ...p, restaurantPrinterId: null }))}
                   style={{ fontSize: 11, fontWeight: 600, color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA', padding: '3px 10px', borderRadius: 5, cursor: 'pointer' }}

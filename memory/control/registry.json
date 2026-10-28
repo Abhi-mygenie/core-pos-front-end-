@@ -33724,7 +33724,7 @@
       "title": "CR-430 OFF badge unreadable \u2014 white text on light grey background",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "area": "Settings / Display",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33734,7 +33734,7 @@
         "CR-430"
       ],
       "intake_doc": "change_requests/BUG-624_CR430_OFF_BADGE_CONTRAST_INTAKE.md",
-      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
+      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 conditional text color on OFF badge. 1 file, 1 line."
     },
     {
       "id": "BUG-625",
@@ -33775,7 +33775,7 @@
       "title": "CR-449 banner shows item station as 'Category default' when override active \u2014 misleading text",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "area": "Menu Management",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33785,7 +33785,7 @@
         "CR-449"
       ],
       "intake_doc": "change_requests/BUG-627_CR449_BANNER_STATION_NAME_MISLEADING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md"
+      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 banner text reworded, removed misleading Category default reference. 1 file, 1 line."
     }
   ],
   "meta": {
