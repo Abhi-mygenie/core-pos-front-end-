@@ -1,0 +1,45 @@
+{
+  "summary": "Retroactive QA of 11 items (GATE_5A -> 5B). I checked code markers for all 11 and ran a 14-test pytest marker/guard suite (all pass). Webpack compiles cleanly. Tested in the browser with Playwright against the preview URL and the live preprod backend: BUG-354 (TAB amber badge seen on real data), CR-429 (Active First pill toggles, localStorage true/false, occupied tables sorted first), CR-430 (toggle card visible and switches), CR-449 (Station & Routing section with 'Category Default (KDS)', KDS, BAR and Bill on Kunafa Mahal; BulkEditor Station column present), CR-475 (Total Returned KPI = 5, food_for filter and 23 badges, add-ons drill-down renders), BUG-598 (sessionStorage assign_food_menu = 'Normal' for Palm House and Kunafa Mahal), BUG-599 ('Aggregator Orders' boot step visible in LoadingPage). BUG-573/600/601/618 are code-verified only, because there was no aggregator data, variation orders or prepaid flow to test with. No page errors were caught in any run. All 11 items pass functional QA. Some follow-up findings are listed below.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "preprod.mygenie.online running orders", "issue": "Environment only: the preprod boot calls are slow and flaky (Categories/Products took >33s once, and Running Orders timed out at 60s once and needed a Retry). This is not a code defect."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "OrderCard.jsx L699-701 (variant parsing)", "issue": "Latent crash with the same data shape as BUG-618: variants.map(v => v.name ...) has no null guard. typeof null === 'object', so variation:[null] (aggregator/scan socket re-hydration) throws a TypeError and hits the ErrorBoundary on the dashboard. orderTransform.js L136 passes the raw array through with nulls.", "selector": "OrderCard", "priority": "MEDIUM"},
+      {"component": "orderTransform.js L722-727 (buildCartItem variationAmount reduce)", "issue": "v.price / v.values is read on possibly-null v, so the same null-variation crash can happen during order update or place. The map above it uses v?. safely but the reduce does not. The BUG-618 commit listed 'filter nulls in orderTransform' as a next step, and it was not done.", "selector": "n/a", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [
+      {"flow": "Order Report Beta status column (beyond BUG-354 scope)", "issue": "getStatusBadge is keyed on row.payment_type, so paid UPI/Card/Room orders show raw 'Upi'/'Card'/'Room' as grey fallback pills in STATUS instead of 'Paid'. Observed on Palm House 20-28 Oct: about 100 Upi, 44 Card and 4 Room rows.", "affected_selectors": ["[data-testid^='day-section-'] td span"]}
+    ],
+    "design_issues": [
+      {"screen": "StatusConfigPage - Auto-expand Served Items card", "issues": ["The OFF badge uses white text on COLORS.borderGray (very light), so it is nearly unreadable. Other toggles' OFF badges are dark grey. Use the same OFF badge style as 'Stay on Order Entry'."]},
+      {"screen": "Dashboard header (<1280px tablet)", "issues": ["The CR-429 'Active First' pill is only in the xl pills nav and is missing from the tablet filter dropdown (BUG-555 WP-C mirror), so tablet users cannot toggle it."]},
+      {"screen": "Order Report Beta / Item Consumption", "issues": ["They use native <input type='date'> rather than the shadcn calendar (this was already the case before)."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_qa_batch_11_markers.py", "/app/test_reports/pytest/qa_batch_11.xml"],
+  "action_items": [
+    "Add null guards in OrderCard variant parsing (filter(Boolean) before map) and in orderTransform buildCartItem variationAmount reduce. Better still, filter nulls in orderTransform L136 (variation) and the matching addOns line.",
+    "Fix the Auto-expand Served Items OFF badge contrast in StatusConfigPage.",
+    "Consider adding Active First to the tablet filter dropdown in Header.jsx.",
+    "Consider mapping Upi/Card/Room/other paid payment_types to the 'Paid' status badge in OrderReportBetaPage.getStatusBadge, or derive status from the order status rather than payment_type.",
+    "Re-label the BUG-618 guard comments in CollectPaymentPanel.jsx L259-260 ('BUG-NEW' -> 'BUG-618') so they can be traced. grep 'BUG-618' currently returns 0 hits."
+  ],
+  "critical_code_review_comments": [
+    "BUG-618: the fix exists (CollectPaymentPanel getItemLinePrice: `if (!group) return s;` plus addon/val guards) but it is labelled BUG-NEW. There are 0 'BUG-618' markers, contrary to the review request.",
+    "BUG-598: 9 markers, as stated, but they are in authService (1), AuthContext (6) and MenuContext (2). authTransform.js L25 carries a BUG-463 marker, not BUG-598. The chain works: sessionStorage = 'Normal'.",
+    "CR-449 ProductForm L511: the banner text says 'Category default: {product.stationName}', but when an item override is active stationName is the effective (item) station, so the banner may show the override station as the 'category default'.",
+    "CR-430: localStorage mygenie_served_auto_expand is written only on Save Configuration (by design; an unsaved-changes bar appears). The default is ON when the key is absent.",
+    "CollectPaymentPanel.jsx is more than 3000 lines and there are many .bak files in src/components/order-entry. These should be cleaned up or split."
+  ],
+  "updated_files": ["/app/backend/tests/test_qa_batch_11_markers.py"],
+  "success_rate": {"backend": "100% (14/14 marker/guard tests; no local backend APIs in scope)", "frontend": "100% of UI-testable items (7/7) passed; 4 items code-verified only"},
+  "test_credentials": "From /app/memory/test_credentials.md: owner@palmhouse.com and owner@kunafamahal.com / Qplazm@10 both worked",
+  "seed_data_creation": "None. Toggles were changed but not saved (CR-430). CR-429 localStorage was left at 'false'.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Full page reloads (page.goto) re-run the /loading boot. After login, navigate in-app via history.pushState + popstate. Routes: /visibility/status-config, /reports-module/order-report-beta, /reports-module/item-consumption, /menu. Preprod is slow, so allow 170s for login->dashboard and auto-click 'Retry Failed'. Palm House 20-28 Oct 2026 has TAB orders; no prepaid/postpaid rows were seen. Aggregator orders count = 0 for Palm House, so BUG-599/600/601 cannot be tested in the UI without aggregator data."
+}
