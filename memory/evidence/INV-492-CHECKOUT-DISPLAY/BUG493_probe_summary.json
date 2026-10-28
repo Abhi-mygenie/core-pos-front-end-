@@ -1,0 +1,68 @@
+{
+  "probe_date": "2026-10-06",
+  "restaurant": "RID 69 — The Goan Kitchen",
+  "login": "owner@thegoankitchen.com",
+
+  "finding_key": "row.charge is NEVER set in getInHouseGuests(). roomListTransform has no charge field. chargeGst is ALWAYS 0.",
+
+  "local_reservations_charge_availability": "CONFIRMED PRESENT at reservation level (res.charge.sgst, res.charge.cgst)",
+
+  "in_house_orders": [
+    {
+      "order_id": 1232903,
+      "scenario": "No discount",
+      "ri_room_price": 1050.00,
+      "ri_advance_payment": 100.00,
+      "ri_balance_payment": 950.00,
+      "ri_room_discount_amount": null,
+      "ri_gst_tax": "ABSENT",
+      "charge_sgst": 26.25,
+      "charge_cgst": 26.25,
+      "charge_booking_charge": 1050,
+      "charge_balance_due": 1002.5,
+      "current_BALANCE_column": 950.0,
+      "expected_BALANCE_column": 1002.5,
+      "gap_rs": 52.5,
+      "gap_cause": "chargeGst=0 (row.charge never set)"
+    },
+    {
+      "order_id": 1232965,
+      "scenario": "Partial discount rs200",
+      "ri_room_price": 1050.00,
+      "ri_advance_payment": 100.00,
+      "ri_balance_payment": 750.00,
+      "ri_room_discount_amount": 200.00,
+      "ri_gst_tax": "ABSENT",
+      "charge_sgst": 26.25,
+      "charge_cgst": 26.25,
+      "charge_booking_charge": 1050,
+      "charge_balance_due": 1002.5,
+      "current_BALANCE_column": 750.0,
+      "expected_BALANCE_column": 802.5,
+      "gap_rs": 52.5,
+      "gap_cause": "chargeGst=0 (row.charge never set)"
+    },
+    {
+      "order_id": 1232972,
+      "order_number": "000324",
+      "scenario": "Full discount (100% Percent = rs1000 stored, ri.balance_payment=0)",
+      "ri_room_price": 1500.00,
+      "ri_advance_payment": 500.00,
+      "ri_balance_payment": 0.00,
+      "ri_room_discount_amount": 1000.00,
+      "ri_gst_tax": "ABSENT",
+      "charge_sgst": 37.5,
+      "charge_cgst": 37.5,
+      "charge_booking_charge": 1500,
+      "charge_balance_due": 1075,
+      "current_BALANCE_column": 0.0,
+      "expected_BALANCE_column_with_fix": 75.0,
+      "note": "Owner confirmed rs0 is correct. With fix applied, shows rs75 (GST not covered by rs1000 discount). Requires owner decision: is the rs75 GST waived or owed?"
+    }
+  ],
+
+  "fix_direction": "Add `row.charge = match.res.charge ?? null` in pmsService.getInHouseGuests() Step 2 (line 68). This makes chargeGst read from LR charge.sgst + charge.cgst.",
+  "fix_file": "src/api/services/pmsService.js",
+  "fix_lines": "~68 (inside rows.forEach in Step 2)",
+  "fix_risk": "Edge case: For full-discount orders where ri.balance_payment=0, adding chargeGst shows GST as outstanding. Owner must decide."
+}

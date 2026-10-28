@@ -1,0 +1,74 @@
+{
+  "firefox_autoplay_allowed": {
+    "launch_error": "Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://pos-uat.mygenie.online/login\", waiting until \"domcontentloaded\"\n"
+  },
+  "firefox_autoplay_blocked": {
+    "five_sec_buzzer": {
+      "result": "PLAY_OK",
+      "duration": 5.6
+    },
+    "forty_five_sec_buzzer": {
+      "result": "PLAY_OK",
+      "duration": 48.096
+    },
+    "order_accepted": {
+      "result": "PLAY_OK",
+      "duration": 1.73625
+    },
+    "new_order": {
+      "result": "PLAY_OK",
+      "duration": 2.005333
+    },
+    "confirm_order": {
+      "result": "PLAY_OK",
+      "duration": 2.218666
+    },
+    "order_rejected": {
+      "result": "ERROR",
+      "code": 4,
+      "msg": "Failed to init decoder"
+    },
+    "swiggy_new_order": {
+      "result": "PLAY_OK",
+      "duration": 2.50775
+    },
+    "silent": {
+      "result": "PLAY_OK",
+      "duration": 0.575759
+    }
+  },
+  "chromium_autoplay_allowed": {
+    "five_sec_buzzer": {
+      "result": "PLAY_OK",
+      "duration": 5.6
+    },
+    "forty_five_sec_buzzer": {
+      "result": "PLAY_OK",
+      "duration": 48.096
+    },
+    "order_accepted": {
+      "result": "PLAY_OK",
+      "duration": 1.73625
+    },
+    "new_order": {
+      "result": "PLAY_OK",
+      "duration": 2.005333
+    },
+    "confirm_order": {
+      "result": "PLAY_OK",
+      "duration": 2.218667
+    },
+    "order_rejected": {
+      "result": "PLAY_OK",
+      "duration": 1.761451
+    },
+    "swiggy_new_order": {
+      "result": "PLAY_OK",
+      "duration": 2.50775
+    },
+    "silent": {
+      "result": "PLAY_OK",
+      "duration": 0.587755
+    }
+  }
+}

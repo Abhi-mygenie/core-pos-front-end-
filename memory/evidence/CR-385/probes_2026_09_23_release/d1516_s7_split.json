@@ -1,0 +1,102 @@
+{
+ "http": 201,
+ "body": {
+  "status": true,
+  "message": "Direct reservation created successfully",
+  "data": {
+   "reservation": {
+    "id": 283,
+    "booking_id": "MG-69-4BA81D03-6BFC-4360-9E01-699E0049C79C",
+    "cm_booking_id": null,
+    "channel": "Direct",
+    "hotel_code": "sandbox-pms",
+    "checkin": "2026-10-20",
+    "checkout": "2026-10-21",
+    "status": "confirmed",
+    "cancelled_at": null,
+    "cancel_reason": null,
+    "cancelled_by": null,
+    "pah": true,
+    "operational_status": "pending",
+    "booked_on": "2026-09-24 00:32:46",
+    "amount_before_tax": "7400.00",
+    "amount_after_tax": "7770.00",
+    "advance_payment": 1000,
+    "balance_payment": 6400,
+    "charge": {
+     "rate_per_night": 7400,
+     "nights": 1,
+     "rateplan_code": "executive-s-ep",
+     "rateplan_name": "executive-s-ep",
+     "upgrade_amount": 0,
+     "booking_charge": 7400,
+     "sgst": 185,
+     "cgst": 185,
+     "total_with_gst": 7770,
+     "prepaid_amount": 0,
+     "advance_payment": 1000,
+     "balance_due": 6770
+    },
+    "currency": "INR",
+    "special_requests": null,
+    "user_id_document_id": 17339,
+    "guest": {
+     "first_name": "P5",
+     "last_name": "QA BQ20 Split",
+     "email": null,
+     "phone": "9878002451",
+     "address_city": null,
+     "address_state": null,
+     "address_country": null
+    },
+    "rooms": [
+     {
+      "id": 295,
+      "room_code": "executive",
+      "rateplan_code": "executive-s-ep",
+      "guest_name": null,
+      "adults": 2,
+      "children": 0,
+      "line_status": "pending",
+      "restaurant_table_id": null,
+      "table_no": null,
+      "table_title": null,
+      "order_id": null,
+      "user_id_document_id": null,
+      "order_f_order_status": null,
+      "order_payment_status": null,
+      "checked_in_at": null,
+      "checked_out_at": null
+     }
+    ]
+   },
+   "inventory_push": {
+    "success": true,
+    "message": "Inventory pushed successfully",
+    "data": {
+     "success": true,
+     "message": "Request Received Successfully"
+    },
+    "payload": {
+     "hotelCode": "sandbox-pms",
+     "updates": [
+      {
+       "startDate": "2026-10-20",
+       "endDate": "2026-10-21",
+       "rooms": [
+        {
+         "roomCode": "suite",
+         "available": 4
+        },
+        {
+         "roomCode": "executive",
+         "available": 0
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ }
+}

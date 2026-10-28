@@ -1,0 +1,116 @@
+{
+  "endpoint": "/api/v1/vendoremployee/get-products-list?limit=2000&offset=1&type=all",
+  "account": "QA_OWNER (alias)",
+  "count": 258,
+  "food_for_distribution": {
+    "Premium": 141,
+    "Normal": 117
+  },
+  "sample": [
+    {
+      "id": 225795,
+      "name": "Veggie Patty Sub",
+      "category_id": 9208,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225796,
+      "name": "Tandoori Paneer Sub",
+      "category_id": 9208,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225797,
+      "name": "Paneer Tikka Sub",
+      "category_id": 9208,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225798,
+      "name": "Mexican Patty Sub",
+      "category_id": 9208,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225799,
+      "name": "Veg Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225800,
+      "name": "Veg Kurkure Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225801,
+      "name": "Cheese Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225802,
+      "name": "Paneer Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225803,
+      "name": "Cheese Kurkure Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225804,
+      "name": "Tandoori Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225805,
+      "name": "Chilli Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225806,
+      "name": "Pizza Momos",
+      "category_id": 3800,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225807,
+      "name": "Margherita Pizza",
+      "category_id": 9209,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225808,
+      "name": "Double Cheese Margherita Pizza",
+      "category_id": 9209,
+      "status": 1,
+      "food_for": "Premium"
+    },
+    {
+      "id": 225809,
+      "name": "Cheese Burst Pizza",
+      "category_id": 9209,
+      "status": 1,
+      "food_for": "Premium"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+ "http": 200,
+ "body": {
+  "status": true,
+  "message": "Rates pushed successfully",
+  "data": {
+   "payload": {
+    "hotelCode": "sandbox-pms",
+    "updates": [
+     {
+      "startDate": "2026-11-15",
+      "endDate": "2026-11-17",
+      "rates": [
+       {
+        "roomCode": "suite",
+        "rateplanCode": "suite-s-ep",
+        "rate": 31500
+       },
+       {
+        "roomCode": "executive",
+        "rateplanCode": "executive-s-ep",
+        "rate": 7400
+       }
+      ]
+     }
+    ]
+   },
+   "response": {
+    "success": true,
+    "message": "Request Received Successfully"
+   }
+  }
+ }
+}

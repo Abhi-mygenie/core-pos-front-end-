@@ -1,0 +1,61 @@
+[
+  {
+    "t": 1790015935.2988179,
+    "phase": "req",
+    "method": "GET",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "body": null
+  },
+  {
+    "t": 1790015936.8817596,
+    "phase": "resp",
+    "status": 200,
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "method": "GET"
+  },
+  {
+    "t": 1790015940.5741343,
+    "phase": "req",
+    "method": "PATCH",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "body": "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"Modified from Front Desk\",\"preview\":true}"
+  },
+  {
+    "t": 1790015941.4158409,
+    "phase": "resp",
+    "status": 200,
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "method": "PATCH",
+    "body": "{\"status\":true,\"message\":\"Reservation modify preview\",\"data\":{\"preview\":true,\"reservation\":{\"id\":226,\"booking_id\":\"MG-69-D41E4F9B-9267-4028-9CA6-5F24D5309B42\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-21 23:52:07\",\"amount_before_tax\":63000,\"amount_after_tax\":74340,\"advance_payment\":0,\"balance_payment\":31500,\"charge\":{\"rate_per_night\":31500,\"nights\":2,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":63000,\"sgst\":5670,\"cgst\":5670,\"total_with_gst\":74340,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":74340},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":17248,\"guest\":{\"first_name\":\"QA-R4-Modify\",\"last_name\":\"\",\"email\":null,\"phone\":\"9999900012\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":237,\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},\"inventory_push\":null}}"
+  },
+  {
+    "t": 1790015943.8911753,
+    "phase": "req",
+    "method": "PATCH",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "body": "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-24\",\"reason\":\"Modified from Front Desk\",\"preview\":true}"
+  },
+  {
+    "t": 1790015944.3298805,
+    "phase": "resp",
+    "status": 200,
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "method": "PATCH",
+    "body": "{\"status\":true,\"message\":\"Reservation modify preview\",\"data\":{\"preview\":true,\"reservation\":{\"id\":226,\"booking_id\":\"MG-69-D41E4F9B-9267-4028-9CA6-5F24D5309B42\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-24\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-21 23:52:07\",\"amount_before_tax\":94500,\"amount_after_tax\":111510,\"advance_payment\":0,\"balance_payment\":31500,\"charge\":{\"rate_per_night\":31500,\"nights\":3,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":94500,\"sgst\":8505,\"cgst\":8505,\"total_with_gst\":111510,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":111510},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":17248,\"guest\":{\"first_name\":\"QA-R4-Modify\",\"last_name\":\"\",\"email\":null,\"phone\":\"9999900012\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":237,\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},\"inventory_push\":null}}"
+  },
+  {
+    "t": 1790015946.4135325,
+    "phase": "req",
+    "method": "PATCH",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "body": "{\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"reason\":\"QA role4\",\"preview\":true}"
+  },
+  {
+    "t": 1790015947.249006,
+    "phase": "resp",
+    "status": 200,
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/226",
+    "method": "PATCH",
+    "body": "{\"status\":true,\"message\":\"Reservation modify preview\",\"data\":{\"preview\":true,\"reservation\":{\"id\":226,\"booking_id\":\"MG-69-D41E4F9B-9267-4028-9CA6-5F24D5309B42\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-21\",\"checkout\":\"2026-09-23\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-21 23:52:07\",\"amount_before_tax\":63000,\"amount_after_tax\":74340,\"advance_payment\":0,\"balance_payment\":31500,\"charge\":{\"rate_per_night\":31500,\"nights\":2,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":63000,\"sgst\":5670,\"cgst\":5670,\"total_with_gst\":74340,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":74340},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":17248,\"guest\":{\"first_name\":\"QA-R4-Modify\",\"last_name\":\"\",\"email\":null,\"phone\":\"9999900012\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":237,\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},\"inventory_push\":null}}"
+  }
+]

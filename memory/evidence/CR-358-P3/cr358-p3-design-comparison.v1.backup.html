@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR-358 Phase 3 PMS — Design Gap Comparison & Impact Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #E8EAED;
+      color: #1A1A1A;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER & TOP SUMMARY ── */
+    .top-header {
+      background: #1A1A1A;
+      color: #FFFFFF;
+      padding: 20px 32px;
+      border-bottom: 3px solid #329937;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header-badge {
+      background: #F26B33;
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    .top-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .top-subtitle {
+      font-size: 13px;
+      color: #A0A0A0;
+      margin-top: 4px;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 1600px;
+      margin: 24px auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ── CHECKLIST SUMMARY BOARD ── */
+    .checklist-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .card-title-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #EEEEEE;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1A1A1A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .checklist-item {
+      background: #F7F7F7;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 0.15s;
+    }
+    .checklist-item:hover {
+      border-color: #329937;
+    }
+    .od-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .od-tag.change { color: #EF4444; }
+    .od-tag.info { color: #3B82F6; }
+    .od-tag.resolved { color: #329937; }
+    .od-desc { font-size: 11px; color: #555; line-height: 1.4; }
+    .od-target { font-size: 10px; font-weight: 600; color: #888; margin-top: 2px; }
+
+    /* ── SCREEN COMPARISON SECTION ── */
+    .screen-section {
+      background: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+    .section-header {
+      background: #2D3748;
+      color: #FFFFFF;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-title-text {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .section-screen-id {
+      background: rgba(255,255,255,0.15);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── TWO COLUMN COMPARISON ── */
+    .comparison-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: #CBD5E0;
+    }
+    .col-panel {
+      background: #F7F7F7;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .col-header {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .col-header.previous {
+      background: #EDF2F7;
+      color: #4A5568;
+      border: 1px solid #CBD5E0;
+    }
+    .col-header.proposed {
+      background: #E8F5E9;
+      color: #217A28;
+      border: 1px solid #C8E6C9;
+    }
+
+    /* ── MOCKUP CONTAINER ── */
+    .mockup-frame-wrap {
+      background: #FFFFFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      min-height: 520px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .mockup-iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      display: block;
+    }
+
+    /* ── ANNOTATION CALLOUT PINS & BADGES ── */
+    .pin {
+      position: absolute;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      cursor: pointer;
+      animation: pulse-pin 2s infinite;
+    }
+    @keyframes pulse-pin {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .pin-remove {
+      background: #EF4444;
+      color: #FFFFFF;
+      border: 1.5px solid #991B1B;
+    }
+    .pin-change {
+      background: #329937;
+      color: #FFFFFF;
+      border: 1.5px solid #14532D;
+    }
+    .pin-info {
+      background: #3B82F6;
+      color: #FFFFFF;
+      border: 1.5px solid #1E40AF;
+    }
+
+    /* Highlight box over iframe overlay */
+    .highlight-rect {
+      position: absolute;
+      border: 2px dashed;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 40;
+    }
+    .highlight-rect.red { border-color: #EF4444; background: rgba(239,68,68,0.08); }
+    .highlight-rect.green { border-color: #329937; background: rgba(50,153,55,0.08); }
+    .highlight-rect.blue { border-color: #3B82F6; background: rgba(59,130,246,0.08); }
+
+    /* ── DECISION ANALYSIS TABLE ── */
+    .table-wrap {
+      padding: 20px;
+      background: #FFFFFF;
+      border-top: 1px solid #E5E5E5;
+    }
+    .table-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1A1A1A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gap-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .gap-table th, .gap-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid #E5E5E5;
+      vertical-align: top;
+    }
+    .gap-table th {
+      background: #F7F7F7;
+      font-weight: 700;
+      color: #4A5568;
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+    }
+    .gap-table tr:nth-child(even) { background: #FAFAFA; }
+    .badge-rec {
+      background: rgba(50,153,55,0.12);
+      color: #217A28;
+      border: 1px solid rgba(50,153,55,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    /* Custom inline visual elements for proposed v2 preview overlays */
+    .proposed-kpi-badge {
+      font-size: 10px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .proposed-sync-card {
+      background: #FFF;
+      border: 1px solid #E5E5E5;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+    }
+
+    /* ── IN-PAGE CHECKOUT SLIDER MOCKUP STYLES ── */
+    .slider-backdrop {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 55;
+      pointer-events: none;
+    }
+    .slider-panel {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 450px;
+      max-width: 95%;
+      background: #FFFFFF;
+      border-left: 2px solid #CBD5E1;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.22);
+      display: flex;
+      flex-direction: column;
+      z-index: 60;
+      font-family: 'Poppins', sans-serif;
+      overflow-y: auto;
+    }
+    .slider-header-bar {
+      background: #FFFFFF;
+      padding: 12px 18px;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .slider-back-icon {
+      font-size: 18px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .slider-header-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+    .slider-header-sub {
+      font-size: 12px;
+      color: #64748B;
+      margin-left: auto;
+      font-weight: 600;
+    }
+
+    .slider-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      background: #F8FAFC;
+    }
+
+    .bill-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .bill-summary-heading {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.04em;
+    }
+    .btn-print-bill-orange {
+      border: 1.5px solid #F97316;
+      color: #EA580C;
+      background: #FFF7ED;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .bill-summary-amount {
+      font-size: 22px;
+      font-weight: 800;
+      color: #EA580C;
+    }
+
+    .panel-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .panel-card-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #334155;
+      padding: 4px 0;
+    }
+
+    .payment-tile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .pay-tile {
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      background: #FFFFFF;
+    }
+    .pay-tile.selected {
+      border-color: #22C55E;
+      background: #F0FDF4;
+      color: #15803D;
+      font-weight: 700;
+      box-shadow: 0 0 0 1px #22C55E;
+    }
+
+    .slider-sticky-footer {
+      padding: 12px 16px;
+      background: #FFFFFF;
+      border-top: 1px solid #E2E8F0;
+    }
+    .btn-green-checkout {
+      width: 100%;
+      background: #22C55E;
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+    }
+
+    /* 3-Step Flow Strip */
+    .flow-strip {
+      background: #F1F5F9;
+      border-top: 1px solid #E2E8F0;
+      padding: 14px 20px;
+    }
+    .flow-strip-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .flow-steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .flow-step-card {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11px;
+    }
+    .step-num {
+      display: inline-block;
+      background: #3B82F6;
+      color: #FFF;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      color: #475569;
+      line-height: 1.35;
+    }
+
+    .nav-jump-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .nav-jump-btn {
+      background: #2D3748;
+      color: #FFF;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-jump-btn:hover {
+      background: #4A5568;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <span class="header-badge">CR-358 Phase 3 · Impact Analysis Gate 2</span>
+    <h1 class="top-title" data-testid="page-main-heading">
+      Hotel PMS Design Gap Side-by-Side Comparison
+    </h1>
+    <p class="top-subtitle">
+      Comparing Frozen 31-Aug Mockups (Left) vs. Data-Accurate Proposed v2 (Right) across S1 Front Desk, S9 Arrivals, and S10 Departures.
+    </p>
+    <div class="nav-jump-bar">
+      <a href="#section-s1" class="nav-jump-btn">Jump to S1 Front Desk</a>
+      <a href="#section-s9" class="nav-jump-btn">Jump to S9 Arrivals</a>
+      <a href="#section-s10" class="nav-jump-btn">Jump to S10 Departures</a>
+      <a href="#checklist-summary" class="nav-jump-btn" style="background:#329937">OD Decision Matrix</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- CHECKLIST SUMMARY BOARD -->
+    <section class="checklist-card" idchecklist-summary" data-testid="decision-checklist-card">
+      <div class="card-title-wrap">
+        <h2 class="card-title">
+          <span>📋 CR-358 Phase 3 Decision Checklist (OD-P3-01 to OD-P3-10)</span>
+        </h2>
+        <span style="font-size:11px; color:#888; font-weight:600">10 Gaps Identified & Evaluated</span>
+      </div>
+      <div class="checklist-grid">
+
+        <div class="checklist-item" data-testid="checklist-od-p3-01">
+          <div class="od-tag change">OD-P3-01 · Departures Route</div>
+          <div class="od-desc"><strong>(d) LOCKED</strong> — in-page checkout slider hosting existing CollectPaymentPanel; Dashboard untouched (Options a/b/c rejected by owner).</div>
+          <div class="od-target">Affected: S1 Front Desk, S10 Departures</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-02 · Arrivals Tabs</div>
+          <div class="od-desc">Proposed tabs: Today · Upcoming · Late · Checked In (API returns future bookings; default Today).</div>
+          <div class="od-target">Affected: S9 Arrivals</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-03 · Prepaid Badge</div>
+          <div class="od-desc">REMOVED green "Prepaid" badge from Balance column (API lacks field). Shows balance amount only.</div>
+          <div class="od-target">Affected: S1 Front Desk, S9 Arrivals, S10 Departures</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag resolved">OD-P3-04 · Backend Bucketing</div>
+          <div class="od-desc">Resolved informational item: Single API endpoint call with client-side bucketing.</div>
+          <div class="od-target">Affected: S9 Arrivals, S10 Departures</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-05 · KPI Endpoint</div>
+          <div class="od-desc">Fed by real KPI API; added "Available tonight N/total" subtext & fallback state "—".</div>
+          <div class="od-target">Affected: S1 Front Desk</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-06 · Channel Sync Card</div>
+          <div class="od-desc">Collapse 4 per-OTA rows to single summary line "AIOSELL · synced X min ago" + "Sync now" button.</div>
+          <div class="od-target">Affected: S1 Front Desk</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag info">OD-P3-07 · Client Pagination</div>
+          <div class="od-desc">Pagination stays visually identical but is client-side (20 rows/page).</div>
+          <div class="od-target">Affected: S9 Arrivals, S10 Departures</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-08 · Guest Self Check-In</div>
+          <div class="od-desc">REMOVED "Send link" button from action column — feature out of scope for Phase 3.</div>
+          <div class="od-target">Affected: S1 Front Desk, S9 Arrivals</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag info">OD-P3-09 · Occupancy Bar</div>
+          <div class="od-desc">Optional 7-day availability mini-bar vs. Today-only (recommended Today-only for clean UX).</div>
+          <div class="od-target">Affected: S1 Front Desk</div>
+        </div>
+
+        <div class="checklist-item">
+          <div class="od-tag change">OD-P3-10 · Departures Tabs</div>
+          <div class="od-desc">Proposed tabs: Overdue · Due Today · Upcoming · Checked Out (default Due Today).</div>
+          <div class="od-target">Affected: S10 Departures</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SCREEN 1: S1 FRONT DESK COMPARISON
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="screen-section" id="section-s1" data-testid="screen-1-comparison-section">
+      <div class="section-header">
+        <h2 class="section-title-text">Screen 1: S1 Front Desk Dashboard</h2>
+        <span class="section-screen-id">File: /pms/front-desk.html</span>
+      </div>
+
+      <div class="comparison-cols">
+        <!-- LEFT: Previous 31-Aug Mockup -->
+        <div class="col-panel">
+          <div class="col-header previous">
+            <span>🔴 Previous Mockup (31-Aug Frozen)</span>
+            <span>Static HTML Baseline</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s1-previous-frame">
+            <iframe class="mockup-iframe" src="/pms/front-desk.html" title="S1 Previous Mockup"></iframe>
+          </div>
+        </div>
+
+        <!-- RIGHT: Proposed v2 (Data-Accurate) -->
+        <div class="col-panel">
+          <div class="col-header proposed">
+            <span>🟢 Proposed v2 (Data-Accurate)</span>
+            <span>Annotated with Live API Gaps</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s1-proposed-frame">
+            <iframe class="mockup-iframe" src="/pms/front-desk.html" title="S1 Proposed v2 Mockup"></iframe>
+
+            <!-- ANNOTATION PINS OVER PROPOSED V2 -->
+            <!-- OD-P3-03 Pin: Prepaid badge removed -->
+            <div class="pin pin-remove" style="top: 310px; left: 340px;" title="OD-P3-03: Prepaid Badge Removed">
+              <span>📌 OD-P3-03</span>
+              <span>Prepaid Badge REMOVED → ₹6,200</span>
+            </div>
+            <div class="highlight-rect red" style="top: 295px; left: 310px; width: 140px; height: 35px;"></div>
+
+            <!-- OD-P3-08 Pin: Send link removed -->
+            <div class="pin pin-remove" style="top: 310px; left: 520px;" title="OD-P3-08: Send Link Removed">
+              <span>📌 OD-P3-08</span>
+              <span>"Send link" Button REMOVED</span>
+            </div>
+            <div class="highlight-rect red" style="top: 295px; left: 510px; width: 90px; height: 35px;"></div>
+
+            <!-- OD-P3-05 Pin: Real KPI feeds -->
+            <div class="pin pin-change" style="top: 130px; left: 80px;" title="OD-P3-05: Real Backend KPI Endpoint">
+              <span>📌 OD-P3-05</span>
+              <span>KPIs fed by real API + "Available tonight 6/20"</span>
+            </div>
+            <div class="highlight-rect green" style="top: 110px; left: 30px; width: 220px; height: 75px;"></div>
+
+            <!-- OD-P3-06 Pin: Channel sync collapse -->
+            <div class="pin pin-change" style="top: 180px; left: 630px;" title="OD-P3-06: Collapsed Channel Sync">
+              <span>📌 OD-P3-06</span>
+              <span>Collapse 4 OTA rows → 1 line "AIOSELL · synced 2m ago"</span>
+            </div>
+            <div class="highlight-rect green" style="top: 170px; left: 620px; width: 200px; height: 110px;"></div>
+
+            <!-- OD-P3-01 Pin: Departures routing -->
+            <div class="pin pin-change" style="top: 420px; left: 630px;" title="OD-P3-01: Departure Action Route">
+              <span>📌 OD-P3-01</span>
+              <span>Check Out opens same checkout slider (OD-P3-01 d)</span>
+            </div>
+            <div class="highlight-rect green" style="top: 405px; left: 620px; width: 200px; height: 90px;"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISION ANALYSIS TABLE FOR SCREEN 1 -->
+      <div class="table-wrap">
+        <h3 class="table-title">
+          <span>🔍 S1 Front Desk — Gap Analysis & Agent Recommendations</span>
+        </h3>
+        <table class="gap-table" data-testid="s1-gap-table">
+          <thead>
+            <tr>
+              <th style="width:90px">OD Number</th>
+              <th style="width:200px">What Changed</th>
+              <th style="width:240px">Why (API Gap / Finding)</th>
+              <th>Options Evaluated</th>
+              <th style="width:210px">Agent Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>OD-P3-03</strong></td>
+              <td>Green "Prepaid" badge in Balance column REMOVED.</td>
+              <td>API returns amount only; lacks payment structure field (pay-at-hotel vs prepaid flag).</td>
+              <td>
+                (a) Keep hardcoded badge [Misleading]<br>
+                (b) <strong>Remove badge, show raw balance amount only</strong> [Accurate]
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Remove badge, display standard balance.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-05</strong></td>
+              <td>KPI tiles fed by real API. Added "Available tonight 6/20" small text.</td>
+              <td>Backend KPI endpoint is now live. Must gracefully handle error/loading states ("—").</td>
+              <td>
+                (a) Retain static values<br>
+                (b) <strong>Bind live API with error fallback state "—"</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Bind live KPI endpoint with fallback.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-06</strong></td>
+              <td>Channel Sync card collapsed per-OTA rows to 1 line summary + "Sync now" button.</td>
+              <td>Channel Manager API provides total channel sync timestamp, not individual per-channel timestamps.</td>
+              <td>
+                (a) <strong>Collapse rows to "AIOSELL · synced X min ago" + button</strong><br>
+                (b) Drop Channel Sync card entirely from panel
+              </td>
+              <td><span class="badge-rec">Option (a) Recommended</span><br>Collapsed summary line preserves status.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-08</strong></td>
+              <td>REMOVED "Send link" self check-in button from row actions.</td>
+              <td>Guest self check-in link generator is out of scope for Phase 3 deliverable.</td>
+              <td>
+                (a) Keep disabled button<br>
+                (b) <strong>Remove button from action column</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Remove out-of-scope button.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-01</strong></td>
+              <td>Annotated "Check Out" action button routing.</td>
+              <td>Checking out from mini-list triggers in-page slider.</td>
+              <td>
+                (a) Open Dashboard checkout panel [Rejected by owner]<br>
+                (b) Open Room Orders report [Rejected by owner]<br>
+                (c) Dashboard filtered + toast [Rejected by owner]<br>
+                <strong>(d) LOCKED — In-page slider hosting existing CollectPaymentPanel</strong>
+              </td>
+              <td><span class="badge-rec" style="background:#22C55E; color:#FFF">Option (d) LOCKED</span><br>Opens same in-page checkout slider.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-09</strong></td>
+              <td>Occupancy tile variant evaluation.</td>
+              <td>Backend provides 7-day occupancy forecast array in addition to today's percentage.</td>
+              <td>
+                (a) <strong>Today's occupancy percentage only</strong> [Clean]<br>
+                (b) Add 7-day availability mini-bar graph
+              </td>
+              <td><span class="badge-rec">Option (a) Recommended</span><br>Keep tile clean; avoid visual clutter.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SCREEN 2: S9 ARRIVALS COMPARISON
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="screen-section" id="section-s9" data-testid="screen-9-comparison-section">
+      <div class="section-header">
+        <h2 class="section-title-text">Screen 2: S9 Arrivals Page</h2>
+        <span class="section-screen-id">File: /pms/arrivals.html</span>
+      </div>
+
+      <div class="comparison-cols">
+        <!-- LEFT: Previous 31-Aug Mockup -->
+        <div class="col-panel">
+          <div class="col-header previous">
+            <span>🔴 Previous Mockup (31-Aug Frozen)</span>
+            <span>Static HTML Baseline</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s9-previous-frame">
+            <iframe class="mockup-iframe" src="/pms/arrivals.html" title="S9 Previous Mockup"></iframe>
+          </div>
+        </div>
+
+        <!-- RIGHT: Proposed v2 (Data-Accurate) -->
+        <div class="col-panel">
+          <div class="col-header proposed">
+            <span>🟢 Proposed v2 (Data-Accurate)</span>
+            <span>Annotated with Live API Gaps</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s9-proposed-frame">
+            <iframe class="mockup-iframe" src="/pms/arrivals.html" title="S9 Proposed v2 Mockup"></iframe>
+
+            <!-- ANNOTATION PINS OVER PROPOSED V2 -->
+            <!-- OD-P3-02 Pin: Filter tabs change -->
+            <div class="pin pin-change" style="top: 190px; left: 80px;" title="OD-P3-02: New Arrivals Filter Tabs">
+              <span>📌 OD-P3-02</span>
+              <span>Tabs: Today (default) · Upcoming · Late · Checked In</span>
+            </div>
+            <div class="highlight-rect green" style="top: 180px; left: 20px; width: 420px; height: 40px;"></div>
+
+            <!-- OD-P3-03 Pin: Prepaid badge removed -->
+            <div class="pin pin-remove" style="top: 310px; left: 390px;" title="OD-P3-03: Prepaid Badge Removed">
+              <span>📌 OD-P3-03</span>
+              <span>Prepaid Badge REMOVED</span>
+            </div>
+            <div class="highlight-rect red" style="top: 295px; left: 380px; width: 90px; height: 35px;"></div>
+
+            <!-- OD-P3-07 Pin: Client-side pagination -->
+            <div class="pin pin-info" style="top: 520px; left: 450px;" title="OD-P3-07: Client-Side Pagination">
+              <span>📌 OD-P3-07</span>
+              <span>Client-side 20 rows/page pagination</span>
+            </div>
+            <div class="highlight-rect blue" style="top: 505px; left: 20px; width: 680px; height: 45px;"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISION ANALYSIS TABLE FOR SCREEN 2 -->
+      <div class="table-wrap">
+        <h3 class="table-title">
+          <span>🔍 S9 Arrivals — Gap Analysis & Agent Recommendations</span>
+        </h3>
+        <table class="gap-table" data-testid="s9-gap-table">
+          <thead>
+            <tr>
+              <th style="width:90px">OD Number</th>
+              <th style="width:200px">What Changed</th>
+              <th style="width:240px">Why (API Gap / Finding)</th>
+              <th>Options Evaluated</th>
+              <th style="width:210px">Agent Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>OD-P3-02</strong></td>
+              <td>Filter tabs updated from "All · Pending · Checked In · Late" to "Today · Upcoming · Late · Checked In".</td>
+              <td>Arrivals API returns future/upcoming bookings as well as today's bookings. Default must be "Today".</td>
+              <td>
+                (a) Keep old tabs [Confusing with future dates]<br>
+                (b) <strong>"Today · Upcoming · Late · Checked In" (default Today)</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Segment today vs future bookings clearly.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-03</strong></td>
+              <td>"Prepaid" badge in Balance column REMOVED.</td>
+              <td>API does not indicate advance payment flag; shows total amount.</td>
+              <td>
+                (a) Keep green badge<br>
+                (b) <strong>Show balance amount only</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Display numeric balance accurately.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-07</strong></td>
+              <td>Pagination becomes client-side (20 rows/page).</td>
+              <td>API returns single response payload for date range without server-side pagination offsets.</td>
+              <td>
+                (a) Server pagination [Unsupported]<br>
+                (b) <strong>Client-side slicing 20 per page</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Fast client-side slicing and pagination.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-04</strong></td>
+              <td>Single API load with client-side bucketing.</td>
+              <td>Resolved informational item: one API call serves both summary KPI counts and table lists.</td>
+              <td>
+                (a) <strong>Single fetch + client bucketing</strong>
+              </td>
+              <td><span class="badge-rec">Informational</span><br>Single API load complete.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SCREEN 3: S10 DEPARTURES COMPARISON
+    ════════════════════════════════════════════════════════════════ -->
+    <section class="screen-section" id="section-s10" data-testid="screen-10-comparison-section">
+      <div class="section-header">
+        <h2 class="section-title-text">Screen 3: S10 Departures Page</h2>
+        <span class="section-screen-id">File: /pms/departures.html</span>
+      </div>
+
+      <div class="comparison-cols">
+        <!-- LEFT: Previous 31-Aug Mockup -->
+        <div class="col-panel">
+          <div class="col-header previous">
+            <span>🔴 Previous Mockup (31-Aug Frozen)</span>
+            <span>Static HTML Baseline</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s10-previous-frame">
+            <iframe class="mockup-iframe" src="/pms/departures.html" title="S10 Previous Mockup"></iframe>
+          </div>
+        </div>
+
+        <!-- RIGHT: Proposed v2 (Data-Accurate) -->
+        <div class="col-panel">
+          <div class="col-header proposed">
+            <span>🟢 Proposed v2 (In-Page Checkout Slider LOCKED)</span>
+            <span>Annotated with Live API Gaps & In-Page Slider</span>
+          </div>
+          <div class="mockup-frame-wrap" data-testid="s10-proposed-frame">
+            <iframe class="mockup-iframe" src="/pms/departures.html" title="S10 Proposed v2 Mockup"></iframe>
+
+            <!-- ACTIVE / PRESSED STATE HIGHLIGHT ON TABLE ROW -->
+            <div class="highlight-rect green" style="top: 250px; left: 15px; width: 660px; height: 38px; border: 2px solid #22C55E; background: rgba(34,197,94,0.12);" title="Pressed Check Out Row"></div>
+
+            <!-- SLIDER DARK BACKDROP (20%) -->
+            <div class="slider-backdrop" style="right: 440px;" data-testid="checkout-slider-backdrop"></div>
+
+            <!-- IN-PAGE CHECKOUT SLIDER PANEL (Reusing CollectPaymentPanel UI) -->
+            <div class="slider-panel" data-testid="checkout-slider-panel">
+              <!-- Slider Header -->
+              <div class="slider-header-bar">
+                <span class="slider-back-icon">‹</span>
+                <span class="slider-header-title">Checkout</span>
+                <span class="slider-header-sub">#000007 · Rm 204</span>
+              </div>
+
+              <!-- Slider Content -->
+              <div class="slider-content">
+                <!-- Bill Summary -->
+                <div>
+                  <div class="bill-summary-row">
+                    <span class="bill-summary-heading">BILL SUMMARY</span>
+                    <button class="btn-print-bill-orange" data-testid="slider-print-bill-btn">Print Bill</button>
+                  </div>
+                  <div class="bill-summary-amount" data-testid="slider-bill-summary-total">₹4,200</div>
+                </div>
+
+                <!-- Room & Items Card -->
+                <div class="panel-card">
+                  <div class="panel-card-row" style="font-weight:700; color:#0F172A; border-bottom:1px solid #F1F5F9; padding-bottom:6px; margin-bottom:4px;">
+                    <span>ROOM</span>
+                    <span>₹4,200 ⌄</span>
+                  </div>
+                  <div class="bill-summary-heading" style="margin-top:6px; font-size:10px;">ITEMS</div>
+                  <div class="panel-card-row" style="color:#64748B;">
+                    <span>Item Total</span>
+                    <span>₹0</span>
+                  </div>
+                  <div class="panel-card-row" style="color:#64748B;">
+                    <span>Subtotal</span>
+                    <span>₹0</span>
+                  </div>
+                  <div class="panel-card-row" style="color:#64748B;">
+                    <span>TAXES</span>
+                    <span>₹0</span>
+                  </div>
+                </div>
+
+                <!-- Room Balance & Grand Total Card -->
+                <div class="panel-card">
+                  <div class="panel-card-row" style="font-weight:600; color:#475569;">
+                    <span>Room Balance</span>
+                    <span>₹4,200</span>
+                  </div>
+                  <div style="border-top:1px dashed #E2E8F0; margin:6px 0;"></div>
+                  <div class="panel-card-row" style="font-size:14px; font-weight:800; color:#EA580C;">
+                    <span>GRAND TOTAL</span>
+                    <span data-testid="slider-grand-total">₹4,200</span>
+                  </div>
+                </div>
+
+                <!-- Payment Method Card -->
+                <div class="panel-card">
+                  <div class="bill-summary-heading">PAYMENT METHOD</div>
+                  <div class="payment-tile-grid">
+                    <div class="pay-tile selected" data-testid="slider-pay-tile-cash">
+                      <div style="font-size:12px;">✓ Cash</div>
+                    </div>
+                    <div class="pay-tile" data-testid="slider-pay-tile-upi">
+                      <div style="font-size:12px;">UPI</div>
+                    </div>
+                    <div class="pay-tile" data-testid="slider-pay-tile-card">
+                      <div style="font-size:12px;">Card</div>
+                    </div>
+                  </div>
+                  <div style="font-size:10px; color:#64748B; margin-top:8px; text-align:center; font-weight:600; cursor:pointer;">
+                    + More payment methods
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sticky Checkout Button -->
+              <div class="slider-sticky-footer">
+                <button class="btn-green-checkout" data-testid="slider-checkout-submit-btn">Checkout ₹4,200</button>
+              </div>
+            </div>
+
+            <!-- ANNOTATION PINS OVER SLIDER & FRAME -->
+            <!-- Pin 1: R6 Existing CollectPaymentPanel -->
+            <div class="pin pin-change" style="top: 15px; right: 120px; z-index:70;" title="R6 Rule: Reused unmodified">
+              <span>📌 R6</span>
+              <span>Existing CollectPaymentPanel — reused as-is, no redesign</span>
+            </div>
+
+            <!-- Pin 2: Drawer Shell Pattern -->
+            <div class="pin pin-info" style="top: 160px; right: 380px; z-index:70;" title="Drawer Shell Pattern">
+              <span>📌 Shell</span>
+              <span>Slider = same shell pattern as Audit report Collect drawer</span>
+            </div>
+
+            <!-- Pin 3: Success Flow & Toast -->
+            <div class="pin pin-change" style="bottom: 60px; right: 120px; z-index:70;" title="Success Toast & Tab Move">
+              <span>📌 Success Flow</span>
+              <span>On success: toast → slider closes → row moves to Checked Out tab, Room Status → available</span>
+            </div>
+
+            <!-- Pin 4: Print Bill Works -->
+            <div class="pin pin-info" style="top: 80px; right: 100px; z-index:70;" title="Print Bill Works">
+              <span>📌 Print Bill</span>
+              <span>Print Bill works directly from slider</span>
+            </div>
+
+            <!-- OD-P3-10 Pin: Filter tabs change -->
+            <div class="pin pin-change" style="top: 190px; left: 15px; z-index:50;" title="OD-P3-10: New Departures Filter Tabs">
+              <span>📌 OD-P3-10</span>
+              <span>Tabs: Overdue · Due Today (default)</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-STEP IN-PAGE CHECKOUT FLOW STRIP -->
+      <div class="flow-strip" data-testid="s10-checkout-flow-strip">
+        <div class="flow-strip-title">🔄 In-Page Checkout Flow Sequence (OD-P3-01 d)</div>
+        <div class="flow-steps-grid">
+          <div class="flow-step-card">
+            <span class="step-num">Step 1</span>
+            <div style="font-weight:700; color:#1E293B; margin:2px 0;">Tap "Check Out" on Row</div>
+            <div class="step-desc">On Departures tab (Overdue/Due Today), cashier clicks orange <strong>Check Out</strong> button on guest row (e.g. Rm 204 · Raj Kumar · ₹4,200). Button enters active/pressed state.</div>
+          </div>
+          <div class="flow-step-card">
+            <span class="step-num" style="background:#F97316">Step 2</span>
+            <div style="font-weight:700; color:#1E293B; margin:2px 0;">Slider Opens In-Page</div>
+            <div class="step-desc">Right-side drawer (450px, 20% backdrop) slides open hosting unmodified <strong>CollectPaymentPanel</strong>. Table remains behind backdrop with zero page navigation.</div>
+          </div>
+          <div class="flow-step-card">
+            <span class="step-num" style="background:#22C55E">Step 3</span>
+            <div style="font-weight:700; color:#1E293B; margin:2px 0;">Success Toast & Auto-Update</div>
+            <div class="step-desc">On completing payment: success toast appears → slider closes automatically → guest row moves to <strong>Checked Out</strong> tab → Room Status updates to <strong>Available</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISION ANALYSIS TABLE FOR SCREEN 3 -->
+      <div class="table-wrap">
+        <h3 class="table-title">
+          <span>🔍 S10 Departures — Gap Analysis & Agent Recommendations</span>
+        </h3>
+        <table class="gap-table" data-testid="s10-gap-table">
+          <thead>
+            <tr>
+              <th style="width:90px">OD Number</th>
+              <th style="width:200px">What Changed</th>
+              <th style="width:240px">Why (API Gap / Finding)</th>
+              <th>Options Evaluated</th>
+              <th style="width:210px">Agent Recommendation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>OD-P3-10</strong></td>
+              <td>Filter tabs updated from "All · Overdue · Due Now · Checked Out" to "Overdue · Due Today · Upcoming · Checked Out".</td>
+              <td>API returns departures across date ranges. "Due Today" is default active tab for front desk operations.</td>
+              <td>
+                (a) Keep "Due Now"<br>
+                (b) <strong>"Overdue · Due Today · Upcoming · Checked Out" (default Due Today)</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Clear operational focus on today's departures.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-03</strong></td>
+              <td>Folio status badge is real "Folio: Open / Clear".</td>
+              <td>`order_payment_status` field in API response maps directly to folio balance settlement.</td>
+              <td>
+                (a) Hardcoded status<br>
+                (b) <strong>Map `order_payment_status` to Open/Clear badge</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Direct API mapping for accurate settlement check.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-01</strong></td>
+              <td>"Check Out" opens in-page checkout slider over Departures table.</td>
+              <td>Eliminates page navigation jump while reusing proven CollectPaymentPanel. Dashboard untouched.</td>
+              <td>
+                (a) Open Dashboard checkout panel [Rejected by owner]<br>
+                (b) Open Room Orders report [Rejected by owner]<br>
+                (c) Dashboard filtered + toast [Rejected by owner]<br>
+                <strong>(d) LOCKED — In-page checkout slider hosting CollectPaymentPanel</strong>
+              </td>
+              <td><span class="badge-rec" style="background:#22C55E; color:#FFF">Option (d) LOCKED</span><br>In-page slider hosting existing CollectPaymentPanel.</td>
+            </tr>
+            <tr>
+              <td><strong>OD-P3-07</strong></td>
+              <td>Client-side pagination (20 rows/page).</td>
+              <td>Backend sends complete dataset array; front-end handles 20 items per page slice.</td>
+              <td>
+                (a) Server pagination<br>
+                (b) <strong>Client-side slicing 20/page</strong>
+              </td>
+              <td><span class="badge-rec">Option (b) Recommended</span><br>Client-side pagination slicing.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="background:#1A1A1A; color:#A0A0A0; padding:24px 32px; text-align:center; font-size:12px; margin-top:40px; border-top:1px solid #333">
+    <div><strong>MyGenie POS & PMS</strong> · CR-358 Phase 3 Impact Analysis Deliverable</div>
+    <div style="margin-top:4px; font-size:11px; color:#666">Static visual comparison contract: /app/frontend/public/cr358-p3-design-comparison.html</div>
+  </footer>
+
+</body>
+</html>

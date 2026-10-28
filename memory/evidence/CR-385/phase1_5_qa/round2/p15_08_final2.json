@@ -1,0 +1,45 @@
+{
+  "settings": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/update-settings",
+      "method": "POST",
+      "post": "------WebKitFormBoundaryIBWQAmsysVMvevi3\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{\"basic\":{\"allow_early_checkin\":false,\"extend_rate_mode\":\"calendar\"}}\r\n------WebKitFormBoundaryIBWQAmsysVMvevi3--\r\n",
+      "ct": "multipart/form-data; boundary=----WebKitFormBoundaryIBWQAmsysVMvevi3"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/restaurant-settings/settings-list",
+      "method": "GET",
+      "post": null,
+      "ct": ""
+    }
+  ],
+  "final": {
+    "early": false,
+    "cal": true,
+    "held": false
+  }
+}

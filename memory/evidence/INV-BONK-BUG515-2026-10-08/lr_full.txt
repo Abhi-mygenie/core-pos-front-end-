@@ -1,0 +1,31 @@
+=== LR charge (booking snapshot) ===
+  charge.rate_per_night: 3000
+  charge.nights: 1
+  charge.rateplan_code: suite-s-cp
+  charge.rateplan_name: suite-s-cp
+  charge.upgrade_amount: 0
+  charge.booking_charge: 3000
+  charge.sgst: 75
+  charge.cgst: 75
+  charge.total_with_gst: 3150
+  charge.prepaid_amount: 0
+  charge.advance_payment: 1500
+  charge.balance_due: 1650
+
+=== LR rooms[0] ===
+  rooms[0].id: 392
+  rooms[0].room_code: suite
+  rooms[0].rateplan_code: suite-s-cp
+  rooms[0].guest_name: None
+  rooms[0].adults: 1
+  rooms[0].children: 0
+  rooms[0].line_status: checked_in
+  rooms[0].restaurant_table_id: 8525
+  rooms[0].table_no: r4
+  rooms[0].table_title: 2nd floor
+  rooms[0].order_id: 1233012
+  rooms[0].user_id_document_id: 17454
+  rooms[0].order_f_order_status: 5
+  rooms[0].order_payment_status: unpaid
+  rooms[0].checked_in_at: 2026-10-08 17:02:20
+  rooms[0].checked_out_at: None

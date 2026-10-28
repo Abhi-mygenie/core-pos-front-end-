@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1200" />
+  <title>MyGenie POS — Backend Brief · Food Court Order Report Endpoint</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #0f172a; }
+    .priority-p0 { background: #fef2f2; border-left: 4px solid #ef4444; }
+    .priority-p1 { background: #fff7ed; border-left: 4px solid #f97316; }
+    .priority-p2 { background: #f0fdf4; border-left: 4px solid #22c55e; }
+    .priority-info { background: #eff6ff; border-left: 4px solid #3b82f6; }
+    .tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tag-p0 { background: #ef4444; color: white; }
+    .tag-p1 { background: #f97316; color: white; }
+    .tag-p2 { background: #22c55e; color: white; }
+    .tag-info { background: #3b82f6; color: white; }
+    .tag-new { background: #8b5cf6; color: white; }
+    table { border-collapse: collapse; width: 100%; }
+    th { background: #1e293b; color: #e2e8f0; text-align: left; padding: 10px 14px; font-size: 13px; font-weight: 600; }
+    td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; font-size: 13px; vertical-align: top; }
+    tr:hover td { background: #f8fafc; }
+    .code, code { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 12px; background: #f1f5f9; padding: 2px 6px; border-radius: 3px; color: #334155; }
+    pre { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 12.5px; background: #0f172a; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; line-height: 1.55; }
+    pre .k { color: #93c5fd; }
+    pre .s { color: #86efac; }
+    pre .n { color: #fca5a5; }
+    pre .c { color: #64748b; font-style: italic; }
+    h1 { font-family: 'Poppins', sans-serif; }
+    h2 { font-family: 'Poppins', sans-serif; }
+    .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(15,23,42,0.06); border: 1px solid #e2e8f0; }
+    .badge-req { background:#dc2626; color:white; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; letter-spacing:0.4px; }
+    .badge-opt { background:#94a3b8; color:white; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; letter-spacing:0.4px; }
+    .station-pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+  </style>
+</head>
+<body class="max-w-6xl mx-auto py-10 px-6">
+
+  <!-- HEADER -->
+  <header class="mb-8">
+    <div class="flex items-start justify-between gap-6 flex-wrap">
+      <div>
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Backend Brief · Food Court Reports</div>
+        <h1 class="text-3xl font-bold text-slate-900">Food Court Order Report Endpoint</h1>
+        <p class="text-sm text-slate-600 mt-2">
+          New endpoint required to power the <strong>Food Court Report</strong> with per-order rows pre-filtered and pre-aggregated
+          by station on the backend — eliminating FE-side aggregation, batching, and large payload transfers.
+        </p>
+      </div>
+      <div class="text-right text-sm">
+        <div><span class="tag tag-p1">P1 · MEDIUM</span> <span class="tag tag-new">NEW ENDPOINT</span></div>
+        <div class="mt-2 text-slate-600">Filed: <strong>2026-08-12</strong></div>
+        <div class="text-slate-600">From: <strong>Frontend · Investigation Gate</strong></div>
+        <div class="text-slate-600">Sprint: <strong>pos_5_1</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- THE PROBLEM -->
+  <section class="card mb-6 priority-p1 p-6">
+    <h2 class="text-lg font-bold mb-3">The Problem — Why This Is Needed</h2>
+    <p class="text-slate-700 leading-relaxed mb-4">
+      The Food Court report currently works by calling <code>order-logs-report</code> (returns ALL orders for the restaurant),
+      then filtering and aggregating per-station entirely on the frontend. For the Shimla Food Court this means:
+    </p>
+    <div class="grid grid-cols-3 gap-4 text-sm mb-4">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="font-bold text-red-700 mb-1">Current — 1 month</div>
+        <div class="text-red-600">817 full order wrappers downloaded · FE loops every item · 3 parallel calls for >30d · batch progress bar UI</div>
+      </div>
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="font-bold text-green-700 mb-1">With this endpoint — any range</div>
+        <div class="text-green-600">1 API call · backend filters by station · only 254 order rows returned · FE renders directly · no batching</div>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="font-bold text-blue-700 mb-1">Existing alt endpoint</div>
+        <div class="text-blue-600"><code>top-food-sales-report</code> gives aggregated items — but <strong>no order IDs</strong>. Cannot show order-level view.</div>
+      </div>
+    </div>
+    <p class="text-sm text-slate-600">
+      Live evidence from <code>preprod.mygenie.online</code> (Shimla Food Court, July 2026):
+      <strong>817 total orders · 4 stations · GUPTAJEE had 254 orders (₹96,612) · MSB 137 orders · ZORKO 332 · CREAMBELLPARLOUR 355</strong>.
+      With a station filter, only 31% of the payload is needed (GUPTAJEE case).
+    </p>
+  </section>
+
+  <!-- EXISTING ENDPOINTS CONTEXT -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Existing endpoints — what they do and why neither is sufficient</h2>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Returns</th><th>Gap</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>POST /api/v2/vendoremployee/report/order-logs-report</code></td>
+          <td>Raw per-order wrappers with all items for all stations</td>
+          <td>FE must filter items by station, compute proportional discount, sum GST per station. Heavy FE computation. Full payload always transferred.</td>
+        </tr>
+        <tr>
+          <td><code>POST /api/v1/vendoremployee/top-food%20sales-report</code></td>
+          <td>food_item × station aggregated totals (qty, revenue, GST, discount)</td>
+          <td>No order IDs, no order date/time, no payment method. Cannot show per-order rows. Audit view impossible.</td>
+        </tr>
+        <tr style="background:#f0fdf4">
+          <td><code>POST /api/v1/vendoremployee/food-court-order-report</code> <span class="badge-req">NEW</span></td>
+          <td>Per-order rows pre-filtered by station with station-scoped financial breakdown</td>
+          <td>— This is what we need</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PROPOSED ENDPOINT -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Proposed endpoint</h2>
+    <table class="mb-6">
+      <tr><th style="width:160px">Method</th><td><code>POST</code></td></tr>
+      <tr><th>Path</th><td><code>/api/v1/vendoremployee/food-court-order-report</code></td></tr>
+      <tr><th>Auth</th><td>Bearer token · same session restaurant context as <code>order-logs-report</code></td></tr>
+      <tr><th>Business-day</th><td>Apply same timezone-aware business-day boundaries as <code>top-food-sales-report</code></td></tr>
+      <tr><th>Sort</th><td>Orders sorted by <code>collect_bill</code> date desc by default (same as current FE behaviour)</td></tr>
+    </table>
+
+    <h3 class="text-sm font-bold text-slate-700 mt-4 mb-2 uppercase tracking-wider">Request body</h3>
+<pre><span class="k">{</span>
+  <span class="s">"from"</span>:    <span class="s">"2026-07-01"</span>,   <span class="c">// required · YYYY-MM-DD</span>
+  <span class="s">"to"</span>:      <span class="s">"2026-07-31"</span>,   <span class="c">// required · YYYY-MM-DD</span>
+
+  <span class="s">"station"</span>: <span class="s">"GUPTAJEE"</span>,    <span class="c">// optional · if omitted: return stations[] list + empty orders (FE picks station)</span>
+  <span class="s">"sort_by"</span>: <span class="s">"collect_bill"</span>  <span class="c">// optional · "collect_bill" | "created_at" — default: collect_bill</span>
+<span class="k">}</span></pre>
+  </section>
+
+  <!-- REQUIRED RESPONSE -->
+  <section class="card mb-6 priority-p0 p-6">
+    <div class="flex items-center gap-3 mb-3">
+      <span class="tag tag-p0">Required</span>
+      <h2 class="text-lg font-bold">Required response shape</h2>
+    </div>
+    <p class="text-sm text-slate-700 mb-4">
+      This is exactly what the FE currently computes client-side from <code>order-logs-report</code>. Moving it server-side eliminates all FE aggregation.
+      All numeric fields must be <strong>numbers</strong> (not strings).
+    </p>
+<pre><span class="k">{</span>
+  <span class="s">"orders"</span>: <span class="k">[</span>
+    <span class="k">{</span>
+      <span class="s">"order_id"</span>:       <span class="s">"036327"</span>,        <span class="c">// restaurant_order_id (string)</span>
+      <span class="s">"order_date"</span>:     <span class="s">"03/08/2026"</span>,    <span class="c">// DD/MM/YYYY display format</span>
+      <span class="s">"order_time"</span>:     <span class="s">"14:30"</span>,         <span class="c">// HH:MM</span>
+      <span class="s">"station"</span>:        <span class="s">"GUPTAJEE"</span>,
+      <span class="s">"payment_method"</span>: <span class="s">"Cash"</span>,
+      <span class="s">"payment_status"</span>: <span class="s">"paid"</span>,
+      <span class="s">"f_order_status"</span>: <span class="n">6</span>,              <span class="c">// numeric — 6 = settled</span>
+      <span class="s">"order_type"</span>:     <span class="s">"DineIn"</span>,
+
+      <span class="c">// Items belonging to this station only</span>
+      <span class="s">"items"</span>: <span class="k">[</span>
+        <span class="k">{</span>
+          <span class="s">"name"</span>:      <span class="s">"Achari Paneer"</span>,
+          <span class="s">"quantity"</span>:  <span class="n">1</span>,
+          <span class="s">"price"</span>:     <span class="n">280</span>,             <span class="c">// unit_price × qty</span>
+          <span class="s">"gst"</span>:       <span class="n">14.00</span>,
+          <span class="s">"vat"</span>:       <span class="n">0.00</span>
+        <span class="k">}</span>
+      <span class="k">]</span>,
+
+      <span class="c">// Station-scoped financial summary</span>
+      <span class="s">"item_count"</span>:  <span class="n">2</span>,               <span class="c">// count of items[] array</span>
+      <span class="s">"total_qty"</span>:   <span class="n">2</span>,               <span class="c">// sum of item quantities</span>
+      <span class="s">"item_total"</span>:  <span class="n">565.00</span>,          <span class="c">// sum(item price + variation + addon) for this station</span>
+      <span class="s">"discount"</span>:    <span class="n">0.00</span>,            <span class="c">// proportional share — see Business Rule 2</span>
+      <span class="s">"sub_total"</span>:   <span class="n">565.00</span>,          <span class="c">// item_total - discount</span>
+      <span class="s">"gst"</span>:         <span class="n">28.25</span>,           <span class="c">// sum of item-level GST for this station only</span>
+      <span class="s">"vat"</span>:         <span class="n">0.00</span>,
+      <span class="s">"total"</span>:       <span class="n">593.25</span>           <span class="c">// sub_total + gst + vat</span>
+    <span class="k">}</span>
+  <span class="k">]</span>,
+
+  <span class="s">"stations"</span>:     <span class="k">[</span><span class="s">"CREAMBELLPARLOUR"</span>, <span class="s">"GUPTAJEE"</span>, <span class="s">"MSB"</span>, <span class="s">"ZORKO"</span><span class="k">]</span>,  <span class="c">// all stations for this restaurant (always returned)</span>
+  <span class="s">"total_orders"</span>: <span class="n">254</span>,              <span class="c">// count of orders[] returned</span>
+  <span class="s">"from"</span>:         <span class="s">"2026-07-01 06:00:00"</span>,  <span class="c">// actual business-day start applied</span>
+  <span class="s">"to"</span>:           <span class="s">"2026-08-01 03:00:00"</span>   <span class="c">// actual business-day end applied</span>
+<span class="k">}</span></pre>
+  </section>
+
+  <!-- BUSINESS RULES -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Business rules</h2>
+    <table>
+      <thead><tr><th style="width:50px">#</th><th style="width:240px">Rule</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>Station filtering</td>
+          <td>Include only items where <code>order_details_table.station === requested station</code>. If an order has no items for the station, exclude it from <code>orders[]</code> entirely.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Proportional discount</td>
+          <td>Order-level discount distributed proportionally by station's share of total order item price.<br><code>station_discount = order_discount × (station_item_total / order_item_total)</code><br>This is what the FE currently computes in <code>foodCourtService.js:toStationRow()</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Financial scope</td>
+          <td><code>item_total</code>, <code>gst</code>, <code>vat</code> reflect <strong>only items belonging to the requested station</strong>. Order-level charges (delivery, tip, round-off, service charge) are excluded — they are not attributable to a single station.</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td>item_total calculation</td>
+          <td><code>item_total = Σ(item.price + item.variation_price + item.addon_price)</code> for non-cancelled items (<code>food_status ≠ 3</code>). Matches <code>top-food-sales-report</code> calculation.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>NULL / unassigned station items</td>
+          <td>Items with no station assignment (<code>station IS NULL</code> or <code>''</code>) → bucket under <code>station = 'UNASSIGNED'</code>. Include in <code>stations[]</code> list if any exist for this restaurant.</td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td>Order status filter</td>
+          <td>Exclude fully cancelled orders (<code>f_order_status = 3</code>). Apply same filter logic as <code>sort_by=collect_bill</code> on <code>order-logs-report</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td>Business-day boundaries</td>
+          <td>Apply restaurant timezone-aware business day. A query for <code>from: 2026-08-03</code> covers <code>2026-08-03 06:00:00 → 2026-08-04 03:00:00</code> (same as <code>top-food-sales-report</code> behaviour confirmed via probe).</td>
+        </tr>
+        <tr>
+          <td><strong>8</strong></td>
+          <td>Empty results</td>
+          <td>Always return <code>{ "orders": [], "stations": [...], "total_orders": 0 }</code>. Never return null or 404 for a valid auth + date range with no matching data.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- LIVE DATA EVIDENCE -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Live data evidence (Shimla Food Court)</h2>
+    <p class="text-sm text-slate-600 mb-4">
+      Probed on <code>preprod.mygenie.online</code> with <code>owner@shimlaqohfoodcourt.com</code> · July 2026.
+      These numbers must be reproducible by the new endpoint.
+    </p>
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Station breakdown — July 2026</h3>
+        <table>
+          <thead><tr><th>Station</th><th>Orders</th><th>Net Sales</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="station-pill" style="background:#fef9c3;color:#854d0e">GUPTAJEE</span></td>
+              <td>254</td>
+              <td>₹96,612.60</td>
+            </tr>
+            <tr>
+              <td><span class="station-pill" style="background:#fce7f3;color:#9d174d">ZORKO</span></td>
+              <td>332</td>
+              <td>₹74,020.85</td>
+            </tr>
+            <tr>
+              <td><span class="station-pill" style="background:#dbeafe;color:#1e40af">MSB</span></td>
+              <td>137</td>
+              <td>₹50,809.93</td>
+            </tr>
+            <tr>
+              <td><span class="station-pill" style="background:#d1fae5;color:#065f46">CREAMBELLPARLOUR</span></td>
+              <td>355</td>
+              <td>₹37,379.60</td>
+            </tr>
+            <tr style="background:#f8fafc">
+              <td><strong>TOTAL</strong></td>
+              <td><strong>817 (unique)</strong></td>
+              <td><strong>₹2,58,822.98</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-xs text-slate-500 mt-2">Note: 817 unique orders but station count exceeds 817 — orders with items from multiple stations are counted in each station.</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Sample order (Aug 3)</h3>
+        <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm">
+          <div class="font-mono font-bold text-orange-600 mb-2">Order #036327</div>
+          <div class="grid grid-cols-2 gap-1 text-xs text-slate-600">
+            <div>Station:</div><div class="font-semibold">GUPTAJEE</div>
+            <div>Payment:</div><div>Cash</div>
+            <div>Items:</div><div>Achari Paneer · Afghani Mushroom Tikka</div>
+            <div>Item Total:</div><div>₹565.00</div>
+            <div>GST:</div><div>₹28.25</div>
+            <div>Total:</div><div class="font-bold">₹593.25</div>
+          </div>
+        </div>
+        <div class="mt-3 text-xs text-slate-500">
+          Confirmed via <code>order-logs-report</code> probe · Aug 3, 2026 had 1 order for shimla food court.
+          Both items had <code>item.station = "GUPTAJEE"</code> directly on <code>order_details_table</code> row.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAMPLE CURL -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-3">Sample cURL (for FE testing once shipped)</h2>
+<pre>curl --location <span class="s">'https://preprod.mygenie.online/api/v1/vendoremployee/food-court-order-report'</span> \
+  --header <span class="s">'Content-Type: application/json; charset=UTF-8'</span> \
+  --header <span class="s">'X-localization: en'</span> \
+  --header <span class="s">'Authorization: Bearer &lt;TOKEN&gt;'</span> \
+  --data <span class="s">'{
+    "from":    "2026-07-01",
+    "to":      "2026-07-31",
+    "station": "GUPTAJEE"
+  }'</span></pre>
+  </section>
+
+  <!-- FIELD REFERENCE -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Field reference — <code>orders[]</code></h2>
+    <table>
+      <thead><tr><th style="width:180px">Field</th><th style="width:90px">Type</th><th style="width:90px">Req?</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>order_id</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>Displayed as <code>#036327</code> in the UI. Maps to <code>restaurant_order_id</code> from <code>orders_table</code>.</td></tr>
+        <tr><td><code>order_date</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td><code>DD/MM/YYYY</code> — matches current FE <code>dateOnly()</code> output.</td></tr>
+        <tr><td><code>order_time</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td><code>HH:MM</code> — matches current FE <code>timeOnly()</code> output.</td></tr>
+        <tr><td><code>station</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>Station name. Matches the requested <code>station</code> param (or "UNASSIGNED").</td></tr>
+        <tr><td><code>payment_method</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>From <code>orders_table.payment_method</code>. E.g. "Cash", "Card", "UPI".</td></tr>
+        <tr><td><code>payment_status</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>From <code>orders_table.payment_status</code>.</td></tr>
+        <tr><td><code>f_order_status</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Integer. 6 = settled. FE uses this to power the "Settled" tab filter.</td></tr>
+        <tr><td><code>order_type</code></td><td>string</td><td><span class="badge-opt">OPT</span></td><td>DineIn / Takeaway / Delivery. For future channel filter.</td></tr>
+        <tr><td><code>items[]</code></td><td>array</td><td><span class="badge-req">REQ</span></td><td>Only items belonging to this station. Each: <code>{ name, quantity, price, gst, vat }</code>. Used to render "Items" cell in table.</td></tr>
+        <tr><td><code>item_count</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Length of <code>items[]</code>.</td></tr>
+        <tr><td><code>total_qty</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Sum of <code>items[].quantity</code>.</td></tr>
+        <tr><td><code>item_total</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Sum of <code>price + variation_price + addon_price</code> for non-cancelled items. Station-scoped.</td></tr>
+        <tr><td><code>discount</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Proportional share of order-level discount (Business Rule 2).</td></tr>
+        <tr><td><code>sub_total</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td><code>item_total - discount</code>.</td></tr>
+        <tr><td><code>gst</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Sum of <code>gst_tax_amount</code> for station items only.</td></tr>
+        <tr><td><code>vat</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Sum of <code>vat_tax_amount</code> for station items only.</td></tr>
+        <tr><td><code>total</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td><code>sub_total + gst + vat</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="text-sm font-bold text-slate-700 mt-6 mb-2 uppercase tracking-wider">Root-level fields</h3>
+    <table>
+      <thead><tr><th style="width:180px">Field</th><th style="width:90px">Type</th><th style="width:90px">Req?</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>stations[]</code></td><td>string[]</td><td><span class="badge-req">REQ</span></td><td>All station names for this restaurant. Always returned regardless of <code>station</code> filter param. Powers the station dropdown in FE.</td></tr>
+        <tr><td><code>total_orders</code></td><td>number</td><td><span class="badge-req">REQ</span></td><td>Count of <code>orders[]</code> returned.</td></tr>
+        <tr><td><code>from</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>Actual business-day start applied (datetime string).</td></tr>
+        <tr><td><code>to</code></td><td>string</td><td><span class="badge-req">REQ</span></td><td>Actual business-day end applied (datetime string).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ACCEPTANCE CRITERIA -->
+  <section class="card mb-6 priority-info p-6">
+    <h2 class="text-lg font-bold mb-3">Acceptance criteria (FE will verify)</h2>
+    <ol class="text-sm text-slate-700 space-y-2 list-decimal list-inside">
+      <li>Calling with no <code>station</code> param returns <code>{ orders: [], stations: ["CREAMBELLPARLOUR","GUPTAJEE","MSB","ZORKO"], total_orders: 0 }</code> — station list always populated.</li>
+      <li>Filter <code>station=GUPTAJEE</code> for July 2026 returns <strong>254 orders</strong> (verifiable against <code>order-logs-report</code> FE count).</li>
+      <li><code>SUM(orders[].total)</code> for GUPTAJEE ≈ <strong>₹96,612.60</strong> — must reconcile with <code>top-food-sales-report</code> GUPTAJEE station total.</li>
+      <li>An order whose items span multiple stations (e.g. GUPTAJEE + MSB) appears under <strong>both</strong> stations when queried separately, with correct per-station financial split.</li>
+      <li>Fully cancelled orders (<code>f_order_status = 3</code>) do not appear in results.</li>
+      <li>Response for a 1-year date range returns in <strong>&lt; 3 seconds</strong> — key performance requirement.</li>
+      <li>Empty date range / no matching orders returns <code>{ orders: [], stations: [...], total_orders: 0 }</code> with HTTP 200.</li>
+      <li>All numeric fields are <strong>numbers</strong> (not strings). Contrast with <code>top-food-sales-report</code> where all row fields are strings — please use numbers here for direct FE rendering.</li>
+    </ol>
+  </section>
+
+  <!-- ERRORS -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">Error codes</h2>
+    <table>
+      <thead><tr><th style="width:200px">Code</th><th style="width:100px">HTTP</th><th>Trigger</th></tr></thead>
+      <tbody>
+        <tr><td><code>auth-001</code></td><td>401</td><td>Missing / expired bearer token.</td></tr>
+        <tr><td><code>VALIDATION_FAILED</code></td><td>422</td><td><code>from &gt; to</code> or malformed dates.</td></tr>
+        <tr><td><code>STATION_NOT_FOUND</code></td><td>422</td><td>Requested station name does not exist for this restaurant. Return valid stations list in error body.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- REFERENCES -->
+  <section class="card mb-6">
+    <h2 class="text-lg font-bold mb-4">References &amp; related</h2>
+    <ul class="text-sm text-slate-700 space-y-1 list-disc list-inside">
+      <li>Investigation report: <code>/app/memory/investigation/FC-BACKEND-AGG_INVESTIGATION_REPORT_2026_08_12.md</code></li>
+      <li>Evidence (API probes, full responses): <code>/app/memory/evidence/FC-BACKEND-AGG/</code></li>
+      <li>Related endpoint (aggregated items, no order IDs): <code>POST /api/v1/vendoremployee/top-food%20sales-report</code></li>
+      <li>Related endpoint (raw orders, FE aggregates): <code>POST /api/v2/vendoremployee/report/order-logs-report</code></li>
+      <li>FE file that will consume this: <code>src/api/services/foodCourtService.js</code> (replace <code>fetchChunk</code> + aggregation logic)</li>
+      <li>FE screen: <code>src/pages/reports-module/FoodCourtMockup.jsx</code> (zero UI changes needed — only service layer changes)</li>
+    </ul>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="text-center text-xs text-slate-400 py-8 border-t border-slate-200 mt-8">
+    <div>Backend Brief · <code>BACKEND_BRIEF_FOOD_COURT_ORDER_REPORT_2026_08_12</code></div>
+    <div class="mt-1">Sprint <strong>pos_5_1</strong> · Filed by Frontend · Investigation Gate · Reply on backend Slack with ETA + any schema questions.</div>
+  </footer>
+
+</body>
+</html>

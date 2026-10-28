@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-147 Delivery Charges Matrix — Two-Input Header & Guided Setup (MyGenie POS)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@500;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F8FAFC;
+    }
+    h1, h2, h3, .heading-font {
+      font-family: 'Cabinet Grotesk', sans-serif;
+    }
+    .mono-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    .highlight-col {
+      background-color: rgba(242, 107, 51, 0.05) !important;
+    }
+    .highlight-row {
+      background-color: rgba(242, 107, 51, 0.05) !important;
+    }
+    .highlight-cell {
+      background-color: rgba(50, 153, 55, 0.08) !important;
+      border-color: #329937 !important;
+    }
+  </style>
+</head>
+<body class="text-zinc-900 antialiased min-h-screen flex flex-col justify-between">
+  <!-- POS Top Bar -->
+  <header class="bg-white border-b border-zinc-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-40" data-testid="pos-header">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-[#F26B33] flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
+          G
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="heading-font text-lg font-bold tracking-tight text-zinc-900">MyGenie POS</span>
+            <span class="text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md uppercase tracking-wider" data-testid="cr147-badge">CR-147 UX Gaps Resolved</span>
+          </div>
+          <p class="text-[11px] text-zinc-500">Delivery Settings &bull; Section 2: Pricing Matrix & Slabs</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick State & Actions Switcher -->
+    <div class="flex items-center gap-3">
+      <!-- Demo View Mode Toggle -->
+      <div class="flex items-center bg-zinc-100 p-1 rounded-xl border border-zinc-200" data-testid="view-mode-selector">
+        <button onclick="setViewMode('populated')" id="btn-mode-populated" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-zinc-900 shadow-xs flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-[#329937]"></span>
+          Populated Matrix
+        </button>
+        <button onclick="setViewMode('empty')" id="btn-mode-empty" class="px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-500 hover:text-zinc-900 transition flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+          Empty State Setup Flow
+        </button>
+      </div>
+
+      <button onclick="togglePayloadModal()" data-testid="btn-view-api-payload" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-zinc-300 hover:bg-zinc-50 rounded-xl text-xs font-semibold text-zinc-700 transition shadow-xs">
+        <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+        Inspect Payload
+      </button>
+
+      <button onclick="saveAllSlabs()" data-testid="btn-save-all-slabs-header" class="flex items-center gap-2 px-4 py-2 bg-[#329937] hover:bg-[#2a802e] text-white rounded-xl text-xs font-bold transition shadow-xs">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="save-btn-text">Save Slabs (18)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 space-y-6 flex-1">
+
+    <!-- UX Gap Fix Explanation Card -->
+    <div class="bg-white border border-zinc-200 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4" data-testid="ux-gap-summary-banner">
+      <div class="space-y-1.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-orange-100 text-[#F26B33]">CR-147 TWO UX GAPS FIXED</span>
+          <span class="text-xs text-zinc-400">&bull;</span>
+          <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">✓ Gap 1: Dual From/To ₹ Inputs in Column Headers</span>
+          <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">✓ Gap 2: Guided 3-Step First-Time Setup</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950">
+          Delivery Charges Rate Matrix
+        </h1>
+        <p class="text-xs sm:text-sm text-zinc-500 max-w-3xl">
+          Order value tiers (columns) now mirror distance bands (rows) with inline dual inputs <strong class="text-zinc-800">[From ₹] &mdash; [To ₹]</strong>. The last tier column displays <strong class="text-zinc-800">[From ₹] &mdash; [ &infin; No Limit ]</strong>. Backend <code class="bg-zinc-100 text-zinc-800 px-1 py-0.5 rounded font-mono text-xs">min_order_value</code> maps directly to the From field.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 self-stretch lg:self-auto">
+        <button onclick="loadNotebookPreset()" data-testid="btn-preset-notebook" class="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl text-xs font-bold text-[#F26B33] transition flex items-center justify-center gap-1.5 shadow-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Reset to Notebook Specs (3×6)
+        </button>
+        <button onclick="startEmptySetup()" data-testid="btn-trigger-empty-flow" class="px-3.5 py-2 border border-zinc-200 hover:bg-zinc-50 rounded-xl text-xs font-bold text-zinc-700 transition shadow-xs">
+          Simulate Empty State
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Strip (Visible in Populated Mode) -->
+    <div id="stats-strip" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4" data-testid="matrix-stats-strip">
+      <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Configured Slabs</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span id="stat-total-slabs" class="text-2xl font-black text-zinc-900 mono-font">18</span>
+          <span class="text-xs text-zinc-400" id="stat-matrix-dim">6 rows &times; 3 cols</span>
+        </div>
+      </div>
+      <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Free Delivery Tiers</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span id="stat-free-slabs" class="text-2xl font-black text-[#329937] mono-font">8</span>
+          <span class="text-xs text-emerald-600">₹0 fee</span>
+        </div>
+      </div>
+      <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Max Coverage Radius</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span id="stat-max-radius" class="text-2xl font-black text-zinc-900 mono-font">6 km</span>
+          <span class="text-xs text-zinc-400">outer distance</span>
+        </div>
+      </div>
+      <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Peak Delivery Charge</span>
+        <div class="mt-1 flex items-baseline gap-2">
+          <span id="stat-max-charge" class="text-2xl font-black text-[#F26B33] mono-font">₹60</span>
+          <span class="text-xs text-zinc-400">max fee slab</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 1: POPULATED MATRIX WITH DUAL-INPUT COLUMN HEADERS -->
+    <div id="populated-matrix-container" class="bg-white border border-zinc-200 rounded-2xl shadow-xs overflow-hidden" data-testid="delivery-charges-matrix-card">
+      
+      <!-- Table Controls Bar -->
+      <div class="p-4 sm:p-5 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3 bg-zinc-50/80">
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 rounded-full bg-[#329937]"></div>
+          <div>
+            <h2 class="text-xs sm:text-sm font-bold text-zinc-900 uppercase tracking-wide">Delivery Slabs Rate Card Matrix</h2>
+            <p class="text-[11px] text-zinc-500">Edit order value tiers & distance bands inline. Cells update instantaneously.</p>
+          </div>
+          <span class="text-xs bg-zinc-200/80 text-zinc-700 px-2.5 py-0.5 rounded-md font-mono font-bold" id="matrix-dimensions-chip">6 Bands &times; 3 Tiers</span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button onclick="addDistanceBand()" data-testid="btn-add-distance-row" class="flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-zinc-50 border border-zinc-300 rounded-xl text-xs font-bold text-zinc-800 transition shadow-xs hover:border-[#F26B33]">
+            <svg class="w-4 h-4 text-[#F26B33]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            + Add Distance Band (Row)
+          </button>
+          <button onclick="addOrderTier()" data-testid="btn-add-tier-col" class="flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-zinc-50 border border-zinc-300 rounded-xl text-xs font-bold text-zinc-800 transition shadow-xs hover:border-[#329937]">
+            <svg class="w-4 h-4 text-[#329937]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            + Add Order Tier (Col)
+          </button>
+        </div>
+      </div>
+
+      <!-- Matrix Interactive Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse" id="pricing-matrix-table" data-testid="pricing-matrix-table">
+          <thead>
+            <tr class="bg-zinc-100/90 border-b border-zinc-200" id="matrix-header-row">
+              <!-- Corner header -->
+              <th class="p-4 text-left border-r border-zinc-200 min-w-[240px] w-[260px] bg-zinc-100">
+                <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Distance Band \ Order Value Tier</div>
+                <div class="text-xs font-bold text-zinc-800 mt-1 flex items-center justify-between">
+                  <span>Distance Range (km)</span>
+                  <span class="text-[10px] text-zinc-400 font-normal">From &mdash; To</span>
+                </div>
+              </th>
+              <!-- Order Tier Column Headers (Injected dynamically with dual From / To inputs) -->
+            </tr>
+          </thead>
+          <tbody id="matrix-body" class="divide-y divide-zinc-200">
+            <!-- Distance Rows (Injected dynamically with dual From / To km inputs + cell charges) -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer Actions -->
+      <div class="p-4 sm:p-5 bg-zinc-50 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-4 text-xs text-zinc-500">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-emerald-100 border border-emerald-300 inline-block"></span>
+            <span class="font-medium text-emerald-800">Free Delivery (₹0)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-white border border-zinc-300 inline-block"></span>
+            <span class="font-medium text-zinc-700">Chargeable Slab</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="px-1.5 py-0.5 rounded bg-zinc-200 text-zinc-700 font-bold text-[10px]">&infin;</span>
+            <span>No Upper Limit (Unlimited Tier)</span>
+          </div>
+          <div class="hidden md:inline text-zinc-400">&bull; Tab between inputs for fast entry</div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="togglePayloadModal()" data-testid="btn-preview-json" class="px-4 py-2 border border-zinc-300 hover:bg-zinc-100 rounded-xl text-xs font-semibold text-zinc-700 transition shadow-xs">
+            Inspect Wire JSON
+          </button>
+          <button onclick="saveAllSlabs()" data-testid="btn-save-all-slabs" class="px-5 py-2.5 bg-[#329937] hover:bg-[#2a802e] text-white rounded-xl text-xs sm:text-sm font-bold transition shadow-xs flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span id="save-btn-footer-text">Save All Slabs (18)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: GUIDED 3-STEP FIRST-TIME SETUP FLOW (WHEN EMPTY OR NEW RESTAURANT) -->
+    <div id="empty-state-container" class="bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 shadow-xs hidden" data-testid="guided-empty-state-card">
+      
+      <!-- Empty State Header -->
+      <div class="text-center max-w-2xl mx-auto mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-orange-100 text-[#F26B33] flex items-center justify-center mx-auto mb-4 shadow-xs">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-zinc-950 tracking-tight heading-font">Create Your Delivery Charges Matrix</h2>
+        <p class="text-sm text-zinc-500 mt-1.5">
+          No delivery slabs configured yet. Follow the 3-step setup below to build your delivery rate card from scratch.
+        </p>
+      </div>
+
+      <!-- 3-Step Guided Wizard Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Step 1: Order Value Tiers -->
+        <div class="border-2 border-dashed border-zinc-300 hover:border-[#329937] rounded-2xl p-5 bg-zinc-50/50 transition flex flex-col justify-between" data-testid="setup-step-1-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-[#329937] text-white font-bold text-xs flex items-center justify-center">1</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#329937] bg-emerald-50 px-2 py-0.5 rounded">Columns</span>
+            </div>
+            <h3 class="text-base font-bold text-zinc-900">Define Order Value Tiers</h3>
+            <p class="text-xs text-zinc-500 mt-1">
+              Set order cart value brackets (e.g., ₹0–₹199, ₹200–₹499, and ₹500+).
+            </p>
+
+            <div class="mt-4 p-3 bg-white rounded-xl border border-zinc-200 text-xs text-zinc-600 space-y-1.5" id="step1-preview-list">
+              <div class="font-semibold text-zinc-800 text-[11px] uppercase tracking-wider">Current Tiers (Columns):</div>
+              <div id="step1-tier-chips" class="flex flex-wrap gap-1 text-[11px] text-zinc-400 italic">None added yet</div>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <button onclick="addQuickTierInSetup()" data-testid="btn-add-first-tier" class="w-full py-2.5 px-4 bg-[#329937] hover:bg-[#2a802e] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              + Add Order Tier (Col)
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Distance Bands -->
+        <div class="border-2 border-dashed border-zinc-300 hover:border-[#F26B33] rounded-2xl p-5 bg-zinc-50/50 transition flex flex-col justify-between" data-testid="setup-step-2-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-[#F26B33] text-white font-bold text-xs flex items-center justify-center">2</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#F26B33] bg-orange-50 px-2 py-0.5 rounded">Rows</span>
+            </div>
+            <h3 class="text-base font-bold text-zinc-900">Define Distance Bands</h3>
+            <p class="text-xs text-zinc-500 mt-1">
+              Set your delivery radius kilometers (e.g., 0–1 km, 1–2 km, 2–3 km).
+            </p>
+
+            <div class="mt-4 p-3 bg-white rounded-xl border border-zinc-200 text-xs text-zinc-600 space-y-1.5" id="step2-preview-list">
+              <div class="font-semibold text-zinc-800 text-[11px] uppercase tracking-wider">Current Bands (Rows):</div>
+              <div id="step2-band-chips" class="flex flex-wrap gap-1 text-[11px] text-zinc-400 italic">None added yet</div>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <button onclick="addQuickBandInSetup()" data-testid="btn-add-first-band" class="w-full py-2.5 px-4 bg-[#F26B33] hover:bg-[#d85822] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              + Add Distance Band (Row)
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Populate Grid Cells -->
+        <div class="border-2 border-zinc-200 rounded-2xl p-5 bg-zinc-50/50 flex flex-col justify-between" data-testid="setup-step-3-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-zinc-800 text-white font-bold text-xs flex items-center justify-center">3</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-600 bg-zinc-200 px-2 py-0.5 rounded">Rate Grid</span>
+            </div>
+            <h3 class="text-base font-bold text-zinc-900">Fill in Delivery Charges</h3>
+            <p class="text-xs text-zinc-500 mt-1">
+              Once rows and columns are added, fill delivery rates in the grid or click <strong class="text-emerald-700">Free</strong>.
+            </p>
+
+            <div class="mt-4 p-3 bg-white rounded-xl border border-zinc-200 text-xs space-y-1 text-zinc-600">
+              <div class="flex justify-between">
+                <span>Calculated Cells:</span>
+                <span class="font-bold text-zinc-900" id="step3-cell-count">0 Slabs</span>
+              </div>
+              <div class="text-[11px] text-zinc-400">Add at least 1 Tier & 1 Band to open matrix editor.</div>
+            </div>
+          </div>
+
+          <div class="mt-5 space-y-2">
+            <button onclick="applySetupAndOpenMatrix()" id="btn-open-matrix-from-setup" disabled class="w-full py-2.5 px-4 bg-zinc-200 text-zinc-400 cursor-not-allowed rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5" data-testid="btn-launch-matrix">
+              <span>Open Spreadsheet Matrix</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+            <button onclick="loadNotebookPreset()" class="w-full py-2 px-3 border border-zinc-200 hover:bg-zinc-100 rounded-xl text-xs font-semibold text-zinc-600 transition" data-testid="btn-setup-load-template">
+              Or Load Standard 3×6 Template
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Backend Wire Mapping & Parallel Array Contract Explanation -->
+    <div class="bg-white border border-zinc-200 rounded-2xl p-5 sm:p-6 shadow-xs" data-testid="api-payload-section">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 rounded-full bg-[#F26B33]"></span>
+          <h2 class="text-sm sm:text-base font-bold text-zinc-900">Backend Wire Mapping: <code class="text-xs bg-zinc-100 text-[#F26B33] px-2 py-0.5 rounded font-mono">POST /delivery-charges</code></h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-zinc-500 font-mono">Parallel Arrays Contract</span>
+          <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-medium">min_order_value = From ₹</span>
+        </div>
+      </div>
+      <p class="text-xs text-zinc-500 mb-4">
+        Each cell generates one slab entry. Column header <strong class="text-zinc-800">[From ₹]</strong> maps directly to <code class="bg-zinc-100 text-zinc-800 px-1 py-0.5 rounded font-mono text-xs">min_order_value</code>. Distance row headers map to <code class="bg-zinc-100 text-zinc-800 px-1 py-0.5 rounded font-mono text-xs">min_distance_km</code> and <code class="bg-zinc-100 text-zinc-800 px-1 py-0.5 rounded font-mono text-xs">max_distance_km</code>.
+      </p>
+      
+      <div class="bg-zinc-950 rounded-xl p-4 overflow-x-auto text-emerald-400 font-mono text-xs leading-relaxed" id="wire-code-preview" data-testid="wire-json-display">
+        <!-- Live JSON representation -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-zinc-200 px-6 py-4 text-center text-xs text-zinc-500">
+    MyGenie POS &bull; CR-147 Delivery Charges UX Redesign &bull; Dual-Input Column Headers & Guided First-Time Setup
+  </footer>
+
+  <!-- Modal: API Payload Inspector -->
+  <div id="payload-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden" data-testid="payload-modal">
+    <div class="bg-white border border-zinc-200 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+        <div>
+          <h3 class="text-base font-bold text-zinc-900">POST /delivery-charges Payload Inspector</h3>
+          <p class="text-xs text-zinc-500">Live parallel arrays serialized from current matrix state</p>
+        </div>
+        <button onclick="togglePayloadModal()" class="p-1.5 hover:bg-zinc-200 rounded-lg text-zinc-500" data-testid="btn-close-modal">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="p-5 overflow-y-auto flex-1 font-mono text-xs">
+        <div class="mb-3 flex items-center justify-between">
+          <span class="text-xs font-sans text-zinc-600 font-semibold" id="modal-slab-count">Total Slabs: 18</span>
+          <button onclick="copyPayloadToClipboard()" id="btn-copy-payload" class="px-3 py-1 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 rounded-lg font-sans text-xs text-zinc-700 font-medium transition" data-testid="btn-copy-json">
+            Copy JSON
+          </button>
+        </div>
+        <pre class="bg-zinc-900 text-emerald-400 p-4 rounded-xl overflow-x-auto" id="modal-json-content"></pre>
+      </div>
+
+      <div class="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end">
+        <button onclick="togglePayloadModal()" class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition">
+          Close Inspector
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-zinc-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50" data-testid="toast-notification">
+    <div class="w-6 h-6 rounded-full bg-[#329937] flex items-center justify-center text-white text-xs font-bold">✓</div>
+    <span id="toast-message" class="text-xs font-semibold">Settings saved successfully</span>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // CR-147 STATE MODEL
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    // Gap 1 Fix: Order Value Tiers now store minOrder (From ₹) and maxOrder (To ₹).
+    // The last tier has isUnlimited = true (maxOrder = null, displays ∞).
+    let orderTiers = [
+      { id: 'tier-1', from: 0, to: 199, isUnlimited: false },
+      { id: 'tier-2', from: 200, to: 499, isUnlimited: false },
+      { id: 'tier-3', from: 500, to: null, isUnlimited: true }
+    ];
+
+    // Distance bands store minKm (From km) and maxKm (To km)
+    let distanceBands = [
+      { id: 'dist-1', minKm: 0, maxKm: 1 },
+      { id: 'dist-2', minKm: 1, maxKm: 2 },
+      { id: 'dist-3', minKm: 2, maxKm: 3 },
+      { id: 'dist-4', minKm: 3, maxKm: 4 },
+      { id: 'dist-5', minKm: 4, maxKm: 5 },
+      { id: 'dist-6', minKm: 5, maxKm: 6 }
+    ];
+
+    // Matrix cells: matrix[rowIdx][colIdx] = charge in INR (0 = Free)
+    let matrix = [
+      [0, 0, 0],
+      [20, 10, 0],
+      [50, 20, 0],
+      [40, 30, 10],
+      [60, 40, 20],
+      [60, 50, 0]
+    ];
+
+    let currentViewMode = 'populated'; // 'populated' or 'empty'
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // VIEW CONTROLLER
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      const popContainer = document.getElementById('populated-matrix-container');
+      const emptyContainer = document.getElementById('empty-state-container');
+      const statsStrip = document.getElementById('stats-strip');
+      const btnPop = document.getElementById('btn-mode-populated');
+      const btnEmpty = document.getElementById('btn-mode-empty');
+
+      if (mode === 'populated') {
+        popContainer.classList.remove('hidden');
+        emptyContainer.classList.add('hidden');
+        statsStrip.classList.remove('hidden');
+
+        btnPop.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-zinc-900 shadow-xs flex items-center gap-1.5";
+        btnEmpty.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-500 hover:text-zinc-900 transition flex items-center gap-1.5";
+        renderMatrix();
+      } else {
+        popContainer.classList.add('hidden');
+        emptyContainer.classList.remove('hidden');
+        statsStrip.classList.add('hidden');
+
+        btnEmpty.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-zinc-900 shadow-xs flex items-center gap-1.5";
+        btnPop.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-zinc-500 hover:text-zinc-900 transition flex items-center gap-1.5";
+        updateEmptySetupState();
+      }
+    }
+
+    function startEmptySetup() {
+      // Clear out all tiers and bands to demonstrate step-by-step creation
+      orderTiers = [];
+      distanceBands = [];
+      matrix = [];
+      setViewMode('empty');
+      showToast('Switched to Guided Empty Setup flow');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // RENDER SPREADSHEET MATRIX (GAP 1 FIX: DUAL FROM/TO INPUTS IN COLUMN HEADERS)
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    function renderMatrix() {
+      const headerRow = document.getElementById('matrix-header-row');
+      const body = document.getElementById('matrix-body');
+
+      if (orderTiers.length === 0 || distanceBands.length === 0) {
+        setViewMode('empty');
+        return;
+      }
+
+      // 1. Build Header Row with Dual Inputs for Order Value Tiers
+      let headerHtml = `
+        <th class="p-4 text-left border-r border-zinc-200 min-w-[240px] w-[260px] bg-zinc-100">
+          <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Distance Band \\ Order Tier</div>
+          <div class="text-xs font-bold text-zinc-800 mt-1 flex items-center justify-between">
+            <span>Distance Range (km)</span>
+            <span class="text-[10px] text-zinc-400 font-normal">From &mdash; To</span>
+          </div>
+        </th>
+      `;
+
+      orderTiers.forEach((tier, colIdx) => {
+        const isLastTier = colIdx === orderTiers.length - 1;
+        headerHtml += `
+          <th class="p-3.5 text-center border-r border-zinc-200 min-w-[210px] bg-zinc-50/90" data-col-idx="${colIdx}">
+            <div class="flex items-center justify-between gap-1 mb-2">
+              <div class="flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-orange-100 text-[#F26B33] text-[9px] font-extrabold flex items-center justify-center">${colIdx + 1}</span>
+                <span class="text-[11px] font-bold text-zinc-700 uppercase tracking-wide">Tier ${colIdx + 1}</span>
+                ${tier.isUnlimited ? '<span class="text-[10px] bg-zinc-200/80 text-zinc-600 px-1.5 py-0.2 rounded font-mono font-bold">Unlimited</span>' : ''}
+              </div>
+              <div class="flex items-center gap-1">
+                ${orderTiers.length > 1 ? `
+                  <button onclick="removeOrderTier(${colIdx})" title="Delete Tier Column" class="p-1 hover:bg-red-50 rounded text-zinc-400 hover:text-red-600 transition" data-testid="btn-del-tier-${colIdx}">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- TWO INLINE INPUTS: [₹ From] — [₹ To / ∞] -->
+            <div class="flex items-center justify-center gap-1.5 bg-white border border-zinc-300 hover:border-zinc-400 focus-within:border-[#F26B33] focus-within:ring-2 focus-within:ring-orange-100 rounded-xl px-2.5 py-1.5 shadow-2xs transition">
+              <!-- From Input -->
+              <div class="flex items-center gap-1">
+                <span class="text-[11px] font-bold text-zinc-400">₹</span>
+                <input type="number" min="0" step="1" 
+                  value="${tier.from}" 
+                  placeholder="From"
+                  title="Tier minimum order value (From ₹)"
+                  onchange="updateTierFrom(${colIdx}, this.value)" 
+                  class="w-14 text-xs font-bold text-zinc-900 text-center bg-transparent outline-none p-0"
+                  data-testid="input-tier-from-${colIdx}"
+                />
+              </div>
+
+              <span class="text-xs text-zinc-300 font-bold">&mdash;</span>
+
+              <!-- To Input OR Infinity Badge -->
+              <div class="flex items-center gap-1">
+                ${tier.isUnlimited ? `
+                  <div class="flex items-center gap-1 px-2 py-0.5 bg-zinc-100 border border-zinc-200 rounded text-zinc-700 text-xs font-bold" title="No upper limit for this tier" data-testid="tier-infinity-badge-${colIdx}">
+                    <span>&infin;</span>
+                    <span class="text-[10px] text-zinc-500 font-normal">no limit</span>
+                  </div>
+                ` : `
+                  <span class="text-[11px] font-bold text-zinc-400">₹</span>
+                  <input type="number" min="0" step="1" 
+                    value="${tier.to !== null ? tier.to : ''}" 
+                    placeholder="To"
+                    title="Tier maximum order value (To ₹)"
+                    onchange="updateTierTo(${colIdx}, this.value)" 
+                    class="w-14 text-xs font-bold text-zinc-900 text-center bg-transparent outline-none p-0"
+                    data-testid="input-tier-to-${colIdx}"
+                  />
+                `}
+              </div>
+            </div>
+
+            <div class="text-[10px] text-zinc-400 mt-1 font-mono">
+              min_order_value: ₹${tier.from}
+            </div>
+          </th>
+        `;
+      });
+
+      headerHtml += `<th class="p-3 text-center w-12 text-zinc-400 text-xs">Actions</th>`;
+      headerRow.innerHTML = headerHtml;
+
+      // 2. Build Distance Rows (Dual km Inputs: [km From] — [km To])
+      let bodyHtml = '';
+      distanceBands.forEach((band, rowIdx) => {
+        bodyHtml += `
+          <tr class="hover:bg-zinc-50/70 transition group" data-row-idx="${rowIdx}">
+            <!-- Distance Band Row Header -->
+            <td class="p-3.5 border-r border-zinc-200 bg-white group-hover:bg-zinc-50/90">
+              <div class="flex items-center gap-2.5">
+                <span class="w-5 h-5 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-[10px] font-bold text-zinc-700">${rowIdx + 1}</span>
+                <div class="flex items-center gap-1 flex-1">
+                  <div class="flex items-center border border-zinc-300 hover:border-zinc-400 focus-within:border-[#F26B33] focus-within:ring-2 focus-within:ring-orange-100 rounded-xl px-2.5 py-1.5 bg-white w-full transition shadow-2xs">
+                    <input type="number" step="0.5" min="0" value="${band.minKm}" 
+                      onchange="updateDistanceBand(${rowIdx}, 'minKm', this.value)"
+                      class="w-11 text-xs font-bold text-zinc-800 outline-none text-center bg-transparent"
+                      data-testid="input-dist-min-${rowIdx}"
+                      placeholder="From"
+                      title="Distance range start (km)"
+                    />
+                    <span class="text-xs text-zinc-300 px-1 font-bold">&mdash;</span>
+                    <input type="number" step="0.5" min="0" value="${band.maxKm}" 
+                      onchange="updateDistanceBand(${rowIdx}, 'maxKm', this.value)"
+                      class="w-11 text-xs font-bold text-zinc-800 outline-none text-center bg-transparent"
+                      data-testid="input-dist-max-${rowIdx}"
+                      placeholder="To"
+                      title="Distance range end (km)"
+                    />
+                    <span class="text-[11px] text-zinc-400 font-semibold ml-1">km</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+        `;
+
+        // Matrix Cells for this row
+        orderTiers.forEach((tier, colIdx) => {
+          const charge = matrix[rowIdx] ? matrix[rowIdx][colIdx] || 0 : 0;
+          const isFree = charge === 0;
+
+          bodyHtml += `
+            <td class="p-3 border-r border-zinc-200 text-center relative ${isFree ? 'bg-emerald-50/40' : 'bg-white'}" 
+                data-cell-row="${rowIdx}" 
+                data-cell-col="${colIdx}"
+                onmouseenter="highlightCrosshair(${rowIdx}, ${colIdx})"
+                onmouseleave="clearCrosshair()"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <!-- Direct Currency Charge Input -->
+                <div class="flex items-center border ${isFree ? 'border-emerald-300 bg-emerald-50/70' : 'border-zinc-300 bg-white hover:border-zinc-400'} rounded-xl px-2.5 py-1.5 transition-all focus-within:border-[#329937] focus-within:ring-2 focus-within:ring-emerald-100 w-[105px] shadow-2xs">
+                  <span class="text-xs font-bold ${isFree ? 'text-[#329937]' : 'text-zinc-400'} mr-1">₹</span>
+                  <input type="number" min="0" step="1" value="${charge}"
+                    onfocus="this.select()"
+                    onchange="updateCellCharge(${rowIdx}, ${colIdx}, this.value)"
+                    class="w-full text-xs font-bold ${isFree ? 'text-[#329937]' : 'text-zinc-900'} outline-none bg-transparent"
+                    data-testid="matrix-cell-${rowIdx}-${colIdx}"
+                  />
+                </div>
+
+                <!-- Free Toggle Button -->
+                <button type="button" 
+                  onclick="toggleCellFree(${rowIdx}, ${colIdx})" 
+                  class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition ${isFree ? 'bg-[#329937] text-white shadow-xs' : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-600'}"
+                  title="Toggle Free Delivery"
+                  data-testid="btn-free-toggle-${rowIdx}-${colIdx}"
+                >
+                  Free
+                </button>
+              </div>
+            </td>
+          `;
+        });
+
+        // Row delete action
+        bodyHtml += `
+          <td class="p-2 text-center bg-white group-hover:bg-zinc-50/90">
+            ${distanceBands.length > 1 ? `
+              <button onclick="removeDistanceBand(${rowIdx})" title="Delete Distance Row" class="p-1.5 hover:bg-red-50 text-zinc-400 hover:text-red-600 rounded-lg transition" data-testid="btn-del-band-${rowIdx}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            ` : ''}
+          </td>
+        </tr>`;
+      });
+
+      body.innerHTML = bodyHtml;
+
+      updateStatsAndWirePreview();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // MUTATIONS: COLUMN HEADERS & DISTANCE ROWS
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    function updateTierFrom(colIdx, val) {
+      const num = Math.max(0, parseInt(val, 10) || 0);
+      orderTiers[colIdx].from = num;
+      updateStatsAndWirePreview();
+    }
+
+    function updateTierTo(colIdx, val) {
+      if (orderTiers[colIdx].isUnlimited) return;
+      const num = Math.max(orderTiers[colIdx].from, parseInt(val, 10) || 0);
+      orderTiers[colIdx].to = num;
+      updateStatsAndWirePreview();
+    }
+
+    function addOrderTier() {
+      const prevTier = orderTiers[orderTiers.length - 1];
+      let newFrom = 0;
+      
+      if (prevTier) {
+        if (prevTier.to !== null) {
+          newFrom = prevTier.to + 1;
+        } else {
+          newFrom = prevTier.from + 300;
+          prevTier.to = newFrom - 1;
+          prevTier.isUnlimited = false;
+        }
+      }
+
+      orderTiers.push({
+        id: `tier-${Date.now()}`,
+        from: newFrom,
+        to: null,
+        isUnlimited: true
+      });
+
+      // Expand matrix columns with default 0 / 20
+      matrix.forEach(row => row.push(0));
+
+      renderMatrix();
+      showToast(`Added Order Tier: From ₹${newFrom} to ∞`);
+    }
+
+    function removeOrderTier(colIdx) {
+      if (orderTiers.length <= 1) return;
+      orderTiers.splice(colIdx, 1);
+      matrix.forEach(row => row.splice(colIdx, 1));
+      
+      // Ensure last tier has isUnlimited = true
+      if (orderTiers.length > 0) {
+        const last = orderTiers[orderTiers.length - 1];
+        last.isUnlimited = true;
+        last.to = null;
+      }
+
+      renderMatrix();
+      showToast('Order tier removed');
+    }
+
+    function updateDistanceBand(rowIdx, field, val) {
+      const num = Math.max(0, parseFloat(val) || 0);
+      distanceBands[rowIdx][field] = num;
+      updateStatsAndWirePreview();
+    }
+
+    function addDistanceBand() {
+      const lastBand = distanceBands[distanceBands.length - 1];
+      const newMin = lastBand ? lastBand.maxKm : 0;
+      const newMax = newMin + 1;
+      
+      distanceBands.push({
+        id: `dist-${Date.now()}`,
+        minKm: newMin,
+        maxKm: newMax
+      });
+
+      // Add a new row in matrix initialized to 20 or 0
+      const newRow = orderTiers.map(() => 20);
+      matrix.push(newRow);
+
+      renderMatrix();
+      showToast(`Added Distance Band: ${newMin}–${newMax} km`);
+    }
+
+    function removeDistanceBand(rowIdx) {
+      if (distanceBands.length <= 1) return;
+      distanceBands.splice(rowIdx, 1);
+      matrix.splice(rowIdx, 1);
+      renderMatrix();
+      showToast('Distance band removed');
+    }
+
+    function updateCellCharge(rowIdx, colIdx, val) {
+      const num = Math.max(0, parseFloat(val) || 0);
+      matrix[rowIdx][colIdx] = num;
+      renderMatrix();
+    }
+
+    function toggleCellFree(rowIdx, colIdx) {
+      if (matrix[rowIdx][colIdx] === 0) {
+        matrix[rowIdx][colIdx] = 20; // Default nominal fee
+      } else {
+        matrix[rowIdx][colIdx] = 0;
+      }
+      renderMatrix();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // GUIDED 3-STEP SETUP FLOW ACTIONS (GAP 2 FIX)
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    function addQuickTierInSetup() {
+      if (orderTiers.length === 0) {
+        orderTiers.push({ id: 'tier-1', from: 0, to: 199, isUnlimited: false });
+      } else if (orderTiers.length === 1) {
+        orderTiers.push({ id: 'tier-2', from: 200, to: 499, isUnlimited: false });
+      } else {
+        const last = orderTiers[orderTiers.length - 1];
+        const nextFrom = last.to ? last.to + 1 : last.from + 500;
+        orderTiers.push({ id: `tier-${Date.now()}`, from: nextFrom, to: null, isUnlimited: true });
+      }
+      updateEmptySetupState();
+      showToast('Order Value Tier added to setup');
+    }
+
+    function addQuickBandInSetup() {
+      if (distanceBands.length === 0) {
+        distanceBands.push({ id: 'dist-1', minKm: 0, maxKm: 2 });
+      } else {
+        const last = distanceBands[distanceBands.length - 1];
+        const nextMin = last.maxKm;
+        const nextMax = nextMin + 2;
+        distanceBands.push({ id: `dist-${Date.now()}`, minKm: nextMin, maxKm: nextMax });
+      }
+      updateEmptySetupState();
+      showToast('Distance Band added to setup');
+    }
+
+    function updateEmptySetupState() {
+      const step1Chips = document.getElementById('step1-tier-chips');
+      const step2Chips = document.getElementById('step2-band-chips');
+      const step3Count = document.getElementById('step3-cell-count');
+      const launchBtn = document.getElementById('btn-open-matrix-from-setup');
+
+      // Update Step 1 Chips
+      if (orderTiers.length === 0) {
+        step1Chips.innerHTML = '<span class="text-[11px] text-zinc-400 italic">None added yet</span>';
+      } else {
+        step1Chips.innerHTML = orderTiers.map((t, idx) => `
+          <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-bold">
+            ₹${t.from} &ndash; ${t.isUnlimited ? '&infin;' : '₹' + t.to}
+          </span>
+        `).join('');
+      }
+
+      // Update Step 2 Chips
+      if (distanceBands.length === 0) {
+        step2Chips.innerHTML = '<span class="text-[11px] text-zinc-400 italic">None added yet</span>';
+      } else {
+        step2Chips.innerHTML = distanceBands.map((b, idx) => `
+          <span class="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded text-[11px] font-bold">
+            ${b.minKm} &ndash; ${b.maxKm} km
+          </span>
+        `).join('');
+      }
+
+      // Update Step 3 State
+      const totalCells = orderTiers.length * distanceBands.length;
+      step3Count.innerText = `${totalCells} Slabs (${distanceBands.length} rows &times; ${orderTiers.length} cols)`;
+
+      if (orderTiers.length > 0 && distanceBands.length > 0) {
+        launchBtn.disabled = false;
+        launchBtn.className = "w-full py-2.5 px-4 bg-[#329937] hover:bg-[#2a802e] text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer";
+      } else {
+        launchBtn.disabled = true;
+        launchBtn.className = "w-full py-2.5 px-4 bg-zinc-200 text-zinc-400 cursor-not-allowed rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5";
+      }
+
+      updateStatsAndWirePreview();
+    }
+
+    function applySetupAndOpenMatrix() {
+      // Rebuild matrix dimensions
+      matrix = distanceBands.map(() => orderTiers.map(() => 0));
+      setViewMode('populated');
+      showToast(`Matrix initialised with ${orderTiers.length * distanceBands.length} editable cells!`);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // PRESETS & PAYLOAD GENERATION
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    function loadNotebookPreset() {
+      orderTiers = [
+        { id: 'tier-1', from: 0, to: 199, isUnlimited: false },
+        { id: 'tier-2', from: 200, to: 499, isUnlimited: false },
+        { id: 'tier-3', from: 500, to: null, isUnlimited: true }
+      ];
+
+      distanceBands = [
+        { id: 'dist-1', minKm: 0, maxKm: 1 },
+        { id: 'dist-2', minKm: 1, maxKm: 2 },
+        { id: 'dist-3', minKm: 2, maxKm: 3 },
+        { id: 'dist-4', minKm: 3, maxKm: 4 },
+        { id: 'dist-5', minKm: 4, maxKm: 5 },
+        { id: 'dist-6', minKm: 5, maxKm: 6 }
+      ];
+
+      matrix = [
+        [0, 0, 0],
+        [20, 10, 0],
+        [50, 20, 0],
+        [40, 30, 10],
+        [60, 40, 20],
+        [60, 50, 0]
+      ];
+
+      setViewMode('populated');
+      showToast("Reset to Owner's physical notebook specs (3 Tiers × 6 Bands = 18 slabs)");
+    }
+
+    function generatePayload() {
+      const min_distance_km = [];
+      const max_distance_km = [];
+      const min_order_value = [];
+      const charge = [];
+
+      distanceBands.forEach((band, rIdx) => {
+        orderTiers.forEach((tier, cIdx) => {
+          min_distance_km.push(band.minKm);
+          max_distance_km.push(band.maxKm);
+          min_order_value.push(tier.from || 0);
+          charge.push(matrix[rIdx] ? matrix[rIdx][cIdx] : 0);
+        });
+      });
+
+      return {
+        min_distance_km,
+        max_distance_km,
+        min_order_value,
+        charge
+      };
+    }
+
+    function updateStatsAndWirePreview() {
+      const totalSlabs = distanceBands.length * orderTiers.length;
+      let freeCount = 0;
+      let maxCharge = 0;
+      let maxRadius = 0;
+
+      distanceBands.forEach((band, r) => {
+        if (band.maxKm > maxRadius) maxRadius = band.maxKm;
+        orderTiers.forEach((tier, c) => {
+          const val = matrix[r] ? matrix[r][c] || 0 : 0;
+          if (val === 0) freeCount++;
+          if (val > maxCharge) maxCharge = val;
+        });
+      });
+
+      const totalSlabsEl = document.getElementById('stat-total-slabs');
+      if (totalSlabsEl) totalSlabsEl.innerText = totalSlabs;
+
+      const freeSlabsEl = document.getElementById('stat-free-slabs');
+      if (freeSlabsEl) freeSlabsEl.innerText = freeCount;
+
+      const maxRadiusEl = document.getElementById('stat-max-radius');
+      if (maxRadiusEl) maxRadiusEl.innerText = `${maxRadius} km`;
+
+      const maxChargeEl = document.getElementById('stat-max-charge');
+      if (maxChargeEl) maxChargeEl.innerText = `₹${maxCharge}`;
+
+      const dimChip = document.getElementById('matrix-dimensions-chip');
+      if (dimChip) dimChip.innerText = `${distanceBands.length} Bands × ${orderTiers.length} Tiers`;
+
+      const saveText = document.getElementById('save-btn-text');
+      if (saveText) saveText.innerText = `Save Slabs (${totalSlabs})`;
+
+      const saveFooterText = document.getElementById('save-btn-footer-text');
+      if (saveFooterText) saveFooterText.innerText = `Save All Slabs (${totalSlabs})`;
+
+      const payload = generatePayload();
+      const codePreview = document.getElementById('wire-code-preview');
+      if (codePreview) codePreview.innerHTML = syntaxHighlight(JSON.stringify(payload, null, 2));
+
+      const modalJson = document.getElementById('modal-json-content');
+      if (modalJson) modalJson.innerText = JSON.stringify(payload, null, 2);
+
+      const modalCount = document.getElementById('modal-slab-count');
+      if (modalCount) modalCount.innerText = `Total Slabs: ${totalSlabs} (Mapped from ${distanceBands.length} rows × ${orderTiers.length} columns)`;
+    }
+
+    function highlightCrosshair(rowIdx, colIdx) {
+      clearCrosshair();
+      const colHeader = document.querySelector(`th[data-col-idx="${colIdx}"]`);
+      if (colHeader) colHeader.classList.add('highlight-col');
+      const rowElem = document.querySelector(`tr[data-row-idx="${rowIdx}"]`);
+      if (rowElem) rowElem.classList.add('highlight-row');
+    }
+
+    function clearCrosshair() {
+      document.querySelectorAll('.highlight-col').forEach(el => el.classList.remove('highlight-col'));
+      document.querySelectorAll('.highlight-row').forEach(el => el.classList.remove('highlight-row'));
+    }
+
+    function togglePayloadModal() {
+      const modal = document.getElementById('payload-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function copyPayloadToClipboard() {
+      const payload = generatePayload();
+      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      const btn = document.getElementById('btn-copy-payload');
+      btn.innerText = 'Copied!';
+      setTimeout(() => { btn.innerText = 'Copy JSON'; }, 2000);
+      showToast('Payload JSON copied to clipboard');
+    }
+
+    function saveAllSlabs() {
+      const total = distanceBands.length * orderTiers.length;
+      showToast(`Successfully saved ${total} delivery slabs to POST /delivery-charges!`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'text-amber-400';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'text-zinc-300 font-bold';
+          } else {
+            cls = 'text-emerald-400';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'text-blue-400';
+        } else if (/null/.test(match)) {
+          cls = 'text-red-400';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMatrix();
+    });
+  </script>
+</body>
+</html>

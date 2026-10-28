@@ -1,0 +1,39 @@
+{
+  "_comment": "CR-390: Day Closure & Settlement module manifest",
+  "module_code": "DC",
+  "module_name": "Day Closure & Settlement",
+  "eyebrow": "DAY CLOSURE & SETTLEMENT",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    {
+      "route": "/settlement/preview",
+      "section": "Settlement Overview",
+      "states": [
+        { "slug": "settlement-overview", "title": "Settlement", "description": "Live settlement summary: cashier-wise collections, payment modes and totals.", "pre_actions": [] },
+        { "slug": "settlement-cashier-expanded", "title": "Settlement \u2014 Cashier Detail", "description": "Expanded cashier row showing order-level breakdown.", "pre_actions": [ { "type": "click", "selector": "[data-testid='cashier-row']:first-child, tr:first-child" }, { "type": "wait", "ms": 500 } ] }
+      ]
+    },
+    {
+      "route": "/reports-module/cashier-settlement",
+      "section": "Cashier Settlement Report",
+      "states": [
+        { "slug": "cashier-settlement-table", "title": "Cashier Settlement Report", "description": "Settlement summary per cashier for the selected date range.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/day-closure",
+      "section": "Day Closure",
+      "states": [
+        { "slug": "day-closure-summary", "title": "Day Closure", "description": "End-of-day summary: total sales, collections, expenses and cash balance.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/reports-module/settlement",
+      "section": "Settlement Report",
+      "states": [
+        { "slug": "settlement-report", "title": "Settlement Report", "description": "Historical settlement data by date range with payment mode breakdown.", "pre_actions": [] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CR-163 — Move Items to Table · MyGenie POS Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:       #22c55e;
+    --green-dark:  #16a34a;
+    --green-light: #dcfce7;
+    --green-ring:  rgba(34,197,94,0.25);
+    --orange:      #f97316;
+    --orange-light:#fff7ed;
+    --dark:        #111827;
+    --mid:         #374151;
+    --gray:        #6b7280;
+    --light-gray:  #9ca3af;
+    --border:      #e5e7eb;
+    --section-bg:  #f9fafb;
+    --white:       #ffffff;
+    --red:         #ef4444;
+    --red-light:   #fef2f2;
+    --amber:       #f59e0b;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    gap: 40px;
+  }
+
+  .page-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light-gray);
+    text-align: center;
+  }
+  .page-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: var(--gray);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ──────────────────────────────────────────
+     SCENE WRAPPER
+  ────────────────────────────────────────── */
+  .scene {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  /* ──────────────────────────────────────────
+     ORDER ENTRY PANEL (left context)
+  ────────────────────────────────────────── */
+  .order-entry {
+    flex: 0 0 320px;
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .oe-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--white);
+  }
+  .oe-header-left { display: flex; align-items: center; gap: 10px; }
+  .oe-back {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; background: var(--white);
+    color: var(--gray);
+  }
+  .oe-room-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    background: var(--orange-light);
+    border: 1px solid #fed7aa;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    color: #c2410c;
+  }
+  .oe-room-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+  }
+  .oe-order-num {
+    font-size: 12px;
+    color: var(--light-gray);
+    font-weight: 500;
+  }
+
+  /* cart content */
+  .oe-body { padding: 0; }
+
+  /* customer row */
+  .oe-customer {
+    padding: 10px 16px;
+    background: #f0fdf4;
+    border-bottom: 1px solid #dcfce7;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .oe-customer-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--green-dark);
+  }
+  .oe-customer-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .oe-customer-room { font-size: 11px; color: var(--gray); }
+
+  /* ── Placed items section ── */
+  .placed-header {
+    padding: 10px 16px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .placed-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--light-gray);
+  }
+
+  /* ─── TRIGGER BUTTON ─── */
+  .move-items-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--dark);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .move-items-btn:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .move-items-btn svg { width: 13px; height: 13px; stroke: var(--green-dark); stroke-width: 2.5; }
+
+  /* item rows */
+  .placed-item {
+    padding: 10px 16px;
+    display: flex; align-items: center;
+    border-bottom: 1px solid var(--section-bg);
+    gap: 10px;
+  }
+  .placed-item-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); flex-shrink: 0;
+  }
+  .placed-item-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--dark); }
+  .placed-item-qty { font-size: 12px; color: var(--gray); margin-right: 4px; }
+  .placed-item-price { font-size: 13px; font-weight: 700; color: var(--dark); font-variant-numeric: tabular-nums; }
+
+  .room-marker {
+    padding: 8px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--section-bg);
+    opacity: 0.5;
+  }
+  .marker-icon { font-size: 11px; color: var(--light-gray); }
+  .marker-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--gray); font-style: italic; }
+  .marker-label {
+    font-size: 10px; font-weight: 600;
+    color: var(--light-gray);
+    padding: 2px 7px; background: var(--section-bg);
+    border-radius: 10px; border: 1px solid var(--border);
+  }
+
+  /* billing section */
+  .oe-totals {
+    padding: 12px 16px;
+    background: var(--section-bg);
+    border-top: 1px solid var(--border);
+  }
+  .oe-total-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray); margin-bottom: 4px; }
+  .oe-total-grand { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: var(--dark); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .oe-bill-btn {
+    margin: 12px 16px;
+    width: calc(100% - 32px);
+    padding: 13px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .oe-bill-btn:hover { background: var(--green-dark); }
+
+  /* ──────────────────────────────────────────
+     MODAL PREVIEW (right side)
+  ────────────────────────────────────────── */
+  .modal-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-scene-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--light-gray);
+  }
+  .modal-scene-label::before, .modal-scene-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .modal-card {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Modal header */
+  .modal-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    background: var(--white);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .modal-header-left { display: flex; flex-direction: column; gap: 6px; }
+  .modal-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dark);
+  }
+  .modal-subtitle {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--gray);
+  }
+  .room-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px;
+    background: var(--orange-light);
+    border: 1px solid #fed7aa;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+    color: #c2410c;
+  }
+  .close-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; margin-top: 2px;
+    color: var(--gray);
+    transition: background 0.15s;
+  }
+  .close-btn:hover { background: var(--section-bg); }
+
+  /* Modal body */
+  .modal-body {
+    flex: 1;
+    padding: 16px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+  }
+
+  .section-hint {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--light-gray);
+    padding: 4px 4px 8px;
+  }
+
+  /* item rows */
+  .split-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    min-height: 64px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .split-row:hover { border-color: #d1d5db; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .split-row:active { transform: scale(0.995); }
+  .split-row.selected {
+    background: #f0fdf4;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
+  }
+  .split-row.disabled {
+    background: #f9fafb;
+    border-color: transparent;
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+  }
+
+  .row-check { flex-shrink: 0; width: 22px; height: 22px; }
+  .row-check svg { width: 22px; height: 22px; stroke-width: 2; }
+
+  .row-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .row-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+  .row-qty { font-size: 12px; color: var(--gray); }
+  .row-price {
+    font-size: 15px; font-weight: 800;
+    color: var(--dark);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .split-row.selected .row-price { color: var(--green-dark); }
+  .disabled-badge {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    color: var(--light-gray);
+    flex-shrink: 0;
+  }
+
+  /* Remark */
+  .remark-section {
+    margin: 4px 0 0;
+    padding: 14px 16px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+  }
+  .remark-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--light-gray);
+    margin-bottom: 8px; display: block;
+  }
+  .remark-input {
+    width: 100%;
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--dark);
+    font-family: 'Inter', sans-serif;
+    resize: none;
+    height: 40px;
+    transition: border-color 0.15s;
+  }
+  .remark-input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-ring);
+    background: var(--white);
+  }
+  .remark-input::placeholder { color: #d1d5db; }
+
+  /* Modal footer */
+  .modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    position: sticky; bottom: 0;
+  }
+  .footer-total { display: flex; flex-direction: column; gap: 2px; }
+  .footer-total-label { font-size: 11px; color: var(--gray); font-weight: 500; }
+  .footer-total-value { font-size: 20px; font-weight: 800; color: var(--dark); font-variant-numeric: tabular-nums; }
+  .footer-total-value.has-amount { color: var(--green-dark); }
+
+  .footer-actions { display: flex; gap: 10px; }
+  .btn-cancel {
+    padding: 11px 20px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--mid);
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-cancel:hover { background: var(--section-bg); border-color: #d1d5db; }
+  .btn-confirm {
+    padding: 11px 22px;
+    border-radius: 12px;
+    border: none;
+    background: var(--green);
+    color: white;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    display: flex; align-items: center; gap: 8px;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 2px 12px rgba(34,197,94,0.35);
+    white-space: nowrap;
+  }
+  .btn-confirm:hover { background: var(--green-dark); box-shadow: 0 4px 16px rgba(34,197,94,0.45); }
+  .btn-confirm:active { transform: scale(0.97); }
+  .btn-confirm:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  .btn-confirm svg { width: 16px; height: 16px; stroke: white; stroke-width: 2.5; }
+
+  /* ──────────────────────────────────────────
+     STATE TABS  (toggle between states)
+  ────────────────────────────────────────── */
+  .state-tabs {
+    display: flex; align-items: center; gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .state-tab {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-size: 12px; font-weight: 600;
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+  .state-tab.active {
+    background: var(--dark);
+    border-color: var(--dark);
+    color: var(--white);
+  }
+  .state-tab:hover:not(.active) { border-color: #9ca3af; color: var(--dark); }
+
+  /* ──────────────────────────────────────────
+     DASHBOARD RESULT PREVIEW
+  ────────────────────────────────────────── */
+  .dashboard-preview {
+    background: var(--white);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    padding: 20px;
+    width: 100%;
+    max-width: 1100px;
+  }
+  .dash-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--gray);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dash-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .dash-card {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .dash-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #d1d5db; }
+  .dash-card.occupied { border-color: #fed7aa; background: #fffbf7; }
+  .dash-card.walk-in-new { border-color: var(--green); background: #f0fdf4; box-shadow: 0 0 0 3px rgba(34,197,94,0.10); }
+  .dash-card-badge {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .dash-card-badge.orange { background: var(--orange); }
+  .dash-card-badge.green { background: var(--green); animation: pulse 2s infinite; }
+  .dash-card-label { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px; font-family: 'Manrope', sans-serif; }
+  .dash-card-sub { font-size: 11px; color: var(--gray); margin-bottom: 10px; }
+  .dash-card-amount { font-size: 15px; font-weight: 700; color: var(--dark); font-variant-numeric: tabular-nums; }
+  .dash-card-time { font-size: 10px; color: var(--light-gray); margin-top: 2px; }
+  .new-tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-radius: 6px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── data-testid badges ── */
+  .testid-badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 600;
+    font-family: monospace;
+    padding: 2px 6px;
+    background: #1e1b4b;
+    color: #a5b4fc;
+    border-radius: 5px;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0;
+  }
+
+  /* ── legend ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    padding: 16px 20px;
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    width: 100%; max-width: 1100px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--mid); font-weight: 500; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ── Page header ── -->
+<div>
+  <div class="page-label">MyGenie POS · CR-163 Design Mockup</div>
+  <div class="page-title">Move Items to Table — Room Split Flow</div>
+  <div class="page-sub">Interactive prototype · click items to select · buttons are wired</div>
+</div>
+
+<!-- ── State tabs ── -->
+<div class="state-tabs">
+  <button class="state-tab active" onclick="setView('trigger')">1 · CartPanel + Trigger</button>
+  <button class="state-tab" onclick="setView('modal-empty')">2 · Modal (nothing selected)</button>
+  <button class="state-tab" onclick="setView('modal-partial')">3 · Modal (items selected)</button>
+  <button class="state-tab" onclick="setView('result')">4 · Dashboard after split</button>
+</div>
+
+<!-- ── SCENE ── -->
+<div class="scene" id="scene-trigger">
+
+  <!-- LEFT: CartPanel -->
+  <div class="order-entry">
+    <!-- Header -->
+    <div class="oe-header">
+      <div class="oe-header-left">
+        <div class="oe-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </div>
+        <div class="oe-room-badge">
+          <div class="oe-room-dot"></div>
+          Room 101
+        </div>
+      </div>
+      <div class="oe-order-num">#015208</div>
+    </div>
+
+    <!-- Customer -->
+    <div class="oe-customer">
+      <div class="oe-customer-avatar">AR</div>
+      <div>
+        <div class="oe-customer-name">Arjun Rawal</div>
+        <div class="oe-customer-room">Room 101 · Check-in: 23 Aug</div>
+      </div>
+    </div>
+
+    <!-- Placed items header + TRIGGER -->
+    <div class="placed-header">
+      <div class="placed-label">Placed Orders</div>
+      <!-- ★ TRIGGER BUTTON ★ -->
+      <button class="move-items-btn" onclick="setView('modal-empty')" data-testid="move-items-trigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M21 16v3a2 2 0 0 0-2 2h-3M8 21H5a2 2 0 0 0-2-2v-3"/><path d="m7 11 5-5 5 5M7 13l5 5 5-5"/></svg>
+        Move Items
+        <span class="testid-badge">move-items-trigger</span>
+      </button>
+    </div>
+
+    <!-- Room marker (disabled) -->
+    <div class="room-marker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" style="color:#9ca3af"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <div class="marker-name">Room Stay — Check-in Marker</div>
+      <div class="marker-label">marker</div>
+    </div>
+
+    <!-- Items -->
+    <div class="placed-item">
+      <div class="placed-item-dot"></div>
+      <div class="placed-item-name">Paneer Tikka</div>
+      <div class="placed-item-qty">×2</div>
+      <div class="placed-item-price">₹640</div>
+    </div>
+    <div class="placed-item">
+      <div class="placed-item-dot"></div>
+      <div class="placed-item-name">Butter Naan</div>
+      <div class="placed-item-qty">×4</div>
+      <div class="placed-item-price">₹180</div>
+    </div>
+    <div class="placed-item">
+      <div class="placed-item-dot"></div>
+      <div class="placed-item-name">Chicken Biryani</div>
+      <div class="placed-item-qty">×1</div>
+      <div class="placed-item-price">₹380</div>
+    </div>
+
+    <!-- Totals -->
+    <div class="oe-totals">
+      <div class="oe-total-row"><span>Food Subtotal</span><span>₹1,200</span></div>
+      <div class="oe-total-row"><span>Room Rent</span><span>₹7,000</span></div>
+      <div class="oe-total-row"><span>GST (5%)</span><span>₹60</span></div>
+      <div class="oe-total-grand"><span>Total Payable</span><span>₹8,260</span></div>
+    </div>
+    <button class="oe-bill-btn">Collect Bill</button>
+  </div>
+
+  <!-- RIGHT: Modal preview -->
+  <div class="modal-preview">
+
+    <div class="modal-scene-label">SplitRoomItemsModal</div>
+
+    <div class="modal-card">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-title">Move Items to Table</div>
+          <div class="modal-subtitle">
+            Moving from
+            <span class="room-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Room 101
+            </span>
+            · Select items to split out
+          </div>
+        </div>
+        <button class="close-btn" onclick="setView('trigger')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body" id="modal-body">
+
+        <div class="section-hint">Select items to move <span class="testid-badge">split-items-modal</span></div>
+
+        <!-- Check-in marker row (always disabled) -->
+        <div class="split-row disabled" data-testid="split-item-checkin">
+          <div class="row-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" ><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="row-info">
+            <div class="row-name" style="color:#9ca3af;">Room Stay Marker</div>
+            <div class="row-qty">Check-in item</div>
+          </div>
+          <div class="disabled-badge">excluded</div>
+          <span class="testid-badge">split-item-checkin</span>
+        </div>
+
+        <!-- Selectable items -->
+        <div class="split-row" id="row-1" onclick="toggleRow(1, 640)" data-testid="split-item-row-3112276">
+          <div class="row-check" id="check-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="row-info">
+            <div class="row-name">Paneer Tikka</div>
+            <div class="row-qty">2 × ₹320</div>
+          </div>
+          <div class="row-price" id="price-1">₹640</div>
+          <span class="testid-badge">split-item-row-3112276</span>
+        </div>
+
+        <div class="split-row" id="row-2" onclick="toggleRow(2, 180)" data-testid="split-item-row-3112277">
+          <div class="row-check" id="check-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="row-info">
+            <div class="row-name">Butter Naan</div>
+            <div class="row-qty">4 × ₹45</div>
+          </div>
+          <div class="row-price" id="price-2">₹180</div>
+          <span class="testid-badge">split-item-row-3112277</span>
+        </div>
+
+        <div class="split-row" id="row-3" onclick="toggleRow(3, 380)" data-testid="split-item-row-3112278">
+          <div class="row-check" id="check-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div class="row-info">
+            <div class="row-name">Chicken Biryani</div>
+            <div class="row-qty">1 × ₹380</div>
+          </div>
+          <div class="row-price" id="price-3">₹380</div>
+          <span class="testid-badge">split-item-row-3112278</span>
+        </div>
+
+        <!-- Remark -->
+        <div class="remark-section">
+          <span class="remark-label">Note (optional)</span>
+          <textarea class="remark-input" placeholder="e.g. friends paying separately..."></textarea>
+        </div>
+
+      </div><!-- end modal-body -->
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <div class="footer-total">
+          <div class="footer-total-label">Moving</div>
+          <div class="footer-total-value" id="total-value">₹0</div>
+        </div>
+        <div class="footer-actions">
+          <button class="btn-cancel" onclick="setView('trigger')">Cancel</button>
+          <button class="btn-confirm" id="confirm-btn" disabled onclick="setView('result')" data-testid="split-confirm-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="m5 12 5 5L20 7"/></svg>
+            <span id="confirm-label">Select Items</span>
+            <span class="testid-badge">split-confirm-btn</span>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- end modal-card -->
+  </div><!-- end modal-preview -->
+
+</div><!-- end scene-trigger -->
+
+
+<!-- ── DASHBOARD RESULT SCENE (hidden initially) ── -->
+<div class="scene" id="scene-result" style="display:none; max-width:1100px; width:100%; flex-direction:column; gap:16px;">
+
+  <div class="modal-scene-label">Dashboard — After Split (Room 101 + new "Room 101" walk-in)</div>
+
+  <div class="dashboard-preview">
+    <div class="dash-title">Walk-In / Room Orders</div>
+    <div class="dash-grid">
+
+      <!-- Original Room 101 (reduced) -->
+      <div class="dash-card occupied">
+        <div class="dash-card-badge orange"></div>
+        <div class="dash-card-label">Room 101</div>
+        <div class="dash-card-sub">Arjun Rawal · Preparing</div>
+        <div class="dash-card-amount">₹7,440</div>
+        <div class="dash-card-time">Biryani + Room Rent</div>
+      </div>
+
+      <!-- New walk-in from split -->
+      <div class="dash-card walk-in-new">
+        <div class="dash-card-badge green"></div>
+        <div class="dash-card-label">Room 101</div>
+        <div class="dash-card-sub">Walk-In · Split Order</div>
+        <div class="dash-card-amount">₹820</div>
+        <div class="new-tag">✦ New · Ready to Bill</div>
+      </div>
+
+      <!-- Other tables for context -->
+      <div class="dash-card">
+        <div class="dash-card-badge orange"></div>
+        <div class="dash-card-label">T3</div>
+        <div class="dash-card-sub">4 guests · Serving</div>
+        <div class="dash-card-amount">₹1,240</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-badge orange"></div>
+        <div class="dash-card-label">T7</div>
+        <div class="dash-card-sub">2 guests · Preparing</div>
+        <div class="dash-card-amount">₹540</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex; gap:12px; justify-content:center; margin-top:8px;">
+    <button class="state-tab" onclick="setView('trigger')" style="font-size:13px; padding:10px 20px; border-radius:12px;">← Back to start</button>
+  </div>
+</div>
+
+
+<!-- ── Legend ── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Selected row — bg-primaryGreen/5 + green border + ring</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div> Unselected row — bg-white + borderGray</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#d1d5db"></div> Disabled (marker) — opacity-50 + cursor-not-allowed</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> Room badge + occupied card</div>
+  <div class="legend-item" style="font-family:monospace; font-size:11px; background:#1e1b4b; color:#a5b4fc; padding:3px 8px; border-radius:6px;">data-testid markers shown inline</div>
+</div>
+
+
+<script>
+  const state = {
+    selected: new Set(),
+    prices: { 1: 640, 2: 180, 3: 380 }
+  };
+
+  function toggleRow(id, price) {
+    const row = document.getElementById(`row-${id}`);
+    const check = document.getElementById(`check-${id}`);
+    const priceEl = document.getElementById(`price-${id}`);
+
+    if (state.selected.has(id)) {
+      state.selected.delete(id);
+      row.classList.remove('selected');
+      check.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>`;
+      priceEl.style.color = 'var(--dark)';
+    } else {
+      state.selected.add(id);
+      row.classList.add('selected');
+      check.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="m8 12 3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      priceEl.style.color = 'var(--green-dark)';
+    }
+    updateFooter();
+  }
+
+  function updateFooter() {
+    const count = state.selected.size;
+    const total = [...state.selected].reduce((sum, id) => sum + state.prices[id], 0);
+    const totalEl = document.getElementById('total-value');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const confirmLabel = document.getElementById('confirm-label');
+
+    totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+    totalEl.className = `footer-total-value${total > 0 ? ' has-amount' : ''}`;
+
+    if (count === 0) {
+      confirmBtn.disabled = true;
+      confirmLabel.textContent = 'Select Items';
+    } else {
+      confirmBtn.disabled = false;
+      confirmLabel.textContent = `Move ${count} Item${count > 1 ? 's' : ''}`;
+    }
+  }
+
+  function setView(view) {
+    const scene = document.getElementById('scene-trigger');
+    const result = document.getElementById('scene-result');
+    const tabs = document.querySelectorAll('.state-tab');
+
+    // Reset selections on modal open
+    if (view === 'modal-empty') {
+      state.selected.clear();
+      [1,2,3].forEach(id => {
+        const row = document.getElementById(`row-${id}`);
+        const check = document.getElementById(`check-${id}`);
+        const priceEl = document.getElementById(`price-${id}`);
+        row.classList.remove('selected');
+        check.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>`;
+        priceEl.style.color = 'var(--dark)';
+      });
+      updateFooter();
+    }
+
+    if (view === 'modal-partial') {
+      // pre-select items 1 and 2
+      state.selected.clear();
+      [1, 2].forEach(id => {
+        state.selected.add(id);
+        const row = document.getElementById(`row-${id}`);
+        const check = document.getElementById(`check-${id}`);
+        const priceEl = document.getElementById(`price-${id}`);
+        row.classList.add('selected');
+        check.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="none"><circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="m8 12 3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        priceEl.style.color = 'var(--green-dark)';
+      });
+      // deselect 3
+      const r3 = document.getElementById('row-3');
+      const c3 = document.getElementById('check-3');
+      const p3 = document.getElementById('price-3');
+      r3.classList.remove('selected');
+      c3.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db"><circle cx="12" cy="12" r="10"/></svg>`;
+      p3.style.color = 'var(--dark)';
+      updateFooter();
+    }
+
+    if (view === 'result') {
+      scene.style.display = 'none';
+      result.style.display = 'flex';
+    } else {
+      scene.style.display = 'flex';
+      result.style.display = 'none';
+    }
+
+    const tabMap = { 'trigger': 0, 'modal-empty': 1, 'modal-partial': 2, 'result': 3 };
+    tabs.forEach((t, i) => t.classList.toggle('active', i === tabMap[view]));
+  }
+</script>
+</body>
+</html>
