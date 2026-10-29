@@ -51,6 +51,7 @@ import PurchaseReportPage from "./pages/reports-module/PurchaseReportPage"; // C
 import PLReportPage from "./pages/reports-module/PLReportPage"; // CR-094
 import ConsumptionReportPage from "./pages/reports-module/ConsumptionReportPage"; // CR-093
 import ItemConsumptionReportPage from "./pages/reports-module/ItemConsumptionReportPage"; // CR-472
+import IngredientMovementReportPage from "./pages/reports-module/IngredientMovementReportPage"; // CR-477
 import SalesAuditPage from "./pages/reports-module/SalesAuditPage"; // CR-474
 import ItemSalesLedgerMockup from "./pages/reports-module/ItemSalesLedgerMockup"; // CR-136
 import VariationAddonMockup from "./pages/reports-module/VariationAddonMockup"; // CR-136
@@ -248,6 +249,7 @@ function App() {
               {/* CR-093: Consumption Report */}
               <Route path="consumption-report" element={<ProtectedRoute><ConsumptionReportPage /></ProtectedRoute>} />
               <Route path="item-consumption" element={<ProtectedRoute><ItemConsumptionReportPage /></ProtectedRoute>} /> {/* CR-472 */}
+              <Route path="ingredient-movement" element={<ProtectedRoute><IngredientMovementReportPage /></ProtectedRoute>} /> {/* CR-477 */}
               <Route path="sales-audit" element={<ProtectedRoute><SalesAuditPage /></ProtectedRoute>} /> {/* CR-474 */}
               {/* CR-117: Order Report Beta */}
               <Route path="order-report-beta" element={<ProtectedRoute><OrderReportBetaPage /></ProtectedRoute>} />

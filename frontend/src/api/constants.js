@@ -232,6 +232,7 @@ export const INVENTORY_TRANSFER_ENDPOINTS = {
   DETAILS: '/api/v2/vendoremployee/inventory-transfer/details',
   RECEIVE: '/api/v2/vendoremployee/inventory-transfer/receive',
   REJECT: '/api/v2/vendoremployee/inventory-transfer/reject',
+  INGREDIENT_MOVEMENT_REPORT: '/api/v2/vendoremployee/inventory-transfer/ingredient-movement-report', // CR-477
 };
 
 // CR-078: Smart Purchase — reporting endpoints (different URL prefix from inventory)

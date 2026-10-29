@@ -2211,3 +2211,8 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/pages/reports-module/OrderReportBetaPage.jsx` | **L50-52:** Added TAB/prepaid/postpaid entries to `getStatusBadge` map. 3 new status badge mappings. | BUG-354 IMPL 2026-10-28 |
 | `src/pages/StatusConfigPage.jsx` | **L1026:** OFF badge text color conditional (white ON, dark OFF). | BUG-624 IMPL 2026-10-28 |
 | `src/components/panels/menu/ProductForm.jsx` | **L511:** Banner text reworded — removed misleading 'Category default' reference. | BUG-627 IMPL 2026-10-28 |
+| `src/pages/reports-module/IngredientMovementReportPage.jsx` | **NEW:** Full ingredient movement report page — received/dispatched toggle, date presets, collapsible table, drill-down, Excel/PDF export. | CR-477 IMPL 2026-10-28 |
+| `src/api/constants.js` | **L235:** Added INGREDIENT_MOVEMENT_REPORT endpoint to INVENTORY_TRANSFER_ENDPOINTS. | CR-477 IMPL 2026-10-28 |
+| `src/api/services/inventoryService.js` | **L4:** Added INVENTORY_TRANSFER_ENDPOINTS import. **L191-197:** Added getIngredientMovementReport() function. | CR-477 IMPL 2026-10-28 |
+| `src/components/layout/Sidebar.jsx` | **L101:** Added "Ingredient Movement" entry below "Item Consumption" in Daily Report section. | CR-477 IMPL 2026-10-28 |
+| `src/App.js` | **L54:** Added import. **L252:** Added route for /reports-module/ingredient-movement. | CR-477 IMPL 2026-10-28 |

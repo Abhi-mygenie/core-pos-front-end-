@@ -1,7 +1,7 @@
 // CR-072: Inventory Service — 22 API functions for inventory CRUD
 // CR-078: +2 services (getDailyConsumptionReport, getVendorItemList)
 import api from '../axios';
-import { INVENTORY_ENDPOINTS, EXPENSE_ENDPOINTS, REPORT_ENDPOINTS } from '../constants';
+import { INVENTORY_ENDPOINTS, EXPENSE_ENDPOINTS, REPORT_ENDPOINTS, INVENTORY_TRANSFER_ENDPOINTS } from '../constants'; // CR-477: +INVENTORY_TRANSFER_ENDPOINTS
 import { fromAPI, toAPI } from '../transforms/inventoryTransform';
 
 // ── Ingredients Master ──────────────────────────────────────────
@@ -185,6 +185,14 @@ export async function getDailyConsumptionReport({ from_date, to_date, ...rest })
 export async function getItemConsumptionReport({ from_date, to_date }) {
   const res = await api.post(REPORT_ENDPOINTS.ITEM_CONSUMPTION_REPORT, { from_date, to_date });
   return res.data;
+}
+
+// CR-477: Ingredient Movement Report (dispatched/received stock transfers between stores)
+export async function getIngredientMovementReport({ movement, from_date, to_date, stock_title }) {
+  const body = { movement, from_date, to_date };
+  if (stock_title) body.stock_title = stock_title;
+  const res = await api.post(INVENTORY_TRANSFER_ENDPOINTS.INGREDIENT_MOVEMENT_REPORT, body);
+  return res.data; // No wrapper — body IS the report
 }
 
 // CR-474: Date-Wise Sales Revenue Report (Sales Audit)

@@ -98,6 +98,7 @@ const sidebarMenuItems = [
       { id: "profit-loss", label: "P&L Report", path: "/reports-module/profit-loss" },  // CR-094
       { id: "consumption-report", label: "Consumption Report", path: "/reports-module/consumption-report" }, // CR-093
       { id: "item-consumption", label: "Item Consumption", path: "/reports-module/item-consumption" }, // CR-472
+      { id: "ingredient-movement", label: "Ingredient Movement", path: "/reports-module/ingredient-movement" }, // CR-477
       { id: "sales-audit", label: "Sales Audit", path: "/reports-module/sales-audit" }, // CR-474
       { id: "summary", label: "Sales Summary", path: "/reports/summary" },
       { id: "audit", label: "Order Report", path: "/reports/audit" },
