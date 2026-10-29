@@ -2216,3 +2216,4 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/api/services/inventoryService.js` | **L4:** Added INVENTORY_TRANSFER_ENDPOINTS import. **L191-197:** Added getIngredientMovementReport() function. | CR-477 IMPL 2026-10-28 |
 | `src/components/layout/Sidebar.jsx` | **L101:** Added "Ingredient Movement" entry below "Item Consumption" in Daily Report section. | CR-477 IMPL 2026-10-28 |
 | `src/App.js` | **L54:** Added import. **L252:** Added route for /reports-module/ingredient-movement. | CR-477 IMPL 2026-10-28 |
+| `src/pages/reports-module/ItemConsumptionReportPage.jsx` | **L98:** Extended search filter to match ingredient_name in consumed/returned/wastage arrays. **L282:** Placeholder updated to 'Search item or ingredient...'. | CR-478 IMPL 2026-10-28 |

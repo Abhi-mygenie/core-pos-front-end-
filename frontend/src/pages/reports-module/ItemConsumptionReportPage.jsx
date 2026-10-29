@@ -95,7 +95,14 @@ export default function ItemConsumptionReportPage() {
   const filteredItems = useMemo(() => {
     let result = items;
     if (foodForFilter !== 'all') result = result.filter(it => it.food_for === foodForFilter); // CR-475
-    if (itemSearch) result = result.filter(it => it.item_name?.toLowerCase().includes(itemSearch.toLowerCase()));
+    if (itemSearch) { // CR-478: search item name + ingredient names
+      const term = itemSearch.toLowerCase();
+      result = result.filter(it => {
+        if (it.item_name?.toLowerCase().includes(term)) return true;
+        const ings = [...(it.consumed_ingredients || []), ...(it.returned_ingredients || []), ...(it.wastage_ingredients || [])];
+        return ings.some(ing => ing.ingredient_name?.toLowerCase().includes(term));
+      });
+    }
     return result;
   }, [items, itemSearch, foodForFilter]); // CR-475: +foodForFilter
 
@@ -272,7 +279,7 @@ export default function ItemConsumptionReportPage() {
               <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1">Search</label>
               <div className="relative">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2" />
-                <input placeholder="Search item name..." value={itemSearch} onChange={e => setItemSearch(e.target.value)} className="h-8 text-xs w-48 border border-slate-200 rounded-md pl-7 pr-2" data-testid="item-consumption-search-input" />
+                <input placeholder="Search item or ingredient..." value={itemSearch} onChange={e => setItemSearch(e.target.value)} className="h-8 text-xs w-48 border border-slate-200 rounded-md pl-7 pr-2" data-testid="item-consumption-search-input" />
               </div>
             </div>
             {itemSearch && (

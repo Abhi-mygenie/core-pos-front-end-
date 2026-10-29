@@ -2021,3 +2021,5 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 **Last Updated:** 2026-10-28 (BUG FIX — BUG-624, BUG-627). BUG-624: StatusConfigPage OFF badge color:#fff → conditional COLORS.darkText. BUG-627: ProductForm banner reworded — removed misleading 'Category default: stationName'. Both GATE_5A_IMPLEMENTED.
 
 **Last Updated:** 2026-10-28 (CR-477 GATE_5A_IMPLEMENTED). Ingredient Movement Report — new page with received/dispatched toggle, date presets, collapsible ingredient table with transfer drill-down, Excel+PDF export. Live on Palm House: 13 ingredients, 22 transfers. 1 new file + 4 modified.
+
+**Last Updated:** 2026-10-28 (CR-478 GATE_5A_IMPLEMENTED). Item Consumption search now matches ingredient names across consumed/returned/wastage arrays. 1 file, 2 edits.
