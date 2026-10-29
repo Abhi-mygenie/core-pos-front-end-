@@ -33802,7 +33802,7 @@
         "CR-077"
       ],
       "intake_doc": "change_requests/CR-477_INGREDIENT_MOVEMENT_REPORT_INTAKE.md",
-      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO.",
+      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO. | 2026-10-28: Gate 3 line-by-line plan complete. 5 edits (M1-M4 + F1). Plan: plans/CR-477_IMPLEMENTATION_PLAN_2026_10_28.md",
       "open_decisions": []
     }
   ],
