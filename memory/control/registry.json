@@ -33804,6 +33804,25 @@
       "intake_doc": "change_requests/CR-477_INGREDIENT_MOVEMENT_REPORT_INTAKE.md",
       "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO. | 2026-10-28: Gate 3 line-by-line plan complete. 5 edits (M1-M4 + F1). Plan: plans/CR-477_IMPLEMENTATION_PLAN_2026_10_28.md | 2026-10-28: IMPLEMENTED \u2014 1 new file (425 lines) + 4 modified. Verified live: 13 ingredients, 22 transfers. Compile clean.",
       "open_decisions": []
+    },
+    {
+      "id": "CR-478",
+      "title": "Item Consumption Report: Search by ingredient name (extends existing item-name search to match consumed/returned/wastage ingredients)",
+      "type": "CR",
+      "priority": "P2",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "area": "Reports / Inventory",
+      "sprint_key": "nov_cr_batch",
+      "risk": "LOW",
+      "registered": "2026-10-28",
+      "registered_by": "INTAKE agent",
+      "related": [
+        "CR-472",
+        "CR-475"
+      ],
+      "intake_doc": "change_requests/CR-478_ITEM_CONSUMPTION_INGREDIENT_SEARCH_INTAKE.md",
+      "notes": "Owner-reported. 1 file, ~7 lines. Client-side filter extension \u2014 no API change. Fast Lane eligible.",
+      "open_decisions": []
     }
   ],
   "meta": {
