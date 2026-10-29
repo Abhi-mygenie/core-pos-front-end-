@@ -33724,7 +33724,7 @@
       "title": "CR-430 OFF badge unreadable \u2014 white text on light grey background",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Settings / Display",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33734,7 +33734,7 @@
         "CR-430"
       ],
       "intake_doc": "change_requests/BUG-624_CR430_OFF_BADGE_CONTRAST_INTAKE.md",
-      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 conditional text color on OFF badge. 1 file, 1 line."
+      "notes": "QA batch 2026-10-28: StatusConfigPage L1026 color:#fff on borderGray. 1 line fix. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 conditional text color on OFF badge. 1 file, 1 line. | 2026-10-28: QA PASS \u2014 testing agent 20/20 scenarios + 4/4 API tests. iteration_11.json."
     },
     {
       "id": "BUG-625",
@@ -33775,7 +33775,7 @@
       "title": "CR-449 banner shows item station as 'Category default' when override active \u2014 misleading text",
       "type": "BUG",
       "priority": "P3",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Menu Management",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33785,14 +33785,14 @@
         "CR-449"
       ],
       "intake_doc": "change_requests/BUG-627_CR449_BANNER_STATION_NAME_MISLEADING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 banner text reworded, removed misleading Category default reference. 1 file, 1 line."
+      "notes": "QA batch 2026-10-28: ProductForm L511 product.stationName is effective station, not category station. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-10-28: BUG FIX \u2014 banner text reworded, removed misleading Category default reference. 1 file, 1 line. | 2026-10-28: QA PASS \u2014 testing agent 20/20 scenarios + 4/4 API tests. iteration_11.json."
     },
     {
       "id": "CR-477",
       "title": "Ingredient Movement Report (Dispatched / Received) \u2014 collapsible ingredient rows with transfer drill-down",
       "type": "CR",
       "priority": "P1",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Inventory / Reports",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
@@ -33802,7 +33802,7 @@
         "CR-077"
       ],
       "intake_doc": "change_requests/CR-477_INGREDIENT_MOVEMENT_REPORT_INTAKE.md",
-      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO. | 2026-10-28: Gate 3 line-by-line plan complete. 5 edits (M1-M4 + F1). Plan: plans/CR-477_IMPLEMENTATION_PLAN_2026_10_28.md | 2026-10-28: IMPLEMENTED \u2014 1 new file (425 lines) + 4 modified. Verified live: 13 ingredients, 22 transfers. Compile clean.",
+      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO. | 2026-10-28: Gate 3 line-by-line plan complete. 5 edits (M1-M4 + F1). Plan: plans/CR-477_IMPLEMENTATION_PLAN_2026_10_28.md | 2026-10-28: IMPLEMENTED \u2014 1 new file (425 lines) + 4 modified. Verified live: 13 ingredients, 22 transfers. Compile clean. | 2026-10-28: QA PASS \u2014 testing agent 20/20 scenarios + 4/4 API tests. iteration_11.json.",
       "open_decisions": []
     },
     {
@@ -33810,7 +33810,7 @@
       "title": "Item Consumption Report: Search by ingredient name (extends existing item-name search to match consumed/returned/wastage ingredients)",
       "type": "CR",
       "priority": "P2",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASS",
       "area": "Reports / Inventory",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -33821,7 +33821,7 @@
         "CR-475"
       ],
       "intake_doc": "change_requests/CR-478_ITEM_CONSUMPTION_INGREDIENT_SEARCH_INTAKE.md",
-      "notes": "Owner-reported. 1 file, ~7 lines. Client-side filter extension \u2014 no API change. Fast Lane eligible. | 2026-10-28: IA+Plan complete. 1 file, 2 edits (~8 lines). Fast Lane eligible. Design mockup created. | 2026-10-28: IMPLEMENTED \u2014 E1 filter logic (L98, 7 lines) + E2 placeholder (L282). Compile clean.",
+      "notes": "Owner-reported. 1 file, ~7 lines. Client-side filter extension \u2014 no API change. Fast Lane eligible. | 2026-10-28: IA+Plan complete. 1 file, 2 edits (~8 lines). Fast Lane eligible. Design mockup created. | 2026-10-28: IMPLEMENTED \u2014 E1 filter logic (L98, 7 lines) + E2 placeholder (L282). Compile clean. | 2026-10-28: QA PASS \u2014 testing agent 20/20 scenarios + 4/4 API tests. iteration_11.json.",
       "open_decisions": []
     }
   ],

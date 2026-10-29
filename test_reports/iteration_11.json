@@ -1,0 +1,50 @@
+{
+  "summary": "QA of 4 new items (BUG-624, BUG-627, CR-477, CR-478) on the preview URL against preprod. All 20 scenarios (T1-T20) PASS in UI (Playwright) and data was cross-checked directly against the preprod APIs (pytest, 4/4 pass). No functional bugs found. There are a few minor code-review and design notes below.",
+  "results": {
+    "T1_BUG624_OFF": "PASS - OFF badge color rgb(26,26,26) on bg rgb(229,229,229)",
+    "T2_BUG624_ON": "PASS - ON badge white on rgb(50,153,55); setting toggled back to its original value, nothing saved",
+    "T3_T4_BUG627": "PASS - banner reads 'Item-level station override active. KOTs will route to the selected station.', with no 'Category default:'. Reset button hides the banner. Kunafa Mahal: none of the first 12 items had a saved override, so the override was set in the form without saving (item 50-50 Aam-E-Bahar)",
+    "T5_sidebar": "PASS - sidebar-ingredient-movement sits right after sidebar-item-consumption (testid is 'sidebar-ingredient-movement', not '-link')",
+    "T6_page_load": "PASS - title, Received active (#F97316), L7D active, dates 2026-10-22 to 2026-10-29",
+    "T7_data": "PASS - 13 ingredients, KPI 13 ingredients / 22 transfers",
+    "T8_drilldown": "PASS - From/To/Dispatched/Received/Qty/Ref/Status shown, green 'received' badge",
+    "T9_T14_dispatched_empty": "PASS - 0 results, 'No Ingredient Movements Found' with icon, export buttons disabled",
+    "T10_search": "PASS - 'Blue' -> blue lotus, Blue Spirulina, Blue Tokai Attikan Coffee, Blue Tokai Coffee Cold Brew Bold",
+    "T11_presets": "PASS - Today 2026-10-29..2026-10-29, L7D back to 2026-10-22..2026-10-29",
+    "T12_excel": "PASS - downloaded ingredient-movement-received-2026-10-22-2026-10-29.csv",
+    "T13_pdf": "PASS - popup opened, titled 'Ingredient Movement Report'",
+    "T15_placeholder": "PASS - 'Search item or ingredient...'",
+    "T16_vanilla": "PASS - 3 items: Banana Date Energiser, Cacao Peanut Banana Date, Vanilla Berry Protein Shake",
+    "T17_blue_tokai": "PASS - 23 items",
+    "T18_americano": "PASS - 3 items (Americano (Long Black), Decaf Americano (Long Black), Iced Americano)",
+    "T19_clear": "PASS - 77 items (3M range 2026-07-29..2026-10-29; expected ~78, depends on the date window)",
+    "T20_combined": "PASS - Blue Tokai+Normal=20 (all Normal badges), +Premium=3, +All=23"
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Ingredient Movement drill-down", "issues": ["The QTY (right-aligned) and REF (left-aligned) columns sit flush against each other, so '1.5 ltrTRF-808-2026-0065' runs together. Add padding (e.g. pl-4 on the Ref cells and header)."]}
+    ]
+  },
+  "critical_code_review_comments": [
+    "IngredientMovementReportPage: toISO uses toISOString(), which is UTC. For IST users between 00:00 and 05:30 'today' resolves to yesterday, so presets and max dates are off by one day. Use local date formatting.",
+    "IngredientMovementReportPage: PRESETS (today/daysAgo) is computed once when the module loads. If the tab stays open past midnight, the presets show stale dates. Compute them inside applyPreset.",
+    "ProductForm L532: the dropdown option 'Category Default (${product.stationName})' uses the same stationName that BUG-627 identified as the effective (possibly item-level) station, not the category's. When an item has a saved override, the option label may show the wrong station. Same root cause as BUG-627; consider using the category's station name.",
+    "IngredientMovementReportPage CSV export: cells are wrapped in quotes but embedded double quotes are not escaped."
+  ],
+  "test_report_links": ["/app/backend/tests/test_qa_batch_12_cr477_cr478.py", "/app/test_reports/pytest/pytest_batch12.xml"],
+  "action_items": [
+    "Optional: add padding between the Qty and Ref columns in the CR-477 drill-down",
+    "Optional: switch to local-date helpers and compute presets lazily in CR-477",
+    "Optional: review the 'Category Default (stationName)' option label in ProductForm"
+  ],
+  "updated_files": ["/app/backend/tests/test_qa_batch_12_cr477_cr478.py"],
+  "success_rate": {"backend": "100% (4/4 preprod API + marker tests)", "frontend": "100% (20/20 scenarios)"},
+  "test_credentials": "From /app/memory/test_credentials.md: owner@palmhouse.com, owner@kunafamahal.com / Qplazm@10",
+  "seed_data_creation": "None. Nothing was saved; the BUG-627 override was only set in the unsaved form.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login takes about 20-60s to reach /dashboard (click 'Retry Failed' if it appears). Navigate in-app with history.pushState+popstate, or with expand-sidebar -> sidebar-reports -> sidebar-<child id>. Preprod API: POST /api/v1/auth/vendoremployee/common-login returns token. POST /api/v2/vendoremployee/inventory-transfer/ingredient-movement-report {movement,from_date,to_date}. POST /api/v2/vendoremployee/report/item-consumption-report {from_date,to_date}. In the Kunafa Mahal menu, none of the first 12 items has a persisted station override."
+}
