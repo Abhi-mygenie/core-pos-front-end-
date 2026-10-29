@@ -33792,7 +33792,7 @@
       "title": "Ingredient Movement Report (Dispatched / Received) \u2014 collapsible ingredient rows with transfer drill-down",
       "type": "CR",
       "priority": "P1",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "area": "Inventory / Reports",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
@@ -33802,13 +33802,8 @@
         "CR-077"
       ],
       "intake_doc": "change_requests/CR-477_INGREDIENT_MOVEMENT_REPORT_INTAKE.md",
-      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code.",
-      "open_decisions": [
-        "OD-477-01",
-        "OD-477-02",
-        "OD-477-03",
-        "OD-477-04"
-      ]
+      "notes": "Backend API live on preprod. Verified: 19 ingredients, 52 lines for Palm House received. New page \u2014 no existing code. | 2026-10-28: ODs locked \u2014 OD-477-01: Daily Report below Item Consumption. OD-477-02: Excel+PDF export. OD-477-03: free text search. OD-477-04: last 7 days default. | 2026-10-28: Gate 2+3 combined. IA + plan complete. Design guidelines generated. 1 new file + 4 modified. Awaiting Gate 4 GO.",
+      "open_decisions": []
     }
   ],
   "meta": {
