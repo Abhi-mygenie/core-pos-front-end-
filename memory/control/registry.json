@@ -34570,7 +34570,7 @@
       "sprint_key": "TBD",
       "id": "BUG-648",
       "title": "CR-482 P6: Weight popup — typing adds to pre-filled 1000 instead of replacing (500 → 1000500 gm → ₹4,60,230)",
-      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND BLOCKER. Next: PLANNING Gate 2-3.",
+      "status": "GATE_3_PLAN_COMPLETE — E1 WEM select-on-focus (everyone) + E6 unit test. Awaiting Gate 4 GO.",
       "files": "WeightEntryModal.jsx",
       "notes": "P0/CRITICAL (money). QA F4. autoFocus + pre-filled value not selected → user types 500, gets 1000500. P6 Enter-to-add commits the bad value instantly. Pre-existing issue amplified by CR-482 P6. Planning must decide: fix for shortcuts ON only or for everyone. Related: CR-482.",
       "artifact_refs": [
@@ -34583,6 +34583,16 @@
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md",
+          "type": "plan"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-482_QA_BUGS_648_651_IMPACT_ANALYSIS_2026_11_05.md",
+          "type": "impact"
         }
       ],
       "completeness": "1/7",
@@ -34598,7 +34608,7 @@
       "sprint_key": "TBD",
       "id": "BUG-649",
       "title": "CR-482 P8: +/- key typed into search box when no last-added item exists",
-      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Next: PLANNING.",
+      "status": "GATE_3_PLAN_COMPLETE — E2 OrderEntry L655-658 move preventDefault. Awaiting Gate 4 GO.",
       "files": "OrderEntry.jsx",
       "notes": "P2/LOW. QA F1. When no lastAddedKeyRef (sent-only table, new order, after weight item), the P8 skip path doesn't call preventDefault → +/- appears in search, grid empties. Workaround: Backspace. Related: CR-482.",
       "artifact_refs": [
@@ -34611,6 +34621,16 @@
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md",
+          "type": "plan"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-482_QA_BUGS_648_651_IMPACT_ANALYSIS_2026_11_05.md",
+          "type": "impact"
         }
       ],
       "completeness": "1/7",
@@ -34626,7 +34646,7 @@
       "sprint_key": "TBD",
       "id": "BUG-650",
       "title": "CR-482 P10: Ctrl+↓ lands on oldest unsent row — handover says newest",
-      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Owner decision needed: top or newest row.",
+      "status": "GATE_3_PLAN_COMPLETE — E3 OrderEntry L636/L639 newest row + E5 docs. Awaiting Gate 4 GO.",
       "files": "OrderEntry.jsx",
       "notes": "P3/LOW. QA F2. Code targets first unsent row (matching the plan). Handover doc says 'newest item'. Owner picks which behaviour, then fix code or docs. Related: CR-482.",
       "artifact_refs": [
@@ -34639,6 +34659,16 @@
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md",
+          "type": "plan"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-482_QA_BUGS_648_651_IMPACT_ANALYSIS_2026_11_05.md",
+          "type": "impact"
         }
       ],
       "completeness": "1/7",
@@ -34654,7 +34684,7 @@
       "sprint_key": "TBD",
       "id": "BUG-651",
       "title": "CR-482 P10: Cart-row orange highlight partly hidden (only top/bottom lines, first row shows bottom line only)",
-      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Next: PLANNING.",
+      "status": "GATE_3_PLAN_COMPLETE — E4 index.css scoped inset ring (normal gate). Awaiting Gate 4 GO.",
       "files": "CartPanel.jsx, index.css",
       "notes": "P3/LOW. QA F3. kbd-focus outline inside scrolling container clips left/right sides. First row shows only bottom line — ambiguous which row is selected. Related: CR-482.",
       "artifact_refs": [
@@ -34667,6 +34697,16 @@
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md",
+          "type": "plan"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-482_QA_BUGS_648_651_IMPACT_ANALYSIS_2026_11_05.md",
+          "type": "impact"
         }
       ],
       "completeness": "1/7",
