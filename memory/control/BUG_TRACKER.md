@@ -6,6 +6,8 @@
 | **BUG-643** | Credit Management — Order Details pop-up (SS3) does not close on X click | **P1** | **MEDIUM** | GATE_1_INTAKE_FROZEN — ROOT CAUSE CONFIRMED BY CODE | `change_requests/BUG-643_CREDIT_ORDER_DETAIL_SHEET_WONT_CLOSE_INTAKE.md` |
 | **BUG-644** | Credit Management — Order Details (SS3) does not show items (header says 3 items) | **P1** | **MEDIUM** | CLOSED — NOT A BUG (owner 2026-11-05: behaviour, no change) | `change_requests/BUG-644_CREDIT_ORDER_DETAIL_ITEMS_NOT_SHOWN_INTAKE.md` |
 | **BUG-645** | Order Report + Orders (Beta) — Payment filter (cash/card/upi) shows wrong amount for split (partial) payments | **P1** | **MEDIUM** | INVESTIGATION_COMPLETE — ODs closed. Next: PLANNING Gate 2-3. | `change_requests/BUG-645_PARTIAL_PAYMENT_FILTER_WRONG_AMOUNT_INTAKE.md` |
+| **BUG-646** | Inclusive Tax Items Inflate Grand Total (Double-Counted in 4 files) | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-646_INCLUSIVE_TAX_DOUBLE_COUNTED_GRAND_TOTAL_INTAKE.md` |
+| **BUG-647** | GST OFF — API Payload Still Sends gst_tax and Inflated order_amount | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-647_GST_OFF_PAYLOAD_STILL_SENDS_GST_INTAKE.md` |
 
 ---
 

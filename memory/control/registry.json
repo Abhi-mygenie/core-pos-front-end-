@@ -34497,6 +34497,68 @@
         "BUG-272",
         "BUG-546"
       ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-646",
+      "title": "Inclusive Tax Items Inflate Grand Total (Double-Counted in 4 files)",
+      "status": "INVESTIGATION_COMPLETE — ODs open (OD-646-01, OD-646-02). Next: PLANNING Gate 2-3.",
+      "files": "CollectPaymentPanel.jsx, orderTransform.js, OrderEntry.jsx, CartPanel.jsx",
+      "notes": "P0/CRITICAL. FE_BUG. ₹100 inclusive-5%-GST item shows ₹105 grand total. rawFinalTotal adds tax on top of prices that already contain inclusive tax. Same break-point in 4 files. ~50 lines fix. Planning skip NOT eligible (4+ files, R5/R6 hotspot). Related: BUG-431 (PMS double-count, different path), INV-GST-001 (GST audit). 2 ODs open.",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-646_INCLUSIVE_TAX_DOUBLE_COUNTED_GRAND_TOTAL_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation Report",
+          "path": "memory/evidence/BUG-646-647_TAX_INCL_GST_OFF_INVESTIGATION_REPORT_2026_11_05.md",
+          "type": "investigation"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Payments / Coupons / Credit",
+      "code_reality": "NONE",
+      "related": [
+        "BUG-431",
+        "BUG-305",
+        "BUG-359",
+        "INV-GST-001",
+        "BUG-647"
+      ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-647",
+      "title": "GST OFF — API Payload Still Sends gst_tax and Inflated order_amount",
+      "status": "INVESTIGATION_COMPLETE — ODs open (OD-647-01, OD-647-02). Next: PLANNING Gate 2-3.",
+      "files": "orderTransform.js, OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx",
+      "notes": "P0/CRITICAL. FE_BUG. BUG-336 fixed UI display (CPP L287) but buildCartItem/calcOrderTotals/localTax/taxTotals have NO gstStatus check — payload sends GST even when restaurant has GST disabled. Cashier sees ₹239, backend receives ₹250. ~30-40 lines fix across 5 sites. Planning skip NOT eligible. Related: BUG-336, INV-GST-001. 2 ODs open.",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-647_GST_OFF_PAYLOAD_STILL_SENDS_GST_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Investigation Report",
+          "path": "memory/evidence/BUG-646-647_TAX_INCL_GST_OFF_INVESTIGATION_REPORT_2026_11_05.md",
+          "type": "investigation"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Payments / Coupons / Credit",
+      "code_reality": "NONE",
+      "related": [
+        "BUG-336",
+        "INV-GST-001",
+        "BUG-646"
+      ]
     }
   ],
   "meta": {
