@@ -1,0 +1,54 @@
+{
+  "status": true,
+  "message": "Local reservations fetched successfully",
+  "data": {
+    "reservations": [
+      {
+        "id": 15,
+        "booking_id": "San1ce92d141430",
+        "cm_booking_id": null,
+        "channel": "Direct",
+        "hotel_code": "sandbox-pms",
+        "checkin": "2026-09-03",
+        "checkout": "2026-09-04",
+        "status": "confirmed",
+        "operational_status": "pending",
+        "booked_on": "2026-09-03 10:46:49",
+        "amount_before_tax": null,
+        "amount_after_tax": "5400.00",
+        "currency": null,
+        "special_requests": null,
+        "user_id_document_id": 16952,
+        "guest": {
+          "first_name": "TEST",
+          "last_name": "TEST",
+          "email": "***",
+          "phone": "***",
+          "address_city": null,
+          "address_state": null,
+          "address_country": null
+        },
+        "rooms": [
+          {
+            "id": 15,
+            "room_code": "executive",
+            "rateplan_code": "executive-s-ep",
+            "guest_name": "TEST",
+            "adults": 1,
+            "children": 0,
+            "line_status": "pending",
+            "restaurant_table_id": null,
+            "table_no": null,
+            "table_title": null,
+            "order_id": null,
+            "user_id_document_id": null,
+            "order_f_order_status": null,
+            "order_payment_status": null,
+            "checked_in_at": null,
+            "checked_out_at": null
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-358-P5 V3 — Rates & Restrictions + Mark No-Show</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+
+/* ─── DESIGN TOKENS ─────────────────────────────────────────────────
+   Brand Green: #329937 | Orange: #F26B33 | Danger: #EF4444
+   Warning: #F59E0B | Border: #E5E5E5 | BG: #F7F7F7 | Card: #FFF
+   Text: #1A1A1A / #555 / #888 | FORBIDDEN: #22C55E, #3B82F6, slate-*
+──────────────────────────────────────────────────────────────────── */
+
+/* SIDEBAR */
+.sb{width:220px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow:hidden}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;color:#555;font-size:13px;font-weight:500;border-left:3px solid transparent;cursor:pointer;transition:background .12s}
+.nav-item:hover{background:#F7F7F7;color:#1A1A1A}
+.nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.07);color:#329937}
+.nav-sub{display:flex;align-items:center;padding:8px 16px 8px 38px;font-size:12px;color:#888;cursor:pointer;transition:background .12s}
+.nav-sub:hover{background:#F7F7F7;color:#1A1A1A}
+.nav-sub.active{color:#329937;font-weight:600;background:rgba(50,153,55,.04)}
+
+/* TABS */
+.tab-btn{padding:0 18px;height:44px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;font-family:'Poppins',sans-serif;color:#888;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.tab-btn.active{color:#1A1A1A;border-bottom-color:#F26B33;font-weight:600}
+
+/* SUB-TABS pill style */
+.sub-tab{height:32px;padding:0 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;font-family:'Poppins',sans-serif;color:#666;transition:background .12s,color .12s}
+.sub-tab.active{background:#329937;color:#fff;font-weight:600}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;white-space:nowrap;gap:4px}
+.badge-green{background:rgba(50,153,55,.1);color:#217A28;border:1px solid rgba(50,153,55,.2)}
+.badge-amber{background:rgba(245,158,11,.1);color:#92400E;border:1px solid rgba(245,158,11,.25)}
+.badge-red{background:#FEE2E2;color:#B91C1C;border:1px solid #FECACA}
+.badge-orange{background:rgba(242,107,51,.1);color:#9A3412;border:1px solid rgba(242,107,51,.2)}
+.badge-blue{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+
+/* BTN */
+.btn{height:36px;padding:0 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:6px;border:none;transition:background .15s,opacity .15s;white-space:nowrap}
+.btn-primary{background:#329937;color:#fff}.btn-primary:hover{background:#2B8230}
+.btn-outline{background:#fff;color:#1A1A1A;border:1px solid #E5E5E5}.btn-outline:hover{background:#FAFAFA}
+.btn-danger{background:#EF4444;color:#fff}.btn-danger:hover{background:#D32F2F}
+.btn-danger-outline{background:#fff;color:#EF4444;border:1px solid rgba(239,68,68,.35)}.btn-danger-outline:hover{background:#FEE2E2}
+.btn-dark{background:#1A1A1A;color:#fff}.btn-dark:hover{background:#333}
+.btn-sm{height:30px;padding:0 12px;font-size:12px;border-radius:6px}
+.btn-xs{height:26px;padding:0 10px;font-size:11px;border-radius:6px}
+
+/* RATE MATRIX */
+.rate-cell{padding:6px 5px;cursor:pointer;transition:background .12s;position:relative}
+.rate-cell:hover .rate-val{border-color:#329937;background:rgba(50,153,55,.04)}
+.rate-val{height:34px;border:1px solid #E5E5E5;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;font-family:'Courier New',monospace;color:#1A1A1A;background:#fff;transition:border-color .12s,background .12s}
+.rate-cell.staged .rate-val{border:2px solid #F26B33;background:#FFF7ED;color:#C2410C}
+.rate-cell.staged::after{content:'';position:absolute;top:8px;right:7px;width:0;height:0;border-left:6px solid transparent;border-top:6px solid #F26B33}
+.rate-cell.weekend .rate-val{background:#FFFBEB}
+.rate-val.stop-sell{background:#FEE2E2;border-color:rgba(239,68,68,.3);color:#B91C1C}
+
+/* RESTRICTION CHIP */
+.rest-chip{display:inline-flex;align-items:center;font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:.02em;margin-top:2px}
+.chip-cta{background:#FEF3C7;color:#92400E}
+.chip-ctd{background:#FEF3C7;color:#92400E}
+.chip-stop{background:#FEE2E2;color:#B91C1C}
+.chip-min{background:#EFF6FF;color:#1D4ED8}
+
+/* ARRIVALS TABLE */
+.arr-row{display:grid;align-items:center;padding:12px 16px;border-bottom:1px solid #F5F5F5;gap:12px}
+.arr-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;padding:9px 16px;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
+
+/* TOGGLE SWITCH */
+.toggle{width:44px;height:22px;border-radius:11px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle .thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on .thumb{left:24px}
+
+/* POPOVER */
+.popover{position:absolute;background:#fff;border:1px solid #E5E5E5;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.13);z-index:100;padding:16px;width:260px;display:none}
+.popover.open{display:block}
+
+/* MODAL OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);backdrop-filter:blur(2px);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;box-shadow:0 16px 48px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto}
+
+/* DIFF TABLE */
+.diff-row{display:grid;grid-template-columns:80px 100px 130px 90px 90px 80px;gap:0;padding:9px 14px;border-bottom:1px solid #F5F5F5;align-items:center}
+.diff-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#888;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
+
+/* STICKY REVIEW BAR */
+.review-bar{position:fixed;bottom:0;left:220px;right:0;background:#fff;border-top:1px solid #E5E5E5;padding:12px 28px;display:none;align-items:center;justify-content:space-between;gap:16px;z-index:50;box-shadow:0 -4px 16px rgba(0,0,0,.07)}
+.review-bar.visible{display:flex}
+
+/* BULK DRAWER */
+.drawer{position:fixed;right:0;top:0;bottom:0;width:380px;background:#fff;border-left:1px solid #E5E5E5;box-shadow:-8px 0 24px rgba(0,0,0,.08);z-index:150;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .2s ease}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════════════ -->
+<aside class="sb">
+  <div style="padding:14px 16px 12px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;gap:10px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:32px;width:32px;object-fit:contain">
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#1A1A1A">MyGenie</div>
+      <div style="font-size:10px;color:#888">The Goan Kitchen · <span style="color:#329937;font-weight:600">PMS</span></div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:6px 0">
+    <div class="nav-item" onclick="showView('channel')"><i data-lucide="layout-grid" style="width:17px;height:17px;flex-shrink:0"></i>Dashboard</div>
+    <div class="nav-item" onclick="showView('channel')"><i data-lucide="door-open" style="width:17px;height:17px;flex-shrink:0"></i>Front Desk</div>
+    <div class="nav-item active" onclick="showView('channel')" id="nav-rooms"><i data-lucide="bed-double" style="width:17px;height:17px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:14px;height:14px;color:#329937"></i></div>
+    <div class="nav-sub active" onclick="showView('arrivals')" id="nav-arrivals">Arrivals</div>
+    <div class="nav-sub" onclick="showView('channel')" id="nav-channel">Channel Manager</div>
+    <div class="nav-sub" onclick="showView('channel')">Room Status</div>
+    <div class="nav-sub" onclick="showView('channel')">Tape Chart</div>
+    <div style="height:1px;background:#F0F0F0;margin:4px 8px"></div>
+    <div class="nav-item"><i data-lucide="bar-chart-3" style="width:17px;height:17px;flex-shrink:0"></i>Reports</div>
+    <div class="nav-item"><i data-lucide="settings" style="width:17px;height:17px;flex-shrink:0"></i>Settings</div>
+  </nav>
+  <div style="padding:10px 16px;border-top:1px solid #E5E5E5;display:flex;align-items:center;gap:8px">
+    <div style="width:30px;height:30px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;truncate">Owner</div><div style="font-size:10px;color:#888">#69</div></div>
+    <button style="background:none;border:none;cursor:pointer;color:#888"><i data-lucide="log-out" style="width:15px;height:15px"></i></button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VIEW 1: CHANNEL MANAGER — Rates & Restrictions Tab -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<main id="view-channel" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:64px">
+
+  <!-- Page header + tabs -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:0">
+      <span style="font-size:17px;font-weight:700;padding:12px 0;margin-right:24px">Channel Manager</span>
+      <button class="tab-btn" onclick="switchMainTab('ota',this)">OTA Channels</button>
+      <button class="tab-btn" onclick="switchMainTab('setup',this)">AIOSELL Setup</button>
+      <button class="tab-btn" onclick="switchMainTab('mapping',this)">Room Mapping</button>
+      <button class="tab-btn active" onclick="switchMainTab('rates',this)">Rates &amp; Restrictions</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;align-items:center;gap:6px;padding:0 12px;height:32px;background:#F0FDF4;border:1px solid rgba(50,153,55,.25);border-radius:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#329937"></div>
+        <span style="font-size:12px;color:#217A28;font-weight:500">AIOSELL Connected</span>
+      </div>
+      <button class="btn btn-dark btn-sm"><i data-lucide="refresh-cw" style="width:13px;height:13px"></i> Sync Now</button>
+    </div>
+  </div>
+
+  <div style="padding:20px 28px;display:flex;flex-direction:column;gap:0">
+
+    <!-- Sub-tabs + date controls -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:2px;background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:3px">
+        <button class="sub-tab active" id="st-rates" onclick="switchSubTab('rates',this)">Rates</button>
+        <button class="sub-tab" id="st-inv" onclick="switchSubTab('inv',this)">Inventory Restrictions</button>
+        <button class="sub-tab" id="st-raterestrict" onclick="switchSubTab('raterestrict',this)">Rate Restrictions</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <!-- Quick range pills -->
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-outline btn-xs active-range" onclick="setRange(7,this)" style="border-color:#329937;color:#329937;background:rgba(50,153,55,.06)">7 Days</button>
+          <button class="btn btn-outline btn-xs" onclick="setRange(14,this)">14 Days</button>
+          <button class="btn btn-outline btn-xs" onclick="setRange(30,this)">30 Days</button>
+        </div>
+        <!-- Date pickers -->
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="date" id="dt-start" value="2026-09-10" style="height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:12px;font-family:Poppins,sans-serif;color:#1A1A1A">
+          <span style="color:#999;font-size:12px">→</span>
+          <input type="date" id="dt-end" value="2026-09-16" style="height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:12px;font-family:Poppins,sans-serif;color:#1A1A1A">
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="fetchRates()"><i data-lucide="download" style="width:13px;height:13px"></i> Fetch from Aiosell</button>
+        <button class="btn btn-outline btn-sm" onclick="toggleBulkDrawer()"><i data-lucide="layers" style="width:13px;height:13px"></i> Bulk Editor</button>
+      </div>
+    </div>
+
+    <!-- ── RATES SUB-TAB ──────────────────────────────────── -->
+    <div id="st-rates-content" class="fade-in">
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;overflow:hidden">
+        <!-- Header -->
+        <div style="padding:12px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <span style="font-size:14px;font-weight:600">Rate Grid</span>
+            <span style="font-size:12px;color:#888;margin-left:10px">10 Sep – 16 Sep 2026 · sandbox-pms</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="staged-count-header" style="font-size:12px;color:#888;display:none"><span id="sc-num" style="font-weight:700;color:#F26B33">0</span> changes staged</span>
+            <span style="font-size:11px;color:#888;background:#FAFAFA;border:1px solid #E5E5E5;border-radius:6px;padding:3px 8px">Click a cell to edit · Orange = staged</span>
+          </div>
+        </div>
+
+        <!-- Rate Matrix -->
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;min-width:700px" id="rate-table">
+            <thead>
+              <tr style="background:#FAFAFA;border-bottom:1px solid #E5E5E5">
+                <th style="padding:9px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;width:200px;position:sticky;left:0;background:#FAFAFA;border-right:1px solid #E5E5E5;z-index:5">Room · Rate Plan</th>
+                <th class="tdate" data-date="2026-09-10" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px"><div style="font-size:10px;font-weight:600;color:#888">WED</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">10 Sep</div></th>
+                <th class="tdate" data-date="2026-09-11" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px"><div style="font-size:10px;font-weight:600;color:#888">THU</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">11 Sep</div></th>
+                <th class="tdate" data-date="2026-09-12" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px"><div style="font-size:10px;font-weight:600;color:#888">FRI</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">12 Sep</div></th>
+                <th class="tdate weekend" data-date="2026-09-13" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px;background:#FFFBEB"><div style="font-size:10px;font-weight:600;color:#F59E0B">SAT</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">13 Sep</div></th>
+                <th class="tdate weekend" data-date="2026-09-14" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px;background:#FFFBEB"><div style="font-size:10px;font-weight:600;color:#F59E0B">SUN</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">14 Sep</div></th>
+                <th class="tdate" data-date="2026-09-15" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px"><div style="font-size:10px;font-weight:600;color:#888">MON</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">15 Sep</div></th>
+                <th class="tdate" data-date="2026-09-16" style="text-align:center;font-size:11px;font-weight:700;color:#888;padding:6px 4px;min-width:88px"><div style="font-size:10px;font-weight:600;color:#888">TUE</div><div style="font-size:12px;font-weight:700;color:#1A1A1A">16 Sep</div></th>
+              </tr>
+              <!-- EXECUTIVE group header -->
+              <tr><td colspan="8" style="padding:6px 16px;background:#F7F7F7;border-bottom:1px solid #E5E5E5;border-top:1px solid #E5E5E5"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#666"><i data-lucide="bed" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:5px"></i>Executive Room</span></td></tr>
+            </thead>
+            <tbody id="rate-body">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Annotation -->
+      <div style="margin-top:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888"><div style="width:14px;height:14px;border:1px solid #E5E5E5;border-radius:3px;background:#fff"></div>Live OTA rate</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888"><div style="width:14px;height:14px;border:2px solid #F26B33;border-radius:3px;background:#FFF7ED"></div>Staged (not pushed yet)</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888"><div style="width:14px;height:14px;background:#FFFBEB;border:1px solid #E5E5E5;border-radius:3px"></div>Weekend column</div>
+        <div style="font-size:11px;color:#888;margin-left:auto;font-style:italic">Weekend rates ≠ weekday rates · Review before push</div>
+      </div>
+    </div>
+
+    <!-- ── INVENTORY RESTRICTIONS SUB-TAB ──────────────────── -->
+    <div id="st-inv-content" style="display:none" class="fade-in">
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;overflow:hidden">
+        <div style="padding:12px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+          <div><span style="font-size:14px;font-weight:600">Inventory Restrictions</span><span style="font-size:12px;color:#888;margin-left:10px">Stop-sell, Min Stay, CTA / CTD per room type</span></div>
+          <button class="btn btn-primary btn-sm" onclick="openPushModal('inv')"><i data-lucide="send" style="width:13px;height:13px"></i> Push Restrictions</button>
+        </div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+          <!-- executive -->
+          <div style="border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+            <div style="padding:10px 16px;background:#FAFAFA;border-bottom:1px solid #E5E5E5;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><i data-lucide="bed" style="width:15px;height:15px;color:#666"></i>Executive Room <span class="badge badge-green" style="font-size:10px">2 rooms</span></div>
+            <div style="padding:14px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Stop Sell</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle" id="tg-ex-stop" onclick="toggleSw(this)"><div class="thumb"></div></div><span id="tg-ex-stop-lbl" style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Min Stay (nights)</label><input type="number" value="1" min="1" style="width:100%;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif"></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Closed to Arrival (CTA)</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle" id="tg-ex-cta" onclick="toggleSw(this)"><div class="thumb"></div></div><span id="tg-ex-cta-lbl" style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Closed to Departure (CTD)</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle" id="tg-ex-ctd" onclick="toggleSw(this)"><div class="thumb"></div></div><span id="tg-ex-ctd-lbl" style="font-size:12px;color:#666">Off</span></div></div>
+            </div>
+          </div>
+          <!-- suite — with stop sell ON to show state -->
+          <div style="border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+            <div style="padding:10px 16px;background:#FAFAFA;border-bottom:1px solid #E5E5E5;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px"><i data-lucide="bed-double" style="width:15px;height:15px;color:#666"></i>Suite <span class="badge badge-green" style="font-size:10px">4 rooms</span><span class="badge badge-red" style="font-size:10px">Stop Sell ON</span></div>
+            <div style="padding:14px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Stop Sell</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle on" id="tg-su-stop" onclick="toggleSw(this)" style="background:#EF4444"><div class="thumb"></div></div><span id="tg-su-stop-lbl" style="font-size:12px;color:#EF4444;font-weight:500">On</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Min Stay (nights)</label><input type="number" value="2" min="1" style="width:100%;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif"></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Closed to Arrival (CTA)</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle" id="tg-su-cta" onclick="toggleSw(this)"><div class="thumb"></div></div><span id="tg-su-cta-lbl" style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:6px">Closed to Departure (CTD)</label><div style="display:flex;align-items:center;gap:8px"><div class="toggle on" id="tg-su-ctd" onclick="toggleSw(this)" style="background:#329937"><div class="thumb"></div></div><span id="tg-su-ctd-lbl" style="font-size:12px;color:#329937;font-weight:500">On</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RATE RESTRICTIONS SUB-TAB ──────────────────────────── -->
+    <div id="st-raterestrict-content" style="display:none" class="fade-in">
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;overflow:hidden">
+        <div style="padding:12px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+          <div><span style="font-size:14px;font-weight:600">Rate Restrictions</span><span style="font-size:12px;color:#888;margin-left:10px">CTA / CTD / Min Stay per rate plan</span></div>
+          <button class="btn btn-primary btn-sm" onclick="openPushModal('rr')"><i data-lucide="send" style="width:13px;height:13px"></i> Push Rate Restrictions</button>
+        </div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+          <!-- Row for each rateplan -->
+          <div style="border:1px solid #E5E5E5;border-radius:10px;padding:14px 16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:4px;padding:2px 7px;color:#555;font-weight:600">executive</span><span style="color:#888">·</span><span style="color:#555;font-weight:600">EP Single</span><span style="font-size:11px;color:#888">(executive-s-ep)</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">Min Stay</label><input type="number" value="1" style="width:100%;height:34px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif"></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">Stop Sell</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div><span style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">CTA</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div><span style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">CTD</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div><span style="font-size:12px;color:#666">Off</span></div></div>
+            </div>
+          </div>
+          <div style="border:1px solid #E5E5E5;border-radius:10px;padding:14px 16px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="font-size:11px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:4px;padding:2px 7px;color:#555;font-weight:600">suite</span><span style="color:#888">·</span><span style="color:#555;font-weight:600">EP Double</span><span style="font-size:11px;color:#888">(suite-d-ep)</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">Min Stay</label><input type="number" value="2" style="width:100%;height:34px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif"></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">Stop Sell</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div><span style="font-size:12px;color:#666">Off</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">CTA</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle on" onclick="toggleSw(this)" style="background:#329937"><div class="thumb"></div></div><span style="font-size:12px;color:#329937;font-weight:500">On</span></div></div>
+              <div><label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">CTD</label><div style="display:flex;align-items:center;gap:8px;height:34px"><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div><span style="font-size:12px;color:#666">Off</span></div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#888;text-align:center;padding:4px">+ 6 more rate plans — scroll or expand to view</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VIEW 2: ARRIVALS PAGE — with Mark No-Show action              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<main id="view-arrivals" style="flex:1;overflow-y:auto;display:none;flex-direction:column;padding-bottom:64px">
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:0">
+      <span style="font-size:17px;font-weight:700;padding:12px 0;margin-right:24px">Arrivals</span>
+      <button class="tab-btn" onclick="switchArrTab('today',this)">Today</button>
+      <button class="tab-btn active" onclick="switchArrTab('late',this)">Late <span style="font-size:10px;background:#FEE2E2;color:#B91C1C;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:700">2</span></button>
+      <button class="tab-btn" onclick="switchArrTab('upcoming',this)">Upcoming</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <span style="font-size:12px;color:#888;align-self:center">Tuesday, 8 September 2026</span>
+    </div>
+  </div>
+
+  <div style="padding:20px 28px;display:flex;flex-direction:column;gap:16px">
+
+    <!-- Late arrivals warning banner -->
+    <div style="background:#FFF8EC;border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:10px">
+      <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#F59E0B;flex-shrink:0"></i>
+      <div style="font-size:12px;color:#92400E"><strong>2 overdue arrivals</strong> — check-in date has passed. Mark as No-Show to release room inventory to OTA channels. Only booking.com / gommt bookings can be marked as No-Show.</div>
+    </div>
+
+    <!-- Arrivals table -->
+    <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;overflow:hidden">
+      <div class="arr-hdr" style="display:grid;grid-template-columns:1fr 120px 120px 90px 120px">
+        <div>Guest / Booking</div>
+        <div>Stay Dates</div>
+        <div>Room</div>
+        <div>Channel</div>
+        <div style="text-align:right">Actions</div>
+      </div>
+
+      <!-- Overdue booking 1 — booking.com LATE -->
+      <div class="arr-row" style="grid-template-columns:1fr 120px 120px 90px 120px;background:#FFF8F8">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="font-size:13px;font-weight:600">Rahul Sharma</div>
+            <span class="badge badge-red">LATE +1d</span>
+          </div>
+          <div style="font-size:11px;color:#888;margin-top:2px">BDC7497606 · +91 98765 43210</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">7 Sep → 9 Sep</div>
+          <div style="font-size:11px;color:#888">2 nights</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">executive</div>
+          <div style="font-size:11px;color:#888">Unassigned</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <img src="https://www.google.com/s2/favicons?domain=booking.com&sz=14" style="width:14px;height:14px">
+            <span style="font-size:11px;color:#555">booking.com</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button class="btn btn-outline btn-xs"><i data-lucide="log-in" style="width:11px;height:11px"></i> Check In</button>
+          <button class="btn btn-danger-outline btn-xs" onclick="openNoShowDialog('BDC7497606','Rahul Sharma','7 Sep','executive','booking.com')">
+            <i data-lucide="user-x" style="width:11px;height:11px"></i> No-Show
+          </button>
+        </div>
+      </div>
+
+      <!-- Overdue booking 2 — gommt LATE -->
+      <div class="arr-row" style="grid-template-columns:1fr 120px 120px 90px 120px;background:#FFF8F8">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="font-size:13px;font-weight:600">Priya Verma</div>
+            <span class="badge badge-red">LATE +1d</span>
+          </div>
+          <div style="font-size:11px;color:#888;margin-top:2px">GOMMT-44512 · +91 99887 76655</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">7 Sep → 10 Sep</div>
+          <div style="font-size:11px;color:#888">3 nights</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">suite</div>
+          <div style="font-size:11px;color:#888">Unassigned</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:11px;font-weight:700;color:#E43">G</span>
+            <span style="font-size:11px;color:#555">gommt</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button class="btn btn-outline btn-xs"><i data-lucide="log-in" style="width:11px;height:11px"></i> Check In</button>
+          <button class="btn btn-danger-outline btn-xs" onclick="openNoShowDialog('GOMMT-44512','Priya Verma','7 Sep','suite','gommt')">
+            <i data-lucide="user-x" style="width:11px;height:11px"></i> No-Show
+          </button>
+        </div>
+      </div>
+
+      <!-- Normal upcoming — Direct — NO No-Show button -->
+      <div class="arr-row" style="grid-template-columns:1fr 120px 120px 90px 120px">
+        <div>
+          <div style="font-size:13px;font-weight:600">Arjun Mehta</div>
+          <div style="font-size:11px;color:#888;margin-top:2px">MG-69-BD4A · +91 98001 23456</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">9 Sep → 11 Sep</div>
+          <div style="font-size:11px;color:#888">2 nights</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:500">suite</div>
+          <div style="font-size:11px;color:#888">r4</div>
+        </div>
+        <div><span style="font-size:11px;color:#555;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:4px;padding:2px 7px">Direct</span></div>
+        <div style="display:flex;gap:6px;justify-content:flex-end">
+          <button class="btn btn-primary btn-xs"><i data-lucide="log-in" style="width:11px;height:11px"></i> Check In</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note: Direct bookings -->
+    <div style="font-size:11px;color:#888;display:flex;align-items:center;gap:6px;padding:0 4px">
+      <i data-lucide="info" style="width:12px;height:12px"></i>
+      No-Show button only appears for <strong>booking.com</strong> and <strong>gommt</strong> channels with pending status and overdue check-in date. Direct bookings are handled via standard cancellation.
+    </div>
+  </div>
+</main>
+
+</div><!-- end flex container -->
+
+<!-- ════════════════════════════════════════════════════════════════
+     CELL QUICK-EDIT POPOVER
+════════════════════════════════════════════════════════════════ -->
+<div id="cell-popover" class="popover" style="z-index:200">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div>
+      <div style="font-size:13px;font-weight:700" id="pop-title">Edit Rate</div>
+      <div style="font-size:11px;color:#888;margin-top:1px" id="pop-sub"></div>
+    </div>
+    <button onclick="closePopover()" style="background:none;border:none;cursor:pointer;color:#888;padding:2px"><i data-lucide="x" style="width:15px;height:15px"></i></button>
+  </div>
+  <div style="margin-bottom:12px">
+    <div style="font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Current Live OTA Rate</div>
+    <div style="font-size:13px;font-weight:700;color:#555" id="pop-current">₹7,400</div>
+  </div>
+  <!-- Rate input -->
+  <div style="display:flex;align-items:center;border:1.5px solid #329937;border-radius:8px;overflow:hidden;margin-bottom:10px">
+    <span style="padding:0 10px;font-size:13px;font-weight:600;color:#888;background:#F9F9F9;border-right:1px solid #E5E5E5;align-self:stretch;display:flex;align-items:center">₹</span>
+    <input type="number" id="pop-input" style="flex:1;height:38px;border:none;outline:none;padding:0 10px;font-size:14px;font-weight:700;font-family:'Courier New',monospace;color:#1A1A1A" value="7400">
+  </div>
+  <!-- Quick chips -->
+  <div style="display:flex;gap:5px;margin-bottom:14px">
+    <button onclick="adjustRate(-500)" style="flex:1;height:28px;border:1px solid #E5E5E5;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#555">-₹500</button>
+    <button onclick="adjustRate(-100)" style="flex:1;height:28px;border:1px solid #E5E5E5;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#555">-₹100</button>
+    <button onclick="adjustRate(100)"  style="flex:1;height:28px;border:1px solid #E5E5E5;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#329937">+₹100</button>
+    <button onclick="adjustRate(500)"  style="flex:1;height:28px;border:1px solid #E5E5E5;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#329937">+₹500</button>
+  </div>
+  <!-- Actions -->
+  <div style="display:flex;gap:8px">
+    <button onclick="closePopover()" style="flex:1;height:34px;border:1px solid #E5E5E5;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666;font-family:Poppins,sans-serif">Cancel</button>
+    <button onclick="stageRate()" style="flex:1;height:34px;background:#329937;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:Poppins,sans-serif">Stage Change</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     STICKY REVIEW BAR
+════════════════════════════════════════════════════════════════ -->
+<div class="review-bar" id="review-bar" style="left:220px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:8px;height:8px;border-radius:50%;background:#F26B33"></div>
+    <span style="font-size:13px;font-weight:600;color:#1A1A1A"><span id="rb-count">0</span> rate change(s) staged and pending push to live OTAs</span>
+    <span style="font-size:11px;color:#888">· Changes are held locally until you confirm push</span>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button onclick="discardAll()" style="background:none;border:none;cursor:pointer;font-size:12px;color:#EF4444;font-family:Poppins,sans-serif;font-weight:500;text-decoration:underline">Discard All</button>
+    <button onclick="openDiffModal()" class="btn btn-primary btn-sm"><i data-lucide="eye" style="width:13px;height:13px"></i> Review &amp; Push to OTAs</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     DIFF MODAL — Before / After Push
+════════════════════════════════════════════════════════════════ -->
+<div id="diff-overlay" class="overlay">
+  <div class="modal fade-in" style="width:720px">
+    <div style="padding:20px 24px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:16px;font-weight:700">Push Rates to Live OTAs</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Review every change before it goes live on Booking.com and Goibibo/MMT</div>
+      </div>
+      <button onclick="closeDiffModal()" style="background:none;border:none;cursor:pointer;color:#888"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+    </div>
+    <!-- Critical warning -->
+    <div style="margin:16px 24px 0;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:11px 14px;display:flex;align-items:flex-start;gap:10px">
+      <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#F26B33;flex-shrink:0;margin-top:1px"></i>
+      <div style="font-size:12px;color:#9A3412;line-height:1.5"><strong>Critical action:</strong> Pushing these changes will immediately update live rates on Booking.com, Goibibo/MMT, and all connected channels. New rates take effect instantly for guest bookings.</div>
+    </div>
+    <!-- Diff table -->
+    <div style="padding:16px 24px">
+      <div class="diff-row diff-hdr">
+        <div>Date</div><div>Room</div><div>Rate Plan</div><div style="text-align:right">Live Rate</div><div style="text-align:right">New Rate</div><div style="text-align:right">Change</div>
+      </div>
+      <div id="diff-rows"></div>
+    </div>
+    <!-- Destinations -->
+    <div style="padding:0 24px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:11px;color:#888;font-weight:500">Pushed to:</span>
+      <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;border:1px solid #E5E5E5;border-radius:12px;font-size:11px;font-weight:600;color:#555;background:#FAFAFA"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=12" style="width:12px;height:12px"> Booking.com</div>
+      <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;border:1px solid #E5E5E5;border-radius:12px;font-size:11px;font-weight:600;color:#555;background:#FAFAFA"><span style="font-size:10px;font-weight:700;color:#E43">G</span> Goibibo / MMT</div>
+      <span style="font-size:11px;color:#888;margin-left:4px">via Aiosell Channel Manager</span>
+    </div>
+    <!-- Actions -->
+    <div style="padding:16px 24px;border-top:1px solid #E5E5E5;display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeDiffModal()" class="btn btn-outline">Back to Editing</button>
+      <button onclick="confirmPush()" class="btn btn-primary"><i data-lucide="send" style="width:14px;height:14px"></i> Confirm &amp; Push Live Rates</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     PUSH SUCCESS / GENERIC CONFIRM MODAL
+════════════════════════════════════════════════════════════════ -->
+<div id="push-ok-overlay" class="overlay">
+  <div class="modal fade-in" style="width:360px;padding:28px 24px;text-align:center">
+    <div style="width:52px;height:52px;border-radius:50%;background:rgba(50,153,55,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><i data-lucide="check-circle-2" style="width:26px;height:26px;color:#329937"></i></div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px" id="push-ok-title">Rates Pushed Successfully</div>
+    <div style="font-size:13px;color:#666;margin-bottom:20px" id="push-ok-msg">Your rate changes are now live on Booking.com and Goibibo/MMT.</div>
+    <button onclick="document.getElementById('push-ok-overlay').classList.remove('open')" class="btn btn-primary" style="width:100%">Done</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MARK NO-SHOW CONFIRMATION DIALOG
+════════════════════════════════════════════════════════════════ -->
+<div id="noshow-overlay" class="overlay">
+  <div class="modal fade-in" style="width:420px;padding:0">
+    <div style="padding:20px 22px;border-bottom:1px solid #E5E5E5">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <div style="width:32px;height:32px;border-radius:8px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user-x" style="width:16px;height:16px;color:#B91C1C"></i></div>
+        <div>
+          <div style="font-size:15px;font-weight:700">Confirm Mark No-Show</div>
+          <span class="badge badge-red" style="font-size:10px;margin-top:2px">Permanent &amp; Irreversible Action</span>
+        </div>
+      </div>
+    </div>
+    <div style="padding:18px 22px;display:flex;flex-direction:column;gap:10px">
+      <!-- Guest details -->
+      <div style="background:#FAFAFA;border:1px solid #E5E5E5;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:7px">
+        <div style="display:grid;grid-template-columns:90px 1fr;gap:4px;font-size:12px">
+          <span style="color:#888;font-weight:500">Guest</span><span id="ns-guest" style="font-weight:600"></span>
+          <span style="color:#888;font-weight:500">Booking ID</span><span id="ns-booking" style="font-weight:600;font-size:11px"></span>
+          <span style="color:#888;font-weight:500">Check-in</span><span id="ns-checkin" style="font-weight:600"></span>
+          <span style="color:#888;font-weight:500">Room</span><span id="ns-room" style="font-weight:600"></span>
+          <span style="color:#888;font-weight:500">Channel</span><span id="ns-channel" style="font-weight:600"></span>
+        </div>
+      </div>
+      <!-- Warning -->
+      <div style="background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:11px 13px;font-size:12px;color:#991B1B;line-height:1.5;display:flex;gap:8px;align-items:flex-start">
+        <i data-lucide="triangle-alert" style="width:14px;height:14px;flex-shrink:0;margin-top:1px;color:#B91C1C"></i>
+        Marking this booking as No-Show will <strong>notify <span id="ns-channel-warn"></span></strong>, cancel the reservation, and immediately release the room back to available inventory. <strong>This action cannot be undone.</strong>
+      </div>
+      <!-- Reason note -->
+      <div>
+        <label style="font-size:11px;font-weight:500;color:#666;display:block;margin-bottom:5px">Front-desk remark (optional)</label>
+        <input type="text" placeholder="e.g. Guest did not respond to calls" style="width:100%;height:34px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:12px;font-family:Poppins,sans-serif">
+      </div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid #E5E5E5;display:flex;gap:10px">
+      <button onclick="closeNoShow()" class="btn btn-outline" style="flex:1">Cancel / Keep Booking</button>
+      <button onclick="confirmNoShow()" class="btn btn-danger" style="flex:1"><i data-lucide="user-x" style="width:13px;height:13px"></i> Mark No-Show &amp; Release Room</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     BULK EDITOR DRAWER
+════════════════════════════════════════════════════════════════ -->
+<div id="bulk-drawer" class="drawer">
+  <div style="padding:18px 20px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;justify-content:space-between">
+    <div><div style="font-size:15px;font-weight:700">Bulk Rate &amp; Restriction Editor</div><div style="font-size:11px;color:#888;margin-top:2px">Apply changes across multiple dates, rooms, or rate plans</div></div>
+    <button onclick="toggleBulkDrawer()" style="background:none;border:none;cursor:pointer;color:#888"><i data-lucide="x" style="width:17px;height:17px"></i></button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:16px">
+    <div>
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Date Range</label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="date" value="2026-09-10" style="flex:1;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:12px;font-family:Poppins,sans-serif">
+        <span style="color:#999">→</span>
+        <input type="date" value="2026-09-20" style="flex:1;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:12px;font-family:Poppins,sans-serif">
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#666;align-self:center">Days:</span>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Mon</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Tue</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Wed</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Thu</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Fri</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox"> Sat</label>
+        <label style="font-size:12px;display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox"> Sun</label>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Room Types</label>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked> Executive Room</label>
+        <label style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked> Suite</label>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Rate Plans</label>
+      <select style="width:100%;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif">
+        <option>All Rate Plans</option>
+        <option>EP only</option>
+        <option>CP only</option>
+      </select>
+    </div>
+    <div style="height:1px;background:#E5E5E5"></div>
+    <div>
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Rate Adjustment</label>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <select style="flex:1;height:36px;border:1px solid #E5E5E5;border-radius:6px;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif">
+          <option>Set to fixed value (₹)</option>
+          <option>Increase by amount (₹)</option>
+          <option>Decrease by amount (₹)</option>
+          <option>Increase by percent (%)</option>
+          <option>Decrease by percent (%)</option>
+        </select>
+        <div style="display:flex;align-items:center;border:1px solid #E5E5E5;border-radius:6px;overflow:hidden;flex:1">
+          <span style="padding:0 10px;font-size:13px;font-weight:600;color:#888;background:#F9F9F9;border-right:1px solid #E5E5E5;align-self:stretch;display:flex;align-items:center">₹</span>
+          <input type="number" placeholder="e.g. 4500" style="flex:1;height:36px;border:none;outline:none;padding:0 10px;font-size:13px;font-family:Poppins,sans-serif">
+        </div>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:8px">Restrictions (optional)</label>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px">Stop Sell</span><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px">Closed to Arrival (CTA)</span><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px">Closed to Departure (CTD)</span><div class="toggle" onclick="toggleSw(this)"><div class="thumb"></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px">Min Stay (nights)</span><input type="number" value="1" min="1" style="width:70px;height:32px;border:1px solid #E5E5E5;border-radius:6px;padding:0 8px;font-size:13px;font-family:Poppins,sans-serif"></div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:14px 20px;border-top:1px solid #E5E5E5;display:flex;gap:10px;align-items:center">
+    <span style="font-size:12px;color:#888;flex:1">Will modify <strong id="bulk-preview-count">56</strong> cells</span>
+    <button onclick="toggleBulkDrawer()" class="btn btn-outline btn-sm">Cancel</button>
+    <button onclick="stageBulkRates()" class="btn btn-primary btn-sm"><i data-lucide="layers" style="width:13px;height:13px"></i> Stage Bulk Updates</button>
+  </div>
+</div>
+<div id="drawer-scrim" onclick="toggleBulkDrawer()" style="display:none;position:fixed;inset:0;background:transparent;z-index:140"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+/* ── RATE DATA (from live probe 2026-09-08) ── */
+const RATE_DATA = {
+  '2026-09-10': {'executive-s-ep':7400,'executive-s-cp':3199,'executive-d-cp':3199,'executive-d-ep':2999,'suite-s-ep':31500,'suite-s-cp':5998,'suite-d-cp':5998,'suite-d-ep':3999},
+  '2026-09-11': {'executive-s-ep':3700,'executive-s-cp':3199,'executive-d-cp':3199,'executive-d-ep':2999,'suite-s-ep':3700,'suite-s-cp':5998,'suite-d-cp':5998,'suite-d-ep':3999},
+  '2026-09-12': {'executive-s-ep':3700,'executive-s-cp':2040,'executive-d-cp':1700,'executive-d-ep':5000,'suite-s-ep':3700,'suite-s-cp':2683,'suite-d-cp':4999,'suite-d-ep':4000},
+  '2026-09-13': {'executive-s-ep':7400,'executive-s-cp':2040,'executive-d-cp':1700,'executive-d-ep':5000,'suite-s-ep':31500,'suite-s-cp':2683,'suite-d-cp':4999,'suite-d-ep':4000},
+  '2026-09-14': {'executive-s-ep':7400,'executive-s-cp':2040,'executive-d-cp':1700,'executive-d-ep':5000,'suite-s-ep':31500,'suite-s-cp':2683,'suite-d-cp':4999,'suite-d-ep':400},
+  '2026-09-15': {'executive-s-ep':7400,'executive-s-cp':2040,'executive-d-cp':2500,'executive-d-ep':5000,'suite-s-ep':31500,'suite-s-cp':2683,'suite-d-cp':3500,'suite-d-ep':400},
+  '2026-09-16': {'executive-s-ep':7400,'executive-s-cp':2040,'executive-d-cp':1700,'executive-d-ep':5000,'suite-s-ep':31500,'suite-s-cp':2683,'suite-d-cp':4999,'suite-d-ep':400},
+};
+const DATES = ['2026-09-10','2026-09-11','2026-09-12','2026-09-13','2026-09-14','2026-09-15','2026-09-16'];
+const WEEKENDS = ['2026-09-13','2026-09-14'];
+const ROWS = [
+  {room:'executive',plan:'executive-s-ep',label:'EP Single'},
+  {room:'executive',plan:'executive-s-cp',label:'CP Single'},
+  {room:'executive',plan:'executive-d-cp',label:'CP Double'},
+  {room:'executive',plan:'executive-d-ep',label:'EP Double'},
+  {room:'suite',   plan:'suite-s-ep',    label:'EP Single'},
+  {room:'suite',   plan:'suite-s-cp',    label:'CP Single'},
+  {room:'suite',   plan:'suite-d-cp',    label:'CP Double'},
+  {room:'suite',   plan:'suite-d-ep',    label:'EP Double'},
+];
+const staged = {}; // key = `${plan}|${date}`, val = newRate
+let activeCell = null;
+
+/* ── BUILD RATE TABLE ── */
+function buildTable() {
+  const tbody = document.getElementById('rate-body');
+  tbody.innerHTML = '';
+  let lastRoom = '';
+  ROWS.forEach((row, ri) => {
+    if (row.room !== lastRoom) {
+      lastRoom = row.room;
+      if (ri > 0) {
+        const grpRow = document.createElement('tr');
+        grpRow.innerHTML = `<td colspan="8" style="padding:6px 16px;background:#F7F7F7;border-bottom:1px solid #E5E5E5;border-top:1px solid #E5E5E5"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#666">${row.room === 'suite' ? '<i data-lucide="bed-double" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:5px"></i>Suite' : ''}</span></td>`;
+        tbody.appendChild(grpRow);
+      }
+    }
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #F5F5F5';
+    let tds = `<td style="padding:10px 16px;position:sticky;left:0;background:#fff;border-right:1px solid #E5E5E5;z-index:4">
+      <div style="font-size:12px;font-weight:600">${row.room}</div>
+      <div style="font-size:10px;color:#888;margin-top:1px">${row.plan}</div>
+      <div style="font-size:10px;color:#555;background:#F7F7F7;border-radius:3px;padding:1px 5px;margin-top:3px;display:inline-block">${row.label}</div>
+    </td>`;
+    DATES.forEach(d => {
+      const key = `${row.plan}|${d}`;
+      const live = RATE_DATA[d]?.[row.plan] ?? 0;
+      const isSt = staged[key] !== undefined;
+      const disp = isSt ? staged[key] : live;
+      const wknd = WEEKENDS.includes(d) ? 'weekend' : '';
+      tds += `<td class="rate-cell ${isSt ? 'staged' : ''} ${wknd}" data-key="${key}" data-live="${live}" data-date="${d}" data-room="${row.room}" data-plan="${row.plan}" data-label="${row.label}" onclick="openPopover(this)">
+        <div class="rate-val">₹${disp.toLocaleString()}</div>
+      </td>`;
+    });
+    tr.innerHTML = tds;
+    tbody.appendChild(tr);
+  });
+  lucide.createIcons();
+  updateStagedCount();
+}
+buildTable();
+
+/* ── POPOVER ── */
+function openPopover(cell) {
+  closePopover();
+  activeCell = cell;
+  const live = parseInt(cell.dataset.live);
+  const key = cell.dataset.key;
+  const cur = staged[key] !== undefined ? staged[key] : live;
+  document.getElementById('pop-title').textContent = cell.dataset.room + ' · ' + cell.dataset.label;
+  document.getElementById('pop-sub').textContent = formatDate(cell.dataset.date) + ' · ' + cell.dataset.plan;
+  document.getElementById('pop-current').textContent = '₹' + live.toLocaleString();
+  document.getElementById('pop-input').value = cur;
+  const pop = document.getElementById('cell-popover');
+  const rect = cell.getBoundingClientRect();
+  pop.style.top = (rect.bottom + window.scrollY + 6) + 'px';
+  let left = rect.left + window.scrollX;
+  if (left + 260 > window.innerWidth) left = window.innerWidth - 270;
+  pop.style.left = left + 'px';
+  pop.classList.add('open');
+  setTimeout(() => document.getElementById('pop-input').focus(), 50);
+}
+function closePopover() {
+  document.getElementById('cell-popover').classList.remove('open');
+  activeCell = null;
+}
+function adjustRate(delta) {
+  const inp = document.getElementById('pop-input');
+  inp.value = Math.max(0, parseInt(inp.value || 0) + delta);
+}
+function stageRate() {
+  if (!activeCell) return;
+  const key = activeCell.dataset.key;
+  const newRate = parseInt(document.getElementById('pop-input').value);
+  const liveRate = parseInt(activeCell.dataset.live);
+  if (newRate === liveRate) { delete staged[key]; }
+  else { staged[key] = newRate; }
+  buildTable();
+  closePopover();
+}
+
+/* ── STAGED COUNT ── */
+function updateStagedCount() {
+  const n = Object.keys(staged).length;
+  document.getElementById('rb-count').textContent = n;
+  document.getElementById('sc-num').textContent = n;
+  const bar = document.getElementById('review-bar');
+  const hdr = document.getElementById('staged-count-header');
+  if (n > 0) { bar.classList.add('visible'); hdr.style.display = ''; }
+  else { bar.classList.remove('visible'); hdr.style.display = 'none'; }
+}
+function discardAll() {
+  Object.keys(staged).forEach(k => delete staged[k]);
+  buildTable();
+}
+
+/* ── DIFF MODAL ── */
+function openDiffModal() {
+  const rows = document.getElementById('diff-rows');
+  rows.innerHTML = '';
+  Object.entries(staged).forEach(([key, newRate]) => {
+    const [plan, date] = key.split('|');
+    const liveRate = RATE_DATA[date]?.[plan] ?? 0;
+    const delta = newRate - liveRate;
+    const deltaColor = delta > 0 ? '#217A28' : '#B91C1C';
+    const deltaStr = (delta > 0 ? '+' : '') + '₹' + Math.abs(delta).toLocaleString();
+    const room = ROWS.find(r => r.plan === plan)?.room ?? '';
+    const label = ROWS.find(r => r.plan === plan)?.label ?? '';
+    rows.innerHTML += `<div class="diff-row">
+      <div style="font-size:12px">${formatDate(date)}</div>
+      <div style="font-size:12px">${room}</div>
+      <div style="font-size:11px;color:#555">${plan}<br><span style="color:#888">${label}</span></div>
+      <div style="text-align:right;font-family:'Courier New',monospace;font-size:12px;text-decoration:line-through;color:#888">₹${liveRate.toLocaleString()}</div>
+      <div style="text-align:right;font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:#1A1A1A">₹${newRate.toLocaleString()}</div>
+      <div style="text-align:right;font-family:'Courier New',monospace;font-size:12px;font-weight:700;color:${deltaColor}">${deltaStr}</div>
+    </div>`;
+  });
+  document.getElementById('diff-overlay').classList.add('open');
+}
+function closeDiffModal() { document.getElementById('diff-overlay').classList.remove('open'); }
+function confirmPush() {
+  closeDiffModal();
+  document.getElementById('review-bar').classList.remove('visible');
+  document.getElementById('push-ok-title').textContent = 'Rates Pushed Successfully';
+  document.getElementById('push-ok-msg').textContent = Object.keys(staged).length + ' rate changes are now live on Booking.com and Goibibo/MMT.';
+  Object.keys(staged).forEach(k => delete staged[k]);
+  buildTable();
+  document.getElementById('push-ok-overlay').classList.add('open');
+}
+
+/* ── GENERIC PUSH MODAL ── */
+function openPushModal(type) {
+  const titles = {inv:'Inventory restrictions pushed successfully!', rr:'Rate restrictions pushed successfully!'};
+  document.getElementById('push-ok-title').textContent = titles[type] || 'Changes pushed successfully!';
+  document.getElementById('push-ok-msg').textContent = 'Your changes have been sent to Aiosell and will be applied to live OTA channels shortly.';
+  document.getElementById('push-ok-overlay').classList.add('open');
+}
+
+/* ── NO-SHOW ── */
+function openNoShowDialog(booking, guest, checkin, room, channel) {
+  document.getElementById('ns-guest').textContent = guest;
+  document.getElementById('ns-booking').textContent = booking;
+  document.getElementById('ns-checkin').textContent = checkin;
+  document.getElementById('ns-room').textContent = room;
+  document.getElementById('ns-channel').textContent = channel;
+  document.getElementById('ns-channel-warn').textContent = channel;
+  document.getElementById('noshow-overlay').classList.add('open');
+}
+function closeNoShow() { document.getElementById('noshow-overlay').classList.remove('open'); }
+function confirmNoShow() {
+  closeNoShow();
+  document.getElementById('push-ok-title').textContent = 'No-Show Recorded';
+  document.getElementById('push-ok-msg').textContent = 'The booking has been marked as No-Show on ' + document.getElementById('ns-channel').textContent + '. Room inventory has been released.';
+  document.getElementById('push-ok-overlay').classList.add('open');
+}
+
+/* ── TABS / VIEWS ── */
+function showView(id) {
+  ['channel','arrivals'].forEach(v => {
+    const el = document.getElementById('view-'+v);
+    if (el) el.style.display = v === id ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.nav-sub').forEach(n => n.classList.remove('active'));
+  if (id === 'arrivals') document.getElementById('nav-arrivals')?.classList.add('active');
+  if (id === 'channel') document.getElementById('nav-channel')?.classList.add('active');
+}
+function switchMainTab(id, btn) {
+  document.querySelectorAll('[id^="view-"] .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function switchSubTab(id, btn) {
+  ['rates','inv','raterestrict'].forEach(t => {
+    const el = document.getElementById('st-'+t+'-content');
+    if (el) el.style.display = t === id ? '' : 'none';
+  });
+  document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function switchArrTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function fetchRates() {
+  buildTable(); // In real app: fetch from Aiosell then rebuild
+  const msg = document.createElement('div');
+  msg.textContent = '✓ Rates refreshed from Aiosell';
+  msg.style.cssText = 'position:fixed;bottom:80px;right:24px;background:#329937;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;animation:fadeIn .2s ease';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 2200);
+}
+
+/* ── BULK DRAWER ── */
+function toggleBulkDrawer() {
+  const d = document.getElementById('bulk-drawer');
+  const s = document.getElementById('drawer-scrim');
+  const open = d.classList.toggle('open');
+  s.style.display = open ? 'block' : 'none';
+}
+function stageBulkRates() {
+  // Simulate staging 3 cells
+  const keys = ['suite-d-ep|2026-09-13','suite-d-ep|2026-09-14','executive-s-ep|2026-09-15'];
+  const vals = [6000, 6000, 8000];
+  keys.forEach((k, i) => staged[k] = vals[i]);
+  toggleBulkDrawer();
+  buildTable();
+}
+
+/* ── TOGGLE SWITCH ── */
+function toggleSw(el) {
+  const isOn = el.classList.toggle('on');
+  const lbl = el.nextElementSibling;
+  if (isOn) {
+    el.style.background = el.id?.includes('stop') ? '#EF4444' : '#329937';
+    if (lbl) { lbl.textContent = 'On'; lbl.style.color = el.id?.includes('stop') ? '#EF4444' : '#329937'; lbl.style.fontWeight = '500'; }
+  } else {
+    el.style.background = '#E5E5E5';
+    if (lbl) { lbl.textContent = 'Off'; lbl.style.color = '#666'; lbl.style.fontWeight = '400'; }
+  }
+}
+
+/* ── HELPERS ── */
+function formatDate(d) {
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+}
+function setRange(n, btn) {
+  document.querySelectorAll('.active-range').forEach(b => { b.classList.remove('active-range'); b.style.borderColor=''; b.style.color=''; b.style.background=''; });
+  btn.classList.add('active-range');
+  btn.style.borderColor = '#329937'; btn.style.color = '#329937'; btn.style.background = 'rgba(50,153,55,.06)';
+}
+
+// Close popover on outside click
+document.addEventListener('click', e => {
+  const pop = document.getElementById('cell-popover');
+  if (pop.classList.contains('open') && !pop.contains(e.target) && !e.target.closest('.rate-cell')) closePopover();
+});
+</script>
+</body>
+</html>

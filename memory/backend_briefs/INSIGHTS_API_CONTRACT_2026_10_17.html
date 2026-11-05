@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyGenie POS — Insights API Contract v1.0</title>
+  <style>
+    :root {
+      --orange: #F26B33;
+      --green: #329937;
+      --amber: #F4A11A;
+      --red: #EF4444;
+      --bg: #F7F7F7;
+      --card: #FFFFFF;
+      --border: #E5E5E5;
+      --text: #1A1A1A;
+      --muted: #666666;
+      --code-bg: #1E1E2E;
+      --code-text: #CDD6F4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+    /* ── Header ── */
+    .page-header {
+      background: var(--text);
+      color: #fff;
+      padding: 36px 48px 28px;
+      border-bottom: 3px solid var(--orange);
+    }
+    .page-header .badge {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .page-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .page-header .meta { font-size: 12px; color: #aaa; margin-top: 8px; display: flex; gap: 24px; flex-wrap: wrap; }
+    .page-header .meta span strong { color: #ddd; }
+
+    /* ── Layout ── */
+    .container { max-width: 1060px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Common pattern card ── */
+    .pattern-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+    }
+    .pattern-card h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
+
+    /* ── Section header ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 40px 0 14px;
+    }
+    .section-label .num {
+      width: 30px; height: 30px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .section-label h2 { font-size: 18px; font-weight: 700; }
+    .section-label .endpoint-pill {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 12px;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      color: #166534;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .section-label .bug-pill {
+      font-size: 11px;
+      font-weight: 700;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: var(--red);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    /* ── Endpoint card ── */
+    .endpoint-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .endpoint-card .card-header {
+      padding: 16px 24px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .method-badge {
+      background: var(--orange);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.5px;
+    }
+    .url-code {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .consumer-tag {
+      font-size: 11px;
+      color: var(--muted);
+      background: #F0F0F0;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .card-body { padding: 20px 24px; }
+
+    /* ── Field table ── */
+    .field-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .field-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      padding: 6px 10px;
+      background: #F9F9F9;
+      border-bottom: 1px solid var(--border);
+    }
+    .field-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #F3F3F3;
+      vertical-align: top;
+    }
+    .field-table tr:last-child td { border-bottom: none; }
+    .field-table .field-name {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      color: #2563EB;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .field-table .type-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .type-number  { background: #EFF6FF; color: #1D4ED8; }
+    .type-string  { background: #F0FDF4; color: #15803D; }
+    .type-boolean { background: #FEF3C7; color: #92400E; }
+    .type-array   { background: #FDF4FF; color: #7E22CE; }
+    .type-object  { background: #FFF7ED; color: #C2410C; }
+
+    /* ── Bug warning ── */
+    .bug-warning {
+      display: flex;
+      gap: 12px;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0 0;
+    }
+    .bug-warning .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .bug-warning .content strong { display: block; font-size: 13px; color: var(--red); margin-bottom: 4px; }
+    .bug-warning .content p { font-size: 12px; color: #7F1D1D; line-height: 1.5; }
+
+    /* ── Code block ── */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 18px 20px;
+      border-radius: 10px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 0;
+    }
+    pre .comment { color: #6C7086; }
+    pre .key { color: #89DCEB; }
+    pre .str { color: #A6E3A1; }
+    pre .num { color: #FAB387; }
+    pre .bool { color: #CBA6F7; }
+    pre .warn { color: #F38BA8; }
+
+    /* ── Summary table ── */
+    .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; border-radius: 10px; overflow: hidden; }
+    .summary-table thead { background: var(--text); color: #fff; }
+    .summary-table th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+    .summary-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .summary-table tr:last-child td { border-bottom: none; }
+    .summary-table .status-ok { color: var(--green); font-weight: 700; }
+    .summary-table .status-bug { color: var(--red); font-weight: 700; }
+
+    /* ── Section divider ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* ── Footer ── */
+    .page-footer {
+      background: var(--text);
+      color: #888;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      margin-top: 60px;
+    }
+    .page-footer strong { color: #ddd; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="badge">Formal Contract — v1.0</div>
+  <h1>MyGenie POS — Insights Reports API Contract</h1>
+  <div class="meta">
+    <span><strong>Date:</strong> 2026-10-17</span>
+    <span><strong>Author:</strong> E1 Investigation Agent (Role 6)</span>
+    <span><strong>Base URL:</strong> https://preprod.mygenie.online</span>
+    <span><strong>API Version:</strong> v2</span>
+    <span><strong>Endpoints:</strong> 9</span>
+    <span><strong>Open bugs:</strong> BUG-579, BUG-580</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Common Pattern -->
+  <div class="pattern-card" style="margin-top:0">
+    <h2>Common Request / Response Pattern (all 9 endpoints)</h2>
+    <pre><span class="comment">// Request (identical for all insights endpoints)</span>
+<span class="key">Method:</span>       <span class="str">POST</span>
+<span class="key">Auth:</span>         <span class="str">Authorization: Bearer &lt;vendor_employee_token&gt;</span>
+<span class="key">Content-Type:</span> <span class="str">application/json</span>
+
+<span class="comment">// Body</span>
+{
+  <span class="key">"from_date"</span>: <span class="str">"YYYY-MM-DD"</span>,
+  <span class="key">"to_date"</span>:   <span class="str">"YYYY-MM-DD"</span>
+}
+
+<span class="comment">// Response wrapper — frontend reads resp.data.data</span>
+{
+  <span class="key">"data"</span>: {
+    <span class="key">"data"</span>: { <span class="comment">/* endpoint-specific payload */</span> }
+  }
+}</pre>
+  </div>
+
+  <!-- ── 1. Dashboard ── -->
+  <div class="section-label">
+    <div class="num">1</div>
+    <h2>insights-dashboard</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-dashboard</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-dashboard</span>
+      <span class="consumer-tag">DashboardMockup.jsx · AuditLogMockup.jsx</span>
+    </div>
+    <div class="card-body">
+      <table class="field-table">
+        <thead><tr><th>Section / Field</th><th>Type</th><th>Frontend Key</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">revenue.total</td><td><span class="type-tag type-number">number</span></td><td>sales.totalRevenue</td><td>Total ₹ revenue</td></tr>
+          <tr><td class="field-name">revenue.paid_order_count</td><td><span class="type-tag type-number">number</span></td><td>sales.paidOrderCount</td><td></td></tr>
+          <tr><td class="field-name">revenue.by_hour[].hour</td><td><span class="type-tag type-number">number</span></td><td>sales.sparkline</td><td>0–23</td></tr>
+          <tr><td class="field-name">revenue.by_hour[].revenue</td><td><span class="type-tag type-number">number</span></td><td>sales.sparkline</td><td></td></tr>
+          <tr><td class="field-name">revenue.tab_settlement_total</td><td><span class="type-tag type-number">number</span></td><td>payments.creditSettled</td><td></td></tr>
+          <tr><td class="field-name">channel_mix[].channel</td><td><span class="type-tag type-string">string</span></td><td>channels.mix[].name</td><td>"Dine In", "Delivery", etc.</td></tr>
+          <tr><td class="field-name">channel_mix[].orders</td><td><span class="type-tag type-number">number</span></td><td>channels.mix[].count</td><td></td></tr>
+          <tr><td class="field-name">channel_mix[].revenue</td><td><span class="type-tag type-number">number</span></td><td>channels.mix[].revenue</td><td></td></tr>
+          <tr><td class="field-name">top_items[].name</td><td><span class="type-tag type-string">string</span></td><td>topItems.items[].name</td><td></td></tr>
+          <tr><td class="field-name">top_items[].qty</td><td><span class="type-tag type-number">number</span></td><td>topItems.items[].qty</td><td></td></tr>
+          <tr><td class="field-name">top_items[].revenue</td><td><span class="type-tag type-number">number</span></td><td>topItems.items[].revenue</td><td></td></tr>
+          <tr><td class="field-name">payment_mix[].method</td><td><span class="type-tag type-string">string</span></td><td>payments.mix[].name</td><td></td></tr>
+          <tr><td class="field-name">payment_mix[].orders</td><td><span class="type-tag type-number">number</span></td><td>payments.mix[].count</td><td></td></tr>
+          <tr><td class="field-name">payment_mix[].revenue</td><td><span class="type-tag type-number">number</span></td><td>payments.mix[].revenue</td><td></td></tr>
+          <tr><td class="field-name">credit_outstanding</td><td><span class="type-tag type-number">number</span></td><td>payments.creditOutstanding</td><td></td></tr>
+          <tr><td class="field-name">cancellations.order_scope_count</td><td><span class="type-tag type-number">number</span></td><td></td><td></td></tr>
+          <tr><td class="field-name">cancellations.item_scope_count</td><td><span class="type-tag type-number">number</span></td><td></td><td></td></tr>
+          <tr><td class="field-name">cancellations.total_loss</td><td><span class="type-tag type-number">number</span></td><td>cancellations.totalRevenue</td><td>₹ value</td></tr>
+          <tr><td class="field-name">cancellations.top_reason</td><td><span class="type-tag type-string">string</span></td><td>cancellations.topReason</td><td></td></tr>
+          <tr><td class="field-name">discounts.manual_discount</td><td><span class="type-tag type-number">number</span></td><td>discounts.directDiscount</td><td>₹</td></tr>
+          <tr><td class="field-name">discounts.coupon_discount</td><td><span class="type-tag type-number">number</span></td><td>discounts.couponDiscount</td><td>₹</td></tr>
+          <tr><td class="field-name">discounts.coupon_order_count</td><td><span class="type-tag type-number">number</span></td><td>discounts.couponOrders</td><td></td></tr>
+          <tr><td class="field-name">discounts.loyalty_discount</td><td><span class="type-tag type-number">number</span></td><td>discounts.loyaltyDiscount</td><td>₹</td></tr>
+          <tr><td class="field-name">discounts.comp_item_total</td><td><span class="type-tag type-number">number</span></td><td>discounts.compItemTotal</td><td>₹</td></tr>
+          <tr><td class="field-name">discounts.comp_item_count</td><td><span class="type-tag type-number">number</span></td><td>discounts.compItemCount</td><td></td></tr>
+          <tr><td class="field-name">discounts.total_leakage</td><td><span class="type-tag type-number">number</span></td><td>discounts.totalLeakage</td><td>₹ — shown as main KPI on dashboard</td></tr>
+          <tr><td class="field-name">audits.make_unpaid_count</td><td><span class="type-tag type-number">number</span></td><td>audits.madeUnpaid</td><td></td></tr>
+          <tr><td class="field-name">audits.payment_method_change_count</td><td><span class="type-tag type-number">number</span></td><td>audits.paymentMethodChanged</td><td></td></tr>
+          <tr><td class="field-name">audits.orders[]</td><td><span class="type-tag type-array">array</span></td><td>audits.orders</td><td>Audit order rows</td></tr>
+          <tr><td class="field-name">kitchen.avg_prep_minutes</td><td><span class="type-tag type-number">number</span></td><td>kitchen.avgPrep</td><td>Float — FE formats to "mm:ss"</td></tr>
+          <tr><td class="field-name">kitchen.avg_serve_minutes</td><td><span class="type-tag type-number">number</span></td><td>kitchen.avgServe</td><td>Float — FE formats to "mm:ss"</td></tr>
+          <tr><td class="field-name">kitchen.sla_breach_count</td><td><span class="type-tag type-number">number</span></td><td>kitchen.slaBreachCount</td><td></td></tr>
+          <tr><td class="field-name">kitchen.has_prep_data</td><td><span class="type-tag type-boolean">boolean</span></td><td>kitchen.hasPrepData</td><td>Gate for showing kitchen section</td></tr>
+          <tr><td class="field-name">customers.repeat_pct</td><td><span class="type-tag type-number">number</span></td><td>customers.repeatPct</td><td>0–100</td></tr>
+          <tr><td class="field-name">customers.repeat_customers</td><td><span class="type-tag type-number">number</span></td><td>customers.repeatCount</td><td></td></tr>
+          <tr><td class="field-name">customers.unique_customers</td><td><span class="type-tag type-number">number</span></td><td>customers.totalIdentified</td><td></td></tr>
+          <tr><td class="field-name">customers.guest_count</td><td><span class="type-tag type-number">number</span></td><td>customers.newCustomers</td><td></td></tr>
+          <tr><td class="field-name">customers.total_orders</td><td><span class="type-tag type-number">number</span></td><td>customers.totalOrders</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 2. Sales ── -->
+  <div class="section-label">
+    <div class="num">2</div>
+    <h2>insights-sales</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-sales</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-sales</span>
+      <span class="consumer-tag">DailySalesMockup.jsx · ChannelPivotMockup.jsx · HourlySalesMockup.jsx</span>
+    </div>
+    <div class="card-body">
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">summary.total_revenue</td><td><span class="type-tag type-number">number</span></td><td>₹ — footer total</td></tr>
+          <tr><td class="field-name">summary.total_orders</td><td><span class="type-tag type-number">number</span></td><td>footer total</td></tr>
+          <tr><td class="field-name">summary.total_tax</td><td><span class="type-tag type-number">number</span></td><td>₹ — footer total</td></tr>
+          <tr><td class="field-name">summary.total_discount</td><td><span class="type-tag type-number">number</span></td><td>₹ — footer total</td></tr>
+          <tr><td class="field-name">daily[].date</td><td><span class="type-tag type-string">string</span></td><td>YYYY-MM-DD</td></tr>
+          <tr><td class="field-name">daily[].revenue</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">daily[].orders</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">daily[].tax</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">daily[].discount</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 3. Items ── -->
+  <div class="section-label">
+    <div class="num">3</div>
+    <h2>insights-items</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-items</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-items</span>
+      <span class="consumer-tag">ItemSalesHybridMockup.jsx · ItemDrillSheet.jsx</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Response is an array of item objects. Transform: <code>transformItemRows()</code></p>
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">food_id</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">name</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">category_id, category_name</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">station</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">menu_price, avg_price_sold</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">order_charges_distributed</td><td><span class="type-tag type-number">number</span></td><td>SC / delivery share per item</td></tr>
+          <tr><td class="field-name">tax_rate, tax_type, tax_calc</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">sold.qty, sold.revenue</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">sold.item_total, sold.discount</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">sold.service_charge, sold.tax</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">cancelled.qty, cancelled.revenue</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">complementary.qty</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">pending.qty, credit.qty</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">variations[], addons[]</td><td><span class="type-tag type-array">array</span></td><td>Drill-down data</td></tr>
+          <tr><td class="field-name">cancel_reasons[]</td><td><span class="type-tag type-array">array</span></td><td>Drill-down data</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 4. Cancellations ── -->
+  <div class="section-label">
+    <div class="num">4</div>
+    <h2>insights-cancellations</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-cancellations</span>
+    <span class="bug-pill">⚠ BUG-579 OPEN</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-cancellations</span>
+      <span class="consumer-tag">CancellationsMockup.jsx · CancelDetailMockup.jsx</span>
+    </div>
+    <div class="card-body">
+      <table class="field-table">
+        <thead><tr><th>Section / Field</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">summary</td></tr>
+          <tr><td class="field-name">summary.total_qty</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">summary.cancelled_order_count</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">summary.order_scope_count</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name">summary.item_scope_count</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name" style="color:var(--red)">summary.total_loss</td><td><span class="type-tag type-number">number</span></td><td style="color:var(--red)">⚠ BUG-579 — must return ₹ value, not 0</td></tr>
+          <tr><td class="field-name" style="color:var(--red)">summary.order_loss</td><td><span class="type-tag type-number">number</span></td><td style="color:var(--red)">⚠ BUG-579</td></tr>
+          <tr><td class="field-name" style="color:var(--red)">summary.item_loss</td><td><span class="type-tag type-number">number</span></td><td style="color:var(--red)">⚠ BUG-579</td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">items[] (per-cancelled-item rows)</td></tr>
+          <tr><td class="field-name">order_number, restaurant_order_id</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">cancel_date, cancel_time</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">food_name, food_id</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">unit_price, qty</td><td><span class="type-tag type-number">number</span></td><td></td></tr>
+          <tr><td class="field-name" style="color:var(--red)">value</td><td><span class="type-tag type-number">number</span></td><td style="color:var(--red)">⚠ BUG-579 — monetary loss per item</td></tr>
+          <tr><td class="field-name">item_total, discount, service_charge</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">gst, vat</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">scope</td><td><span class="type-tag type-string">string</span></td><td>"item" | "order"</td></tr>
+          <tr><td class="field-name">stage, cancel_type</td><td><span class="type-tag type-string">string</span></td><td>"Before Cooking", etc.</td></tr>
+          <tr><td class="field-name">reason, notes</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td class="field-name">cancelled_by, punched_by, station</td><td><span class="type-tag type-string">string</span></td><td></td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">aggregation sections</td></tr>
+          <tr><td class="field-name">by_stage[].stage, .loss, .count</td><td><span class="type-tag type-array">array</span></td><td></td></tr>
+          <tr><td class="field-name">by_reason[].reason, .count, .loss</td><td><span class="type-tag type-array">array</span></td><td></td></tr>
+          <tr><td class="field-name">by_employee[].name, .order_cancels, .item_cancels, .loss</td><td><span class="type-tag type-array">array</span></td><td></td></tr>
+          <tr><td class="field-name" style="color:var(--red)">by_day[].order_loss, .item_loss</td><td><span class="type-tag type-number">number</span></td><td style="color:var(--red)">⚠ BUG-579</td></tr>
+        </tbody>
+      </table>
+      <div class="bug-warning">
+        <div class="icon">⚠</div>
+        <div class="content">
+          <strong>BUG-579 — Cancellation ₹ values missing</strong>
+          <p>All monetary fields marked above currently return 0 or null from the backend. Frontend display code is complete and ready — it shows ₹0 because backend is not populating these fields. Backend team must return actual monetary loss values in <code>summary.total_loss</code>, <code>items[].value</code>, and <code>by_day[].order_loss</code> / <code>by_day[].item_loss</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 5. Tax ── -->
+  <div class="section-label">
+    <div class="num">5</div>
+    <h2>insights-tax</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-tax</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-tax</span>
+      <span class="consumer-tag">TaxSlabsMockup.jsx · TaxDetailMockup.jsx · TaxCalcMockup.jsx</span>
+    </div>
+    <div class="card-body" style="color:var(--muted);font-size:13px;">No open bugs. Contract stable — deep field trace not required.</div>
+  </div>
+
+  <!-- ── 6. Discounts ── -->
+  <div class="section-label">
+    <div class="num">6</div>
+    <h2>insights-discounts</h2>
+    <span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-discounts</span>
+    <span class="bug-pill">⚠ BUG-580 OPEN</span>
+  </div>
+  <div class="endpoint-card">
+    <div class="card-header">
+      <span class="method-badge">POST</span>
+      <span class="url-code">/api/v2/vendoremployee/report/insights-discounts</span>
+      <span class="consumer-tag">DiscountReportMockup.jsx (S26) · CouponUsageMockup.jsx (S27)</span>
+    </div>
+    <div class="card-body">
+      <table class="field-table">
+        <thead><tr><th>Section / Field</th><th>Type</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">summary</td></tr>
+          <tr><td class="field-name">summary.total</td><td><span class="type-tag type-number">number</span></td><td>₹ — grand total KPI</td></tr>
+          <tr><td class="field-name">summary.manual_discount</td><td><span class="type-tag type-number">number</span></td><td>₹ — Manual KPI + footer</td></tr>
+          <tr><td class="field-name">summary.coupon_discount</td><td><span class="type-tag type-number">number</span></td><td>₹ — Coupon KPI + footer</td></tr>
+          <tr><td class="field-name">summary.loyalty_discount</td><td><span class="type-tag type-number">number</span></td><td>₹ — Loyalty KPI + footer</td></tr>
+          <tr><td class="field-name">summary.comp_total</td><td><span class="type-tag type-number">number</span></td><td>₹ — Comp KPI + footer</td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">daily[] — area chart + daily table</td></tr>
+          <tr><td class="field-name">daily[].date</td><td><span class="type-tag type-string">string</span></td><td>YYYY-MM-DD</td></tr>
+          <tr><td class="field-name">daily[].manual</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">daily[].coupon</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">daily[].loyalty</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">daily[].comp</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">by_employee[] — bar chart</td></tr>
+          <tr><td class="field-name">by_employee[].name</td><td><span class="type-tag type-string">string</span></td><td>Employee name</td></tr>
+          <tr><td class="field-name">by_employee[].manual_discount</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">by_employee[].coupon_applied</td><td><span class="type-tag type-number">number</span></td><td>count</td></tr>
+          <tr><td class="field-name">by_employee[].comp_count</td><td><span class="type-tag type-number">number</span></td><td>count</td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">orders_table[] — per-order reasons</td></tr>
+          <tr><td class="field-name">orders_table[].restaurant_order_id</td><td><span class="type-tag type-number">number</span></td><td>Shown as #ID</td></tr>
+          <tr><td class="field-name">orders_table[].order_date</td><td><span class="type-tag type-string">string</span></td><td>YYYY-MM-DD</td></tr>
+          <tr><td class="field-name" style="color:var(--red)">orders_table[].discount_for</td><td><span class="type-tag type-string">string</span></td><td style="color:var(--red)">⚠ BUG-580 — discount type label. ALL types must appear (Thrive, Staff, etc.)</td></tr>
+          <tr><td class="field-name">orders_table[].order_discount</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td class="field-name">orders_table[].total_discount</td><td><span class="type-tag type-number">number</span></td><td>₹</td></tr>
+          <tr><td colspan="3" style="background:#F9F9F9;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:8px 10px;color:var(--muted)">coupons[] — CouponUsageMockup S27</td></tr>
+          <tr><td class="field-name">coupons[].code</td><td><span class="type-tag type-string">string</span></td><td>Coupon code string</td></tr>
+          <tr><td class="field-name">coupons[].type</td><td><span class="type-tag type-string">string</span></td><td>"percentage", "flat", etc.</td></tr>
+          <tr><td class="field-name">coupons[].uses</td><td><span class="type-tag type-number">number</span></td><td>Redemption count</td></tr>
+          <tr><td class="field-name">coupons[].discount_total</td><td><span class="type-tag type-number">number</span></td><td>₹ total discount given</td></tr>
+          <tr><td class="field-name">coupons[].orders</td><td><span class="type-tag type-number">number</span></td><td>Order count</td></tr>
+        </tbody>
+      </table>
+      <div class="bug-warning">
+        <div class="icon">⚠</div>
+        <div class="content">
+          <strong>BUG-580 — Discount types missing (Thrive, custom types)</strong>
+          <p><code>orders_table[].discount_for</code> is the sole source of discount type labels in the UI. If backend does not include entries for custom discount types like "Thrive" in <code>orders_table[]</code>, those discount types will not appear anywhere in the Discount Report. Backend must populate <code>discount_for</code> for ALL discount types applied to an order. Also confirm: is "Thrive discount" included in <code>summary.manual_discount</code> or tracked under a separate field?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 7–9 ── -->
+  <div class="section-label"><div class="num">7</div><h2>insights-staff</h2><span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-staff</span></div>
+  <div class="endpoint-card">
+    <div class="card-header"><span class="method-badge">POST</span><span class="url-code">/api/v2/vendoremployee/report/insights-staff</span><span class="consumer-tag">CashierSettlementMockup.jsx · StaffCashiersMockup.jsx · StaffServersMockup.jsx</span></div>
+    <div class="card-body" style="color:var(--muted);font-size:13px;">No open bugs. Contract stable.</div>
+  </div>
+
+  <div class="section-label"><div class="num">8</div><h2>insights-customers</h2><span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-customers</span></div>
+  <div class="endpoint-card">
+    <div class="card-header"><span class="method-badge">POST</span><span class="url-code">/api/v2/vendoremployee/report/insights-customers</span><span class="consumer-tag">CustomersMixMockup.jsx · CustomersRfmMockup.jsx</span></div>
+    <div class="card-body" style="color:var(--muted);font-size:13px;">No open bugs. Contract stable.</div>
+  </div>
+
+  <div class="section-label"><div class="num">9</div><h2>insights-locations</h2><span class="endpoint-pill">POST /api/v2/vendoremployee/report/insights-locations</span></div>
+  <div class="endpoint-card">
+    <div class="card-header"><span class="method-badge">POST</span><span class="url-code">/api/v2/vendoremployee/report/insights-locations</span><span class="consumer-tag">FoodCourtBetaPage.jsx</span></div>
+    <div class="card-body" style="color:var(--muted);font-size:13px;">Food court only. No open bugs. Contract stable.</div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Summary -->
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Open Backend Action Items</h2>
+  <table class="summary-table">
+    <thead>
+      <tr><th>Bug</th><th>Endpoint</th><th>Missing from backend</th><th>UI impact</th><th>FE fix needed?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--red)">BUG-579</strong></td>
+        <td><code>insights-cancellations</code></td>
+        <td><code>summary.total_loss</code>, <code>items[].value</code>, <code>by_day[].order_loss</code>, <code>by_day[].item_loss</code> — must return ₹ values</td>
+        <td>Cancellation report shows ₹0 throughout</td>
+        <td class="status-ok">NO</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--red)">BUG-580</strong></td>
+        <td><code>insights-discounts</code></td>
+        <td><code>orders_table[].discount_for</code> missing custom types (Thrive, etc.)</td>
+        <td>Thrive and other discount types not visible in Discount Report</td>
+        <td class="status-ok">NO</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div class="page-footer">
+  <strong>MyGenie POS — Insights API Contract v1.0</strong> &nbsp;·&nbsp; Generated 2026-10-17 by E1 Investigation Agent &nbsp;·&nbsp;
+  MD: <code>backend_briefs/BACKEND_BRIEF_INSIGHTS_API_CONTRACT_2026_10_17.md</code>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "_comment": "CR-390: Shared fictional business persona (OD-390-02). Business name DOM-swapped in all PDFs.",
+  "business_name": "Sharma Hotel & Restaurant",
+  "business_short": "Sharma Hotel",
+  "location": "Connaught Place, New Delhi \u2014 110001",
+  "gst_number": "07AAAAS0000A1Z5",
+  "phone": "+91 98100 00001",
+  "email": "manager@sharmahotel.example",
+  "outlets": ["Main Restaurant", "Bar & Lounge", "Room Service"],
+  "reference_week": {
+    "start": "2026-09-14",
+    "end": "2026-09-20",
+    "label": "Week of 14\u201320 Sep 2026"
+  },
+  "currency": "INR",
+  "gst_type": "CGST+SGST"
+}

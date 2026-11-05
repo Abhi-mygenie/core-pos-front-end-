@@ -1,0 +1,3 @@
+[x9_restore_set] HTTP 200 :: {"success": true, "message": "Restaurant settings updated successfully", "data": {"basic": {"name": "The Goan Kitchen", "phone": "7391826054", "address": "226F+QW6, Palolem Down St", "gst": {"status":
+[x9_profile] HTTP 200 :: 
+  settings now: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}

@@ -1,0 +1,163 @@
+{
+  "project_type": "dashboard",
+  "app_name": "Restaurant POS System - Ingredient Movement Report",
+  "archetype": "SWISS & HIGH-CONTRAST / TACTICAL DASHBOARD",
+  "typography": {
+    "font_family_primary": "Inter, system-ui, -apple-system, sans-serif",
+    "font_family_mono": "JetBrains Mono, ui-monospace, SFMono-Regular, monospace",
+    "headings": {
+      "page_title": "text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100",
+      "section_title": "text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100",
+      "card_title": "text-base font-semibold text-slate-800 dark:text-slate-200"
+    },
+    "body": {
+      "standard": "text-sm text-slate-700 dark:text-slate-300 font-normal leading-relaxed",
+      "muted": "text-xs text-slate-500 dark:text-slate-400 font-normal",
+      "strong": "text-sm font-semibold text-slate-900 dark:text-slate-100",
+      "numeric_data": "font-mono text-sm tracking-wide font-medium text-slate-800 dark:text-slate-200"
+    },
+    "labels": {
+      "badge": "text-xs font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full",
+      "table_header": "text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+    }
+  },
+  "colors": {
+    "primary_accent": "#F97316",
+    "primary_accent_hover": "#EA580C",
+    "primary_accent_light": "#FFEDD5",
+    "background": {
+      "page": "bg-slate-50/50 dark:bg-slate-950",
+      "card": "bg-white dark:bg-slate-900",
+      "table_header": "bg-slate-100/80 dark:bg-slate-800/80",
+      "table_row_hover": "hover:bg-slate-50/80 dark:hover:bg-slate-800/50",
+      "drilldown_bg": "bg-slate-50/80 dark:bg-slate-900/60"
+    },
+    "borders": {
+      "default": "border-slate-200 dark:border-slate-800",
+      "subtle": "border-slate-100 dark:border-slate-850",
+      "active": "border-orange-500"
+    },
+    "status_badges": {
+      "received": {
+        "bg": "bg-emerald-50 dark:bg-emerald-950/40",
+        "text": "text-emerald-700 dark:text-emerald-400",
+        "border": "border-emerald-200 dark:border-emerald-800"
+      },
+      "dispatched": {
+        "bg": "bg-blue-50 dark:bg-blue-950/40",
+        "text": "text-blue-700 dark:text-blue-400",
+        "border": "border-blue-200 dark:border-blue-800"
+      },
+      "in_transit": {
+        "bg": "bg-amber-50 dark:bg-amber-950/40",
+        "text": "text-amber-700 dark:text-amber-400",
+        "border": "border-amber-200 dark:border-amber-800"
+      },
+      "pending": {
+        "bg": "bg-slate-100 dark:bg-slate-800",
+        "text": "text-slate-700 dark:text-slate-300",
+        "border": "border-slate-200 dark:border-slate-700"
+      }
+    }
+  },
+  "layout": {
+    "sidebar_location": "Daily Report section, directly below 'Item Consumption' report link",
+    "page_structure": {
+      "container": "flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden",
+      "main_area": "flex-1 flex flex-col min-w-0 overflow-y-auto p-6 md:p-8 space-y-6",
+      "header_bar": "flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800",
+      "filter_bar": "flex flex-wrap items-center justify-between gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+    }
+  },
+  "key_features_and_components": {
+    "navigation_back": "ArrowLeft icon back button returning to Daily Reports overview or previous section",
+    "movement_toggle": {
+      "type": "Segmented Tab Control / Pill Toggle",
+      "options": ["Received", "Dispatched"],
+      "rule": "Strictly separated views — Received shows incoming stock transfers (franchise ↔ central ↔ master), Dispatched shows outgoing stock transfers. Never blended into one combined table.",
+      "styles": "bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex items-center gap-1"
+    },
+    "date_range_picker": {
+      "presets": ["Today", "Last 7 Days", "MTD", "Custom"],
+      "default_preset": "Last 7 Days",
+      "custom_date_inputs": "Dual date pickers (Start Date, End Date) with popover calendar or native input formatted for POS style"
+    },
+    "search_filter": {
+      "placeholder": "Search free text for ingredient name or SKU...",
+      "icon": "Search icon from lucide-react",
+      "style": "relative min-w-[260px] flex-1 max-w-md"
+    },
+    "collapsible_ingredient_table": {
+      "parent_row_columns": [
+        "Expand/Collapse Indicator (ChevronRight / ChevronDown)",
+        "Ingredient Name & Category",
+        "Unit of Measure (e.g., kg, L, units, bags)",
+        "Total Quantity Transferred (highlighted in mono font)",
+        "Transfer Count (e.g., 8 transfers)",
+        "Latest Transfer Date"
+      ],
+      "drilldown_subtable_columns": [
+        "From Store / Source Location",
+        "To Store / Destination Location",
+        "Dispatched Date",
+        "Received Date",
+        "Quantity Transferred",
+        "Status Badge (Received / In Transit / Dispatched / Pending)"
+      ],
+      "interaction": "Clicking parent row toggles drill-down section with smooth animation and subtable formatting."
+    },
+    "export_actions": {
+      "excel": {
+        "button": "Button variant='outline' size='sm' className='gap-2 text-slate-700 hover:text-orange-600 border-slate-300 hover:border-orange-500'",
+        "icon": "Download or FileSpreadsheet icon",
+        "behavior": "Triggers CSV / Excel download of current filtered Received/Dispatched movement report data."
+      },
+      "pdf": {
+        "button": "Button variant='outline' size='sm' className='gap-2 text-slate-700 hover:text-orange-600 border-slate-300 hover:border-orange-500'",
+        "icon": "FileText or Printer icon",
+        "behavior": "Opens print-friendly report popup or triggers PDF export with formal header, summary metrics, and detail breakdown."
+      }
+    },
+    "empty_state": {
+      "icon": "PackageX or ArrowLeftRight",
+      "title": "No Ingredient Movements Found",
+      "description": "No stock transfer records match your current date range and search filter.",
+      "action": "Reset Filters button"
+    },
+    "loading_state": {
+      "skeleton_rows": 6,
+      "loader": "Subtle skeleton pulse cards and table row placeholders with spinner overlay during API call."
+    }
+  },
+  "data_testid_catalog": {
+    "page": "data-testid='ingredient-movement-report-page'",
+    "sidebar_link": "data-testid='sidebar-ingredient-movement-link'",
+    "back_button": "data-testid='report-back-button'",
+    "movement_toggle_received": "data-testid='movement-toggle-received'",
+    "movement_toggle_dispatched": "data-testid='movement-toggle-dispatched'",
+    "date_preset_today": "data-testid='date-preset-today'",
+    "date_preset_last_7_days": "data-testid='date-preset-last-7-days'",
+    "date_preset_mtd": "data-testid='date-preset-mtd'",
+    "date_preset_custom": "data-testid='date-preset-custom'",
+    "date_start_input": "data-testid='date-start-input'",
+    "date_end_input": "data-testid='date-end-input'",
+    "search_input": "data-testid='ingredient-search-input'",
+    "export_excel_btn": "data-testid='export-excel-btn'",
+    "export_pdf_btn": "data-testid='export-pdf-btn'",
+    "ingredient_table": "data-testid='ingredient-movement-table'",
+    "ingredient_row": "data-testid='ingredient-row-{id}'",
+    "drilldown_row": "data-testid='ingredient-drilldown-{id}'",
+    "empty_state": "data-testid='empty-movement-state'",
+    "loading_state": "data-testid='loading-movement-state'"
+  },
+  "instructions_to_main_agent": [
+    "1. File extension note: Use JavaScript (.js / .jsx) files for React components.",
+    "2. Ensure the sidebar navigation incorporates 'Ingredient Movement' directly in the 'Daily Report' menu group right below 'Item Consumption'.",
+    "3. Maintain strict toggle separation between 'Received' and 'Dispatched' stock transfers.",
+    "4. Default date range filter MUST be 'Last 7 Days'.",
+    "5. Use `#F97316` (Tailwind orange-500) as the primary brand accent for active toggles, highlighted totals, and focused controls.",
+    "6. Include drill-down nested transfer lines showing From Store, To Store, Dispatched date, Received date, Qty, and Status badges.",
+    "7. Add standard Excel (CSV) and PDF print export functionalities with shadcn outline buttons.",
+    "8. Attach all requested data-testid attributes for automated test suite verification."
+  ]
+}

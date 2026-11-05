@@ -1,0 +1,7 @@
+{
+ "http": 422,
+ "body": {
+  "status": false,
+  "message": "advance.split_payments amounts must sum to advance.amount."
+ }
+}

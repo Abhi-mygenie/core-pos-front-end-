@@ -1,0 +1,31 @@
+{
+  "summary": "Frontend-only retest of BUG-640 (fmtISO timezone fix) and CR-481 (standard presets), run in an IST browser context (Asia/Kolkata, browser time Mon Nov 2 2026 17:35 IST). The Cancellations FY crash is FIXED: FY gives 2025-04-01 to 2026-03-31 with no page error and no webpack overlay. All 6 Cancellations presets give correct dates. Channel-pivot shows all 6 presets with correct dates. Settlement keeps its extended 8-preset set. Dashboard loads and its 6 presets become enabled after about 20s of data loading; LM, FY and MTD are correct. OrderReportBeta defaults to today (2026-11-02). The LM, MTD and 7D dates are correct on TaxDetail, TipReport, DeliveryCharge and PurchaseReport (no off-by-one). FAILED: TaxDetail, TipReport and DeliveryCharge still show only [7D, LM, MTD], and PurchaseReport shows only [Today, 7D, LM, MTD]. These pages do not have the 6 standard CR-481 presets.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "TaxDetailMockup.jsx L108", "issue": "Preset render array is hardcoded to ['7D','LM','MTD'], although DATE_PRESETS is imported and handlePreset supports Today, 30D and FY. Only 3 of the 6 presets are visible.", "selector": "[data-testid='s23-presets'] button", "priority": "MEDIUM"},
+      {"component": "TipReportMockup.jsx L76", "issue": "Same problem: hardcoded ['7D','LM','MTD'], so only 3 of the 6 presets are shown.", "selector": "[data-testid='s21-presets'] button", "priority": "MEDIUM"},
+      {"component": "DeliveryChargeMockup.jsx L96", "issue": "Same problem: hardcoded ['7D','LM','MTD'], so only 3 of the 6 presets are shown.", "selector": "[data-testid='s30-presets'] button", "priority": "MEDIUM"},
+      {"component": "PurchaseReportPage.jsx QUICK_RANGES L35-43", "issue": "Only Today, 7D, LM and MTD are defined. 30D and FY are missing.", "selector": "[data-testid='purchase-report-presets'] button", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "In TaxDetailMockup, TipReportMockup and DeliveryChargeMockup, replace the hardcoded ['7D','LM','MTD'] with DATE_PRESETS. The handlers already support all 6. Also add data-testid={`s23|s21|s30-preset-${p.toLowerCase()}`} to the buttons, which currently have no testid.",
+    "In PurchaseReportPage QUICK_RANGES, add 30D and FY (for example by using computePresetRange) so the page shows the standard [Today, 7D, LM, 30D, MTD, FY]."
+  ],
+  "critical_code_review_comments": [
+    "TaxDetail, TipReport and DeliveryCharge import DATE_PRESETS and computePresetRange, but the render does not use DATE_PRESETS. handlePreset is also still inline duplicated logic (DRY violation); call computePresetRange(p) instead.",
+    "The preset buttons on TaxDetail, TipReport and DeliveryCharge have no data-testid.",
+    "Route names differ from the review request: tips is /reports-module/tips, delivery is /reports-module/locations-delivery, purchase is /reports-module/purchase-report."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "~70% (7/11 scenarios fully pass; 4 pages fail only the '6 presets visible' check, and their LM dates are correct)"},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Use browser.new_context(timezone_id='Asia/Kolkata'). Log in, wait for /dashboard plus 18s, then navigate with pushState + popstate. Read the dates with document.querySelectorAll('input[type=date]').value. Preset containers: s23-presets (tax-detail), s21-presets (tips), s30-presets (locations-delivery), purchase-report-presets (purchase-report), s14-preset-* (channel-pivot), cancellations-preset-*, settlement-report-preset-*, reports-date-preset-* (dashboard; disabled for about 20s while it loads). Cancellations FY is safe to click now. Verified: Cancellations, Channel-pivot, Settlement, Dashboard and OrderReportBeta all pass. Remaining work: 6 presets on TaxDetail, Tip, Delivery and Purchase."
+}

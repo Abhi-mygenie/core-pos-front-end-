@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyGenie POS — Architecture Bible</title>
+<meta name="description" content="End-to-end architecture gap analysis and improvement roadmap for MyGenie POS to scale to thousands of tenants." />
+<style>
+:root{
+  --bg:#0e1116;--panel:#151a21;--panel-2:#1b222b;--border:#2a323d;
+  --text:#e6edf3;--muted:#9aa4af;--accent:#329937;--warn:#F26B33;--amber:#F4A11A;
+  --link:#5eb0ef;--code-bg:#0b0f14;--code-border:#1f2732;
+  --high:#e05b4c;--med:#f0a935;--low:#5bb85b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+  line-height:1.65;font-size:15.5px;-webkit-font-smoothing:antialiased}
+.page{max-width:1080px;margin:0 auto;padding:48px 32px 96px}
+.masthead{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,rgba(14,17,22,0.98) 0%,rgba(14,17,22,0.85) 100%);
+  border-bottom:1px solid var(--border);padding:14px 32px;backdrop-filter:blur(8px)}
+.masthead .inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);color:var(--muted);background:var(--panel-2)}
+h1,h2,h3,h4,h5,h6{color:#fff;line-height:1.25;margin-top:2em;margin-bottom:0.6em;letter-spacing:-0.01em}
+h1{font-size:34px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-top:0.4em}
+h2{font-size:24px;border-bottom:1px solid var(--border);padding-bottom:8px}
+h3{font-size:19px;color:#dbe4ee}
+h4{font-size:16px;color:#c7d2de}
+h2::before{content:"";display:inline-block;width:6px;height:20px;background:var(--accent);border-radius:2px;margin-right:12px;vertical-align:-3px}
+a{color:var(--link);text-decoration:none;border-bottom:1px dotted rgba(94,176,239,0.35)}
+a:hover{color:#8fd0ff;border-bottom-color:#8fd0ff}
+.headerlink{opacity:0;margin-left:8px;font-size:0.7em;color:var(--muted);border:none}
+h2:hover .headerlink,h3:hover .headerlink,h4:hover .headerlink{opacity:1}
+p{margin:0.8em 0}
+strong{color:#fff}
+em{color:#c7d2de}
+code{background:var(--code-bg);border:1px solid var(--code-border);border-radius:4px;padding:1px 6px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;font-size:0.88em;color:#f0d67d}
+pre{background:var(--code-bg);border:1px solid var(--code-border);border-radius:8px;padding:16px 18px;overflow:auto;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02)}
+pre code{background:transparent;border:none;padding:0;color:#c8d2dc;font-size:13.5px;line-height:1.55}
+blockquote{border-left:3px solid var(--accent);margin:1.2em 0;padding:2px 16px;color:#c7d2de;background:rgba(50,153,55,0.06);border-radius:0 6px 6px 0}
+ul,ol{padding-left:1.5em}
+li{margin:0.25em 0}
+li>ul,li>ol{margin-top:0.25em}
+hr{border:none;border-top:1px solid var(--border);margin:2.4em 0}
+table{width:100%;border-collapse:collapse;margin:1em 0;background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;
+  display:block;overflow-x:auto}
+table thead{background:var(--panel-2)}
+table th,table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top;font-size:14.5px}
+table th{font-weight:600;color:#fff;font-size:13.5px;text-transform:none;letter-spacing:0.01em}
+table tr:last-child td{border-bottom:none}
+table tr:hover td{background:rgba(94,176,239,0.04)}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 28px;margin:24px 0 32px}
+.toc>ul{margin:0;padding-left:1.2em;list-style:decimal;color:var(--muted)}
+.toc a{color:var(--text);border-bottom:none}
+.toc a:hover{color:var(--link)}
+.toc ul ul{list-style:disc;color:var(--muted);margin-top:4px}
+/* Priority pill styles: matches [HIGH]/[MEDIUM]/[LOW] bracketed markers in headings */
+h3 code,h4 code{background:#20262f;color:#dbe4ee;border-color:#2c3540}
+/* Emphasise HIGH/MED/LOW badge words when they occur inline (rendered as **HIGH** etc) */
+strong{position:relative}
+/* Footer */
+.footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--border);color:var(--muted);font-size:13px;text-align:center}
+.footer a{color:var(--muted)}
+/* Scrollbar */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#2a323d;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#3a4452}
+/* Print */
+@media print{
+  .masthead{display:none}
+  .page{max-width:100%;padding:0}
+  body{background:#fff;color:#111}
+  pre,code,table,.toc{background:#f8f8f8;color:#111;border-color:#ddd}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="inner">
+    <div class="brand"><span class="dot"></span> MyGenie POS · Architecture Bible</div>
+    <div class="badges">
+      <span class="badge">v1.0</span>
+      <span class="badge">90 findings</span>
+      <span class="badge">33 HIGH · 37 MED · 20 LOW</span>
+    </div>
+  </div>
+</header>
+<main class="page">
+<h1 id="mygenie-pos-architecture-bible"><a class="toclink" href="#mygenie-pos-architecture-bible">MyGenie POS — Architecture Bible</a></h1>
+<p><strong>Document:</strong> ARCHITECTURE_BIBLE.md
+<strong>Purpose:</strong> End-to-end architecture gap analysis and improvement roadmap to scale from a single-restaurant deployment to thousands of tenants.
+<strong>Audience:</strong> Engineering leadership, backend team, frontend team, DevOps/SRE, security, product.
+<strong>Basis:</strong> Static analysis of <code>/app</code> codebase (frontend <code>React 19 + CRACO</code>, local proxy <code>FastAPI :8001</code>, <code>training-backend :8002</code>), plus repo docs at <code>/app/memory/current-state/*</code>, <code>/app/memory/analysis/*</code>, <code>/app/memory/final/*</code>.
+<strong>Status:</strong> Baseline v1.0 — living document. Update every sprint.</p>
+<hr>
+<h2 id="table-of-contents"><a class="toclink" href="#table-of-contents">Table of Contents</a></h2>
+<ol>
+<li><a href="#1-executive-summary">Executive Summary</a></li>
+<li><a href="#2-current-end-to-end-architecture">Current End-to-End Architecture</a></li>
+<li><a href="#3-how-to-read-the-findings">How to Read the Findings</a></li>
+<li><a href="#4-security-findings">Security Findings</a></li>
+<li><a href="#5-scalability-findings">Scalability Findings</a></li>
+<li><a href="#6-reliability--resilience-findings">Reliability &amp; Resilience Findings</a></li>
+<li><a href="#7-performance-findings">Performance Findings</a></li>
+<li><a href="#8-data-model--persistence-findings">Data Model &amp; Persistence Findings</a></li>
+<li><a href="#9-maintainability--code-health-findings">Maintainability &amp; Code-Health Findings</a></li>
+<li><a href="#10-deployment-build--release-findings">Deployment, Build &amp; Release Findings</a></li>
+<li><a href="#11-observability--monitoring-findings">Observability &amp; Monitoring Findings</a></li>
+<li><a href="#12-multi-tenancy--data-isolation-findings">Multi-Tenancy &amp; Data-Isolation Findings</a></li>
+<li><a href="#13-compliance--privacy-findings">Compliance &amp; Privacy Findings</a></li>
+<li><a href="#14-cross-cutting-architectural-weaknesses">Cross-Cutting Architectural Weaknesses</a></li>
+<li><a href="#15-priority-matrix--roadmap">Priority Matrix &amp; Roadmap</a></li>
+<li><a href="#16-target-architecture-for-1000-tenants">Target Architecture for 1,000+ Tenants</a></li>
+<li><a href="#17-appendix--evidence-index">Appendix — Evidence Index</a></li>
+<li><a href="#18-capacity-analysis--how-many-tenants-before-it-breaks">Capacity Analysis — How Many Tenants Before It Breaks</a></li>
+</ol>
+<hr>
+<h2 id="1-executive-summary"><a class="toclink" href="#1-executive-summary">1. Executive Summary</a></h2>
+<p>MyGenie POS is a <strong>single-tenant-styled React 19 SPA</strong> talking to a <strong>Laravel monolith</strong> (<code>preprod.mygenie.online</code>), a <strong>Socket.io server</strong>, a <strong>CRM service</strong>, and <strong>Firebase</strong>. The application is functional at the current scale (tens of restaurants) but has <strong>structural, security, and operational gaps</strong> that will surface hard as it grows toward thousands of tenants.</p>
+<p><strong>Top 10 risks that must be fixed before scaling past ~200 concurrent restaurants:</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Category</th>
+<th style="text-align: center;">Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>All CRM tenant API keys shipped to the browser bundle via <code>REACT_APP_CRM_API_KEYS</code></td>
+<td>Security</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Firebase config, Google Maps key, Firebase VAPID key exposed client-side</td>
+<td>Security</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>JWT stored in <code>localStorage</code> — XSS steals sessions permanently</td>
+<td>Security</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Sequential 7-call bootstrap on every login → 3–8 s cold-start</td>
+<td>Performance</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Socket channels are <code>${event}_${restaurantId}</code> on a shared server; no room isolation guarantees, no fan-out strategy</td>
+<td>Scalability</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Two orchestration hotspots (<code>DashboardPage.jsx</code> ~1975 loc, <code>OrderEntry.jsx</code> ~2500 loc) concentrate 60 % of business logic</td>
+<td>Maintainability</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td>No frontend error tracking (Sentry/Datadog), no RUM, no structured logs</td>
+<td>Observability</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Heavy localStorage state → no cross-device sync, no audit, no server-side truth</td>
+<td>Data model</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>9</td>
+<td>No CI/CD pipeline visible; deploy = manual <code>git clone + yarn install</code></td>
+<td>Deployment</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Local FastAPI <code>server.py</code> uses MongoDB for a "workflow queue" that writes to <code>/app/frontend/public/__dev/data/workflow_queue.json</code> — a dev artifact bundled with prod</td>
+<td>Release hygiene</td>
+<td style="text-align: center;"><strong>HIGH</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bottom line:</strong> The app is a well-organised SPA on top of a traditional LAMP-style backend. To reach thousands of tenants, the roadmap must invest in <strong>backend-for-frontend (BFF), per-tenant secret isolation, socket sharding, CDN + edge caching, observability, and a proper CI/CD + IaC pipeline</strong>.</p>
+<hr>
+<h2 id="2-current-end-to-end-architecture"><a class="toclink" href="#2-current-end-to-end-architecture">2. Current End-to-End Architecture</a></h2>
+<h3 id="21-component-map"><a class="toclink" href="#21-component-map">2.1 Component map</a></h3>
+<div class="codehilite"><pre><span></span><code>┌───────────────────────────────────────────────────────────────────────────┐
+│                              Client (Browser)                              │
+│                                                                            │
+│  React 19 SPA (CRACO, Tailwind, Radix, Chakra, shadcn, Framer Motion)      │
+│   ├─ ErrorBoundary                                                         │
+│   ├─ AppProviders (9 contexts in fixed order)                              │
+│   │    Auth → Socket → Notification → Restaurant → Menu →                  │
+│   │    Table → Settings → Order → Station                                  │
+│   ├─ BrowserRouter                                                         │
+│   │    / (Login) · /loading · /dashboard · /reports/* · /visibility/*      │
+│   ├─ localStorage (auth_token, view flags, walkIn cart, station config)   │
+│   └─ Firebase SW (public/firebase-messaging-sw.js, FCM compat v10)         │
+└───────────────────────────────────────────────────────────────────────────┘
+        │                    │                    │                     │
+        ▼                    ▼                    ▼                     ▼
+┌────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌─────────────┐
+│ preprod.mygenie│  │ presocket.mygenie│  │ crm.mygenie.online│ │ Firebase    │
+│  .online       │  │  .online         │  │                  │  │ FCM + Auth  │
+│ Laravel REST   │  │ Socket.IO        │  │ Customer intel   │  │             │
+│ (external)     │  │ (external)       │  │ (external)       │  │             │
+└────────────────┘  └──────────────────┘  └──────────────────┘  └─────────────┘
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│                     In-Emergent Deployment Only                            │
+│                                                                            │
+│  /app/backend/server.py         (FastAPI :8001)                            │
+│    • /api/*         → local endpoints (status-checks, workflow-queue)      │
+│    • /api/training/*→ proxied to :8002                                     │
+│    • Depends on local MongoDB                                              │
+│                                                                            │
+│  /app/training-backend/server.py (FastAPI :8002)                           │
+│    • Standalone training module — separate DB `mygenie_training`           │
+│    • Auth via preprod `vendoremployee/profile`                             │
+│                                                                            │
+│  /app/frontend/public/__dev/data/*.json                                    │
+│    • Dashboard + workflow queue data written by /api/workflow-queue        │
+│    • ⚠ Bundled into production build unless excluded                       │
+└───────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<h3 id="22-data-flow-order-lifecycle-happy-path"><a class="toclink" href="#22-data-flow-order-lifecycle-happy-path">2.2 Data flow — order lifecycle (happy path)</a></h3>
+<div class="codehilite"><pre><span></span><code>User (Cashier)
+   │
+   ▼ Login (email/pw + optional FCM token)
+LoginPage → authService.login()  ── POST /auth/vendoremployee/login ─► Laravel
+   │                                                                     │
+   │◄─────────────── {token, role, permissions, firebase_token} ─────────┘
+   │  auth_token → localStorage
+   ▼
+/loading → LoadingPage
+   │  SEQUENTIAL fetch (not parallel):
+   │   1) profile          2) categories       3) products
+   │   4) tables           5) cancellation     6) popular food
+   │   7) running orders   8) station data
+   ▼
+Contexts hydrated → /dashboard
+   │
+   ▼ Cashier picks a table / creates walk-in
+OrderEntry.jsx (~2500 loc)  ── POST /order/place ─► Laravel
+   │◄──────────── {order_id, invoice_no, …} ───────┘
+   │
+   ▼ Kitchen printer + station display updated
+Socket.io &quot;new_order_${restaurantId}&quot;  ◄── presocket.mygenie.online
+   │
+   ▼ Order status changes broadcast on same channel
+socketHandlers.js → mutates OrderContext / TableContext directly
+   │
+   ▼ Payment
+CollectPaymentPanel.jsx (~3050 loc) ── POST /payment/collect ─► Laravel
+   │
+   ▼ Settle + close day
+SettlementPage / DayClosurePage → report endpoints
+</code></pre></div>
+
+<h3 id="23-trust-boundaries"><a class="toclink" href="#23-trust-boundaries">2.3 Trust boundaries</a></h3>
+<table>
+<thead>
+<tr>
+<th>Boundary</th>
+<th>Trust level</th>
+<th>Concern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Browser ↔ Laravel</td>
+<td>Bearer JWT (HTTPS)</td>
+<td>Token in localStorage; no refresh token</td>
+</tr>
+<tr>
+<td>Browser ↔ Socket.IO</td>
+<td>Auth via query param / handshake (unverified in code)</td>
+<td>No end-to-end verification found</td>
+</tr>
+<tr>
+<td>Browser ↔ CRM</td>
+<td><code>X-API-Key</code> per-restaurant (JSON shipped in bundle)</td>
+<td><strong>Key material in client bundle</strong></td>
+</tr>
+<tr>
+<td>Browser ↔ Firebase</td>
+<td>Public config + VAPID key</td>
+<td>Standard Firebase practice, but scope must be limited</td>
+</tr>
+<tr>
+<td>Local FastAPI ↔ MongoDB</td>
+<td>No auth (<code>mongodb://localhost:27017</code>)</td>
+<td>Fine inside a pod, but no defense-in-depth</td>
+</tr>
+<tr>
+<td>Training backend ↔ Preprod profile API</td>
+<td>Bearer JWT relayed</td>
+<td>OK as design, but no rate limiting</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-how-to-read-the-findings"><a class="toclink" href="#3-how-to-read-the-findings">3. How to Read the Findings</a></h2>
+<p>Every finding uses this shape:</p>
+<div class="codehilite"><pre><span></span><code>## F&lt;Category&gt;-&lt;Number&gt;  &lt;Short title&gt;                              [PRIORITY]
+- What        : one-sentence factual description of the current state
+- Evidence    : file / line / config that proves it
+- Why it&#39;s a risk
+- Impact at scale (&gt;1,000 tenants)
+- Recommended fix
+- Effort      : S (≤1 sprint) · M (1–3 sprints) · L (&gt;3 sprints)
+- Owner (proposed)
+</code></pre></div>
+
+<p><strong>Priority definitions</strong></p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Definition</th>
+<th>SLA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HIGH</strong></td>
+<td>Ships blocker for scale-up; produces incidents, security exposure, or revenue loss under load</td>
+<td>Fix before scaling past ~200 tenants</td>
+</tr>
+<tr>
+<td><strong>MEDIUM</strong></td>
+<td>Erodes velocity, causes intermittent user pain, or increases blast radius of future changes</td>
+<td>Fix in the next 2 quarters</td>
+</tr>
+<tr>
+<td><strong>LOW</strong></td>
+<td>Housekeeping; improves developer experience or cleanliness</td>
+<td>Backlog, group into cleanup sprints</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-security-findings"><a class="toclink" href="#4-security-findings">4. Security Findings</a></h2>
+<h3 id="fsec-01-crm-api-keys-embedded-in-client-bundle-high"><a class="toclink" href="#fsec-01-crm-api-keys-embedded-in-client-bundle-high">FSEC-01  CRM API keys embedded in client bundle          [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>REACT_APP_CRM_API_KEYS</code> is a JSON object of all 15 tenants → <code>dp_live_*</code> keys, shipped inside the compiled JS bundle. Any user of any restaurant can read every other restaurant's key from DevTools.</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/src/api/crmAxios.js:11-16, 29-41</code>; <code>DEPLOYMENT_HANDOVER_2026-05-04.md</code> line 85.</li>
+<li><strong>Why it's a risk:</strong> A tenant can call the CRM as any other tenant → cross-tenant customer data disclosure.</li>
+<li><strong>Impact at scale:</strong> With 1,000 tenants, the bundle would carry 1,000 secrets; a single compromised viewer key breaches customer PII across the fleet.</li>
+<li><strong>Fix:</strong> Move all CRM traffic behind a <strong>backend-for-frontend (BFF)</strong> that resolves the correct tenant key server-side. Rotate all leaked keys.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="fsec-02-jwt-stored-in-localstorage-high"><a class="toclink" href="#fsec-02-jwt-stored-in-localstorage-high">FSEC-02  JWT stored in <code>localStorage</code>                    [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>auth_token</code> is persisted in <code>localStorage</code>; every XSS payload trivially exfiltrates it.</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/src/api/axios.js:21-27</code>; <code>/app/frontend/src/api/services/authService.js:19-29</code>.</li>
+<li><strong>Why it's a risk:</strong> No httpOnly protection; token has no observable rotation. A single XSS in any dependency (recharts, framer, third-party ad script) grants long-lived account takeover.</li>
+<li><strong>Impact at scale:</strong> One XSS in a dependency → mass compromise across every tenant that loaded that version.</li>
+<li><strong>Fix:</strong> Move to <strong>httpOnly, Secure, SameSite=Strict cookie</strong>; issue short-lived (5–15 min) access tokens + refresh via BFF; add CSP (default-src 'self') and Trusted Types.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="fsec-03-no-content-security-policy-or-sri-high"><a class="toclink" href="#fsec-03-no-content-security-policy-or-sri-high">FSEC-03  No Content Security Policy or SRI               [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>public/index.html</code> has no CSP, no <code>integrity=</code>/<code>crossorigin=</code> on external scripts.</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/public/index.html</code>.</li>
+<li><strong>Why it's a risk:</strong> Zero mitigation against XSS or a compromised CDN.</li>
+<li><strong>Impact at scale:</strong> A single supply-chain incident (any npm dep) turns into an org-wide breach.</li>
+<li><strong>Fix:</strong> Add CSP header (start report-only, tighten iteratively); enable SRI for all <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags; enable <code>X-Content-Type-Options: nosniff</code>, <code>Referrer-Policy: strict-origin-when-cross-origin</code>, <code>Permissions-Policy</code>.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend + DevOps</li>
+</ul>
+<h3 id="fsec-04-firebase-google-maps-keys-in-env-shipped-client-side-medium"><a class="toclink" href="#fsec-04-firebase-google-maps-keys-in-env-shipped-client-side-medium">FSEC-04  Firebase &amp; Google Maps keys in <code>.env</code> shipped client-side   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>REACT_APP_FIREBASE_*</code> and <code>REACT_APP_GOOGLE_MAPS_KEY</code> are public-by-nature but currently <strong>unrestricted</strong> (no HTTP referrer / package restrictions verified).</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/.env</code>; <code>/app/frontend/src/config/firebase.js:5-27</code>.</li>
+<li><strong>Why it's a risk:</strong> Unrestricted Google Maps key → billing fraud. Firebase project without domain restrictions → abuse from other origins.</li>
+<li><strong>Impact at scale:</strong> Uncapped billing exposure; Firebase abuse; brand-domain spoofing.</li>
+<li><strong>Fix:</strong> Restrict Maps key to production domain + iOS/Android bundle IDs; restrict Firebase to authorised domains list; monitor billing anomalies.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fsec-05-cors-wildcard-on-local-proxy-backend-medium"><a class="toclink" href="#fsec-05-cors-wildcard-on-local-proxy-backend-medium">FSEC-05  CORS wildcard on local proxy backend            [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>allow_origins=os.environ.get('CORS_ORIGINS', '*').split(',')</code> defaults to <code>*</code>; <code>.env</code> currently has <code>CORS_ORIGINS="*"</code>.</li>
+<li><strong>Evidence:</strong> <code>/app/backend/server.py:122-128</code>; <code>/app/backend/.env</code>.</li>
+<li><strong>Why it's a risk:</strong> Any origin can hit <code>/api/*</code> with credentials disabled by default, but the settings are not tightened per environment.</li>
+<li><strong>Impact at scale:</strong> In production, backend endpoints should be restricted to the actual preview / production domains.</li>
+<li><strong>Fix:</strong> Set <code>CORS_ORIGINS</code> to explicit allowlist per environment; disallow <code>*</code> in prod build validation.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fsec-06-backend-known-misspelling-sucess-is-a-fragile-protocol-contract-medium"><a class="toclink" href="#fsec-06-backend-known-misspelling-sucess-is-a-fragile-protocol-contract-medium">FSEC-06  Backend-known misspelling <code>'sucess'</code> is a fragile protocol contract   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Frontend must send <code>'sucess'</code> (not <code>'success'</code>) for PayLater; documented as a hard rule (R9 in Agent Prompt).</li>
+<li><strong>Evidence:</strong> <code>AGENT_PROMPT_ALPHA.md</code> R9; <code>HIGH-RISK FILE TRAPS</code> table.</li>
+<li><strong>Why it's a risk:</strong> Any well-meaning developer will "fix the typo" and break payments.</li>
+<li><strong>Impact at scale:</strong> Silent payment status corruption; hard to audit.</li>
+<li><strong>Fix:</strong> Fix backend contract (add both spellings, deprecate misspelling with dual-write for 1 release cycle, then remove).</li>
+<li><strong>Effort:</strong> S (backend) · <strong>Owner:</strong> Backend team</li>
+</ul>
+<h3 id="fsec-07-no-rate-limiting-on-preprod-login-otp-less-brute-force-high"><a class="toclink" href="#fsec-07-no-rate-limiting-on-preprod-login-otp-less-brute-force-high">FSEC-07  No rate limiting on preprod login / OTP-less brute force   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Login is <code>POST /auth/vendoremployee/login</code> with email+password. No CAPTCHA, no lockout logic visible.</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/src/api/services/authService.js</code>.</li>
+<li><strong>Why it's a risk:</strong> Trivial credential stuffing at scale; leaked password lists can enumerate valid accounts.</li>
+<li><strong>Impact at scale:</strong> Account takeovers grow linearly with tenant count; support cost balloons.</li>
+<li><strong>Fix:</strong> Backend WAF + per-IP + per-account rate limiting; hCaptcha/Turnstile after N failures; passwordless / MFA for owners.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Security</li>
+</ul>
+<h3 id="fsec-08-no-e2e-encryption-of-print-payloads-receipts-low-medium"><a class="toclink" href="#fsec-08-no-e2e-encryption-of-print-payloads-receipts-low-medium">FSEC-08  No E2E encryption of print payloads / receipts   [LOW-MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Bill/print payloads flow through HTTPS but there's no application-level integrity signature.</li>
+<li><strong>Why it's a risk:</strong> Tampered browser extensions could inject items into a print flow.</li>
+<li><strong>Impact at scale:</strong> Rare, but a class of insider fraud opens up.</li>
+<li><strong>Fix:</strong> Server-signed receipt payloads (HMAC) verified at printer bridge.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fsec-09-service-worker-for-firebase-fcm-uses-old-compat-sdk-10141-low"><a class="toclink" href="#fsec-09-service-worker-for-firebase-fcm-uses-old-compat-sdk-10141-low">FSEC-09  Service Worker for Firebase FCM uses old compat SDK (10.14.1)   [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> App uses <code>firebase ^12.x</code>, SW imports compat v10 from CDN.</li>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §11</code>; <code>public/firebase-messaging-sw.js:7-8</code>.</li>
+<li><strong>Why it's a risk:</strong> Divergent SDKs → subtle push failures; upgrade blocked by drift.</li>
+<li><strong>Fix:</strong> Align SW with app SDK version; version pin.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fsec-10-secrets-committed-via-env-handover-doc-medium"><a class="toclink" href="#fsec-10-secrets-committed-via-env-handover-doc-medium">FSEC-10  Secrets committed via <code>.env</code> handover doc         [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>/app/memory/memory/memory/DEPLOYMENT_HANDOVER_2026-05-04.md</code> documents production-ish keys (Firebase, Maps, CRM) in plain markdown inside the repo.</li>
+<li><strong>Why it's a risk:</strong> Any repo leak = full key disclosure. This has already happened at least once (repo is public on GitHub if unchanged).</li>
+<li><strong>Impact at scale:</strong> Blast radius grows with fleet size.</li>
+<li><strong>Fix:</strong> Rotate all keys documented in memory/*.md; move secrets into a vault (AWS Secrets Manager / HashiCorp Vault / Doppler); enforce pre-commit scanning (gitleaks, trufflehog).</li>
+<li><strong>Effort:</strong> S (rotate) + M (vault) · <strong>Owner:</strong> DevOps + Security</li>
+</ul>
+<hr>
+<h2 id="5-scalability-findings"><a class="toclink" href="#5-scalability-findings">5. Scalability Findings</a></h2>
+<h3 id="fsca-01-sequential-bootstrap-on-every-login-high"><a class="toclink" href="#fsca-01-sequential-bootstrap-on-every-login-high">FSCA-01  Sequential bootstrap on every login                [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>LoadingPage</code> fires 7 API calls in strict sequence before user can act.</li>
+<li><strong>Evidence:</strong> <code>CURRENT_ARCHITECTURE.md §3</code>; <code>LoadingPage.jsx:174-304</code>.</li>
+<li><strong>Why it's a risk:</strong> Time-to-interactive = sum(all latencies). Any slow endpoint stalls every user.</li>
+<li><strong>Impact at scale:</strong> With p95 backend latency 200 ms → 1.4 s just for bootstrap; under load p95 climbs to 800 ms → <strong>5.6 s login-to-usable</strong>. Peak lunch/dinner hours amplify this.</li>
+<li><strong>Fix:</strong>
+  1. Parallelise independent calls (<code>Promise.all</code>) — profile, categories, products, tables, cancel reasons are independent.
+  2. Add server-side "bootstrap aggregation" endpoint returning all bootstrap payload in one round trip (BFF pattern).
+  3. Cache-Control: <code>stale-while-revalidate</code> for menu/products at the edge.</li>
+<li><strong>Effort:</strong> S (parallelise) + M (aggregation endpoint) · <strong>Owner:</strong> Frontend + Backend</li>
+</ul>
+<h3 id="fsca-02-socketio-shared-server-without-sharding-strategy-high"><a class="toclink" href="#fsca-02-socketio-shared-server-without-sharding-strategy-high">FSCA-02  Socket.IO shared server without sharding strategy   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> All tenants connect to the same <code>presocket.mygenie.online</code> host. Channels are <code>event_${restaurantId}</code>.</li>
+<li><strong>Evidence:</strong> <code>useSocketEvents.js:129-180</code>.</li>
+<li><strong>Why it's a risk:</strong> Single Node process capacity ≈ 10k–20k concurrent sockets. With avg 5 users/restaurant × 1,000 restaurants = <strong>50k+ sockets</strong>, plus mobile PWA/kitchen displays.</li>
+<li><strong>Impact at scale:</strong> Connection storms, memory pressure, event fan-out amplification, single-point outage.</li>
+<li><strong>Fix:</strong></li>
+<li>Move to <strong>Redis pub/sub or NATS</strong> as the message bus.</li>
+<li><strong>Sticky-session load balance</strong> across N Socket.IO nodes (Redis adapter).</li>
+<li>Or migrate to <strong>AWS AppSync / Ably / Pusher / Supabase Realtime</strong> for managed scale.</li>
+<li>Introduce per-tenant "namespaces" (<code>/tenant-&lt;id&gt;</code>) for real isolation.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend + Infra</li>
+</ul>
+<h3 id="fsca-03-no-cdn-edge-cache-for-static-assets-medium"><a class="toclink" href="#fsca-03-no-cdn-edge-cache-for-static-assets-medium">FSCA-03  No CDN / edge cache for static assets              [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> CRA build served from single origin; no evidence of Cloudflare / CloudFront in front.</li>
+<li><strong>Why it's a risk:</strong> Global latency; origin overload during releases.</li>
+<li><strong>Impact at scale:</strong> Users in geographically distant regions see slow FCP.</li>
+<li><strong>Fix:</strong> Put CDN (Cloudflare / CloudFront) in front of static bundle; enable Brotli; set immutable cache headers on hashed asset filenames.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fsca-04-client-side-reporting-logic-will-not-scale-to-enterprise-chains-high"><a class="toclink" href="#fsca-04-client-side-reporting-logic-will-not-scale-to-enterprise-chains-high">FSCA-04  Client-side reporting logic will not scale to enterprise chains   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>reportService.js</code> does business-day arithmetic, multi-endpoint merges, dedupes, and report-row generation client-side.</li>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §9</code>.</li>
+<li><strong>Why it's a risk:</strong> A chain with 100 outlets pulling 30 days of data will download megabytes of raw orders and process them in the browser.</li>
+<li><strong>Impact at scale:</strong> Chrome OOM on low-end tablets; UI jank; slow reports.</li>
+<li><strong>Fix:</strong> Move aggregation to backend; return pre-computed report rows. Introduce a <strong>read-only reporting service</strong> (Postgres read replica + materialised views, or ClickHouse for OLAP).</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fsca-05-monolithic-laravel-backend-implied-no-service-seams-high"><a class="toclink" href="#fsca-05-monolithic-laravel-backend-implied-no-service-seams-high">FSCA-05  Monolithic Laravel backend implied — no service seams   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> All backend traffic hits <code>preprod.mygenie.online</code> — single origin, single database implied.</li>
+<li><strong>Why it's a risk:</strong> A hot spot in "reports" can starve "orders". Deploying a report fix requires deploying the whole monolith.</li>
+<li><strong>Impact at scale:</strong> Blast radius grows with feature count; feature velocity drops.</li>
+<li><strong>Fix:</strong> Introduce module seams:</li>
+<li><strong>auth-service</strong> (login, permissions)</li>
+<li><strong>catalog-service</strong> (menu, products)</li>
+<li><strong>orders-service</strong> (place / update / cancel)</li>
+<li><strong>payments-service</strong></li>
+<li><strong>reports-service</strong> (OLAP / read-replica)</li>
+<li><strong>crm-service</strong> (already separate)
+  Keep the monolith for now, but enforce module boundaries + event-driven integration.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend + Architecture</li>
+</ul>
+<h3 id="fsca-06-firebase-fcm-used-for-realtime-instead-of-socketio-where-possible-low"><a class="toclink" href="#fsca-06-firebase-fcm-used-for-realtime-instead-of-socketio-where-possible-low">FSCA-06  Firebase FCM used for realtime instead of Socket.IO where possible   [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> Notifications go over FCM; live order updates via socket. Two channels to maintain.</li>
+<li><strong>Why it's a risk:</strong> Duplicate infra to scale, monitor, and pay for.</li>
+<li><strong>Impact at scale:</strong> Slightly complicated ops; each channel needs SLOs.</li>
+<li><strong>Fix:</strong> Long-term, unify around one realtime layer (managed provider) and use FCM only for actual OS-level push.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fsca-07-no-horizontal-scale-story-for-the-local-appbackendserverpy-low"><a class="toclink" href="#fsca-07-no-horizontal-scale-story-for-the-local-appbackendserverpy-low">FSCA-07  No horizontal-scale story for the local <code>/app/backend/server.py</code>   [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> The local FastAPI proxy is a single process; MongoDB is local; the <code>workflow-queue</code> writes to a shared filesystem file.</li>
+<li><strong>Why it's a risk:</strong> This service is currently dev-only, but if promoted to prod without work, it will not scale (file-based state, single writer).</li>
+<li><strong>Impact at scale:</strong> Only if this becomes a production dependency.</li>
+<li><strong>Fix:</strong> Keep it dev-only. If promoted, move state to a proper store (Postgres / Mongo) and remove file-based queue.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<hr>
+<h2 id="6-reliability-resilience-findings"><a class="toclink" href="#6-reliability-resilience-findings">6. Reliability &amp; Resilience Findings</a></h2>
+<h3 id="frel-01-no-retrybackoff-strategy-on-api-calls-high"><a class="toclink" href="#frel-01-no-retrybackoff-strategy-on-api-calls-high">FREL-01  No retry/backoff strategy on API calls              [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>axios.js</code> interceptor only translates 401 → redirect; no automatic retry with jitter for 5xx / network errors.</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/src/api/axios.js</code>.</li>
+<li><strong>Why it's a risk:</strong> Transient network hiccups (very common on café Wi-Fi) surface as full errors to cashiers.</li>
+<li><strong>Impact at scale:</strong> Order loss during transient failures; cashier anxiety.</li>
+<li><strong>Fix:</strong> Add axios-retry for idempotent GETs; add explicit <strong>idempotency-key</strong> header for POST /order, POST /payment to make retries safe; write a client-side outbox for critical writes when offline.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend + Backend</li>
+</ul>
+<h3 id="frel-02-soft-failure-pattern-hides-real-failures-high"><a class="toclink" href="#frel-02-soft-failure-pattern-hides-real-failures-high">FREL-02  Soft-failure pattern hides real failures            [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>stationService.fetchStationData()</code> and parts of <code>customerService</code>, <code>reportService</code> return empty arrays / fallback objects on error instead of surfacing the failure.</li>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §7, §13</code>; <code>stationService.js:131,201-209</code>.</li>
+<li><strong>Why it's a risk:</strong> Operators see "no data" and don't know it's a fetch failure. Silent data loss.</li>
+<li><strong>Impact at scale:</strong> Support cost balloons; incident MTTR grows because monitors can't detect failure.</li>
+<li><strong>Fix:</strong> Standardise a response envelope <code>{status: 'ok'|'empty'|'error', data, error}</code> across services; separate "empty" from "failed" in the UI.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="frel-03-no-offline-mode-pwa-offline-queue-high"><a class="toclink" href="#frel-03-no-offline-mode-pwa-offline-queue-high">FREL-03  No offline mode / PWA offline queue                 [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> No Service Worker beyond FCM; no offline order queue.</li>
+<li><strong>Why it's a risk:</strong> Cafés lose internet — cashiers can't take orders → direct revenue loss.</li>
+<li><strong>Impact at scale:</strong> Every hour of outage across the fleet = measurable revenue impact.</li>
+<li><strong>Fix:</strong> Implement offline-first order capture: Service Worker + IndexedDB outbox + idempotent replay on reconnect.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend + Backend</li>
+</ul>
+<h3 id="frel-04-no-circuit-breakers-between-browser-and-external-services-medium"><a class="toclink" href="#frel-04-no-circuit-breakers-between-browser-and-external-services-medium">FREL-04  No circuit breakers between browser and external services   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> If CRM is slow, the browser waits <code>crmAxios timeout: 60000</code> (60 s implied default).</li>
+<li><strong>Evidence:</strong> <code>/app/frontend/src/api/crmAxios.js</code>.</li>
+<li><strong>Why it's a risk:</strong> One slow dependency locks up the entire UI thread's request queue.</li>
+<li><strong>Impact at scale:</strong> CRM incident → whole app feels down.</li>
+<li><strong>Fix:</strong> Set tight per-service timeouts (2–5 s), add a client-side circuit breaker (opossum-js or equivalent), gracefully degrade CRM widgets.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="frel-05-socket-reconnect-logic-not-fully-proven-medium"><a class="toclink" href="#frel-05-socket-reconnect-logic-not-fully-proven-medium">FREL-05  Socket reconnect logic not fully proven              [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>SocketContext</code> reconnects on visibility/online events, but no evidence of exponential backoff, snapshot-catchup on reconnect, or out-of-order event handling.</li>
+<li><strong>Evidence:</strong> <code>SocketContext.jsx:70-113</code>; <code>socketService.js:21-364</code>.</li>
+<li><strong>Why it's a risk:</strong> After a disconnect, missed events = stale UI state until next hydration.</li>
+<li><strong>Impact at scale:</strong> During network blips, UI drifts; kitchen displays show wrong statuses.</li>
+<li><strong>Fix:</strong> On reconnect, refetch orders since <code>last_event_id</code>; add server-side event sequence numbers.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="frel-06-single-point-of-failure-preprod-is-one-host-high"><a class="toclink" href="#frel-06-single-point-of-failure-preprod-is-one-host-high">FREL-06  Single point of failure: preprod is one host        [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> All prod-ish traffic goes to one hostname; no evidence of multi-AZ, failover, or graceful-degradation plan.</li>
+<li><strong>Why it's a risk:</strong> Any preprod outage = every restaurant down.</li>
+<li><strong>Impact at scale:</strong> SLA obligations get harder as customer count grows.</li>
+<li><strong>Fix:</strong> Multi-AZ deploy for backend; health checks + failover; documented DR runbook; RTO/RPO targets published.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Infra</li>
+</ul>
+<h3 id="frel-07-no-graceful-shutdown-drain-in-local-fastapi-proxy-low"><a class="toclink" href="#frel-07-no-graceful-shutdown-drain-in-local-fastapi-proxy-low">FREL-07  No graceful shutdown / drain in local FastAPI proxy   [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> Uvicorn <code>--reload</code> is used in supervisor; only a shutdown handler that closes Mongo.</li>
+<li><strong>Evidence:</strong> <code>/etc/supervisor/conf.d/*.conf</code>; <code>/app/backend/server.py:137-139</code>.</li>
+<li><strong>Why it's a risk:</strong> In-flight requests dropped on restart.</li>
+<li><strong>Impact at scale:</strong> Only if this becomes production.</li>
+<li><strong>Fix:</strong> Remove <code>--reload</code> in prod; enable Uvicorn workers with proper drain.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> DevOps</li>
+</ul>
+<hr>
+<h2 id="7-performance-findings"><a class="toclink" href="#7-performance-findings">7. Performance Findings</a></h2>
+<h3 id="fprf-01-two-orchestration-hotspots-dominate-render-cost-high"><a class="toclink" href="#fprf-01-two-orchestration-hotspots-dominate-render-cost-high">FPRF-01  Two orchestration hotspots dominate render cost      [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>DashboardPage.jsx</code> (~1975 loc) and <code>OrderEntry.jsx</code> (~2500 loc) render huge subtrees; likely many re-renders per state change.</li>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §1, §2</code>; <code>HIGH-RISK FILE TRAPS</code>.</li>
+<li><strong>Why it's a risk:</strong> Each context write triggers wide re-renders. On busy nights, cashiers report "sticky" UI.</li>
+<li><strong>Impact at scale:</strong> Low-end tablets (2 GB RAM Android) become unusable during peak.</li>
+<li><strong>Fix:</strong></li>
+<li>Split contexts into read/action pairs (or use Zustand with selector subscriptions).</li>
+<li>Memoise cards with <code>React.memo</code> + stable prop references.</li>
+<li>Virtualise long lists (react-virtual / TanStack Virtual).</li>
+<li>Move filter logic into worker threads for heavy report screens.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fprf-02-bundle-size-many-heavy-deps-medium"><a class="toclink" href="#fprf-02-bundle-size-many-heavy-deps-medium">FPRF-02  Bundle size — many heavy deps                        [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>package.json</code> contains Chakra + Radix + Tailwind + shadcn + Framer Motion + Chart.js + Recharts + Firebase + Socket.io + Zod + lodash + libphonenumber. Multiple UI kits and multiple chart libs.</li>
+<li><strong>Why it's a risk:</strong> Redundant dependencies inflate the bundle.</li>
+<li><strong>Impact at scale:</strong> Slower first-load on tablets, higher bandwidth bill.</li>
+<li><strong>Fix:</strong></li>
+<li>Pick one chart lib (Recharts OR Chart.js) — deprecate the other.</li>
+<li>Consider dropping Chakra if shadcn+Radix covers the same needs.</li>
+<li>Route-based code splitting + <code>React.lazy</code> for reports, settings, day closure.</li>
+<li>Analyse with <code>source-map-explorer</code> and set a <strong>CI bundle-size budget</strong>.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fprf-03-no-image-optimisation-cdn-medium"><a class="toclink" href="#fprf-03-no-image-optimisation-cdn-medium">FPRF-03  No image optimisation / CDN                          [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Product images (likely served from Laravel storage) unoptimised, no responsive variants.</li>
+<li><strong>Why it's a risk:</strong> Menu with 200 products × 300 KB image = 60 MB load.</li>
+<li><strong>Fix:</strong> Image service (imgproxy / Cloudinary) with WebP/AVIF + responsive srcset; lazy load.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="fprf-04-react-19-concurrent-features-not-leveraged-low"><a class="toclink" href="#fprf-04-react-19-concurrent-features-not-leveraged-low">FPRF-04  React 19 concurrent features not leveraged          [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> No <code>useTransition</code>, <code>useDeferredValue</code>, Suspense boundaries around slow lists.</li>
+<li><strong>Why it's a risk:</strong> Missed opportunity to keep UI responsive.</li>
+<li><strong>Fix:</strong> Wrap heavy report tables with <code>useDeferredValue</code>; Suspense for lazy routes.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fprf-05-chart-libraries-render-synchronously-low"><a class="toclink" href="#fprf-05-chart-libraries-render-synchronously-low">FPRF-05  Chart libraries render synchronously                 [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> Chart.js/Recharts synchronous render on main thread.</li>
+<li><strong>Fix:</strong> Consider <code>&lt;Suspense&gt;</code> around charts; render skeletons; offload heavy summarisation to Web Worker.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fprf-06-no-react-devtools-profiler-baseline-captured-low"><a class="toclink" href="#fprf-06-no-react-devtools-profiler-baseline-captured-low">FPRF-06  No React DevTools Profiler baseline captured        [LOW]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Record and store perf baselines (render count, TTI, LCP) per sprint in <code>/app/memory/perf-baselines/</code>.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<hr>
+<h2 id="8-data-model-persistence-findings"><a class="toclink" href="#8-data-model-persistence-findings">8. Data Model &amp; Persistence Findings</a></h2>
+<h3 id="fdat-01-localstorage-is-a-de-facto-database-high"><a class="toclink" href="#fdat-01-localstorage-is-a-de-facto-database-high">FDAT-01  localStorage is a de-facto database                 [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Channel/status visibility, view mode locks, order-taking enablement, station config, <code>walkIn</code> cart, dynamic-tables flag — all in localStorage.</li>
+<li><strong>Evidence:</strong> <code>CURRENT_ARCHITECTURE.md §6 (persistence)</code>; <code>SCALING_RISK_REGISTER.md §6</code>.</li>
+<li><strong>Why it's a risk:</strong> No cross-device sync, no audit trail, no restore-on-loss, no per-user policy enforcement.</li>
+<li><strong>Impact at scale:</strong> Owners setting policies on one device don't propagate; support can't reproduce state; enterprise customers can't audit changes.</li>
+<li><strong>Fix:</strong></li>
+<li>Classify each key as <strong>device-local</strong>, <strong>user-level</strong>, or <strong>restaurant-level</strong>.</li>
+<li>Move restaurant-level to backend <code>POST /settings/restaurant</code>.</li>
+<li>Move user-level to backend <code>POST /settings/user</code>.</li>
+<li>Keep only truly device-local settings client-side (e.g., last-used printer name).</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="fdat-02-backend-expects-sucess-misspelling-as-canonical-status-medium"><a class="toclink" href="#fdat-02-backend-expects-sucess-misspelling-as-canonical-status-medium">FDAT-02  Backend expects <code>'sucess'</code> misspelling as canonical status  [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Duplicate of FSEC-06 but from data-model angle: an enum has a misspelled canonical value.</li>
+<li><strong>Fix:</strong> Migration path documented above.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-03-two-payment-status-fields-with-conflicting-semantics-high"><a class="toclink" href="#fdat-03-two-payment-status-fields-with-conflicting-semantics-high">FDAT-03  Two payment status fields with conflicting semantics   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>payment_status</code> returns <code>null</code> from list endpoint; must use <code>fOrderStatus</code> for rooms.</li>
+<li><strong>Evidence:</strong> <code>AGENT_PROMPT_ALPHA.md — KNOWN BACKEND QUIRKS</code>.</li>
+<li><strong>Why it's a risk:</strong> Business rules split across two fields → constant source of subtle bugs.</li>
+<li><strong>Impact at scale:</strong> Finance/settlement bugs correlate with revenue; hard to audit.</li>
+<li><strong>Fix:</strong> Normalise on backend to a single derived <code>payment_state</code> (<code>unpaid / partial / paid / voided</code>) with a consistent enum. Migrate reports and dashboards.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-04-socket-payload-has-two-shapes-4-element-old-6-element-new-medium"><a class="toclink" href="#fdat-04-socket-payload-has-two-shapes-4-element-old-6-element-new-medium">FDAT-04  Socket payload has two shapes (4-element old, 6-element new)  [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>scan-new-order</code> socket event ships two payload formats simultaneously.</li>
+<li><strong>Evidence:</strong> <code>AGENT_PROMPT_ALPHA.md — KNOWN BACKEND QUIRKS</code>.</li>
+<li><strong>Why it's a risk:</strong> Every consumer must branch on payload length.</li>
+<li><strong>Fix:</strong> Version the socket protocol (<code>v1</code>, <code>v2</code> events); deprecate v1 after 1 release.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-05-business-day-boundary-computed-client-side-medium"><a class="toclink" href="#fdat-05-business-day-boundary-computed-client-side-medium">FDAT-05  Business-day boundary computed client-side          [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>reportService.js</code> computes business-day windows.</li>
+<li><strong>Why it's a risk:</strong> Client timezone drift → mismatched reports; time-zone bugs are the #1 finance-report cause of tickets.</li>
+<li><strong>Fix:</strong> Backend authoritative business-day; expose <code>POST /reports/x?business_date=YYYY-MM-DD</code>.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-06-no-event-log-append-only-journal-for-orders-high"><a class="toclink" href="#fdat-06-no-event-log-append-only-journal-for-orders-high">FDAT-06  No event log / append-only journal for orders       [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Orders are mutated in place server-side; no immutable event stream visible.</li>
+<li><strong>Why it's a risk:</strong> Reconstructing "what happened" during disputes is difficult.</li>
+<li><strong>Impact at scale:</strong> Legal / audit compliance harder; forensic support cost high.</li>
+<li><strong>Fix:</strong> Emit domain events (<code>OrderPlaced</code>, <code>OrderModified</code>, <code>PaymentCollected</code>) into an event store (Kafka / Postgres event table). Reports read from a projection.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-07-menu-product-model-versioning-medium"><a class="toclink" href="#fdat-07-menu-product-model-versioning-medium">FDAT-07  Menu / product model versioning                     [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> No indication that menu items track version / effective-from dates.</li>
+<li><strong>Why it's a risk:</strong> Historical bills reprinted with today's prices produce wrong totals.</li>
+<li><strong>Fix:</strong> Track <code>menu_version_id</code> on each order line item; freeze pricing at time of order.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fdat-08-two-mongodb-databases-in-local-backend-without-formal-ownership-low"><a class="toclink" href="#fdat-08-two-mongodb-databases-in-local-backend-without-formal-ownership-low">FDAT-08  Two MongoDB databases in local backend without formal ownership   [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>test_database</code> for main + <code>mygenie_training</code> for training. Only in dev pod.</li>
+<li><strong>Fix:</strong> Not a prod concern; keep them separate; document.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<hr>
+<h2 id="9-maintainability-code-health-findings"><a class="toclink" href="#9-maintainability-code-health-findings">9. Maintainability &amp; Code-Health Findings</a></h2>
+<h3 id="fmnt-01-two-2000-loc-orchestration-files-high"><a class="toclink" href="#fmnt-01-two-2000-loc-orchestration-files-high">FMNT-01  Two 2,000-loc orchestration files                   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>DashboardPage.jsx</code> and <code>OrderEntry.jsx</code> mix UI, business, transport.</li>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §1, §2</code>; <code>REFACTOR_OPPORTUNITY_MAP.md §1, §2</code>.</li>
+<li><strong>Why it's a risk:</strong> Regressions in revenue-critical paths; onboarding time &gt; 2 weeks.</li>
+<li><strong>Fix:</strong> Follow the repo's own P0 refactor plan (extract selectors → action hooks → modal orchestration).</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-02-mixed-api-access-direct-axios-vs-service-layer-medium"><a class="toclink" href="#fmnt-02-mixed-api-access-direct-axios-vs-service-layer-medium">FMNT-02  Mixed API access — direct axios vs service layer   [MEDIUM]</a></h3>
+<ul>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §4</code>; direct calls in <code>DashboardPage.jsx:1131-1134, 1260-1269</code>; <code>OrderEntry.jsx:626-681, 729-805, 831-850</code>.</li>
+<li><strong>Fix:</strong> Ban direct <code>api.*</code> calls in components (ESLint rule <code>no-restricted-imports</code>); go through a domain-action layer.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-03-ordertransformjs-is-a-business-rule-sink-1900-loc-high"><a class="toclink" href="#fmnt-03-ordertransformjs-is-a-business-rule-sink-1900-loc-high">FMNT-03  <code>orderTransform.js</code> is a business-rule sink (~1900 loc)   [HIGH]</a></h3>
+<ul>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §12</code>; <code>REFACTOR_OPPORTUNITY_MAP.md §7</code>.</li>
+<li><strong>Why it's a risk:</strong> Financial correctness debt in one file.</li>
+<li><strong>Fix:</strong> Split into <code>read/</code>, <code>write/</code>, <code>payments/</code>, <code>print/</code>, <code>room/</code> transforms with unit tests.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-04-two-ui-kits-chakra-shadcnradix-coexist-medium"><a class="toclink" href="#fmnt-04-two-ui-kits-chakra-shadcnradix-coexist-medium">FMNT-04  Two UI kits (Chakra + shadcn/Radix) coexist          [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>package.json</code> includes both; the AGENT prompt says "Tailwind + Radix + shadcn" but Chakra remains.</li>
+<li><strong>Fix:</strong> Pick one. Migrate the other's usages over 2 sprints.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-05-no-typescript-medium"><a class="toclink" href="#fmnt-05-no-typescript-medium">FMNT-05  No TypeScript                                        [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> All source in JS; some Zod schemas, but no compile-time typing.</li>
+<li><strong>Why it's a risk:</strong> Refactors in 2,000-loc files without types are dangerous.</li>
+<li><strong>Fix:</strong> Incrementally introduce TypeScript at API boundary + transform layer (start with <code>.d.ts</code> files, then convert critical files).</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-06-eslint-warnings-tolerated-low"><a class="toclink" href="#fmnt-06-eslint-warnings-tolerated-low">FMNT-06  ESLint warnings tolerated                           [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> Multiple <code>react-hooks/exhaustive-deps</code> warnings exist per <code>frontend.out.log</code>.</li>
+<li><strong>Fix:</strong> Zero-warning policy on PRs; migrate to <code>eslint --max-warnings=0</code> in CI.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-07-provider-order-is-architecture-significant-but-not-enforced-low"><a class="toclink" href="#fmnt-07-provider-order-is-architecture-significant-but-not-enforced-low">FMNT-07  Provider order is architecture-significant but not enforced   [LOW]</a></h3>
+<ul>
+<li><strong>Evidence:</strong> <code>AppProviders.jsx:13-34</code>; guarded only by rule R7 in Agent Prompt.</li>
+<li><strong>Fix:</strong> Add a test that asserts provider order at boot; unit test the shape.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fmnt-08-firebase-messaging-swjs-version-drift-low"><a class="toclink" href="#fmnt-08-firebase-messaging-swjs-version-drift-low">FMNT-08  <code>firebase-messaging-sw.js</code> version drift             [LOW]</a></h3>
+<ul>
+<li>Covered in FSEC-09.</li>
+</ul>
+<h3 id="fmnt-09-sidebar-exposes-routes-that-dont-exist-low"><a class="toclink" href="#fmnt-09-sidebar-exposes-routes-that-dont-exist-low">FMNT-09  Sidebar exposes routes that don't exist              [LOW]</a></h3>
+<ul>
+<li><strong>Evidence:</strong> <code>SCALING_RISK_REGISTER.md §14</code>.</li>
+<li><strong>Fix:</strong> Feature-flag "coming soon" entries or move them to a roadmap page.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend + Product</li>
+</ul>
+<h3 id="fmnt-10-handwritten-memorymd-docs-700-files-risk-drifting-from-code-medium"><a class="toclink" href="#fmnt-10-handwritten-memorymd-docs-700-files-risk-drifting-from-code-medium">FMNT-10  Handwritten memory/*.md docs (700+ files) risk drifting from code   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> The <code>/app/memory/</code> folder is a governance system, but code-vs-doc drift is called out repeatedly.</li>
+<li><strong>Fix:</strong> Automate doc regeneration for architecture/API maps from source (jsdoc/tsdoc + a nightly job to update <code>MODULE_MAP.md</code>).</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Platform / DX</li>
+</ul>
+<hr>
+<h2 id="10-deployment-build-release-findings"><a class="toclink" href="#10-deployment-build-release-findings">10. Deployment, Build &amp; Release Findings</a></h2>
+<h3 id="fdep-01-no-cicd-pipeline-visible-high"><a class="toclink" href="#fdep-01-no-cicd-pipeline-visible-high">FDEP-01  No CI/CD pipeline visible                             [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> No <code>.github/workflows</code>, <code>.gitlab-ci.yml</code>, or equivalent found; deploy is manual (<code>git clone + yarn install + supervisorctl restart</code>).</li>
+<li><strong>Evidence:</strong> Repo root; deployment handover doc.</li>
+<li><strong>Why it's a risk:</strong> No automated tests on PRs, no environment promotion, human error on releases.</li>
+<li><strong>Fix:</strong> GitHub Actions or GitLab CI:</li>
+<li><code>install → lint → test → build → snapshot bundle size → deploy to preview</code></li>
+<li><code>main → auto-deploy to staging; tag → prod deploy with manual approval</code></li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-02-__devdatajson-bundled-in-production-build-high"><a class="toclink" href="#fdep-02-__devdatajson-bundled-in-production-build-high">FDEP-02  <code>__dev/data/*.json</code> bundled in production build      [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>workflow-queue.json</code> and other <code>__dev/data/*.json</code> sit in <code>public/</code> — CRA copies everything in <code>public/</code> to <code>build/</code>.</li>
+<li><strong>Evidence:</strong> <code>/app/backend/server.py:70-86</code>.</li>
+<li><strong>Why it's a risk:</strong> Internal governance data (control-plane state) shipped to browsers of every restaurant.</li>
+<li><strong>Impact at scale:</strong> Data leakage, cache pollution, bundle bloat.</li>
+<li><strong>Fix:</strong></li>
+<li>Move <code>__dev/</code> outside <code>public/</code>.</li>
+<li>Guard build with a check that fails if <code>__dev/</code> exists.</li>
+<li>Serve dashboard data via authenticated API only.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> DevOps + Frontend</li>
+</ul>
+<h3 id="fdep-03-no-environment-segregation-dev-stage-prod-high"><a class="toclink" href="#fdep-03-no-environment-segregation-dev-stage-prod-high">FDEP-03  No environment segregation (dev / stage / prod)      [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Only one preprod exists; frontend <code>.env</code> points to same host for all builds.</li>
+<li><strong>Fix:</strong> Formal envs — <code>dev</code>, <code>stage</code>, <code>prod</code> — each with own DNS, DB, keys; enforce with 12-factor style config.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-04-frontend-served-by-craco-start-in-prod-supervisor-high"><a class="toclink" href="#fdep-04-frontend-served-by-craco-start-in-prod-supervisor-high">FDEP-04  Frontend served by <code>craco start</code> in prod supervisor   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Supervisor runs <code>yarn start</code> → dev server. Not fit for production.</li>
+<li><strong>Fix:</strong> Build once (<code>yarn build</code>) → serve static via CDN or nginx; add health check.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-05-no-infrastructure-as-code-medium"><a class="toclink" href="#fdep-05-no-infrastructure-as-code-medium">FDEP-05  No Infrastructure-as-Code                            [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> No Terraform / Pulumi / CloudFormation in repo.</li>
+<li><strong>Fix:</strong> Codify infra (DNS, LB, K8s manifests, Redis, DBs) in IaC. One-command bring-up.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-06-docker-not-present-not-standard-medium"><a class="toclink" href="#fdep-06-docker-not-present-not-standard-medium">FDEP-06  Docker not present / not standard                   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> No <code>Dockerfile</code>. Emergent supplies a runtime, but for scale each service should have a reproducible image.</li>
+<li><strong>Fix:</strong> Multi-stage Dockerfile for frontend (build → nginx) and backend; publish to a container registry.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-07-no-feature-flag-system-medium"><a class="toclink" href="#fdep-07-no-feature-flag-system-medium">FDEP-07  No feature-flag system                                [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Feature flags are hardcoded in <code>constants/featureFlags.js</code>.</li>
+<li><strong>Why it's a risk:</strong> Every flag flip = deploy; no per-tenant rollout.</li>
+<li><strong>Fix:</strong> Runtime flags (LaunchDarkly / Unleash / GrowthBook) evaluated per user/restaurant.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Platform</li>
+</ul>
+<h3 id="fdep-08-no-bluegreen-or-canary-medium"><a class="toclink" href="#fdep-08-no-bluegreen-or-canary-medium">FDEP-08  No blue/green or canary                              [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Add canary route (5 %) with automatic rollback on error-rate spike.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fdep-09-yarn-1x-classic-end-of-life-posture-low"><a class="toclink" href="#fdep-09-yarn-1x-classic-end-of-life-posture-low">FDEP-09  Yarn 1.x (Classic) — end-of-life posture             [LOW]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>packageManager: yarn@1.22.22</code>.</li>
+<li><strong>Fix:</strong> Plan migration to Yarn Berry (PnP or node-modules) or <code>pnpm</code> for reproducibility.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fdep-10-emergent-specific-emergent-folder-tied-to-preview-only-low"><a class="toclink" href="#fdep-10-emergent-specific-emergent-folder-tied-to-preview-only-low">FDEP-10  Emergent-specific <code>.emergent/</code> folder tied to preview only   [LOW]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Ensure prod deployment does not depend on Emergent-only assets.</li>
+</ul>
+<hr>
+<h2 id="11-observability-monitoring-findings"><a class="toclink" href="#11-observability-monitoring-findings">11. Observability &amp; Monitoring Findings</a></h2>
+<h3 id="fobs-01-no-frontend-error-tracking-high"><a class="toclink" href="#fobs-01-no-frontend-error-tracking-high">FOBS-01  No frontend error tracking                            [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> No Sentry / Rollbar / Bugsnag / Datadog RUM.</li>
+<li><strong>Why it's a risk:</strong> All frontend errors invisible to engineering.</li>
+<li><strong>Impact at scale:</strong> Bugs found by customer complaints, not telemetry.</li>
+<li><strong>Fix:</strong> Add Sentry with source-map upload in CI; alert on new/regression errors; PII scrubbing.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend + DevOps</li>
+</ul>
+<h3 id="fobs-02-no-rum-performance-monitoring-high"><a class="toclink" href="#fobs-02-no-rum-performance-monitoring-high">FOBS-02  No RUM / performance monitoring                     [HIGH]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Web-Vitals reporting (LCP, INP, CLS) → RUM tool; per-page dashboards.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="fobs-03-no-structured-logs-on-backend-high"><a class="toclink" href="#fobs-03-no-structured-logs-on-backend-high">FOBS-03  No structured logs on backend                        [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> FastAPI logs are default text; no correlation IDs, no JSON.</li>
+<li><strong>Fix:</strong> JSON logger (<code>loguru</code> / <code>structlog</code>), <code>X-Request-ID</code> propagation from client → backend → downstream.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fobs-04-no-metrics-prometheus-opentelemetry-high"><a class="toclink" href="#fobs-04-no-metrics-prometheus-opentelemetry-high">FOBS-04  No metrics (Prometheus / OpenTelemetry)              [HIGH]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Instrument backend with OpenTelemetry; export to Prometheus/Grafana or a hosted APM (Datadog, New Relic, Grafana Cloud).</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + DevOps</li>
+</ul>
+<h3 id="fobs-05-no-distributed-tracing-medium"><a class="toclink" href="#fobs-05-no-distributed-tracing-medium">FOBS-05  No distributed tracing                                [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> W3C <code>traceparent</code> propagation client → backend → Laravel → CRM.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Full stack</li>
+</ul>
+<h3 id="fobs-06-no-health-readiness-endpoints-on-all-services-medium"><a class="toclink" href="#fobs-06-no-health-readiness-endpoints-on-all-services-medium">FOBS-06  No health / readiness endpoints on all services      [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>ENABLE_HEALTH_CHECK=false</code> in <code>.env</code>.</li>
+<li><strong>Fix:</strong> Standard <code>/healthz</code>, <code>/readyz</code> on every backend service; wired to LB probes.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fobs-07-no-slo-sla-definition-medium"><a class="toclink" href="#fobs-07-no-slo-sla-definition-medium">FOBS-07  No SLO / SLA definition                              [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Define SLOs: login success ≥ 99.9 %, order-place p95 ≤ 500 ms, socket-connect p95 ≤ 1 s. Track with error budgets.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> SRE</li>
+</ul>
+<h3 id="fobs-08-no-log-aggregation-retention-policy-medium"><a class="toclink" href="#fobs-08-no-log-aggregation-retention-policy-medium">FOBS-08  No log aggregation / retention policy                [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> ELK / Loki / Datadog Logs; 30-day hot / 1-year cold retention aligned with compliance.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="fobs-09-no-synthetic-uptime-monitoring-medium"><a class="toclink" href="#fobs-09-no-synthetic-uptime-monitoring-medium">FOBS-09  No synthetic / uptime monitoring                     [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Blackbox monitors (Pingdom / UptimeRobot / Grafana Synthetics) on login, socket, key APIs.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> SRE</li>
+</ul>
+<h3 id="fobs-10-no-user-session-replay-for-support-low"><a class="toclink" href="#fobs-10-no-user-session-replay-for-support-low">FOBS-10  No user-session replay for support                   [LOW]</a></h3>
+<ul>
+<li><strong>Fix:</strong> LogRocket / FullStory (PII-safe config) — dramatically shortens support cycles.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Support + Frontend</li>
+</ul>
+<hr>
+<h2 id="12-multi-tenancy-data-isolation-findings"><a class="toclink" href="#12-multi-tenancy-data-isolation-findings">12. Multi-Tenancy &amp; Data-Isolation Findings</a></h2>
+<h3 id="fmt-01-no-proven-per-tenant-data-isolation-at-db-layer-high"><a class="toclink" href="#fmt-01-no-proven-per-tenant-data-isolation-at-db-layer-high">FMT-01  No proven per-tenant data isolation at DB layer        [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Not verifiable from client code; every backend call is <code>restaurant_id</code>-scoped, but no evidence of row-level security or per-tenant DB partitioning.</li>
+<li><strong>Why it's a risk:</strong> A single missed <code>WHERE restaurant_id = ?</code> = catastrophic cross-tenant leak.</li>
+<li><strong>Fix:</strong> Enable Postgres row-level security (RLS) with policies keyed on <code>restaurant_id</code>; enforce at query builder layer; automated tests that attempt cross-tenant reads and expect 403.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fmt-02-restaurant-id-sourced-from-client-side-context-high"><a class="toclink" href="#fmt-02-restaurant-id-sourced-from-client-side-context-high">FMT-02  Restaurant ID sourced from client-side context        [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Frontend sends <code>restaurant_id</code> alongside requests; if backend trusts client-provided IDs, cross-tenant escalation is possible.</li>
+<li><strong>Fix:</strong> Backend must <strong>derive</strong> <code>restaurant_id</code> from the JWT/session claim, never from request body.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fmt-03-tenant-provisioning-is-manual-medium"><a class="toclink" href="#fmt-03-tenant-provisioning-is-manual-medium">FMT-03  Tenant provisioning is manual                          [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> No self-service tenant onboarding visible.</li>
+<li><strong>Fix:</strong> Signup + provisioning API + welcome email + first-run wizard.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Product + Backend</li>
+</ul>
+<h3 id="fmt-04-noisy-neighbour-risk-medium"><a class="toclink" href="#fmt-04-noisy-neighbour-risk-medium">FMT-04  Noisy neighbour risk                                   [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> No per-tenant rate limit or quota.</li>
+<li><strong>Fix:</strong> Per-tenant token bucket in the API gateway.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fmt-05-per-tenant-feature-flags-absent-medium"><a class="toclink" href="#fmt-05-per-tenant-feature-flags-absent-medium">FMT-05  Per-tenant feature flags absent                        [MEDIUM]</a></h3>
+<ul>
+<li>Covered in FDEP-07.</li>
+</ul>
+<h3 id="fmt-06-global-crm-keys-map-ships-to-every-tenant-high"><a class="toclink" href="#fmt-06-global-crm-keys-map-ships-to-every-tenant-high">FMT-06  Global CRM keys map ships to every tenant             [HIGH]</a></h3>
+<ul>
+<li>Covered in FSEC-01.</li>
+</ul>
+<h3 id="fmt-07-firebase-project-is-shared-medium"><a class="toclink" href="#fmt-07-firebase-project-is-shared-medium">FMT-07  Firebase project is shared                            [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Single Firebase project across all tenants → single blast radius for FCM abuse.</li>
+<li><strong>Fix:</strong> For enterprise plans, offer dedicated Firebase projects; otherwise carefully scope topics + validate <code>restaurant_id</code> on send.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<hr>
+<h2 id="13-compliance-privacy-findings"><a class="toclink" href="#13-compliance-privacy-findings">13. Compliance &amp; Privacy Findings</a></h2>
+<h3 id="fcmp-01-no-documented-data-retention-policy-medium"><a class="toclink" href="#fcmp-01-no-documented-data-retention-policy-medium">FCMP-01  No documented data-retention policy                   [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Publish retention windows per data type (orders 7 years, PII 3 years post-inactivity, logs 1 year); automate purge.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Legal + Backend</li>
+</ul>
+<h3 id="fcmp-02-no-data-subject-request-dsr-workflow-medium"><a class="toclink" href="#fcmp-02-no-data-subject-request-dsr-workflow-medium">FCMP-02  No data subject request (DSR) workflow               [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Export + erase endpoints per user; runbook.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Support</li>
+</ul>
+<h3 id="fcmp-03-pci-scope-payment-data-flowing-through-frontend-high"><a class="toclink" href="#fcmp-03-pci-scope-payment-data-flowing-through-frontend-high">FCMP-03  PCI scope — payment data flowing through frontend    [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> <code>CollectPaymentPanel.jsx</code> handles payment details; scope of PCI exposure unclear.</li>
+<li><strong>Fix:</strong> If any card data touches frontend, use a <strong>tokenised</strong> integration (Stripe Elements / Razorpay Checkout / hosted fields). Ensure app is PCI-DSS SAQ-A scope only.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Payments + Security</li>
+</ul>
+<h3 id="fcmp-04-gstvat-invoicing-correctness-high"><a class="toclink" href="#fcmp-04-gstvat-invoicing-correctness-high">FCMP-04  GST/VAT invoicing correctness                        [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Tax logic partly in <code>orderTransform.js</code>; the AGENT prompt rule R6 flags financial logic as sacred.</li>
+<li><strong>Fix:</strong> Move tax calculation to backend as single source of truth; canonical invoice generator; audit trail for every tax change.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="fcmp-05-cookie-consent-banner-absent-low"><a class="toclink" href="#fcmp-05-cookie-consent-banner-absent-low">FCMP-05  Cookie / consent banner absent                        [LOW]</a></h3>
+<ul>
+<li><strong>Fix:</strong> If serving EU users, add consent management (Cookiebot / OneTrust) for analytics.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Frontend + Legal</li>
+</ul>
+<hr>
+<h2 id="14-cross-cutting-architectural-weaknesses"><a class="toclink" href="#14-cross-cutting-architectural-weaknesses">14. Cross-Cutting Architectural Weaknesses</a></h2>
+<h3 id="farc-01-no-backend-for-frontend-bff-layer-high"><a class="toclink" href="#farc-01-no-backend-for-frontend-bff-layer-high">FARC-01  No Backend-For-Frontend (BFF) layer                   [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Frontend talks directly to Laravel, CRM, Socket, and Firebase. Every integration = frontend knowledge.</li>
+<li><strong>Why it's a risk:</strong> Every new backend endpoint requires a frontend deploy; keys leak into browser; auth logic duplicated.</li>
+<li><strong>Fix:</strong> Introduce a BFF (Node/FastAPI) between the SPA and backends. Aggregates bootstrap, hides CRM keys, injects tenant identity, terminates auth cookie, translates payload shapes.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Full stack</li>
+</ul>
+<h3 id="farc-02-no-api-contract-typed-schema-high"><a class="toclink" href="#farc-02-no-api-contract-typed-schema-high">FARC-02  No API contract / typed schema                       [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> No OpenAPI spec, no shared TS types with backend.</li>
+<li><strong>Fix:</strong> Backend publishes OpenAPI 3.1; codegen client SDK for frontend; enforce in CI.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend + Frontend</li>
+</ul>
+<h3 id="farc-03-no-event-driven-decoupling-between-services-medium"><a class="toclink" href="#farc-03-no-event-driven-decoupling-between-services-medium">FARC-03  No event-driven decoupling between services         [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Long term: introduce Kafka / Redis Streams for order/payment events → reports/CRM/loyalty consume asynchronously.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="farc-04-no-service-mesh-api-gateway-medium"><a class="toclink" href="#farc-04-no-service-mesh-api-gateway-medium">FARC-04  No service mesh / API gateway                        [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Kong / Envoy / AWS API Gateway in front — centralise auth, rate limit, retries, tracing.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> DevOps</li>
+</ul>
+<h3 id="farc-05-no-caching-layer-redis-high"><a class="toclink" href="#farc-05-no-caching-layer-redis-high">FARC-05  No caching layer (Redis)                              [HIGH]</a></h3>
+<ul>
+<li><strong>What:</strong> Menu, restaurant profile, permissions read from DB every request.</li>
+<li><strong>Fix:</strong> Redis with per-tenant keyspace; cache-aside pattern; short TTL + explicit invalidation on writes.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Backend</li>
+</ul>
+<h3 id="farc-06-testing-pyramid-inverted-medium"><a class="toclink" href="#farc-06-testing-pyramid-inverted-medium">FARC-06  Testing pyramid inverted                              [MEDIUM]</a></h3>
+<ul>
+<li><strong>What:</strong> Repo has <code>__tests__/</code> folders but no evidence of high coverage on transforms/business logic.</li>
+<li><strong>Fix:</strong> Enforce ≥ 70 % coverage on <code>api/transforms/*</code> and <code>utils/*</code>; add smoke E2E via Playwright.</li>
+<li><strong>Effort:</strong> M · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="farc-07-frontend-routing-has-narrower-coverage-than-sidebar-low"><a class="toclink" href="#farc-07-frontend-routing-has-narrower-coverage-than-sidebar-low">FARC-07  Frontend routing has narrower coverage than sidebar   [LOW]</a></h3>
+<ul>
+<li>Covered in FMNT-09.</li>
+</ul>
+<h3 id="farc-08-provider-stack-is-9-deep-re-render-blast-radius-medium"><a class="toclink" href="#farc-08-provider-stack-is-9-deep-re-render-blast-radius-medium">FARC-08  Provider stack is 9 deep — re-render blast radius    [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Introduce a "state atom" library (Jotai / Zustand) for cross-cutting slices; keep contexts only for identity/config; reduces re-render count materially.</li>
+<li><strong>Effort:</strong> L · <strong>Owner:</strong> Frontend</li>
+</ul>
+<h3 id="farc-09-no-documented-capacity-model-medium"><a class="toclink" href="#farc-09-no-documented-capacity-model-medium">FARC-09  No documented capacity model                          [MEDIUM]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Publish "1 tenant costs X CPU / Y RAM / Z requests-per-second"; use for capacity planning.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> SRE</li>
+</ul>
+<h3 id="farc-10-no-architecture-decision-record-adr-process-low"><a class="toclink" href="#farc-10-no-architecture-decision-record-adr-process-low">FARC-10  No architecture-decision-record (ADR) process        [LOW]</a></h3>
+<ul>
+<li><strong>Fix:</strong> Add <code>docs/adr/NNNN-title.md</code> template; require ADR for every HIGH-risk decision.</li>
+<li><strong>Effort:</strong> S · <strong>Owner:</strong> Architecture</li>
+</ul>
+<hr>
+<h2 id="15-priority-matrix-roadmap"><a class="toclink" href="#15-priority-matrix-roadmap">15. Priority Matrix &amp; Roadmap</a></h2>
+<h3 id="151-high-priority-items-fix-before-scaling-past-200-tenants"><a class="toclink" href="#151-high-priority-items-fix-before-scaling-past-200-tenants">15.1 HIGH-priority items (fix before scaling past ~200 tenants)</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Finding</th>
+<th style="text-align: center;">Effort</th>
+<th style="text-align: left;">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FSEC-01</td>
+<td>CRM keys in browser bundle</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend + FE</td>
+</tr>
+<tr>
+<td>FSEC-02</td>
+<td>JWT in localStorage</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend + FE</td>
+</tr>
+<tr>
+<td>FSEC-03</td>
+<td>No CSP / SRI</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">FE + DevOps</td>
+</tr>
+<tr>
+<td>FSEC-07</td>
+<td>No login rate limit</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FSCA-01</td>
+<td>Sequential bootstrap</td>
+<td style="text-align: center;">S+M</td>
+<td style="text-align: left;">Backend + FE</td>
+</tr>
+<tr>
+<td>FSCA-02</td>
+<td>Socket sharding</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend + Infra</td>
+</tr>
+<tr>
+<td>FSCA-04</td>
+<td>Client-side report aggregation</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FSCA-05</td>
+<td>Monolithic Laravel</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FREL-01</td>
+<td>No retry / idempotency</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">FE + Backend</td>
+</tr>
+<tr>
+<td>FREL-02</td>
+<td>Soft-failure hides errors</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">FE</td>
+</tr>
+<tr>
+<td>FREL-03</td>
+<td>No offline mode</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">FE + Backend</td>
+</tr>
+<tr>
+<td>FREL-06</td>
+<td>Single-host SPOF</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Infra</td>
+</tr>
+<tr>
+<td>FPRF-01</td>
+<td>2,000-loc hotspots</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">FE</td>
+</tr>
+<tr>
+<td>FDAT-01</td>
+<td>localStorage as DB</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend + FE</td>
+</tr>
+<tr>
+<td>FDAT-03</td>
+<td>Payment status split fields</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FDAT-06</td>
+<td>No event log</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FMNT-01</td>
+<td>Same as FPRF-01</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">FE</td>
+</tr>
+<tr>
+<td>FMNT-03</td>
+<td>orderTransform sink</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">FE</td>
+</tr>
+<tr>
+<td>FDEP-01</td>
+<td>No CI/CD</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">DevOps</td>
+</tr>
+<tr>
+<td>FDEP-02</td>
+<td><code>__dev/data</code> in prod build</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">DevOps + FE</td>
+</tr>
+<tr>
+<td>FDEP-03</td>
+<td>No env segregation</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">DevOps</td>
+</tr>
+<tr>
+<td>FDEP-04</td>
+<td>craco start in prod</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">DevOps</td>
+</tr>
+<tr>
+<td>FOBS-01</td>
+<td>No error tracking</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">FE + DevOps</td>
+</tr>
+<tr>
+<td>FOBS-02</td>
+<td>No RUM</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">FE</td>
+</tr>
+<tr>
+<td>FOBS-03</td>
+<td>No structured logs</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FOBS-04</td>
+<td>No metrics</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend + DevOps</td>
+</tr>
+<tr>
+<td>FMT-01</td>
+<td>No RLS proof</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FMT-02</td>
+<td>Client-provided restaurant_id</td>
+<td style="text-align: center;">S</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FCMP-03</td>
+<td>Payment PCI scope</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Payments</td>
+</tr>
+<tr>
+<td>FCMP-04</td>
+<td>GST correctness</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+<tr>
+<td>FARC-01</td>
+<td>No BFF</td>
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">Full stack</td>
+</tr>
+<tr>
+<td>FARC-02</td>
+<td>No OpenAPI contract</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend + FE</td>
+</tr>
+<tr>
+<td>FARC-05</td>
+<td>No Redis cache</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">Backend</td>
+</tr>
+</tbody>
+</table>
+<h3 id="152-suggested-3-quarter-roadmap"><a class="toclink" href="#152-suggested-3-quarter-roadmap">15.2 Suggested 3-quarter roadmap</a></h3>
+<p><strong>Q1 — "Stop the bleeding" (foundations)</strong>
+- FSEC-01, FSEC-02, FSEC-03, FSEC-07, FSEC-10 → <strong>security baseline</strong>
+- FDEP-01, FDEP-02, FDEP-03, FDEP-04 → <strong>prod-worthy deploy</strong>
+- FOBS-01, FOBS-02, FOBS-03, FOBS-04, FOBS-06 → <strong>observability MVP</strong>
+- FMT-02 → server-derived tenant ID</p>
+<p><strong>Q2 — "Reliability + Scale"</strong>
+- FSCA-01 (bootstrap parallel + aggregation)
+- FREL-01 (retry + idempotency)
+- FREL-02 (error envelope)
+- FARC-01 (BFF)
+- FARC-05 (Redis cache)
+- FMT-01 (RLS)
+- FSCA-02 (socket sharding — start)</p>
+<p><strong>Q3 — "Refactor + Enterprise readiness"</strong>
+- FMNT-01/03 (hotspot decomposition — hand-in-hand with Order team's own P0 refactor plan)
+- FDAT-01 (localStorage → server settings)
+- FDAT-06 (event log)
+- FREL-03 (offline mode)
+- FCMP-01/02/03 (compliance rollout)
+- FARC-02 (OpenAPI contract)</p>
+<h3 id="153-effort-legend"><a class="toclink" href="#153-effort-legend">15.3 Effort legend</a></h3>
+<ul>
+<li><strong>S</strong> = ≤ 1 sprint (2 weeks)</li>
+<li><strong>M</strong> = 1–3 sprints</li>
+<li><strong>L</strong> = &gt; 3 sprints (may span multiple quarters)</li>
+</ul>
+<hr>
+<h2 id="16-target-architecture-for-1000-tenants"><a class="toclink" href="#16-target-architecture-for-1000-tenants">16. Target Architecture for 1,000+ Tenants</a></h2>
+<div class="codehilite"><pre><span></span><code>                         ┌─────────────────────────────────────────┐
+                         │        CDN (Cloudflare/CloudFront)       │
+                         │   Static SPA, images, WebP, cache SWR    │
+                         └───────────────┬─────────────────────────┘
+                                         │
+                                         ▼
+                         ┌─────────────────────────────────────────┐
+                         │    Web / API Gateway (Kong / Envoy)     │
+                         │  TLS, WAF, per-tenant rate limit,       │
+                         │  auth cookie termination, tracing       │
+                         └───────────────┬─────────────────────────┘
+                                         │
+                    ┌────────────────────┼────────────────────┐
+                    ▼                    ▼                    ▼
+        ┌─────────────────┐   ┌───────────────────┐   ┌───────────────────┐
+        │      BFF        │   │ Realtime Gateway  │   │  Auth Service     │
+        │ (FastAPI/Node)  │   │ (Socket.IO nodes  │   │  short-lived JWT  │
+        │ Aggregates      │   │  + Redis adapter) │   │  + refresh cookie │
+        │ bootstrap,      │   │  sticky sessions  │   │                   │
+        │ hides CRM keys  │   └────────┬──────────┘   └───────┬───────────┘
+        └────────┬────────┘            │                      │
+                 │                     │                      │
+   ┌─────────────┼─────────────────────┼──────────────────────┤
+   ▼             ▼                     ▼                      ▼
+┌────────┐  ┌──────────┐   ┌─────────────────┐    ┌────────────────────┐
+│Catalog │  │ Orders   │   │  Payments       │    │  Reports (OLAP)    │
+│Service │  │ Service  │   │  Service        │    │  read-replica /    │
+│        │  │(events)  │   │(idempotent)     │    │  ClickHouse        │
+└───┬────┘  └────┬─────┘   └────────┬────────┘    └──────────┬─────────┘
+    │            │                  │                        │
+    └─────► Message bus (Kafka / Redis Streams) ─────────────┤
+    │            │                                            │
+    ▼            ▼                                            ▼
+ Postgres    Postgres                                    Postgres RO
+ (RLS)       (RLS, event    ┌───────────────────┐        + ClickHouse
+             journal)       │  Redis (cache,    │
+                            │  session, rate    │
+                            │  limiting)        │
+                            └───────────────────┘
+
+Cross-cutting: OpenTelemetry traces + JSON logs + Prometheus metrics + Sentry
+</code></pre></div>
+
+<p><strong>Principles</strong>
+1. <strong>BFF owns tenant secrets</strong> — no CRM/Firebase/Maps keys with tenant scope in the browser.
+2. <strong>JWT in httpOnly cookie</strong>, short TTL, refresh via BFF.
+3. <strong>Row-level security on every table</strong>, enforced by DB.
+4. <strong>All writes idempotent</strong> via <code>Idempotency-Key</code>.
+5. <strong>Domain events on Kafka</strong> — every mutation produces an event.
+6. <strong>Reports isolated</strong> on a read replica / OLAP store.
+7. <strong>Realtime on managed layer</strong> (Ably / Pusher / self-hosted Socket.IO cluster with Redis adapter).
+8. <strong>CI/CD every commit</strong> — lint, test, build, bundle-budget, deploy to preview.
+9. <strong>Observability = default</strong> — every service ships logs + metrics + traces + Sentry.
+10. <strong>Feature flags per tenant</strong> — LaunchDarkly or Unleash.</p>
+<hr>
+<h2 id="17-appendix-evidence-index"><a class="toclink" href="#17-appendix-evidence-index">17. Appendix — Evidence Index</a></h2>
+<table>
+<thead>
+<tr>
+<th>Ref</th>
+<th>File / Doc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture summary</td>
+<td><code>/app/memory/memory/memory/current-state/CURRENT_ARCHITECTURE.md</code></td>
+</tr>
+<tr>
+<td>Module map</td>
+<td><code>/app/memory/memory/memory/current-state/MODULE_MAP.md</code></td>
+</tr>
+<tr>
+<td>API usage</td>
+<td><code>/app/memory/memory/memory/current-state/API_USAGE_MAP.md</code></td>
+</tr>
+<tr>
+<td>Repo's own risk register</td>
+<td><code>/app/memory/memory/memory/analysis/SCALING_RISK_REGISTER.md</code></td>
+</tr>
+<tr>
+<td>Refactor opportunities</td>
+<td><code>/app/memory/memory/memory/analysis/REFACTOR_OPPORTUNITY_MAP.md</code></td>
+</tr>
+<tr>
+<td>Final architecture decisions</td>
+<td><code>/app/memory/memory/memory/final/ARCHITECTURE_DECISIONS_FINAL.md</code></td>
+</tr>
+<tr>
+<td>Agent operating manual</td>
+<td><code>/app/memory/control/AGENT_PROMPT_ALPHA.md</code></td>
+</tr>
+<tr>
+<td>Backend proxy</td>
+<td><code>/app/backend/server.py</code></td>
+</tr>
+<tr>
+<td>Training backend</td>
+<td><code>/app/training-backend/server.py</code></td>
+</tr>
+<tr>
+<td>Main axios client</td>
+<td><code>/app/frontend/src/api/axios.js</code></td>
+</tr>
+<tr>
+<td>CRM axios client</td>
+<td><code>/app/frontend/src/api/crmAxios.js</code></td>
+</tr>
+<tr>
+<td>Provider stack</td>
+<td><code>/app/frontend/src/contexts/AppProviders.jsx</code></td>
+</tr>
+<tr>
+<td>Dashboard hotspot</td>
+<td><code>/app/frontend/src/pages/DashboardPage.jsx</code></td>
+</tr>
+<tr>
+<td>Order-entry hotspot</td>
+<td><code>/app/frontend/src/components/order-entry/OrderEntry.jsx</code></td>
+</tr>
+<tr>
+<td>Order transforms</td>
+<td><code>/app/frontend/src/api/transforms/orderTransform.js</code></td>
+</tr>
+<tr>
+<td>Socket wiring</td>
+<td><code>/app/frontend/src/api/socket/useSocketEvents.js</code>, <code>socketHandlers.js</code>, <code>socketService.js</code></td>
+</tr>
+<tr>
+<td>Env handover</td>
+<td><code>/app/memory/memory/memory/DEPLOYMENT_HANDOVER_2026-05-04.md</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>Owner of this document:</strong> Architecture team.
+<strong>Cadence:</strong> Reviewed at the start of every sprint; findings closed only when a linked ADR + tests + monitoring exist.
+<strong>How to add a new finding:</strong> Append under the correct category with the standard template. Update the Priority Matrix. Open a corresponding CR in <code>/app/memory/change_requests/</code>.</p>
+<hr>
+<h2 id="18-capacity-analysis-how-many-tenants-before-it-breaks"><a class="toclink" href="#18-capacity-analysis-how-many-tenants-before-it-breaks">18. Capacity Analysis — How Many Tenants Before It Breaks</a></h2>
+<p>This section answers the practical question: <strong>with the architecture as it exists today, how many restaurants can we serve before real problems appear?</strong></p>
+<h3 id="181-tldr"><a class="toclink" href="#181-tldr">18.1 TL;DR</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th style="text-align: center;">Restaurant count</th>
+<th>State</th>
+<th>What you feel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Safe zone</strong></td>
+<td style="text-align: center;"><strong>1 – 50</strong></td>
+<td>Works fine</td>
+<td>No noticeable issues</td>
+</tr>
+<tr>
+<td><strong>First cracks</strong></td>
+<td style="text-align: center;"><strong>50 – 150</strong></td>
+<td>Strain begins</td>
+<td>Slow reports, login lag, occasional socket drops</td>
+</tr>
+<tr>
+<td><strong>Breaking point</strong></td>
+<td style="text-align: center;"><strong>150 – 300</strong></td>
+<td>Frequent incidents</td>
+<td>Peak-hour outages, support drowning, deploys scary</td>
+</tr>
+<tr>
+<td><strong>Structurally broken</strong></td>
+<td style="text-align: center;"><strong>300 – 500</strong></td>
+<td>Won't hold</td>
+<td>Weekly incidents, SPOF failures, security posture untenable</td>
+</tr>
+<tr>
+<td><strong>Impossible</strong></td>
+<td style="text-align: center;"><strong>500+</strong></td>
+<td>Architecture unfit</td>
+<td>Cannot scale without redesign</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>hard ceiling</strong> of the current architecture is roughly <strong>200–300 concurrent-during-peak restaurants</strong>. Beyond that, no amount of tuning saves it — the design itself has to change.</p>
+<h3 id="182-assumptions-used"><a class="toclink" href="#182-assumptions-used">18.2 Assumptions used</a></h3>
+<p>Per restaurant during peak lunch / dinner hours:
+- <strong>~4 concurrent users</strong> (1 owner + 2 cashiers + 1 kitchen display / waiter tablet)
+- <strong>20 – 50 orders/hour</strong> — roughly one order every 1–3 minutes
+- <strong>5 – 10 API calls per order</strong> (place, modify, KOT, payment, print, settle)
+- <strong>3 – 5 socket messages per order</strong> (<code>new_order</code>, status, engage/disengage)
+- <strong>Peak windows:</strong> 12–2 PM and 7–10 PM (about 5 hours/day)
+- <strong>Login storms</strong> at shift changes (9 AM, 5 PM)</p>
+<h3 id="183-component-by-component-ceiling"><a class="toclink" href="#183-component-by-component-ceiling">18.3 Component-by-component ceiling</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Component</th>
+<th style="text-align: center;">Theoretical max</th>
+<th style="text-align: center;">Real-world break-point</th>
+<th>First symptom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>craco start</code> dev server (currently used in prod supervisor)</td>
+<td style="text-align: center;">~100 concurrent conns</td>
+<td style="text-align: center;"><strong>~30–50 restaurants</strong></td>
+<td>Page load timeouts, 502s</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Laravel monolith + single DB</td>
+<td style="text-align: center;">500–2,000 restaurants</td>
+<td style="text-align: center;"><strong>~150–300</strong></td>
+<td>Slow reports, 500s during peak</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Socket.IO single node</td>
+<td style="text-align: center;">10k–15k sockets</td>
+<td style="text-align: center;"><strong>~500–800 peak / cracks at ~200</strong></td>
+<td>Socket reconnect storms</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Sequential 7-call bootstrap</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>~50–100 concurrent logins</strong></td>
+<td>Login takes 5–8 s at 5 PM shift change</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Client-side report aggregation</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>Any chain with 10+ outlets</strong></td>
+<td>Chrome OOM on tablets</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CRM keys shipped in bundle (security wall)</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>~20–50 tenants</strong></td>
+<td>Key rotation becomes impossible</td>
+</tr>
+<tr>
+<td>7</td>
+<td>No CI/CD, manual deploys</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>~20 restaurants</strong></td>
+<td>"Deploy fear", changes slow to a crawl</td>
+</tr>
+<tr>
+<td>8</td>
+<td>No error tracking / no RUM</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>~30–50</strong></td>
+<td>Bugs invisible; support tickets are the only signal</td>
+</tr>
+<tr>
+<td>9</td>
+<td>localStorage as a database</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;"><strong>~200–300</strong></td>
+<td>Support cost per restaurant explodes</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Single AZ / single host SPOF</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: center;">Any scale</td>
+<td>One outage = 100% of fleet down</td>
+</tr>
+</tbody>
+</table>
+<h3 id="184-what-breaks-first-in-order"><a class="toclink" href="#184-what-breaks-first-in-order">18.4 What breaks first — in order</a></h3>
+<p><strong>Restaurants #1 – #30 — everything fine.</strong>
+Backend is idle, DB is warm, sockets are quiet. Support handles complaints directly.</p>
+<p><strong>Around #30 – #50 — static hosting cracks first.</strong>
+If the production supervisor still runs <code>craco start</code> (FDEP-04), you hit the dev-server connection cap. Fix: build once, serve via nginx or CDN. This is the cheapest single win in the entire roadmap.</p>
+<p><strong>Around #50 — deploy velocity collapses.</strong>
+Every change touches the 2,000-loc hotspots (<code>DashboardPage</code>, <code>OrderEntry</code>). Manual deploys become risky. Bug fixes get deferred because "we can't risk it during dinner service."</p>
+<p><strong>Around #50 – #80 — login storms.</strong>
+At shift changes (5 PM / 9 AM), 100+ users login within 5 minutes. Each user does 7 sequential API calls. Backend CPU spikes → p95 latency doubles → bootstrap goes from 1.5 s to 5–8 s → cashiers complain the app "hangs on login".</p>
+<p><strong>Around #80 – #150 — report queries start timing out.</strong>
+Reports pull raw orders and aggregate client-side. A chain with 30 outlets running month-end reports pulls hundreds of megabytes of order rows. Chrome runs out of memory on 2 GB Android tablets. Backend DB CPU sits at 80 % during business hours. The slow-query log fills up.</p>
+<p><strong>Around #100 – #200 — socket reconnect storms.</strong>
+Café Wi-Fi drops for 3 seconds → 500+ sockets reconnect simultaneously → Socket.IO server thrashes → cascading disconnects → kitchen displays show wrong statuses → cashiers panic-refresh → more load.</p>
+<p><strong>Around #150 – #250 — CRM key rotation becomes impossible.</strong>
+A tenant leaves and demands their key be rotated. To do that, you must rebuild and redeploy the bundle for <strong>every</strong> tenant. This is when it becomes clear that <code>REACT_APP_CRM_API_KEYS</code> was a foundational mistake.</p>
+<p><strong>Around #200 – #300 — support cost outpaces revenue per tenant.</strong>
+localStorage state means every "my dashboard looks different on the other tablet" ticket is a manual investigation. Multi-device drift, "coming soon" sidebar entries, <code>walkIn</code> cart persistence — each is 15–30 minutes of support time.</p>
+<p><strong>Around #300 – #500 — incidents become weekly.</strong>
+- Single-AZ preprod host goes down → 100 % of the fleet is offline
+- Payment PCI-scope audit fails
+- A CVE in any of the 40+ npm dependencies triggers a bundle rebuild across the whole fleet
+- Hot-fixes take a day because there is no CI/CD</p>
+<p><strong>Around #500+ — architecture is structurally unfit.</strong>
+The single Laravel monolith + single Socket.IO node + browser-side reports + localStorage state model simply cannot serve this many tenants safely.</p>
+<h3 id="185-what-buys-the-most-headroom-per-week-of-effort"><a class="toclink" href="#185-what-buys-the-most-headroom-per-week-of-effort">18.5 What buys the most headroom per week of effort</a></h3>
+<p>Ranked by capacity gained per engineer-week:</p>
+<table>
+<thead>
+<tr>
+<th>Fix</th>
+<th style="text-align: center;">Effort</th>
+<th style="text-align: center;">Ceiling raised to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Serve built bundle from nginx / CDN (kill <code>craco start</code>)</td>
+<td style="text-align: center;">2 days</td>
+<td style="text-align: center;"><strong>~200</strong></td>
+</tr>
+<tr>
+<td>Parallelise the 7-call bootstrap</td>
+<td style="text-align: center;">3 days</td>
+<td style="text-align: center;"><strong>~250</strong></td>
+</tr>
+<tr>
+<td>Add error tracking (Sentry) + basic RUM</td>
+<td style="text-align: center;">3 days</td>
+<td style="text-align: center;">Visibility to diagnose &gt; 200</td>
+</tr>
+<tr>
+<td>Add Redis + cache menu / profile / permissions</td>
+<td style="text-align: center;">1 sprint</td>
+<td style="text-align: center;"><strong>~400</strong></td>
+</tr>
+<tr>
+<td>Backend aggregation endpoint (single bootstrap payload)</td>
+<td style="text-align: center;">1 sprint</td>
+<td style="text-align: center;"><strong>~500</strong></td>
+</tr>
+<tr>
+<td>Move CRM traffic through a BFF (kill client-side keys)</td>
+<td style="text-align: center;">2 sprints</td>
+<td style="text-align: center;">Removes the security wall entirely</td>
+</tr>
+<tr>
+<td>Socket.IO Redis-adapter cluster</td>
+<td style="text-align: center;">3 sprints</td>
+<td style="text-align: center;"><strong>~5,000</strong></td>
+</tr>
+<tr>
+<td>Move reports to backend + OLAP (ClickHouse / read replica)</td>
+<td style="text-align: center;">3–4 sprints</td>
+<td style="text-align: center;"><strong>~10,000</strong></td>
+</tr>
+<tr>
+<td>Full BFF + event bus + RLS</td>
+<td style="text-align: center;">2 quarters</td>
+<td style="text-align: center;"><strong>~50,000+</strong></td>
+</tr>
+</tbody>
+</table>
+<p>A pragmatic 1-quarter push (Sentry + CDN + bootstrap fix + Redis + moving CRM keys out of the bundle) realistically takes the ceiling from <strong>~150 tenants to ~500–800</strong>. That is the near-term runway.</p>
+<h3 id="186-recommendation"><a class="toclink" href="#186-recommendation">18.6 Recommendation</a></h3>
+<ul>
+<li><strong>Safe today up to ~50 restaurants.</strong> No panic.</li>
+<li><strong>Between 50 and 150</strong> the team will spend most of its time firefighting instead of shipping features. Fix the six items in §18.5 first.</li>
+<li><strong>Do not onboard the 200th restaurant</strong> without at minimum: CDN + built assets, Sentry, Redis cache, and a backend bootstrap aggregation endpoint.</li>
+<li><strong>Do not onboard the 500th restaurant</strong> without completing the Q2 roadmap from §15.2: BFF, socket sharding, reports on OLAP, event log.</li>
+</ul>
+<p><em>End of Architecture Bible v1.1.</em></p>
+<div class="footer">
+  Source: <code>/app/memory/control/ARCHITECTURE_BIBLE.md</code> · Rendered for read-only viewing.
+</div>
+</main>
+</body>
+</html>

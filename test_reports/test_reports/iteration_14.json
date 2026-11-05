@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only test of BUG-640 and CR-481. Ran Playwright in a browser context set to Asia/Kolkata (IST, verified 'Mon Nov 02 2026 17:15 GMT+0530'). BUG-640 passes on every page tested: LM = 2026-10-01→2026-10-31, Today = 2026-11-02→2026-11-02, MTD = 2026-11-01→2026-11-02, 7D = 2026-10-27→2026-11-02 and 30D = 2026-10-04→2026-11-02 on Cancellations, Channel Pivot, Sales and Daily Sales. FY = 2025-04-01→2026-03-31 on Channel Pivot, Sales and Daily Sales. CR-481 passes: Cancellations, Channel Pivot (s14-), Sales and Daily Sales (s11-) each show exactly [Today, 7D, LM, 30D, MTD, FY]. Dashboard shows the same 6. Settlement keeps its 8 presets [Today, Yesterday, 7D, LM, 90D, 365D, MTD, YTD], with LM 10-01→10-31, Today 11-02 and Yesterday 11-01. One CRITICAL regression: clicking FY on Cancellations throws 'TypeError: Assignment to constant variable.', so the dates do not change and the webpack error overlay appears in dev.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CancellationsMockup handlePreset FY", "issue": "Runtime crash 'Assignment to constant variable.' CancellationsMockup.jsx L219 declares `const t = new Date()`, then the FY branch (L231) runs `t = new Date(fyEndYear, 2, 31)`. Clicking FY leaves the dates unchanged (stayed at 2026-10-04→2026-11-02) and throws an uncaught error. In dev, the webpack overlay iframe then blocks all further clicks on the page. Fix: use computePresetRange('FY') as Sales and ChannelPivot do, or change it to `let t`.", "selector": "[data-testid='cancellations-preset-fy']", "priority": "CRITICAL"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "critical_code_review_comments": [
+    "BUG-640 is incomplete. The same UTC toISOString LM bug remains in pages that are not in scope: TaxDetailMockup L45-46, TipReportMockup L36-37, DeliveryChargeMockup L35-36 and PurchaseReportPage L32 (mtdISO) and L39-40/L77-78. They use new Date(y,m,1).toISOString().split('T')[0], which gives the 30th of the previous month and an off-by-one 'to' date in IST. Also OrderReportBetaPage L78: today = new Date().toISOString().split('T')[0] returns yesterday before 05:30 IST.",
+    "maxToDate/minFromDate in CancellationsMockup L214-215, DashboardMockup L81-82 and ItemSalesHybridMockup L174-175 still use toISOString. The impact is small (it can shift the max-range boundary by a day), but use fmtISO for consistency.",
+    "DRY: each page still has its own handlePreset with inline Today/7D/30D/MTD logic plus computePresetRange for some branches. Replace it with a single `const r = computePresetRange(p)` on every page. This would also have prevented the Cancellations FY crash.",
+    "SettlementReportMockup still defines its own local fmtISO (L71). It is correct (local timezone), but it duplicates the shared util."
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "CRITICAL: Fix the Cancellations FY preset crash (const t reassigned at CancellationsMockup.jsx L231). Use computePresetRange('FY').",
+    "MEDIUM: Replace the remaining toISOString LM/MTD/today calculations in TaxDetail, TipReport, DeliveryCharge, PurchaseReport and OrderReportBeta with fmtISO or computePresetRange."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "9 of 10 requested checks pass. Cancellations FY fails with a runtime error."},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10",
+  "seed_data_creation": "none",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Use browser.new_context(timezone_id='Asia/Kolkata') to reproduce IST. Log in, wait for /dashboard plus 18s, then go to report pages with history.pushState + a popstate event. Preset testids: cancellations-preset-*, s14-preset-* (channel-pivot), sales-preset-*, s11-preset-* (daily-sales), settlement-report-preset-*. Buttons are disabled while loading, so wait for :not([disabled]) or click via JS. Avoid clicking cancellations FY until it is fixed, because the webpack overlay blocks all later clicks. The Reports dashboard was still showing 'Loading report...' after 15s, which is a preprod data fetch and not a crash."
+}

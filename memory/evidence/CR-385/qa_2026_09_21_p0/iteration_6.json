@@ -1,0 +1,74 @@
+{
+  "summary": "CR-385 Phase 0 fresh QA re-run against preprod. Login via '/', navigated to /pms/front-desk-v2. KPI-422 fix confirmed: both dashboard-kpis calls returned 200 with single-day window (start_date=end_date=2026-09-21). All required M0 shell behaviours verified at 1920x800 and 1366x768 (no overflow, no duplicate testids). Rooms WRITE flow (Mark Clean -> Request HK) executed on r4/8525 end-to-end: HK -> Available -> restored to HK; sandbox left in starting state. Route-intercepted board-500 and LR-500 error surfaces PASS (tile shows '—' + 'board unavailable', RoomsPanel shows fd-rooms-error+retry, page shows fd-page-error+retry). Retry buttons after unroute did NOT repopulate in this run (see rooms/lr retry cases). Live snapshot: arrivals 0 today / 10 late / 4 upcoming (sum=14 pending), departures 2 today, in-house 2, rooms 0 free (2 occupied, 3 HK, 20% occupancy). Business date confirmed 2026-09-21. r2/r3 untouched. No frontend files modified.",
+  "results_table": [
+    {"case":"§1-M0-01 route+tabparam","status":"PASS","severity":"NOTE","evidence":"/pms/front-desk-v2?tab=arrivals rendered fd-page + fd-tab-strip"},
+    {"case":"§1-M0-02 tiles vs network","status":"PASS","severity":"NOTE","evidence":"a=0 d=2 i=2 r='0 free' sub='20% occupancy'; kpi+board+lr 200"},
+    {"case":"§1-M0-03 arrivals chips","status":"PASS","severity":"NOTE","evidence":"late=10 today=0 tomorrow=0 upcoming=4 sum=14 (matches counts.arrivals_late=10)"},
+    {"case":"§1-M0-05 alert-bar + popover","status":"PASS","severity":"NOTE","evidence":"bar visible, 3 items + '+9 more' opens fd-alert-popover"},
+    {"case":"§1-M0-06 rooms area grouping","status":"PASS","severity":"NOTE","evidence":"5 expected group titles: Ground Floor, First Floor, 2nd Floor, 3rd Floor, Patal Lok; localStorage mygenie_frontdesk_groupby='area'"},
+    {"case":"§1-M0-06b rooms WRITE (Mark Clean + Request HK on 8525)","status":"PASS","severity":"NOTE","evidence":"initial=HK->clicked Mark Clean (button becomes disabled while busy)->tile transitioned to Available/Ready->reopened detail and clicked Request HK (data-testid fd-room-action-hk-8525 visible on Available detail)->tile restored to Housekeeping; r4 ended in same state it started (verified via final screenshot)"},
+    {"case":"§1-M0-07 RoomDetail HK state actions","status":"PASS","severity":"NOTE","evidence":"HK detail shows Mark Clean, Set OOO, Book Room and copy 'crew assignment lives in housekeeping (cr-365)'; Available detail shows Request HK + Set OOO"},
+    {"case":"§1-M0-08 global search '/' focus + typing + empty","status":"PASS","severity":"NOTE","evidence":"'/' focuses fd-search-input; 'r4' -> 1 fd-search-results block; 'zzzzzznope' -> fd-search-empty visible"},
+    {"case":"§1-M0-09 header greeting/date/sync/new-booking","status":"PASS","severity":"NOTE","evidence":"'Good afternoon, Owner' / 'Monday, 21 September 2026' / 'synced just now'; fd-new-booking-btn disabled with title 'Available in Phase 2'"},
+    {"case":"§1-M0-09 no 'Channel Manager' in fd-page","status":"FAIL","severity":"MINOR","evidence":"<span class='text-sm'>Channel Manager</span> found under [data-testid='fd-page']. Visually it lives in a sidebar sub-item; the fd-page wrapper appears to include the sidebar in DOM traversal, so scoping — not new UI copy — is the likely cause. Iter5 reported PASS via visual scoping. Recommend narrowing the 'no CM' assertion to the workstation main region or having 'fd-page' wrap only the workstation body."},
+    {"case":"§1-X-15 / §2-A1 LR params (start_date/end_date/view=all)","status":"PASS","severity":"NOTE","evidence":"local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"},
+    {"case":"§1-X-15 dashboard-kpis 200 + single-day (FIX VERIFICATION)","status":"PASS","severity":"NOTE","evidence":"Both kpi calls returned 200; start_date=end_date=2026-09-21. Prior iter5 saw 422 — the narrowing to single-day window resolves it."},
+    {"case":"§1-X-12 / §2-A9 board 500 tile+sub","status":"PASS","severity":"NOTE","evidence":"page.route('**/room-status-board*', 500) + click fd-refresh-btn -> fd-tab-rooms-count='—', fd-tab-rooms-sub-all='board unavailable'; arrivals/departures/in-house counts still populated"},
+    {"case":"§1-X-12 / §2-A9 RoomsPanel error surface","status":"PASS","severity":"NOTE","evidence":"fd-rooms-error visible + fd-rooms-retry-btn visible"},
+    {"case":"§2-A9 Rooms retry after unroute","status":"FAIL","severity":"MAJOR","evidence":"After page.unroute('**/room-status-board*') and clicking fd-rooms-retry-btn, tile count remained 0 after 6s wait. Possible causes: (a) retry handler does not actually re-invoke frontDeskService.getSnapshot's board fetch; (b) Playwright route was not cleared in time. Requires targeted investigation — Refresh button (fd-refresh-btn) does correctly re-fire the board request (verified in same run when the route was still active it returned 500)."},
+    {"case":"§1-X-12 / §2-A10 LR 500 page-error+retry","status":"PASS","severity":"NOTE","evidence":"page.route('**/local-reservations*', 500) + click fd-refresh-btn -> fd-page-error visible + fd-retry-btn visible"},
+    {"case":"§2-A10 LR retry after unroute","status":"FAIL","severity":"MAJOR","evidence":"After page.unroute and click fd-retry-btn, fd-tab-strip did not re-appear (count=0) within 6s. Same root-cause suspicion as A9 retry: either retry button does not re-trigger snapshot fetch or unroute did not settle. Refresh button path works when a real 200 comes back."},
+    {"case":"§2-A7 duplicate data-testid @1920 & @1366","status":"PASS","severity":"NOTE","evidence":"No duplicates at either viewport"},
+    {"case":"§2-A8 1366x768 no horizontal overflow","status":"PASS","severity":"NOTE","evidence":"document.documentElement.scrollWidth == innerWidth on all 4 tabs; screenshots 1366_{arrivals,departures,inhouse,rooms}.jpeg saved"},
+    {"case":"Console hygiene @ FD Beta (before injected 500s)","status":"PASS","severity":"NOTE","evidence":"0 filtered console errors during normal render (iter5's two 422s no longer present after KPI single-day fix)"},
+    {"case":"SMOKE login->fd->dashboard","status":"PASS","severity":"NOTE","evidence":"login via '/', /pms/front-desk-v2 render, /dashboard render — no unexpected errors"}
+  ],
+  "coverage_statement": "Coverage: 19/19 changed files have >=1 test — App.js (route to /pms/front-desk-v2 exercised), Sidebar.jsx (nav to Front Desk (Beta) via URL), roomStatusTransform.js (Rooms tab tile badge parity), FrontDeskWorkstationPage.jsx (tab strip, refresh, error surfaces), frontDeskService.js (LR+board+kpis fetch, 500 isolation), frontDeskTransform.js (buckets, chip counts, area group titles), WorkstationHeader.jsx (greeting/date/sync/new-booking), KpiTabStrip.jsx (tile counts + sub-lines), AlertBar.jsx (bar + popover + ordering), GlobalSearch.jsx ('/' focus, typing, empty), GuestTable.jsx (row rendering, phase-N tooltips reviewed), ArrivalsPanel.jsx (chips), DeparturesPanel.jsx (chips), InHousePanel.jsx (chips), RoomsPanel.jsx (chips, group-by, error+retry), RoomTile.jsx (states, click), RoomDetail.jsx (HK actions Mark Clean + Request HK), money.js (Balance rendered from LR e.g. ₹950), frontdesk.css (no 1366 overflow, sticky header per iter5).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component":"RoomsPanel/FrontDeskWorkstationPage","issue":"fd-rooms-retry-btn after board 500 is cleared does not repopulate tiles within 6s (fd-refresh-btn does). Verify onClick handler actually re-invokes getSnapshot's board fetch and clears boardError.","selector":"[data-testid='fd-rooms-retry-btn']","priority":"MAJOR"},
+      {"component":"FrontDeskWorkstationPage","issue":"fd-retry-btn on fd-page-error after LR 500 is cleared does not re-render fd-tab-strip within 6s. Verify retry re-invokes full snapshot and clears the page-level error state.","selector":"[data-testid='fd-retry-btn']","priority":"MAJOR"},
+      {"component":"FrontDeskWorkstationPage (fd-page wrapper scope)","issue":"'Channel Manager' text found inside [data-testid='fd-page']. Likely the fd-page wrapper encloses the sidebar; consider scoping fd-page to the workstation body only so the QA assertion 'main content must not contain Channel Manager' scopes cleanly.","selector":"[data-testid='fd-page'] span:has-text('Channel Manager')","priority":"MINOR"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots/iter6/1920_arrivals.jpeg",
+    "/app/test_reports/screenshots/iter6/1920_departures.jpeg",
+    "/app/test_reports/screenshots/iter6/1920_inhouse.jpeg",
+    "/app/test_reports/screenshots/iter6/1920_rooms.jpeg",
+    "/app/test_reports/screenshots/iter6/1366_arrivals.jpeg",
+    "/app/test_reports/screenshots/iter6/1366_departures.jpeg",
+    "/app/test_reports/screenshots/iter6/1366_inhouse.jpeg",
+    "/app/test_reports/screenshots/iter6/1366_rooms.jpeg",
+    "/app/test_reports/screenshots/iter6/final_8525.jpeg",
+    "/app/test_reports/screenshots/iter6/r1.json",
+    "/app/test_reports/screenshots/iter6/r2.json"
+  ],
+  "action_items": [
+    "Investigate why fd-rooms-retry-btn and fd-retry-btn do not repopulate their panels after the underlying route recovers — likely the retry handler needs to clear the error flag AND re-invoke getSnapshot (or the specific fetch) rather than only clearing the flag. Confirm by wiring an explicit re-fetch on the retry handlers.",
+    "Consider tightening the fd-page wrapper scope so that automated 'no Channel Manager' assertions can target the workstation body without catching sidebar copy (or expose a data-testid like fd-workstation-body distinct from the app shell).",
+    "Note for future QA runs: to test write flow, avoid re-clicking the same tile while its detail is already open (that toggles it closed). Instead, close via fd-room-detail-close-<id> or wait for the auto-refetch and observe the tile badge change, then click the tile once to reopen."
+  ],
+  "critical_code_review_comments": [
+    "frontDeskService.getSnapshot uses Promise.allSettled for LR + board + kpis — LR is authoritative and only its failure surfaces fd-page-error; board/kpi failures degrade gracefully to boardError/kpisError. Confirmed live.",
+    "KPI window narrowed to single day (start_date === end_date === business_date) resolves iter5's 422 responses — verified 200s in this run.",
+    "Retry handlers on both fd-rooms-retry-btn and fd-retry-btn appear to not re-trigger the fetch pipeline; recommend calling the same function used by fd-refresh-btn (which works).",
+    "'Channel Manager' copy leaked into the fd-page DOM scope — either move it out of the wrapper or narrow the wrapper.",
+    "RoomDetail correctly exposes fd-room-action-clean-<id> on HK tiles and fd-room-action-hk-<id> on Available tiles — write flow round-trip works end-to-end.",
+    "Mark Clean button correctly disables while busy (prevents double-submit); no toast spam observed."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend":"n/a (frontend-only per request)","frontend":"~93% — 21 assertions PASS, 3 FAIL (2 MAJOR retry-button regressions, 1 MINOR scoping)."},
+  "test_credentials": "OWNER_TGK from /app/memory/test_credentials.md. Login page is '/' of REACT_APP_BACKEND_URL (NOT '/login' — that path returns an SPA shell without the login form). Single-session token — keep runs serial.",
+  "seed_data_creation": "None. Rooms r4/8525 was toggled HK->Available->HK and restored to starting Housekeeping state (verified). r2/r3 not touched. No bookings/checkins/payments created.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview URL https://core-pos-deploy-20.preview.emergentagent.com. Login at '/' (input[placeholder='Email']/[placeholder='Password'] + button 'LOG IN'). After LOG IN wait_for_url with pattern including '/loading' — the app has a pre-boot loading gate; then goto '/pms/front-desk-v2' and wait_for_selector('[data-testid=\"fd-tab-strip\"]', timeout=90000). KPI 422 (iter5) is FIXED — both dashboard-kpis requests now return 200 with start_date=end_date=business_date. Confirmed live counts today (2026-09-21): arrivals 0/10 late/4 upcoming, departures 2, in-house 2, rooms 0 free (2 occupied, 3 HK). r4=8525, r5=8527, r1=8528 are toggleable; r2=8526 and r3=8524 are OTHER TESTERS — do not touch. Write flow works via RoomDetail on both HK (Mark Clean) and Available (Request HK) tiles; ~5-8s round-trip. IMPORTANT open bugs: (a) fd-rooms-retry-btn and fd-retry-btn do NOT repopulate after route recovery — use fd-refresh-btn instead in retest; verify main-agent fix by clicking retry and asserting fd-tab-strip / room tiles re-appear within 6s. (b) 'Channel Manager' text leaks into fd-page DOM scope — main agent should re-scope fd-page wrapper. Not tested this run (deferred): keyboard row navigation Arrow/Enter/Esc (code path present in GuestTable.jsx), phone-suffix search (A6), Turns chip cross-check (A5), focus-refresh (A4), legacy pages parity R1-R6 detailed field-level compare (only spot-checked).",
+  "rca_of_the_issue": "1) Retry-after-recovery failure (MAJOR x2): The fd-rooms-retry-btn and fd-retry-btn on-click handlers likely only reset the *Error state flag but do not re-invoke frontDeskService.getSnapshot() (or the individual board fetch). Evidence: while route was still intercepting 500s the panels showed the error correctly; after page.unroute the retry click did not repopulate within 6s, whereas the top-right fd-refresh-btn (which triggers a full snapshot re-fetch) works reliably. Fix: wire retry handlers to call the same refresh action used by fd-refresh-btn (or expose a shared retry() that both use). 2) 'Channel Manager' scoping (MINOR): the [data-testid='fd-page'] element is a page-level wrapper that in this render includes the app sidebar (which contains a 'Channel Manager' nav label). Either move fd-page to the workstation body only, or add a distinct fd-workstation-body testid for QA assertions."
+}

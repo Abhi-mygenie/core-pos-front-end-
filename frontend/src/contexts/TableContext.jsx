@@ -1,0 +1,270 @@
+import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
+import { TABLE_STATUS } from '../api/constants';
+import * as tableService from '../api/services/tableService';
+
+// Create Table Context
+const TableContext = createContext(null);
+
+// Table Provider Component
+export const TableProvider = ({ children }) => {
+  // Single unified array - includes both tables (isRoom=false) and rooms (isRoom=true)
+  const [tables, setTablesData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  // Engaged tables — temporarily locked during update-order transactions
+  const [engagedTables, setEngagedTables] = useState(new Set());
+  const engagedTablesRef = useRef(new Set());
+
+  // Set tables (called from LoadingPage) - includes both tables and rooms
+  const setTables = useCallback((data) => {
+    setTablesData(data || []);
+    setIsLoaded(true);
+  }, []);
+
+  // Clear tables data (on logout)
+  const clearTables = useCallback(() => {
+    setTablesData([]);
+    setIsLoaded(false);
+  }, []);
+
+  // Refresh tables — re-fetch and update context
+  const refreshTables = useCallback(async () => {
+    const fresh = await tableService.getTables();
+    setTablesData(fresh || []);
+  }, []);
+
+  // ===========================================================================
+  // SOCKET UPDATE FUNCTIONS
+  // ===========================================================================
+
+  /**
+   * Set table engaged state (locked during update-order transactions)
+   * @param {number} tableId
+   * @param {boolean} engaged
+   */
+  const setTableEngaged = useCallback((tableId, engaged) => {
+    if (!tableId || tableId === 0) return;
+    console.log(`[TableContext] setTableEngaged: ${tableId} → ${engaged}`);
+    const next = new Set(engagedTablesRef.current);
+    if (engaged) {
+      next.add(tableId);
+    } else {
+      next.delete(tableId);
+    }
+    engagedTablesRef.current = next;
+    setEngagedTables(next);
+  }, []);
+
+  /**
+   * Check if a table is engaged
+   * @param {number} tableId
+   * @returns {boolean}
+   */
+  const isTableEngaged = useCallback((tableId) => {
+    return engagedTables.has(tableId);
+  }, [engagedTables]);
+
+  /**
+   * Wait for a table to become engaged (poll ref, not state)
+   * @param {number} tableId
+   * @param {number} timeoutMs
+   * @returns {Promise<boolean>}
+   */
+  const waitForTableEngaged = useCallback((tableId, timeoutMs = 5000) => {
+    return new Promise((resolve) => {
+      const start = Date.now();
+      const check = () => {
+        if (engagedTablesRef.current.has(tableId)) {
+          resolve(true);
+        } else if (Date.now() - start > timeoutMs) {
+          console.log(`[TableContext] waitForTableEngaged: timeout for ${tableId}`);
+          resolve(false);
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
+    });
+  }, []);
+
+  /**
+   * Update table status from socket event
+   * @param {number} tableId - Table ID (0 = walk-in/takeaway/delivery, skip update)
+   * @param {string} status - New status ('occupied', 'available', etc.)
+   */
+  const updateTableStatus = useCallback((tableId, status) => {
+    // Skip if tableId is 0 (walk-in/takeaway/delivery - not a physical table)
+    if (tableId === 0) {
+      console.log('[TableContext] updateTableStatus: Skipping tableId=0 (walk-in/takeaway/delivery)');
+      return;
+    }
+
+    if (!tableId || !status) {
+      console.warn('[TableContext] updateTableStatus: Invalid params', { tableId, status });
+      return;
+    }
+
+    setTablesData(prev => {
+      const tableExists = prev.some(t => t.tableId === tableId);
+      if (!tableExists) {
+        console.warn('[TableContext] updateTableStatus: Table not found', tableId);
+        return prev;
+      }
+
+      console.log('[TableContext] updateTableStatus:', tableId, '→', status);
+      return prev.map(t => {
+        if (t.tableId === tableId) {
+          const updated = {
+            ...t,
+            status: status,
+            isOccupied: status === 'occupied',
+          };
+          // Clear order display fields when table becomes available
+          if (status === 'available') {
+            updated.orderId = null;
+            updated.amount = 0;
+            updated.customer = '';
+            updated.phone = '';
+            updated.orderTime = null;
+            updated.itemCount = 0;
+            updated.isOccupied = false;
+          }
+          return updated;
+        }
+        return t;
+      });
+    });
+  }, []);
+
+  // ===========================================================================
+  // COMPUTED & HELPERS
+  // ===========================================================================
+
+  // Get unique sections from all tables/rooms
+  const sections = useMemo(() => {
+    const sectionSet = new Set();
+    tables.forEach((table) => {
+      sectionSet.add(table.sectionName || 'Default');
+    });
+    return Array.from(sectionSet).sort();
+  }, [tables]);
+
+  // Get table/room by ID (works for both)
+  const getTableById = useCallback((tableId) => {
+    return tables.find((t) => t.tableId === tableId) || null;
+  }, [tables]);
+
+  // Get table/room by number (works for both)
+  const getTableByNumber = useCallback((tableNumber) => {
+    return tables.find((t) => t.tableNumber === tableNumber) || null;
+  }, [tables]);
+
+  // Get tables/rooms by section (works for both)
+  const getTablesBySection = useCallback((sectionName) => {
+    if (!sectionName || sectionName === 'All') return tables;
+    return tables.filter((t) => (t.sectionName || 'Default') === sectionName);
+  }, [tables]);
+
+  // Get tables/rooms grouped by section (works for both)
+  const getTablesGroupedBySection = useCallback(() => {
+    const grouped = {};
+    tables.forEach((table) => {
+      const section = table.sectionName || 'Default';
+      if (!grouped[section]) {
+        grouped[section] = [];
+      }
+      grouped[section].push(table);
+    });
+    return grouped;
+  }, [tables]);
+
+  // Filter by status (works for both)
+  const filterByStatus = useCallback((status) => {
+    if (!status || status === 'all') return tables;
+    return tables.filter((t) => t.status === status);
+  }, [tables]);
+
+  // Get available (free) tables/rooms (works for both)
+  const getAvailableTables = useCallback(() => {
+    return tables.filter((t) => t.status === TABLE_STATUS.FREE);
+  }, [tables]);
+
+  // Get occupied tables/rooms (works for both)
+  const getOccupiedTables = useCallback(() => {
+    return tables.filter((t) => t.isOccupied);
+  }, [tables]);
+
+  // Search tables/rooms by number (works for both)
+  const searchTables = useCallback((searchTerm) => {
+    if (!searchTerm) return tables;
+    const term = searchTerm.toLowerCase();
+    return tables.filter((t) =>
+      t.tableNumber.toLowerCase().includes(term) ||
+      t.displayName.toLowerCase().includes(term)
+    );
+  }, [tables]);
+
+  // Context value
+  const value = useMemo(() => ({
+    // State (unified - includes tables and rooms)
+    tables,
+    sections,
+    isLoaded,
+    
+    // Actions
+    setTables,
+    clearTables,
+    refreshTables,
+
+    // Socket Update Actions
+    updateTableStatus,
+    setTableEngaged,
+    isTableEngaged,
+    waitForTableEngaged,
+    
+    // Helpers (work for both tables and rooms)
+    getTableById,
+    getTableByNumber,
+    getTablesBySection,
+    getTablesGroupedBySection,
+    filterByStatus,
+    getAvailableTables,
+    getOccupiedTables,
+    searchTables,
+  }), [
+    tables,
+    sections,
+    isLoaded,
+    setTables,
+    clearTables,
+    refreshTables,
+    updateTableStatus,
+    setTableEngaged,
+    isTableEngaged,
+    waitForTableEngaged,
+    getTableById,
+    getTableByNumber,
+    getTablesBySection,
+    getTablesGroupedBySection,
+    filterByStatus,
+    getAvailableTables,
+    getOccupiedTables,
+    searchTables,
+  ]);
+
+  return (
+    <TableContext.Provider value={value}>
+      {children}
+    </TableContext.Provider>
+  );
+};
+
+// Custom hook to use Table Context
+export const useTables = () => {
+  const context = useContext(TableContext);
+  if (!context) {
+    throw new Error('useTables must be used within a TableProvider');
+  }
+  return context;
+};
+
+export default TableContext;

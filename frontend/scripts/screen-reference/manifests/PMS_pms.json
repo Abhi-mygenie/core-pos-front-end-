@@ -1,0 +1,11 @@
+{
+  "_comment": "CR-390: PMS redo module manifest \u2014 journey DEFERRED (OD-390-13, PMS still under active development)",
+  "module_code": "PMS",
+  "module_name": "Property Management System",
+  "eyebrow": "PROPERTY MANAGEMENT SYSTEM",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "deferred": true,
+  "deferred_reason": "OD-390-13: PMS work ongoing (CR-385). Journey to be defined after PMS stabilises. Sequenced last.",
+  "journey": []
+}

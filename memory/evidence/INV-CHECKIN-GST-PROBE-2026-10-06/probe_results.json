@@ -1,0 +1,64 @@
+{
+  "probe_date": "2026-10-06",
+  "question": "Does backend auto-calculate GST on discounted rent at check-in?",
+  "orders_probed": [
+    {
+      "order_id": 1232976,
+      "booking_id": "000326",
+      "room_price": 6700,
+      "room_discount_amount": 5325,
+      "room_discount_type": "Percent",
+      "room_discount_at": "check_in",
+      "advance_payment_stored": 1375,
+      "balance_payment_stored": 0,
+      "gst_tax_in_room_info": "ABSENT",
+      "formula_check": "6700 - 5325 - 1375 = 0 (no GST in formula)",
+      "comment": "80% discount. 80% of 6700 = 5360 but stored 5325 = 6700-1375 = room-advance (backend caps at room-advance)"
+    },
+    {
+      "order_id": 1232973,
+      "booking_id": "000325",
+      "room_price": 1920,
+      "room_discount_amount": 1620,
+      "room_discount_type": "Percent",
+      "room_discount_at": "check_in",
+      "advance_payment_stored": 300,
+      "balance_payment_stored": 0,
+      "gst_tax_in_room_info": "ABSENT",
+      "formula_check": "1920 - 1620 - 300 = 0 (no GST in formula)",
+      "comment": "89% discount. 89% of 1920 = 1708 but stored 1620 = 1920-300 = room-advance (backend caps at room-advance)"
+    }
+  ],
+  "in_house_reservations": [
+    {
+      "reservation_id": 326,
+      "charge_booking_charge": 1050,
+      "charge_sgst": 26.25,
+      "charge_cgst": 26.25,
+      "charge_total_with_gst": 1102.5,
+      "charge_advance": 100,
+      "charge_balance_due": 1002.5,
+      "reservation_amount_after_tax": 1050,
+      "reservation_balance_payment": 950,
+      "formula_check": "1050 - 100 = 950 (no GST in LR balance_payment)",
+      "fe_display_formula": "950 + 52.5 (chargeGst) = 1002.5 (matches charge.balance_due)"
+    }
+  ],
+  "findings": [
+    "F1: gst_tax field ABSENT from room_info API response (confirmed by probing both orders and folio data)",
+    "F2: Backend formula = room_price - room_discount - advance_payment (no GST) for balance_payment",
+    "F3: Backend CAPS room_discount at (room_price - advance_payment) - confirmed by data",
+    "F4: Frontend-sent gst_tax at check-in is IGNORED by backend",
+    "F5: Frontend-sent balance_payment at check-in is OVERRIDDEN by backend own formula",
+    "F6: In-house balance display = backend.balance_payment + charge.sgst + charge.cgst (ORIGINAL booking slab)",
+    "F7: When bp=0 (max discount + enough advance), GST is waived (shown as 0 balance) per BUG-493",
+    "F8: FrontDesk Beta sends gst_tax=0 always - server handles from reservation charge",
+    "F9: reservation.amount_after_tax = booking_charge (room rent, NOT total_with_gst) - confirms form.orderAmount = room rent"
+  ],
+  "impact_on_plans": {
+    "BUG500_F2_GST_strip": "DISPLAY-ONLY fix. Does not affect backend stored data. Correct to fix for staff information.",
+    "BUG496_E4_gstBase_submit": "Sent gst_tax is IGNORED by backend. Low backend impact. Good practice to send correct value.",
+    "BUG500_F1_effectiveBalanceDue": "CRITICAL FINDING: if effectiveBalanceDue includes new GST (e.g. 134 for 88% disc), staff overcollects relative to backend formula. Backend stores negative bp, in-house balance shows wrong value using original chargeGst.",
+    "recommendation": "effectiveBalanceDue for Collect Now cap should use backend-compatible formula: room_price - discount - booking_advance. NOT GST-inclusive formula."
+  }
+}

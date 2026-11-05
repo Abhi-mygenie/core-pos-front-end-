@@ -1,0 +1,35 @@
+{
+  "no-body": {
+    "status": 200,
+    "body": "{\"status\":true,\"message\":\"Sub-recipe deleted successfully.\"}"
+  },
+  "delete_reason": {
+    "status": 404,
+    "body": "{\"status\":false,\"message\":\"Sub-recipe not found.\"}"
+  },
+  "reason": {
+    "status": 404,
+    "body": "{\"status\":false,\"message\":\"Sub-recipe not found.\"}"
+  },
+  "still_listed": false,
+  "sub_keys": [
+    "recipe_id",
+    "name",
+    "food_name",
+    "category_name",
+    "preparation_time",
+    "serve_time",
+    "unit",
+    "serve_people",
+    "qty",
+    "type",
+    "inventory_id",
+    "current_stock",
+    "stock_unit",
+    "min_qty_alert",
+    "min_unit_alert",
+    "cal_quantity",
+    "ingredients",
+    "is_pushed_managed"
+  ]
+}

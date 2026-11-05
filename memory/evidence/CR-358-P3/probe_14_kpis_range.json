@@ -1,0 +1,16 @@
+{
+ "request": {
+  "start_date": "2026-07-05",
+  "end_date": "2026-09-10"
+ },
+ "status": 422,
+ "body": {
+  "status": false,
+  "message": "Date range cannot exceed 31 days.",
+  "errors": {
+   "end_date": [
+    "Maximum range is 31 days."
+   ]
+  }
+ }
+}
