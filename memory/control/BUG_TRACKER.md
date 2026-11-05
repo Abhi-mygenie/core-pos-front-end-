@@ -5,6 +5,7 @@
 | **BUG-642** | Installed PWA (standalone) has no way to go back — no browser back button | **P1** | **MEDIUM** | GATE_1_INTAKE_FROZEN | `change_requests/BUG-642_PWA_NO_BACK_NAVIGATION_INTAKE.md` |
 | **BUG-643** | Credit Management — Order Details pop-up (SS3) does not close on X click | **P1** | **MEDIUM** | GATE_1_INTAKE_FROZEN — ROOT CAUSE CONFIRMED BY CODE | `change_requests/BUG-643_CREDIT_ORDER_DETAIL_SHEET_WONT_CLOSE_INTAKE.md` |
 | **BUG-644** | Credit Management — Order Details (SS3) does not show items (header says 3 items) | **P1** | **MEDIUM** | CLOSED — NOT A BUG (owner 2026-11-05: behaviour, no change) | `change_requests/BUG-644_CREDIT_ORDER_DETAIL_ITEMS_NOT_SHOWN_INTAKE.md` |
+| **BUG-645** | Order Report + Orders (Beta) — Payment filter (cash/card/upi) shows wrong amount for split (partial) payments | **P1** | **MEDIUM** | INVESTIGATION_COMPLETE — ODs closed. Next: PLANNING Gate 2-3. | `change_requests/BUG-645_PARTIAL_PAYMENT_FILTER_WRONG_AMOUNT_INTAKE.md` |
 
 ---
 
