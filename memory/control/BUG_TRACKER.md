@@ -1,4 +1,4 @@
-**CURRENT 2026-11-05 — INTAKE (imported batch 2026-11-04/05, 3 BUGs)**
+**CURRENT 2026-11-05 — INTAKE (imported batch 2026-11-04/05, 3 BUGs + CR-482 QA findings)**
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
@@ -8,6 +8,10 @@
 | **BUG-645** | Order Report + Orders (Beta) — Payment filter (cash/card/upi) shows wrong amount for split (partial) payments | **P1** | **MEDIUM** | INVESTIGATION_COMPLETE — ODs closed. Next: PLANNING Gate 2-3. | `change_requests/BUG-645_PARTIAL_PAYMENT_FILTER_WRONG_AMOUNT_INTAKE.md` |
 | **BUG-646** | Inclusive Tax Items Inflate Grand Total (Double-Counted in 4 files) | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-646_INCLUSIVE_TAX_DOUBLE_COUNTED_GRAND_TOTAL_INTAKE.md` |
 | **BUG-647** | GST OFF — API Payload Still Sends gst_tax and Inflated order_amount | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-647_GST_OFF_PAYLOAD_STILL_SENDS_GST_INTAKE.md` |
+| **BUG-648** | CR-482 P6: Weight popup — typing adds to pre-filled 1000 instead of replacing (₹4,60,230 cart line) | **P0** | **CRITICAL** | GATE_1_INTAKE_COMPLETE — QA BLOCKER. Next: PLANNING. | `test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md` |
+| **BUG-649** | CR-482 P8: +/- key typed into search box when no last-added item | **P2** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR. Next: PLANNING. | `test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md` |
+| **BUG-650** | CR-482 P10: Ctrl+↓ lands on oldest unsent row — handover says newest | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR. Owner decision needed. | `test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md` |
+| **BUG-651** | CR-482 P10: Cart-row orange highlight partly hidden (sides clipped, first row ambiguous) | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR. Next: PLANNING. | `test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md` |
 
 ---
 

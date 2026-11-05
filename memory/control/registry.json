@@ -34178,7 +34178,7 @@
       "priority": "P0",
       "risk": "HIGH",
       "area": "Menu / Order Entry",
-      "status": "GATE_4_IN_PROGRESS — Phase A P0–P10 IMPLEMENTED (P6–P9 not live-tested; P10 agent-tested new rows) — P11–P26 pending",
+      "status": "GATE_5B_QA_FAIL — P6-P10 QA: 54/56 PASS, 1 BLOCKER (BUG-648 weight popup money), 3 MINOR (BUG-649/650/651). P6 blocked. P7-P10 pending owner decision on MINORs.",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-04",
       "registered_by": "INTAKE agent",
@@ -34202,6 +34202,11 @@
           "label": "Backend Brief",
           "path": "memory/backend_briefs/BACKEND_BRIEF_CR-482_SETTINGS_KEY.md",
           "type": "backend_brief"
+        },
+        {
+          "label": "QA Report P6-P10",
+          "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
+          "type": "qa_report"
         }
       ]
     },
@@ -34558,6 +34563,98 @@
         "BUG-336",
         "INV-GST-001",
         "BUG-646"
+      ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-648",
+      "title": "CR-482 P6: Weight popup — typing adds to pre-filled 1000 instead of replacing (500 → 1000500 gm → ₹4,60,230)",
+      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND BLOCKER. Next: PLANNING Gate 2-3.",
+      "files": "WeightEntryModal.jsx",
+      "notes": "P0/CRITICAL (money). QA F4. autoFocus + pre-filled value not selected → user types 500, gets 1000500. P6 Enter-to-add commits the bad value instantly. Pre-existing issue amplified by CR-482 P6. Planning must decide: fix for shortcuts ON only or for everyone. Related: CR-482.",
+      "artifact_refs": [
+        {
+          "label": "QA Report",
+          "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
+          "type": "qa_report"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Order Entry / Keyboard",
+      "code_reality": "NONE",
+      "related": [
+        "CR-482"
+      ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-649",
+      "title": "CR-482 P8: +/- key typed into search box when no last-added item exists",
+      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Next: PLANNING.",
+      "files": "OrderEntry.jsx",
+      "notes": "P2/LOW. QA F1. When no lastAddedKeyRef (sent-only table, new order, after weight item), the P8 skip path doesn't call preventDefault → +/- appears in search, grid empties. Workaround: Backspace. Related: CR-482.",
+      "artifact_refs": [
+        {
+          "label": "QA Report",
+          "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
+          "type": "qa_report"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Order Entry / Keyboard",
+      "code_reality": "NONE",
+      "related": [
+        "CR-482"
+      ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-650",
+      "title": "CR-482 P10: Ctrl+↓ lands on oldest unsent row — handover says newest",
+      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Owner decision needed: top or newest row.",
+      "files": "OrderEntry.jsx",
+      "notes": "P3/LOW. QA F2. Code targets first unsent row (matching the plan). Handover doc says 'newest item'. Owner picks which behaviour, then fix code or docs. Related: CR-482.",
+      "artifact_refs": [
+        {
+          "label": "QA Report",
+          "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
+          "type": "qa_report"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Order Entry / Keyboard",
+      "code_reality": "PARTIAL",
+      "related": [
+        "CR-482"
+      ]
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "TBD",
+      "id": "BUG-651",
+      "title": "CR-482 P10: Cart-row orange highlight partly hidden (only top/bottom lines, first row shows bottom line only)",
+      "status": "GATE_1_INTAKE_COMPLETE — QA-FOUND MINOR. Next: PLANNING.",
+      "files": "CartPanel.jsx, index.css",
+      "notes": "P3/LOW. QA F3. kbd-focus outline inside scrolling container clips left/right sides. First row shows only bottom line — ambiguous which row is selected. Related: CR-482.",
+      "artifact_refs": [
+        {
+          "label": "QA Report",
+          "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
+          "type": "qa_report"
+        }
+      ],
+      "completeness": "1/7",
+      "category": "IN_PROGRESS",
+      "area": "Order Entry / Keyboard",
+      "code_reality": "NONE",
+      "related": [
+        "CR-482"
       ]
     }
   ],
