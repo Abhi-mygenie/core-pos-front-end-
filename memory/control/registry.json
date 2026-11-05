@@ -34575,6 +34575,11 @@
       "notes": "P0/CRITICAL (money). QA F4. autoFocus + pre-filled value not selected → user types 500, gets 1000500. P6 Enter-to-add commits the bad value instantly. Pre-existing issue amplified by CR-482 P6. Planning must decide: fix for shortcuts ON only or for everyone. Related: CR-482.",
       "artifact_refs": [
         {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-648_WEIGHT_POPUP_PREFILL_NOT_SELECTED_INTAKE.md",
+          "type": "intake"
+        },
+        {
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
@@ -34597,6 +34602,11 @@
       "files": "OrderEntry.jsx",
       "notes": "P2/LOW. QA F1. When no lastAddedKeyRef (sent-only table, new order, after weight item), the P8 skip path doesn't call preventDefault → +/- appears in search, grid empties. Workaround: Backspace. Related: CR-482.",
       "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-649_PLUS_MINUS_TYPED_INTO_SEARCH_INTAKE.md",
+          "type": "intake"
+        },
         {
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
@@ -34621,6 +34631,11 @@
       "notes": "P3/LOW. QA F2. Code targets first unsent row (matching the plan). Handover doc says 'newest item'. Owner picks which behaviour, then fix code or docs. Related: CR-482.",
       "artifact_refs": [
         {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-650_CTRL_DOWN_TARGET_ROW_MISMATCH_INTAKE.md",
+          "type": "intake"
+        },
+        {
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
           "type": "qa_report"
@@ -34643,6 +34658,11 @@
       "files": "CartPanel.jsx, index.css",
       "notes": "P3/LOW. QA F3. kbd-focus outline inside scrolling container clips left/right sides. First row shows only bottom line — ambiguous which row is selected. Related: CR-482.",
       "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/BUG-651_CART_ROW_HIGHLIGHT_CLIPPED_INTAKE.md",
+          "type": "intake"
+        },
         {
           "label": "QA Report",
           "path": "memory/test_reports/CR-482_QA_REPORT_P6_P10_2026_11_05.md",
