@@ -633,10 +633,11 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   useKeyboardShortcuts((e) => {
     const { key, shiftKey, ctrlKey, altKey, metaKey } = e;
 
-    // CR-482 P10: Ctrl+↓ from search jumps into cart rows (first unplaced row, else first row)
+    // CR-482 P10 + BUG-650: Ctrl+↓ from search jumps into cart rows (newest/bottom unplaced row, else first row)
     if (key === 'ArrowDown' && ctrlKey && !altKey && !metaKey) {
       if (isKbdModalOpen() || document.activeElement !== searchInputRef.current) return;
-      const target = document.querySelector('[data-kbd-cart-row="new"]') || document.querySelector('[data-kbd-cart-row]');
+      const newRows = document.querySelectorAll('[data-kbd-cart-row="new"]'); // BUG-650 (OD-650-01 = B)
+      const target = newRows[newRows.length - 1] || document.querySelector('[data-kbd-cart-row]');
       if (!target) return;
       e.preventDefault();
       target.focus();
@@ -653,9 +654,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const inEmptySearch = active === searchInputRef.current && searchQuery === '';
       const onNeutral = !active || active === document.body || active.hasAttribute('data-kbd-item');
       if (!inEmptySearch && !onNeutral) return;
+      e.preventDefault(); // BUG-649: never type +/- into empty search, even with no last-added line
       const line = cartItems.find(ci => ci._cartKey && ci._cartKey === lastAddedKeyRef.current);
       if (!line || line.placed || line.isWeightItem) return;
-      e.preventDefault();
       if (isPlus) updateQuantity(line._cartKey, line.qty + 1);
       else if (line.qty > 1) updateQuantity(line._cartKey, line.qty - 1);
       return;

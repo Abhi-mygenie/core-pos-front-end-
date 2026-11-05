@@ -1,5 +1,7 @@
 /* CR-482: keyboard shortcut focus ring + highlight — only consumed when kbdEnabled=true */
 .kbd-focus:focus-visible, .kbd-highlight { outline: 3px solid #F97316; outline-offset: 2px; }
+/* BUG-651: cart rows sit in an overflow-y scroll box that clips an outer ring — draw it inside */
+[data-kbd-cart-row].kbd-focus:focus-visible { outline-offset: -3px; }
 
 @tailwind base;
 @tailwind components;

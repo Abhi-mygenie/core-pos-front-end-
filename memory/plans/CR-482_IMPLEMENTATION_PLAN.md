@@ -210,8 +210,8 @@ When `kbdEnabled=false` (setting off OR tablet): no auto-focus, no on-screen key
 
 ### P10 — Ctrl+Down: jump into cart lines (+ row keys)
 **M4 CartPanel:** each `NewItemRow` (L226) / `PlacedItemRow` (L65) root gets `tabIndex=0`, `data-kbd-cart-row`, `kbd-focus`; row `onKeyDown`: up/down -> prev/next row; `+` -> same as qty-plus (L300); `-` -> same as qty-minus (L298, min 1; placed rows keep `min=originalQty`, BUG-374 rule); `Delete` on NewItemRow -> `onDeleteItem` (same as `delete-item-btn` L233); Delete on PlacedItemRow -> no-op (cancel needs permission modal — mouse only); `Escape` -> back to search (callback prop `onExitCart`).
-**M2 OE:** OE handler `Ctrl+ArrowDown` (from search) -> focus first `[data-kbd-cart-row]` (newest-unplaced first if present). Pass `onExitCart` to CartPanel.
-**Smoke:** add 2 items -> Ctrl+Down -> first cart row ringed; down -> second; `+` -> qty up; `-` -> down (stops at 1); Delete -> unplaced row removed; Esc -> caret in search. Busy table placed row: `-` cannot go below placed qty; Delete no-op.
+**M2 OE:** OE handler `Ctrl+ArrowDown` (from search) -> focus the newest (bottom) unplaced `[data-kbd-cart-row="new"]`, else the first row (BUG-650). Pass `onExitCart` to CartPanel.
+**Smoke:** add 2 items -> Ctrl+Down -> newest new row ringed; up -> previous row; `+` -> qty up; `-` -> down (stops at 1); Delete -> unplaced row removed; Esc -> caret in search. Busy table placed row: `-` cannot go below placed qty; Delete no-op.
 
 
 ---

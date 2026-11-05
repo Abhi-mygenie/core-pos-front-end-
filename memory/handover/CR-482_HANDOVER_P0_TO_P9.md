@@ -55,7 +55,7 @@ Known open option (not approved yet): `+`/`-` keys inside the customization popu
 
 ## Next phase: P10 — Ctrl+↓ jump into cart rows
 Plain-language explanation for the user:
-- From the search box, Ctrl+↓ moves the cursor into the cart (right side), starting at the newest item.
+- From the search box, Ctrl+↓ moves the cursor into the cart (right side), starting at the newest item. (BUG-650: confirmed = bottom unsent row)
 - ↑ / ↓ move between cart rows (orange ring on the row).
 - `+` / `-` on a row change that row's quantity — same as its +/− buttons (− stops at 1; for items already sent to kitchen it can't go below the sent qty — existing rule).
 - Delete removes an item NOT yet sent to kitchen (same as its bin button). Delete on sent items does nothing.

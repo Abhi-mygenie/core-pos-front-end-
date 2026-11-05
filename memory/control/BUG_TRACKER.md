@@ -8,10 +8,10 @@
 | **BUG-645** | Order Report + Orders (Beta) — Payment filter (cash/card/upi) shows wrong amount for split (partial) payments | **P1** | **MEDIUM** | INVESTIGATION_COMPLETE — ODs closed. Next: PLANNING Gate 2-3. | `change_requests/BUG-645_PARTIAL_PAYMENT_FILTER_WRONG_AMOUNT_INTAKE.md` |
 | **BUG-646** | Inclusive Tax Items Inflate Grand Total (Double-Counted in 4 files) | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-646_INCLUSIVE_TAX_DOUBLE_COUNTED_GRAND_TOTAL_INTAKE.md` |
 | **BUG-647** | GST OFF — API Payload Still Sends gst_tax and Inflated order_amount | **P0** | **CRITICAL** | INVESTIGATION_COMPLETE — ODs open. Next: PLANNING Gate 2-3. | `change_requests/BUG-647_GST_OFF_PAYLOAD_STILL_SENDS_GST_INTAKE.md` |
-| **BUG-648** | CR-482 P6: Weight popup — typing adds to pre-filled 1000 instead of replacing (₹4,60,230 cart line) | **P0** | **CRITICAL** | GATE_3_PLAN_COMPLETE — E1 WEM select-on-focus (everyone) + E6 unit test. Awaiting Gate 4 GO. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
-| **BUG-649** | CR-482 P8: +/- key typed into search box when no last-added item | **P2** | **LOW** | GATE_3_PLAN_COMPLETE — E2 OrderEntry L655-658 move preventDefault. Awaiting Gate 4 GO. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
-| **BUG-650** | CR-482 P10: Ctrl+↓ lands on oldest unsent row — handover says newest | **P3** | **LOW** | GATE_3_PLAN_COMPLETE — E3 OrderEntry L636/L639 newest row + E5 docs. Awaiting Gate 4 GO. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
-| **BUG-651** | CR-482 P10: Cart-row orange highlight partly hidden (sides clipped, first row ambiguous) | **P3** | **LOW** | GATE_3_PLAN_COMPLETE — E4 index.css scoped inset ring (normal gate). Awaiting Gate 4 GO. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
+| **BUG-648** | CR-482 P6: Weight popup — typing adds to pre-filled 1000 instead of replacing (₹4,60,230 cart line) | **P0** | **CRITICAL** | GATE_5A_IMPLEMENTED — E1 WEM select-on-focus (everyone) + E6 unit test. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
+| **BUG-649** | CR-482 P8: +/- key typed into search box when no last-added item | **P2** | **LOW** | GATE_5A_IMPLEMENTED — E2 OrderEntry preventDefault moved. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
+| **BUG-650** | CR-482 P10: Ctrl+↓ lands on oldest unsent row — handover says newest | **P3** | **LOW** | GATE_5A_IMPLEMENTED — E3 newest row + E5 docs. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
+| **BUG-651** | CR-482 P10: Cart-row orange highlight partly hidden (sides clipped, first row ambiguous) | **P3** | **LOW** | GATE_5A_IMPLEMENTED — E4 index.css inset ring. | `plans/CR-482_QA_BUGS_648_651_IMPLEMENTATION_PLAN_2026_11_05.md` |
 
 ---
 

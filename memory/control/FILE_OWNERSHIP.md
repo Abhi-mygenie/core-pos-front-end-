@@ -5,14 +5,15 @@
 | `frontend/src/hooks/useKeyboardShortcuts.js` | NEW (P0). Capture-phase keydown hook + `isTypingTarget` / `isKbdModalOpen` / `clickIfEnabled`. | CR-482 P0 |
 | `frontend/src/hooks/useArrowGridNav.js` | NEW (P0). `moveFocus` spatial nav. | CR-482 P0 |
 | `frontend/src/hooks/index.js` | Barrel exports. | CR-482 P0 |
-| `frontend/src/index.css` | `.kbd-focus` / `.kbd-highlight` orange outline. | CR-482 P0 |
 | `frontend/src/api/transforms/profileTransform.js` | `keyboardShortcuts` setting mapping (default false). | CR-482 P0 |
 | `frontend/src/pages/StatusConfigPage.jsx` | Keyboard Shortcuts toggle (localStorage `mygenie_keyboard_shortcuts_enabled`). | CR-482 |
-| `frontend/src/components/order-entry/OrderEntry.jsx` | `kbdEnabled` gate; search autofocus + focus trap (P1); highlight (P2); arrows (P3); Enter add (P4); popup refocus (P5–P7); `lastAddedKeyRef` + `+/-` (P8); CategoryPanel props (P9); Ctrl+↓ into cart + CartPanel props (P10). | CR-482 P1–P10 |
 | `frontend/src/components/order-entry/ItemCustomizationModal.jsx` | Esc / Ctrl+Enter / focus-in / Tab loop / hint (P5). | CR-482 P5 |
-| `frontend/src/components/order-entry/WeightEntryModal.jsx` | Enter confirm / Esc (P6). | CR-482 P6 |
+| `frontend/src/components/order-entry/WeightEntryModal.jsx` | Enter confirm / Esc (P6). `selectOnFocus` select-on-focus (BUG-648, everyone). | CR-482 P6, BUG-648 |
 | `frontend/src/components/order-entry/CategoryPanel.jsx` | Roving focus, ↑/↓, Enter/Space pick (P9). | CR-482 P9 |
 | `frontend/src/components/order-entry/CartPanel.jsx` | `kbdRowProps` helper; focusable rows ↑/↓, +/−, Delete (unplaced only), Esc → search (P10). All gated by `kbdEnabled`. | CR-482 P10 |
+| `frontend/src/index.css` | `.kbd-focus` / `.kbd-highlight` orange outline. `[data-kbd-cart-row].kbd-focus` inset ring (BUG-651). | CR-482 P0, BUG-651 |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | `kbdEnabled` gate; search autofocus + focus trap (P1); highlight (P2); arrows (P3); Enter add (P4); popup refocus (P5–P7); `lastAddedKeyRef` + `+/-` (P8, BUG-649 preventDefault fix); CategoryPanel props (P9); Ctrl+↓ into cart newest row (P10, BUG-650) + CartPanel props. | CR-482 P1–P10, BUG-649, BUG-650 |
+| `frontend/src/__tests__/components/WeightEntryModal.bug648.test.jsx` | NEW. Unit test: select() called on mount (kbd ON/OFF) + re-focus. | BUG-648 |
 NOT touched: backend · API services · tax/price/total logic · print logic · CollectPaymentPanel.jsx.
 
 

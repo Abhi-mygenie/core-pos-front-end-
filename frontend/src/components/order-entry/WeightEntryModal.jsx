@@ -133,6 +133,8 @@ const WeightEntryModal = ({ item, onConfirm, onClose, kbdEnabled = false }) => {
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
   }, { enabled: kbdEnabled });
 
+  const selectOnFocus = (e) => e.target.select(); // BUG-648: typing replaces pre-fill (all users, OD-648-01)
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="weight-entry-modal" {...(kbdEnabled ? { 'data-kbd-modal': 'weight' } : {})}>
       {/* Backdrop */}
@@ -193,6 +195,7 @@ const WeightEntryModal = ({ item, onConfirm, onClose, kbdEnabled = false }) => {
                     color: COLORS.darkText,
                   }}
                   data-testid="weight-input"
+                  onFocus={selectOnFocus}
                   autoFocus
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium" style={{ color: COLORS.grayText }}>
