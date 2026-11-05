@@ -4,7 +4,7 @@
 **Classification:** BUG  
 **Severity:** P3 — LOW  
 **Risk:** LOW (doc/behaviour mismatch, no data/money impact)  
-**Process required:** Owner decision only (fix code or fix docs). FAST LANE eligible? **YES** (1 file, 1 line or doc-only)  
+**Process required:** Owner decision first, then gate flow. FAST LANE eligible? **NO** (OrderEntry.jsx is R5 hotspot if code fix; doc-only if docs are wrong)  
 **Sprint:** TBD  
 **Source:** QA-FOUND (CR-482 QA Report P6–P10, test F2)
 

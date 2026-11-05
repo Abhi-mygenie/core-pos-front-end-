@@ -4,7 +4,7 @@
 **Classification:** BUG  
 **Severity:** P2 — MEDIUM  
 **Risk:** LOW (UX annoyance, no data/money impact)  
-**Process required:** Standard gate flow. FAST LANE eligible? **YES** (1 file, ≤5 lines, no financial logic, not R5 hotspot for this specific path)  
+**Process required:** Standard gate flow. FAST LANE eligible? **NO** (OrderEntry.jsx is R5 hotspot)  
 **Sprint:** TBD  
 **Source:** QA-FOUND (CR-482 QA Report P6–P10, test 8.10)
 
@@ -52,4 +52,4 @@ When keyboard shortcuts are ON and there is no "last added" item (sent-only tabl
 
 ---
 
-## Next: PLANNING (Fast Lane candidate — owner approval needed)
+## Next: PLANNING Gate 2-3 (NOT Fast Lane — R5 hotspot file)
