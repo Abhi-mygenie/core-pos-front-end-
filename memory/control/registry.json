@@ -35890,6 +35890,32 @@
       "assignee": ""
     },
     {
+      "id": "BUG-657",
+      "type": "BUG",
+      "title": "billPrinted missing from orderItemsByTableId whitelist \u2014 CR-489 lock broken for dine-in + room orders",
+      "status": "GATE_1_INTAKE_COMPLETE \u2014 1 line fix in OrderContext.jsx. Next: Gate 4 GO.",
+      "priority": "P0",
+      "risk": "HIGH",
+      "sprint_key": "nov_cr_batch",
+      "area": "Permissions / Security",
+      "source": "INVESTIGATION (2026-11-06 \u2014 traced from owner report on C1 #021106)",
+      "intake_doc": "change_requests/BUG-657_BILLPRINTED_MISSING_FROM_ORDERITEMSBYTABLEID_WHITELIST_INTAKE.md",
+      "duplicate_check": "DISTINCT (RELATED: BUG-656, CR-489, BUG-583)",
+      "blast_radius": "SMALL (1 file, 1 line: OrderContext.jsx whitelist)",
+      "files_affected": [
+        "src/contexts/OrderContext.jsx"
+      ],
+      "fast_lane_eligible": false,
+      "notes": "2026-11-06: INTAKE. orderItemsByTableId useMemo whitelist in OrderContext.jsx does not include billPrinted. Dine-in + room orders fed to OrderEntry via getOrderDataForEntry have billPrinted=undefined. CR-489 isEditLocked always false for these order types. Takeaway/delivery/walk-in unaffected (use full order objects). Fix: add billPrinted: order.billPrinted || false to whitelist.",
+      "related": [
+        "CR-489",
+        "BUG-656",
+        "BUG-583",
+        "CR-512"
+      ],
+      "assignee": ""
+    },
+    {
       "type": "CR",
       "id": "CR-492",
       "sprint_key": "TBD",
