@@ -26,6 +26,8 @@ const CHURN_STYLES = {
 };
 
 const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '', customerIntel = null, customerIntelLoading = false, onAddToCart = null, onCustomizeItem = null, menuItems = [], cartItems = [], orderType = null }) => {
+  const kbdModalRef = useRef(null); // CR-482 P17: stable ref for auto-focus on mount
+  useEffect(() => { if (kbdModalRef.current && !kbdModalRef.current.contains(document.activeElement)) kbdModalRef.current.focus(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const { toast } = useToast();
   const [name, setName] = useState(initialData?.name || "");
   const [phone, setPhone] = useState(initialData?.phone || "");
@@ -414,7 +416,7 @@ const CustomerModal = ({ onClose, onSave, initialData = null, restaurantId = '',
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="customer-modal" data-kbd-modal="customer" tabIndex={-1} ref={el => { if (el) el.focus(); }} onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="customer-modal" data-kbd-modal="customer" tabIndex={-1} ref={kbdModalRef} onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 

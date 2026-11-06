@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Printer } from "lucide-react";
 import { COLORS } from "../../constants";
 
@@ -17,7 +17,13 @@ const StationPickerModal = ({
   stations = [], 
   isLoading = false 
 }) => {
+  const kbdModalRef = useRef(null); // CR-482 P13: stable ref for auto-focus on mount
   const [selectedStations, setSelectedStations] = useState([]);
+
+  // CR-482 P13: focus modal on open so Esc/Enter work immediately
+  useEffect(() => {
+    if (isOpen && kbdModalRef.current && !kbdModalRef.current.contains(document.activeElement)) kbdModalRef.current.focus();
+  }, [isOpen]);
 
   // Reset selections when modal opens
   useEffect(() => {
@@ -64,7 +70,7 @@ const StationPickerModal = ({
         data-testid="station-picker-modal"
         data-kbd-modal="station-picker"
         tabIndex={-1}
-        ref={el => { if (el) el.focus(); }}
+        ref={kbdModalRef}
         onKeyDown={e => { // CR-482 P13
           if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
           if (e.key === 'Enter' && selectedStations.length > 0 && !isLoading) { e.preventDefault(); handleConfirm(); }

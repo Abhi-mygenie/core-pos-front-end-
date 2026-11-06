@@ -1,0 +1,30 @@
+{
+  "summary": "CR-482 Batch 2 retest (P17 modal root auto-focus, P16 Stay/Esc refocus) on the preview URL against preprod, logged in as owner@cafe103.com. Safety: a capture click interceptor on place-order, reprint-kot, collect-bill and print-bill, plus route aborts on order-temp-store, place-order, update-place-order and order-bill-payment. No orders were placed or printed (blocked clicks were place-order-btn and collect-bill-btn only). PASS: P17 Esc pressed straight after a mouse open now closes the Customer, Order Notes, Item Notes and Custom Item modals, because focus starts on the modal root. While the Customer modal is open, +, typed characters, Enter and F8 do not fire OE shortcuts. P16 Stay (Enter), Stay (mouse) and Esc-dismiss close the dialog, keep the cart and put focus back in menu-search-input. Batch 1 and P10 regression: F2 focuses search, F8 clicks place-order (intercepted), F9 clicks collect-bill (intercepted), F4 and F7 do nothing on C2 (no button), Ctrl+Down goes to the newest cart row, + and - change qty (400 to 800 to 400), ArrowUp moves rows, Esc from a row goes back to search, and Enter on a search result adds the item. CRITICAL REGRESSION introduced by this fix: the inline ref callback `ref={el => { if (el) el.focus(); }}` is a new function on every render. React therefore detaches and re-attaches it on every commit, and calls el.focus() again after each state change. So after the first keystroke in any modal input, focus jumps back to the modal root div and only the first character is kept. Reproduced: Customer name 'TEST_Name' becomes 'T'; Order Notes 'TEST_note' becomes 'T'; Item Notes 'TEST_x' becomes 'T'; Custom Item name 'TEST' becomes 'T' (the autoFocus input also loses focus to the root on open); price '12' becomes '1'. The ref is not gated on kbdEnabled, so this also happens with shortcuts OFF (Customer name and Custom Item name both stay 'T'). Users cannot type a customer name, notes or custom items at all. StationPickerModal uses the same pattern and is presumably affected, but the picker cannot be reached with the current data.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CustomerModal, OrderNotesModal, ItemNotesModal, AddCustomItemModal, StationPickerModal", "issue": "Focus is stolen back to the modal root on every re-render. The inline ref callback runs el.focus() on each commit, so typing in any modal input keeps only one character. This happens with the shortcut flag both ON and OFF. It is a regression from the CR-482 P17 fix.", "selector": "[data-testid=customer-name-input], [data-testid=custom-item-name-input], [data-testid=custom-item-price-input], order-notes-modal input, item-notes-modal input", "priority": "CRITICAL"},
+      {"component": "P17 modals close", "issue": "After Esc or close, focus goes to BODY instead of menu-search-input. F8 and F9 still work from BODY, but typing does not reach search until F2 is pressed. Minor.", "selector": "[data-testid=menu-search-input]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "action_items": [
+    "CRITICAL: replace the inline `ref={el => { if (el) el.focus(); }}` in all 5 modals with a stable ref: `const rootRef = useRef(null); useEffect(() => { if (rootRef.current && !rootRef.current.contains(document.activeElement)) rootRef.current.focus(); }, []);` and `ref={rootRef}`. Alternatively, wrap the callback in useCallback with [] deps. In AddCustomItemModal, skip the root focus so the name input's autoFocus wins (the contains() check handles this).",
+    "Optional: refocus searchInputRef when a P17 modal closes and kbdEnabled is true (same pattern as P5/P6/P7, with useEffect on the modal-open state).",
+    "Retest: type multiple characters into the Customer name, Order Notes, Item Notes and Custom Item name and price fields with the flag ON and OFF, then press Esc right after opening each modal."
+  ],
+  "critical_code_review_comments": [
+    "An inline ref callback with side effects (focus) runs on every render. Never put an imperative focus in an unstable ref callback.",
+    "The modal root focus is applied regardless of kbdEnabled, so this keyboard-only feature now affects mouse users too (flag OFF breaks).",
+    "OrderEntry.jsx is about 3276 lines and should be split."
+  ],
+  "updated_files": ["/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "success_rate": {"backend": "N/A", "frontend": "~80% (P17 Esc x4, P17 shortcut blocking, P16 x3, Batch1/P10 regression pass; modal text input broken in all 4 testable modals)"},
+  "seed_data_creation": "None. Items were added to C2's cart locally only and nothing was placed.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Use the recipe in /app/tests/cr482_batch2_p13_p16_p17.md (the iteration_23 section). Main check after the fix: click custom-item-name-input and type 'TEST'. The value should be 'TEST' and activeElement should be the input. Repeat for customer-name-input and the order-notes and item-notes modal inputs, with the flag ON and OFF. Also re-verify that Esc straight after a mouse open still closes each modal.",
+  "rca of the issue": "The root div in each modal uses `ref={el => { if (el) el.focus(); }}`. A new function identity on every render makes React call the old ref with null and the new ref with the element on each commit. So any state update (an onChange from typing, suggestions appearing, a qty change) re-runs el.focus() on the root, which steals focus from the focused child input. Repro: open Add Custom Item, click the name input, type 'TEST', and the value is 'T' with activeElement DIV[data-testid=add-custom-item-modal]. Mitigation: use a stable useRef plus a mount-only useEffect, guarded with !root.contains(document.activeElement)."
+}

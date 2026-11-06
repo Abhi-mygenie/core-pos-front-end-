@@ -3,6 +3,8 @@ import { X, Minus, Plus } from "lucide-react";
 import { COLORS } from "../../constants";
 
 const AddCustomItemModal = ({ categories = [], products = [], onClose, onAdd, showGst = false }) => { // CR-348: showGst prop
+  const kbdModalRef = useRef(null); // CR-482 P17: stable ref for auto-focus on mount
+  useEffect(() => { if (kbdModalRef.current && !kbdModalRef.current.contains(document.activeElement)) kbdModalRef.current.focus(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [name, setName] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categorySearch, setCategorySearch] = useState('');
@@ -88,7 +90,7 @@ const AddCustomItemModal = ({ categories = [], products = [], onClose, onAdd, sh
   const selectedCategoryName = categories.find(c => String(c.categoryId) === String(categoryId))?.categoryName || '';
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="add-custom-item-modal" data-kbd-modal="custom-item" tabIndex={-1} ref={el => { if (el) el.focus(); }} onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="add-custom-item-modal" data-kbd-modal="custom-item" tabIndex={-1} ref={kbdModalRef} onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-hidden flex flex-col">
