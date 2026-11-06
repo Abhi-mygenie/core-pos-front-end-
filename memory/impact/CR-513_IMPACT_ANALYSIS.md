@@ -7,6 +7,25 @@
 **Risk:** **CRITICAL** (printing + discount + customer-facing bill) — unchanged from intake.
 **Evidence:** `evidence/CR-513/CR-513_order_temp_store_probe_2026_11_06.json` (owner) · `evidence/CR-513/CR-513_order_source_field_probe_2026_11_06.json` (this session, sanitized, token masked)
 
+
+> ## ✅ GATE 2 CLOSED — 2026-11-06 (owner)
+> **Consolidated scope:** CR-513 + CR-487 + CR-502 (subsumed) + BUG-592 FE fix. One plan → `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md` (Gate 3, awaiting "Gate 3 GO").
+>
+> | # | Final decision |
+> |---|---|
+> | Scope (OD-04) | **Option A** — 6 live Collect-Bill paths: CPP Print Bill (P1), prepaid auto-print (P2), postpaid collect auto-print (P3), QSR ×3 (P4a/b/c) |
+> | Files | `orderTransform.js` · `CollectPaymentPanel.jsx` · `OrderEntry.jsx` (all R5 → Gate 4 owner approval) |
+> | `discount_percentage` (OD-06, OD-05) | % of the single active discount (manual or preset; one discount at a time). **Omitted** for flat ₹, coupon-only, or no discount |
+> | `roundoff` (OD-07, OD-10) | Signed (+ rounded up / − rounded down, CR-170). **Omitted** when ₹0.00 |
+> | Reprint paths (Q1) | Dashboard / report reprints send **nothing** — discount % & round-off only exist at Collect Bill |
+> | BUG-592 (OD-08, OD-592-A) | Combined plan + coding pass. Remove `discount_value` fallback at `fromAPI.order` L234 (₹ from `restaurant_discount_amount` only). Backend part verified DONE (#021113) |
+> | OD-592-B | No FE workaround. Backend brief filed: `backend_briefs/BACKEND_BRIEF_BUG-592_CR-513_2026_11_06.md` (get-single-order-new missing discount/round_up; socket payload confirmation). **Non-blocking** for Option A |
+> | Bill rendering (OD-01/02) | Printer Agent team — N/A for FE |
+> | PMS paths (P7) | Separate follow-up CR (not yet registered) |
+> | Optional owner check | T0 — WS payload carries `restaurant_discount_amount` (§14d) |
+>
+> Sections §9–§14 below are the decision log; where they conflict, this box wins.
+
 ---
 
 ## 0. Conflict Pre-Check

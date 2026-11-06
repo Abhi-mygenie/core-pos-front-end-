@@ -25,3 +25,10 @@
 - PMS paths → separate follow-up CR.
 - Still OPEN: OD-513-04 (scope A/B/C), OD-513-01/02/03/05.
 - BUG-592 row added to BUG_TRACKER.md top table (was missing — registry.json only).
+
+## 4. GATE 2 CLOSED (owner, 2026-11-06)
+- Final decision box: top of `impact/CR-513_IMPACT_ANALYSIS.md`.
+- CR-487 + CR-502 SUBSUMED into CR-513. BUG-592 FE fix combined (OD-592-A: remove L234 `discount_value` fallback).
+- Backend brief: `backend_briefs/BACKEND_BRIEF_BUG-592_CR-513_2026_11_06.md` (non-blocking).
+- BUG-652 (dashboard ReferenceError) fixed + QA PASS (iteration_25) — awaiting owner smoke.
+- **Next agent:** PLANNING Gate 3 on owner "Gate 3 GO" → `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md` (exact edits, Verification Matrix, Post-Code Registry Checklist). No code before Gate 4 GO.
