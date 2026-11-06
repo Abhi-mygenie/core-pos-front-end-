@@ -2,7 +2,7 @@
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
-| **CR-513** | order-temp-store: send `discount_percentage` + `roundoff` in bill print payload (backend verified 2026-11-06). RELATED BUG-592 / CR-487 / CR-502. CR-512 skipped (other branch). | **P1** | **CRITICAL** | GATE_2_IMPACT_ANALYSIS_COMPLETE — 9 print paths mapped; Option A recommended (live paths, 3 R5 files); ODs 04/06/07/08 open | `change_requests/CR-513_ORDER_TEMP_STORE_DISCOUNT_PERCENTAGE_ROUNDOFF_INTAKE.md` · `impact/CR-513_IMPACT_ANALYSIS.md` |
+| **CR-513** | order-temp-store: send `discount_percentage` + `roundoff` in bill print payload (backend verified 2026-11-06). RELATED BUG-592 / CR-487 / CR-502. CR-512 skipped (other branch). | **P1** | **CRITICAL** | GATE_2_IMPACT_ANALYSIS_COMPLETE — ODs 06 (active % only, one discount at a time) / 07 (roundoff signed ±) / 08 (combined plan with BUG-592) LOCKED; OD-04 + 01/02/03/05 OPEN; PMS → follow-up CR | `change_requests/CR-513_ORDER_TEMP_STORE_DISCOUNT_PERCENTAGE_ROUNDOFF_INTAKE.md` · `impact/CR-513_IMPACT_ANALYSIS.md` |
 | **CR-503** | Order Beta: Pay Later - Print Bill and Collect Payment | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-503_ORDER_BETA_PAY_LATER_PRINT_COLLECT_ACTIONS_INTAKE.md` |
 | **CR-504** | Order Beta: Table Section-wise Filter | **P2** | **MEDIUM** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-504_ORDER_BETA_TABLE_SECTION_FILTER_INTAKE.md` |
 | **CR-505** | Order Beta: Partial Payment Split + Totals | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-505_ORDER_BETA_PARTIAL_PAYMENT_SPLIT_TOTALS_INTAKE.md` |

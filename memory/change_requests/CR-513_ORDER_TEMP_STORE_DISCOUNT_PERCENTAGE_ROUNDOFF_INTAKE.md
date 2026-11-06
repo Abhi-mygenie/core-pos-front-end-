@@ -90,7 +90,12 @@ roundoff:            overrides.roundoff ?? <source TBD at Gate 2>,          // C
 - **OD-513-03:** Do CR-513 subsume FE-payload scope of CR-502 (roundoff) and CR-487 (discount %)? — OPEN (agent recommends YES — single owner of the payload lines)
 - **OD-513-04:** Which print paths in scope — Collect Bill only, or also prepaid / manual reprint / auto-print? — OPEN (overlaps OD-502-03)
 - **OD-513-05:** For flat (₹) discounts, send `discount_percentage = 0` or computed %? — OPEN (overlaps OD-487-01)
-- **OD-513-06:** Both fields optional — **LOCKED YES** (backend probe)
+- **OD-513-06 (Gate 2):** Active % only — one discount at a time — **LOCKED 2026-11-06**
+- **OD-513-07 (Gate 2):** `roundoff` signed (+/−) — **LOCKED 2026-11-06**
+- **OD-513-08 (Gate 2):** Combined plan + coding pass with BUG-592 FE fix — **LOCKED 2026-11-06**
+- **OD-513-09:** Both fields optional — **LOCKED YES** (backend probe; was OD-513-06 at intake, renumbered)
+- PMS paths → follow-up CR (owner 2026-11-06)
+- Full decision log: `impact/CR-513_IMPACT_ANALYSIS.md` §9
 
 ## 10. Delivery Phases
 

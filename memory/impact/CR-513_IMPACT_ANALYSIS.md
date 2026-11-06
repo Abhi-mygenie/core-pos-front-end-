@@ -105,10 +105,10 @@ Estimated lines: Option A ≈ 14-16 changed lines across 3 hotspot files. **Blas
 | # | Risk | Mitigation |
 |---|---|---|
 | R1 | Mixed discounts: `discount_amount` = manual + preset + coupon (CPP L1294). A "(50%)" label next to a total that includes a coupon would be misleading | OD-513-06 |
-| R2 | Manual % and preset % both non-zero (BUG-619 prevents, but state can exist) | OD-513-06 — send which %? |
-| R3 | Round-off sign: FE `roundOff` can be negative (CR-170 floor case); report `round_up` samples are all ≥0 | OD-513-07 — send signed value? Backend to confirm storage |
+| R2 | ~~Manual % and preset % both non-zero~~ — **CORRECTED 2026-11-06 (owner):** current functionality allows only ONE discount at a time; this IA missed that rule | Send the single active % (OD-513-06 LOCKED) |
+| R3 | Round-off sign: FE `roundOff` can be negative (CR-170 floor case); report `round_up` samples are all ≥0 | OD-513-07 LOCKED = signed (option c). Template must render +/− |
 | R4 | Room orders: CPP `roundOff` is food-only; Grand Total includes room balance | Template concern; document only |
-| R5 | Same lines as BUG-592 | Sequence (§0) |
+| R5 | Same lines as BUG-592 | OD-513-08 LOCKED = (i) one combined plan + one coding pass |
 | R6 | 3 R5 hotspot files | Owner Approval Matrix at Gate 4; QA regression: BUG-001/002/273/281/556/641 print payloads unchanged except 2 new keys |
 
 ## 7. Owner Decisions
@@ -131,11 +131,16 @@ Owner answers OD-513-04/06/07/08 (+ intake ODs) → **Gate 3 GO** → Implementa
 
 ---
 
-## 9. Owner Decisions — Round 1 (2026-11-06)
+## 9. Owner Decisions — LOCKED (2026-11-06)
 
-| OD | Owner answer | Status | Agent note |
-|---|---|---|---|
-| OD-513-06 | "both" — manual % and preset % both feed `discount_percentage` | LOCKED (pending confirm of combine rule) | Interpreted as: when both are active send manual% + preset% (sum); when one is active send that one. Coupon/flat excluded. Confirm at Gate 3. |
-| OD-513-07 | "always positive" | LOCKED — send absolute value | ⚠ Conflict with CR-170 rule (`roundOffUtils.js`): paise < 10 → floor → FE `roundOff` is NEGATIVE (₹100.04 → ₹100, −0.04). Sending `Math.abs` would print "+0.04" on a bill that was rounded down. Owner to confirm: (a) abs anyway, (b) send 0 in floor case, or (c) signed. Raised in chat. |
-| OD-513-08 | Owner asked for BUG-592 explanation before deciding | OPEN | Explained in chat 2026-11-06. |
-| PMS paths (P7) | "check separately as a follow-up CR" | OUT OF SCOPE for CR-513 | Follow-up CR to be registered when owner asks (P7 + `rawOrderDetails ?? order` gap). |
+| OD | Decision | Status |
+|---|---|---|
+| OD-513-06 | Only ONE discount can be active at a time (existing functionality — IA R2 corrected). `discount_percentage` = the active discount's % (manual % or preset %). No summing. Coupon never contributes. Flat ₹ handling = OD-513-05 (open). | **LOCKED** |
+| OD-513-07 | `roundoff` sent **signed** — positive when rounded up, negative when rounded down (CR-170 floor case, e.g. ₹100.04 → ₹100 = −0.04). Option (c). | **LOCKED** |
+| OD-513-08 | **(i)** One combined Implementation Plan + one coding pass for CR-513 + BUG-592 FE-side fix (`fromAPI.order` L234 fallback), so ₹ amount and % stay consistent. BUG-592 backend part (populate `restaurant_discount_amount` at prepaid order creation) remains a backend dependency. | **LOCKED** |
+| PMS paths (P7) | Out of CR-513 scope → separate follow-up CR (includes `rawOrderDetails ?? order` gap). | **LOCKED (deferred)** |
+| OD-513-09 | Both fields optional | **LOCKED** |
+
+**Still OPEN before Gate 3:** OD-513-04 (scope A/B/C — agent recommends A + C follow-up) · intake OD-513-01 (print % label), OD-513-02 (round-off line / when ₹0), OD-513-03 (subsume CR-502 FE scope + CR-487 enabler — agent recommends YES), OD-513-05 (flat ₹ → 0 or computed % — agent recommends 0, consistent with OD-06).
+
+**Gate 3 implications of OD-08 (i):** plan must also cover BUG-592 FE edit at `fromAPI.order` L234 and the socket-refresh finding (§2b item 3: `get-single-order-new` has no discount fields → `order.discount` resets to 0). Plan doc name: `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md`.

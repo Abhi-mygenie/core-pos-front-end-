@@ -33551,9 +33551,12 @@
         "src/api/transforms/orderTransform.js"
       ],
       "registered": "2026-10-18",
-      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524.",
+      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524. | 2026-11-06 (CR-513 Gate 2): owner OD-513-08=(i) — BUG-592 FE fix (fromAPI.order L234) planned + coded together with CR-513 in plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md. New finding: socket refresh uses get-single-order-new which has NO discount fields → order.discount resets to 0 on dashboard reprint. Backend part (restaurant_discount_amount at prepaid creation) still pending.",
       "priority": "P0",
-      "assignee": "Piyush"
+      "assignee": "Piyush",
+      "related": [
+        "CR-513"
+      ]
     },
     {
       "id": "CR-436",
@@ -36262,7 +36265,7 @@
       "id": "CR-513",
       "sprint_key": "TBD",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — OD-06 LOCKED (both), OD-07 LOCKED (positive; CR-170 floor conflict raised), OD-08 OPEN, OD-04 OPEN. PMS (P7) → follow-up CR.",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — ODs 06/07/08 LOCKED; OD-04 + intake ODs 01/02/03/05 OPEN. Combined Gate 3 plan with BUG-592.",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
@@ -36271,7 +36274,7 @@
       "registered": "2026-11-06",
       "registered_by": "INTAKE agent",
       "source": "OWNER-REPORTED",
-      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR.",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR. | 2026-11-06 ODs LOCKED: OD-06 one discount at a time → send active % (IA R2 corrected); OD-07 roundoff signed +/-; OD-08 (i) combined plan + coding pass with BUG-592 FE fix. PMS → follow-up CR.",
       "blocked_on": "",
       "assignee": "",
       "related": [
@@ -36306,7 +36309,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-06",
-    "last_action": "PLANNING Gate 2: CR-513 Impact Analysis complete.",
+    "last_action": "PLANNING Gate 2: CR-513 ODs 06/07/08 locked; combined with BUG-592.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

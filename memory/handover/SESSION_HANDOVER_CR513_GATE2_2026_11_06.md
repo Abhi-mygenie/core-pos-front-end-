@@ -17,3 +17,11 @@
 
 ## 2. Docs updated
 `impact/CR-513_IMPACT_ANALYSIS.md` · `evidence/CR-513/CR-513_order_source_field_probe_2026_11_06.json` · `control/registry.json` · `control/CR_REGISTRY.md`
+
+## 3. Owner decisions locked (2026-11-06, later in session)
+- OD-513-06: only one discount at a time (existing rule; IA R2 corrected) → send the active % (manual or preset); coupon never; flat ₹ = OD-513-05 (open).
+- OD-513-07: `roundoff` signed — + when rounded up, − when rounded down (CR-170 floor case).
+- OD-513-08: (i) one combined Gate 3 plan + coding pass with BUG-592 FE fix → `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md`.
+- PMS paths → separate follow-up CR.
+- Still OPEN: OD-513-04 (scope A/B/C), OD-513-01/02/03/05.
+- BUG-592 row added to BUG_TRACKER.md top table (was missing — registry.json only).
