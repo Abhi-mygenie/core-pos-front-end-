@@ -12019,7 +12019,7 @@
       "title": "Place Order on 401 silently redirects to dashboard; cashier mistakes failure for success",
       "type": "bug",
       "sprint": "pos_4_0",
-      "priority": "P0",
+      "priority": "P1",
       "status": "GATE 2 COMPLETE — Impact Analysis done. Needs owner decisions Q-123-1..4 before Gate 3.",
       "area": "Permissions / Security",
       "completeness": "1/7",
@@ -14884,7 +14884,7 @@
       "id": "BUG-192",
       "title": "Prep & Serve Time — Handover time showing 0 + full logic investigation",
       "type": "BUG",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "status": "GATE_1_INTAKE_COMPLETE",
       "gate": "0-1",
@@ -19544,7 +19544,7 @@
       "type": "CR",
       "title": "Dual Excel Download — Add Backend Excel Endpoint to CR-136 Screens",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "oct_cr_batch",
       "artifact_refs": [
@@ -23031,7 +23031,7 @@
       "title": "PMS Module — Property Management + Channel Manager Integration (AIOSELL + Room Redesign)",
       "type": "CR",
       "status": "GATE 3 — PHASED PLAN OWNER-APPROVED (2026-09-01)",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "HIGH",
       "sprint_key": "pos_5_2",
       "gate": 3,
@@ -29144,7 +29144,7 @@
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
       "notes": "Prepaid orders auto-settled before user can see them. Likely a backend auto-settlement config or socket-triggered early settlement. Need to check auto_settle_prepaid setting and socket flow.",
-      "priority": "P0"
+      "priority": "P1"
     },
     {
       "id": "BUG-476",
@@ -31249,7 +31249,8 @@
       "description": "Automatically printed bills (via Printer Agent) and manually printed bills apply rounding differently — one is rounded off while the other is not. Inconsistent rounding between print paths.",
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
-      "risk": "MEDIUM"
+      "risk": "MEDIUM",
+      "priority": "P0"
     },
     {
       "id": "BUG-554",
@@ -32645,7 +32646,8 @@
         "src/api/transforms/orderTransform.js"
       ],
       "registered": "2026-10-18",
-      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524."
+      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524.",
+      "priority": "P0"
     },
     {
       "id": "CR-436",
@@ -32663,7 +32665,7 @@
       "title": "New Settings Keys Including Menu Master",
       "type": "CR",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "backlog",
       "area": "Settings / Profile",
@@ -33058,7 +33060,7 @@
         "OD-447-04"
       ],
       "notes": "from TT-017, TT-022",
-      "priority": "P0",
+      "priority": "P1",
       "blocked_by": "BACKEND"
     },
     {
@@ -33486,7 +33488,7 @@
       "id": "CR-469",
       "title": "When restaurant is created, POS should auto-login on CRM via API and store token",
       "type": "CR",
-      "priority": "P0",
+      "priority": "P1",
       "status": "GATE_1_INTAKE_COMPLETE",
       "area": "CRM / Customer",
       "sprint_key": "nov_cr_batch",
@@ -33510,7 +33512,8 @@
       "intake_doc": "change_requests/CR-470_DEFAULT_PAYMENT_CONFIG_NEW_RESTAURANT_INTAKE.md",
       "registered": "2026-10-22",
       "tt_source": "TT-041",
-      "blocked_by": "BACKEND"
+      "blocked_by": "BACKEND",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-471",
@@ -33707,7 +33710,7 @@
       "id": "BUG-623",
       "title": "Null variation entry crashes orderTransform.reduce + BUG-618 markers labelled BUG-NEW",
       "type": "BUG",
-      "priority": "P1",
+      "priority": "P0",
       "status": "GATE_3_PLAN_COMPLETE",
       "area": "Order Entry / Transforms",
       "sprint_key": "nov_cr_batch",
@@ -33741,7 +33744,7 @@
       "id": "BUG-625",
       "title": "CR-429 Active First pill missing from tablet dropdown (<1280px)",
       "type": "BUG",
-      "priority": "P2",
+      "priority": "P0",
       "status": "GATE_3_PLAN_COMPLETE",
       "area": "Dashboard / Responsive",
       "sprint_key": "nov_cr_batch",
@@ -33758,7 +33761,7 @@
       "id": "BUG-626",
       "title": "getStatusBadge missing Upi/Card/Room — ~148 rows show raw strings in Order Report Beta",
       "type": "BUG",
-      "priority": "P2",
+      "priority": "P0",
       "status": "GATE_3_PLAN_COMPLETE",
       "area": "Reports",
       "sprint_key": "nov_cr_batch",
@@ -34090,7 +34093,8 @@
       "files": [
         "src/api/transforms/orderTransform.js"
       ],
-      "notes": "updateOrder L1184+L1191 missing expandCompItems(). placeOrder/placeOrderWithPayment/collectBillExisting all have it. Partial comp items not split = is_complementary:No. Fix: 2 lines, same pattern. Investigation: investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md. OD-639-01: direct bug fix recommended (existing pattern). | 2026-11-02: IA+Plan complete. 2 edits in 1 file. L1184: expandCompItems(newItems), L1191: expandCompItems(allActiveItems). Exact pattern match to placeOrder L1054/L1062. Plan: plans/BUG-639_IMPLEMENTATION_PLAN.md."
+      "notes": "updateOrder L1184+L1191 missing expandCompItems(). placeOrder/placeOrderWithPayment/collectBillExisting all have it. Partial comp items not split = is_complementary:No. Fix: 2 lines, same pattern. Investigation: investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md. OD-639-01: direct bug fix recommended (existing pattern). | 2026-11-02: IA+Plan complete. 2 edits in 1 file. L1184: expandCompItems(newItems), L1191: expandCompItems(allActiveItems). Exact pattern match to placeOrder L1054/L1062. Plan: plans/BUG-639_IMPLEMENTATION_PLAN.md.",
+      "priority": "P0"
     },
     {
       "id": "CR-480",
@@ -34230,7 +34234,8 @@
       "intake_doc": "change_requests/CR-483_SHORT_PAYMENT_SETTLEMENT_INTAKE.md",
       "description": "Customers sometimes pay a rounded-down amount (bill ₹763.77, customer pays ₹763 by UPI). Cashier needs a text box next to the payment method (as for Cash) to enter the actual amount received. Owner question: where does the difference go — should it be treated as discount?",
       "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: PARTIAL — Cash has \"Cash Received\" box but handlePayment hard-blocks received < total (BUG-CASH-UNDERPAY guard, CollectPaymentPanel.jsx ~L11 | ODs: OD-483-01 Where the difference goes ; OD-483-02 Max allowed difference (e.g. ≤ ₹1 / ≤ ₹10 / configurable) ; OD-483-03 Applies to UPI only, or Cash/Card/Split too ; OD-483-04 Permission-gated (manager only above limit)? ; OD-483-05 Backend field for adjustment amount | 2026-11-04 owner: new Settlement Amount field on all methods, difference = discount. OD-483-06 OPEN (A post-tax settlement discount recommended / B pre-tax). | 2026-11-05: owner reconfirmed registration (Settlement Amount field, difference = discount). OD-483-06 still OPEN. | 2026-11-05 r3: ODs mostly LOCKED (A post-tax; cap ₹10 default/per-restaurant; no right; all methods; reprint line; Discounts own type). OPEN: reason?, link with CR-484. | 2026-11-05 r4: NO discount, billing untouched; \"Received Amount\" field all methods (+/- within restaurant % default 3%); backend computes Reconciliation; Order Report +2 cols. Earlier discount decisions SUPERSEDED. | 2026-11-05 r5: CR-484 merged in; 3% limit everywhere. INTAKE FROZEN. | 2026-11-05: Backend brief filed `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` §B. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
-      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md"
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-484",
@@ -34250,7 +34255,8 @@
       ],
       "intake_doc": "change_requests/CR-484_CARD_BANK_CHARGES_INTAKE.md",
       "description": "Bank deducts/charges extra on card transactions, so the amount the bank charges differs from what the customer pays on the bill. Owner originally raised as \"round-off option for card payments\". Needs a defined way to handle it.",
-      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: NONE — card flow captures only last-4 transaction id; round-off (CR-170) applies to grand total for all methods; no bank-charge concept. | ODs: OD-484-01 Who bears the charge ; OD-484-02 Charge % fixed per restaurant or per card type (debit/credit/Amex) ; OD-484-03 Applies to split payments card portion | 2026-11-05 r3: Owner: bill same; Settlement Amount +/-; new Reconciliation Amount field for card bank charge; no discount. Interpretation OD-484-05 to confirm. | 2026-11-05 r4: same Received Amount logic as CR-483; proposed SUBSUMED into CR-483. | 2026-11-05 r5: SUBSUMED into CR-483 (owner). | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive)."
+      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: NONE — card flow captures only last-4 transaction id; round-off (CR-170) applies to grand total for all methods; no bank-charge concept. | ODs: OD-484-01 Who bears the charge ; OD-484-02 Charge % fixed per restaurant or per card type (debit/credit/Amex) ; OD-484-03 Applies to split payments card portion | 2026-11-05 r3: Owner: bill same; Settlement Amount +/-; new Reconciliation Amount field for card bank charge; no discount. Interpretation OD-484-05 to confirm. | 2026-11-05 r4: same Received Amount logic as CR-483; proposed SUBSUMED into CR-483. | 2026-11-05 r5: SUBSUMED into CR-483 (owner). | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-485",
@@ -34294,7 +34300,8 @@
       ],
       "intake_doc": "change_requests/CR-486_MULTIPLE_COUNTER_LOGINS_INTAKE.md",
       "description": "Allow two different user logins to operate simultaneously at the same counter. Owner: handled by a different team — register for tracking only.",
-      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: NONE | ODs: OD-486-01 Model: same device switch-user vs two devices both active ; Note: BUG-454 | 2026-11-05 r4: owner answers at Gate 2. | 2026-11-05 r5 FROZEN tracking. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive)."
+      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: NONE | ODs: OD-486-01 Model: same device switch-user vs two devices both active ; Note: BUG-454 | 2026-11-05 r4: owner answers at Gate 2. | 2026-11-05 r5 FROZEN tracking. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-487",
@@ -34365,7 +34372,8 @@
       "intake_doc": "change_requests/CR-489_EDIT_AFTER_BILL_PRINT_PERMISSION_INTAKE.md",
       "description": "Owner: \"need configuration if bill is printed edit order can happen only by specific employee with rights\". Restaurant-level setting; when ON and bill already printed, edit order (add/remove/qty/price changes) is allowed only for employees holding a dedicated permission.",
       "notes": "2026-11-05: Intake. PARTIAL — OrderEntry.jsx L333-341 permission flags (order_cancel, food, bill, discount, print_icon…); BUG-470 edit_order gate exists (GATE_6). No \"edit after bill print\" permission or restaurant setting. Bill-printed sig | 2026-11-05: owner ODs locked — setting ON/OFF; after print only Collect Payment without right; no PIN override. | 2026-11-05: OD-489-04 CONFIRMED — without right, no order-taking operation for that order; only Collect Payment. | 2026-11-05 r3: All owner ODs closed (no discount/coupon, reprint yes, KOT no, cancel no, settings access toggles, auto-print locks, no retro lock). | 2026-11-05 r5 FROZEN. | 2026-11-05: Backend brief filed `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` §A+§C. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
-      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md"
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-490",
@@ -34388,7 +34396,8 @@
       "intake_doc": "change_requests/CR-490_DAILY_REPORT_ONLY_PERMISSION_INTAKE.md",
       "description": "Owner: \"there is already a CR for role gating; need another CR specific to make a user only daily reports rights, nothing else in report\". Granular report rights so a role can see Daily Report and nothing else under Reports/Insights.",
       "notes": "2026-11-05: Intake. NONE (granular) — Sidebar.jsx L41-52 SIDEBAR_PERMISSIONS: `reports` and `insights` both gated by single `report` permission → all-or-nothing. No per-report permission. CR-071 (app-wide role gating) is DEFERRED; this is a | 2026-11-05: owner ODs locked — A single daily_report key; Day Closure separate; route guard YES. | 2026-11-05 r3: All owner ODs closed (all tabs, export yes, Insights hidden). | 2026-11-05 r5 FROZEN. | 2026-11-05: Backend brief filed `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` §D. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
-      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md"
+      "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md",
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-491",
@@ -34472,7 +34481,8 @@
       ],
       "intake_doc": "change_requests/BUG-644_CREDIT_ORDER_DETAIL_ITEMS_NOT_SHOWN_INTAKE.md",
       "description": "Order 000414 (pos.mygenie.online/credit): chip shows \"3 Items\", totals ₹244.23 / ₹257, but no item list is visible in Order Details.",
-      "notes": "2026-11-05: Intake. PARTIAL — SS3 fetches via getSingleOrderNew (FETCH MODE, src/components/reports/OrderDetailSheet.jsx ~L505) and renders items in scroll body (~L728, fallback text \"Item details not available\" not visi | 2026-11-05 r3: Re-shared SS3 shows scrollbar → supports H1. | 2026-11-05 r4: owner says items visible on scroll. OD-644-02 close vs UX fix. | 2026-11-05 r5: owner — behaviour, not a bug, no change. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive)."
+      "notes": "2026-11-05: Intake. PARTIAL — SS3 fetches via getSingleOrderNew (FETCH MODE, src/components/reports/OrderDetailSheet.jsx ~L505) and renders items in scroll body (~L728, fallback text \"Item details not available\" not visi | 2026-11-05 r3: Re-shared SS3 shows scrollbar → supports H1. | 2026-11-05 r4: owner says items visible on scroll. OD-644-02 close vs UX fix. | 2026-11-05 r5: owner — behaviour, not a bug, no change. | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
+      "blocked_on": "BACKEND"
     },
     {
       "type": "BUG",
