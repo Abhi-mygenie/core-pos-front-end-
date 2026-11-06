@@ -1,0 +1,24 @@
+{
+  "summary": "BUG-583 retest after adapter fix. Unit test 6/6 PASS. Code verified: billPrinted present in all 12 DashboardPage.jsx adapter locations (L603,649,682,742,803,832,967,985,1144,1163,1222,1238), OrderCard L458 conditional bg+border, TableCard cardStyle useMemo L283-286 with table.billPrinted in deps, colors.js L18 billPrintedBg '#E8F5E9', orderTransform L310 mapping. Webpack latest status 'Compiled successfully'. Live API confirms 3 orders (1537757,1537753,1537752) all bill_print='No'/print_bill_status='No'. Browser: login OK, dashboard loads (85 table cards); all table cards and order cards (grid view + list/channel view) have white bg rgb(255,255,255) and normal status borders (amber for Ready, green #329937 for Served/Bill order 1537757, gray for Available). Zero elements with #E8F5E9 background. Zero console errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Dashboard cards", "issues": ["Observation: billPrinted border (#329937) is identical to Served/Billed status border (fOs 5/6), so for a served order the only visual differentiator after bill print is the light-green bg. Acceptable per spec."]}
+    ]
+  },
+  "test_report_links": ["/app/frontend/src/__tests__/api/transforms/orderTransform.bug583.test.js"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "orderTransform uses OR fallback (bill_print==='Yes' || print_bill_status==='Yes'): if backend ever resets bill_print to 'No' while legacy print_bill_status stays 'Yes', card stays green. Low risk; confirm with backend contract.",
+    "Positive case (bill_print='Yes' rendering green) not verified live because it requires printing a bill on real preprod data; covered only by unit test + code review."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (external preprod API, read-only check OK)", "frontend": "100%"},
+  "test_credentials": "manager@cafe103.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-583 negative case verified live; positive green case only unit-tested. Login selectors: login-email, login-password, login-button. Cards: table-card-*, order-card-*; view toggles: view-toggle, channel-columns-layout. Running orders API: GET /api/v1/vendoremployee/pos/employee-orders-list?role_name=Manager."
+}
