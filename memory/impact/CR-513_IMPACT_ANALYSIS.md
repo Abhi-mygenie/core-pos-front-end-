@@ -209,3 +209,17 @@ No — values are correct. `630` is the **₹ amount**, not the %: 021113 subtot
 ### 14b. Owner decisions (2026-11-06)
 - **OD-592-A LOCKED = YES** — remove `discount_value` fallback at `fromAPI.order` L234 (read `restaurant_discount_amount` only).
 - **OD-592-B — clarified (code-traced):** socket events `update-food-status` (L381-430), `update-order-status` (L460-514) and delivery-assign (L608-637) in `api/socket/socketHandlers.js` re-fetch via `fetchSingleOrderForSocket` → `get-single-order-new` (orderService.js L34), then `OrderContext.updateOrder` (L148) **replaces** the whole order. That API returns no discount fields (probe #021113) → `order.discount` becomes 0. `new-order` / `update-order*` events use the socket payload instead (fields not probed). Classification: **CONTRACT_MISMATCH** — backend API omits fields that the running-orders list provides. Awaiting owner choice (a) backend / (b) FE preserve / (c) both.
+
+### 14c. CORRECTION — socket flow re-traced (2026-11-06, owner challenge)
+§2b item 3 and §14b overstated the problem. Dashboard live updates use the **socket payload** (`orderFromAPI.order(payload.orders[0])`), no API call, for: `new-order`, `update-order`, `update-order-target/source/paid`, `update-item-status`, `update-order-status` (L471 "no GET API call"), `split-order`, `delivery-assign-order` (primary).
+
+`get-single-order-new` is called ONLY by:
+| Caller | When |
+|---|---|
+| `handleUpdateFoodStatus` (socketHandlers.js L417) | legacy `update-food-status` event, and only if NO v2 event for that order in the last 5 s (BUG-089 dedup) — comment says this is the room-transfer case |
+| `handleDeliveryAssignOrder` L635 | fallback only when socket payload missing |
+| `OrderEntry.jsx` L3192 `onSplitSuccess` | adds the NEW split order |
+| Reports: `AllOrdersReportPage` L824, `OrderReportBetaPage` L334, `OrderDetailSheet` L496, `CollectBillPanelDrawer` L128, `reportService` L259/L292 | report view / reprint / collect from report |
+| PMS: `pmsService` L86/L583, `PmsCheckoutDrawer` L90 | PMS (follow-up CR) |
+
+**Revised conclusion:** normal dashboard updates do NOT lose the discount via the API — as long as the socket payload carries `restaurant_discount_amount` (not yet verified; socket payload fields not probed). OD-592-B narrowed to the edge callers above. Owner to decide whether OD-592-B is still needed.
