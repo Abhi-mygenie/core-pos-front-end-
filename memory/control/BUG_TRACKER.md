@@ -2072,7 +2072,7 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 
 **Last Updated:** 2026-11-02 (INTAKE — BUG-639 registered). Owner-reported: marking dish complimentary in real time passes is_complementary: "No" in printer payload. Root cause: updateOrder L1184+L1191 missing expandCompItems() — was added to placeOrder/placeOrderWithPayment/collectBillExisting but missed in updateOrder (BUG-298/299 omission).
 
-| **BUG-639** | updateOrder Missing expandCompItems — partial/full comp items not split before buildCartItem on update-order path. is_complementary: "No" in printer payload. Fix: wrap L1184+L1191 with expandCompItems(), identical to 3 other paths. | **P1** | **MEDIUM** | **GATE_1_INTAKE_COMPLETE 2026-11-02** — Investigation: `investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md`. OD-639-01: direct bug fix recommended. Sprint: nov_cr_batch. | `orderTransform.js` (R5) |
+| **BUG-639** | updateOrder Missing expandCompItems — partial/full comp items not split before buildCartItem on update-order path. is_complementary: "No" in printer payload. Fix: wrap L1184+L1191 with expandCompItems(), identical to 3 other paths. | **P1** | **MEDIUM** | **GATE_3_REOPENED — STOPPED 2026-11-06** — plan conflicts with code (C1-C4, see `plans/BUG-639_IMPLEMENTATION_PLAN.md` addendum). Awaiting owner repro. | `orderTransform.js` (R5) |
 
 **Last Updated:** 2026-11-02 (INTAKE — CR-480 registered). Owner requested hourly cancellation trend widget on Cancellations report page.
 

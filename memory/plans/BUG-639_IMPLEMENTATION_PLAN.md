@@ -113,3 +113,18 @@ What SHOULD happen (like placeOrder):
 ## Scope Lock
 - **Files WILL change:** `orderTransform.js` (2 lines)
 - **Files will NOT touch:** OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, any service, any other transform
+
+---
+
+## PLANNING RE-VERIFICATION — 2026-11-06 (PLANNING role) — ⛔ STOPPED: plan conflicts with code
+
+Line drift only: L1184→L1185, L1191→L1192 (CR-513 E1 added 1 line). Code text unchanged. **But the plan's premise does not hold:**
+
+| # | Finding | Evidence |
+|---|---|---|
+| C1 | Comp can only be marked in Collect Payment (checkbox → `MarkCompModal`). Collect Bill is **disabled when placed + unplaced items coexist**. So a fresh unplaced item can never carry `compQty` into `updateOrder`. | `CollectPaymentPanel.jsx` L2450-2468 · `CartPanel.jsx` L1658 `(hasPlacedItems && hasUnplacedItems)` |
+| C2 | The only unplaced items in `newItems` that can carry `compQty` are **qty-increase delta items**. They copy the placed item via `{...placedItem}`, inheriting `compQty` and `isComplementaryRuntime`. With E1, `expandCompItems` would make *new* units complimentary that the cashier never marked (placed 3 with 1 comp, +2 → delta qty 2 → split 1 comp + 1 paid). **E1 would introduce a wrong financial result.** | `OrderEntry.jsx` L996-1005 (BUG-237 delta) |
+| C3 | `update-order` `cart-update` sends **only unplaced items**. A comp mark on a placed item is never sent by update-order (with or without the plan), so after Update Order → redirect → reload from backend, the local mark is lost and later prints show non-comp. The plan does not fix this. | `orderTransform.js` L1184-1186; `OrderEntry.jsx` L1253-1256 |
+| C4 | E2 (totals) is correct for placed partial-comp items. But combined with C2's inherited `compQty`, it would also double-count comp units on delta lines. | L1191-1198 |
+
+**Status:** plan NOT approved for implementation. Needs the owner's exact repro of the 2026-11-02 observation (screen, steps, API/payload that showed `is_complementary: "No"`). It may be BUG-641 (print payload, already fixed) or C3 (mark lost on update).

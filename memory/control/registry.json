@@ -35114,7 +35114,7 @@
       "title": "updateOrder Missing expandCompItems — Complimentary Passes No in Printer Payload",
       "severity": "P1",
       "risk": "MEDIUM",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_3_REOPENED — STOPPED 2026-11-06: plan conflicts with code (C1-C4). Awaiting owner repro.",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-02",
       "source": "OWNER-REPORTED",
@@ -35126,7 +35126,7 @@
       "files": [
         "src/api/transforms/orderTransform.js"
       ],
-      "notes": "updateOrder L1184+L1191 missing expandCompItems(). placeOrder/placeOrderWithPayment/collectBillExisting all have it. Partial comp items not split = is_complementary:No. Fix: 2 lines, same pattern. Investigation: investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md. OD-639-01: direct bug fix recommended (existing pattern). | 2026-11-02: IA+Plan complete. 2 edits in 1 file. L1184: expandCompItems(newItems), L1191: expandCompItems(allActiveItems). Exact pattern match to placeOrder L1054/L1062. Plan: plans/BUG-639_IMPLEMENTATION_PLAN.md.",
+      "notes": "updateOrder L1184+L1191 missing expandCompItems(). placeOrder/placeOrderWithPayment/collectBillExisting all have it. Partial comp items not split = is_complementary:No. Fix: 2 lines, same pattern. Investigation: investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md. OD-639-01: direct bug fix recommended (existing pattern). | 2026-11-02: IA+Plan complete. 2 edits in 1 file. L1184: expandCompItems(newItems), L1191: expandCompItems(allActiveItems). Exact pattern match to placeOrder L1054/L1062. Plan: plans/BUG-639_IMPLEMENTATION_PLAN.md. | 2026-11-06 PLANNING re-verify STOP: C1 comp only markable in CPP, which is disabled with unplaced items; C2 delta items inherit compQty (E1 would comp new units wrongly); C3 placed-item comp marks are never sent by update-order and are lost after update; C4 E2 double-counts with C2. See plan addendum.",
       "priority": "P0",
       "assignee": "",
       "area": "Menu / Order Entry"
