@@ -33542,7 +33542,7 @@
       "id": "BUG-592",
       "type": "BUG",
       "title": "Manual bill print shows discount as percentage (50) not rupee amount (₹180.96) for prepaid orders",
-      "status": "GATE_2_COMPLETE (via CR-513 IA) — awaiting combined Gate 3 GO",
+      "status": "GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO (combined CR-513 + BUG-592 plan, 3 R5 files)",
       "severity": "P1",
       "risk": "MEDIUM",
       "area": "Billing / Print / order-temp-store",
@@ -33562,6 +33562,11 @@
           "label": "Backend brief",
           "path": "memory/backend_briefs/BACKEND_BRIEF_BUG-592_CR-513_2026_11_06.md",
           "type": "backend_brief"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         }
       ]
     },
@@ -36274,7 +36279,7 @@
       "id": "CR-513",
       "sprint_key": "TBD",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_2_COMPLETE — IA CLOSED 2026-11-06. All ODs locked. Awaiting Gate 3 GO (combined plan with BUG-592).",
+      "status": "GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO (combined CR-513 + BUG-592 plan, 3 R5 files)",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
@@ -36318,6 +36323,11 @@
           "label": "Backend brief",
           "path": "memory/backend_briefs/BACKEND_BRIEF_BUG-592_CR-513_2026_11_06.md",
           "type": "backend_brief"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         }
       ]
     },
@@ -36344,7 +36354,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-06",
-    "last_action": "CR-513 Gate 2 IA CLOSED (owner). Next: Gate 3 GO.",
+    "last_action": "PLANNING Gate 3: CR-513 + BUG-592 plan complete. Awaiting Gate 4 GO.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

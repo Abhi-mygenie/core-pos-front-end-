@@ -32,3 +32,6 @@
 - Backend brief: `backend_briefs/BACKEND_BRIEF_BUG-592_CR-513_2026_11_06.md` (non-blocking).
 - BUG-652 (dashboard ReferenceError) fixed + QA PASS (iteration_25) — awaiting owner smoke.
 - **Next agent:** PLANNING Gate 3 on owner "Gate 3 GO" → `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md` (exact edits, Verification Matrix, Post-Code Registry Checklist). No code before Gate 4 GO.
+
+## 5. GATE 3 COMPLETE (2026-11-06)
+Plan: `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md` — E1 (BUG-592 L234), E2 (builder keys), E3 (CPP), E4a-e (OrderEntry ×5), E5 (8 unit tests). Next: owner Gate 4 GO → IMPLEMENTATION.
