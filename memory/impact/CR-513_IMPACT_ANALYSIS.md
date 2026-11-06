@@ -205,3 +205,7 @@ Evidence: `evidence/CR-513/CR-513_BUG-592_backend_reprobe_021113_2026_11_06.json
 
 ### 14a. Owner query "I gave 30% — wrong value in payload?" (2026-11-06)
 No — values are correct. `630` is the **₹ amount**, not the %: 021113 subtotal ₹2,100 × 30% = ₹630; 021114 ₹450 × 30% = ₹135. `discount_value = 30.00` carries the %. Post-discount subtotal and order_amount reconcile (see evidence `math_check`). Owner's payload screenshot not received (only the earlier BUG-652 screenshot is in assets).
+
+### 14b. Owner decisions (2026-11-06)
+- **OD-592-A LOCKED = YES** — remove `discount_value` fallback at `fromAPI.order` L234 (read `restaurant_discount_amount` only).
+- **OD-592-B — clarified (code-traced):** socket events `update-food-status` (L381-430), `update-order-status` (L460-514) and delivery-assign (L608-637) in `api/socket/socketHandlers.js` re-fetch via `fetchSingleOrderForSocket` → `get-single-order-new` (orderService.js L34), then `OrderContext.updateOrder` (L148) **replaces** the whole order. That API returns no discount fields (probe #021113) → `order.discount` becomes 0. `new-order` / `update-order*` events use the socket payload instead (fields not probed). Classification: **CONTRACT_MISMATCH** — backend API omits fields that the running-orders list provides. Awaiting owner choice (a) backend / (b) FE preserve / (c) both.
