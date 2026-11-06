@@ -86,6 +86,7 @@ const ChannelColumnsLayout = ({
   matchingIds,
   onHideColumn,      // Handler to hide a column
   activeFirst = false,  // CR-429
+  kbdEnabled = false, kbdHighlightId = null, // CR-482 P18+P19
 }) => {
   const containerRef = useRef(null);
   
@@ -224,6 +225,7 @@ const ChannelColumnsLayout = ({
           // CR-414: fluid grid + full-width column on tablet
           isTablet={isTablet}
           activeFirst={activeFirst}  // CR-429
+                kbdEnabled={kbdEnabled} kbdHighlightId={kbdHighlightId}
         />
       );
     });

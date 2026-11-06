@@ -65,6 +65,7 @@ const ChannelColumn = ({
   onHideColumn,      // Handler to hide this column
   isTablet = false,  // CR-414: full-width stacked column + fluid grid <1024px (OD-537-03)
   activeFirst = false,  // CR-429
+  kbdEnabled = false, kbdHighlightId = null, // CR-482 P18+P19
 }) => {
   // Filter by search if applicable
   const filteredItems = useMemo(() => {
@@ -334,6 +335,7 @@ const ChannelColumn = ({
                           isEngaged={isOrderEngaged?.(item.orderId) || isTableEngaged?.(item.tableId)}
                           onAggregatorReady={onAggregatorReady}
                           onAggregatorDispatch={onAggregatorDispatch}
+                          kbdEnabled={kbdEnabled} kbdHighlight={kbdHighlightId === item.id}
                         />
                       );
                     }
@@ -369,6 +371,7 @@ const ChannelColumn = ({
                             onFoodTransfer={onFoodTransfer ? (order, foodItem) => onFoodTransfer(order, foodItem, item) : undefined}
                             onAggregatorReady={onAggregatorReady}
                             onAggregatorDispatch={onAggregatorDispatch}
+                            kbdEnabled={kbdEnabled} kbdHighlight={kbdHighlightId === item.id}
                           />
                         </div>
                       );
@@ -400,6 +403,7 @@ const ChannelColumn = ({
                         onFoodTransfer={onFoodTransfer ? (order, foodItem) => onFoodTransfer(order, foodItem, item) : undefined}
                         onAggregatorReady={onAggregatorReady}
                         onAggregatorDispatch={onAggregatorDispatch}
+                        kbdEnabled={kbdEnabled} kbdHighlight={kbdHighlightId === item.id}
                       />
                     );
                   })}

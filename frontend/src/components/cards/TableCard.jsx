@@ -56,6 +56,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   // CR-106: Aggregator action handlers
   onAggregatorReady,
   onAggregatorDispatch,
+  kbdEnabled = false, kbdHighlight = false, // CR-482 P18
   // BUG-029 (Apr-2026): callback invoked after successful prepaid settle so the
   // parent dashboard can clear any stale order-entry selection for this order.
   onPostSettleSuccess,
@@ -302,8 +303,10 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   return (
     <div
       data-testid={`table-card-${table.id}`}
+      {...(kbdEnabled && !isEngaged && !isAggregator ? { tabIndex: 0, 'data-kbd-card': '', 'data-kbd-label': table.label || '' } : {})}
       onClick={isEngaged || isAggregator ? undefined : handleCardClick} // CR-106: no-op for aggregator
-      className={`relative rounded-2xl transition-all duration-200 ${isEngaged ? 'pointer-events-none' : 'cursor-pointer hover:shadow-md'} ${isSnoozed ? 'opacity-60' : ''}`}
+      onKeyDown={kbdEnabled && !isEngaged && !isAggregator ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } } : undefined}
+      className={`relative rounded-2xl transition-all duration-200 ${isEngaged ? 'pointer-events-none' : 'cursor-pointer hover:shadow-md'} ${isSnoozed ? 'opacity-60' : ''} ${kbdEnabled ? 'kbd-focus' : ''} ${kbdHighlight ? 'kbd-highlight' : ''}`}
       style={cardStyle}
     >
       {/* Engaged spinner overlay */}

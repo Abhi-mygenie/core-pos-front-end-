@@ -25,6 +25,9 @@ import soundManager from "../utils/soundManager"; // BUG-453
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
 import { updateOrderStatus, confirmOrder, completePrepaidOrder } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
+import TableJumpChip from "../components/dashboard/TableJumpChip"; // CR-482 P19
+import { useKeyboardShortcuts, isTypingTarget, isKbdModalOpen } from "../hooks/useKeyboardShortcuts"; // CR-482 P18
+import { HAS_POINTER_DEVICE, TABLE_JUMP_TIMEOUT_MS } from "../constants/keyboardShortcuts"; // CR-482 P19
 import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
 import { isWebOrigin, getRunningOrders } from "../utils/orderOrigin";
@@ -447,6 +450,15 @@ const DashboardPage = () => {
     () => localStorage.getItem('mygenie_sidebar_expanded') === 'true'
   );
   const [searchQuery, setSearchQuery] = useState("");
+  // CR-482 P18-P22: Dashboard keyboard navigation
+  const kbdEnabled = !!(restaurant?.settings?.keyboardShortcuts || localStorage.getItem('mygenie_keyboard_shortcuts_enabled') === 'true') && HAS_POINTER_DEVICE();
+  const [jumpBuffer, setJumpBuffer] = useState('');
+  const [kbdHighlightId, setKbdHighlightId] = useState(null);
+  const [jumpMatches, setJumpMatches] = useState([]); // array of {id, label, element}
+  const [jumpMatchIndex, setJumpMatchIndex] = useState(0);
+  const [jumpNotFound, setJumpNotFound] = useState(false);
+  const [jumpNotInView, setJumpNotInView] = useState(false);
+  const jumpTimerRef = useRef(null);
   const [snoozedOrders, setSnoozedOrders] = useState(new Set());
   // POS2-002 Phase 3 (May-2026): Platform filter state. null = "All" (default).
   // 'pos' = non-web orders (orderFrom !== 'web'). 'web' = orderFrom === 'web'.
@@ -1655,6 +1667,113 @@ const DashboardPage = () => {
     updateTableStatus(Number(tableStringId), newStatus);
   }, [updateTableStatus]);
 
+  // ── CR-482 P19-P22: Dashboard type-to-jump keyboard handler ──
+  const clearJump = useCallback(() => {
+    setJumpBuffer(''); setKbdHighlightId(null); setJumpMatches([]); setJumpMatchIndex(0);
+    setJumpNotFound(false); setJumpNotInView(false);
+    if (jumpTimerRef.current) { clearTimeout(jumpTimerRef.current); jumpTimerRef.current = null; }
+  }, []);
+
+  const findCardMatches = useCallback((buffer) => {
+    if (!buffer) return { matches: [], notInView: false };
+    const cards = Array.from(document.querySelectorAll('[data-kbd-card]'));
+    const q = buffer.toLowerCase();
+    const matches = cards.filter(el => {
+      const label = (el.getAttribute('data-kbd-label') || '').replace(/\s*\(.*\)$/, '').toLowerCase();
+      return label === q;
+    }).map(el => ({ id: el.dataset.testid?.replace('table-card-','').replace('order-card-',''), el }));
+    // Check if label exists in allTablesList/allRoomsList but not rendered
+    const notInView = matches.length === 0 && (
+      allTablesList?.some(t => (t.label || '').toLowerCase() === q) ||
+      allRoomsList?.some(t => (t.label || '').toLowerCase() === q)
+    );
+    return { matches, notInView };
+  }, [allTablesList, allRoomsList]);
+
+  useKeyboardShortcuts((e) => {
+    const { key, ctrlKey, altKey, metaKey } = e;
+    if (isTypingTarget(e.target)) return; // R3: skip if typing in header search etc.
+    if (isKbdModalOpen()) return; // R4
+
+    // P22: Esc clears jump
+    if (key === 'Escape') {
+      if (jumpBuffer) { e.preventDefault(); clearJump(); return; }
+      return;
+    }
+
+    // P20: Enter opens highlighted card
+    if (key === 'Enter' && !ctrlKey && !altKey && !metaKey) {
+      if (kbdHighlightId && jumpMatches.length > 0) {
+        e.preventDefault();
+        const match = jumpMatches[jumpMatchIndex];
+        if (match?.el) match.el.click();
+        clearJump();
+        return;
+      }
+      return;
+    }
+
+    // P21: arrows cycle matches or move between cards
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(key) && !ctrlKey && !altKey) {
+      if (jumpMatches.length > 1) {
+        e.preventDefault();
+        const next = key === 'ArrowRight' || key === 'ArrowDown'
+          ? (jumpMatchIndex + 1) % jumpMatches.length
+          : (jumpMatchIndex - 1 + jumpMatches.length) % jumpMatches.length;
+        setJumpMatchIndex(next);
+        const el = jumpMatches[next]?.el;
+        if (el) { setKbdHighlightId(el.dataset.testid?.replace('table-card-','').replace('order-card-','')); el.focus(); el.scrollIntoView({ block: 'nearest' }); }
+        return;
+      }
+      return;
+    }
+
+    // P19: type letters/digits → build jump buffer
+    if (/^[A-Za-z0-9]$/.test(key) && !ctrlKey && !altKey && !metaKey) {
+      e.preventDefault();
+      const newBuffer = jumpBuffer + key.toUpperCase();
+      setJumpBuffer(newBuffer);
+      // Reset timer
+      if (jumpTimerRef.current) clearTimeout(jumpTimerRef.current);
+      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); }, TABLE_JUMP_TIMEOUT_MS);
+      // Find matches
+      const { matches, notInView } = findCardMatches(newBuffer);
+      setJumpNotInView(notInView);
+      setJumpNotFound(!notInView && matches.length === 0);
+      setJumpMatches(matches);
+      setJumpMatchIndex(0);
+      if (matches.length > 0) {
+        const el = matches[0].el;
+        const id = el.dataset.testid?.replace('table-card-','').replace('order-card-','');
+        setKbdHighlightId(id);
+        el.focus(); el.scrollIntoView({ block: 'nearest' });
+      } else {
+        setKbdHighlightId(null);
+      }
+      return;
+    }
+
+    // P19: Backspace pops last char
+    if (key === 'Backspace' && !ctrlKey && !altKey && !metaKey && jumpBuffer) {
+      e.preventDefault();
+      const newBuffer = jumpBuffer.slice(0, -1);
+      setJumpBuffer(newBuffer);
+      if (!newBuffer) { clearJump(); return; }
+      if (jumpTimerRef.current) clearTimeout(jumpTimerRef.current);
+      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); }, TABLE_JUMP_TIMEOUT_MS);
+      const { matches, notInView } = findCardMatches(newBuffer);
+      setJumpNotInView(notInView); setJumpNotFound(!notInView && matches.length === 0);
+      setJumpMatches(matches); setJumpMatchIndex(0);
+      if (matches.length > 0) {
+        const el = matches[0].el;
+        setKbdHighlightId(el.dataset.testid?.replace('table-card-','').replace('order-card-',''));
+        el.focus(); el.scrollIntoView({ block: 'nearest' });
+      } else { setKbdHighlightId(null); }
+      return;
+    }
+  }, { enabled: kbdEnabled && orderEntryType === null });
+
+
   return (
     <div
       data-testid="pos-home"
@@ -1826,6 +1945,7 @@ const DashboardPage = () => {
                 isOrderEngaged={isOrderEngaged}
                 searchQuery={searchQuery}
                 matchingIds={matchingGridIds} // BUG-587: was matchingTableIds — rooms/delivery/takeaway never highlighted; matchingGridIds is the union of all channel IDs
+                kbdEnabled={kbdEnabled} kbdHighlightId={kbdHighlightId}
                 onHideColumn={(columnId) => {
                   // Hide column AND corresponding filter based on current view
                   if (dashboardView === 'status') {
@@ -2071,6 +2191,11 @@ const DashboardPage = () => {
             )}
             </div>
         </main>
+
+        {/* CR-482 P19: type-to-jump chip */}
+        {kbdEnabled && !orderEntryType && jumpBuffer && (
+          <TableJumpChip buffer={jumpBuffer} matchCount={jumpMatches.length} matchIndex={jumpMatchIndex} notFound={jumpNotFound} notInView={jumpNotInView} />
+        )}
 
         {orderEntryType && (
           <OrderEntry
