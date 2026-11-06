@@ -78,7 +78,7 @@ const OrderNotesModal = ({ tableId, onClose, onSave, initialNotes = [], customer
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="order-notes-modal">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="order-notes-modal" data-kbd-modal="order-notes" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
