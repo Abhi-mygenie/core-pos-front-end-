@@ -86,9 +86,10 @@ _MONEY_AREAS = {  # CR-428: updated to 13-module names
 # ── Phase 1 columns accepted from sheet (contract §5 + §8.1) ──────────────
 # PENDING → owner approves → applied to registry
 # All other agent-owned cols diffed too but logged as REJECTED (not editable in Phase 1)
-# Excluded from diff entirely (§5.6): Assignee, Release week
-_PHASE1_ACCEPTED  = {'Status', 'Registered', 'Closed', 'Priority', 'Blocked on'}  # BUG-541
-_EXCLUDED_FROM_DIFF = {'Assignee', 'Release week', 'Last updated'}                  # BUG-541 — Last updated is agent-computed-only (§5)
+# Excluded from diff entirely (§5.6): Release week
+_PHASE1_ACCEPTED  = {'Status', 'Registered', 'Closed', 'Priority', 'Blocked on', 'Assignee'}  # BUG-541 + owner brief 2026-11-06
+_EXCLUDED_FROM_DIFF = {'Release week', 'Last updated'}                  # BUG-541 — Last updated is agent-computed-only (§5)
+_ALLOWED_ASSIGNEES = {'Abhishek', 'Avinash', 'Gyan', 'Parth', 'Piyush', ''}  # owner brief 2026-11-06
 
 # ── Status → stage tab ────────────────────────────────────────────────────
 _STATUS_TO_TAB = {
@@ -538,7 +539,7 @@ def to_contract_row(item):
         str(item.get('sprint_key', '') or ''),
         blocked_on[:200],
         owner_action,
-        '',                    # Assignee — NEVER written by agent
+        str(item.get('assignee', '') or ''),  # Assignee — written from registry (owner brief 2026-11-06)
         registered,
         last_updated,
         closed,
@@ -902,18 +903,14 @@ def update_all_items_inplace(token, items, dry_run=False):
         item_id = item['id']
         if item_id in id_to_row:
             n = id_to_row[item_id]
-            # CR-420 G1: skip col M (Assignee). Write A:L then N:V.
+            # Owner brief 2026-11-06: write full row A:V including col M (Assignee)
             update_data.append({
-                'range':  f"'All Items'!A{n}:L{n}",
-                'values': [contract_row[:12]],
-            })
-            update_data.append({
-                'range':  f"'All Items'!N{n}:V{n}",
-                'values': [contract_row[13:]],
+                'range':  f"'All Items'!A{n}:V{n}",
+                'values': [contract_row],
             })
         else:
-            # New row — same split for append
-            append_rows.append((contract_row[:12], contract_row[13:]))
+            # New row — full row
+            append_rows.append(contract_row)
 
     if dry_run:
         print(f"  [dry-run] All Items: {len(update_data)} in-place updates, "
@@ -949,10 +946,10 @@ def update_all_items_inplace(token, items, dry_run=False):
     if append_rows:
         next_row = len(existing_data) + 1
         append_data = []
-        for idx, (row_al, row_nv) in enumerate(append_rows):
+        for idx, row in enumerate(append_rows):
             n = next_row + idx
-            append_data.append({'range': f"'All Items'!A{n}:L{n}", 'values': [row_al]})
-            append_data.append({'range': f"'All Items'!N{n}:V{n}", 'values': [row_nv]})
+            # Owner brief 2026-11-06: write full row A:V including col M
+            append_data.append({'range': f"'All Items'!A{n}:V{n}", 'values': [row]})
         for i in range(0, len(append_data), BATCH):
             chunk = append_data[i:i + BATCH]
             r = sheets_post(token, '/values:batchUpdate',
@@ -1091,6 +1088,134 @@ def freeze_tab_headers(token, meta, dry_run=False):  # CR-420 G8
         print(f"  ⚠  Freeze failed: {r.json().get('error',{}).get('message','')}")
 
 
+
+# ── Assignee seed + sync (owner brief 2026-11-06) ─────────────────────────
+def seed_assignees_from_sheet(token, items, dry_run=False):
+    """Read All Items col M (Assignee) from sheet, populate registry items
+    that don't yet have an assignee field. Returns (seeded_count, report_lines)."""
+    enc = _range_url('All Items', 'A1:M10000')
+    r = sheets_get(token, f'/values/{enc}')
+    if r.status_code != 200:
+        print(f"  ⚠  Cannot read All Items for assignee seed ({r.status_code})")
+        return 0, []
+
+    rows = r.json().get('values', [])
+    if not rows:
+        return 0, []
+
+    header = rows[0]
+    id_col = header.index('ID') if 'ID' in header else 1
+    assignee_col = header.index('Assignee') if 'Assignee' in header else 12
+
+    items_by_id = {i['id']: i for i in items}
+    seeded = 0
+    unknown_names = []
+    counts = Counter()
+
+    for row in rows[1:]:
+        item_id = row[id_col].strip() if id_col < len(row) else ''
+        sheet_assignee = row[assignee_col].strip() if assignee_col < len(row) else ''
+        if not item_id or not sheet_assignee:
+            continue
+        if item_id not in items_by_id:
+            continue
+
+        # Validate name
+        if sheet_assignee not in _ALLOWED_ASSIGNEES:
+            unknown_names.append((item_id, sheet_assignee))
+            # Keep the value as-is per brief: "leave the cell as it is and report it"
+            items_by_id[item_id]['assignee'] = sheet_assignee
+            counts[sheet_assignee] += 1
+            seeded += 1
+            continue
+
+        existing = items_by_id[item_id].get('assignee', '')
+        if not existing:  # Only seed if registry doesn't already have one
+            items_by_id[item_id]['assignee'] = sheet_assignee
+            seeded += 1
+        counts[sheet_assignee] += 1
+
+    # Ensure every item has the assignee field (blank if not seeded)
+    for item in items:
+        if 'assignee' not in item:
+            item['assignee'] = ''
+
+    report = []
+    if seeded > 0:
+        report.append(f"Assignee seeded: {seeded} items from sheet")
+        for name, cnt in counts.most_common():
+            report.append(f"  {name}: {cnt}")
+    if unknown_names:
+        report.append(f"Unknown names (outside allowed list): {unknown_names}")
+
+    return seeded, report
+
+
+def sync_assignees_from_sheet(token, items, dry_run=False):
+    """On every push: diff sheet col M vs registry.assignee.
+    Dashboard edits → apply to registry. Conflicts → log. Returns (cl_rows, report_lines)."""
+    enc = _range_url('All Items', 'A1:M10000')
+    r = sheets_get(token, f'/values/{enc}')
+    if r.status_code != 200:
+        return [], []
+
+    rows = r.json().get('values', [])
+    if not rows:
+        return [], []
+
+    header = rows[0]
+    id_col = header.index('ID') if 'ID' in header else 1
+    assignee_col = header.index('Assignee') if 'Assignee' in header else 12
+
+    items_by_id = {i['id']: i for i in items}
+    now_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    cl_rows = []
+    applied = []
+    unknown_names = []
+    report = []
+
+    for row in rows[1:]:
+        item_id = row[id_col].strip() if id_col < len(row) else ''
+        sheet_val = row[assignee_col].strip() if assignee_col < len(row) else ''
+        if not item_id or item_id not in items_by_id:
+            continue
+
+        reg_val = str(items_by_id[item_id].get('assignee', '') or '')
+
+        if sheet_val == reg_val:
+            continue  # Same — nothing to do
+
+        # Validate name (if non-blank)
+        if sheet_val and sheet_val not in _ALLOWED_ASSIGNEES:
+            unknown_names.append((item_id, sheet_val))
+            # Keep sheet value per brief, but report it
+            items_by_id[item_id]['assignee'] = sheet_val
+            cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
+                           'APPLIED', now_str, f'SOURCE=DASHBOARD, APPLIED (unknown name: {sheet_val})'])
+            applied.append(item_id)
+            continue
+
+        if not sheet_val and reg_val:
+            # Owner cleared it
+            items_by_id[item_id]['assignee'] = ''
+            cl_rows.append([now_str, item_id, 'Assignee', reg_val, '',
+                           'APPLIED', now_str, 'SOURCE=DASHBOARD, CLEARED'])
+            applied.append(item_id)
+        elif sheet_val != reg_val:
+            # Dashboard edit — apply directly (no owner approval needed per brief §3)
+            items_by_id[item_id]['assignee'] = sheet_val
+            cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
+                           'APPLIED', now_str, 'SOURCE=DASHBOARD, APPLIED'])
+            applied.append(item_id)
+
+    if applied:
+        report.append(f"Dashboard assignee edits applied: {', '.join(applied)}")
+    if unknown_names:
+        report.append(f"Unknown assignee names (outside allowed list): {unknown_names}")
+
+    return cl_rows, report
+
+
 # ── PUSH command ───────────────────────────────────────────────────────────
 def cmd_push(dry_run=False):
     print("\n── PUSH: registry.json → Google Sheets (contract v1.5) " + "─" * 18)
@@ -1107,6 +1232,25 @@ def cmd_push(dry_run=False):
     token = get_access_token()
     print("  ✅ Access token refreshed")
 
+    # ── Owner brief 2026-11-06: Assignee seed + sync ──
+    assignee_report = []
+    needs_seed = not any(i.get('assignee') for i in items)
+    if needs_seed:
+        print("  Assignee: no values in registry — seeding from sheet…")
+        seeded, seed_report = seed_assignees_from_sheet(token, items, dry_run)
+        assignee_report.extend(seed_report)
+        if seeded and not dry_run:
+            json.dump(registry, open(REGISTRY_PATH, 'w'), indent=2, ensure_ascii=False)
+            print(f"  ✅ Assignee seeded: {seeded} items → registry.json saved")
+    else:
+        # Sync: pick up dashboard edits
+        cl_rows, sync_report = sync_assignees_from_sheet(token, items, dry_run)
+        assignee_report.extend(sync_report)
+        if cl_rows and not dry_run:
+            json.dump(registry, open(REGISTRY_PATH, 'w'), indent=2, ensure_ascii=False)
+            append_to_change_log(token, cl_rows, dry_run)
+            print(f"  ✅ Assignee sync: {len(cl_rows)} dashboard edit(s) applied → registry.json saved")
+
     meta = get_sheet_meta(token)
     print(f"  Sheet: {meta['properties']['title']}")
     sync_tabs(token, meta, dry_run)
@@ -1115,7 +1259,7 @@ def cmd_push(dry_run=False):
         time.sleep(1)
         token = get_access_token()
 
-    # All Items — in-place by ID, cols A–V only, col W preserved
+    # All Items — in-place by ID, cols A–V including col M (Assignee)
     update_all_items_inplace(token, items, dry_run)
 
     # Stage tabs — clear A:V + write (derived views, safe to clear)
@@ -1141,6 +1285,25 @@ def cmd_push(dry_run=False):
               build_summary_rows(items, pending, all_items_data), dry_run)
 
     _print_run_report(items, dry_run)
+
+    # ── Assignee run report section ──
+    if assignee_report:
+        print("\n── ASSIGNEE REPORT " + "─" * 50)
+        for line in assignee_report:
+            print(f"  {line}")
+    # Count per assignee
+    a_counts = Counter(i.get('assignee', '') for i in items if i.get('assignee'))
+    open_counts = Counter(i.get('assignee', '') for i in items
+                          if i.get('assignee') and 'CLOSED' not in str(i.get('status', '')).upper()
+                          and 'PARKED' not in str(i.get('status', '')).upper()
+                          and 'DUPLICATE' not in str(i.get('status', '')).upper())
+    if a_counts:
+        print(f"  Assignee totals (all): {dict(a_counts.most_common())}")
+        print(f"  Assignee totals (open): {dict(open_counts.most_common())}")
+    unknown = [f"{i['id']}={i.get('assignee','')}" for i in items
+               if i.get('assignee') and i['assignee'] not in _ALLOWED_ASSIGNEES]
+    if unknown:
+        print(f"  ⚠  Names outside allowed list: {unknown}")
 
     # CR-420 G8: freeze row 1 on all tabs
     fresh_meta = get_sheet_meta(token)
@@ -1235,7 +1398,7 @@ def cmd_diff_log(dry_run=False):
         contract_row = to_contract_row(item)
 
         for col_name in CONTRACT_COLS:                          # BUG-541: diff all cols
-            if col_name in _EXCLUDED_FROM_DIFF:                # skip Assignee + Release week
+            if col_name in _EXCLUDED_FROM_DIFF:                # skip Release week + Last updated
                 continue
             if col_name not in col_idx:
                 continue
