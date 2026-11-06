@@ -1,7 +1,18 @@
-**CURRENT 2026-11-05 — INTAKE (imported batch 2026-11-04/05, 10 CRs)**
+**CURRENT 2026-11-06 — INTAKE (11 new CRs: CR-492 to CR-502)**
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
+| **CR-492** | Runtime Complementary Should Be Rights-Based (complementary_food role) | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE — 3 ODs open | `change_requests/CR-492_COMPLEMENTARY_RIGHTS_BASED_ROLE_GATING_INTAKE.md` |
+| **CR-493** | Cancellation Reason Mandatory on Every Cancellation | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — 3 ODs open | `change_requests/CR-493_CANCELLATION_REASON_MANDATORY_INTAKE.md` |
+| **CR-494** | Cancellation Rights: Min Amount Threshold + Manager PIN | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY. 5 ODs open | `change_requests/CR-494_CANCELLATION_AMOUNT_THRESHOLD_PIN_INTAKE.md` |
+| **CR-495** | Complementary Only for Rooms with Breakfast Meal Plan | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — depends on CR-492. 4 ODs open | `change_requests/CR-495_COMPLEMENTARY_ONLY_ROOMS_WITH_BREAKFAST_INTAKE.md` |
+| **CR-496** | After-Serve Cancellation: In-App Notification | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY. 3 ODs open | `change_requests/CR-496_AFTER_SERVE_CANCELLATION_IN_APP_NOTIFICATION_INTAKE.md` |
+| **CR-497** | Daily and Weekly Crisp Summary | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — 5 ODs open | `change_requests/CR-497_DAILY_WEEKLY_CRISP_SUMMARY_INTAKE.md` |
+| **CR-498** | Recipe Correction Workflow | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY. 4 ODs open | `change_requests/CR-498_RECIPE_CORRECTION_WORKFLOW_INTAKE.md` |
+| **CR-499** | Final Audit After Recipe Correction | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — depends on CR-498. BACKEND. 4 ODs open | `change_requests/CR-499_FINAL_AUDIT_AFTER_RECIPE_CORRECTION_INTAKE.md` |
+| **CR-500** | iPhone WiFi Printing (Tracking Only — Printer Agent team) | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — TRACKING ONLY | `change_requests/CR-500_IPHONE_WIFI_PRINTING_INTAKE.md` |
+| **CR-501** | Running Order KOT on Update (Tracking Only — Printer Agent team) | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — TRACKING ONLY | `change_requests/CR-501_UPDATE_ORDER_RUNNING_ORDER_KOT_PRINT_INTAKE.md` |
+| **CR-502** | Round Off Value on Printed Bill (All Print Paths) | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — 4 ODs open | `change_requests/CR-502_ROUND_OFF_PRINTED_ON_BILL_ALL_PATHS_INTAKE.md` |
 | **CR-482** | Keyboard navigation — select items and process orders without a mouse | **P0** | **HIGH** | GATE_4_IN_PROGRESS — P0–P10 IMPLEMENTED, P11–P26 pending | `plans/CR-482_IMPLEMENTATION_PLAN.md` |
 | **CR-483** | Received Amount field on all payment methods (± % per restaurant, default 3%) — billing unchanged; backend Reconciliation Amount + 2 Order Report columns | **P1** | **CRITICAL** | GATE_1_INTAKE_FROZEN — BACKEND DEPENDENCY (received_amount + reconciliation + Order Report columns) | `change_requests/CR-483_SHORT_PAYMENT_SETTLEMENT_INTAKE.md` |
 | **CR-484** | Card payments — handle bank charges (MDR) over the bill amount | **P1** | **CRITICAL** | SUBSUMED into CR-483 (owner 2026-11-05) | `change_requests/CR-484_CARD_BANK_CHARGES_INTAKE.md` |

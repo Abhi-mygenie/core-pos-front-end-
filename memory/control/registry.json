@@ -35770,6 +35770,276 @@
         "CR-482"
       ],
       "assignee": ""
+    },
+    {
+      "type": "CR",
+      "id": "CR-492",
+      "sprint_key": "TBD",
+      "title": "Runtime Complementary Should Be Rights-Based (complementary_food role)",
+      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open (OD-492-01/02/03). Next: PLANNING Gate 2-3.",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "area": "Permissions / Security",
+      "files": "OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, MarkCompModal.jsx",
+      "notes": "Only employees with complementary_food permission should mark items as comp at runtime. hasPermission() pattern exists for cancel but NOT for comp. Related: CR-058, CR-104, BUG-298/299. Dependency: CR-495 depends on this.",
+      "blocked_on": "",
+      "related": [
+        "CR-058",
+        "CR-104",
+        "BUG-298",
+        "BUG-299",
+        "CR-495"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-492_COMPLEMENTARY_RIGHTS_BASED_ROLE_GATING_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-493",
+      "sprint_key": "TBD",
+      "title": "Cancellation Reason Mandatory on Every Cancellation (Order + Item Level)",
+      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open. Next: PLANNING Gate 2-3.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Menu / Order Entry",
+      "files": "CancelFoodModal.jsx, CancelOrderModal.jsx, OrderEntry.jsx",
+      "notes": "Every cancel must require reason from backend reasons list. CANCELLATION_REASONS endpoint exists, used in insights, enforcement inconsistent. Related: BUG-440 (empty reasons dropdown). Dependency: CR-494 extends this.",
+      "blocked_on": "",
+      "related": [
+        "BUG-440",
+        "CR-494"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-493_CANCELLATION_REASON_MANDATORY_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-494",
+      "sprint_key": "TBD",
+      "title": "Cancellation Rights: Min Amount Threshold + Manager PIN for Higher Values",
+      "status": "GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY (PIN endpoint + threshold settings). 5 ODs open.",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "area": "Permissions / Security",
+      "files": "",
+      "notes": "Below threshold: normal cancel. Above: manager PIN required. No amount check or PIN flow exists in FE. BACKEND must provide PIN endpoint + threshold in settings. Extends CR-493 (reason + threshold + PIN).",
+      "blocked_on": "BACKEND",
+      "related": [
+        "CR-493"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-494_CANCELLATION_AMOUNT_THRESHOLD_PIN_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-495",
+      "sprint_key": "TBD",
+      "title": "Complementary Marking Only for Rooms with Breakfast Meal Plan",
+      "status": "GATE_1_INTAKE_COMPLETE — DEPENDS ON CR-492. 4 ODs open.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "PMS / Rooms",
+      "files": "MarkCompModal.jsx, orderTransform.js",
+      "notes": "Comp only for rooms booked with breakfast/meal plan, not Room Only. mealPlan exists in transforms but NOT checked in comp flow. Double gate: CR-492 permission + meal plan.",
+      "blocked_on": "",
+      "related": [
+        "CR-492"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-495_COMPLEMENTARY_ONLY_ROOMS_WITH_BREAKFAST_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-496",
+      "sprint_key": "TBD",
+      "title": "After-Serve Cancellation: In-App Notification to Manager/Owner",
+      "status": "GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY (after-serve cancel event). 3 ODs open.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Aggregator / Sockets",
+      "files": "",
+      "notes": "When served item cancelled, alert manager/owner via in-app notification. No code for this trigger exists. Backend must differentiate after-serve cancel events.",
+      "blocked_on": "BACKEND",
+      "related": [],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-496_AFTER_SERVE_CANCELLATION_IN_APP_NOTIFICATION_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-497",
+      "sprint_key": "TBD",
+      "title": "Daily and Weekly Crisp Summary (Revenue, Orders, Cancellations, Payment Split, Top Items)",
+      "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "",
+      "notes": "Quick at-a-glance view. Daily Report + insights exist but no crisp summary. PARTIAL code reality — existing report infrastructure reusable.",
+      "blocked_on": "",
+      "related": [],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-497_DAILY_WEEKLY_CRISP_SUMMARY_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-498",
+      "sprint_key": "TBD",
+      "title": "Recipe Correction Workflow (Edit with Before/After Tracking + Optional Retroactive Stock Adjustment)",
+      "status": "GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY. 4 ODs open.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Inventory / Stock",
+      "files": "",
+      "notes": "Recipe CRUD exists, no 'correction' workflow with change tracking or retroactive adjustment. Related: BUG-457, BUG-459. Dependency: CR-499 depends on this.",
+      "blocked_on": "BACKEND",
+      "related": [
+        "BUG-457",
+        "BUG-459",
+        "CR-499"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-498_RECIPE_CORRECTION_WORKFLOW_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-499",
+      "sprint_key": "TBD",
+      "title": "Final Audit After Recipe Correction (Stock vs Expected, Flag Discrepancies)",
+      "status": "GATE_1_INTAKE_COMPLETE — DEPENDS ON CR-498. BACKEND DEPENDENCY. 4 ODs open.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Inventory / Stock",
+      "files": "",
+      "notes": "Post-correction stock verification. StockAuditPanel exists, no recipe-correction-triggered audit. Related: BUG-457, BUG-459.",
+      "blocked_on": "BACKEND",
+      "related": [
+        "CR-498",
+        "BUG-457",
+        "BUG-459"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-499_FINAL_AUDIT_AFTER_RECIPE_CORRECTION_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-500",
+      "sprint_key": "TBD",
+      "title": "iPhone WiFi Printing Support (Printer Agent Team — Tracking Only)",
+      "status": "GATE_1_INTAKE_COMPLETE — TRACKING ONLY. Printer Agent team owns implementation.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Printing / Printer Agent",
+      "files": "",
+      "notes": "No POS FE code needed. Registered for visibility/tracking. Printer Agent team implements. Related: BUG-468.",
+      "blocked_on": "",
+      "related": [
+        "BUG-468"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-500_IPHONE_WIFI_PRINTING_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-501",
+      "sprint_key": "TBD",
+      "title": "On Update Order: Running Order Print in KOT (Printer Agent Team — Tracking Only)",
+      "status": "GATE_1_INTAKE_COMPLETE — TRACKING ONLY. Printer Agent team owns implementation.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Printing / Printer Agent",
+      "files": "",
+      "notes": "No POS FE code needed. Registered for visibility/tracking. Printer Agent team implements. Related: CR-395.",
+      "blocked_on": "",
+      "related": [
+        "CR-395"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-501_UPDATE_ORDER_RUNNING_ORDER_KOT_PRINT_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-502",
+      "sprint_key": "TBD",
+      "title": "Round Off Value to Be Printed on Bill (Pass via order_temp at All Print Paths)",
+      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open. Key name in order_temp TBD at IA.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Printing / Printer Agent",
+      "files": "orderTransform.js, CollectPaymentPanel.jsx",
+      "notes": "Round-off computed (CR-170) but NOT in print payload. Same gap pattern as BUG-536. All print paths need update: collect bill, prepaid, manual, auto.",
+      "blocked_on": "",
+      "related": [
+        "BUG-536",
+        "CR-170"
+      ],
+      "assignee": "",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-502_ROUND_OFF_PRINTED_ON_BILL_ALL_PATHS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
     }
   ],
   "meta": {
