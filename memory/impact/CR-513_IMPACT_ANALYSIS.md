@@ -154,3 +154,13 @@ Owner answers OD-513-04/06/07/08 (+ intake ODs) → **Gate 3 GO** → Implementa
 | OD-513-02 | Whether/how round-off line prints = **Printer Agent team**. Not an FE decision. | **CLOSED — N/A for FE** |
 | OD-513-03 | Owner: "done by printer agent". Agent clarification asked: OD-03 was about registry overlap (CR-502 FE payload scope + CR-487 enabler) — pending. | **CLARIFICATION PENDING** |
 | OD-513-05 | Flat ₹ discount → **"passing nothing"**. Agent interpretation: omit `discount_percentage` key (not `0`). Confirmation pending (also for no-discount orders and P5-P7 reprint paths). | **PENDING CONFIRM** |
+
+## 11. Owner Decisions — Round 4 (2026-11-06)
+
+| OD | Decision | Status |
+|---|---|---|
+| OD-513-05 | `discount_percentage` **omitted** (key not sent) for flat ₹ discount AND when no discount applies. "Nothing should be sent." Also omitted on non-Option-A paths (no source). | **LOCKED** |
+| OD-513-10 (NEW) | `roundoff` **omitted** (key not sent) when value is ₹0.00. Non-zero → signed value (OD-07). | **LOCKED** |
+| OD-513-03 | Owner asked for walkthrough of CR-502 / CR-487 before deciding. | **OPEN** |
+
+Supersedes §3 Option A note "P5-P7 send 0" → P5-P7 send **nothing** (keys omitted).
