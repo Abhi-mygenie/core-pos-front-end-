@@ -185,6 +185,22 @@ export const printOrder = async (orderId, printType, stationKot = null, orderDat
   console.log('[PrintOrder] payload:', payload, 'printer_agent.length:', agents.length);
   const response = await api.post(API_ENDPOINTS.PRINT_ORDER, payload);
   console.log('[PrintOrder] response:', response.data);
+
+  // CR-512: Confirm print success → sets bill_print/kot_print on order + emits update-order socket.
+  // Handover rules: do NOT call on preview/failure. Do NOT auto-retry (additive, not idempotent).
+  try {
+    const confirmPayload = {
+      order_id: Number(orderId),
+      bill_print: printType === 'bill' ? 'Yes' : 'No',
+      kot_print: printType === 'kot' ? 'Yes' : 'No',
+    };
+    const confirmResp = await api.post(API_ENDPOINTS.CONFIRM_PRINT_STATUS, confirmPayload);
+    console.log('[PrintOrder] confirm:', confirmResp.data);
+  } catch (confirmErr) {
+    // Non-blocking: print was sent to queue; confirmation failure should not crash caller.
+    console.warn('[PrintOrder] confirm-print-status failed (non-blocking):', confirmErr?.message);
+  }
+
   return response.data;
 };
 

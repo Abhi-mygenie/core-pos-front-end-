@@ -106,6 +106,7 @@ export const API_ENDPOINTS = {
 
   // Print Operations (KOT/Bill)
   PRINT_ORDER: '/api/v1/vendoremployee/order-temp-store',
+  CONFIRM_PRINT_STATUS: '/api/v2/vendoremployee/print/update-print-status', // CR-512
 
   // Settings
   CANCELLATION_REASONS: '/api/v1/vendoremployee/cancellation-reasons',
