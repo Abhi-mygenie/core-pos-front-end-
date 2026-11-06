@@ -1,0 +1,26 @@
+{
+  "summary": "CR-482 P11-P15 retest after the F8/Radix Toast fix, run on the preview URL against preprod (owner@cafe103.com). A window-capture click interceptor blocked every place-order-btn and order-entry-print-bill-btn-* click, so no orders were placed, nothing was printed and no bills were settled. 23/23 checks passed. F8-TOAST-FIX: F8 in search clicks place-order and focus stays in the search input (not an OL). F9 straight after F8 opens collect-payment-panel. F8 then F4 keeps focus in search. F8-SEQUENCE: F8, F2, F4, F9 each work; keydown log shows defaultPrevented true and activeElement INPUT for every key. F8 from a grid item or cart row keeps focus on that element, and F9 afterwards still works. F4-NO-BUTTON: on new table C2 (no print button), F4 from a grid item, from body or from a cart row leaves focus where it was and does not jump to search. On C1 (#021102), F4 clicks order-entry-print-bill-btn-1537752 (intercepted) and refocuses search. F8 then F4 on C1 also works. OFF-REGRESSION: with the flag false (kbd-focus-trap-end absent), F8 on the dashboard, in OE search and from body never moves focus to an OL, and place-order is not clicked. Gating: F8, F4 and F9 do nothing in the quick-customer-name input. F2 and F8 do nothing while the dynamic-price modal (item 'test1') is open.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/tests/cr482_f8_retest.py"],
+  "action_items": [
+    "Optional (minor UX): after closing the Collect Payment panel with payment-back-btn while shortcuts are ON, document.activeElement is BODY, not the search input. Shortcuts still work from body, but scanner/typing input is lost until F2. Consider refocusing search when the panel closes if kbdEnabled."
+  ],
+  "critical_code_review_comments": [
+    "Fix verified: toaster.jsx L30 <ToastViewport hotkey={[]} />. Radix checks hotkey.length !== 0, so the document F8 listener is now a no-op everywhere, with shortcuts ON or OFF.",
+    "Fix verified: OrderEntry.jsx L675-677. The F4 refocus is now gated on clickIfEnabled() returning true.",
+    "Still open from iteration_20 (not in scope): clickIfEnabled `el.style.display !== 'fixed'` is meaningless (likely meant getComputedStyle position). The duplicated 'allowed' active-element check in F8/F4/F9 should be extracted into a helper. OrderEntry.jsx is about 3200 lines.",
+    "Side effect of hotkey={[]}: the Radix toast viewport no longer has a keyboard shortcut for accessibility. This is acceptable, but note it if a11y is a requirement."
+  ],
+  "updated_files": ["/app/tests/cr482_f8_retest.py (helper snippet only; no app code changed)"],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100% (23/23 checks)"},
+  "seed_data_creation": "None. Only unplaced cart lines were added to C2 in the browser and never sent to the server. C1 order #021102 was read only; Print Bill clicks were intercepted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login owner@cafe103.com / Qplazm@10. The dashboard needs up to about 60s to load (the /loading screen fetches products). C1 = table-card-8321 (click the 'Owner' text inside the card); print btn order-entry-print-bill-btn-1537752; collect-bill-btn disabled (status Ready). C2 = table-card-8322 (available). The item at index 0 'test1' opens the dynamic-price modal (data-kbd-modal); the item at index 1 'Bean Snapshot Salad' adds directly. The inline customer name input testid is quick-customer-name. Use add_init_script for the localStorage flag plus a capture click interceptor. P3 diagonal grid issue is still pre-existing and was not retested.",
+  "rca of the issue": "Iteration_20 F8 focus steal is resolved. The Radix ToastViewport default hotkey ['F8'] is now overridden with []."
+}
