@@ -1307,6 +1307,11 @@ const CollectPaymentPanel = ({
         paymentAmount:       finalTotal,
         grantAmount:         effectiveTotal,
         discountAmount,
+        // CR-513: active discount % (one discount at a time) + signed round-off
+        discountPercent: (discountType === 'percent' && parseFloat(discountValue) > 0)
+          ? parseFloat(discountValue)
+          : (selectedDiscountType?.discountPercent || 0),
+        roundoff: roundOff,
         couponCode:          selectedCoupon?.code || '',
         // BUG-108 V1B (2026-05-25, E-7, Owner Q5 = A): forward coupon discount
         // ₹ amount to the print payload so the bill template renders a

@@ -1721,6 +1721,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                   orderSubtotal:       paymentData?.subtotal,
                   paymentAmount:       paymentData?.finalTotal,
                   discountAmount,
+                  discountPercent: paymentData?.discounts?.orderDiscountPercent || paymentData?.discounts?.presetDiscountPercent || 0, // CR-513
+                  roundoff:        paymentData?.roundOff, // CR-513
                   couponCode:          paymentData?.discounts?.couponCode || '',
                   couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
                   serviceChargeAmount: paymentData?.serviceCharge || 0,
@@ -1764,6 +1766,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       orderSubtotal:       paymentData?.subtotal,
                       paymentAmount:       paymentData?.finalTotal,
                       discountAmount,
+                      discountPercent: paymentData?.discounts?.orderDiscountPercent || paymentData?.discounts?.presetDiscountPercent || 0, // CR-513
+                      roundoff:        paymentData?.roundOff, // CR-513
                       couponCode:          paymentData?.discounts?.couponCode || '',
                       couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
                       serviceChargeAmount: paymentData?.serviceCharge || 0,
@@ -1841,6 +1845,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 orderSubtotal:       paymentData?.subtotal,
                 paymentAmount:       paymentData?.finalTotal,
                 discountAmount,
+                discountPercent: paymentData?.discounts?.orderDiscountPercent || paymentData?.discounts?.presetDiscountPercent || 0, // CR-513
+                roundoff:        paymentData?.roundOff, // CR-513
                 couponCode:          paymentData?.discounts?.couponCode || '',
                 couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
                 serviceChargeAmount: paymentData?.serviceCharge || 0,
@@ -2290,6 +2296,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       orderSubtotal:       paymentData?.subtotal,
                       paymentAmount:       paymentData?.finalTotal,
                       discountAmount:      autoPrintDiscountAmount,
+                      discountPercent: paymentData?.discounts?.orderDiscountPercent || paymentData?.discounts?.presetDiscountPercent || 0, // CR-513
+                      roundoff:        paymentData?.roundOff, // CR-513
                       couponCode:          paymentData?.discounts?.couponCode || '',
                       couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
                       loyaltyAmount:       paymentData?.discounts?.loyaltyPoints || 0,
@@ -2576,6 +2584,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                             orderSubtotal:       paymentData?.subtotal,
                             paymentAmount:       paymentData?.finalTotal,
                             discountAmount:      collectBillDiscountAmount,
+                            discountPercent: paymentData?.discounts?.orderDiscountPercent || paymentData?.discounts?.presetDiscountPercent || 0, // CR-513
+                            roundoff:        paymentData?.roundOff, // CR-513
                             couponCode:          paymentData?.discounts?.couponCode || '',
                             couponDiscount:      paymentData?.discounts?.couponDiscount || 0,
                             loyaltyAmount:       paymentData?.discounts?.loyaltyPoints || 0,

@@ -2244,3 +2244,7 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/modals/RoomCheckInModal.jsx` | **L20:** +PhoneInputField import. **L301:** +countryCode state. **L946-972:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/pages/pms/CheckInPage.jsx` | **L13-14:** +PhoneInputField+validatePhone imports. **L295:** validation uses validatePhone. **L671-674:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/api/services/customerService.js` | **L40:** lookupCustomer +countryCode param, sends country_code for international. | CR-479 IMPL 2026-11-01 |
+| `src/api/transforms/orderTransform.js` | **L234-235 (BUG-592 E1):** `discount` reads `restaurant_discount_amount` only — `discount_value` fallback removed. **~L2167-2170 (CR-513 E2):** `buildBillPrintPayload` +`discount_percentage` (when override >0) +`roundoff` (signed, when ≠0) conditional spreads. | CR-513 + BUG-592 IMPL 2026-11-06 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **~L1310-1314 (CR-513 E3):** `handlePrintBill` overrides +`discountPercent` (manual % else preset %) +`roundoff: roundOff`. | CR-513 IMPL 2026-11-06 |
+| `src/components/order-entry/OrderEntry.jsx` | **L1724-1725, L1769-1770, L1848-1849, L2299-2300, L2587-2588 (CR-513 E4a-e):** +`discountPercent` +`roundoff` in 5 auto-print override objects. | CR-513 IMPL 2026-11-06 |
+| `src/__tests__/api/transforms/orderTransform.cr513.test.js` | **NEW (E5):** 8 tests U1-U8. | CR-513 + BUG-592 IMPL 2026-11-06 |

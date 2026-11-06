@@ -33542,16 +33542,16 @@
       "id": "BUG-592",
       "type": "BUG",
       "title": "Manual bill print shows discount as percentage (50) not rupee amount (₹180.96) for prepaid orders",
-      "status": "GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO (combined CR-513 + BUG-592 plan, 3 R5 files)",
+      "status": "GATE_5A_IMPLEMENTED — 2026-11-06. Self-test 8/8 unit PASS. Awaiting QA Gate 5b.",
       "severity": "P1",
       "risk": "MEDIUM",
       "area": "Billing / Print / order-temp-store",
-      "sprint_key": "oct_cr_batch",
+      "sprint_key": "nov_cr_batch",
       "files": [
         "src/api/transforms/orderTransform.js"
       ],
       "registered": "2026-10-18",
-      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524. | 2026-11-06 (CR-513 Gate 2): owner OD-513-08=(i) — BUG-592 FE fix (fromAPI.order L234) planned + coded together with CR-513 in plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md. New finding: socket refresh uses get-single-order-new which has NO discount fields → order.discount resets to 0 on dashboard reprint. Backend part (restaurant_discount_amount at prepaid creation) still pending. | 2026-11-06 re-probe #021113: backend part DONE (restaurant_discount_amount=630 in employee-orders-list). NEW confirmed gap: get-single-order-new has no discount fields → socket refresh sets order.discount=0. ODs OD-592-A/B open. | OD-592-A LOCKED YES (drop discount_value fallback L234). OD-592-B explained: socket food/order-status refetch via get-single-order-new replaces order → discount 0. Owner choice pending. | CORRECTION 2026-11-06: dashboard socket updates use payload (no API). get-single-order-new only on legacy update-food-status (5s dedup), delivery fallback, split success, report/PMS screens. OD-592-B narrowed. | 2026-11-06 backend brief filed: get-single-order-new missing discount/round_up fields; socket payload confirmation requested.",
+      "notes": "FE sends discount_value=50 (raw %). Backend does not populate restaurant_discount_amount for prepaid/unserved orders. fromAPI.order L234 fallback reads discount_value (%) not rupee amount. order-temp-store gets discount_amount=50. Two-part fix: backend to populate restaurant_discount_amount at order creation; FE safety net at L234. Evidence: bill photos BillNo 000524. | 2026-11-06 (CR-513 Gate 2): owner OD-513-08=(i) — BUG-592 FE fix (fromAPI.order L234) planned + coded together with CR-513 in plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md. New finding: socket refresh uses get-single-order-new which has NO discount fields → order.discount resets to 0 on dashboard reprint. Backend part (restaurant_discount_amount at prepaid creation) still pending. | 2026-11-06 re-probe #021113: backend part DONE (restaurant_discount_amount=630 in employee-orders-list). NEW confirmed gap: get-single-order-new has no discount fields → socket refresh sets order.discount=0. ODs OD-592-A/B open. | OD-592-A LOCKED YES (drop discount_value fallback L234). OD-592-B explained: socket food/order-status refetch via get-single-order-new replaces order → discount 0. Owner choice pending. | CORRECTION 2026-11-06: dashboard socket updates use payload (no API). get-single-order-new only on legacy update-food-status (5s dedup), delivery fallback, split success, report/PMS screens. OD-592-B narrowed. | 2026-11-06 backend brief filed: get-single-order-new missing discount/round_up fields; socket payload confirmation requested. | 2026-11-06 IMPLEMENTED: E1 L234-235, E2 builder keys, E3 CPP handlePrintBill, E4a-e OrderEntry x5, E5 orderTransform.cr513.test.js (8/8). Plan correction: QSR paymentData source = CartPanel.jsx L520-570 (same fields, no edit).",
       "priority": "P0",
       "assignee": "Piyush",
       "related": [
@@ -33567,6 +33567,11 @@
           "label": "Implementation Plan",
           "path": "memory/plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md",
           "type": "plan"
+        },
+        {
+          "label": "QA Handover",
+          "path": "memory/handover/QA_HANDOVER_CR513_BUG592_2026_11_06.md",
+          "type": "qa_handover"
         }
       ]
     },
@@ -36277,9 +36282,9 @@
     {
       "type": "CR",
       "id": "CR-513",
-      "sprint_key": "TBD",
+      "sprint_key": "nov_cr_batch",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_3_PLAN_COMPLETE — awaiting Gate 4 GO (combined CR-513 + BUG-592 plan, 3 R5 files)",
+      "status": "GATE_5A_IMPLEMENTED — 2026-11-06. Self-test 8/8 unit PASS. Awaiting QA Gate 5b.",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
@@ -36288,7 +36293,7 @@
       "registered": "2026-11-06",
       "registered_by": "INTAKE agent",
       "source": "OWNER-REPORTED",
-      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR. | 2026-11-06 ODs LOCKED: OD-06 one discount at a time → send active % (IA R2 corrected); OD-07 roundoff signed +/-; OD-08 (i) combined plan + coding pass with BUG-592 FE fix. PMS → follow-up CR. | 2026-11-06 R3: OD-04=A (6 live paths, 3 R5 files). OD-01/02 = Printer Agent team decides rendering — closed N/A for FE. OD-05 = pass nothing for flat (interpretation: omit key — confirm). OD-03 clarification asked. | 2026-11-06 R4: OD-05 omit discount_percentage for flat/no discount; OD-10 omit roundoff when 0. | 2026-11-06 R5: owner merged CR-487 + CR-502 into CR-513 (OD-513-03 LOCKED = consolidate). One planning cycle. | 2026-11-06 Q1 LOCKED: discount%/roundoff only at Collect Bill → reprints send nothing. BUG-592 backend verified done (#021113). OD-592-A/B open. Stay Gate 2. | 2026-11-06 backend brief filed: get-single-order-new missing discount/round_up fields; socket payload confirmation requested. | 2026-11-06 IA CLOSED by owner. Final: Option A, 3 R5 files, discount_percentage omitted for flat/none, roundoff signed & omitted at 0, reprints send nothing, BUG-592 L234 fallback removed, backend brief non-blocking.",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR. | 2026-11-06 ODs LOCKED: OD-06 one discount at a time → send active % (IA R2 corrected); OD-07 roundoff signed +/-; OD-08 (i) combined plan + coding pass with BUG-592 FE fix. PMS → follow-up CR. | 2026-11-06 R3: OD-04=A (6 live paths, 3 R5 files). OD-01/02 = Printer Agent team decides rendering — closed N/A for FE. OD-05 = pass nothing for flat (interpretation: omit key — confirm). OD-03 clarification asked. | 2026-11-06 R4: OD-05 omit discount_percentage for flat/no discount; OD-10 omit roundoff when 0. | 2026-11-06 R5: owner merged CR-487 + CR-502 into CR-513 (OD-513-03 LOCKED = consolidate). One planning cycle. | 2026-11-06 Q1 LOCKED: discount%/roundoff only at Collect Bill → reprints send nothing. BUG-592 backend verified done (#021113). OD-592-A/B open. Stay Gate 2. | 2026-11-06 backend brief filed: get-single-order-new missing discount/round_up fields; socket payload confirmation requested. | 2026-11-06 IA CLOSED by owner. Final: Option A, 3 R5 files, discount_percentage omitted for flat/none, roundoff signed & omitted at 0, reprints send nothing, BUG-592 L234 fallback removed, backend brief non-blocking. | 2026-11-06 IMPLEMENTED: E1 L234-235, E2 builder keys, E3 CPP handlePrintBill, E4a-e OrderEntry x5, E5 orderTransform.cr513.test.js (8/8). Plan correction: QSR paymentData source = CartPanel.jsx L520-570 (same fields, no edit).",
       "blocked_on": "",
       "assignee": "",
       "related": [
@@ -36328,6 +36333,11 @@
           "label": "Implementation Plan",
           "path": "memory/plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md",
           "type": "plan"
+        },
+        {
+          "label": "QA Handover",
+          "path": "memory/handover/QA_HANDOVER_CR513_BUG592_2026_11_06.md",
+          "type": "qa_handover"
         }
       ]
     },
@@ -36354,7 +36364,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-06",
-    "last_action": "PLANNING Gate 3: CR-513 + BUG-592 plan complete. Awaiting Gate 4 GO.",
+    "last_action": "IMPLEMENTATION: CR-513 + BUG-592 GATE_5A_IMPLEMENTED.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

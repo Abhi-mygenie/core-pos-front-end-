@@ -231,7 +231,8 @@ export const fromAPI = {
       // Source field mirrors reportTransform.js (`restaurant_discount_amount`
       // with `discount_value` as legacy fallback). Missing field → 0 (no
       // regression vs current behavior).
-      discount: parseFloat(api.restaurant_discount_amount || api.discount_value || 0) || 0,
+      // BUG-592: discount_value removed — it is the raw %/₹ input, not the resolved ₹
+      discount: parseFloat(api.restaurant_discount_amount || 0) || 0,
       // BUG-538: role-base discount applied by authorized user before collection.
       // 'fixed'→'flat' maps API type to CPP internal type. null when absent → no-op for all restaurants today.
       orderDiscountJson: api.order_discount_json
@@ -2163,6 +2164,10 @@ export const toAPI = {
       // `order.discount` instead of hardcoded 0, so dashboard re-print matches
       // Collect Bill discount_amount when the order was paid with a discount.
       discount_amount: overrides.discountAmount !== undefined ? overrides.discountAmount : (parseFloat(order.discount) || 0),
+      // CR-513: additive print keys — omitted when not applicable (OD-513-05/10)
+      ...(parseFloat(overrides.discountPercent) > 0 ? { discount_percentage: parseFloat(overrides.discountPercent) } : {}),
+      ...(Number.isFinite(parseFloat(overrides.roundoff)) && parseFloat(overrides.roundoff) !== 0
+          ? { roundoff: Math.round(parseFloat(overrides.roundoff) * 100) / 100 } : {}),
       // BUG-108 P1 (May-2026): Force-zero coupon/loyalty/wallet print fields
       // when their CRM endpoints are not yet live. UI keeps these sections
       // disabled; this prevents any stale override value from printing on the bill.
