@@ -672,8 +672,9 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const allowed = !active || active === document.body || active === searchInputRef.current || active.hasAttribute('data-kbd-item') || active.hasAttribute('data-kbd-cart-row');
       if (!allowed) return;
       e.preventDefault(); // CR-482 P14
-      clickIfEnabled('[data-testid^="order-entry-print-bill-btn-"]');
-      setTimeout(() => searchInputRef.current?.focus(), 300); // G7: refocus after print dialog
+      if (clickIfEnabled('[data-testid^="order-entry-print-bill-btn-"]')) {
+        setTimeout(() => searchInputRef.current?.focus(), 300); // G7: refocus after print dialog
+      }
       return;
     }
 
