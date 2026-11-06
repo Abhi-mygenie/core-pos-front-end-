@@ -36262,7 +36262,7 @@
       "id": "CR-513",
       "sprint_key": "TBD",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — awaiting OD-513-04/06/07/08 → Gate 3 GO",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — OD-06 LOCKED (both), OD-07 LOCKED (positive; CR-170 floor conflict raised), OD-08 OPEN, OD-04 OPEN. PMS (P7) → follow-up CR.",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
@@ -36271,7 +36271,7 @@
       "registered": "2026-11-06",
       "registered_by": "INTAKE agent",
       "source": "OWNER-REPORTED",
-      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files).",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR.",
       "blocked_on": "",
       "assignee": "",
       "related": [

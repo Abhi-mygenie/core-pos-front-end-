@@ -128,3 +128,14 @@ Expose `order_discount_type` and `round_up` (already stored — present in `orde
 
 ## Next
 Owner answers OD-513-04/06/07/08 (+ intake ODs) → **Gate 3 GO** → Implementation Plan (Verification Matrix + Registry Checklist).
+
+---
+
+## 9. Owner Decisions — Round 1 (2026-11-06)
+
+| OD | Owner answer | Status | Agent note |
+|---|---|---|---|
+| OD-513-06 | "both" — manual % and preset % both feed `discount_percentage` | LOCKED (pending confirm of combine rule) | Interpreted as: when both are active send manual% + preset% (sum); when one is active send that one. Coupon/flat excluded. Confirm at Gate 3. |
+| OD-513-07 | "always positive" | LOCKED — send absolute value | ⚠ Conflict with CR-170 rule (`roundOffUtils.js`): paise < 10 → floor → FE `roundOff` is NEGATIVE (₹100.04 → ₹100, −0.04). Sending `Math.abs` would print "+0.04" on a bill that was rounded down. Owner to confirm: (a) abs anyway, (b) send 0 in floor case, or (c) signed. Raised in chat. |
+| OD-513-08 | Owner asked for BUG-592 explanation before deciding | OPEN | Explained in chat 2026-11-06. |
+| PMS paths (P7) | "check separately as a follow-up CR" | OUT OF SCOPE for CR-513 | Follow-up CR to be registered when owner asks (P7 + `rawOrderDetails ?? order` gap). |
