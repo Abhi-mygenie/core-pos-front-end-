@@ -33883,7 +33883,7 @@
         "OD-605-01",
         "OD-605-02"
       ],
-      "notes": "from TT-002",
+      "notes": "from TT-002 | Excel Item #3 (Unpaid Button) is a DUPLICATE of this bug.",
       "blocked_by": "BACKEND",
       "assignee": "Gyan"
     },
@@ -36037,6 +36037,222 @@
         {
           "label": "Intake",
           "path": "memory/change_requests/CR-502_ROUND_OFF_PRINTED_ON_BILL_ALL_PATHS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-503",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Pay Later - Print Bill and Collect Payment Actions",
+      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open. Next: PLANNING.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx, OrderTable.jsx, reportService.js",
+      "notes": "Excel Item #1. Add Print Bill + Collect Payment actions for Pay Later orders. Extends CR-003 Actions pattern. Related: BUG-605 (buttons not working).",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "BUG-605",
+        "CR-003"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-503_ORDER_BETA_PAY_LATER_PRINT_COLLECT_ACTIONS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-504",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Table Section-wise Filter",
+      "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx, FilterBar.jsx",
+      "notes": "Excel Item #2. Add filter dropdown for table sections (e.g. Ground Floor, Terrace). Parallel with CR-506.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "CR-506"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-504_ORDER_BETA_TABLE_SECTION_FILTER_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-505",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Partial Payment Split + Payment-wise Totals",
+      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open. Financial display (R6).",
+      "priority": "P1",
+      "risk": "CRITICAL",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx, OrderTable.jsx, reportService.js",
+      "notes": "Excel Item #4. Show per-mode split for partial payments + payment-wise header totals. No double-counting. Related: BUG-272 (partial payment breakdown), BUG-645 (payment filter wrong amount).",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "BUG-272",
+        "BUG-645"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-505_ORDER_BETA_PARTIAL_PAYMENT_SPLIT_TOTALS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-506",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Room Number Filter",
+      "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
+      "priority": "P2",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx, FilterBar.jsx",
+      "notes": "Excel Item #5. Add filter dropdown for room numbers. Parallel with CR-504.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "CR-504"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-506_ORDER_BETA_ROOM_NUMBER_FILTER_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-507",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Separate Table # and Room # Columns",
+      "status": "GATE_1_INTAKE_COMPLETE — 1 OD open.",
+      "priority": "P2",
+      "risk": "LOW",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx, OrderTable.jsx",
+      "notes": "Excel Item #6. Split combined Table/Room column into separate Table # and Room # columns.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-507_ORDER_BETA_SEPARATE_TABLE_ROOM_COLUMNS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-508",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Total Cancelled Revenue Metric",
+      "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "OrderReportBetaPage.jsx",
+      "notes": "Excel Item #7. Add cancelled revenue KPI to header. Respects selected date range.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-508_ORDER_BETA_TOTAL_CANCELLED_REVENUE_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-509",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Order Details Drill-Down + Activity Logs",
+      "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open. Largest item — unblocks CR-510 + CR-511.",
+      "priority": "P1",
+      "risk": "HIGH",
+      "area": "Reports / Analytics",
+      "files": "OrderDetailSheet.jsx, OrderReportBetaPage.jsx, reportService.js",
+      "notes": "Excel Item #8. Full order details sheet + chronological activity log (append-only, employee + timestamp). Dependency: CR-510 and CR-511 depend on this.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "CR-510",
+        "CR-511"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-509_ORDER_BETA_ORDER_DETAILS_ACTIVITY_LOGS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-510",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Aggregator Item Details (Variations/Add-ons in Drill-Down)",
+      "status": "GATE_1_INTAKE_COMPLETE — depends on CR-509. 2 ODs open.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "OrderDetailSheet.jsx, reportService.js",
+      "notes": "Excel Item #9. Show aggregator item variations and add-ons in the order details sheet. Related: BUG-601 (variations silently dropped). Depends on CR-509.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "CR-509",
+        "BUG-601"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-510_ORDER_BETA_AGGREGATOR_ITEM_DETAILS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-511",
+      "sprint_key": "TBD",
+      "title": "Order Beta: Aggregator Complete Amount Breakdown (Customer vs Platform)",
+      "status": "GATE_1_INTAKE_COMPLETE — depends on CR-509. 3 ODs open.",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Reports / Analytics",
+      "files": "OrderDetailSheet.jsx, OrderReportBetaPage.jsx, reportService.js",
+      "notes": "Excel Item #10. Customer-facing amounts vs platform commissions in aggregator orders. Depends on CR-509.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "CR-509"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-511_ORDER_BETA_AGGREGATOR_AMOUNT_BREAKDOWN_INTAKE.md",
           "type": "intake"
         }
       ]

@@ -1,7 +1,16 @@
-**CURRENT 2026-11-06 — INTAKE (11 new CRs: CR-492 to CR-502)**
+**CURRENT 2026-11-06 — INTAKE (11 CRs CR-492-502 + 9 Order Beta CRs CR-503-511)**
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
+| **CR-503** | Order Beta: Pay Later - Print Bill and Collect Payment | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-503_ORDER_BETA_PAY_LATER_PRINT_COLLECT_ACTIONS_INTAKE.md` |
+| **CR-504** | Order Beta: Table Section-wise Filter | **P2** | **MEDIUM** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-504_ORDER_BETA_TABLE_SECTION_FILTER_INTAKE.md` |
+| **CR-505** | Order Beta: Partial Payment Split + Totals | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-505_ORDER_BETA_PARTIAL_PAYMENT_SPLIT_TOTALS_INTAKE.md` |
+| **CR-506** | Order Beta: Room Number Filter | **P2** | **MEDIUM** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-506_ORDER_BETA_ROOM_NUMBER_FILTER_INTAKE.md` |
+| **CR-507** | Order Beta: Separate Table # and Room # Columns | **P2** | **LOW** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-507_ORDER_BETA_SEPARATE_TABLE_ROOM_COLUMNS_INTAKE.md` |
+| **CR-508** | Order Beta: Total Cancelled Revenue Metric | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE | `change_requests/CR-508_ORDER_BETA_TOTAL_CANCELLED_REVENUE_INTAKE.md` |
+| **CR-509** | Order Beta: Order Details + Activity Logs (largest) | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — unblocks CR-510/511 | `change_requests/CR-509_ORDER_BETA_ORDER_DETAILS_ACTIVITY_LOGS_INTAKE.md` |
+| **CR-510** | Order Beta: Aggregator Item Details | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — depends CR-509 | `change_requests/CR-510_ORDER_BETA_AGGREGATOR_ITEM_DETAILS_INTAKE.md` |
+| **CR-511** | Order Beta: Aggregator Amount Breakdown | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — depends CR-509 | `change_requests/CR-511_ORDER_BETA_AGGREGATOR_AMOUNT_BREAKDOWN_INTAKE.md` |
 | **CR-492** | Runtime Complementary Should Be Rights-Based (complementary_food role) | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE — 3 ODs open | `change_requests/CR-492_COMPLEMENTARY_RIGHTS_BASED_ROLE_GATING_INTAKE.md` |
 | **CR-493** | Cancellation Reason Mandatory on Every Cancellation | **P1** | **HIGH** | GATE_1_INTAKE_COMPLETE — 3 ODs open | `change_requests/CR-493_CANCELLATION_REASON_MANDATORY_INTAKE.md` |
 | **CR-494** | Cancellation Rights: Min Amount Threshold + Manager PIN | **P1** | **CRITICAL** | GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY. 5 ODs open | `change_requests/CR-494_CANCELLATION_AMOUNT_THRESHOLD_PIN_INTAKE.md` |
