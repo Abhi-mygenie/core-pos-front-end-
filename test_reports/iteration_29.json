@@ -1,0 +1,22 @@
+{
+  "summary": "CR-512 print confirmation verified end-to-end. Code: CONFIRM_PRINT_STATUS constant at constants.js L109 with CR-512 marker; printOrder() (orderService.js L189-201) calls api.post(CONFIRM_PRINT_STATUS) only after order-temp-store succeeds, payload {order_id:Number, bill_print, kot_print} correct for bill/kot, wrapped in try/catch (non-blocking), returns original response.data. New Jest unit test printOrder.cr512.test.js 5/5 PASS (plus bug583 6/6, constants 4/4). Webpack 'Compiled successfully'. Live browser (manager@cafe103.com): login -> dashboard OK; clicking Bill on card table-card-wc-1537757 fired order-temp-store (200) then POST /api/v2/vendoremployee/print/update-print-status (200, body {order_id:1537757,bill_print:'Yes',kot_print:'No'}, response success bill_print_count:1, socket_publish_attempted:true). update-order socket received and card bg changed rgb(255,255,255) -> rgb(232,245,233) (#E8F5E9), border rgb(50,153,55) (#329937). Green persisted after fresh login. KOT print (print-btn-wc-1537757) fired temp-store then confirm with {bill_print:'No',kot_print:'Yes'} -> 200, kot_print_count:1. No console errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/frontend/src/__tests__/api/services/printOrder.cr512.test.js"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Low: confirmation is sent even when printer_agent is empty (no matching agent configured / KOT with no stationKot) — order gets marked kot_print/bill_print 'Yes' although nothing may physically print. Consider skipping confirm when agents.length===0 if that matches the handover's 'do NOT call on failure' intent.",
+    "Low: TableCard Bill (TextButton) buttons lack a data-testid (print KOT IconButton has print-btn-{id}); selected via text in tests."
+  ],
+  "updated_files": ["/app/frontend/src/__tests__/api/services/printOrder.cr512.test.js (new)"],
+  "success_rate": {"backend": "N/A (external preprod API, verified via browser network: 2/2 confirm calls 200)", "frontend": "100%"},
+  "seed_data_creation": "None. Side effect: real print jobs queued for order 1537757 (1 bill, 1 KOT) on preprod; bill_print_count=1, kot_print_count=1 now set on that order.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Order 1537757 (WC, table-card-wc-1537757) now has bill_print='Yes' and renders green. Order 1537753 was concurrently modified by another actor during testing (amount 1155->2310, status Ready) — not caused by this test. Print KOT btn: print-btn-{table.id}; Bill btn: button text 'Bill' inside table-card-*. Wait for **/dashboard** (loading screen ~10s).",
+  "test_credentials": "manager@cafe103.com / Qplazm@10 (works)"
+}
