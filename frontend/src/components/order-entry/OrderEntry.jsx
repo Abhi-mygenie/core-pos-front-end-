@@ -362,7 +362,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   // CR-489: Lock order editing after bill is printed (per-restaurant setting).
   // When ON + bill printed + user lacks order_edit_access → only Collect Payment + Reprint Bill allowed.
   const canEditAfterPrint = hasPermission('order_edit_access');
-  const isEditLocked = !!(restaurant?.orderEditAccess)   // setting ON for this restaurant
+  const isEditLocked = !!(restaurant?.settings?.orderEditAccess)   // setting ON for this restaurant
                     && !!(orderData?.billPrinted)          // bill was printed for THIS order
                     && !canEditAfterPrint;                  // user does NOT have the override permission
 

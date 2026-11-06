@@ -119,7 +119,7 @@ const OrderCard = ({
   const isTakeAway = orderType === "takeAway";
   const isRoom = orderType === "room" || order.isRoom;
   // CR-489: Lock order editing after bill is printed
-  const isEditLocked = !!(restaurant?.orderEditAccess) && !!(order?.billPrinted) && !hasPermission('order_edit_access');
+  const isEditLocked = !!(restaurant?.settings?.orderEditAccess) && !!(order?.billPrinted) && !hasPermission('order_edit_access');
   // BUG-097: delivery_assign from restaurant profile determines Dispatch vs Assign Rider
   const deliveryAssign = restaurant?.features?.deliveryAssign;
   const hasRiderAssigned = !!order.deliveryManId;

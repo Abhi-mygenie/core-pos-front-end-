@@ -1,0 +1,31 @@
+{
+  "summary": "CR-489 (lock order edit after bill print). I checked the code for V-1 to V-13 and ran the dashboard in the browser as owner@cafe103.com. The code markers are present, V-1 to V-3 are correct and webpack compiles with only the old L1888 warning. The lock itself does NOT work. Both OrderEntry and OrderCard read restaurant?.orderEditAccess, but profileTransform stores the flag at restaurant.settings.orderEditAccess. I confirmed this from the live React state: restaurant.orderEditAccess is undefined (it does not exist at the top level of the restaurant object) and restaurant.settings.orderEditAccess is true. The profile API returns order_edit_access:'Yes' and employee-orders-list returns bill_print:'Yes' for 1537757, but isEditLocked is always false. Order 1537757 (bill printed) still shows print-kot-btn and cancel-order-btn in Order View. The expected reduced button set did not appear.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "OrderCard.jsx L122 / OrderEntry.jsx L365", "issue": "isEditLocked reads restaurant?.orderEditAccess (undefined). The value lives at restaurant.settings.orderEditAccess (profileTransform L425 is inside fromAPI.settings, which is stored as restaurant.settings at L222). So the lock never activates.", "selector": "[data-testid=print-kot-btn-1537757], [data-testid=cancel-order-btn-1537757]", "priority": "CRITICAL"}
+    ],
+    "integration_issues": [
+      {"flow": "Bill printed + setting ON + user without order_edit_access", "issue": "Order 1537757 (bill_print=Yes) shows these buttons: bill-btn, cancel-order-btn, print-kot-btn, served-toggle. Unprinted orders 1537752/1537753 show cancel/print-kot/ready (plus merge/shift on 1537752). There is no difference, so the lock is not applied.", "affected_selectors": ["print-kot-btn-1537757", "cancel-order-btn-1537757"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "CRITICAL: change restaurant?.orderEditAccess to restaurant?.settings?.orderEditAccess in OrderCard.jsx L122 and OrderEntry.jsx L365. Alternatively, also expose orderEditAccess at the top level of the restaurant object in profileTransform.",
+    "Scope gap vs spec ('block all actions except Collect Payment and Reprint Bill'). OrderEntry only gates order cancel and item cancel. Adding items, changing quantities, Update Order/KOT, shift/merge/food-transfer from OrderEntry, and discount are not gated. OrderCard leaves served-toggle, item-action-btn and food-transfer-btn ungated, along with the TableCard actions in Table View.",
+    "orderData.billPrinted in OrderEntry is a prop snapshot. After printing inside the same OrderEntry session, the lock will not apply until orderData refreshes."
+  ],
+  "critical_code_review_comments": [
+    "Field-path mismatch: profileTransform.settings() writes to restaurant.settings.*, while consumers read the top level of the restaurant object. Other flags follow the settings.* pattern, e.g. restaurant?.settings?.whatsappMessage in OrderCard L141.",
+    "restaurantSettingsTransform maps order_edit_access both ways (L99/L250), but no settings-page UI reads or writes orderEditAccess.",
+    "There is no unit test for orderEditAccess in profileTransform.test.js."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (no backend changes; external preprod API)", "frontend": "Code checks: 11 of 13 V-items look correct in code but are not effective. V-4/V-7 (isEditLocked derivation) are broken. Browser lock check: 0 of 2 passed."},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Log in at the frontend URL using the data-testids login-email, login-password and login-button. Wait about 18s, then click the view-toggle testid to switch to Order View, where OrderCard renders with order-card-{id}. At cafe103, 1537757 has bill_print=Yes; 1537752 and 1537753 are unprinted. Profile returns order_edit_access='Yes'. After the fix, expect print-kot-btn-1537757 and cancel-order-btn-1537757 to be absent while bill-btn-1537757 stays.",
+  "rca of the issue": "profileTransform L222 builds the restaurant as { ..., settings: fromAPI.settings(api) }, and L425 adds orderEditAccess inside that settings object. OrderCard/OrderEntry read restaurant.orderEditAccess, which is undefined, so !!undefined is false and isEditLocked is always false. Reproduce: log in as the owner, switch to Order View, and note that order 1537757 still shows its KOT and Cancel buttons. Fix: read restaurant?.settings?.orderEditAccess."
+}
