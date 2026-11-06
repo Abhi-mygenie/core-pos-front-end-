@@ -1,0 +1,29 @@
+{
+  "summary": "CR-482 Batch 2 final retest, frontend only, on the preview URL against preprod (owner@cafe103.com, table C2). Safety: a click interceptor plus route aborts. No order was placed, printed or paid (window.__blocked was empty except for the intentional F8/F9 checks, which were intercepted). CRITICAL bug found and fixed: OrderNotesModal.jsx and ItemNotesModal.jsx called useEffect without importing it ('ReferenceError: useEffect is not defined'), so the whole OE crashed to the ErrorBoundary as soon as either modal opened. I added useEffect to the react import in both files. After that fix every requested check PASSES. P17 Esc right after opening closes all 4 modals (Customer, Order Notes, Item Notes, Custom Item) with the flag ON and OFF. Typing keeps every character: Customer name 'TEST_Name', Order note 'Test note', Item note 'Less spicy', Custom item 'TestItem' (the autoFocus input wins over the root focus thanks to the contains() guard) and price '150', with the flag ON and OFF. While a modal is open, + and F8 do not fire OE shortcuts (place-order is not clicked, the modal stays open, and + does not change qty). P16: Esc with an unplaced cart shows the confirm with Stay focused. Enter (Stay) refocuses menu-search-input, Esc-dismiss refocuses menu-search-input, and Tab+Enter on Leave closes OE to the dashboard. Flag OFF: Esc does not show the confirm. Batch1/P10 regression: F2 focuses search; Enter on a search result adds the item (cart rows 1 to 2); Ctrl+Down goes to the newest row; + and - change the row (60,000 to 120,000 to 60,000); ArrowUp and ArrowDown move between rows; Esc from a row goes back to search; F4 and F7 do nothing on C2; F8 clicks place-order-btn and F9 clicks collect-bill-btn (both intercepted).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "OrderNotesModal / ItemNotesModal", "issue": "Missing useEffect import crashed the app when the modal opened (FIXED by the testing agent)", "selector": "[data-testid=order-notes-modal], [data-testid=item-notes-modal]", "priority": "CRITICAL"}
+    ],
+    "integration_issues": [
+      {"flow": "Customer modal name typing (environmental)", "issue": "The CRM search at crm.mygenie.online returns 401 'Invalid API key', and then preprod restaurant-crm-token returns 401, which logs the user out mid-typing. Seen in the first run before CRM requests were aborted. It is not caused by the P17 change, but a CRM 401 should not log out the POS session.", "affected_selectors": ["customer-name-input"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/tests/it24_modal_flow.py", "/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "action_items": [
+    "Review the import fix the testing agent made in OrderNotesModal.jsx and ItemNotesModal.jsx (useEffect added). Check lint/compile on every file you touch.",
+    "Investigate why a CRM / restaurant-crm-token 401 triggers a global logout (the 401 interceptor). The CRM API key on preprod looks invalid.",
+    "Minor (carried over): after a P17 modal closes, focus goes to BODY rather than back to menu-search-input."
+  ],
+  "critical_code_review_comments": [
+    "The useRef + mount-only useEffect with the contains(document.activeElement) guard is correct. useEffect runs after the child autoFocus, so AddCustomItemModal keeps focus on the name input.",
+    "The previous patch shipped with an import error, which means the change was never opened in a browser before handoff."
+  ],
+  "updated_files": ["/app/frontend/src/components/order-entry/OrderNotesModal.jsx", "/app/frontend/src/components/order-entry/ItemNotesModal.jsx", "/app/tests/it24_modal_flow.py", "/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "success_rate": {"backend": "N/A", "frontend": "100% after the import fix (0% before: OE crashed on Order/Item Notes)"},
+  "seed_data_creation": "None. Cart items were added locally and never placed. The custom item was not submitted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "See the iteration_24 section in /app/tests/cr482_batch2_p13_p16_p17.md. Call page.reload() after add_init_script and abort CRM requests. The StationPickerModal is still unreachable with the current data (C1 has a single station)."
+}

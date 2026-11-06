@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Plus, Clock, User } from "lucide-react";
 import { COLORS } from "../../constants";
 import { orderLevelPresets } from "../../data";
