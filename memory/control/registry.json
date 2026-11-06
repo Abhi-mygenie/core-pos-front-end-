@@ -35389,7 +35389,7 @@
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
-      "status": "GATE_3_PLAN_COMPLETE \u2014 4 edits / 4 files. Dependencies satisfied (BUG-583 + CR-512). Awaiting Gate 4 GO.",
+      "status": "GATE_5A_IMPLEMENTED \u2014 4 files. Awaiting QA.",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-05",
       "registered_by": "INTAKE agent",

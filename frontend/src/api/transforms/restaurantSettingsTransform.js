@@ -96,6 +96,7 @@ export const fromAPI = {
         takeawayOnlinePayment: toBool(advanced.takeaway_online_payment),
         deliveryOnlinePayment: toBool(advanced.delivery_online_payment),
         roleBaseDiscount:   toBool(basic.role_base_discount),
+        orderEditAccess:    toBool(basic.order_edit_access), // CR-489: lock order edit after bill print
         // Contact & Delivery (F1-03: phone moved here from Screen 1)
         phone:             basic.phone || '',
         reportNumber:      basic.report_number || '',
@@ -246,6 +247,7 @@ export const toAPI = {
         dinein_number:       toYesNo(s3.dineinNumber),
         dinein_otp_require:  toYesNo(s3.dineinOtpRequire),
         role_base_discount:  toYesNo(s3.roleBaseDiscount),
+        order_edit_access:   toYesNo(s3.orderEditAccess), // CR-489
         // Screen 3 — Contact (phone moved here from Screen 1)
         phone:               s3.phone,
         report_number:       s3.reportNumber,

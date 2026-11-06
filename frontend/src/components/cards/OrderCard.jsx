@@ -106,7 +106,7 @@ const OrderCard = ({
   const { toast } = useToast();
   const { getProductById } = useMenu();
   const { restaurant, printerAgents, currencySymbol } = useRestaurant(); // CR-112: added currencySymbol
-  const { user, permissions } = useAuth(); // BUG-628: +permissions for dispatch role_name
+  const { user, permissions, hasPermission } = useAuth(); // BUG-628: +permissions for dispatch role_name // CR-489: +hasPermission
   const { updateOrder } = useOrders();
 
   if (!order) return null;
@@ -118,6 +118,8 @@ const OrderCard = ({
   const isDelivery = orderType === "delivery";
   const isTakeAway = orderType === "takeAway";
   const isRoom = orderType === "room" || order.isRoom;
+  // CR-489: Lock order editing after bill is printed
+  const isEditLocked = !!(restaurant?.orderEditAccess) && !!(order?.billPrinted) && !hasPermission('order_edit_access');
   // BUG-097: delivery_assign from restaurant profile determines Dispatch vs Assign Rider
   const deliveryAssign = restaurant?.features?.deliveryAssign;
   const hasRiderAssigned = !!order.deliveryManId;
@@ -571,7 +573,7 @@ const OrderCard = ({
           {/* Merge Order Button - Dine-In only, permission-gated.
               BUG-PREPAID-MERGE-SHIFT (May-2026): hidden for prepaid orders —
               merging would break the finalised financial record. */}
-          {isDineIn && !isYetToConfirm && canMergeOrder && order.paymentType !== 'prepaid' && (
+          {isDineIn && !isYetToConfirm && canMergeOrder && !isEditLocked && order.paymentType !== 'prepaid' && (
             <button
               data-testid={`merge-btn-${orderId}`}
               onClick={(e) => {
@@ -588,7 +590,7 @@ const OrderCard = ({
           {/* Table Shift Button - Dine-In only, permission-gated.
               BUG-PREPAID-MERGE-SHIFT (May-2026): hidden for prepaid orders —
               shifting after payment would orphan the bill print/record. */}
-          {isDineIn && !isYetToConfirm && canShiftTable && order.paymentType !== 'prepaid' && (
+          {isDineIn && !isYetToConfirm && canShiftTable && !isEditLocked && order.paymentType !== 'prepaid' && (
             <button
               data-testid={`shift-btn-${orderId}`}
               onClick={(e) => {
@@ -1052,7 +1054,7 @@ const OrderCard = ({
               {/* CR-118: KOT button — aggregator uses dedicated print endpoint */}
               {/* CR-120: Aggregator KOT only at fOS=1 (preparing); Bill moves to fOS=2 */}
               {/* BUG-286: Aggregator print bypasses canPrintBill — uses UrbanPiper API, not POS printer */}
-              {(isAggregator || canPrintBill) && (isAggregator ? (fOrderStatus === 1) : !(isDelivery && (fOrderStatus === 2 || fOrderStatus === 5))) && (
+              {(isAggregator || canPrintBill) && !isEditLocked && (isAggregator ? (fOrderStatus === 1) : !(isDelivery && (fOrderStatus === 2 || fOrderStatus === 5))) && (
               <button
                 data-testid={`print-kot-btn-${orderId}`}
                 className={`min-h-[44px] min-w-[44px] rounded-lg border flex items-center justify-center ${isActionInProgress ? 'opacity-50' : ''}`}
@@ -1066,7 +1068,7 @@ const OrderCard = ({
               )}
 
               {/* Cancel Order Button - permission gated (order_cancel) — BUG-251: hidden for aggregator */}
-              {!isAggregator && isOrderCancelAllowed && (
+              {!isAggregator && isOrderCancelAllowed && !isEditLocked && (
               <button
                 data-testid={`cancel-order-btn-${orderId}`}
                 onClick={() => onCancelOrder?.(order)}

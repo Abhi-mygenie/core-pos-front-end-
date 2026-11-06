@@ -359,19 +359,28 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const canDiscount = hasPermission('discount');
   const canPrintBill = hasPermission('print_icon');
 
+  // CR-489: Lock order editing after bill is printed (per-restaurant setting).
+  // When ON + bill printed + user lacks order_edit_access → only Collect Payment + Reprint Bill allowed.
+  const canEditAfterPrint = hasPermission('order_edit_access');
+  const isEditLocked = !!(restaurant?.orderEditAccess)   // setting ON for this restaurant
+                    && !!(orderData?.billPrinted)          // bill was printed for THIS order
+                    && !canEditAfterPrint;                  // user does NOT have the override permission
+
   // ── Permission-only checks ──
   // Order Card shows action if user has permission; restaurant settings validation removed
   // Actual business rules should be enforced by backend API
-  const isOrderCancelAllowed = canCancelOrder;
+  // CR-489: override permissions when edit-locked
+  const isOrderCancelAllowed = canCancelOrder && !isEditLocked;
 
   // Item-level cancel: permission only
   const isItemCancelAllowed = useCallback((item) => {
+    if (isEditLocked) return false; // CR-489: locked after bill print
     if (!canCancelItem) return false;
     // BUG-330: block cancel on post-serve items when allowPostServeCancel is OFF
     // post-serve = status !== 'preparing' (confirmed orderTransform:953)
     if (item.status !== 'preparing' && cancellation?.allowPostServeCancel === false) return false;
     return true;
-  }, [canCancelItem, cancellation?.allowPostServeCancel]);
+  }, [canCancelItem, cancellation?.allowPostServeCancel, isEditLocked]);
 
   // Dietary filter states
   const [primaryFilter, setPrimaryFilter] = useState(null); // "veg" | "egg" | "nonveg" | null
