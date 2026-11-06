@@ -36354,7 +36354,7 @@
       "type": "CR",
       "sprint_key": "nov_cr_batch",
       "title": "Print Confirmation Flow — wire update-print-status + print-logs APIs (enables BUG-583 + CR-489)",
-      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open (OD-512-01/02/03/04)",
+      "status": "GATE_1_INTAKE_COMPLETE — all ODs locked. Next: Planning Gate 2.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Printing / Printer Agent",

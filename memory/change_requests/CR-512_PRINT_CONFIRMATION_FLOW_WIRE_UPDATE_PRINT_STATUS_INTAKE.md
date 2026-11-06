@@ -112,17 +112,14 @@ User taps "Bill" → printOrder() → POST /order-temp-store → "Stored in temp
 
 ---
 
-## Open Decisions
+## Open Decisions — ALL LOCKED (owner 2026-11-06)
 
-| OD | Question | Options | Recommended |
-|----|----------|---------|-------------|
-| **OD-512-01** | Where to add confirmation call? | **(a) Inside `printOrder()` after success** — 1 file change, all callers get it | **(a)** — zero blast radius to callers |
-| | | (b) At each call site — 10 files, 15 edits | |
-| **OD-512-02** | Confirm KOT prints too, or bill only? | (a) Bill only | **(b)** — handover supports both |
-| | | **(b) Both bill and KOT** | |
-| **OD-512-03** | Wire print-logs (failure logging) in same CR or defer? | **(a) Same CR** — log failures alongside confirmation | **(a)** — complete the handover flow |
-| | | (b) Defer to separate CR | |
-| **OD-512-04** | Reprint increments counter again — acceptable? | Handover says yes: "Reprints are separate attempts: each successful confirmation increments the relevant counter again" | **Owner to confirm** |
+| OD | Decision | Owner choice |
+|----|----------|-------------|
+| **OD-512-01** | Where to add confirmation call? | **(a) Inside `printOrder()`** — 1 file, all callers get it for free |
+| **OD-512-02** | Confirm KOT prints too, or bill only? | **(b) Both bill and KOT** |
+| **OD-512-03** | Wire print-logs (failure logging) in same CR or defer? | **(b) Defer** to separate CR — only success confirmation in CR-512 |
+| **OD-512-04** | Reprint increments counter — acceptable? | **Yes** — counter is backend-internal; FE only sees "Yes"/"No" flag (Yes when counter > 0). Reprints keep flag at "Yes". No FE impact. |
 
 ---
 
