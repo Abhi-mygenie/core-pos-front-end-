@@ -1695,6 +1695,26 @@ const DashboardPage = () => {
     if (isTypingTarget(e.target)) return; // R3: skip if typing in header search etc.
     if (isKbdModalOpen()) return; // R4
 
+    // CR-482 P23: Alt+T — open Takeaway
+    if (key === 't' && altKey && !ctrlKey && !metaKey) {
+      e.preventDefault(); // CR-482 P23
+      if (features.takeaway !== false) {
+        setOrderEntryTable(null);
+        setOrderEntryType('takeAway');
+      }
+      return;
+    }
+
+    // CR-482 P24: Alt+D — open Delivery
+    if (key === 'd' && altKey && !ctrlKey && !metaKey) {
+      e.preventDefault(); // CR-482 P24: also suppresses Chrome/Edge address bar focus
+      if (features.delivery !== false) {
+        setOrderEntryTable(null);
+        setOrderEntryType('delivery');
+      }
+      return;
+    }
+
     // P22: Esc clears jump
     if (key === 'Escape') {
       if (jumpBuffer) { e.preventDefault(); clearJump(); return; }
