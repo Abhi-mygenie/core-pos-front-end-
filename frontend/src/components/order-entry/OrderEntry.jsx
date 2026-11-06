@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { HAS_POINTER_DEVICE } from "../../constants/keyboardShortcuts"; // CR-482
-import { useKeyboardShortcuts, isTypingTarget, isKbdModalOpen } from "../../hooks/useKeyboardShortcuts"; // CR-482 P3
+import { useKeyboardShortcuts, isTypingTarget, isKbdModalOpen, clickIfEnabled } from "../../hooks/useKeyboardShortcuts"; // CR-482 P3
 import { moveFocus } from "../../hooks/useArrowGridNav"; // CR-482 P3
 import { ChevronDown, Search, UserPlus, StickyNote, Plus, Truck, ShoppingBag, UtensilsCrossed, Scissors, ArrowRightLeft, GitMerge, X, RotateCw } from "lucide-react"; // BUG-555 A1
 import { COLORS } from "../../constants";
@@ -642,6 +642,49 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       e.preventDefault();
       target.focus();
       target.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    // CR-482 P11: F2 — focus search from anywhere in OE
+    if (key === 'F2' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return;
+      e.preventDefault(); // CR-482 P11
+      searchInputRef.current?.focus();
+      searchInputRef.current?.select();
+      return;
+    }
+
+    // CR-482 P12: F8 — Place / Update Order
+    if (key === 'F8' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return;
+      const active = document.activeElement;
+      const allowed = !active || active === document.body || active === searchInputRef.current || active.hasAttribute('data-kbd-item') || active.hasAttribute('data-kbd-cart-row');
+      if (!allowed) return;
+      e.preventDefault(); // CR-482 P12
+      clickIfEnabled('[data-testid="place-order-btn"]');
+      return;
+    }
+
+    // CR-482 P14: F4 — Print Bill
+    if (key === 'F4' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return;
+      const active = document.activeElement;
+      const allowed = !active || active === document.body || active === searchInputRef.current || active.hasAttribute('data-kbd-item') || active.hasAttribute('data-kbd-cart-row');
+      if (!allowed) return;
+      e.preventDefault(); // CR-482 P14
+      clickIfEnabled('[data-testid^="order-entry-print-bill-btn-"]');
+      setTimeout(() => searchInputRef.current?.focus(), 300); // G7: refocus after print dialog
+      return;
+    }
+
+    // CR-482 P15: F9 — Collect Bill
+    if (key === 'F9' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return;
+      const active = document.activeElement;
+      const allowed = !active || active === document.body || active === searchInputRef.current || active.hasAttribute('data-kbd-item') || active.hasAttribute('data-kbd-cart-row');
+      if (!allowed) return;
+      e.preventDefault(); // CR-482 P15
+      clickIfEnabled('[data-testid="collect-bill-btn"]') || clickIfEnabled('[data-testid="qsr-collect-bill-btn"]');
       return;
     }
 
