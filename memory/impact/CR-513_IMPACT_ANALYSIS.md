@@ -144,3 +144,13 @@ Owner answers OD-513-04/06/07/08 (+ intake ODs) → **Gate 3 GO** → Implementa
 **Still OPEN before Gate 3:** OD-513-04 (scope A/B/C — agent recommends A + C follow-up) · intake OD-513-01 (print % label), OD-513-02 (round-off line / when ₹0), OD-513-03 (subsume CR-502 FE scope + CR-487 enabler — agent recommends YES), OD-513-05 (flat ₹ → 0 or computed % — agent recommends 0, consistent with OD-06).
 
 **Gate 3 implications of OD-08 (i):** plan must also cover BUG-592 FE edit at `fromAPI.order` L234 and the socket-refresh finding (§2b item 3: `get-single-order-new` has no discount fields → `order.discount` resets to 0). Plan doc name: `plans/CR-513_BUG-592_IMPLEMENTATION_PLAN.md`.
+
+## 10. Owner Decisions — Round 3 (2026-11-06)
+
+| OD | Decision | Status |
+|---|---|---|
+| OD-513-04 | **Option A** — send fields on the 6 live paths (P1, P2, P3, P4a/b/c). Files: `orderTransform.js`, `CollectPaymentPanel.jsx`, `OrderEntry.jsx` (all R5). | **LOCKED** |
+| OD-513-01 | Whether/how % label prints = **Printer Agent team** (template). Not an FE decision. | **CLOSED — N/A for FE** |
+| OD-513-02 | Whether/how round-off line prints = **Printer Agent team**. Not an FE decision. | **CLOSED — N/A for FE** |
+| OD-513-03 | Owner: "done by printer agent". Agent clarification asked: OD-03 was about registry overlap (CR-502 FE payload scope + CR-487 enabler) — pending. | **CLARIFICATION PENDING** |
+| OD-513-05 | Flat ₹ discount → **"passing nothing"**. Agent interpretation: omit `discount_percentage` key (not `0`). Confirmation pending (also for no-discount orders and P5-P7 reprint paths). | **PENDING CONFIRM** |
