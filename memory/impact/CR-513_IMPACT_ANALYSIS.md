@@ -176,3 +176,10 @@ Answers carried over from the absorbed CRs:
 **Open confirmations before Gate 3 (asked in chat):**
 - Q1: CR-502 asked for round-off on ALL print paths. Option A covers the 6 live paths. Dashboard / report reprints have no source in `employee-orders-list` / `get-single-order-new` → keys omitted there unless backend exposes `round_up` + `order_discount_type`. Keep reprint paths as "send nothing"?
 - Q2: BUG-592 backend part (populate `restaurant_discount_amount` at prepaid order creation) — done by backend, or still pending?
+
+## 13. Owner Answers — Round 6 (2026-11-06)
+
+- **Q1 LOCKED:** Owner: discount % and round-off are only set at **Collect Bill** (incl. Place+Pay); running (unsettled) orders never carry them. → Dashboard / report reprint paths send **nothing** (keys omitted). Option A scope is complete for the business flow. No backend brief for reprint paths.
+- **Q2:** Owner states backend already populates the ₹ discount for prepaid orders (BUG-592 backend part). Re-probe requested with the cafe103 **manager** alias.
+  - Probe 2026-11-06: login OK (role_name=Owner on manager alias). `employee-orders-list` = **0 running orders**; today's order-logs show no discounted orders → **no existing prepaid+discount order to inspect**. Verification needs a fresh prepaid order with a % discount on preprod — **awaiting owner OK** before creating test data.
+- Stage: **Gate 2** (owner instruction — do not start Gate 3).
