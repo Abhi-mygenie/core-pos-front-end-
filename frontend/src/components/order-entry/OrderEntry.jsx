@@ -119,6 +119,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [searchQuery, setSearchQuery] = useState("");
   // CR-482 P2: highlight index for keyboard navigation in menu grid
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [showKbdLeaveConfirm, setShowKbdLeaveConfirm] = useState(false); // CR-482 P16: Esc unsaved-items confirm
   const [isRotateBlocked, setIsRotateBlocked] = useState(() => window.matchMedia(ROTATE_MQ).matches); // BUG-555 A3
   useEffect(() => { const mq = window.matchMedia(ROTATE_MQ); const h = (e) => setIsRotateBlocked(e.matches); mq.addEventListener('change', h); return () => mq.removeEventListener('change', h); }, []); // BUG-555 A3
 
@@ -697,6 +698,23 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       if (!allowed) return;
       e.preventDefault(); // CR-482 P13: also suppresses Chrome/Edge Caret Browsing prompt
       clickIfEnabled('[data-testid="reprint-kot-btn"]');
+      return;
+    }
+
+    // CR-482 P16: Esc chain — clear search → unsaved confirm → close OE
+    if (key === 'Escape' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return; // popups handle their own Esc (P5/P6/P7/P17)
+      // P10 cart-row Esc is handled by CartPanel onKeyDown, not here
+      const active = document.activeElement;
+      if (active?.hasAttribute('data-kbd-cart-row')) return; // let CartPanel handle it
+      e.preventDefault(); // CR-482 P16
+      // Step 1: clear search if non-empty
+      if (searchQuery !== '') { setSearchQuery(''); return; }
+      // Step 2: unsaved items → show confirm (OD-482-A7)
+      const hasUnplaced = cartItems.some(i => !i.placed && i.status !== 'cancelled');
+      if (hasUnplaced) { setShowKbdLeaveConfirm(true); return; }
+      // Step 3: nothing unsaved → close OE
+      onClose();
       return;
     }
 
@@ -3218,6 +3236,21 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       )}
       {/* CR-482 P1: focus trap — end sentinel (Shift+Tab wraps from start to last focusable) */}
       {kbdEnabled && <div tabIndex={0} onFocus={() => searchInputRef.current?.focus()} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden' }} aria-hidden="true" data-testid="kbd-focus-trap-end" />}
+      {/* CR-482 P16: Esc unsaved-items confirmation dialog */}
+      {showKbdLeaveConfirm && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} data-kbd-modal="kbd-leave-confirm" data-testid="kbd-leave-confirm">
+          <div className="bg-white rounded-xl shadow-2xl p-6 mx-4 max-w-xs text-center" onKeyDown={e => {
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setShowKbdLeaveConfirm(false); }
+          }}>
+            <p className="font-semibold text-base mb-1" style={{ color: COLORS.darkText }}>Unsaved items</p>
+            <p className="text-sm mb-5" style={{ color: COLORS.grayText }}>Items not yet placed will be lost. Leave?</p>
+            <div className="flex gap-3">
+              <button autoFocus onClick={() => setShowKbdLeaveConfirm(false)} className="flex-1 py-2.5 rounded-lg font-medium text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="kbd-leave-confirm-stay">Stay</button>
+              <button onClick={() => { setShowKbdLeaveConfirm(false); onClose(); }} className="flex-1 py-2.5 rounded-lg font-medium border" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }} data-testid="kbd-leave-confirm-leave">Leave</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* BUG-555 WP-A (OD-555-02=c): sibling layer — OrderEntry stays mounted, cart/customer/search preserved */}
       {isRotateBlocked && (
         <div
