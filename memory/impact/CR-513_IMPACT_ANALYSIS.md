@@ -183,3 +183,22 @@ Answers carried over from the absorbed CRs:
 - **Q2:** Owner states backend already populates the ₹ discount for prepaid orders (BUG-592 backend part). Re-probe requested with the cafe103 **manager** alias.
   - Probe 2026-11-06: login OK (role_name=Owner on manager alias). `employee-orders-list` = **0 running orders**; today's order-logs show no discounted orders → **no existing prepaid+discount order to inspect**. Verification needs a fresh prepaid order with a % discount on preprod — **awaiting owner OK** before creating test data.
 - Stage: **Gate 2** (owner instruction — do not start Gate 3).
+
+## 14. BUG-592 Backend Re-probe — order #021113 (2026-11-06)
+
+Evidence: `evidence/CR-513/CR-513_BUG-592_backend_reprobe_021113_2026_11_06.json`. Prepaid, 30% discount, unserved (queue).
+
+| Source API | `restaurant_discount_amount` | `discount_value` | type | `round_up` |
+|---|---|---|---|---|
+| `employee-orders-list` (dashboard boot) | **630 ✅** | 30.00 (raw %) | absent | absent |
+| `get-single-order-new` (socket refresh, report reprint) | **absent ❌** | absent | absent | absent |
+| `order-logs-report` | 630 | 30.00 | Percent | 0.50 |
+
+**Conclusions:**
+1. **BUG-592 backend part = DONE ✅** — ₹ discount (630) is populated at prepaid creation. With it present, `fromAPI.order` L234 resolves `discount = 630` (correct) on dashboard boot. The "Discount: 30" symptom can now only occur if `restaurant_discount_amount` is 0/null and L234 falls back to `discount_value` (raw %).
+2. **Remaining BUG-592 FE gap (NEW, confirmed):** after any socket refresh the order is rebuilt from `get-single-order-new`, which has **no discount fields** → `order.discount = 0` → dashboard reprint prints **no discount** on a discounted prepaid order.
+3. Correction: earlier "0 running orders" was a probe error (`role_name=Owner`); FE sends `Manager`.
+
+**Open owner decisions (Gate 2 — stay):**
+- **OD-592-A:** Remove the `discount_value` fallback at L234 (it is the raw-% source of the original bug; backend now fills the ₹ value)? Agent recommends YES.
+- **OD-592-B:** Socket-refresh discount loss — (a) backend adds `restaurant_discount_amount` (+ `discount_value`, `order_discount_type`, `round_up`) to `get-single-order-new`; (b) FE keeps the last known discount when the refreshed payload lacks the field; (c) both. Agent recommends (a) as the real fix, (b) only if backend can't.
