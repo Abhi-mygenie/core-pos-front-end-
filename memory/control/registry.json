@@ -31361,7 +31361,7 @@
       "id": "BUG-532",
       "type": "BUG",
       "title": "Dashboard room tile SC gap: order.amount excludes service charge → tile ₹827 vs CPP ₹848",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_3_REOPENED — IMPLEMENTATION STOPPED 2026-11-06: double-count risk (order_amount already includes SC when room auto-SC ON). Needs live probe (preprod down).",
       "severity": "P2",
       "risk": "MEDIUM",
       "area": "PMS / Rooms",
@@ -31372,7 +31372,7 @@
         "src/pages/DashboardPage.jsx"
       ],
       "related": "BUG-527 F1, BUG-529",
-      "notes": "computeRoomCardAmount L49 food=order.amount (no SC=₹227) vs CPP finalTotal=₹248. Gap=₹21=SC. PRE-EXISTING (predates oct_bug_batch). Backend-blocked: ask filed to include SC in order.amount. OD-532-01 open (FE fix now vs wait backend). R5 file. Intake: change_requests/BUG-532_DASHBOARD_TILE_SC_GAP_ORDER_AMOUNT_VS_FINALTOTAL_INTAKE.md | IA: impact/BUG-532_IMPACT_ANALYSIS_2026_10_10.md. KEY: NOT backend-blocked — order.serviceTax (api.total_service_tax_amount) already on order shape. Fix: food += order.serviceTax. 1 line, R5. OD-532-01 REVISED (FE fix approved?). OD-532-02 NEW (fix transfers? DEFER recommended). Non-room tiles unaffected. restaurants with SC=0: no-op. | Plan: plans/BUG-532_IMPLEMENTATION_PLAN_2026_10_10.md. E1: food += order.serviceTax (1 line, R5). NOT backend-blocked. OD-532-01 awaiting Gate 4 GO. OD-532-02 DEFERRED (transfers).",
+      "notes": "computeRoomCardAmount L49 food=order.amount (no SC=₹227) vs CPP finalTotal=₹248. Gap=₹21=SC. PRE-EXISTING (predates oct_bug_batch). Backend-blocked: ask filed to include SC in order.amount. OD-532-01 open (FE fix now vs wait backend). R5 file. Intake: change_requests/BUG-532_DASHBOARD_TILE_SC_GAP_ORDER_AMOUNT_VS_FINALTOTAL_INTAKE.md | IA: impact/BUG-532_IMPACT_ANALYSIS_2026_10_10.md. KEY: NOT backend-blocked — order.serviceTax (api.total_service_tax_amount) already on order shape. Fix: food += order.serviceTax. 1 line, R5. OD-532-01 REVISED (FE fix approved?). OD-532-02 NEW (fix transfers? DEFER recommended). Non-room tiles unaffected. restaurants with SC=0: no-op. | Plan: plans/BUG-532_IMPLEMENTATION_PLAN_2026_10_10.md. E1: food += order.serviceTax (1 line, R5). NOT backend-blocked. OD-532-01 awaiting Gate 4 GO. OD-532-02 DEFERRED (transfers). | 2026-11-06 IMPL entry STOP: anchor OK (L52). calcOrderTotals includes SC in order_amount; place/update send SC for rooms when autoServiceCharge ON → E1 would double count. Oct-10 evidence covers auto-SC OFF only. Preprod unreachable. Back to Planning.",
       "priority": "P0",
       "assignee": ""
     },

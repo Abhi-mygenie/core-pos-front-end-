@@ -92,3 +92,18 @@ Plan says: L49 currently reads:
 - [ ] Code marker: // BUG-532 on the modified line ✓ (in new code above)
 - [ ] webpack compile: 0 new warnings — MANDATORY for R5 file
 ```
+
+---
+
+## IMPLEMENTATION ENTRY VERIFICATION — 2026-11-06 — ⛔ STOPPED (no code changed)
+
+- **Anchor:** text `const food = Number(order?.amount) || 0;` matches. It is now at **L52** (was L49); the BUG-527 roomBal formula is now L56-59. Drift is OK.
+- **STOP reason — double-count risk on a financial value (plan premise not proven for all flows):**
+  - `calcOrderTotals` (orderTransform.js ~L857-924) builds `order_amount = postDiscount + serviceCharge + tip + delivery + tax`, i.e. **SC is INCLUDED**.
+  - Place / update flows send `serviceChargePercentage = restaurant.serviceChargePercentage` for **room orders when `autoServiceCharge` = ON** (OrderEntry.jsx L1264-1267, L1327-1330, L2435-2437).
+  - Room orders placed with auto-SC ON therefore have SC inside `order.amount` AND in `order.serviceTax` → E1 would show the tile **SC higher than CPP** (double count).
+  - The Oct-10 evidence (amount ₹227 + SC ₹21) only proves the auto-SC-OFF / CPP-toggle case.
+- **Live probe:** preprod unreachable 2026-11-06 (login timeout 35 s ×3). Cannot verify the backend `order_amount` vs `total_service_tax_amount` on a live room order.
+- **Needed before coding (back to Planning):**
+  1. Probe one room order with auto-SC ON and one with auto-SC OFF + SC toggled in CPP: compare `order_amount`, `total_service_tax_amount`, and the CPP total.
+  2. Revise E1 if needed, e.g. add SC only when `order.amount` excludes it, or mirror CPP's own SC math instead of `order.serviceTax`.
