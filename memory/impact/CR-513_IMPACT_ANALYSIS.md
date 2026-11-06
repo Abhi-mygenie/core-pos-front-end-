@@ -223,3 +223,11 @@ No — values are correct. `630` is the **₹ amount**, not the %: 021113 subtot
 | PMS: `pmsService` L86/L583, `PmsCheckoutDrawer` L90 | PMS (follow-up CR) |
 
 **Revised conclusion:** normal dashboard updates do NOT lose the discount via the API — as long as the socket payload carries `restaurant_discount_amount` (not yet verified; socket payload fields not probed). OD-592-B narrowed to the edge callers above. Owner to decide whether OD-592-B is still needed.
+
+### 14d. Owner edge-case test list for OD-592-B (2026-11-06)
+Setup: prepaid order with % discount (e.g. 30%). DevTools → Network (filter `get-single-order-new`) + WS tab. Check = order card / reprinted bill still shows ₹ discount.
+- T0 (main): mark item ready/served → WS message contains `restaurant_discount_amount`? → reprint from dashboard card → ₹ discount present.
+- T1: same action — does `get-single-order-new` fire (legacy `update-food-status` without v2 event)? If yes → reprint → discount ₹0?
+- T2: delivery order + assign rider → does `get-single-order-new` fire (payload missing)? → reprint.
+- T3: split a discounted order → new split order (added via `get-single-order-new`) → reprint.
+- T4: reprint a discounted paid order from Audit report / Order Report Beta / Order detail sheet → printed ₹ discount = 0? (these always use `get-single-order-new`).
