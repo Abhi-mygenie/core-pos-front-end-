@@ -35864,6 +35864,32 @@
       "assignee": ""
     },
     {
+      "id": "BUG-656",
+      "type": "BUG",
+      "title": "CR-489 Edit Lock Incomplete: 5 mutation paths ungated inside OrderEntry (add item, qty, update order, transfer, customer edit)",
+      "status": "GATE_1_INTAKE_COMPLETE \u2014 5 gaps identified. Next: Planning Gate 2.",
+      "priority": "P0",
+      "risk": "HIGH",
+      "sprint_key": "nov_cr_batch",
+      "area": "Permissions / Security",
+      "source": "OWNER-REPORTED (2026-11-06 \u2014 owner tested printed order, could add items)",
+      "intake_doc": "change_requests/BUG-656_CR489_EDIT_LOCK_INCOMPLETE_5_MUTATION_PATHS_UNGATED_INTAKE.md",
+      "duplicate_check": "DISTINCT (RELATED: CR-489)",
+      "blast_radius": "SMALL-MEDIUM (OrderEntry.jsx R5 + CartPanel.jsx, 5 locations)",
+      "files_affected": [
+        "src/components/order-entry/OrderEntry.jsx",
+        "src/components/order-entry/CartPanel.jsx"
+      ],
+      "fast_lane_eligible": false,
+      "notes": "2026-11-06: INTAKE. CR-489 isEditLocked exists but only gates 4 of 9 mutation paths. 5 ungated: addToCart, qty edit, Update Order btn, food transfer, customer edit. Owner confirmed: full menu clickable, Aloo Paratha added to printed order. Spec says block ALL operations except Collect Payment + Reprint Bill.",
+      "related": [
+        "CR-489",
+        "BUG-583",
+        "CR-512"
+      ],
+      "assignee": ""
+    },
+    {
       "type": "CR",
       "id": "CR-492",
       "sprint_key": "TBD",
