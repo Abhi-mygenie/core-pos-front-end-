@@ -50,3 +50,8 @@ Owner: "there is no discount percentage, just received amount; now we don't touc
 
 ## Owner Decision (2026-11-05, round 5)
 - OD-487-06 **LOCKED** — keep CR for **tracking only**; bill content owned by Old POS Printer Agent team; no FE billing logic change.
+
+
+---
+## SUBSUMED into CR-513 (owner 2026-11-06)
+Owner: duplicate — all bill-data work for this item is planned and implemented under **CR-513** (one CR, one plan). See `impact/CR-513_IMPACT_ANALYSIS.md` §9-§12. No further gates for CR-487.

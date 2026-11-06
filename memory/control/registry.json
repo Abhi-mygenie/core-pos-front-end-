@@ -35342,7 +35342,7 @@
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Printing / Printer Agent",
-      "status": "GATE_2_PLANNING — printed bill discount % and discount name display",
+      "status": "SUBSUMED into CR-513 (owner 2026-11-06) — single CR + single plan",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-04",
       "registered_by": "INTAKE agent",
@@ -35350,11 +35350,12 @@
       "related": [
         "BUG-592",
         "CR-426",
-        "BUG-001"
+        "BUG-001",
+        "CR-513"
       ],
       "intake_doc": "change_requests/CR-487_DISCOUNT_PERCENT_AND_AMOUNT_ON_BILL_INTAKE.md",
       "description": "Bill should print both the discount percentage and the discount amount (e.g. \"Discount (10%)  -₹56.00\").",
-      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: PARTIAL — bill payload carries one discount value; BUG-592 shows % sometimes printed instead of ₹. | ODs: OD-487-01 Flat-₹ discounts: show computed % too, or ₹ only? ; OD-487-02 Fix together with BUG-592 and CR-426 (same print payload) ; OD-487-03 Printer Agent template change needed? | 2026-11-05 r3: Owner: bill details owned by Old POS Printer Agent team — external dependency. | 2026-11-05 r4: owner statement suggests withdraw / external — OD-487-06 to confirm. | 2026-11-05 r5: tracking only (Printer Agent team). | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
+      "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: PARTIAL — bill payload carries one discount value; BUG-592 shows % sometimes printed instead of ₹. | ODs: OD-487-01 Flat-₹ discounts: show computed % too, or ₹ only? ; OD-487-02 Fix together with BUG-592 and CR-426 (same print payload) ; OD-487-03 Printer Agent template change needed? | 2026-11-05 r3: Owner: bill details owned by Old POS Printer Agent team — external dependency. | 2026-11-05 r4: owner statement suggests withdraw / external — OD-487-06 to confirm. | 2026-11-05 r5: tracking only (Printer Agent team). | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive). | 2026-11-06: owner — duplicate; merged into CR-513 (with BUG-592 FE fix). Planning/implementation tracked under CR-513 only.",
       "assignee": "Piyush",
       "blocked_on": ""
     },
@@ -36024,16 +36025,17 @@
       "id": "CR-502",
       "sprint_key": "TBD",
       "title": "Round Off Value to Be Printed on Bill (Pass via order_temp at All Print Paths)",
-      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open. Key name in order_temp TBD at IA.",
+      "status": "SUBSUMED into CR-513 (owner 2026-11-06) — single CR + single plan",
       "priority": "P1",
       "risk": "HIGH",
       "area": "Printing / Printer Agent",
       "files": "orderTransform.js, CollectPaymentPanel.jsx",
-      "notes": "Round-off computed (CR-170) but NOT in print payload. Same gap pattern as BUG-536. All print paths need update: collect bill, prepaid, manual, auto.",
+      "notes": "Round-off computed (CR-170) but NOT in print payload. Same gap pattern as BUG-536. All print paths need update: collect bill, prepaid, manual, auto. | 2026-11-06: owner — duplicate; merged into CR-513 (with BUG-592 FE fix). Planning/implementation tracked under CR-513 only.",
       "blocked_on": "",
       "related": [
         "BUG-536",
-        "CR-170"
+        "CR-170",
+        "CR-513"
       ],
       "assignee": "",
       "artifact_refs": [
@@ -36265,7 +36267,7 @@
       "id": "CR-513",
       "sprint_key": "TBD",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — OD-04=A, 05 (omit when flat/none), 06, 07, 08, 10 (omit roundoff when 0) LOCKED; OD-03 OPEN (walkthrough given)",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — consolidated CR (absorbs CR-487 + CR-502; BUG-592 FE fix combined). All ODs locked except 2 scope confirmations (reprint paths, BUG-592 backend).",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
@@ -36274,11 +36276,12 @@
       "registered": "2026-11-06",
       "registered_by": "INTAKE agent",
       "source": "OWNER-REPORTED",
-      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR. | 2026-11-06 ODs LOCKED: OD-06 one discount at a time → send active % (IA R2 corrected); OD-07 roundoff signed +/-; OD-08 (i) combined plan + coding pass with BUG-592 FE fix. PMS → follow-up CR. | 2026-11-06 R3: OD-04=A (6 live paths, 3 R5 files). OD-01/02 = Printer Agent team decides rendering — closed N/A for FE. OD-05 = pass nothing for flat (interpretation: omit key — confirm). OD-03 clarification asked. | 2026-11-06 R4: OD-05 omit discount_percentage for flat/no discount; OD-10 omit roundoff when 0.",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files). | 2026-11-06 ODs R1: OD-513-06=both (manual+preset), OD-513-07=always positive (conflict with CR-170 negative floor case flagged), PMS deferred to follow-up CR. | 2026-11-06 ODs LOCKED: OD-06 one discount at a time → send active % (IA R2 corrected); OD-07 roundoff signed +/-; OD-08 (i) combined plan + coding pass with BUG-592 FE fix. PMS → follow-up CR. | 2026-11-06 R3: OD-04=A (6 live paths, 3 R5 files). OD-01/02 = Printer Agent team decides rendering — closed N/A for FE. OD-05 = pass nothing for flat (interpretation: omit key — confirm). OD-03 clarification asked. | 2026-11-06 R4: OD-05 omit discount_percentage for flat/no discount; OD-10 omit roundoff when 0. | 2026-11-06 R5: owner merged CR-487 + CR-502 into CR-513 (OD-513-03 LOCKED = consolidate). One planning cycle.",
       "blocked_on": "",
       "assignee": "",
       "related": [
         "BUG-592",
+        "CR-170",
         "CR-487",
         "CR-502"
       ],
@@ -36329,7 +36332,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-06",
-    "last_action": "PLANNING Gate 2: CR-513 ODs 06/07/08 locked; combined with BUG-592.",
+    "last_action": "CR-487 + CR-502 SUBSUMED into CR-513 (owner).",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",

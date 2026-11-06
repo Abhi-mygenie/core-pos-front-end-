@@ -79,3 +79,8 @@ Key files with print payload construction:
 - **OD-502-02:** Should the round-off line print even when the value is ₹0.00, or only when non-zero?
 - **OD-502-03:** Should the round-off key be included in ALL 4+ print paths, or only the primary collect-bill path?
 - **OD-502-04:** Does the Printer Agent already support rendering a round-off line, or does it need a template update (Printer Agent team dependency)?
+
+
+---
+## SUBSUMED into CR-513 (owner 2026-11-06)
+Owner: duplicate — all bill-data work for this item is planned and implemented under **CR-513** (one CR, one plan). See `impact/CR-513_IMPACT_ANALYSIS.md` §9-§12. No further gates for CR-502.

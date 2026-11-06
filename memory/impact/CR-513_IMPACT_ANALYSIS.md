@@ -164,3 +164,15 @@ Owner answers OD-513-04/06/07/08 (+ intake ODs) → **Gate 3 GO** → Implementa
 | OD-513-03 | Owner asked for walkthrough of CR-502 / CR-487 before deciding. | **OPEN** |
 
 Supersedes §3 Option A note "P5-P7 send 0" → P5-P7 send **nothing** (keys omitted).
+
+## 12. Consolidation (2026-11-06)
+
+**OD-513-03 LOCKED:** owner — CR-487 and CR-502 are duplicates → **SUBSUMED into CR-513**. One CR, one planning cycle, one coding pass (with BUG-592 FE fix per OD-08).
+
+Answers carried over from the absorbed CRs:
+- CR-502 OD-01 key name → `roundoff` · OD-02 ₹0 → omitted (OD-513-10) · OD-03 paths → see open confirmation Q1 below · OD-04 template → Printer Agent team.
+- CR-487 OD-01 flat → `discount_percentage` omitted (OD-513-05) · OD-04 FE field → `discount_percentage` · OD-06 template owned by Printer Agent team.
+
+**Open confirmations before Gate 3 (asked in chat):**
+- Q1: CR-502 asked for round-off on ALL print paths. Option A covers the 6 live paths. Dashboard / report reprints have no source in `employee-orders-list` / `get-single-order-new` → keys omitted there unless backend exposes `round_up` + `order_discount_type`. Keep reprint paths as "send nothing"?
+- Q2: BUG-592 backend part (populate `restaurant_discount_amount` at prepaid order creation) — done by backend, or still pending?
