@@ -433,6 +433,17 @@ const Header = ({
                       <Check className="w-4 h-4 flex-shrink-0" style={{ visibility: tableFilter === 'schedule' ? 'visible' : 'hidden', color: '#1565C0' }} />
                       <span>Schedule</span>
                     </button>
+                    {/* BUG-625: Active First in tablet dropdown — mirrors CR-429 xl pill */}
+                    <div className="my-1 border-t" style={{ borderColor: COLORS.borderGray }} />
+                    <button
+                      data-testid="tablet-filter-active-first"
+                      onClick={onChannelActiveFirstToggle}
+                      className="w-full text-left px-3 py-2.5 text-sm flex items-center gap-2.5 hover:bg-slate-50 transition-colors"
+                      style={{ color: channelActiveFirst ? COLORS.primaryOrange : COLORS.grayText }}
+                    >
+                      <Check className="w-4 h-4 flex-shrink-0" style={{ visibility: channelActiveFirst ? 'visible' : 'hidden', color: COLORS.primaryOrange }} />
+                      <span>Active First</span>
+                    </button>
                   </>
                 )}
               </div>

@@ -704,7 +704,7 @@ const buildCartItem = (item) => {
     // `item.variation` arrives here in RESPONSE shape. Without normalisation,
     // the payload triggers PHP "Undefined array key 'label'".
     // Accept either shape on input; always emit the REQUEST shape.
-    variations = item.variation.map(v => {
+    variations = item.variation.filter(Boolean).map(v => { // BUG-623: drop null entries (aggregator/scan re-hydration)
       // Already in REQUEST shape — pass through (defensive).
       if (v?.values && !Array.isArray(v.values) && Array.isArray(v.values.label)) {
         return { name: v.name, values: { label: v.values.label } };
@@ -720,7 +720,7 @@ const buildCartItem = (item) => {
       return { name: v?.name || 'Variant', values: { label: [] } };
     });
     // variation_amount math below already handles BOTH shapes — unchanged.
-    variationAmount = item.variation.reduce((sum, v) => {
+    variationAmount = item.variation.filter(Boolean).reduce((sum, v) => { // BUG-623
       // Try direct price (legacy)
       if (v.price) return sum + (parseFloat(v.price) || 0);
       // Parse nested values array: values[].optionPrice
@@ -1553,7 +1553,7 @@ export const toAPI = {
         // Compute variation amount from item.variation array
         let variationAmount = 0;
         if (item.variation?.length > 0) {
-          variationAmount = item.variation.reduce((sum, v) => {
+          variationAmount = item.variation.filter(Boolean).reduce((sum, v) => { // BUG-623
             if (v.price) return sum + (parseFloat(v.price) || 0);
             const vals = Array.isArray(v.values) ? v.values : [];
             return sum + vals.reduce((s, opt) => s + (parseFloat(opt.optionPrice) || 0), 0);
@@ -2001,7 +2001,7 @@ export const toAPI = {
         // (OrderCard / TableCard / RePrintButton). Uses item.variation[].values[].optionPrice
         // (Option A) — item.variation_amount is null on pre-BUG-VQTY orders and unsafe.
         // COLLECT BILL PATH not touched — its gstTax override already carries correct value.
-        const variationPerUnit = (item.variation || []).reduce(
+        const variationPerUnit = (item.variation || []).filter(Boolean).reduce( // BUG-623
           (sum, v) => sum + (Array.isArray(v.values) ? v.values.reduce(
             (s, opt) => s + (parseFloat(opt.optionPrice) || 0), 0) : 0), 0
         );
