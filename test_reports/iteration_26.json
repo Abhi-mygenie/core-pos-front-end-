@@ -1,0 +1,25 @@
+{
+  "summary": "CR-513 + BUG-592 frontend verification against preprod (manager@cafe103.com). Unit suite cr513 8/8 PASS. Login -> /dashboard loads, no error boundary. All order-temp-store requests were intercepted with page.route + fulfilled {status:true}; nothing reached backend; no payment/settle/place performed. Reprint paths (OrderEntry header Print Bill for #021114/#021113, dashboard card 'Bill' button for table 101) send discount_amount 135 / 630 / 0 (not 30) and NEITHER discount_percentage NOR roundoff. Collect Payment Print Bill on running order #021108 (id 1537788, items Rs520 + 5% GST): no discount -> neither key (exact Rs546); manual 10% -> discount_percentage=10, roundoff=0.6 (panel +Rs0.60); manual 30% -> 30 / 0.8 (panel +Rs0.80); flat Rs50 -> no discount_percentage, roundoff=0.5 (panel +Rs0.50); flat Rs19 -> no discount_percentage, roundoff=-0.06 (panel Rs-0.06, signed negative OK); preset 'Complementary - 100%' -> discount_percentage=100, roundoff absent (total 0); switching back to None -> neither key. All pre-existing payload keys still present.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Collect Payment bill summary", "issues": ["Negative round-off renders as 'Rs-0.06' (sign after currency symbol) while positive renders '+Rs0.60'; cosmetic, pre-existing, suggest '-Rs0.06'"]}
+    ]
+  },
+  "test_report_links": ["/app/frontend/src/__tests__/api/transforms/orderTransform.cr513.test.js"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "CollectPaymentPanel handlePrintBill discountPercent: manual % when discountType==='percent' && value>0 else preset % — correct given the select enforces one discount at a time (manual clears preset and vice versa).",
+    "OrderEntry 5 auto-print sites use paymentData.discounts.orderDiscountPercent || presetDiscountPercent and paymentData.roundOff; both CollectPaymentPanel (L1196, L1216) and CartPanel QSR (L523, L535) populate these keys — consistent by code review (not executed, needs real payment).",
+    "Role-base discount (BUG-538 orderDiscountJson, percent type) is not mapped to discount_percentage on reprint paths — by spec reprints send neither key; flag only if product wants it.",
+    "CollectPaymentPanel.jsx / OrderEntry.jsx / orderTransform.js are far over 700 lines (pre-existing tech debt)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100%"},
+  "seed_data_creation": "None. No data created or modified; all print requests intercepted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Dashboard card print-btn-wc-<id> on fOrderStatus=1 cards is KOT print, not bill. Bill reprint: click table-card-wc-<id> -> order-entry-print-bill-btn-<id>, or collect-btn-<tableId> on served (green) cards. Collect Payment: table-card-8276 (table 101, order 1537788 #021108, Rs520+GST) -> collect-bill-btn -> collect-payment-panel; discount-type-select values '', 'percent', 'flat', 'preset_81' (Complementary 100%); discount-value-input; print-bill-btn; bill-round-off. Always route-intercept **/order-temp-store**."
+}
