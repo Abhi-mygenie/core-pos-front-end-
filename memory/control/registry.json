@@ -35772,6 +35772,98 @@
       "assignee": ""
     },
     {
+      "id": "BUG-652",
+      "type": "BUG",
+      "title": "Dashboard crash — ReferenceError: restaurant is not defined (CR-482 P18 kbdEnabled)",
+      "status": "GATE_5A_IMPLEMENTED",
+      "priority": "P0",
+      "risk": "CRITICAL",
+      "sprint_key": "nov_cr_batch",
+      "area": "Menu / Order Entry",
+      "source": "QA-FOUND (CR-482 P18-P24 QA, iteration_25, F1)",
+      "intake_doc": "memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "BLOCKER — crashes dashboard for ALL users",
+      "files_affected": [
+        "src/pages/DashboardPage.jsx"
+      ],
+      "fast_lane_eligible": true,
+      "notes": "2026-11-06: QA F1 BLOCKER. DashboardPage.jsx:454 used bare `restaurant?.settings?.keyboardShortcuts` but only `settings` is destructured from useRestaurant(). Optional chaining on undeclared identifier throws ReferenceError. Fix: `settings?.keyboardShortcuts`. Applied by testing agent to unblock QA, then formally fixed. 1 file, 1 line.",
+      "related": [
+        "CR-482"
+      ],
+      "assignee": ""
+    },
+    {
+      "id": "BUG-653",
+      "type": "BUG",
+      "title": "P20 Enter double-fires handleCardClick() — capture click + bubble onKeyDown",
+      "status": "GATE_5A_IMPLEMENTED",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "nov_cr_batch",
+      "area": "Menu / Order Entry",
+      "source": "QA-FOUND (CR-482 P18-P24 QA, iteration_25, F2)",
+      "intake_doc": "memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL (DashboardPage.jsx only, idempotent in current UI)",
+      "files_affected": [
+        "src/pages/DashboardPage.jsx"
+      ],
+      "fast_lane_eligible": true,
+      "notes": "2026-11-06: QA F2 MAJOR. P20 capture-phase handler calls match.el.click() → fires card onClick → handleCardClick(). Same keydown then bubbles to card onKeyDown → second handleCardClick(). Fix: e.stopPropagation() in P20 Enter branch. 1 file, 1 line.",
+      "related": [
+        "CR-482"
+      ],
+      "assignee": ""
+    },
+    {
+      "id": "BUG-654",
+      "type": "BUG",
+      "title": "macOS — Alt+T and Alt+D shortcuts don't work (e.key gives † and ∂)",
+      "status": "GATE_5A_IMPLEMENTED",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "sprint_key": "nov_cr_batch",
+      "area": "Menu / Order Entry",
+      "source": "QA-FOUND (CR-482 P18-P24 QA, iteration_25, F3)",
+      "intake_doc": "memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL (DashboardPage.jsx only, macOS only)",
+      "files_affected": [
+        "src/pages/DashboardPage.jsx"
+      ],
+      "fast_lane_eligible": true,
+      "notes": "2026-11-06: QA F3 MAJOR. Handler checks key==='t'/key==='d' but on macOS Option+T=† and Option+D=∂. Shortcuts never fire on Mac. Fix: use e.code==='KeyT'/e.code==='KeyD' instead of e.key. 1 file, 2 lines.",
+      "related": [
+        "CR-482"
+      ],
+      "assignee": ""
+    },
+    {
+      "id": "BUG-655",
+      "type": "BUG",
+      "title": "Esc can't clear stale highlight ring after chip timeout (kbdHighlightId persists)",
+      "status": "GATE_5A_IMPLEMENTED",
+      "priority": "P2",
+      "risk": "LOW",
+      "sprint_key": "nov_cr_batch",
+      "area": "Menu / Order Entry",
+      "source": "QA-FOUND (CR-482 P18-P24 QA, iteration_25, F4)",
+      "intake_doc": "memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL (DashboardPage.jsx only, cosmetic)",
+      "files_affected": [
+        "src/pages/DashboardPage.jsx"
+      ],
+      "fast_lane_eligible": true,
+      "notes": "2026-11-06: QA F4 MINOR. After 2s chip timeout, jumpBuffer clears but kbdHighlightId and jumpMatches stay. Esc branch only acts when jumpBuffer is non-empty (already cleared). Orange ring stays on card. Fix: clear kbdHighlightId and jumpMatches in timeout callback. 1 file, 2 timeout sites.",
+      "related": [
+        "CR-482"
+      ],
+      "assignee": ""
+    },
+    {
       "type": "CR",
       "id": "CR-492",
       "sprint_key": "TBD",

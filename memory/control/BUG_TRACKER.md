@@ -1,3 +1,14 @@
+**CURRENT 2026-11-06 — CR-482 QA FINDINGS (P18-P24 keyboard navigation, 4 bugs registered + fixed)**
+
+| ID | Title | Sev | Risk | Status | Doc |
+|---|---|---|---|---|---|
+| **BUG-652** | Dashboard crash — `ReferenceError: restaurant is not defined` (CR-482 P18 kbdEnabled) | **P0** | **CRITICAL** | GATE_5A_IMPLEMENTED — `settings?.keyboardShortcuts` replaces bare `restaurant?.settings` | `memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md` |
+| **BUG-653** | P20 Enter double-fires `handleCardClick()` — capture click + bubble onKeyDown | **P1** | **MEDIUM** | GATE_5A_IMPLEMENTED — `e.stopPropagation()` in P20 Enter branch | `memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md` |
+| **BUG-654** | macOS — Alt+T and Alt+D shortcuts don't work (`e.key` gives `†` and `∂`) | **P1** | **MEDIUM** | GATE_5A_IMPLEMENTED — `e.code === 'KeyT'/'KeyD'` replaces `e.key` | `memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md` |
+| **BUG-655** | Esc can't clear stale highlight ring after chip timeout | **P2** | **LOW** | GATE_5A_IMPLEMENTED — timeout callback clears kbdHighlightId + jumpMatches | `memory/test_reports/CR-482_QA_REPORT_P18_P24_2026_11_06.md` |
+
+---
+
 **CURRENT 2026-11-05 — INTAKE (imported batch 2026-11-04/05, 3 BUGs + CR-482 QA findings)**
 
 | ID | Title | Sev | Risk | Status | Doc |

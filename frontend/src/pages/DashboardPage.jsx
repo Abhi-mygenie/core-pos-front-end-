@@ -1696,7 +1696,7 @@ const DashboardPage = () => {
     if (isKbdModalOpen()) return; // R4
 
     // CR-482 P23: Alt+T — open Takeaway
-    if (key === 't' && altKey && !ctrlKey && !metaKey) {
+    if (e.code === 'KeyT' && altKey && !ctrlKey && !metaKey) { // BUG-654: use e.code for macOS compat
       e.preventDefault(); // CR-482 P23
       if (features.takeaway !== false) {
         setOrderEntryTable(null);
@@ -1706,7 +1706,7 @@ const DashboardPage = () => {
     }
 
     // CR-482 P24: Alt+D — open Delivery
-    if (key === 'd' && altKey && !ctrlKey && !metaKey) {
+    if (e.code === 'KeyD' && altKey && !ctrlKey && !metaKey) { // BUG-654: use e.code for macOS compat
       e.preventDefault(); // CR-482 P24: also suppresses Chrome/Edge address bar focus
       if (features.delivery !== false) {
         setOrderEntryTable(null);
@@ -1725,6 +1725,7 @@ const DashboardPage = () => {
     if (key === 'Enter' && !ctrlKey && !altKey && !metaKey) {
       if (kbdHighlightId && jumpMatches.length > 0) {
         e.preventDefault();
+        e.stopPropagation(); // BUG-653: prevent bubble to card onKeyDown firing handleCardClick twice
         const match = jumpMatches[jumpMatchIndex];
         if (match?.el) match.el.click();
         clearJump();
@@ -1755,7 +1756,7 @@ const DashboardPage = () => {
       setJumpBuffer(newBuffer);
       // Reset timer
       if (jumpTimerRef.current) clearTimeout(jumpTimerRef.current);
-      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); }, TABLE_JUMP_TIMEOUT_MS);
+      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); setKbdHighlightId(null); setJumpMatches([]); }, TABLE_JUMP_TIMEOUT_MS); // BUG-655: clear highlight+matches on timeout
       // Find matches
       const { matches, notInView } = findCardMatches(newBuffer);
       setJumpNotInView(notInView);
@@ -1780,7 +1781,7 @@ const DashboardPage = () => {
       setJumpBuffer(newBuffer);
       if (!newBuffer) { clearJump(); return; }
       if (jumpTimerRef.current) clearTimeout(jumpTimerRef.current);
-      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); }, TABLE_JUMP_TIMEOUT_MS);
+      jumpTimerRef.current = setTimeout(() => { setJumpBuffer(''); setJumpNotFound(false); setJumpNotInView(false); setKbdHighlightId(null); setJumpMatches([]); }, TABLE_JUMP_TIMEOUT_MS); // BUG-655: clear highlight+matches on timeout
       const { matches, notInView } = findCardMatches(newBuffer);
       setJumpNotInView(notInView); setJumpNotFound(!notInView && matches.length === 0);
       setJumpMatches(matches); setJumpMatchIndex(0);
