@@ -36305,6 +36305,26 @@
           "type": "evidence"
         }
       ]
+    },
+    {
+      "type": "BUG",
+      "id": "BUG-652",
+      "title": "Dashboard crash — ReferenceError: restaurant is not defined (CR-482 P18 kbdEnabled)",
+      "status": "GATE_5A_IMPLEMENTED — hotfix, awaiting QA",
+      "severity": "P0",
+      "priority": "P0",
+      "risk": "LOW",
+      "area": "Menu / Order Entry",
+      "sprint_key": "nov_cr_batch",
+      "files": [
+        "src/pages/DashboardPage.jsx"
+      ],
+      "registered": "2026-11-06",
+      "source": "OWNER-REPORTED",
+      "related": [
+        "CR-482"
+      ],
+      "notes": "DashboardPage.jsx L454 read restaurant?.settings?.keyboardShortcuts but `restaurant` never destructured from useRestaurant() → whole /dashboard crashed into error boundary. Fix: use context `settings?.keyboardShortcuts` (same as OrderEntry L72). 1 line. Found via eslint no-undef (only hit in src)."
     }
   ],
   "meta": {

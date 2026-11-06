@@ -451,7 +451,8 @@ const DashboardPage = () => {
   );
   const [searchQuery, setSearchQuery] = useState("");
   // CR-482 P18-P22: Dashboard keyboard navigation
-  const kbdEnabled = !!(restaurant?.settings?.keyboardShortcuts || localStorage.getItem('mygenie_keyboard_shortcuts_enabled') === 'true') && HAS_POINTER_DEVICE();
+  // BUG-652: `restaurant` was undeclared here (ReferenceError crash) — use context `settings`, mirrors OrderEntry L72
+  const kbdEnabled = !!(settings?.keyboardShortcuts || localStorage.getItem('mygenie_keyboard_shortcuts_enabled') === 'true') && HAS_POINTER_DEVICE();
   const [jumpBuffer, setJumpBuffer] = useState('');
   const [kbdHighlightId, setKbdHighlightId] = useState(null);
   const [jumpMatches, setJumpMatches] = useState([]); // array of {id, label, element}
