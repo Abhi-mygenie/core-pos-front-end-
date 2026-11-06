@@ -1,0 +1,26 @@
+{
+  "summary": "Verified all 4 CR-482 keyboard-handler fixes (BUG-652..655) in DashboardPage.jsx via source grep, served-bundle grep, and login page render check. All PASS. Post-login keyboard flows NOT runtime-tested (no credentials).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "verification_details": {
+    "BUG-652": "PASS - line 454 uses settings?.keyboardShortcuts; settings destructured from useRestaurant() at line 178; no bare 'restaurant' identifier in file (only restaurantLoaded). Served bundle transpiles to settings.keyboardShortcuts; no 'restaurant is not defined' string; no pageerror on load.",
+    "BUG-653": "PASS - line 1728 e.stopPropagation() after e.preventDefault() in P20 Enter branch. Effective: useKeyboardShortcuts attaches window keydown in CAPTURE phase, so stopPropagation stops event before React root/TableCard(308)/OrderCard(460) onKeyDown -> no double handleCardClick; match.el.click() fires once.",
+    "BUG-654": "PASS - lines 1699/1709 use e.code === 'KeyT' / 'KeyD' with altKey && !ctrlKey && !metaKey; present in served bundle.",
+    "BUG-655": "PASS - both setTimeout callbacks (lines 1759 letter/digit, 1784 Backspace) include setKbdHighlightId(null); setJumpMatches([]) along with setJumpBuffer('')."
+  },
+  "compile": "webpack compiled successfully (frontend.out.log)",
+  "login_page": "Renders correctly: login-screen, login-email, login-password, login-button present; no ErrorBoundary; 0 page errors",
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Two identical setTimeout reset lambdas (1759, 1784) - could reuse a resetJump helper / clearJump (DRY), minor",
+    "Note: timeout callback does not reset jumpMatchIndex (clearJump does) - harmless since it's reset on next keypress"
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (code-level + login render)"},
+  "test_credentials": "None available (/app/memory/test_credentials.md absent); external auth preprod.mygenie.online",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-652..655 verified at code+bundle level. If credentials become available, runtime-test on dashboard with keyboard shortcuts enabled (localStorage mygenie_keyboard_shortcuts_enabled=true): type table number -> highlight, Enter opens once, Alt+T/Alt+D open takeaway/delivery, wait TABLE_JUMP_TIMEOUT_MS -> highlight clears."
+}
