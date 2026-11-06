@@ -11,7 +11,7 @@ class SmokeTestPDF(FPDF):
         self.cell(0, 8, 'CR-482 Keyboard Shortcuts - Owner Smoke Test', align='C', new_x="LMARGIN", new_y="NEXT")
         self.set_font('Helvetica', '', 8)
         self.set_text_color(120, 120, 120)
-        self.cell(0, 5, f'Generated {datetime.now().strftime("%d %b %Y")}  |  Phases P0 - P17  |  Shortcuts ON unless noted', align='C', new_x="LMARGIN", new_y="NEXT")
+        self.cell(0, 5, f'Generated {datetime.now().strftime("%d %b %Y")}  |  Phases P0 - P24  |  Shortcuts ON unless noted', align='C', new_x="LMARGIN", new_y="NEXT")
         self.line(10, self.get_y()+1, 200, self.get_y()+1)
         self.ln(4)
 
@@ -236,18 +236,69 @@ pdf.test_row('17.3', 'Open Order Notes modal. Press Esc.', 'Modal closes. Notes 
 pdf.test_row('17.4', 'Open Item Notes modal (note icon on a cart item). Press Esc.', 'Modal closes.')
 pdf.test_row('17.5', 'While any popup is open, press + or type characters.', 'Characters go into the popup field. No qty changes or OE shortcuts fire.')
 
+# === P18 ===
+pdf.phase_header('P18', 'Tab / Enter on Dashboard cards', 'Navigate and open table/order cards')
+pdf.test_row('18.1', 'Shortcuts ON. On the dashboard, press Tab repeatedly.', 'Orange ring moves card to card. Engaged and aggregator cards are skipped.')
+pdf.test_row('18.2', 'Tab to an available table card. Press Enter.', 'Order Entry opens for that table (dine-in). Cursor in search (P1).')
+pdf.test_row('18.3', 'Tab to a busy (running order) card. Press Enter.', 'Running order loaded in Order Entry.')
+pdf.test_row('18.4', 'Press Space on a focused card.', 'Same as Enter - opens the card.')
+pdf.test_row('18.5', 'Mouse click on any card.', 'Still works normally (unchanged).')
+pdf.test_row('18.6', 'Shortcuts OFF. Press Tab on dashboard.', 'No Tab stops on cards. No orange rings. Normal browser Tab behaviour.')
+
+# === P19 ===
+pdf.phase_header('P19', 'Type table label (letters/digits)', 'Type-to-jump to a table on Dashboard')
+pdf.test_row('19.1', 'Shortcuts ON, on dashboard. Type "C1" (or any table label).', 'Green chip appears at bottom: "Table: C1". That card gets orange ring and scrolls into view.')
+pdf.test_row('19.2', 'Type "10" then Backspace.', 'Buffer becomes "1". Chip updates to show match for "1".')
+pdf.test_row('19.3', 'Wait 2 seconds after typing.', 'Chip disappears. Ring stays on the last focused card.')
+pdf.test_row('19.4', 'Type a label that has multiple matches (e.g. "5" if Table 5 exists in multiple views).', 'Chip shows "Table: 5 - 1 of 2". Use arrows to cycle (P21).')
+pdf.test_row('19.5', 'Type a label that does not exist (e.g. "Z99").', 'Red chip: "Z99 - not found".')
+pdf.test_row('19.6', 'In Order View, type a free table label not shown.', 'Gray chip: "C1 - not in this view".')
+pdf.test_row('19.7', 'Click into the header search bar, type letters.', 'No chip appears. Header search works normally (typing target skipped).')
+
+# === P20 ===
+pdf.phase_header('P20', 'Enter on highlighted card', 'Open the type-to-jump match')
+pdf.test_row('20.1', 'Type a table label (chip shows match). Press Enter.', 'Order Entry opens for that table. Chip clears.')
+pdf.test_row('20.2', 'Type a busy table label. Press Enter.', 'Running order opens. Same as clicking the card.')
+pdf.test_row('20.3', 'Type a label with no match. Press Enter.', 'Nothing happens (no card to open).')
+
+# === P21 ===
+pdf.phase_header('P21', 'Arrow keys on Dashboard', 'Cycle matches or move between cards')
+pdf.test_row('21.1', 'Type a label with 2+ matches. Press Right arrow.', 'Chip changes to "2 of 2". Second match card gets the ring.')
+pdf.test_row('21.2', 'Press Left arrow.', 'Back to "1 of 2". First match card ringed again.')
+pdf.test_row('21.3', 'Press Down/Up arrows.', 'Same cycling behaviour as Left/Right.')
+
+# === P22 ===
+pdf.phase_header('P22', 'Esc on Dashboard', 'Clear type-to-jump')
+pdf.test_row('22.1', 'Type a table label (chip visible). Press Esc.', 'Chip disappears. Ring clears. Dashboard unchanged.')
+pdf.test_row('22.2', 'No text typed. Press Esc.', 'Nothing happens (no buffer to clear).')
+
+# === P23 ===
+pdf.phase_header('P23', 'Alt+T (Mac: Option+T)', 'Open Takeaway from Dashboard')
+pdf.test_row('23.1', 'Shortcuts ON, on dashboard. Press Alt+T.', 'Order Entry opens in Takeaway mode. Cursor in search.')
+pdf.test_row('23.2', 'Takeaway feature disabled in restaurant settings. Press Alt+T.', 'Nothing happens.')
+pdf.test_row('23.3', 'Type "T" then "1" (no Alt).', 'Table jump chip shows "T1", NOT Takeaway. Alt is required.')
+
+# === P24 ===
+pdf.phase_header('P24', 'Alt+D (Mac: Option+D)', 'Open Delivery from Dashboard')
+pdf.test_row('24.1', 'Shortcuts ON, on dashboard. Press Alt+D.', 'Order Entry opens in Delivery mode. Browser address bar NOT focused.')
+pdf.test_row('24.2', 'Delivery feature disabled. Press Alt+D.', 'Nothing happens.')
+pdf.test_row('24.3', 'Type "D" (no Alt).', 'Table jump for label "D", NOT delivery mode.')
+
 # === GLOBAL OFF REGRESSION ===
 pdf.section_title('Global Regression: Shortcuts OFF')
 pdf.info_block(
     'Toggle Keyboard Shortcuts OFF. Verify ALL of the following:\n'
     '  - No auto-focus on search when opening a table\n'
-    '  - No orange rings on items or cart rows\n'
+    '  - No orange rings on items, cart rows, or dashboard cards\n'
     '  - Enter in search does nothing\n'
     '  - +/- types normally in search (no qty change)\n'
     '  - Arrow keys move cursor in search (no grid nav)\n'
     '  - Ctrl+Down does nothing\n'
     '  - F2/F4/F7/F8/F9 do nothing (or browser defaults)\n'
     '  - Esc does NOT clear search or show confirm dialog\n'
+    '  - Tab on dashboard does NOT stop on cards (no focus ring)\n'
+    '  - Typing letters on dashboard does NOT show jump chip\n'
+    '  - Alt+T and Alt+D do NOT open Takeaway/Delivery\n'
     '  - All mouse interactions work exactly as before\n'
     '  - Tab does NOT trap inside order screen'
 )
@@ -264,5 +315,5 @@ pdf.cell(0, 6, 'Notes: _________________________________________________________
 pdf.ln(2)
 pdf.cell(0, 6, '       ________________________________________________________________________', new_x="LMARGIN", new_y="NEXT")
 
-pdf.output('/app/memory/test_reports/CR-482_SMOKE_TEST_GUIDE_P0_P17.pdf')
-print("PDF generated at /app/memory/test_reports/CR-482_SMOKE_TEST_GUIDE_P0_P17.pdf")
+pdf.output('/app/memory/test_reports/CR-482_SMOKE_TEST_GUIDE_P0_P24.pdf')
+print("PDF generated at /app/memory/test_reports/CR-482_SMOKE_TEST_GUIDE_P0_P24.pdf")
