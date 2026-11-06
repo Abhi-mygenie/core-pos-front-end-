@@ -35893,7 +35893,7 @@
       "id": "BUG-657",
       "type": "BUG",
       "title": "billPrinted missing from orderItemsByTableId whitelist \u2014 CR-489 lock broken for dine-in + room orders",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 1 line fix in OrderContext.jsx. Next: Gate 4 GO.",
+      "status": "GATE_5A_IMPLEMENTED \u2014 1 line. Dine-in + room lock now works.",
       "priority": "P0",
       "risk": "HIGH",
       "sprint_key": "nov_cr_batch",

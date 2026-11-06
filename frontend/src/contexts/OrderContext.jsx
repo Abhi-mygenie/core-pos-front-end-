@@ -340,6 +340,7 @@ export const OrderProvider = ({ children }) => {
           // Checkout amount. Null for non-room orders.
           roomInfo: order.roomInfo || null,
           orderDiscountJson: order.orderDiscountJson || null, // BUG-595: owner-applied role-base discount must survive orderItemsByTableId rebuild so dine-in table CPP receives it after socket update
+          billPrinted: order.billPrinted || false, // BUG-657: CR-489 edit lock needs this for dine-in + room orders
         };
         if (!map[order.tableId]) {
           map[order.tableId] = [];
