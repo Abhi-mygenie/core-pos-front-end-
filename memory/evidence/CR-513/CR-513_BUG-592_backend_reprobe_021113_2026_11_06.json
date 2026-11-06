@@ -34,5 +34,9 @@
     "round_up": "0.50",
     "order_amount": 1544
   },
-  "correction": "Earlier 2026-11-06 probe used role_name=Owner and got 0 running orders; FE sends role_name=Manager (orderService.js L13). Manager \u2192 10 running orders."
+  "correction": "Earlier 2026-11-06 probe used role_name=Owner and got 0 running orders; FE sends role_name=Manager (orderService.js L13). Manager \u2192 10 running orders.",
+  "math_check": {
+    "021113 (id 1537795)": "items 1100+1000 = 2100 subtotal; 30% of 2100 = 630 = restaurant_discount_amount \u2705; 2100-630 = 1470 (order_sub_total_without_tax) \u2705; +5% GST 73.50 = 1543.50 \u2192 1544 (round_up 0.50) \u2705",
+    "021114 (id 1537796)": "items 400+50 = 450; 30% = 135 = restaurant_discount_amount \u2705; 450-135 = 315 \u2705; order_amount 331 (315 + GST, rounded) \u2705"
+  }
 }

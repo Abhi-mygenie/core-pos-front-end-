@@ -202,3 +202,6 @@ Evidence: `evidence/CR-513/CR-513_BUG-592_backend_reprobe_021113_2026_11_06.json
 **Open owner decisions (Gate 2 — stay):**
 - **OD-592-A:** Remove the `discount_value` fallback at L234 (it is the raw-% source of the original bug; backend now fills the ₹ value)? Agent recommends YES.
 - **OD-592-B:** Socket-refresh discount loss — (a) backend adds `restaurant_discount_amount` (+ `discount_value`, `order_discount_type`, `round_up`) to `get-single-order-new`; (b) FE keeps the last known discount when the refreshed payload lacks the field; (c) both. Agent recommends (a) as the real fix, (b) only if backend can't.
+
+### 14a. Owner query "I gave 30% — wrong value in payload?" (2026-11-06)
+No — values are correct. `630` is the **₹ amount**, not the %: 021113 subtotal ₹2,100 × 30% = ₹630; 021114 ₹450 × 30% = ₹135. `discount_value = 30.00` carries the %. Post-discount subtotal and order_amount reconcile (see evidence `math_check`). Owner's payload screenshot not received (only the earlier BUG-652 screenshot is in assets).
