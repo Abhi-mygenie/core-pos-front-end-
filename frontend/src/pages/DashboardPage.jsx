@@ -451,7 +451,7 @@ const DashboardPage = () => {
   );
   const [searchQuery, setSearchQuery] = useState("");
   // CR-482 P18-P22: Dashboard keyboard navigation
-  const kbdEnabled = !!(restaurant?.settings?.keyboardShortcuts || localStorage.getItem('mygenie_keyboard_shortcuts_enabled') === 'true') && HAS_POINTER_DEVICE();
+  const kbdEnabled = !!(settings?.keyboardShortcuts || localStorage.getItem('mygenie_keyboard_shortcuts_enabled') === 'true') && HAS_POINTER_DEVICE();
   const [jumpBuffer, setJumpBuffer] = useState('');
   const [kbdHighlightId, setKbdHighlightId] = useState(null);
   const [jumpMatches, setJumpMatches] = useState([]); // array of {id, label, element}
