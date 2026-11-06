@@ -34466,7 +34466,7 @@
       "title": "Payment config (Cash, Card, UPI) should be default for new restaurants",
       "type": "CR",
       "priority": "P0",
-      "status": "GATE_2_PLANNING — payment config (Cash/Card/UPI) backend implementation pending",
+      "status": "GATE_2_PLANNING — payment config (Cash/Card/UPI), backend dependency",
       "area": "Payments / Coupons / Credit",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
@@ -34483,7 +34483,7 @@
       "title": "Application loading in Old POS — key missing",
       "type": "CR",
       "priority": "P0",
-      "status": "GATE_2_PLANNING — Old POS application loading key, other team",
+      "status": "GATE_2_PLANNING — Old POS application loading, key missing",
       "area": "Other",
       "sprint_key": "nov_cr_batch",
       "risk": "HIGH",
@@ -34492,7 +34492,8 @@
       "registered": "2026-10-22",
       "tt_source": "TT-042",
       "blocked_by": "BACKEND",
-      "assignee": "Piyush"
+      "assignee": "Piyush",
+      "blocked_on": ""
     },
     {
       "id": "CR-472",
@@ -34616,7 +34617,8 @@
       "sprint_key": "nov_cr_batch",
       "qa_date": null,
       "notes": " | 2026-10-28: QA PASS — retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Payments / Coupons / Credit"
     },
     {
       "id": "BUG-619",
@@ -34627,7 +34629,8 @@
       "risk": "HIGH",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-26",
-      "assignee": ""
+      "assignee": "",
+      "area": "Payments / Coupons / Credit"
     },
     {
       "id": "BUG-620",
@@ -34638,7 +34641,8 @@
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-26",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "BUG-621",
@@ -34649,7 +34653,8 @@
       "risk": "MEDIUM",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-26",
-      "assignee": ""
+      "assignee": "",
+      "area": "Aggregator / Sockets"
     },
     {
       "id": "CR-475",
@@ -34660,7 +34665,8 @@
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
       "notes": " | 2026-10-28: QA PASS — retroactive QA batch. Testing agent 14/14 backend + 7/7 browser + 4 code-verified.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Reports / Analytics"
     },
     {
       "id": "BUG-622",
@@ -34671,7 +34677,8 @@
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-28",
-      "assignee": ""
+      "assignee": "",
+      "area": "Aggregator / Sockets"
     },
     {
       "id": "CR-476",
@@ -34682,7 +34689,8 @@
       "risk": "LOW",
       "sprint_key": "nov_cr_batch",
       "qa_date": "2026-10-28",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "BUG-623",
@@ -34726,7 +34734,7 @@
       "type": "BUG",
       "priority": "P0",
       "status": "GATE_3_PLAN_COMPLETE",
-      "area": "Dashboard / Responsive",
+      "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
       "registered": "2026-10-28",
@@ -34840,7 +34848,7 @@
       "type": "BUG",
       "priority": "P2",
       "status": "GATE_5A_IMPLEMENTED",
-      "area": "Settlement / Day Closure",
+      "area": "Reports / Analytics",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
       "registered": "2026-10-31",
@@ -34916,7 +34924,8 @@
         "src/components/order-entry/CollectPaymentPanel.jsx"
       ],
       "notes": "Owner feedback on CR-479: flag picker + phone clipped in narrow CartPanel/CPP. Fix: compact variant for PhoneInputField. R5 file (CartPanel). Code reality: NONE. | 2026-11-02: IA+Plan complete. Plan: plans/BUG-631_632_IMPLEMENTATION_PLAN.md. ODs locked. 4 edits across 3 files. Awaiting Gate 4 GO. | 2026-11-02: IMPLEMENTED — PhoneInputField compact prop + viewport-aware dropdown. CartPanel + CPP pass compact. webpack 0 new warnings. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "BUG-632",
@@ -34943,7 +34952,8 @@
         "src/pages/pms/CheckInPage.jsx"
       ],
       "notes": "Owner feedback on CR-479: flag picker dropdown may overflow/clip on tablets <1024px. Fix: responsive dropdown positioning. Related to BUG-555 tablet umbrella. Code reality: NONE. | 2026-11-02: IA+Plan complete. Plan: plans/BUG-631_632_IMPLEMENTATION_PLAN.md. ODs locked. 4 edits across 3 files. Awaiting Gate 4 GO. | 2026-11-02: IMPLEMENTED — PhoneInputField compact prop + viewport-aware dropdown. CartPanel + CPP pass compact. webpack 0 new warnings. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "BUG-633",
@@ -34965,7 +34975,8 @@
         "src/components/ui/PhoneInputField.jsx"
       ],
       "notes": "Height py-[7px] vs h-10, bg white vs #f9fafb, no shadow, border #E2E8F0 vs #E5E5E5, font 14px vs 13px. Fast Lane eligible (1 file, CSS only). | 2026-11-02: IMPLEMENTED. webpack compiled successfully. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "BUG-634",
@@ -34986,7 +34997,8 @@
         "src/pages/pms/CheckInPage.jsx"
       ],
       "notes": "grid-cols-2 narrow column + full picker = clips Phone nu... Owner screenshot confirms. Fix: add compact. Fast Lane eligible (1 file, 1 word). | 2026-11-02: IMPLEMENTED. webpack compiled successfully. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "PMS / Rooms"
     },
     {
       "id": "BUG-635",
@@ -35008,7 +35020,8 @@
         "src/components/modals/RoomCheckInModal.jsx"
       ],
       "notes": "Modal shrinks on tablets, full picker may clip. Fix: add compact or verify min-width. Fast Lane eligible. | 2026-11-02: IMPLEMENTED. webpack compiled successfully. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "PMS / Rooms"
     },
     {
       "id": "BUG-636",
@@ -35029,7 +35042,8 @@
         "src/components/order-entry/CollectPaymentPanel.jsx"
       ],
       "notes": "useEffect L576-590 fires per-keystroke for intl >=6 digits. Creates junk CRM profiles. Also missing countryCode in createCustomer + tabContact. Fix: debounce 500ms + add countryCode. R5 file. | 2026-11-02: IA+Plan complete. Plan: plans/BUG-636_IMPLEMENTATION_PLAN.md. 3 edits in 1 file (CPP R5). Debounce 600ms + countryCode in createCustomer + tabContact. | 2026-11-02: IMPLEMENTED. Debounce 600ms useRef+setTimeout for intl, immediate for +91. countryCode added to createCustomer + tabContact. webpack 0 new warnings. EXIT GATE 5/5.",
-      "assignee": ""
+      "assignee": "",
+      "area": "CRM / Customer Intelligence"
     },
     {
       "id": "BUG-637",
@@ -35050,7 +35064,8 @@
         "src/components/ui/PhoneInputField.jsx"
       ],
       "notes": "L190 highlight compares callingCode not ISO code. UK selected = GG/IM/JE/GB all highlighted. Fix: compare country.code. Fast Lane eligible. | 2026-11-02: IMPLEMENTED. webpack 0 new warnings.",
-      "assignee": ""
+      "assignee": "",
+      "area": "CRM / Customer Intelligence"
     },
     {
       "id": "BUG-638",
@@ -35070,7 +35085,8 @@
         "src/components/order-entry/CustomerModal.jsx"
       ],
       "notes": "L658/763 placeholder 10-digit mobile needs 116px, input 104px wide. Fix: shorten to Phone number. Fast Lane eligible. | 2026-11-02: IMPLEMENTED. webpack 0 new warnings.",
-      "assignee": ""
+      "assignee": "",
+      "area": "CRM / Customer Intelligence"
     },
     {
       "id": "BUG-639",
@@ -35092,7 +35108,8 @@
       ],
       "notes": "updateOrder L1184+L1191 missing expandCompItems(). placeOrder/placeOrderWithPayment/collectBillExisting all have it. Partial comp items not split = is_complementary:No. Fix: 2 lines, same pattern. Investigation: investigations/INVESTIGATION_COMP_NO_PRINTER_PAYLOAD_2026_11_02.md. OD-639-01: direct bug fix recommended (existing pattern). | 2026-11-02: IA+Plan complete. 2 edits in 1 file. L1184: expandCompItems(newItems), L1191: expandCompItems(allActiveItems). Exact pattern match to placeOrder L1054/L1062. Plan: plans/BUG-639_IMPLEMENTATION_PLAN.md.",
       "priority": "P0",
-      "assignee": ""
+      "assignee": "",
+      "area": "Menu / Order Entry"
     },
     {
       "id": "CR-480",
@@ -35113,7 +35130,8 @@
         "src/pages/reports-module/CancellationsMockup.jsx"
       ],
       "notes": "New hourly bar chart widget. Data: compute 24h buckets from items[].cancel_time (FE only, no backend). Pattern: HourlySalesMockup. ~40 lines, 1 file. OD-480-01: placement (new row recommended). OD-480-02: peak hour badge (yes recommended). Investigation: investigations/INVESTIGATION_HOURLY_CANCELLATION_TREND_2026_11_02.md. | 2026-11-02: IA+Plan complete. Plan: plans/CR-480_IMPLEMENTATION_PLAN.md. Mockup: public/cr480-hourly-cancellation-mockup.html. 3 edits in 1 file (~67 lines). ODs locked: OD-480-01=A (new row), OD-480-02=YES (peak badge). | 2026-11-02: IMPLEMENTED. HourlyTooltip + byHour/peakHour computation + chart widget with peak badge. webpack 0 new warnings. EXIT GATE 5/5. Verified via API probe: 278 items, 15 active hours, peak 17:00.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Reports / Analytics"
     },
     {
       "id": "BUG-640",
@@ -35133,7 +35151,8 @@
         "36 report pages in pages/reports-module/"
       ],
       "notes": "toISOString().slice(0,10) converts to UTC. IST midnight = prev day UTC. LM Oct 1→Oct 31 becomes Sep 30→Oct 30. Affects all presets on all 36 report pages. Fix: use local getFullYear/getMonth/getDate. Related: CR-422 (LM implementation). | 2026-11-02: IA+Plan complete. Combined with CR-481. 48 toISOString occurrences across 38 files + InsightsCacheContext. Fix: shared datePresets.js utility with local fmtISO. Plan: plans/BUG-640_CR-481_IMPLEMENTATION_PLAN.md. | 2026-11-02: IMPLEMENTED. datePresets.js shared utility + 43 files updated. fmtISO uses local getFullYear/getMonth/getDate. webpack 0 new warnings. EXIT GATE 5/5. | QA iteration_14: FY crash fixed (const t reassignment). 5 more files cleaned (TaxDetail, TipReport, DeliveryCharge, PurchaseReport, OrderReportBeta). All toISOString eliminated. | QA iteration_15: FY crash fixed, all toISOString eliminated. 4 remaining pages fixed (TaxDetail/TipReport/DeliveryCharge preset arrays + PurchaseReport QUICK_RANGES). GATE_5B_QA_PASS.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Reports / Analytics"
     },
     {
       "id": "CR-481",
@@ -35153,7 +35172,8 @@
         "46 report pages in pages/reports-module/"
       ],
       "notes": "17 distinct preset combos across 46 pages. LM in 8 pages, 30D in 31 pages, FY in 7 pages. Channel&Payment has [Today,7D,30D,MTD] — no LM/FY. OD-481-01: standard set [Today,7D,LM,30D,MTD,FY] recommended. OD-481-02: shared constant recommended. | OD-481-01 LOCKED: YES — standard set [Today,7D,LM,30D,MTD,FY]. OD-481-02 LOCKED: NO new component — shared constant only, no design changes. Intake closed. | 2026-11-02: IA+Plan complete. Combined with BUG-640. 37 pages get standardized [Today,7D,LM,30D,MTD,FY]. Settlement keeps extended set. Shared DATE_PRESETS constant + computePresetRange(). Plan: plans/BUG-640_CR-481_IMPLEMENTATION_PLAN.md. | 2026-11-02: IMPLEMENTED. DATE_PRESETS [Today,7D,LM,30D,MTD,FY] applied to 37 pages. Settlement keeps extended set. computePresetRange() shared. webpack 0 new warnings. EXIT GATE 5/5. | QA iteration_15: 4 remaining pages standardized. All pages now show DATE_PRESETS. Settlement keeps extended set. GATE_5B_QA_PASS.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Reports / Analytics"
     },
     {
       "id": "BUG-641",
@@ -35174,7 +35194,8 @@
         "src/api/transforms/orderTransform.js"
       ],
       "notes": "buildBillPrintPayload L1868: spread {..d} kept stale food_details.complementary:no for runtime comp items. Printer agent reads food_details.complementary not is_complementary. Fix: food_details: { ...d.food_details, complementary: Yes }. 1 line, 1 file. webpack 0 new warnings.",
-      "assignee": ""
+      "assignee": "",
+      "area": "Printing / Printer Agent"
     },
     {
       "id": "CR-482",
@@ -35318,7 +35339,7 @@
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Printing / Printer Agent",
-      "status": "GATE_2_PLANNING — printed bill discount % display",
+      "status": "GATE_2_PLANNING — printed bill discount % and discount name display",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-04",
       "registered_by": "INTAKE agent",
@@ -35331,7 +35352,8 @@
       "intake_doc": "change_requests/CR-487_DISCOUNT_PERCENT_AND_AMOUNT_ON_BILL_INTAKE.md",
       "description": "Bill should print both the discount percentage and the discount amount (e.g. \"Discount (10%)  -₹56.00\").",
       "notes": "2026-11-04: Intake. Dup: RELATED. Code reality: PARTIAL — bill payload carries one discount value; BUG-592 shows % sometimes printed instead of ₹. | ODs: OD-487-01 Flat-₹ discounts: show computed % too, or ₹ only? ; OD-487-02 Fix together with BUG-592 and CR-426 (same print payload) ; OD-487-03 Printer Agent template change needed? | 2026-11-05 r3: Owner: bill details owned by Old POS Printer Agent team — external dependency. | 2026-11-05 r4: owner statement suggests withdraw / external — OD-487-06 to confirm. | 2026-11-05 r5: tracking only (Printer Agent team). | 2026-11-05: PRIORITY UPGRADE P1→P0 (owner directive).",
-      "assignee": "Piyush"
+      "assignee": "Piyush",
+      "blocked_on": ""
     },
     {
       "id": "CR-488",

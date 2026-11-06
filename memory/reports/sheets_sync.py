@@ -490,7 +490,7 @@ def to_contract_row(item):
     _ID_RE = re.compile(r'^(CR|BUG|PROD|INV|PROD-HOTFIX)-\d')  # CR-420 G5
     blocked_on = ''
     if contract_status not in ('CLOSED', 'PARKED', 'DUPLICATE'):
-        _raw_bo = str(item.get('blocked_by', '') or blocked_party or '').strip()
+        _raw_bo = str(item.get('blocked_on', '') or item.get('blocked_by', '') or blocked_party or '').strip()
         if _raw_bo and _ID_RE.match(_raw_bo):
             # Item ID in Blocked on → move to Related, leave Blocked on blank
             if _raw_bo not in related_ids:
