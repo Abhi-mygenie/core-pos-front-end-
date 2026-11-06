@@ -33757,7 +33757,7 @@
       "title": "order_note sent in place-order payload but backend returns empty in employee-orders-list — notes pushed to food_level_notes instead",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_1_INTAKE_BACKEND_BLOCKED",
+      "status": "CLOSED",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
