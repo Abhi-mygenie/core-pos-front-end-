@@ -36348,6 +36348,33 @@
           "type": "intake"
         }
       ]
+    },
+    {
+      "id": "CR-512",
+      "type": "CR",
+      "sprint_key": "nov_cr_batch",
+      "title": "Print Confirmation Flow — wire update-print-status + print-logs APIs (enables BUG-583 + CR-489)",
+      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open (OD-512-01/02/03/04)",
+      "priority": "P0",
+      "risk": "HIGH",
+      "area": "Printing / Printer Agent",
+      "files": "orderService.js, constants.js, OrderCard.jsx (R5-adj), OrderEntry.jsx (R5)",
+      "notes": "2026-11-06: INTAKE. Backend delivered 3 new print APIs (update-print-status, print-logs POST/GET) in frontend-handover-printing.md. None wired in FE. Without calling update-print-status after bill print, bill_print stays 'No' → BUG-583 green cards never activate, CR-489 edit-lock can't detect print. Cleanest fix: add confirmation inside printOrder() in orderService.js — all 10 callers get it for free. DISTINCT. Code reality: NONE.",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "BUG-583",
+        "CR-489",
+        "CR-500",
+        "CR-501"
+      ],
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-512_PRINT_CONFIRMATION_FLOW_WIRE_UPDATE_PRINT_STATUS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
     }
   ],
   "meta": {

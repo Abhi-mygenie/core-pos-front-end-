@@ -1,10 +1,12 @@
 # BACKEND_BRIEF_BUG-583_BILL_PRINT_NOT_SET_2026_11_06
 
-## Summary
-- Issue: `bill_print` field stays `"No"` in `employee-orders-list` after bill is printed via POS
-- Classification: CONTRACT_MISMATCH
-- Frontend impact: BUG-583 green card feature cannot activate — FE checks `bill_print === 'Yes'` but backend never sets it
-- Priority/Risk: P0 / HIGH — blocks BUG-583 feature and CR-489 (edit-after-print lock)
+## ⚠ CORRECTION (2026-11-06, post-handover review)
+
+**This was initially filed as a backend gap. After reading the full `frontend-handover-printing.md`, it is a FRONTEND gap.**
+
+The backend **correctly** does not set `bill_print` on the `order-temp-store` call. That endpoint is the printer queue only. The frontend must call `POST /api/v2/vendoremployee/print/update-print-status` with `bill_print: "Yes"` after a successful print — this is the trigger that sets the field and emits the socket.
+
+**Registered as CR-512** — Print Confirmation Flow. This brief is kept for audit trail only.
 
 ## Endpoint
 - Print: POST `https://preprod.mygenie.online/api/v1/vendoremployee/pos/order-temp-store`
