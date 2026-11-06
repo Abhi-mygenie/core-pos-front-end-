@@ -1,0 +1,29 @@
+{
+  "summary": "Gate 5A check for BUG-583 (bill printed -> green card). All 5 edits are present with code markers. 6/6 transform unit tests pass. Webpack compiles cleanly. Login and dashboard work, there are no console errors, and no card wrongly shows the green background (all 3 live cafe103 orders have bill_print 'No'). One real gap: on the default dashboard, TableCard never gets billPrinted, so printed dine-in and walk-in tables will NOT turn green. Only search results and OrderCard views (list/order mode) get the flag.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Bill printed -> TableCard green (default dashboard and channel view)", "issue": "The E-3 change is only in the enrichedTables block inside the search-results useMemo (DashboardPage.jsx ~L1214-1231). The objects that actually feed TableCard on the main grid do not copy billPrinted. These are adaptTable (~L581), the walk-in entries (~L625, ~L650, ~L780), adaptOrder (~L800), adaptOrderForStatus (~L940) and the room/other entries (~L976, ~L1019, ~L1056, ~L1134, ~L1152). So table.billPrinted is always undefined there and the card never turns green. The live dashboard renders data-testid=table-card-* (TableCard) for every dine-in and walk-in item.", "affected_selectors": ["[data-testid^='table-card-']"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/frontend/src/__tests__/api/transforms/orderTransform.bug583.test.js"],
+  "action_items": [
+    "Add billPrinted: order.billPrinted || false to every table-like adapter in DashboardPage.jsx that feeds TableCard: adaptTable order map (~L581), walk-in pushes (~L625/650/780), adaptOrder (~L800), adaptOrderForStatus (~L940) and the room/status entries (~L976/1019/1134/1152). Alternatively, have TableCard fall back to table.order?.billPrinted.",
+    "Then check a printed order on the live view: the table-card's computed background should be rgb(232,245,233) and its border rgb(50,153,55)."
+  ],
+  "critical_code_review_comments": [
+    "E-3 is in the wrong place for most users: it only affects search results.",
+    "E-2 uses OR logic: bill_print:'No' with print_bill_status:'Yes' gives true. Check that the backend never leaves a stale print_bill_status 'Yes' after a reprint or reset. bill_print should probably take priority when it is defined.",
+    "OrderCard (E-4) gets the full transformed order, so it works correctly."
+  ],
+  "updated_files": ["/app/frontend/src/__tests__/api/transforms/orderTransform.bug583.test.js (new)"],
+  "success_rate": {"backend": "N/A (external preprod API; login and orders-list return 200)", "frontend": "Unit 6/6 pass; dashboard loads, 0 console errors, 0 false-green cards; feature incomplete for TableCard on the main grid"},
+  "test_credentials": "manager@cafe103.com / Qplazm@10",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Live cafe103 orders: 1537757 (fos 5), 1537753 and 1537752 (fos 1), all with bill_print 'No'. Default dashboard = channel view rendering table-card-* testids. Run the unit test: CI=true yarn test --watchAll=false src/__tests__/api/transforms/orderTransform.bug583.test.js. To fully verify, you need an order with bill_print 'Yes': print a bill on preprod.",
+  "rca of the issue": "billPrinted is mapped correctly in the transform and OrderCard reads it. But DashboardPage builds new plain objects for TableCard (adaptTable and friends) that list fields one by one, and billPrinted was only added to the search enrichment copy. So the main-grid objects drop the flag."
+}

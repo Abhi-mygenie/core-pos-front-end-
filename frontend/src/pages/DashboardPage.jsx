@@ -600,6 +600,7 @@ const DashboardPage = () => {
         servedAt: order.servedAt,
         paymentType: order.paymentType || '',
         paymentMethod: order.paymentMethod || '',
+        billPrinted: order.billPrinted || false, // BUG-583
       }));
     };
 
@@ -645,6 +646,7 @@ const DashboardPage = () => {
             servedAt: order.servedAt,
             paymentType: order.paymentType || '',
             paymentMethod: order.paymentMethod || '',
+            billPrinted: order.billPrinted || false, // BUG-583
           })),
         };
       }
@@ -677,6 +679,7 @@ const DashboardPage = () => {
           servedAt: order.servedAt,
           paymentType: order.paymentType || '',
           paymentMethod: order.paymentMethod || '',
+          billPrinted: order.billPrinted || false, // BUG-583
         });
       });
 
@@ -736,6 +739,7 @@ const DashboardPage = () => {
           items: order.items,
           orderNote: order.orderNote,
           order: order,  // full order object for OrderCard fallback (item.order || item)
+          billPrinted: order.billPrinted || false, // BUG-583
         }));
       });
   }, [tablesLoaded, apiTables, getOrdersByTableId, oooRoomIds]); // BUG-387: oooRoomIds added
@@ -796,6 +800,7 @@ const DashboardPage = () => {
       servedAt: order.servedAt,
       paymentType: order.paymentType || '',
       paymentMethod: order.paymentMethod || '',
+      billPrinted: order.billPrinted || false, // BUG-583
     });
 
     // Helper to adapt takeaway/delivery orders
@@ -824,6 +829,7 @@ const DashboardPage = () => {
       isWebOrder: order.isWebOrder || false,
       customer: order.customer || '',
       customerName: order.customerName || '',
+      billPrinted: order.billPrinted || false, // BUG-583
     });
 
     // Helper to enrich dine-in tables with order data (supports split: 1 table → N entries)
@@ -958,6 +964,7 @@ const DashboardPage = () => {
       servedAt: order.servedAt,
       paymentType: order.paymentType || '',
       paymentMethod: order.paymentMethod || '',
+      billPrinted: order.billPrinted || false, // BUG-583
     });
 
     // Collect ALL orders from all channels
@@ -975,6 +982,7 @@ const DashboardPage = () => {
               order: order,
               fOrderStatus: order.fOrderStatus,
               orderType: 'dineIn',
+              billPrinted: order.billPrinted || false, // BUG-583
             });
           }
         }
@@ -1133,6 +1141,7 @@ const DashboardPage = () => {
           orderId: order.orderId,
           fOrderStatus: order.fOrderStatus,
           waiter: order.waiter || '',
+          billPrinted: order.billPrinted || false, // BUG-583
         });
       });
     }
@@ -1151,6 +1160,7 @@ const DashboardPage = () => {
           orderId: order.orderId,
           fOrderStatus: order.fOrderStatus,
           waiter: order.waiter || '',
+          billPrinted: order.billPrinted || false, // BUG-583
         });
       });
     }
@@ -1208,7 +1218,8 @@ const DashboardPage = () => {
         status: 'occupied',
         amount: order.amount,
         fOrderStatus: order.fOrderStatus,
-        orderId: order.orderId
+        orderId: order.orderId,
+        billPrinted: order.billPrinted || false, // BUG-583
       }));
 
       const enrichedTables = allTablesList.filter(t => !t.isWalkIn).map(table => {
