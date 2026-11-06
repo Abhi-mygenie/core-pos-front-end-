@@ -1,0 +1,33 @@
+{
+  "summary": "BUG-656 retest (frontend only). Logged in as owner@cafe103.com and opened the bill-printed order #021104 (1537757) from table-card-wc-1537757. PASS: clicking a plain menu item shows the toast 'Order Locked – Bill printed — editing requires permission.' and adds nothing to the cart. There are 0 qty-edit pencils and 0 transfer-food-btn. place-order-btn ('Update Order') is disabled at opacity-50. shift-table-btn and merge-tables-btn are hidden. Print Bill (order-entry-print-bill-btn-1537757) and Re-Print are present and enabled. The unprinted C1 order (table-card-8321) is not locked: 2 pencils, 2 Transfer buttons, shift and merge enabled, Collect Bill enabled, and a menu click opens the normal price prompt with no lock toast. The code has 4 BUG-656 markers in OrderEntry.jsx and 1 in CartPanel.jsx. FAIL / GAPS: (1) Customizable menu items get past the lock. Clicking 'Akuri & Plain Paratha' then 'Add to Order' added the item to the locked cart with no toast. Update Order became '(1)' but stayed disabled, and the Collect Bill total changed from 141,149 to 141,380. (2) The customer name field is still editable: I typed 'TESTX' and it was accepted, with no readOnly. Only the update to the parent is blocked, so the UI suggests an edit that never saves. The customer-info-btn modal (onSave=setCustomer) is not gated either. (3) add-custom-item-btn is still enabled and handleAddCustomItem is not gated. It calls ADD_CUSTOM_ITEM on the backend, so I did not submit it, to avoid creating data. (4) On 1537757, Collect Bill is disabled. Per the code this is not caused by the lock: the placed 'Aloo Paratha' left by the previous test has a non-served status, so the hasPlacedItems && !isServed gate applies. As a result, 'Collect Bill stays active on a locked order' could not be shown on this order.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "OrderEntry.jsx addCustomizedItemToCart (L946)", "issue": "Has no isEditLocked guard. Customizable items (menu-item with 'Customize') open ItemCustomizationModal and 'Add to Order' adds them to the locked order's cart.", "selector": "[data-testid^=menu-item-]:has-text('Customize')", "priority": "HIGH"},
+      {"component": "OrderEntry.jsx handleAddCustomItem (L1594) / add-custom-item-btn (L1974)", "issue": "The Add Custom Item button and handler are not gated on a locked order. The handler also calls the backend ADD_CUSTOM_ITEM API.", "selector": "[data-testid=add-custom-item-btn]", "priority": "MEDIUM"},
+      {"component": "CartPanel quick-customer-name/phone + CustomerModal", "issue": "The inputs stay editable when locked: local state updates but the parent is never told. The customer-info-btn modal onSave=setCustomer is ungated. The fields should be readOnly/disabled when isEditLocked.", "selector": "[data-testid=quick-customer-name], [data-testid=customer-info-btn]", "priority": "MEDIUM"},
+      {"component": "CartPanel PlacedItemRow kbdRowProps onPlus (~L1316) and OrderEntry L742 keyboard qty", "issue": "Code review: keyboard-shortcut qty +/- on placed rows calls updateQuantity(item.id, +1, true) without checking isEditLocked. When kbd mode is on, this bypasses the hidden pencil. Not exercised in the browser.", "selector": "kbd mode", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Add the same isEditLocked guard and toast to addCustomizedItemToCart, or block setCustomizationItem in the menu onClick at L2060.",
+    "Gate add-custom-item-btn (hide or disable it) and the handleAddCustomItem handler when isEditLocked.",
+    "Make quick-customer-name/phone readOnly when locked, and gate the customer-info-btn modal save.",
+    "Gate the keyboard qty handlers (kbdRowProps onPlus/onMinus for placed rows) with !isEditLocked.",
+    "Consider putting the guard in updateQuantity/setCartItems paths, or a single mutation wrapper, instead of patching each entry point."
+  ],
+  "critical_code_review_comments": [
+    "The lock is enforced per entry point, which is fragile: 3+ add paths (customized, custom item, customer modal suggestions with onAddToCart) were missed. A central guard would be more robust.",
+    "orderData.billPrinted is a prop snapshot, so printing the bill within the session does not lock until the order is reopened (carried over from iteration_31).",
+    "reprint-kot-btn ('Re-Print') is still shown in OrderEntry on a locked order, but KOT is hidden on OrderCard. This is inconsistent (carried over)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "8 of 9 requested checks passed. Collect Bill active could not be confirmed on 1537757 because of the served-status gate, not the lock. 3 additional bypass paths were found."},
+  "seed_data_creation": "None. The customized item was added only to local cart state and never placed (Update Order was disabled). No custom item was submitted to the API.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login testids: login-email, login-password, login-button. Locked order: table-card-wc-1537757 (#021104). Unprinted C1: table-card-8321 (#021106). 1537757 has a placed, unserved 'Aloo Paratha', so collect-bill-btn is disabled because of !isServed. Retest the customizable item (Akuri & Plain Paratha → Add to Order), add-custom-item-btn and quick-customer-name readOnly on 1537757."
+}

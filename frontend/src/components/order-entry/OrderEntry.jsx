@@ -944,6 +944,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const genCartKey = () => `ck-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
   const addCustomizedItemToCart = (item) => {
+    // BUG-656: block customized item add when locked
+    if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; }
     // Case 3: Prepaid orders cannot be edited
     if (isPrepaid && placedOrderId) {
       toast({ title: "Cannot Edit", description: "Prepaid orders cannot be modified", variant: "destructive" });
@@ -1592,6 +1594,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // CR-348: receive + forward tax fields from AddCustomItemModal
   const handleAddCustomItem = async ({ name, categoryId, price, qty, notes, taxPercent = 0, taxCalc = 'Exclusive' }) => {
+    if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; } // BUG-656
     const payload = orderToAPI.addCustomItem(name, categoryId, price, taxPercent, taxCalc);
     const response = await api.post(API_ENDPOINTS.ADD_CUSTOM_ITEM, payload);
     const cartItem = customItemFromAPI(response.data.data, qty, notes);
@@ -2057,7 +2060,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     key={item.id}
                     data-testid={`menu-item-${item.id}`}
                     data-kbd-item=""
-                    onClick={() => item.customizable ? setCustomizationItem(item) : addToCart(item)}
+                    onClick={() => { if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; } item.customizable ? setCustomizationItem(item) : addToCart(item); }}
                     className={`relative px-5 py-3 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-2${isHighlighted ? ' kbd-highlight' : ''}`}
                     style={{
                       backgroundColor: isFlashing ? `${COLORS.primaryGreen}20` : "white",

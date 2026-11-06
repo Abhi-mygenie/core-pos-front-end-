@@ -1123,7 +1123,7 @@ const CartPanel = ({
             onChange={handleNameChange}
             onBlur={handleFieldBlur}
             onFocus={() => !isRoom && customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
-            readOnly={isRoom}
+            readOnly={isRoom || isEditLocked} // BUG-656: disable when locked
             className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
             style={{ 
               borderColor: nameMissing ? '#ef4444' : COLORS.borderGray, 
@@ -1170,7 +1170,7 @@ const CartPanel = ({
             placeholder={isPhoneRequired ? 'Phone *' : 'Phone number'}
             error={phoneMissing}
             testId="quick-customer-phone"
-            disabled={isRoom}
+            disabled={isRoom || isEditLocked} // BUG-656: disable when locked
           />
           {/* Phone Auto-suggest */}
           {showPhoneSuggestions && (
