@@ -803,6 +803,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // Add item to cart with flash feedback
   const addToCart = (item) => {
+    if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; } // BUG-656
     // CR-010: Weight item intercept — before dynamic-price check.
     // Weight items are identified by non-empty itemUnit. Mutually exclusive with price=1 (D8/MISC-001).
     if (item.isWeightItem) {
@@ -2886,7 +2887,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onAddNote={(item, cartIndex) => setItemNotesModal({ item, cartIndex })}
                 onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
-                onCustomerChange={setCustomer}
+                onCustomerChange={isEditLocked ? undefined : setCustomer} // BUG-656: disable customer edit when locked
                 selectedAddress={selectedAddress}
                 onAddressClick={() => {
                   if (customer?.phone) fetchDeliveryAddresses(customer.phone);
@@ -2915,7 +2916,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 orderNotes={orderNotes}
                 onEditOrderNotes={() => setShowNotesModal(true)}
                 canCancelItem={canCancelItem}
-                canFoodTransfer={canFoodTransfer}
+                canFoodTransfer={canFoodTransfer && !isEditLocked} // BUG-656
+                isEditLocked={isEditLocked} // BUG-656
                 canBill={canBill}
                 canPrintBill={canPrintBill}
                 isItemCancelAllowed={isItemCancelAllowed}

@@ -62,7 +62,7 @@ const getTimeAgo = (isoString) => {
 };
 
 // Placed item row (sent to kitchen)
-const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed, kbdRowProps = {} }) => {
+const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed, isEditLocked = false, kbdRowProps = {} }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   const isCancelled = item.status === 'cancelled';
   const showCancelBtn = !isCancelled && canCancelItem && (!isItemCancelAllowed || isItemCancelAllowed(item));
@@ -185,9 +185,11 @@ const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editi
           ) : (
             <>
               <span className="font-bold" style={{ color: COLORS.primaryGreen }}>{shownQty}</span>
+              {!isEditLocked && (
               <button onClick={() => setEditingQtyItemId(item.id)} className="p-2 hover:bg-gray-100 rounded-lg" data-testid={`qty-edit-${item.id}`}>
                 <Pencil className="w-3.5 h-3.5" style={{ color: COLORS.grayText }} />
               </button>
+              )}
             </>
           )}
         </div>
@@ -836,6 +838,7 @@ const CartPanel = ({
   setPrintAllBill,
   // BUG-099 (May-2026): QSR Quick Billing mode
   qsrMode = false,
+  isEditLocked = false, // BUG-656: block mutations when bill-printed + no permission
   qsrDiscountEnabled = false,
   onQsrCollectBill,
   restaurant = null,
@@ -1309,6 +1312,7 @@ const CartPanel = ({
                     updateQuantity={updateQuantity}
                     canCancelItem={canCancelItem}
                     canFoodTransfer={canFoodTransfer && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid}
+                    isEditLocked={isEditLocked}
                     isItemCancelAllowed={isItemCancelAllowed}
                     kbdRowProps={kbdEnabled ? kbdRowProps({
                       onPlus: item.status === 'cancelled' || item.isWeightItem ? null : () => {
@@ -1631,7 +1635,7 @@ const CartPanel = ({
         <button
           data-testid="place-order-btn"
           onClick={handlePlaceOrder}
-          disabled={newItemCount === 0 || isPlacingOrder || hasValidationErrors || (isScheduled && (!scheduleAt?.trim() || !scheduleAt?.includes(':')))}
+          disabled={isEditLocked || newItemCount === 0 || isPlacingOrder || hasValidationErrors || (isScheduled && (!scheduleAt?.trim() || !scheduleAt?.includes(':')))}
           className="flex-1 py-3 rounded-lg font-bold text-sm text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           style={{ backgroundColor: COLORS.primaryOrange }}
         >
