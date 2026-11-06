@@ -689,6 +689,17 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       return;
     }
 
+    // CR-482 P13: F7 — Reprint KOT
+    if (key === 'F7' && !ctrlKey && !altKey && !metaKey) {
+      if (isKbdModalOpen()) return;
+      const active = document.activeElement;
+      const allowed = !active || active === document.body || active === searchInputRef.current || active.hasAttribute('data-kbd-item') || active.hasAttribute('data-kbd-cart-row');
+      if (!allowed) return;
+      e.preventDefault(); // CR-482 P13: also suppresses Chrome/Edge Caret Browsing prompt
+      clickIfEnabled('[data-testid="reprint-kot-btn"]');
+      return;
+    }
+
     // CR-482 P8: +/- changes qty of last added (unplaced, non-weight) cart line
     const isPlus = key === '+' || (e.code === 'NumpadAdd');
     const isMinus = key === '-' || (e.code === 'NumpadSubtract');

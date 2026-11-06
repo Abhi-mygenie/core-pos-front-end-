@@ -62,6 +62,11 @@ const StationPickerModal = ({
         className="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4"
         onClick={e => e.stopPropagation()}
         data-testid="station-picker-modal"
+        data-kbd-modal="station-picker"
+        onKeyDown={e => { // CR-482 P13
+          if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
+          if (e.key === 'Enter' && selectedStations.length > 0 && !isLoading) { e.preventDefault(); handleConfirm(); }
+        }}
       >
         {/* Header */}
         <div 
