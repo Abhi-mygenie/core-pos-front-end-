@@ -35867,7 +35867,7 @@
       "id": "BUG-656",
       "type": "BUG",
       "title": "CR-489 Edit Lock Incomplete: 5 mutation paths ungated inside OrderEntry (add item, qty, update order, transfer, customer edit)",
-      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE \u2014 5 gaps, 2 files. Next: Gate 3 plan.",
+      "status": "GATE_3_PLAN_COMPLETE \u2014 8 edits / 2 files. Awaiting Gate 4 GO.",
       "priority": "P0",
       "risk": "HIGH",
       "sprint_key": "nov_cr_batch",
