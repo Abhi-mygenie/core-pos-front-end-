@@ -1,0 +1,28 @@
+{
+  "summary": "Retest of the CR-489 field-path fix. Both OrderEntry L365 and OrderCard L122 now read restaurant?.settings?.orderEditAccess. I logged in as owner@cafe103.com in the browser. The employee-orders-list API returned bill_print=Yes for 1537757, bill_print=No for 1537752, and bill_print=Yes for 1537753 (1537753 is now printed too). ORDER VIEW, PASS: order-card-1537757 shows only served-toggle and bill-btn. print-kot-btn and cancel-order-btn are hidden and Bill is visible. 1537753 (printed) is locked the same way, showing served-toggle and ready-btn with no KOT/Cancel. Unprinted 1537752 still shows merge, shift, food-transfer, item-action, print-kot, cancel and ready. The OrderCard lock now works. GAPS: (1) In Table View, TableCard has no lock. print-btn-wc-1537757 (Print KOT) is still visible on the printed order. TableCard has no merge/shift buttons, so the 'Merge/Shift hidden in Table View' item cannot be tested there. Merge/Shift exist only in OrderCard, where they are gated, and in OrderEntry. (2) OrderEntry for locked 1537757 still shows shift-table-btn, merge-tables-btn, reprint-kot-btn, the per-item edit pencils and Transfer, and the item catalogue for adding items. Only order cancel and item cancel are gated there.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "TableCard.jsx L537-580 / L661", "issue": "The Print KOT IconButton is not gated by isEditLocked. It is visible on the bill-printed order 1537757 in Table View.", "selector": "[data-testid=print-btn-wc-1537757]", "priority": "MEDIUM"},
+      {"component": "OrderEntry header/cart", "issue": "On a locked order (1537757) the shift-table-btn, merge-tables-btn, item edit (pencil), Transfer and add-item menu are still available. The spec says to block everything except Collect Payment and Reprint Bill.", "selector": "[data-testid=shift-table-btn], [data-testid=merge-tables-btn]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Gate the TableCard Print KOT button (print-btn-{id}) with the same isEditLocked logic: restaurant.settings.orderEditAccess && table.billPrinted && !hasPermission('order_edit_access').",
+    "In OrderEntry, gate shift-table-btn, merge-tables-btn, food transfer, quantity edits, adding items and Update Order when isEditLocked is true, if the spec requires a full lock.",
+    "Decide whether reprint-kot-btn in OrderEntry should be allowed while locked. KOT is hidden on OrderCard but still shown in OrderEntry, which is inconsistent."
+  ],
+  "critical_code_review_comments": [
+    "The isEditLocked expression is duplicated in OrderCard and OrderEntry, and TableCard needs it too. Extract a shared hook such as useIsEditLocked(order) to avoid future path drift.",
+    "orderData.billPrinted in OrderEntry is still a prop snapshot, so it will not update after printing the bill within the session."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "Core CR-489 OrderCard checks: 4 of 4 pass (KOT hidden, Cancel hidden, Bill visible, unprinted unchanged). Table View / OrderEntry lock coverage is incomplete."},
+  "seed_data_creation": "None. Test was read-only, no orders modified.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login testids: login-email, login-password, login-button. Wait about 20s, then click view-toggle for Order View. At cafe103, 1537757 and 1537753 have bill_print=Yes and 1537752 has bill_print=No (room C1). Table View card id: table-card-wc-1537757; clicking it opens OrderEntry. Next: verify print-btn-wc-1537757 is hidden in Table View, and that OrderEntry shift/merge are gated."
+}

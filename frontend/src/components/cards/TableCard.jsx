@@ -72,7 +72,7 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   const { getProductById } = useMenu();
   const { getOrderById, updateOrder } = useOrders();
   const { restaurant, printerAgents } = useRestaurant();
-  const { user, permissions } = useAuth(); // BUG-628: +permissions for dispatch role_name
+  const { user, permissions, hasPermission } = useAuth(); // BUG-628: +permissions for dispatch role_name // CR-489: +hasPermission
   
   // BUG-097: delivery_assign from restaurant profile determines Dispatch vs Assign Rider
   const isDelivery = table.orderType === 'delivery';
@@ -142,9 +142,13 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
     }
   };
 
+  // CR-489: Lock order editing after bill is printed (same logic as OrderCard)
+  const isEditLocked = !!(restaurant?.settings?.orderEditAccess) && !!(table?.billPrinted) && !hasPermission('order_edit_access');
+
   // Handle KOT print - with station picker
   const handlePrintKot = async (e) => {
     e.stopPropagation();
+    if (isEditLocked) return; // CR-489: block KOT reprint when locked
     console.log('[TableCard] Print KOT clicked:', { tableId: table.id, tableTableId: table.tableId, orderId: table.orderId, isPrintingKot });
     console.log('[TableCard] orderItems prop:', orderItems);
     console.log('[TableCard] table.items:', table.items);

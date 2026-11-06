@@ -2005,7 +2005,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               </button>
 
               {/* Shift/Transfer Table — hidden for TakeAway/Delivery (no physical table) and prepaid orders (BUG-270) */}
-              {canShiftTable && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid && (
+              {canShiftTable && !isEditLocked && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid && (
                 <button
                   onClick={() => setShowShiftModal(true)}
                   className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
@@ -2017,7 +2017,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
               )}
 
               {/* Merge Tables — hidden for TakeAway/Delivery (no physical table) and prepaid orders (BUG-270) */}
-              {canMergeOrder && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid && (
+              {canMergeOrder && !isEditLocked && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid && (
                 <button
                   onClick={() => setShowMergeModal(true)}
                   className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors"
