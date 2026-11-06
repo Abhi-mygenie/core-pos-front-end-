@@ -1,0 +1,87 @@
+{
+ "out": {
+  "t1": {
+   "total": "\u20b937,170",
+   "adv": "\u20b91,000",
+   "bal": "\u20b936,170"
+  },
+  "t4bill": {
+   "total": "\u20b937,170",
+   "paid": "\u20b91,000",
+   "bal": "\u20b936,170"
+  },
+  "inhouse": {
+   "bal": "\u20b935,670",
+   "title": null,
+   "row": "QA P3 Suite MG-69-A2B7E79A-DBBD-4207-8A18-3AFA03D73022 \u2022\u2022\u2022\u20220401 DirectPAY AT HOTEL 22 Sep 23 Sep 1 night \u00b7 1A r1 \u00b7 suite \u20b935,670 IN-HOUSE Bill Mark Clean Extend"
+  },
+  "extend_before": {
+   "total": "\u20b937,170",
+   "paid": "\u20b91,500",
+   "bal": "\u20b935,670",
+   "disabled": true
+  },
+  "t6_extend": {
+   "sh": 297,
+   "ch": 297
+  },
+  "extend_result": {
+   "err": null,
+   "conflict": null,
+   "total": "\u20b974,340",
+   "sgst": "\u20b95,670",
+   "cgst": "\u20b95,670",
+   "paid": "\u20b92,000",
+   "bal": "\u20b972,340",
+   "nights": [
+    "held rate",
+    "rate table"
+   ]
+  },
+  "after_extend_row": "QA P3 Suite MG-69-A2B7E79A-DBBD-4207-8A18-3AFA03D73022 \u00b7 SR \u25cf \u2022\u2022\u2022\u20220401 DirectPAY AT HOTEL 22 Sep 24 Sep 2 nights \u00b7 1A r1 \u00b7 suite \u20b972,340 IN-HOUSE Bill Mark Clea",
+  "shorten": {
+   "btn": "Shorten to 23 Sep",
+   "err": null,
+   "total": "\u20b937,170",
+   "bal": "\u20b935,170",
+   "nights": [
+    "held rate"
+   ]
+  },
+  "hk": [
+   "Mark Clean",
+   "Request HK",
+   "Mark Clean"
+  ],
+  "pos_balance": "\u20b935,170"
+ },
+ "caps": {
+  "booking": [
+   {
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/direct-reservation",
+    "ct": "application/json",
+    "body": "{\"guest\":{\"name\":\"QA P3 Suite\",\"phone\":\"9876500401\"},\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-23\",\"adults\":1,\"children\":0,\"rooms\":[{\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"rooms_count\":1}],\"advance\":{\"amount\":1000,\"method\":\"upi\",\"reference\":\"QAUTR3\"}}"
+   }
+  ],
+  "checkin": [
+   {
+    "url": "https://preprod.mygenie.online/api/v1/vendoremployee/pos/user-group-check-in",
+    "ct": "multipart/form-data; boundary=----WebKitFormBoundaryFMPCP5Nsyx2fWgow",
+    "body": "------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"booking_type\"\r\n\r\nDirect\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"booking_id\"\r\n\r\nMG-69-A2B7E79A-DBBD-4207-8A18-3AFA03D73022\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"aiosell_reservation_id\"\r\n\r\n237\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nQA P3 Suite\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"phone\"\r\n\r\n9876500401\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"email\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"room_id[0]\"\r\n\r\n8528\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"id_type\"\r\n\r\nAadhar card\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"total_adult\"\r\n\r\n1\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"total_children\"\r\n\r\n0\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"children_name\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"name2\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"id_type2\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"name3\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"id_type3\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"name4\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"id_type4\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"checkin_date\"\r\n\r\n2026-09-22\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"checkout_date\"\r\n\r\n2026-09-23\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"booking_details\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"booking_for\"\r\n\r\nIndividual\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"order_amount\"\r\n\r\n0\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"room_price\"\r\n\r\n0\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"advance_payment\"\r\n\r\n500\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"balance_payment\"\r\n\r\n0\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"payment_method\"\r\n\r\nCard\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"order_note\"\r\n\r\nCard ref QACARD3\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"gst_tax\"\r\n\r\n0\r\n------WebKitFormBoundaryFMPCP5Nsyx2fWgow\r\nContent-Disposition: form-data; name=\"firm_name\"\r\n\r\n\r\n------WebKitFormBoundaryFMPCP5Nsyx2f"
+   }
+  ],
+  "extend": [
+   {
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-extend-stay",
+    "ct": "application/json",
+    "body": "{\"order_id\":1232659,\"new_checkout_date\":\"2026-09-24\",\"reason\":\"qa extend\",\"payment\":{\"amount\":500,\"method\":\"cash\"}}"
+   },
+   {
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/pos/room-extend-stay",
+    "ct": "application/json",
+    "body": "{\"order_id\":1232659,\"new_checkout_date\":\"2026-09-23\",\"reason\":\"qa shorten\"}"
+   }
+  ]
+ },
+ "console_errors": []
+}

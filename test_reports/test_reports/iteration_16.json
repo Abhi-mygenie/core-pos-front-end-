@@ -1,0 +1,32 @@
+{
+  "summary": "Frontend-only test of BUG-643, BUG-642, CR-491 Wave 1 on preview URL (owner@palmhouse.com). BUG-643: SS3 X button, backdrop click and Esc all close SS3 while SS2 stays open; body pointer-events restored after all closed. BUT mouse-wheel scrolling inside SS3 is still blocked (wheel event defaultPrevented by Radix RemoveScroll of SS2) - only keyboard PageDown scrolls. BUG-642: Back button hidden on /dashboard, visible on /reports/audit, /credit, /settings, /menu, /day-closure; collapsed = icon only with title 'Go Back', expanded = 'Back' label; navigate(-1) works (settings->credit->dashboard). CR-491: demo routes (/settings-preview, /screen1-compare, /aggregator-preview, /printer-config-preview) render blank (auth + unauth); /aggregator/setup works; logos load locally (/mygenie-logo.svg on login, settings sidebar, restaurant-settings; /mygenie-logo.png in collapsed rail); Menu (MENU_ENDPOINTS v2/product/*), Day Closure settlement (v1/waiter/*), item-consumption/sales-audit reports load with 200s; API path diffs verified identical to previous inline strings. Login/logout and dashboard OK. Found pre-existing crash: /reports-module/profit-loss, /order-ledger, /item-sales throw 'ReferenceError: DATE_PRESETS is not defined' (not introduced by this change, but blocks P&L / REPORT_ENDPOINTS.PROFIT_LOSS verification).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CreditCustomerDetailSheet SS3 (OrderDetailSheet portaled to body)", "issue": "Mouse wheel / trackpad scroll inside SS3 does not scroll (scrollTop stays 0; wheel event.defaultPrevented=true). RCA: SS2 Radix Sheet (modal) uses react-remove-scroll which cancels wheel/touchmove for any node outside SheetContent; SS3 is portaled to document.body so it is 'outside'. pointer-events wrapper fixed clicks but not scroll. Touch scroll on tablets likely blocked too. Keyboard PageDown works.", "selector": "[data-testid='order-detail-sheet'] .overflow-y-auto", "priority": "HIGH"},
+      {"component": "PLReportPage.jsx / OrderLedgerMockup.jsx / ItemSalesLedgerMockup.jsx", "issue": "Pre-existing: page crashes with 'ReferenceError: DATE_PRESETS is not defined' (used at PLReportPage L234, OrderLedgerMockup L647, ItemSalesLedgerMockup L409 without import). App-level ErrorBoundary then stays in error state for every subsequent client-side route until full reload.", "selector": "/reports-module/profit-loss, /reports-module/order-ledger, /reports-module/item-sales", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Back button coverage", "issues": ["Pages without Sidebar (/aggregator/setup, /restaurant-settings) have no Back button - PWA users still have no in-app back there (restaurant-settings has no sidebar at all).", "/reports/audit shows both the page's own back arrow and the new sidebar back arrow side by side (duplicate controls)."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "BUG-643 scroll: make SS3 scrollable while SS2 open - e.g. set <Sheet modal={!billOrder}> or render OrderDetailSheet inside SheetContent (portal container = SheetContent node) so RemoveScroll treats it as inside; alternatively stop SS2 modal while SS3 open. Verify wheel + touch scroll.",
+    "Fix DATE_PRESETS missing import in PLReportPage.jsx, OrderLedgerMockup.jsx, ItemSalesLedgerMockup.jsx (import { DATE_PRESETS } from '@/utils/datePresets' - careful: these files define fmtISO locally) then re-verify P&L uses REPORT_ENDPOINTS.PROFIT_LOSS.",
+    "Optional: ErrorBoundary should reset on location change (key={location.pathname}) so one broken page does not brick all navigation.",
+    "Optional BUG-642: navigate(-1) has no fallback when there is no in-app history (PWA cold start on deep link) - fallback to navigate('/dashboard') when window.history.state?.idx === 0."
+  ],
+  "critical_code_review_comments": [
+    "Sidebar Back: hidden-path check is inline string comparisons; fine, but no history fallback.",
+    "CR-491 endpoint constants: all migrated paths byte-identical to removed inline strings (verified via git diff).",
+    "All .bak files removed (0 remaining); demo page imports/routes removed; no remaining references in src."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "88% (BUG-643 scroll fails; P&L page crash pre-existing)"},
+  "seed_data_creation": "None. No data modified.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login takes ~15s then /dashboard. Use client-side navigation (history.pushState + popstate) - full page.goto reloads through /loading. Credit: first customer 'Louise madam' has 236 View buttons [data-testid^=credit-txn-detail-btn-]. SS3 testids: order-detail-sheet, sheet-close, sheet-backdrop. To test SS3 scroll: mouse.wheel over '[data-testid=order-detail-sheet] .overflow-y-auto' and check scrollTop. Screenshot path f-strings get mangled by the tool - use string concatenation."
+}

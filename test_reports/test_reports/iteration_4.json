@@ -1,0 +1,39 @@
+{
+  "summary": "BUG-618 verification: null guards in getItemLinePrice() confirmed working. Preset discount (Family 50%), manual % discount, and flat ₹ discount all work without ErrorBoundary crash. No TypeErrors in console.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "bug_618_results": {
+    "code_review": {
+      "status": "CONFIRMED",
+      "details": "Null guards present at CollectPaymentPanel.jsx lines 259-267: (1) a? guard in addOns reduce, (2) if(!group) return s in variation reduce, (3) val? guard in inner values reduce"
+    },
+    "D0_cpp_open_no_crash": "PASS — CPP opened on T1 (dine-in order), no ErrorBoundary",
+    "DA_preset_discount_select": "PASS — Family — 50% selected, -₹10 preview shown, Apply button visible",
+    "DB_apply_no_crash": "PASS — Apply clicked, discount applied (₹20 → ₹10), no ErrorBoundary",
+    "DC_unapply_button_shown": "PASS — Unapply button appeared after Apply",
+    "DD_unapply_clears_discount": "PASS — Unapply clicked, discount cleared",
+    "R1_manual_pct_no_crash": "PASS — % type selected, no ErrorBoundary",
+    "R2_manual_pct_applied": "PASS — 10% discount applied, Unapply shown",
+    "R3_pct_amount_correct": "PASS — Discount (10%) -₹2 on ₹20 order = ₹18 grand total ✓",
+    "R4_flat_inr_no_crash": "PASS — ₹ type selected, no ErrorBoundary",
+    "R5_flat_inr_applied": "PASS — Flat ₹5 discount applied (₹20 → ₹15) ✓",
+    "typeerrors_in_console": "None",
+    "errorboundary_seen": false
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-618 PASSED. All discount flows (preset Family 50%, manual 10%, flat ₹5) work without crash on Mantri account (T1 dine-in). Null guards in getItemLinePrice confirmed in code. No ErrorBoundary seen at any step.",
+  "seed_data_creation": "None"
+}

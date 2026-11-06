@@ -1,0 +1,32 @@
+{
+  "summary": "CR-485 frontend verification of Daily Report (/reports/audit) column layout on Settled, All Orders and Cancelled tabs at 1920px and 1280px. I measured bounding boxes with JS. On Settled (45 rows, 41 with actions, at 1280 and 1920), the ₹ Amount span did not overlap any Change/Unpaid/Print pill in any row. No cell spilled into the next one, the action pills stayed inside the actions cell, and no amount was truncated (the longest was ₹1,859.02). Header cells line up with row cells (left offset and width within 1px) on all 3 tabs. Print is clickable: it shows the 'Bill request sent' toast and does not open the row drawer. Change/Unpaid are disabled on older dates with the tooltip 'Only available for today and yesterday', which is expected. I could not test them enabled because today and yesterday have 0 orders. The CR-485 fix works. Separately, I found a race condition when changing dates (it was there before this change and is not part of CR-485), plus a few minor layout issues.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "AllOrdersReportPage fetchOrders (date navigation)", "issue": "PRE-EXISTING race condition, outside CR-485. The order-logs-report call takes about 5-10s. If the user clicks the date picker prev/next arrow more than once, older responses arrive late and overwrite the data for the date now selected. I saw this in testing: the picker showed 'Oct 28, 2026' while the tab counts changed 70→66→52 as responses for other dates landed. The Print toast was for order #023021 while the top row shown was #022899. fetchOrders (L229) has no AbortController or 'latest request wins' guard on selectedDate.", "selector": "[data-testid='date-picker-prev-day']", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Daily Report - Settled/All Orders headers", "issues": ["Because the columns are narrower, the 'TABLE NO' (w-20) and 'PUNCHED BY' (w-24) header labels wrap onto 2 lines (37px tall vs 24px for the others).", "The PUNCHED BY sort icon sits right against the 'ACTIONED BY' label with no gap."]},
+      {"screen": "Daily Report - Cancelled tab at 1280px", "issues": ["The table is wider than its container (1168px content in a 1144px container), so the AMOUNT header and values are cut off at the right edge ('AMOUN', '₹28'). The user has to scroll sideways and there is no visible hint. The Cancelled column set (columnsWithoutPayment: actionedBy w-36, amount w-32, plus Reason and Status) was not tightened in CR-485."]},
+      {"screen": "Daily Report - Settled at 1920px", "issues": ["The table only uses about 60% of the card width, leaving a large empty area to the right of the action pills. Consider making columns flex/grow at wide viewports."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional (outside CR-485): add a stale-response guard in AllOrdersReportPage.fetchOrders, using a request counter or AbortController keyed on selectedDate, so late responses for earlier dates cannot overwrite the current date's data.",
+    "Minor: tighten or rebalance columnsWithoutPayment (Cancelled tab) so AMOUNT is not clipped at 1280px.",
+    "Minor: add whitespace-nowrap to header labels, or widen the TABLE NO/PUNCHED BY columns slightly, so the headers stay on one line."
+  ],
+  "critical_code_review_comments": [
+    "OrderTable.jsx: the CR-485 changes are correct. overflow-hidden on both header and row cells, plus truncate on the amount span, stops amounts from spilling into neighbouring cells.",
+    "AllOrdersReportPage.jsx is 1139 lines; consider splitting it.",
+    "fetchOrders has no cancellation for in-flight requests (see the HIGH ui_bug)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% of CR-485 checks passed"},
+  "seed_data_creation": "None. The only side effect: one Print Bill request was sent for an old order (#023021, Oct 28 data).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login owner@palmhouse.com / Qplazm@10, which lands on /dashboard after about 18s. /reports/audit: today (Nov 5 2026) through Oct 29 return 0 orders; Nov 2 and Oct 28 have data. Wait at least 5s after each date-picker-prev-day click, because of the race condition. Settled = tab-paid. Action testids: row-action-change-method-{id}, row-action-mark-unpaid-{id}, row-action-print-bill-{id}. Change/Unpaid are only enabled for today and yesterday."
+}

@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only test of CR-488, the Print Bill button in the OrderDetailSheet (SS3) header, plus quick regressions for BUG-643 and BUG-642. Logged in as owner@palmhouse.com on the 29a6b792 preview URL. Path: Credit page, Louise madam, View / Manage, View on the first order (Order 000069). The Print Bill button was visible, sat left of the X (x=1758 vs x=1864), had an orange outline (border-orange-300, text-orange-700), a printer icon and the text 'Print Bill'. Clicking it changed the button to a spinner with 'Printing...' and disabled it. The network showed POST get-single-order-new and then POST /api/v1/vendoremployee/order-temp-store, which returned 200 'Order stored in temp table' (print_type=bill, payment_amount 23051, printer_agent length 1). The button then went back to 'Print Bill' and enabled. Audit report (/reports/audit, Nov 1-3 2026): the button showed on an All Orders order (023158), was hidden on a Cancelled order (023076) and hidden on a Merged order (023180). Regressions passed: SS3 closes with X (SS2 stays open), with Esc and with a backdrop click. The sidebar Back button is hidden on /dashboard and shown on /reports/audit.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional UX: handlePrintBill gives the user no success or failure feedback (no toast). It also returns silently when the SINGLE_ORDER_NEW response is empty or rawOrderDetails is empty, so the spinner just stops. Consider showing a toast for success, failure and 'nothing to print', the same way the Orders Beta reprint does if it has one."
+  ],
+  "critical_code_review_comments": [
+    "OrderDetailSheet.jsx handlePrintBill: errors are only sent to console.error, so the user never sees a failure (non-blocking).",
+    "The button is hidden while details load and when details are null, which is correct. In DATA MODE (audit), details=order, so the button depends on order.isCancelled and order.isMerged or tabId==='merged'. Verified working.",
+    "The handler fetches SINGLE_ORDER_NEW again even though FETCH MODE already loaded the details. This is one extra API call per print. Acceptable because it matches the Orders Beta reprint logic."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100%"},
+  "seed_data_creation": "None. One real bill print request (order-temp-store) was sent for order 287784 / 000069 as the test request asked.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Use the preview URL 29a6b792-...; the login testids are login-email, login-password and login-button. After login, move around with client-side navigation (history.pushState plus a popstate event). The audit page defaults to Today, which can be empty; click [data-testid=date-picker-prev-day] to go back a few days. Nov 1-3 2026 have All, Cancelled and Merged orders. Tab testids are tab-all, tab-cancelled and tab-merged; rows are order-row-{id}. SS3 testids: order-detail-sheet, ss3-print-bill-btn, sheet-close, sheet-backdrop."
+}

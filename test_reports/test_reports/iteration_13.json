@@ -1,0 +1,35 @@
+{
+  "summary": "Frontend-only retest of the 5 fixes from iteration_12 plus 4 regressions, run with Playwright at 1920x1080 on the preview URL against preprod. All 5 fixes pass and all 4 regressions pass. FIX1: CartPanel phone now reaches the order. Name typed, then phone 9876543210, then clicking an item gave a place-order payload with cust_mobile '9876543210' and cust_country_code '+91' (request intercepted and aborted). FIX2: after Singapore +65, 81234567 and a name/outside blur, the picker stays 🇸🇬+65 even after adding an item. The payload had cust_mobile '81234567' and cust_country_code '+65'. FIX3: on CPP Credit with UK +44 and 3 digits, the message is 'Enter at least 6 digits (3 entered)' and Pay is disabled. With 7911123456 there is no message and Pay is ENABLED. With +91 and 6 digits the message is 'Enter 10-digit phone number (6/10)' and Pay is disabled. FIX4: UK shows 🇬🇧+44, US 🇺🇸+1, Russia 🇷🇺+7 and Australia 🇦🇺+61 (CartPanel, CPP and CustomerModal). FIX5: the CartPanel dropdown is right-aligned (x 1652 to 1908, inside 1920) and no ancestor scrolls horizontally. The CheckInPage dropdown is also right-aligned (1619 to 1875) with no horizontal scroll. Regressions: the CartPanel compact picker is 40px, #f9fafb, with shadow, no chevron and no hint. CheckInPage walk-in uses the compact picker and the 'Phone number' placeholder is not clipped. CustomerModal uses the full picker with chevron, and the hint switches between '10 digits, starts 6-9' and '6-15 digits'. A real order placed on C-05 (+91) returned 200 with no errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "PhoneInputField dropdown highlight", "issue": "Row highlight still compares callingCode. When UK is selected, GG, IM, JE and GB are all highlighted. Selecting Guernsey/Jersey/Isle of Man (or American Samoa, Canada and others under +1) displays the primary flag (🇬🇧 or 🇺🇸), because the selection is derived from the calling code and not stored as an ISO code.", "selector": "[data-testid$='-country-dropdown'] .bg-orange-50", "priority": "LOW"},
+      {"component": "CustomerModal placeholder", "issue": "Still clipped: '10-digit mobile' renders as '10-digit mobi' (input is 104px wide). Carried over from iteration_12.", "selector": "[data-testid='customer-phone-input']", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "CPP TAB intl CRM lookup/create", "issue": "Not fixed, carried over. The CollectPaymentPanel L576-590 effect runs on every keystroke once the length is 6 or more for intl numbers. Typing UK 7911123456 fired POST /pos/customer-lookup 5 times (791112, 7911123, ... 7911123456). If a lookup returns not-found and a name is entered, createCustomer runs for each partial number, and its payload does not include countryCode. This can create duplicate or junk CRM customers. In addition, tabContact (L1200) still omits tabCountryCode.", "affected_selectors": ["[data-testid='tab-customer-phone-input']"]}
+    ],
+    "design_issues": [
+      {"screen": "CartPanel", "issues": ["Name input wrapper is 42px tall vs the phone picker at 40px (minor, carried over)."]}
+    ]
+  },
+  "critical_code_review_comments": [
+    "CPP L576-590: debounce the intl lookup or trigger it on blur, and pass countryCode to createCustomer at L584.",
+    "CPP L1200: add countryCode: tabCountryCode to tabContact.",
+    "PhoneInputField: store the selected ISO code (e.g. 'GG') so that secondary countries sharing a calling code show the right flag and only one row is highlighted. PRIMARY_COUNTRY_MAP is a reasonable interim fix.",
+    "Switching from an intl code back to +91 still does not truncate an existing phone longer than 10 digits (not re-tested; code unchanged)."
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "MEDIUM: Debounce or blur-trigger the CPP intl CRM lookup/create (L576-590), and include countryCode in createCustomer and tabContact.",
+    "LOW: Highlight only the selected ISO country and support secondary countries for shared calling codes.",
+    "LOW: Fix the clipped CustomerModal placeholder."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100% of the requested fix and regression checks (9/9). 1 carried-over MEDIUM issue (CPP CRM per-keystroke lookup) and 2 LOW issues remain."},
+  "test_credentials": "owner@palmhouse.com / Qplazm@10",
+  "seed_data_creation": "Real order on preprod: C-05, 1x Toast, ₹53, cust 'QA Regress' / 9876501111 (+91). Every CartPanel place-order call apart from that one was aborted. No CPP payment was made (Pay button never clicked). NOTE: in the first unblocked CPP Credit run (UK +44 7911123456, name 'Intl Test'), CRM lookup ran for partial numbers. If preprod CRM had no match, createCustomer may have created 'Intl Test' customers with phones 791112 to 7911123456. Please check the CRM and clean up.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login lands on /dashboard after about 5s. Table cards: C-03 = table-card-4018 (Available), C-05 = table-card-4020 (now has the test order), C-1 = table-card-4769 (₹700 bill, use for CPP: collect-bill-btn, then payment-method-section button 'Credit'). Add an item via the menu-item-* filtered by exact text 'Toast' (the first item opens a customize modal). Intercept place-order with a regex route on 'place-order' to inspect the multipart payload. Block CRM writes with a route on 'mygenie-crm-app' to avoid junk customers."
+}

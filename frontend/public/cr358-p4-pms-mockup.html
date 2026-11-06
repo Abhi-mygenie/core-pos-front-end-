@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-358-P4 — PMS Tape Chart + Room Status Board (Real Evidence)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+
+/* ─── DESIGN TOKENS ─────────────────────── */
+/* Brand Orange: #F26B33 | Action Green: #329937 | Danger: #EF4444 | Warning: #F59E0B */
+/* Text: #1A1A1A / #888 | Border: #E5E5E5 | BG: #F7F7F7 | Card: #FFF */
+/* FORBIDDEN: #22C55E, #3B82F6, #2563EB, slate-* */
+
+/* ─── SIDEBAR ────────────────────────────── */
+.sb{width:220px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow:hidden}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;color:#555;font-size:13px;font-weight:500;border-left:3px solid transparent;cursor:pointer;transition:background .12s;text-decoration:none}
+.nav-item:hover{background:#F7F7F7;color:#1A1A1A}
+.nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.07);color:#329937}
+.nav-sub{display:flex;align-items:center;padding:8px 16px 8px 38px;font-size:12px;color:#888;cursor:pointer;text-decoration:none;transition:background .12s}
+.nav-sub:hover{background:#F7F7F7;color:#1A1A1A}
+.nav-sub.active{color:#329937;font-weight:600;background:rgba(50,153,55,.04)}
+
+/* ─── TABS ───────────────────────────────── */
+.tab-btn{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;font-family:'Inter',sans-serif;color:#888;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.tab-btn.active{color:#1A1A1A;border-bottom-color:#F26B33;font-weight:600}
+.tab-pane{display:none}.tab-pane.active{display:flex;flex-direction:column;flex:1;overflow:hidden}
+
+/* ─── TAPE CHART ────────────────────────── */
+.tc-wrap{overflow:auto;flex:1}
+.tc-room-col{width:160px;min-width:160px;position:sticky;left:0;background:#fff;z-index:10;border-right:1px solid #E5E5E5}
+.tc-day{width:108px;min-width:108px}
+.tc-row{height:52px;border-bottom:1px solid #F0F0F0}
+.type-hdr{background:#F7F7F7;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#777;padding:6px 16px;border-bottom:1px solid #E5E5E5}
+/* Reservation blocks — position:absolute inside a relative cell */
+.res-block{position:absolute;top:8px;height:36px;border-radius:6px;border-left-width:4px;border-left-style:solid;border:1px solid #E5E5E5;border-left-width:4px;display:flex;align-items:center;padding:0 9px;gap:6px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;overflow:hidden;transition:box-shadow .12s,transform .12s;z-index:5}
+.res-block:hover{box-shadow:0 3px 10px rgba(0,0,0,.1);transform:translateY(-1px);z-index:15}
+.res-block.in-house{background:rgba(50,153,55,.07);border-color:rgba(50,153,55,.3)}
+.res-block.departed{background:#FAFAFA;opacity:.65}
+.res-block.pending{background:#fff}
+.res-block.unassigned{background:#FAFAFA;border-style:dashed;opacity:.9}
+
+/* ─── ROOM STATUS BOARD ─────────────────── */
+.room-card{background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:0;position:relative;overflow:visible;transition:box-shadow .15s,border-color .15s;cursor:default}
+.room-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.room-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:10px 0 0 10px}
+.rc-occupied::before{background:#F26B33}
+.rc-available::before{background:#329937}
+.rc-hk::before{background:#F59E0B}
+.rc-ooo::before{background:#EF4444}
+.rc-booked::before{background:#6366F1}
+.status-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.02em;gap:4px}
+.sb-occupied{background:rgba(242,107,51,.1);color:#C4501A}
+.sb-available{background:rgba(50,153,55,.1);color:#217A28}
+.sb-hk{background:rgba(245,158,11,.12);color:#92550A}
+.sb-ooo{background:#FEE2E2;color:#B91C1C}
+.sb-booked{background:rgba(99,102,241,.1);color:#4338CA}
+.action-btn{height:28px;padding:0 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;border:1px solid #E5E5E5;background:#fff;color:#555;transition:background .12s,border-color .12s;white-space:nowrap}
+.action-btn:hover:not(:disabled){background:#F7F7F7}
+.action-btn:disabled{opacity:.45;cursor:not-allowed}
+.action-btn.green{background:#329937;color:#fff;border-color:#329937}.action-btn.green:hover{background:#2a7e2f}
+.action-btn.orange{background:#F26B33;color:#fff;border-color:#F26B33}.action-btn.orange:hover{background:#d9571e}
+.action-btn.amber{background:#FFF8EC;color:#966800;border-color:rgba(245,158,11,.3)}.action-btn.amber:hover{background:#FFF0D0}
+.action-btn.danger-outline{color:#EF4444;border-color:rgba(239,68,68,.3)}.action-btn.danger-outline:hover{background:#FEF2F2}
+.action-btn.phase5{color:#999;border-color:#E5E5E5;background:#FAFAFA;cursor:not-allowed;font-style:italic}
+
+/* ─── STATUS DROPDOWN ───────────────────── */
+.status-dd{position:absolute;top:calc(100% + 6px);right:0;left:0;background:#fff;border:1px solid #E5E5E5;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;overflow:hidden;display:none;min-width:200px}
+.status-dd.open{display:block}
+.dd-option{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .1s}
+.dd-option:hover{background:#F7F7F7}
+.dd-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ─── EVIDENCE CALLOUT ──────────────────── */
+.evidence-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(50,153,55,.08);color:#217A28;border:1px solid rgba(50,153,55,.2)}
+.api-box{font-family:'Courier New',monospace;font-size:11px;background:#1A1A1A;color:#E8E8E8;padding:12px 16px;border-radius:8px;overflow-x:auto;white-space:pre;line-height:1.6}
+.api-key{color:#7DD3FC}.api-str{color:#86EFAC}.api-num{color:#FCA5A5}.api-bool{color:#FCD34D}
+.gap-closed{display:inline-flex;align-items:center;gap:4px;font-size:10px;background:rgba(50,153,55,.08);color:#217A28;border:1px solid rgba(50,153,55,.2);border-radius:10px;padding:1px 8px;font-weight:600}
+
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- ═══ SIDEBAR ══════════════════════════════════════════════════ -->
+<aside class="sb">
+  <div style="padding:14px 16px 12px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;gap:10px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:32px;width:32px;object-fit:contain">
+    <div>
+      <div style="font-size:13px;font-weight:700;font-family:'Poppins',sans-serif;color:#1A1A1A">MyGenie</div>
+      <div style="font-size:10px;color:#888">The Palm House · <span style="color:#329937;font-weight:600">PMS</span></div>
+    </div>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:6px 0">
+    <a class="nav-item" href="#"><i data-lucide="layout-grid" style="width:17px;height:17px;flex-shrink:0"></i>Dashboard</a>
+    <a class="nav-item" href="#"><i data-lucide="receipt" style="width:17px;height:17px;flex-shrink:0"></i>Day Closure</a>
+    <a class="nav-item active" href="#"><i data-lucide="bed-double" style="width:17px;height:17px;flex-shrink:0"></i><span style="flex:1">Rooms</span><i data-lucide="chevron-down" style="width:14px;height:14px;color:#329937"></i></a>
+    <div style="border-left:1px solid #E5E5E5;margin-left:28px">
+      <a class="nav-sub" href="pms/front-desk.html">Front Desk</a>
+      <a class="nav-sub" href="pms/arrivals.html">Arrivals</a>
+      <a class="nav-sub" href="pms/departures.html">Departures</a>
+      <a class="nav-sub" href="pms/in-house.html">In-House Guests</a>
+      <a class="nav-sub active" href="#" onclick="return false">Reservations</a>
+      <a class="nav-sub" href="#">Room Status</a>
+      <a class="nav-sub" href="pms/channel-manager-v2.html">Channel Manager</a>
+    </div>
+    <a class="nav-item" href="#"><i data-lucide="bar-chart-3" style="width:17px;height:17px;flex-shrink:0"></i>Reports</a>
+    <a class="nav-item" href="#"><i data-lucide="settings" style="width:17px;height:17px;flex-shrink:0"></i>Settings</a>
+  </nav>
+  <div style="padding:12px 16px;border-top:1px solid #E5E5E5">
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+      <div style="width:30px;height:30px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div>
+      <div><div style="font-size:12px;font-weight:600">Owner</div><div style="font-size:10px;color:#888">thegoankitchen · #69</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════ -->
+<main style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+
+  <!-- Header -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:0 24px;display:flex;align-items:stretch;gap:0;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0">
+      <div>
+        <h1 style="font-size:17px;font-weight:700;font-family:'Poppins',sans-serif">PMS — Phase 4</h1>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+          <span class="evidence-pill"><i data-lucide="check-circle" style="width:11px;height:11px"></i>Real preprod data · 2026-09-04</span>
+          <span style="font-size:10px;color:#888">restaurant_id: 69 · sandbox-pms</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-left:24px;display:flex;align-items:stretch;gap:0">
+      <button class="tab-btn active" onclick="switchTab('s2',this)">S2 — Tape Chart</button>
+      <button class="tab-btn" onclick="switchTab('s7',this)">S7 — Room Status Board</button>
+      <button class="tab-btn" onclick="switchTab('api',this)">API Contract</button>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <a href="pms/new-booking.html" style="display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;background:#F26B33;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none"><i data-lucide="plus" style="width:13px;height:13px"></i>New Booking</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 1 — S2 TAPE CHART
+  ════════════════════════════════════════════════════════════ -->
+  <div id="tab-s2" class="tab-pane active">
+    <!-- Toolbar -->
+    <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div style="display:flex;border:1px solid #E5E5E5;border-radius:8px;overflow:hidden">
+        <button style="padding:5px 12px;font-size:12px;background:#fff;border:none;cursor:pointer;color:#666;font-family:'Inter',sans-serif">Month</button>
+        <button style="padding:5px 12px;font-size:12px;background:#1A1A1A;border:none;cursor:pointer;color:#fff;font-family:'Inter',sans-serif;font-weight:600">7d</button>
+        <button style="padding:5px 12px;font-size:12px;background:#fff;border:none;cursor:pointer;color:#666;font-family:'Inter',sans-serif">14d</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid #E5E5E5;border-radius:8px">
+        <button style="background:none;border:none;cursor:pointer;color:#555;display:flex"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+        <span style="font-size:12px;font-weight:600">2 Sep – 8 Sep 2026</span>
+        <button style="background:none;border:none;cursor:pointer;color:#555;display:flex"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+        <span style="font-size:10px;font-weight:700;background:#F26B33;color:#fff;padding:1px 6px;border-radius:4px;margin-left:2px">TODAY</span>
+      </div>
+      <!-- Evidence badge -->
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(50,153,55,.06);border:1px solid rgba(50,153,55,.2);border-radius:8px">
+        <i data-lucide="database" style="width:12px;height:12px;color:#329937"></i>
+        <span style="font-size:11px;color:#329937;font-weight:600">15 reservations · probe_10_lr.json</span>
+      </div>
+      <!-- Legend -->
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#666">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:16px;height:8px;border-radius:2px;background:rgba(50,153,55,.07);border:1px solid rgba(50,153,55,.3);border-left:3px solid #329937"></div>In-house</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:16px;height:8px;border-radius:2px;background:#fff;border:1px solid #E5E5E5;border-left:3px solid #F26B33"></div>Pending</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:16px;height:8px;border-radius:2px;background:#FAFAFA;border:1px solid #E5E5E5;border-left:3px solid #888;opacity:.65"></div>Departed</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:16px;height:8px;border-radius:2px;border:1.5px dashed #CCC;border-left:3px solid #6366F1"></div>Unassigned</div>
+      </div>
+    </div>
+
+    <!-- Tape chart table -->
+    <div class="tc-wrap">
+      <table style="border-collapse:collapse;table-layout:fixed;width:916px">
+        <colgroup>
+          <col style="width:160px"><!-- room col -->
+          <col style="width:108px"><!-- Sep 2 -->
+          <col style="width:108px"><!-- Sep 3 -->
+          <col style="width:108px"><!-- Sep 4 TODAY -->
+          <col style="width:108px"><!-- Sep 5 -->
+          <col style="width:108px"><!-- Sep 6 -->
+          <col style="width:108px"><!-- Sep 7 -->
+          <col style="width:108px"><!-- Sep 8 -->
+        </colgroup>
+        <!-- ── HEADER ROW ── -->
+        <thead style="position:sticky;top:0;z-index:20">
+          <tr>
+            <th class="tc-room-col" style="padding:10px 16px;text-align:left;border-bottom:1px solid #E5E5E5;background:#fff;font-weight:600;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.06em">Room</th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">MON</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">2</div>
+            </th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">TUE</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">3</div>
+            </th>
+            <th style="background:rgba(242,107,51,.04);border-bottom:2px solid #F26B33;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:700;color:#F26B33">WED</div>
+              <div style="font-size:16px;font-weight:700;color:#F26B33;line-height:1.2">4</div>
+              <div style="font-size:9px;font-weight:700;color:#F26B33;letter-spacing:.04em">TODAY</div>
+            </th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">THU</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">5</div>
+            </th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">FRI</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">6</div>
+            </th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;border-right:1px solid #F0F0F0;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">SAT</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">7</div>
+            </th>
+            <th style="background:#fff;border-bottom:1px solid #E5E5E5;text-align:center;padding:8px 4px">
+              <div style="font-size:10px;font-weight:600;color:#888">SUN</div>
+              <div style="font-size:16px;font-weight:700;color:#1A1A1A;line-height:1.2">8</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- ── UNASSIGNED (G1 — no restaurant_table_id) ── -->
+          <tr><td colspan="8" class="type-hdr">Unassigned Bookings (2) — <span style="font-weight:500;color:#F59E0B">OD-P4-05: "Assign Room" → disabled · Phase 5 tooltip</span></td></tr>
+
+          <!-- BDC7497606 booking.com Sep 7-9 unassigned -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">
+                <img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px">
+                <span style="font-size:12px;color:#666">Suite (no room)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px">
+                <i data-lucide="alert-circle" style="width:11px;height:11px;color:#F59E0B"></i>
+                <button class="action-btn phase5" title="Coming in Phase 5 — no assignment API yet" style="height:22px;font-size:10px;padding:0 8px">Assign Room</button>
+              </div>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0" colspan="4"></td>
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0;position:relative" colspan="3">
+              <!-- BDC7497606: Sep 7-9, unassigned, booking.com -->
+              <div class="res-block unassigned" style="border-left-color:#003580;left:2px;width:200px" title="BDC7497606 · booking.com · Sep 7-9">
+                <img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:12px;height:12px;border-radius:2px;flex-shrink:0">
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis">Test Guest · 2N</span>
+                <span style="font-size:9px;color:#888;flex-shrink:0">BDC7497606</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- MG-69-8859 Direct Sep 7-9 unassigned executive -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px">
+                <i data-lucide="phone" style="width:12px;height:12px;color:#F26B33"></i>
+                <span style="font-size:12px;color:#666">Executive (no room)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px">
+                <i data-lucide="alert-circle" style="width:11px;height:11px;color:#F59E0B"></i>
+                <button class="action-btn phase5" title="Coming in Phase 5 — no assignment API yet" style="height:22px;font-size:10px;padding:0 8px">Assign Room</button>
+              </div>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0" colspan="4"></td>
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0;position:relative" colspan="3">
+              <!-- MG-69-8859 pending Sep 7-9 Direct, no room -->
+              <div class="res-block pending" style="border-left-color:#F26B33;left:2px;width:200px;border-style:dashed" title="MG-69-8859D21E · Direct · Sep 7-9">
+                <i data-lucide="phone" style="width:11px;height:11px;color:#F26B33;flex-shrink:0"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis">Direct · 2N</span>
+                <span style="font-size:9px;color:#888;flex-shrink:0">MG-69-8859</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── EXECUTIVE ROOMS ── -->
+          <tr><td colspan="8" class="type-hdr">Executive — r1, r2 &nbsp;<span style="font-weight:500;color:#999">aiosell_room_code: "executive"</span></td></tr>
+
+          <!-- r2 (8526) executive — occupied today (in_house) + departed yesterday -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="font-size:14px;font-weight:700;line-height:1">r2</div>
+              <div style="font-size:10px;color:#888;margin-top:1px">Executive · id 8526</div>
+              <span class="status-badge sb-occupied" style="margin-top:3px">Occupied</span>
+            </td>
+            <!-- Sep 2 empty -->
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <!-- Sep 3 — r2 departed (San1ce92d, Direct, Sep3-4) -->
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0;position:relative">
+              <div class="res-block departed" style="border-left-color:#888;left:2px;width:100px" title="San1ce92d141430 · Direct · Sep3-4 · checked_out">
+                <i data-lucide="phone" style="width:10px;height:10px;color:#888;flex-shrink:0"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;font-size:10px">Direct</span>
+              </div>
+            </td>
+            <!-- Sep 4 TODAY — r2 in_house (San110f43, Direct, Sep4-5) -->
+            <td style="background:rgba(50,153,55,.03);border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0;position:relative">
+              <div class="res-block in-house" style="border-left-color:#329937;left:2px;width:100px" onclick="showPopover('r2-in-house')" title="San110f43523659 · Direct · Sep4-5 · checked_in">
+                <i data-lucide="phone" style="width:10px;height:10px;color:#329937;flex-shrink:0"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis">In</span>
+                <span style="font-size:9px;font-weight:700;color:#329937">✓</span>
+              </div>
+            </td>
+            <!-- Sep 5–8 empty -->
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0"></td>
+          </tr>
+
+          <!-- r1 (8528) executive — hk today, departed yesterday (WalkIn), booked Sep 7-9 -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="font-size:14px;font-weight:700;line-height:1">r1</div>
+              <div style="font-size:10px;color:#888;margin-top:1px">Executive · id 8528</div>
+              <span class="status-badge sb-hk" style="margin-top:3px"><i data-lucide="brush" style="width:9px;height:9px"></i>HK</span>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <!-- Sep 4 — r1 WalkIn departed (MG-69-BD4A, Sep4-5) -->
+            <td style="background:rgba(50,153,55,.02);border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0;position:relative">
+              <div class="res-block departed" style="border-left-color:#329937;left:2px;width:100px" title="MG-69-BD4A · Walk-in · Sep4-5 · checked_out">
+                <i data-lucide="user-plus" style="width:10px;height:10px;color:#329937;flex-shrink:0"></i>
+                <span style="font-size:10px;color:#888">Walk-in</span>
+              </div>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <!-- Sep 7 — r1 pending (MG-69-69BC checked_out Sep7-9) -->
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0;position:relative" colspan="2">
+              <div class="res-block pending" style="border-left-color:#F26B33;left:2px;width:196px" title="MG-69-69BCC4D3 · Direct · Sep7-9 · checked_out">
+                <i data-lucide="phone" style="width:10px;height:10px;color:#F26B33;flex-shrink:0"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis">Direct</span>
+                <span style="font-size:9px;color:#888">MG-69-69BC</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── SUITE ROOMS ── -->
+          <tr><td colspan="8" class="type-hdr">Suite — r3, r4, r5 &nbsp;<span style="font-weight:500;color:#999">aiosell_room_code: "suite"</span></td></tr>
+
+          <!-- r3 (8524) suite — occupied today (BDC3590615 in_house Sep10-12) + departed Sep3-4 -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="font-size:14px;font-weight:700;line-height:1">r3</div>
+              <div style="font-size:10px;color:#888;margin-top:1px">Suite · id 8524</div>
+              <span class="status-badge sb-occupied" style="margin-top:3px">Occupied</span>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <!-- Sep 3 — r3 departed (MG-69-A26B Sep3-4) -->
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0;position:relative">
+              <div class="res-block departed" style="border-left-color:#888;left:2px;width:100px" title="MG-69-A26BDA2F · Direct · Sep3-4 · checked_out">
+                <i data-lucide="phone" style="width:10px;height:10px;color:#888;flex-shrink:0"></i>
+                <span style="font-size:10px;color:#888">Direct</span>
+              </div>
+            </td>
+            <!-- Sep 4 today empty (BDC3590615 in_house starts Sep10 — not in this window) -->
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <!-- Sep 5-8 — r3 pending MG-69-24CCA Sep5-8 -->
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0;position:relative;border-right:1px solid #F0F0F0">
+              <div class="res-block pending" style="border-left-color:#F26B33;left:2px;width:298px" title="MG-69-24CCA187 · Direct · Sep5-8 · pending">
+                <i data-lucide="phone" style="width:10px;height:10px;color:#F26B33;flex-shrink:0"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis">Direct · 3N</span>
+                <span style="font-size:9px;color:#888;flex-shrink:0">MG-69-24CC</span>
+              </div>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0"></td>
+            <td style="background:#FAFAFA;border-bottom:1px solid #F0F0F0"></td>
+          </tr>
+
+          <!-- r4 (8525) suite — booked, no stays in this window -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="font-size:14px;font-weight:700;line-height:1">r4</div>
+              <div style="font-size:10px;color:#888;margin-top:1px">Suite · id 8525</div>
+              <span class="status-badge sb-booked" style="margin-top:3px">Booked</span>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0" colspan="7"></td>
+          </tr>
+
+          <!-- r5 (8527) suite — booked, BDC6263973 Sep10-12 outside window -->
+          <tr class="tc-row">
+            <td class="tc-room-col" style="padding:8px 16px">
+              <div style="font-size:14px;font-weight:700;line-height:1">r5</div>
+              <div style="font-size:10px;color:#888;margin-top:1px">Suite · id 8527</div>
+              <span class="status-badge sb-booked" style="margin-top:3px">Booked</span>
+            </td>
+            <td style="background:#FAFAFA;border-right:1px solid #F0F0F0;border-bottom:1px solid #F0F0F0" colspan="7">
+              <div style="display:flex;align-items:center;height:100%;padding-left:8px">
+                <span style="font-size:10px;color:#bbb;font-style:italic">Next booking: Sep 10-12 (outside window)</span>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <!-- Evidence note for tape chart -->
+      <div style="padding:12px 24px 16px;background:#fff;border-top:1px solid #E5E5E5;margin-top:0">
+        <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:8px 12px">
+            <span class="gap-closed">G4 ✓</span>
+            <span style="font-size:11px;color:#555"><strong>Join key verified:</strong> <code style="background:#F0F0F0;padding:1px 5px;border-radius:4px;font-size:10px">reservations[].rooms[].restaurant_table_id ↔ localRooms[].id</code> (NOT roomLines[])</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:8px 12px">
+            <span class="gap-closed">G6 ✓</span>
+            <span style="font-size:11px;color:#555"><strong>OD-P4-05:</strong> "Assign Room" button = disabled + "Phase 5" tooltip (no API exists)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:8px 12px">
+            <span style="font-size:11px;color:#555"><strong>15 reservations</strong> in 90-day window · all 5 rooms RM-type confirmed · no non-RM leakage</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 2 — S7 ROOM STATUS BOARD
+  ════════════════════════════════════════════════════════════ -->
+  <div id="tab-s7" class="tab-pane">
+    <!-- Toolbar -->
+    <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:10px 24px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <!-- Filter chips -->
+      <button class="action-btn" style="background:#1A1A1A;color:#fff;border-color:#1A1A1A" onclick="filterBoard('all',this)">All 5</button>
+      <button class="action-btn" onclick="filterBoard('occupied',this)">Occupied <span style="font-weight:700;color:#F26B33">2</span></button>
+      <button class="action-btn" onclick="filterBoard('booked',this)">Booked <span style="font-weight:700;color:#6366F1">2</span></button>
+      <button class="action-btn amber" onclick="filterBoard('hk',this)"><i data-lucide="brush" style="width:12px;height:12px"></i>HK <span style="font-weight:700">1</span></button>
+      <button class="action-btn" style="color:#EF4444;border-color:rgba(239,68,68,.25)" onclick="filterBoard('ooo',this)">OOO <span style="font-weight:700">0</span></button>
+      <button class="action-btn" onclick="filterBoard('available',this)">Available <span style="font-weight:700;color:#329937">0</span></button>
+
+      <div style="height:20px;width:1px;background:#E5E5E5;margin:0 4px"></div>
+
+      <!-- Bulk Mark Clean (1 HK room) -->
+      <button class="action-btn amber" onclick="bulkMarkClean()" id="bulk-clean-btn">
+        <i data-lucide="sparkles" style="width:12px;height:12px"></i>Mark All Clean (1 HK)
+      </button>
+
+      <!-- auto_hk badge — real probe value -->
+      <div style="display:flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(50,153,55,.06);border:1px solid rgba(50,153,55,.2);border-radius:8px;font-size:11px;color:#329937;font-weight:600">
+        <i data-lucide="zap" style="width:11px;height:11px"></i>
+        auto_hk_on_rm_checkout: true
+      </div>
+
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(50,153,55,.06);border:1px solid rgba(50,153,55,.2);border-radius:8px">
+        <i data-lucide="database" style="width:12px;height:12px;color:#329937"></i>
+        <span style="font-size:11px;color:#329937;font-weight:600">GET /aiosell/room-status-board · probe_01</span>
+      </div>
+    </div>
+
+    <!-- Room cards grid -->
+    <div style="flex:1;overflow-y:auto;padding:20px 24px">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px" id="room-grid">
+
+        <!-- r3 (8524) — OCCUPIED · manual_status: null -->
+        <div class="room-card rc-occupied" data-status="occupied" id="card-r3">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1;font-family:'Poppins',sans-serif">r3</div>
+              <div style="font-size:10px;color:#888;margin-top:2px">Suite · id 8524</div>
+            </div>
+            <span class="status-badge sb-occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">Test1 Guest1</div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">booking.com · BDC3590615</div>
+          <div style="font-size:11px;color:#888;margin-bottom:10px">Sep 10 – Sep 12</div>
+          <!-- OD-P4-03: occupied → disable HK/OOO buttons + tooltip -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="action-btn" disabled title="Cannot change while occupied (OD-P4-03 · 422: Cannot set HK/OOO while the room is occupied.)">
+              <i data-lucide="brush" style="width:11px;height:11px"></i>HK
+            </button>
+            <button class="action-btn" disabled title="Cannot change while occupied (OD-P4-03 · 422: Cannot set HK/OOO while the room is occupied.)">
+              <i data-lucide="alert-triangle" style="width:11px;height:11px"></i>OOO
+            </button>
+            <!-- OD-P4-04: occupied → View Folio -->
+            <button class="action-btn orange" onclick="window.open('../reports/room-orders','_blank')" title="OD-P4-04: occupied → /reports/room-orders">
+              <i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio
+            </button>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:#FFF8EC;border-radius:6px;font-size:10px;color:#888;display:flex;align-items:center;gap:4px">
+            <i data-lucide="info" style="width:11px;height:11px;color:#F59E0B;flex-shrink:0"></i>
+            <span>manual_status: null · display driven by booking</span>
+          </div>
+        </div>
+
+        <!-- r4 (8525) — BOOKED · manual_status: null -->
+        <div class="room-card rc-booked" data-status="booked" id="card-r4">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1;font-family:'Poppins',sans-serif">r4</div>
+              <div style="font-size:10px;color:#888;margin-top:2px">Suite · id 8525</div>
+            </div>
+            <span class="status-badge sb-booked">Booked</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">Test Guest</div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">booking.com · BDC7497606</div>
+          <div style="font-size:11px;color:#888;margin-bottom:10px">Sep 7 – Sep 9 (arriving)</div>
+          <!-- OD-P4-08: booked tiles → HK/OOO toggles HIDDEN -->
+          <!-- OD-P4-04: booked → View Booking → /pms/check-in?booking_id= -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="action-btn green" onclick="window.location='pms/check-in.html?booking_id=BDC7497606'" title="OD-P4-07: View Booking → /pms/check-in?booking_id=BDC7497606">
+              <i data-lucide="log-in" style="width:11px;height:11px"></i>Check In
+            </button>
+            <button class="action-btn" title="OD-P4-04: booked → popover info">
+              <i data-lucide="info" style="width:11px;height:11px"></i>Details
+            </button>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(99,102,241,.06);border-radius:6px;font-size:10px;color:#888;display:flex;align-items:center;gap:4px">
+            <i data-lucide="info" style="width:11px;height:11px;color:#6366F1;flex-shrink:0"></i>
+            <span>OD-P4-08: HK/OOO toggles hidden on booked tiles</span>
+          </div>
+        </div>
+
+        <!-- r2 (8526) — OCCUPIED · manual_status: hk (important: display=occupied overrides hk) -->
+        <div class="room-card rc-occupied" data-status="occupied" id="card-r2">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1;font-family:'Poppins',sans-serif">r2</div>
+              <div style="font-size:10px;color:#888;margin-top:2px">Executive · id 8526</div>
+            </div>
+            <span class="status-badge sb-occupied">Occupied</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">Direct Guest</div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">Direct · San110f43</div>
+          <div style="font-size:11px;color:#888;margin-bottom:10px">Checked in Sep 4</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="action-btn" disabled title="Cannot change while occupied (OD-P4-03 · 422)">
+              <i data-lucide="brush" style="width:11px;height:11px"></i>HK
+            </button>
+            <button class="action-btn" disabled title="Cannot change while occupied (OD-P4-03 · 422)">
+              <i data-lucide="alert-triangle" style="width:11px;height:11px"></i>OOO
+            </button>
+            <button class="action-btn orange" onclick="window.open('../reports/room-orders','_blank')">
+              <i data-lucide="file-text" style="width:11px;height:11px"></i>View Folio
+            </button>
+          </div>
+          <!-- KEY FINDING: display=occupied but manual_status=hk -->
+          <div style="margin-top:8px;padding:6px 8px;background:#FFF8EC;border-radius:6px;font-size:10px;color:#966800;display:flex;align-items:flex-start;gap:4px">
+            <i data-lucide="alert-circle" style="width:11px;height:11px;color:#F59E0B;flex-shrink:0;margin-top:1px"></i>
+            <span><strong>Key finding (G2):</strong> display=occupied BUT manual_status=hk · op_at=2026-09-04 02:20:48 — server priority: occupied &gt; hk. UI uses display_status, not manual_status.</span>
+          </div>
+        </div>
+
+        <!-- r5 (8527) — BOOKED · manual_status: null -->
+        <div class="room-card rc-booked" data-status="booked" id="card-r5">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1;font-family:'Poppins',sans-serif">r5</div>
+              <div style="font-size:10px;color:#888;margin-top:2px">Suite · id 8527</div>
+            </div>
+            <span class="status-badge sb-booked">Booked</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">Test Guest</div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">booking.com · BDC6263973</div>
+          <div style="font-size:11px;color:#888;margin-bottom:10px">Sep 10 – Sep 12</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="action-btn green" onclick="window.location='pms/check-in.html?booking_id=BDC6263973'" title="OD-P4-07">
+              <i data-lucide="log-in" style="width:11px;height:11px"></i>Check In
+            </button>
+            <button class="action-btn" title="OD-P4-04">
+              <i data-lucide="info" style="width:11px;height:11px"></i>Details
+            </button>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(99,102,241,.06);border-radius:6px;font-size:10px;color:#888;display:flex;align-items:center;gap:4px">
+            <i data-lucide="info" style="width:11px;height:11px;color:#6366F1;flex-shrink:0"></i>
+            <span>OD-P4-08: HK/OOO hidden on booked tiles</span>
+          </div>
+        </div>
+
+        <!-- r1 (8528) — HK · manual_status: hk · room_operational_status_at set -->
+        <div class="room-card rc-hk" data-status="hk" id="card-r1">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:20px;font-weight:700;line-height:1;font-family:'Poppins',sans-serif">r1</div>
+              <div style="font-size:10px;color:#888;margin-top:2px">Executive · id 8528</div>
+            </div>
+            <span class="status-badge sb-hk"><i data-lucide="brush" style="width:9px;height:9px"></i>HK</span>
+          </div>
+          <div style="font-size:11px;color:#888;margin-bottom:2px">Needs housekeeping</div>
+          <div style="font-size:10px;color:#F59E0B;margin-bottom:10px;display:flex;align-items:center;gap:4px;font-weight:600">
+            <i data-lucide="clock" style="width:11px;height:11px"></i>
+            Since 2026-09-04 03:01:50
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="action-btn green" onclick="markClean('r1')" title="PATCH {status:'available'} → 200 · message: Room marked available.">
+              <i data-lucide="check" style="width:11px;height:11px"></i>Mark Clean
+            </button>
+            <button class="action-btn danger-outline" onclick="markOOO('r1')" title="PATCH {status:'ooo'} → 200 · inventory_push_warning: null">
+              <i data-lucide="alert-triangle" style="width:11px;height:11px"></i>Mark OOO
+            </button>
+          </div>
+          <!-- Real PATCH response preview -->
+          <div style="margin-top:8px;padding:6px 8px;background:#FFFBF5;border:1px solid rgba(245,158,11,.2);border-radius:6px;font-size:10px;color:#888">
+            <div style="font-weight:600;color:#966800;margin-bottom:3px">PATCH response (real · probe_04)</div>
+            <div style="font-family:monospace;font-size:9px;color:#555;line-height:1.5">manual_status: "hk"<br>room_operational_status_at: "2026-09-04 03:00:51"<br>inventory_push_warning: null</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Evidence + OD summary row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px">
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="gap-closed">G1 ✓</span>PATCH 422 shapes (T4)</div>
+          <div style="font-family:monospace;font-size:10px;line-height:1.7;color:#555">
+            <div><span style="color:#F26B33">occupied→hk</span>: 422 · "Cannot set HK/OOO while the room is occupied."</div>
+            <div><span style="color:#F26B33">bogus status</span>: 422 · errors.status[0]</div>
+            <div><span style="color:#F59E0B">bad ID 99999</span>: 422 (NOT 404) · "Room not found (must be rtype=RM)."</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="gap-closed">G2 ✓</span>display_status server priority (T2)</div>
+          <div style="font-size:11px;color:#555;line-height:1.6">
+            <div>occupied &gt; ooo &gt; hk &gt; booked &gt; available</div>
+            <div style="color:#888;margin-top:4px">r2 proof: display=<span style="color:#F26B33">occupied</span> even though manual_status=<span style="color:#F59E0B">hk</span></div>
+            <div style="color:#888;margin-top:4px">PATCH response omits display_status → must refetch board after every PATCH</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="gap-closed">T5 ✓</span>OOO / inventory_push_warning</div>
+          <div style="font-size:11px;color:#555;line-height:1.6">
+            <div>OOO PATCH (hk→ooo): 200 ✓</div>
+            <div>manual_status: "ooo" · op_at set</div>
+            <div style="color:#329937;font-weight:600;margin-top:4px">inventory_push_warning: <strong>null</strong> on sandbox</div>
+            <div style="color:#888;margin-top:4px">Treat non-null as warning toast (defensive)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 3 — API CONTRACT (real probe evidence)
+  ════════════════════════════════════════════════════════════ -->
+  <div id="tab-api" class="tab-pane" style="overflow-y:auto;padding:24px;gap:20px">
+
+    <div style="max-width:900px;display:flex;flex-direction:column;gap:20px">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:10px">
+        <h2 style="font-size:16px;font-weight:700;font-family:'Poppins',sans-serif">API Contract — CR-358-P4</h2>
+        <span class="evidence-pill">All shapes verified 2026-09-04</span>
+        <span style="font-size:11px;color:#888">restaurant_id: 69 · Base: https://preprod.mygenie.online</span>
+      </div>
+
+      <!-- GET room-status-board -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:700;background:#329937;color:#fff;padding:2px 8px;border-radius:5px">GET</span>
+          <code style="font-size:12px;font-weight:600">/api/v2/vendoremployee/aiosell/room-status-board</code>
+          <span class="gap-closed">G2 closed</span>
+          <span style="font-size:11px;color:#888;margin-left:auto">probe_01_board_baseline.json</span>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">200 Response (verified fields)</div>
+            <div class="api-box">{
+  <span class="api-key">"status"</span>: <span class="api-bool">true</span>,
+  <span class="api-key">"data"</span>: {
+    <span class="api-key">"auto_hk_on_rm_checkout"</span>: <span class="api-bool">true</span>,
+    <span class="api-key">"rooms"</span>: [{
+      <span class="api-key">"restaurant_table_id"</span>: <span class="api-num">8524</span>,
+      <span class="api-key">"table_no"</span>: <span class="api-str">"r3"</span>,
+      <span class="api-key">"aiosell_room_code"</span>: <span class="api-str">"suite"</span>,
+      <span class="api-key">"manual_status"</span>: <span class="api-str">"hk"</span> <span style="color:#666">| null</span>,
+      <span class="api-key">"display_status"</span>: <span class="api-str">"occupied"</span>,
+      <span class="api-key">"room_operational_status_at"</span>:
+        <span class="api-str">"2026-09-04 03:00:51"</span> <span style="color:#666">| null</span>,
+      <span class="api-key">"guest"</span>: {<span class="api-key">"name"</span>:<span class="api-str">"…"</span>, <span class="api-key">"booking_id"</span>:<span class="api-str">"…"</span>,
+                   <span class="api-key">"order_id"</span>:<span class="api-num">1232205</span>} <span style="color:#666">| null</span>,
+      <span class="api-key">"reservation"</span>: {<span class="api-key">"booking_id"</span>:<span class="api-str">"BDC7497606"</span>,
+                       <span class="api-key">"channel"</span>:<span class="api-str">"booking.com"</span>,
+                       <span class="api-key">"checkin"</span>:<span class="api-str">"2026-09-07"</span>,
+                       <span class="api-key">"checkout"</span>:<span class="api-str">"2026-09-09"</span>} <span style="color:#666">| null</span>
+    }]
+  }
+}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">display_status priority (server-side)</div>
+            <div style="background:#F7F7F7;border-radius:8px;padding:12px;font-size:12px;font-family:monospace;line-height:2">
+              <div style="color:#F26B33;font-weight:700">occupied</div>
+              <div style="color:#EF4444;font-weight:700;padding-left:20px">↳ ooo</div>
+              <div style="color:#F59E0B;font-weight:700;padding-left:40px">↳ hk</div>
+              <div style="color:#6366F1;font-weight:700;padding-left:60px">↳ booked</div>
+              <div style="color:#329937;font-weight:700;padding-left:80px">↳ available</div>
+            </div>
+            <div style="margin-top:10px;padding:8px 10px;background:#FFF8EC;border-radius:6px;font-size:11px;color:#966800">
+              <strong>Critical:</strong> r2 has display=occupied + manual=hk. Always use display_status for UI state. PATCH response does NOT return display_status — must refetch board.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATCH room-status -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:700;background:#F59E0B;color:#fff;padding:2px 8px;border-radius:5px">PATCH</span>
+          <code style="font-size:12px;font-weight:600">/api/v2/vendoremployee/aiosell/room-status/{restaurant_table_id}</code>
+          <span class="gap-closed">G1 closed</span>
+          <span style="font-size:11px;color:#888;margin-left:auto">probe_02..08</span>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Request</div>
+            <div class="api-box">{
+  <span class="api-key">"status"</span>: <span class="api-str">"hk"</span> <span style="color:#666">| "ooo" | "available"</span>
+}</div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-top:14px;margin-bottom:8px">200 Success</div>
+            <div class="api-box">{
+  <span class="api-key">"status"</span>: <span class="api-bool">true</span>,
+  <span class="api-key">"message"</span>: <span class="api-str">"Room marked for housekeeping."</span>,
+  <span class="api-key">"data"</span>: {
+    <span class="api-key">"room"</span>: {
+      <span class="api-key">"restaurant_table_id"</span>: <span class="api-num">8528</span>,
+      <span class="api-key">"table_no"</span>: <span class="api-str">"r1"</span>,
+      <span class="api-key">"manual_status"</span>: <span class="api-str">"hk"</span>,
+      <span class="api-key">"room_operational_status_at"</span>:
+        <span class="api-str">"2026-09-04 03:00:51"</span>
+      <span style="color:#888">// NOTE: display_status NOT returned</span>
+      <span style="color:#888">// → must refetch board after PATCH</span>
+    },
+    <span class="api-key">"inventory_push_warning"</span>: <span class="api-bool">null</span>
+  }
+}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">422 Error shapes (T4 — all verified)</div>
+            <div class="api-box"><span style="color:#F59E0B">// CASE 1: Occupied room → HK (G1 closed)</span>
+HTTP 422
+{
+  <span class="api-key">"status"</span>: <span class="api-bool">false</span>,
+  <span class="api-key">"message"</span>: <span class="api-str">"Cannot set HK/OOO while the
+               room is occupied."</span>
+}
+
+<span style="color:#F59E0B">// CASE 2: Invalid status value</span>
+HTTP 422
+{
+  <span class="api-key">"status"</span>: <span class="api-bool">false</span>,
+  <span class="api-key">"errors"</span>: {
+    <span class="api-key">"status"</span>: [<span class="api-str">"The selected status
+                     is invalid."</span>]
+  }
+}
+
+<span style="color:#F59E0B">// CASE 3: Bad ID — returns 422, NOT 404</span>
+HTTP 422
+{
+  <span class="api-key">"status"</span>: <span class="api-bool">false</span>,
+  <span class="api-key">"message"</span>: <span class="api-str">"Room not found for this
+               restaurant (must be rtype=RM)."</span>
+}</div>
+            <div style="margin-top:10px;padding:8px 10px;background:#FEF2F2;border-radius:6px;font-size:11px;color:#B91C1C">
+              <strong>Transform note:</strong> error handler must check both <code>data.message</code> AND <code>data.errors?.status[0]</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GET local-reservations -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;font-weight:700;background:#329937;color:#fff;padding:2px 8px;border-radius:5px">GET</span>
+          <code style="font-size:12px;font-weight:600">/api/v2/vendoremployee/aiosell/local-reservations?start_date=…&end_date=…</code>
+          <span class="gap-closed">G4 closed</span>
+          <span style="font-size:11px;color:#888;margin-left:auto">probe_10_lr.json · 15 results</span>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Reservation shape (verified join key)</div>
+            <div class="api-box">{
+  <span class="api-key">"data"</span>: {
+    <span class="api-key">"reservations"</span>: [{
+      <span class="api-key">"id"</span>: <span class="api-num">21</span>,
+      <span class="api-key">"booking_id"</span>: <span class="api-str">"San110f43523659"</span>,
+      <span class="api-key">"channel"</span>: <span class="api-str">"Direct"</span>,
+      <span class="api-key">"checkin"</span>: <span class="api-str">"2026-09-04"</span>,
+      <span class="api-key">"checkout"</span>: <span class="api-str">"2026-09-05"</span>,
+      <span class="api-key">"status"</span>: <span class="api-str">"confirmed"</span>,
+      <span class="api-key">"operational_status"</span>: <span class="api-str">"in_house"</span>,
+      <span class="api-key">"rooms"</span>: [{ <span style="color:#86EFAC">← join array (was wrong: roomLines)</span>
+        <span class="api-key">"restaurant_table_id"</span>: <span class="api-num">8526</span>, <span style="color:#86EFAC">← JOIN KEY</span>
+        <span class="api-key">"table_no"</span>: <span class="api-str">"r2"</span>,
+        <span class="api-key">"room_code"</span>: <span class="api-str">"executive"</span>,
+        <span class="api-key">"line_status"</span>: <span class="api-str">"checked_in"</span>,
+        <span class="api-key">"order_id"</span>: <span class="api-num">1232217</span>
+      }]
+    }]
+  }
+}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Join logic for Tape Chart (G4)</div>
+            <div style="background:#F7F7F7;border-radius:8px;padding:12px;font-size:11px;line-height:1.8;color:#555">
+              <div><strong style="color:#EF4444">❌ OLD (IA was wrong):</strong> <code>roomLines[].restaurantTableId</code></div>
+              <div><strong style="color:#329937">✅ CORRECT:</strong> <code>rooms[].restaurant_table_id</code></div>
+              <div style="margin-top:8px;color:#888;font-size:10px">roomLines[] and restaurantTableId do not exist in the API response</div>
+            </div>
+            <div style="margin-top:10px;background:#F7F7F7;border-radius:8px;padding:12px;font-size:11px;line-height:1.6;color:#555">
+              <div><strong>Channels observed in probe_10:</strong></div>
+              <div>Direct · booking.com · WalkIn</div>
+              <div style="margin-top:6px"><strong>operational_status values:</strong></div>
+              <div>in_house · departed · pending</div>
+              <div style="margin-top:6px"><strong>line_status values:</strong></div>
+              <div>checked_in · checked_out · pending</div>
+              <div style="margin-top:6px"><strong>All 5 rooms confirmed rtype=RM</strong> — getAiosellRooms() is RM-only</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Owner Decisions summary -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:16px">
+        <div style="font-size:13px;font-weight:700;font-family:'Poppins',sans-serif;margin-bottom:12px">All 10 Owner Decisions Locked</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <tr style="background:#F7F7F7"><th style="text-align:left;padding:6px 10px;font-weight:600;border:1px solid #E5E5E5">OD</th><th style="text-align:left;padding:6px 10px;font-weight:600;border:1px solid #E5E5E5">Decision</th><th style="padding:6px 10px;font-weight:600;border:1px solid #E5E5E5">Date</th></tr>
+          <tr><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-01</td><td style="padding:6px 10px;border:1px solid #F0F0F0">PATCH body: {status:"hk"|"ooo"|"available"}</td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 03</td></tr>
+          <tr><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-02</td><td style="padding:6px 10px;border:1px solid #F0F0F0">Tape Chart reuses getReservationOps() — 0 new API calls</td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 03</td></tr>
+          <tr><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-03</td><td style="padding:6px 10px;border:1px solid #F0F0F0">Occupied → disable HK/OOO + tooltip "Cannot change while occupied"</td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 03</td></tr>
+          <tr><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-04</td><td style="padding:6px 10px;border:1px solid #F0F0F0">Booked→Check In (/pms/check-in?booking_id=), occupied→View Folio (/reports/room-orders)</td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 03</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-05</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>Assign Room → disabled, "Phase 5" tooltip (no API)</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-06</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>+ Book Room → /pms/new-booking</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-07</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>View Booking → /pms/check-in?booking_id=X</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-08</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>Booked tiles: HK/OOO toggles hidden</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-09</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>Bulk Mark Clean failure: continue + summary toast</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+          <tr style="background:rgba(50,153,55,.03)"><td style="padding:6px 10px;border:1px solid #F0F0F0">OD-P4-10</td><td style="padding:6px 10px;border:1px solid #F0F0F0"><strong>OOO probe approved + executed. inventory_push_warning=null on sandbox</strong></td><td style="padding:6px 10px;border:1px solid #F0F0F0;color:#888">Sep 04</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Click-outside for any dropdowns -->
+<div id="overlay" style="display:none;position:fixed;inset:0;z-index:40" onclick="closeAll()"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function filterBoard(status, btn) {
+  document.querySelectorAll('#room-grid .room-card').forEach(c => {
+    c.style.display = (status === 'all' || c.dataset.status === status) ? '' : 'none';
+  });
+  document.querySelectorAll('.action-btn[onclick*="filterBoard"]').forEach(b => {
+    b.style.background = ''; b.style.color = ''; b.style.borderColor = '';
+  });
+  btn.style.background = '#1A1A1A'; btn.style.color = '#fff'; btn.style.borderColor = '#1A1A1A';
+}
+
+function markClean(room) {
+  const card = document.getElementById('card-' + room);
+  if (!card) return;
+  card.className = 'room-card rc-available';
+  card.dataset.status = 'available';
+  card.querySelector('.status-badge').className = 'status-badge sb-available';
+  card.querySelector('.status-badge').textContent = 'Available';
+  // Update bulk clean button
+  document.getElementById('bulk-clean-btn').style.opacity = '.5';
+  document.getElementById('bulk-clean-btn').disabled = true;
+  lucide.createIcons();
+  // Show toast simulation
+  showToast('r1 marked clean · PATCH 200 · manual_status: null');
+}
+
+function markOOO(room) {
+  const card = document.getElementById('card-' + room);
+  if (!card) return;
+  card.className = 'room-card rc-ooo';
+  card.dataset.status = 'ooo';
+  card.querySelector('.status-badge').className = 'status-badge sb-ooo';
+  card.querySelector('.status-badge').innerHTML = '<i data-lucide="alert-triangle" style="width:9px;height:9px"></i>OOO';
+  lucide.createIcons();
+  showToast('r1 marked OOO · PATCH 200 · inventory_push_warning: null');
+}
+
+function bulkMarkClean() {
+  // Only r1 is HK — mark it clean
+  markClean('r1');
+  showToast('Bulk clean: 1 room marked available · 0 failed');
+}
+
+function closeAll() {
+  document.querySelectorAll('.status-dd').forEach(d => d.classList.remove('open'));
+  document.getElementById('overlay').style.display = 'none';
+}
+
+let toastTimeout;
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1A1A1A;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;z-index:9999;max-width:360px;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .2s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+</script>
+</body>
+</html>

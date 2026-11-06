@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-163 — Move Items Modal: Before vs After</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F0F2F5;
+      color: #1A1A1A;
+      padding: 32px 24px;
+      min-height: 100vh;
+    }
+
+    /* Page header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .page-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: #666;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: .03em;
+    }
+    .badge-green { background: #DCFCE7; color: #15803D; }
+    .badge-orange { background: #FFEDD5; color: #C2410C; }
+    .badge-gray { background: #F3F4F6; color: #374151; }
+
+    /* Comparison grid */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Column labels */
+    .col-label {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .col-label .label-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+    .label-before { background: #FEE2E2; color: #991B1B; }
+    .label-after  { background: #DCFCE7; color: #15803D; }
+    .col-label .col-desc {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    /* Modal shell */
+    .modal-shell {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.10);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .modal-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid #E5E5E5;
+    }
+    .modal-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .modal-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .icon-arrow {
+      width: 18px; height: 18px;
+      color: #329937;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; color: #1A1A1A; }
+    .modal-subtitle { font-size: 12px; color: #666; }
+    .room-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #FFF7ED;
+      color: #C2410C;
+      border: 1px solid #FED7AA;
+    }
+    .close-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #666;
+      font-size: 16px;
+      background: #F7F7F7;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    /* Body */
+    .modal-body {
+      padding: 12px;
+      background: #F7F7F7;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #666;
+      padding: 0 4px 4px;
+    }
+
+    /* Item rows */
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 14px;
+      background: #fff;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      min-height: 64px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .item-row.selected {
+      background: #F0FDF4;
+      border-color: #329937;
+      box-shadow: 0 0 0 3px rgba(50,153,55,.12);
+    }
+    .item-row.disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .item-icon { width: 22px; height: 22px; flex-shrink: 0; }
+    .icon-checked { color: #329937; }
+    .icon-unchecked { color: #D1D5DB; }
+    .item-info { flex: 1; }
+    .item-name { font-size: 13px; font-weight: 600; color: #1A1A1A; }
+    .item-meta { font-size: 11px; color: #666; }
+    .item-price { font-size: 14px; font-weight: 700; color: #329937; }
+
+    /* ---- DESTINATION PICKER ---- */
+    .destination-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #E5E5E5;
+    }
+    .dest-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .dest-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #666;
+    }
+    .mandatory-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: #FEF3C7;
+      color: #92400E;
+      letter-spacing: .03em;
+    }
+
+    /* Existing table cards grid */
+    .table-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .table-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 2px solid #E5E5E5;
+      background: #fff;
+      cursor: pointer;
+      min-height: 64px;
+      gap: 4px;
+      transition: all .15s;
+      text-align: center;
+    }
+    .table-card.selected {
+      border-color: #329937;
+      background: #F0FDF4;
+      box-shadow: 0 0 0 3px rgba(50,153,55,.12);
+    }
+    .table-card-label { font-size: 13px; font-weight: 700; color: #1A1A1A; }
+    .table-card.selected .table-card-label { color: #16A34A; }
+    .table-card-status { font-size: 10px; color: #666; }
+    .table-card.selected .table-card-status { color: #16A34A; }
+    .table-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #D1FAE5;
+      border: 1.5px solid #329937;
+      flex-shrink: 0;
+    }
+
+    /* Divider between table cards and create row */
+    .dest-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+    .dest-divider-line { flex: 1; height: 1px; background: #E5E5E5; }
+    .dest-divider-text { font-size: 10px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; letter-spacing: .06em; }
+
+    /* Create Room table row */
+    .create-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 2px dashed #F26B33;
+      background: #FFF7ED;
+      cursor: pointer;
+      min-height: 64px;
+      transition: all .15s;
+    }
+    .create-row.selected {
+      border: 2px solid #329937;
+      border-style: solid;
+      background: #ECFDF5;
+      box-shadow: 0 0 0 3px rgba(50,153,55,.15);
+    }
+    .create-icon-wrap {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #FFEDD5;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+    .create-row.selected .create-icon-wrap {
+      background: #DCFCE7;
+    }
+    .create-icon { color: #F26B33; font-size: 16px; }
+    .create-row.selected .create-icon { color: #329937; }
+    .create-info { flex: 1; }
+    .create-label { font-size: 13px; font-weight: 700; color: #C2410C; }
+    .create-row.selected .create-label { color: #15803D; }
+    .create-sublabel { font-size: 11px; color: #F26B33; margin-top: 1px; }
+    .create-row.selected .create-sublabel { color: #16A34A; }
+    .create-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: #FFEDD5;
+      color: #C2410C;
+      flex-shrink: 0;
+    }
+    .create-row.selected .create-badge { background: #DCFCE7; color: #15803D; }
+
+    /* Remark */
+    .remark-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #E5E5E5;
+    }
+    .remark-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .remark-textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #E5E5E5;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #1A1A1A;
+      background: #F7F7F7;
+      resize: none;
+      height: 48px;
+    }
+
+    /* Footer */
+    .modal-footer {
+      padding: 14px 16px;
+      border-top: 1px solid #E5E5E5;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .footer-total-label { font-size: 11px; color: #666; }
+    .footer-total-amount { font-size: 18px; font-weight: 700; color: #329937; }
+    .footer-total-amount.zero { color: #1A1A1A; }
+    .footer-actions { display: flex; gap: 8px; }
+    .btn-cancel {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid #E5E5E5;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A1A1A;
+      cursor: pointer;
+    }
+    .btn-move {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-move.active { background: #329937; }
+    .btn-move.disabled { background: #9CA3AF; cursor: not-allowed; opacity: .7; }
+
+    /* Change callout annotations */
+    .change-callout {
+      background: #ECFDF5;
+      border: 1.5px solid #86EFAC;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #15803D;
+      margin-top: 12px;
+    }
+    .change-callout ul { padding-left: 14px; margin-top: 4px; }
+    .change-callout li { margin-bottom: 3px; line-height: 1.5; }
+    .change-callout strong { font-weight: 700; }
+
+    /* Legend */
+    .legend {
+      max-width: 1200px;
+      margin: 28px auto 0;
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      border: 1px solid #E5E5E5;
+    }
+    .legend h3 { font-size: 13px; font-weight: 700; color: #1A1A1A; margin-bottom: 12px; }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #F7F7F7;
+    }
+    .legend-swatch {
+      width: 14px; height: 14px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .legend-text { font-size: 12px; line-height: 1.5; color: #374151; }
+    .legend-text strong { font-weight: 700; color: #1A1A1A; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1>CR-163 — Move Items Modal: Before vs After</h1>
+    <p>SplitRoomItemsModal.jsx — Destination Picker addition</p>
+    <div class="badge-row">
+      <span class="badge badge-gray">Gate 2 IA COMPLETE</span>
+      <span class="badge badge-orange">OD-163-03 LOCKED: Mandatory destination</span>
+      <span class="badge badge-green">OD-163-05 LOCKED: Reuse existing table</span>
+    </div>
+  </div>
+
+  <!-- Side-by-side grid -->
+  <div class="comparison-grid">
+
+    <!-- ===================== BEFORE ===================== -->
+    <div>
+      <div class="col-label">
+        <span class="label-tag label-before">&#x2717;&nbsp; Before (Current)</span>
+        <p class="col-desc">Item list → Remark → Move enabled on 1+ items selected</p>
+      </div>
+
+      <div class="modal-shell">
+        <!-- Header -->
+        <div class="modal-header">
+          <div class="modal-header-top">
+            <div>
+              <div class="modal-title-row">
+                <svg class="icon-arrow" fill="none" stroke="#329937" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/></svg>
+                <span class="modal-title">Move Items to Table</span>
+              </div>
+              <span class="modal-subtitle">Moving from <span class="room-badge">Room r2</span> · Select items to split out</span>
+            </div>
+            <button class="close-btn">&#x2715;</button>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="section-label">Select items to move</div>
+
+          <!-- Items -->
+          <div class="item-row selected">
+            <svg class="item-icon icon-checked" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="item-info">
+              <div class="item-name">Jeera Rice</div>
+              <div class="item-meta">1 × ₹107</div>
+            </div>
+            <span class="item-price">₹107</span>
+          </div>
+
+          <div class="item-row">
+            <svg class="item-icon icon-unchecked" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+            <div class="item-info">
+              <div class="item-name">Butter Naan</div>
+              <div class="item-meta">2 × ₹60</div>
+            </div>
+            <span class="item-price" style="color:#1A1A1A">₹120</span>
+          </div>
+
+          <div class="item-row disabled">
+            <svg class="item-icon icon-unchecked" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+            <div class="item-info">
+              <div class="item-name">Room Stay Marker</div>
+              <div class="item-meta">Check-in item — cannot be moved</div>
+            </div>
+            <span style="font-size:10px;padding:2px 7px;border-radius:8px;background:#F7F7F7;color:#666">excluded</span>
+          </div>
+
+          <!-- Remark -->
+          <div class="remark-box">
+            <div class="remark-label">Note (optional)</div>
+            <textarea class="remark-textarea" placeholder="e.g. friends paying separately..."></textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <div>
+            <div class="footer-total-label">Moving</div>
+            <div class="footer-total-amount">₹107.00</div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-move active">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/></svg>
+              Move 1 Item
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Before callout -->
+      <div class="change-callout" style="background:#FEF2F2;border-color:#FCA5A5;color:#991B1B;">
+        <strong>Current state issues:</strong>
+        <ul>
+          <li>Move button active with 0 destination — creates a floating walk-in order</li>
+          <li>New order gets <code>table_id = 0</code>, never visible on Dine-In board (GAP2)</li>
+          <li>No way for staff to route the order to a specific table</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===================== AFTER ===================== -->
+    <div>
+      <div class="col-label">
+        <span class="label-tag label-after">&#x2713;&nbsp; After (CR-163)</span>
+        <p class="col-desc">Item list → Destination picker (mandatory) → Remark → Move</p>
+      </div>
+
+      <div class="modal-shell">
+        <!-- Header -->
+        <div class="modal-header">
+          <div class="modal-header-top">
+            <div>
+              <div class="modal-title-row">
+                <svg class="icon-arrow" fill="none" stroke="#329937" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/></svg>
+                <span class="modal-title">Move Items to Table</span>
+              </div>
+              <span class="modal-subtitle">Moving from <span class="room-badge">Room r2</span> · Select items + destination</span>
+            </div>
+            <button class="close-btn">&#x2715;</button>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="section-label">Select items to move</div>
+
+          <div class="item-row selected">
+            <svg class="item-icon icon-checked" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="item-info">
+              <div class="item-name">Jeera Rice</div>
+              <div class="item-meta">1 × ₹107</div>
+            </div>
+            <span class="item-price">₹107</span>
+          </div>
+
+          <div class="item-row">
+            <svg class="item-icon icon-unchecked" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+            <div class="item-info">
+              <div class="item-name">Butter Naan</div>
+              <div class="item-meta">2 × ₹60</div>
+            </div>
+            <span class="item-price" style="color:#1A1A1A">₹120</span>
+          </div>
+
+          <!-- NEW: Destination Picker -->
+          <div class="destination-section">
+            <div class="dest-section-header">
+              <span class="dest-section-title">Select Destination</span>
+              <span class="mandatory-tag">MANDATORY</span>
+            </div>
+
+            <!-- Path A: Free dine-in table cards -->
+            <div class="table-cards-grid">
+              <div class="table-card selected" data-testid="destination-table-card-8529">
+                <div class="table-dot"></div>
+                <div class="table-card-label">Table 1</div>
+                <div class="table-card-status">Free</div>
+              </div>
+              <div class="table-card" data-testid="destination-table-card-8530">
+                <div class="table-dot" style="background:#E5E5E5;border-color:#9CA3AF"></div>
+                <div class="table-card-label">Table 2</div>
+                <div class="table-card-status">Free</div>
+              </div>
+              <div class="table-card" data-testid="destination-table-card-8531">
+                <div class="table-dot" style="background:#E5E5E5;border-color:#9CA3AF"></div>
+                <div class="table-card-label">Table 3</div>
+                <div class="table-card-status">Free</div>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="dest-divider">
+              <div class="dest-divider-line"></div>
+              <span class="dest-divider-text">or</span>
+              <div class="dest-divider-line"></div>
+            </div>
+
+            <!-- Path B: Create Room table row -->
+            <div class="create-row" data-testid="destination-create-room-table-row">
+              <div class="create-icon-wrap">
+                <svg width="16" height="16" fill="none" stroke="#F26B33" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              </div>
+              <div class="create-info">
+                <div class="create-label">Create "Room r2" table</div>
+                <div class="create-sublabel">Auto-creates a dine-in table on the board</div>
+              </div>
+              <span class="create-badge">Dynamic</span>
+            </div>
+          </div>
+
+          <!-- Remark -->
+          <div class="remark-box">
+            <div class="remark-label">Note (optional)</div>
+            <textarea class="remark-textarea" placeholder="e.g. friends paying separately..."></textarea>
+          </div>
+        </div>
+
+        <!-- Footer — Path A selected so Move is enabled -->
+        <div class="modal-footer">
+          <div>
+            <div class="footer-total-label">Moving</div>
+            <div class="footer-total-amount">₹107.00</div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-move active" data-testid="split-confirm-btn">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/></svg>
+              Move to Table 1
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- After callout -->
+      <div class="change-callout">
+        <strong>What changes (CR-163):</strong>
+        <ul>
+          <li><strong>NEW — Destination picker</strong> between items and remark</li>
+          <li><strong>Path A</strong>: Free dine-in table cards (Table 1/2/3) — uses <code>target_table_id</code></li>
+          <li><strong>Path B</strong>: "Create Room r2 table" row — calls <code>storeTable</code> + <code>switchOrderTable</code></li>
+          <li><strong>Move button disabled</strong> until items selected AND destination picked (OD-163-03 A)</li>
+          <li><strong>Reuses</strong> existing "Room r2" table if already present (OD-163-05 A)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disabled state demo -->
+  <div style="max-width:1200px;margin:28px auto 0;">
+    <p style="font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Move Button States</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="background:#fff;border-radius:12px;padding:14px 18px;border:1px solid #E5E5E5;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:#666;">No items, no destination:</span>
+        <button class="btn-move disabled" style="font-size:12px;padding:8px 14px;">Select Items</button>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:14px 18px;border:1px solid #E5E5E5;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:#666;">Items selected, no destination:</span>
+        <button class="btn-move disabled" style="font-size:12px;padding:8px 14px;">Select Destination</button>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:14px 18px;border:1px solid #E5E5E5;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:#666;">Both selected (Path A):</span>
+        <button class="btn-move active" style="font-size:12px;padding:8px 14px;">Move 1 Item to Table 1</button>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:14px 18px;border:1px solid #E5E5E5;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:#666;">Both selected (Path B):</span>
+        <button class="btn-move active" style="font-size:12px;padding:8px 14px;background:#F26B33;">Create &amp; Move 1 Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <h3>Design Token Reference</h3>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#329937"></div>
+        <div class="legend-text"><strong>primaryGreen #329937</strong><br/>Selected state, Move button active, checked icon</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#F26B33"></div>
+        <div class="legend-text"><strong>primaryOrange #F26B33</strong><br/>Create Room row border, icon, Move button (Path B)</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#FFF7ED;border:1px solid #FED7AA"></div>
+        <div class="legend-text"><strong>amberBg #FFF7ED</strong><br/>Create Room row default background</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#F7F7F7;border:1px solid #E5E5E5"></div>
+        <div class="legend-text"><strong>sectionBg #F7F7F7</strong><br/>Modal body background, remark input</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#9CA3AF"></div>
+        <div class="legend-text"><strong>disabledGray #9CA3AF</strong><br/>Move button disabled state</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#ECFDF5;border:1px solid #86EFAC"></div>
+        <div class="legend-text"><strong>F0FDF4 / ECFDF5</strong><br/>Selected card/row background (green tint)</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

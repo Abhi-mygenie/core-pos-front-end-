@@ -1,0 +1,2986 @@
+[
+ {
+  "id": "POS2-001",
+  "type": "CR",
+  "status": "NOT STARTED",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-001",
+  "type": "CR",
+  "status": "SUBSUMED into CR-002",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-006",
+  "type": "CR",
+  "status": "SUBSUMED into CR-002",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-007",
+  "type": "CR",
+  "status": "SUBSUMED into CR-002",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-090",
+  "type": "BUG",
+  "status": "BACKEND-BLOCKED",
+  "priority": "P2",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-092",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-094",
+  "type": "BUG",
+  "status": "RE-INVESTIGATE \u2014 owner says backend now sends payload (2026-06-15)",
+  "priority": "P3",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-096",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-097",
+  "type": "BUG",
+  "status": "MAIN VERIFIED (smoke PASSED)",
+  "priority": "P1",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-107",
+  "type": "BUG",
+  "status": "SUBSUMED",
+  "priority": "P2",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-058",
+  "type": "BUG",
+  "status": "CARRY-FORWARD",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-040",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P3",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-041",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P3",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "PROD-003",
+  "type": "BUG",
+  "status": "FE-VERIFIED, BE-FOLLOWUP",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-011",
+  "type": "CR",
+  "status": "OPEN \u2014 Phase 3 COMPLETE. 28/28 screens built + verified (screenshots). All endpoints live. Awaiting owner Gate \u2461 review + sidebar rearrangement.",
+  "priority": "P1",
+  "risk": null,
+  "gate": "Phase 3 \u2014 Gate \u2460+\u2463 COMPLETE for all 28 screens. Awaiting Gate \u2461\u2462\u2464\u2465."
+ },
+ {
+  "id": "CR-012",
+  "type": "CR",
+  "status": "OPEN \u2014 INTAKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-118",
+  "type": "bug",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-123",
+  "type": "bug",
+  "status": "GATE 2 COMPLETE \u2014 Impact Analysis done. Needs owner decisions Q-123-1..4 before Gate 3.",
+  "priority": "P1",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-130",
+  "type": "bug",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-041",
+  "type": "cr",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-043",
+  "type": "cr",
+  "status": "REGISTERED \u2014 GATE 1 ONLY",
+  "priority": "P2",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-045",
+  "type": "cr",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-046",
+  "type": "cr",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-135",
+  "type": "bug",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-048",
+  "type": "cr",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE | CR-048-REBUILD: sync script recreated + dashboard JSONs regenerated (2026-07-25)",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-049",
+  "type": "cr",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "CR-050",
+  "type": "cr",
+  "status": "INTAKE COMPLETE \u2014 registered for future sprint",
+  "priority": "P3",
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-136",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": null,
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-138",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-139",
+  "type": "BUG",
+  "status": "SUPERSEDED by CR-052",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-052",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-053",
+  "type": "CR",
+  "status": "IMPLEMENTATION IN PROGRESS (Phase 1: Checkpoints 1-2 done, Missions 1-3 verified E2E)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-054",
+  "type": "CR",
+  "status": "PLACEHOLDER INTAKE \u2014 10 open questions pending owner workshop",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "0"
+ },
+ {
+  "id": "BUG-144",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-147",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-056",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 5/5 code + curl tests. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "0-2"
+ },
+ {
+  "id": "CR-058",
+  "type": "CR",
+  "status": "INTAKE \u2014 PARKED (2026-08-22, deferred by owner. OQ-1 through OQ-8 unanswered. Do not plan or implement until owner explicitly resumes.)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-059",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-061",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-062",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 6/6 code + curl tests. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "0-2"
+ },
+ {
+  "id": "BUG-150",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-151",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-152",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-153",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-154",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-155",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-156",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-157",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-158",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-159",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-160",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-161",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-162",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (bundled into CR-074-B Phase 1, optimistic-update pattern, 2026-07-17)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-VQTY",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-ROOM-PAIDROOM",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-164",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 6/6 code + curl tests (HTTP 409 confirmed). Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-2"
+ },
+ {
+  "id": "BUG-165",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 client guard + catch verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-2"
+ },
+ {
+  "id": "CR-064",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Unit Price field present in Stock Master quick-add row + existing items show \u20b9 price column.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "1"
+ },
+ {
+  "id": "CR-065",
+  "type": "CR",
+  "status": "RETIRED \u2014 SUPERSEDED-BY-BUG-202 (2026-07-16)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-066",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-166",
+  "type": "BUG",
+  "status": "OWNER VERIFIED \u2014 FIX PERMANENT",
+  "priority": "P0",
+  "risk": "MEDIUM",
+  "gate": "5"
+ },
+ {
+  "id": "BUG-167",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-168",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-170",
+  "type": null,
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-172",
+  "type": "BUG",
+  "status": "RETIRED \u2014 SUPERSEDED-BY-CR-074-B (2026-07-16)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "1"
+ },
+ {
+  "id": "BUG-173",
+  "type": "BUG",
+  "status": "RETIRED \u2014 SUPERSEDED-BY-CR-074-B (2026-07-16)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "BUG-174",
+  "type": "BUG",
+  "status": "RETIRED \u2014 OBSOLETE-BY-CR-074-A (2026-07-16)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-067",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-175",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-176",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-178",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (retroactive 2026-07-17) \u2014 Code exists: item name renders as plain text in edit mode (BUG-178 comment in code).",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-179",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (retroactive 2026-07-17) \u2014 Code exists: buildExportPayload + exportReportAsExcel with proper { title, sheets } structure.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-180",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (retroactive 2026-07-17) \u2014 Code exists: openReportWindow + exportReportAsPDF(pdfWin, payload) pattern.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-181",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (retroactive 2026-07-17) \u2014 Code exists: Added By header + tx.employeeName cell + edit read-only.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-183",
+  "type": "BUG",
+  "status": "BACKEND_BLOCKED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-185",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Day Closure loads with Opening Balance section + Set Opening Balance button visible.",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-186",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Day Closure Self-Settle button accessible (partial settlement mode).",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-188",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-189",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-190",
+  "type": "BUG",
+  "status": "INTAKE \u2014 BACKEND_BLOCKED (investigation 2026-08-22: FE pipeline 100% wired, crm_token rejected by CRM API. Zero FE changes. CRM team to fix token auth.)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-191",
+  "type": "BUG",
+  "status": "INTAKE \u2014 BACKEND_BLOCKED (investigation 2026-08-22: FE renders c.phone correctly, backend /insights-customers omits phone. Zero FE changes. Backend to include phone.)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-192",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-193",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-194",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-195",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-068",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "0-1"
+ },
+ {
+  "id": "CR-069",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Employee list (9 employees), Roles tab (14 roles), Add Employee, search, status toggle all present.",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": "5"
+ },
+ {
+  "id": "CR-070",
+  "type": "CR",
+  "status": "SUBSUMED into CR-069 (2026-07-15)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "N/A"
+ },
+ {
+  "id": "CR-071",
+  "type": "CR",
+  "status": "INTAKE \u2014 DEFERRED (post CR-057 + CR-058 close, and CR-069 ship)",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": "0"
+ },
+ {
+  "id": "CR-072",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Setup tabs (Ingredients, Vendors, Wastage), Recipes, Current Stock all load with data.",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5"
+ },
+ {
+  "id": "BUG-196",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: All inventory+employee pages render with sidebar visible.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5"
+ },
+ {
+  "id": "BUG-197",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Recipe CRUD, purchase, vendor save all functional (covered by CR-072+CR-073 QA).",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "5"
+ },
+ {
+  "id": "BUG-198",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 10/10 tests pass. Employee PUT works, inline password+eye toggle, role type wired, X-localization header, ResetPasswordDialog deleted.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "1"
+ },
+ {
+  "id": "BUG-199",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 Code verified: category_id auto-filled from master item (L177-178) + serialized in API payload (transform L109).",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "5"
+ },
+ {
+  "id": "BUG-201",
+  "type": "BUG",
+  "status": "PHASE 1 IMPLEMENTED + QA PASS (2026-07-22) \u2014 iteration_2: 5/5 tests PASS. Impact-aware modal: fetches GET /expense/item/{id}/impact on trash click, shows real transaction count + amount, delete sends delete_reason. Phase 2 (backend 409 enforcement) pending backend delivery.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-202",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (2026-07-17) \u2014 Backend PUT /expenses/{id} confirmed working. FE inline edit already coded (BUG-202-fwd-compat). Awaiting owner smoke.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "2"
+ },
+ {
+  "id": "BUG-203",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 single PUT with unit_price verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-2"
+ },
+ {
+  "id": "BUG-204",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (2026-07-17). Qty\u00d7unitPrice auto-calc on Add Expense (Case A). Testing iteration_30: 100% pass.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-205",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-17) \u2014 IMPLEMENTED (2026-07-17) \u2014 Qty/Unit columns added to both tables + export.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-076",
+  "type": "CR",
+  "status": "ABSORBED into CR-085 (2026-07-21). D1 S3 upload PARKED \u2014 awaiting backend presigned URL.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-077",
+  "type": "CR",
+  "status": "PHASE 1 IMPLEMENTED + QA PASS (2026-07-19, iteration_10) \u2014 8/8 PASS. PHASE 2 DEFERRED (2026-07-21) \u2014 Dispatch/Return deferred per owner. [Registry drift corrected 2026-07-21]",
+  "priority": "P1",
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "CR-078",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: Smart Purchase renders with horizon picker, 24-item shopping list, vendor cells, ad-hoc button.",
+  "priority": "P1",
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "CR-079",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 iteration_9: All 6 nav items render, sidebar visible, Receive hidden for normal, /inventory redirects to dashboard.",
+  "priority": "P2",
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "CR-073",
+  "type": "CR",
+  "status": "QA PASS (2026-07-19) \u2014 19/19 checks pass. V9+RT-1 fixed by BUG-206. Testing iterations 4+6.",
+  "priority": "P1",
+  "risk": null,
+  "gate": "3"
+ },
+ {
+  "id": "BUG-206",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 v2 fix verified. Testing iteration_6: 3/3 PASS (V9 PUT 200, RT-1 persisted, regression clean).",
+  "priority": "P0",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-207",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-19) \u2014 v2 fix verified. 7/7 PASS. 22 recipes show real \u20b9 cost, 70 show \"\u2014\" (no purchase rate). Testing iteration_8.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-073-FU-01",
+  "type": "CR",
+  "status": "ABSORBED into CR-085 (2026-07-21). D3 column toggle \u2192 CR-085 Phase 1.",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-082",
+  "type": "CR",
+  "status": "QA PASS (2026-07-20) \u2014 7/7 tests pass, 0 blockers. Coverage 3/3. Ready for Gate 6 (Owner Smoke).",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": null
+ },
+ {
+  "id": "BUG-208",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-20) \u2014 4/4 bug fixes verified, 1 regression partial (Set Price QTY field \u2014 expected behavior). Data restored after testing.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-083",
+  "type": "CR",
+  "status": "QA PASS (2026-07-20) \u2014 8/8 tests pass, 0 blockers. Split flow, validation, Unpaid, Cash Draw hint, cancel, remove, regression all verified.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-209",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "Awaiting Gate 4 GO"
+ },
+ {
+  "id": "BUG-210",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-20, iteration_18) \u2014 dashboard data fixes verified. Promoted from IMPLEMENTED.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-084",
+  "type": "CR",
+  "status": "QA PASS (2026-07-20, iteration_18) \u2014 vendor CRUD verified. Promoted from IMPLEMENTED.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-085",
+  "type": "CR",
+  "status": "IMPLEMENTED PHASE 1 + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). A1 grid borders PASS. A3 recipe cost/sale real values PASS. KPI cards 4 widgets PASS.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-211",
+  "type": "BUG",
+  "status": "IMPLEMENTED + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). Sort: Out\u2192Low\u2192In verified. KPI click filters verified. Chip row absence confirmed.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-212",
+  "type": "BUG",
+  "status": "IMPLEMENTED + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). Edit inline row (blue border) verified. 7-field add form verified. Export downloads real file.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-086",
+  "type": "CR",
+  "status": "IMPLEMENTED + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). F1 KPI filters PASS. F2 Excel export downloads .xlsx. F3 PDF downloads .pdf. F4 BulkEditor 15 categories, amber dirty highlight, save enable, close verified. F5 DEFERRED.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-213",
+  "type": "BUG",
+  "status": "IMPLEMENTED (FAST LANE) + QA PASS (2026-07-21) \u2014 iteration_1: 27/27 tests PASS. Playwright automation, preprod Kunafa Mahal (RID 689). bulk-editor-title element present, text=Bulk Edit Ingredients confirmed.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-087",
+  "type": "CR",
+  "status": "GATE 5 IMPLEMENTED + QA PASS (2026-07-22) \u2014 iteration_3.json: 9/9 tests PASS. Form Row 2: Notes+Paid To+Ref ID side-by-side. Table: 12 cols. Report: 11 cols. Edit mode: 2 new inputs. Search extended. Transform layer maps paymentMadeTo+paymentRefId.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-214",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-215",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-216",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-217",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-218",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-219",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-220",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-221",
+  "type": "BUG",
+  "status": "QA PASS (FE) (2026-07-22) \u2014 iteration_6: 7/8 browser tests PASS. T2 (ingredient template) blocked by backend CORS on export-sample-inventory \u2014 backend brief filed. FE code verified correct.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5 \u2705 (FE)"
+ },
+ {
+  "id": "BUG-222",
+  "type": "BUG",
+  "status": "QA PASS (FE) (2026-07-22) \u2014 iteration_6: all recipe tests PASS (export, template, import field name, gating). No blockers.",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5 \u2705 (FE)"
+ },
+ {
+  "id": "BUG-223",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-224",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-226",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-227",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "CR-088",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "CR-089",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 jsPDF + 3-section PDF + button verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-3"
+ },
+ {
+  "id": "CR-090",
+  "type": "CR",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. 71 categories with trash icon confirmed. Ready for Gate 6.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-091",
+  "type": "CR",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED (covered by CR-100)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-1"
+ },
+ {
+  "id": "CR-092",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "CR-093",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "CR-094",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "CR-095",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": null,
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-229",
+  "type": "CR",
+  "status": "QA PASS (2026-07-22) \u2014 iteration_7: T1-T3 PASS (auto-email gen, clear/refill, manual override). T4 code-verified (email mandatory validation at L134). Disappearing-row bug is pre-existing.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5 \u2705"
+ },
+ {
+  "id": "BUG-230",
+  "type": "CR",
+  "status": "QA PASS (2026-07-22) \u2014 iteration_7: T5a PASS (existing employee email syncs on fname change when matching pattern). T5b PASS (custom email NOT overwritten). Both scenarios confirmed.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5 \u2705"
+ },
+ {
+  "id": "BUG-231",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-22) \u2014 iteration_7: T6-T10 all PASS. role_type hidden, name validation + red border, permissions validation, error clears on type, no JS errors. Full browser-verified.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5 \u2705"
+ },
+ {
+  "id": "BUG-232",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 Batch QA verified via testing_agent",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b \u2705"
+ },
+ {
+  "id": "BUG-233",
+  "type": "BUG",
+  "status": "BACKEND-BLOCKED",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-234",
+  "type": "BUG",
+  "status": "QA PASS \u2014 OWNER SMOKE PENDING",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b"
+ },
+ {
+  "id": "BUG-235",
+  "type": "BUG",
+  "status": "QA PASS \u2014 OWNER SMOKE PENDING",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "0-5b"
+ },
+ {
+  "id": "CR-096",
+  "type": "CR",
+  "status": "QA PASS \u2014 OWNER SMOKE PENDING",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "0-5b"
+ },
+ {
+  "id": "CR-097",
+  "type": "CR",
+  "status": "QA PASS \u2014 10/10. Ready for Gate 6 (Owner Smoke).",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": null
+ },
+ {
+  "id": "CR-098",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 8/8 code + curl tests. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-3"
+ },
+ {
+  "id": "CR-099",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 8/8 code tests. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-3"
+ },
+ {
+  "id": "BUG-236",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-237",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 recipe name hidden for standard. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-238",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 shadcn combobox replaces plain select. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-239",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-24) \u2014 serves hidden for sub/addon. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "CR-100",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "0-1"
+ },
+ {
+  "id": "CR-101",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 filter state + dropdowns + options verified. Ready for Gate 6.",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-3"
+ },
+ {
+  "id": "CR-102",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 hasConversion guard + consumption_unit verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-3"
+ },
+ {
+  "id": "CR-103",
+  "type": "CR",
+  "status": "QA PASS (2026-07-24) \u2014 selection + bulk remove + activeRows + prominent \u00d7 verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-3"
+ },
+ {
+  "id": "BUG-240",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-241",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-242",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-243",
+  "type": "BUG",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED (stock qty not credited after add-purchase)",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-244",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-245",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-246",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-247",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-104",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-08-22). Awaiting Gate 6 (Owner Smoke).",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-248",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-105",
+  "type": "CR",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-249",
+  "type": "BUG",
+  "status": "QA PASS (2026-07-25) \u2014 code inspection + browser E2E verified. Ready for Gate 6.",
+  "priority": null,
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-107",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": "0-2"
+ },
+ {
+  "id": "CR-109",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5a"
+ },
+ {
+  "id": "CR-110",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5a"
+ },
+ {
+  "id": "BUG-258",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-259",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-260",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-261",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-262",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-114",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-115",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-263",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-264",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-265",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-266",
+  "type": "BUG",
+  "status": "GATE 2 COMPLETE (Impact Analysis + Backend Brief filed) \u2014 BACKEND-BLOCKED",
+  "priority": null,
+  "risk": "N/A",
+  "gate": null
+ },
+ {
+  "id": "BUG-267",
+  "type": "BUG",
+  "status": "INVESTIGATION COMPLETE \u2014 NEEDS_MORE_DATA (cannot reproduce)",
+  "priority": null,
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-268",
+  "type": "BUG",
+  "status": "INVESTIGATION COMPLETE \u2014 BACKEND-BLOCKED (SQL AUTO_INCREMENT missing)",
+  "priority": null,
+  "risk": "CRITICAL",
+  "gate": null
+ },
+ {
+  "id": "BUG-269",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-270",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-271",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": "0-5"
+ },
+ {
+  "id": "CR-116",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-272",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-273",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-08-22). Awaiting Gate 6 (Owner Smoke).",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "0-3"
+ },
+ {
+  "id": "BUG-274",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-275",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-276",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-277",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-278",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "BUG-279",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b (2026-07-31)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "0-5"
+ },
+ {
+  "id": "CR-117",
+  "type": "CR",
+  "status": "GATE_5_PENDING_QA",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "CR-118",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-119",
+  "type": "CR",
+  "status": "IMPLEMENTED Gate 5a \u2014 QA PENDING (Gate 5b)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-280",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-281",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-282",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-283",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-284",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-285",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-120",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-121",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "0-1"
+ },
+ {
+  "id": "BUG-286",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-287",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-288",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-289",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-122",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-123",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-290",
+  "type": "BUG",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE",
+  "priority": "P0",
+  "risk": "LOW",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-291",
+  "type": "BUG",
+  "status": "QA PASS (Gate 5b, 2026-08-01) \u2014 Awaiting Gate 6 Owner Smoke",
+  "priority": "P1",
+  "risk": "LOW (revised from HIGH \u2014 socketHandlers.js NOT touched; GAP-R5 false alarm)",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-124",
+  "type": "CR",
+  "status": "GATE 5a \u2014 IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM-HIGH",
+  "gate": "5a complete \u2014 QA next"
+ },
+ {
+  "id": "BUG-292",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-293",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-126",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-127",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-128",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-294",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-129",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-295",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "BUG-296",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 Gate 5a 2026-08-06",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-130",
+  "type": "CR",
+  "status": "QA PASS (Gate 5b, 2026-08-06) \u2014 Awaiting Gate 6 Owner Smoke",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-297",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-298",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-299",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-131",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 Gate 5a 2026-08-06",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "BUG-300",
+  "type": "BUG",
+  "status": "IMPLEMENTED Tier 2 \u2014 Gate 5a 2026-08-06",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-132",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 AWAITING QA",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 3
+ },
+ {
+  "id": "BUG-301",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 Gate 5a 2026-08-06",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-302",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 Gate 5a 2026-08-06",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "CR-133",
+  "type": "CR",
+  "status": "IMPLEMENTED (Gap Batch) \u2014 AWAITING QA",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-SCAN-DEDUP",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-134",
+  "type": "CR",
+  "status": "HOLD \u2014 BACKEND PENDING",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": 1
+ },
+ {
+  "id": "CR-135",
+  "type": "CR",
+  "status": "QA PASS \u2014 AWAITING OWNER SMOKE (Gate 6)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-304",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-305",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": null
+ },
+ {
+  "id": "BUG-306",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-307",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (Gate 5b)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-136",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-137",
+  "type": "CR",
+  "status": "QA_PASS",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-138",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-308",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-309",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-310",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-311",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA pending (Gate 5a)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-312",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 SUBSUMED by CR-139",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-313",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 SUBSUMED by CR-139",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5a"
+ },
+ {
+  "id": "CR-139",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-314",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-315",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-316",
+  "type": "BUG",
+  "status": "IMPLEMENTED (FIX v2 \u2014 2026-08-13: FALLBACK\u2192APPROVED, always used)",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-317",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-318",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-319",
+  "type": "BUG",
+  "status": "GATE 2 COMPLETE \u2014 BACKEND-BLOCKED. Impact Analysis: memory/impact/BUG-315-319_PRINTER_IMPACT_ANALYSIS.md",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "2"
+ },
+ {
+  "id": "BUG-320",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-321",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5a"
+ },
+ {
+  "id": "BUG-322",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "CR-140",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P0",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-141",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "CR-142",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 QA PASS",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-143",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 QA PASS",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-144",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 QA PASS",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-145",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 QA PASS",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-323",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "BUG-324",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (ENV-BLOCKED TC-2)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "GAP-BULK-DEFAULTS",
+  "type": "GAP",
+  "status": "IMPLEMENTED \u2014 QA pending (Gate 5a)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": "5a"
+ },
+ {
+  "id": "CR-146",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": 5
+ },
+ {
+  "id": "BUG-325",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": "LOW",
+  "gate": 5
+ },
+ {
+  "id": "BUG-326",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": "MEDIUM",
+  "gate": 5
+ },
+ {
+  "id": "BUG-327",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-147",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-08-23). Awaiting Gate 6 (Owner Smoke).",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-328",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-148",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "Gate 2"
+ },
+ {
+  "id": "CR-149",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-341",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-342",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-150",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "Gate 2"
+ },
+ {
+  "id": "CR-151",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-152",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-153",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-154",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-343",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-155",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "Gate 3"
+ },
+ {
+  "id": "CR-156",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-157",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "Gate 2"
+ },
+ {
+  "id": "CR-159",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "Gate 3"
+ },
+ {
+  "id": "BUG-344",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "LOW-MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-160",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-161",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "INV-ROOM-001",
+  "type": "INVESTIGATION",
+  "status": "INVESTIGATION COMPLETE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "INV-OE-001",
+  "type": "INVESTIGATION",
+  "status": "INVESTIGATION COMPLETE",
+  "priority": "P1",
+  "risk": "LOW-MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-333",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-163",
+  "type": "CR",
+  "status": "IMPLEMENTED \u2014 FE complete. BACKEND BLOCKED: GAP1 (items not removed from source order) + GAP2 (new order created as room not walk-in). Backend brief filed 2026-08-24.",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "INV-PG-001",
+  "type": "INVESTIGATION",
+  "status": "INVESTIGATION COMPLETE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-335",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-164",
+  "type": "CR",
+  "status": "INTAKE \u2014 CRM_EVENTS_ENDPOINT_BLOCKED",
+  "priority": "P1",
+  "risk": "LOW-MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "INV-GST-001",
+  "type": "INVESTIGATION",
+  "status": "INVESTIGATION COMPLETE",
+  "priority": "P0",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-336",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": null
+ },
+ {
+  "id": "BUG-337",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-338",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "INV-BACKEND-001",
+  "type": "INVESTIGATION",
+  "status": "INVESTIGATION COMPLETE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-339",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-165",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-346",
+  "type": "BUG",
+  "status": "INTAKE \u2014 BACKEND_BUG (investigation 2026-08-22: FE displays printer config phone correctly. Backend must sync phone_number_on_bill \u2192 printer_config restaurant_information.phone_number. Zero FE work.)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-330",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-332",
+  "type": "BUG",
+  "status": "GATE_5B_QA_PASS_AWAITING_OWNER_SMOKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-347",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-345",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-167",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-168",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-169",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-170",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": "Gate 5a \u2014 Awaiting QA"
+ },
+ {
+  "id": "BUG-340",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-347",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-348",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-351",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-352",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-353",
+  "type": "BUG",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED",
+  "priority": null,
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "BUG-354",
+  "type": "BUG",
+  "status": "INTAKE",
+  "priority": null,
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "BUG-355",
+  "type": "BUG",
+  "status": "PARKED \u2014 owner decision",
+  "priority": null,
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "BUG-356",
+  "type": "BUG",
+  "status": "INTAKE \u2014 AWAITING LIVE TEST",
+  "priority": null,
+  "risk": null,
+  "gate": "1"
+ },
+ {
+  "id": "BUG-357",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-358",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-359",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "CR-348",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "CR-349",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "CR-350",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-360",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-361",
+  "type": "BUG",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "CR-351",
+  "type": "CR",
+  "status": "IMPLEMENTED",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-352",
+  "type": "CR",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-364",
+  "type": "BUG",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": null,
+  "risk": null,
+  "gate": "5"
+ },
+ {
+  "id": "BUG-365",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-366",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "CR-353",
+  "type": "CR",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 3
+ },
+ {
+  "id": "CR-355",
+  "type": "CR",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P3",
+  "risk": "LOW",
+  "gate": 3
+ },
+ {
+  "id": "BUG-368",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 Awaiting QA",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "BUG-369",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PENDING (testing agent timed out 2x; manual verification needed)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": 3
+ },
+ {
+  "id": "BUG-370",
+  "type": "BUG",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P2",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "BUG-371",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PENDING (testing agent timed out 2x; manual verification needed)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": 3
+ },
+ {
+  "id": "BUG-372",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PENDING (testing agent timed out 2x; manual verification needed)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 3
+ },
+ {
+  "id": "BUG-373",
+  "type": "BUG",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": null
+ },
+ {
+  "id": "BUG-374",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PENDING (testing agent timed out 2x; manual verification needed)",
+  "priority": "P0",
+  "risk": "CRITICAL",
+  "gate": 3
+ },
+ {
+  "id": "BUG-375",
+  "type": "BUG",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Owner Smoke (Gate 6)",
+  "priority": "P3",
+  "risk": "LOW",
+  "gate": null
+ },
+ {
+  "id": "CR-357",
+  "type": "CR",
+  "status": "INTAKE \u2014 Gate 2 blocked on OD-7 backend confirmation",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": null
+ },
+ {
+  "id": "CR-358",
+  "type": "CR",
+  "status": "GATE 3 \u2014 PHASED PLAN OWNER-APPROVED (2026-09-01)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 3
+ },
+ {
+  "id": "CR-359",
+  "type": "CR",
+  "status": "QA PASS (Gate 5b) \u2014 Awaiting Gate 6 (Owner Smoke)",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-376",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 2026-09-02 (roleTransform.js R1/R2/R3 + RoleFormView.jsx F1-F5)",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "1"
+ },
+ {
+  "id": "CR-358-P1",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-377",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (r2 \u2014 deeper root fix 2026-09-03)",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "BUG-378",
+  "type": "BUG",
+  "status": "IMPLEMENTED \u2014 QA PASS (testing agent 2026-09-03)",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-360",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b",
+  "priority": null,
+  "risk": null,
+  "gate": null
+ },
+ {
+  "id": "CR-358-P2",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (13/13 tests PASS, 100%)",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-358-P3",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-09-04). 30/31 exec PASS (1 V-M4 skipped \u2014 preprod mutation). Ready for Gate 6.",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-379",
+  "type": "BUG",
+  "status": "QA PASS \u2014 Gate 5b",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "CR-358-P4",
+  "type": "CR",
+  "status": "QA PASS \u2014 Gate 5b (2026-09-04). 34/34 exec PASS + testing agent 100%. Ready for Gate 6.",
+  "priority": "P0",
+  "risk": "MEDIUM",
+  "gate": "5b"
+ },
+ {
+  "id": "BUG-380",
+  "type": "BUG",
+  "status": "QA PASS \u2014 6/6 PASS, 0 FAIL. Coverage 3/3 files. Ready for Gate 6 (Owner Smoke).",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "BUG-381",
+  "type": "BUG",
+  "status": "QA PASS (2 NOTE \u2014 no walk-in data on preprod). Backend fix verified via data flow. Ready for Gate 6 (Owner Smoke).",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": 5
+ },
+ {
+  "id": "CR-361",
+  "type": "CR",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED",
+  "priority": "P1",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-362",
+  "type": "CR",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED",
+  "priority": "P1",
+  "risk": "CRITICAL",
+  "gate": "1"
+ },
+ {
+  "id": "CR-363",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "1"
+ },
+ {
+  "id": "CR-364",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "1"
+ },
+ {
+  "id": "CR-365",
+  "type": "CR",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-366",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P2",
+  "risk": "MEDIUM",
+  "gate": "1"
+ },
+ {
+  "id": "CR-367",
+  "type": "CR",
+  "status": "INTAKE \u2014 BACKEND-BLOCKED",
+  "priority": "P2",
+  "risk": "HIGH",
+  "gate": "1"
+ },
+ {
+  "id": "CR-358-P5",
+  "type": "CR",
+  "status": "INTAKE",
+  "priority": "P1",
+  "risk": "HIGH",
+  "gate": "1"
+ }
+]

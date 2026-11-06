@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only test of the DATE_PRESETS / computePresetRange missing-import fix (BUG-640 + CR-491). Logged in as owner@palmhouse.com. Loaded all 6 fixed pages (profit-loss, order-ledger, item-sales, food-court, food-court-beta, variation-addon-sales) plus 3 regression pages (dashboard, sales, payments). Each was tested twice: once with a full page.goto and once with client-side navigation. None crashed: no 'is not defined' text, no ErrorBoundary, and 0 pageerror events. I also clicked the preset pills (LM/30D/Today/MTD) to run computePresetRange. LM gives 2026-10-01..2026-10-31 on order-ledger, item-sales, food-court and food-court-beta. A static scan of src/ found no remaining file that uses DATE_PRESETS or computePresetRange without importing or defining it. The crash fix works. Separately, the P&L page has a preset logic bug: its LM and FY pills are not handled.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "PLReportPage applyPreset (lines 44-58)", "issue": "The DATE_PRESETS list includes 'LM' and 'FY', but the applyPreset switch only handles Today, 7D, 30D and MTD. Clicking LM or FY falls to `default` and sets the range to Today..Today, while the pill shows LM or FY as active. Verified: clicking LM set both date inputs to 2026-11-05. Fix: use computePresetRange(preset) from utils/datePresets, as the other pages do.", "selector": "[data-testid=pl-preset-lm], [data-testid=pl-preset-fy]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Variation & Addon Sales", "issues": ["The preset pill set (Today/7D/30D/MTD/1Y) differs from the other reports (Today/7D/LM/30D/MTD/FY). The page has an LM branch in handlePreset (line 96), but no pill can trigger it. On the first load I saw the 7D pill highlighted while the date range was today..today; not re-verified."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "PLReportPage.jsx: handle 'LM' and 'FY' in applyPreset (for example, use computePresetRange from @/utils/datePresets). Right now both silently fall back to Today.",
+    "Optional: VariationAddonMockup either add LM to its pill list or remove the unreachable LM branch, and check that the default pill matches the default date range."
+  ],
+  "critical_code_review_comments": [
+    "PLReportPage defines its own fmtISO and applyPreset instead of using the shared utils/datePresets helpers. This duplication caused the LM/FY gap.",
+    "Each report page has its own copy of the preset handling logic. Extracting it into a shared hook (for example, useDatePresets) would prevent this kind of drift and the missing-import class of bug."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% for the crash fix (9/9 pages render, 0 page errors); P&L LM/FY preset logic bug found"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "The login page is at '/' (testids login-email, login-password, login-button). After login the app goes to /loading and then /dashboard. A full page.goto to a report page also goes through /loading for about 15s, so wait for the URL. Client-side navigation is faster: history.pushState followed by dispatching a popstate event. Preset testids look like pl-preset-lm and order-ledger-preset-lm. Preset buttons are disabled while data is loading. Only the LM click calls computePresetRange on the Mockup and Beta pages.",
+  "rca of the issue": "Original crash: 6 report files referenced DATE_PRESETS and/or computePresetRange without importing them, so a ReferenceError was thrown at render (or on the LM click) and the ErrorBoundary caught it. The imports were added and the fix is verified. New finding: PLReportPage now renders DATE_PRESETS pills, but its local applyPreset was written for 4 presets only, so the LM and FY pills set the wrong range."
+}

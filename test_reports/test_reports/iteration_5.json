@@ -1,0 +1,50 @@
+{
+  "summary": "BUG-619 and BUG-620 verification complete. Both bugs fixed and passing. All regression tests pass.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "CollectPaymentPanel",
+        "issues": ["Minor: 'Please enter discount amount' error toast appears transiently when % type is selected with value=0 and no apply action. Not a blocker."]
+      }
+    ]
+  },
+  "bug_619_results": {
+    "test_order": "T1 (Mantri, owner@mantri.com), order total ₹20",
+    "D0_cpp_open": "PASS — CPP opened on T1 dine-in order",
+    "D1_preset_family_50_select": "PASS — Family — 50% selected from dropdown (preset_91)",
+    "D2_preset_auto_applied": "PASS — Preset auto-applies on selection, Unapply button shown immediately",
+    "D3_grand_total_50pct": "PASS — Pay ₹10 shown (50% of ₹20, NOT ₹0). Total Discount = -₹10, single discount line",
+    "D4_unapply_restores_full": "PASS — Unapply clicked → Pay ₹20 (full total restored)",
+    "double_discount_present": false,
+    "verdict": "FIXED — No double-discount. Grand Total = 50% of order total as expected."
+  },
+  "regression_results": {
+    "A_manual_pct_15": "PASS — 15% discount → Pay ₹17 (₹20 × 85%), Unapply shown",
+    "B_flat_inr_5": "PASS — Flat ₹5 discount → Pay ₹15 (₹20 - ₹5), correct",
+    "C_none_selection": "PASS — No crash on None selection (tested implicitly via Unapply flow)"
+  },
+  "bug_620_results": {
+    "palmhouse_login": "PASS — owner@palmhouse.com logged in, dashboard loaded",
+    "list_view_accessible": "PASS — 'Switch to Order View' button found (data-testid=view-toggle)",
+    "list_view_renders": "PASS — Order list view renders dine-in and room orders without crash",
+    "orders_visible": "PASS — Multiple orders visible: mark ₹3,423, lady with nose ring ₹893, rooms 306/209/206/107",
+    "js_errors": "0 non-WebSocket JS errors in list view",
+    "crash": false,
+    "verdict": "FIXED — List view renders without crash."
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-619 FIXED: preset Family 50% applies only 50% discount (not 100%). BUG-620 FIXED: list view (Switch to Order View) renders without crash on Palm House. Mantri (T1) has ₹20 order. All discount flows (preset, manual %, flat ₹) working correctly.",
+  "seed_data_creation": "None"
+}

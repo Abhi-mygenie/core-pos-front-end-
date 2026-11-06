@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Stock Audit — AFTER (BUG-459 · OD-UNIFY-01)</title>
+<style>
+*{box-sizing:border-box;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+body{margin:0;background:#fff;color:#1e293b}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 34px}
+.mockbar{background:#0f172a;color:#fff;font-size:12px;letter-spacing:.4px;padding:8px 34px;display:flex;gap:16px;align-items:center}
+.mockbar b{color:#4ade80}
+.mockbar .tag{background:#1e293b;padding:3px 10px;border-radius:999px}
+h1{font-size:26px;margin:6px 0 2px;display:flex;align-items:center;gap:10px}
+.sub{color:#64748b;font-size:14px;margin:0 0 22px}
+.save{float:right;background:#22c55e;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-weight:600;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:#94a3b8;font-size:11px;letter-spacing:.6px;font-weight:700;padding:10px 16px;border-bottom:1px solid #e2e8f0}
+td{padding:14px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.center{text-align:center}
+.name{font-weight:600}
+.cat{color:#94a3b8;font-size:12px}
+.qty b{font-size:15px}
+.unit{color:#64748b;font-size:13px;margin-left:3px}
+.paren-old{color:#cbd5e1;text-decoration:line-through;text-decoration-color:#ef4444;text-decoration-thickness:2px;font-size:12px;margin-left:6px}
+.box{display:inline-flex;align-items:center;justify-content:center;width:60px;height:34px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:14px;text-align:center}
+.box.added{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.ulbl{color:#64748b;font-size:12px;margin:0 6px}
+.twobox{display:inline-flex;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600}
+.b-short{background:#fef3c7;color:#b45309}
+.b-match{background:#f1f5f9;color:#64748b}
+.b-over{background:#dcfce7;color:#15803d}
+.dash{color:#cbd5e1}
+select{height:34px;border:1px solid #e2e8f0;border-radius:8px;padding:0 8px;color:#64748b;font-size:13px;width:190px}
+.callout{position:relative}
+.note{display:inline-block;background:#fef2f2;color:#b91c1c;border:1px dashed #fca5a5;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:8px}
+.note.add{background:#f0fdf4;color:#15803d;border-color:#86efac}
+.legend{margin-top:26px;font-size:12px;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;line-height:1.9}
+.legend b{color:#0f172a}
+</style></head><body>
+<div class="mockbar"><span class="tag">MOCKUP · not wired</span> <b>STOCK AUDIT — AFTER</b> · BUG-459 (OD-UNIFY-01) · breakdown shown once per cell</div>
+<div class="wrap">
+<button class="save">✓ Save Adjustments</button>
+<h1>📋 Stock Audit</h1>
+<p class="sub">Compare system quantities with actual physical stock. Count in the display unit; put any leftover base units in the second box.</p>
+<table>
+<thead><tr><th>INGREDIENT</th><th class="center">SYSTEM QTY</th><th class="center">PHYSICAL QTY</th><th class="center">DRIFT</th><th>REASON</th></tr></thead>
+<tbody>
+<tr class="callout">
+  <td><div class="name">ANGARA GREAVY</div><div class="cat">UAT Raw Conversion</div></td>
+  <td class="center qty"><b>9.4</b><span class="unit">pkt</span><span class="paren-old">(9 pkt 200 gm)</span><span class="note">REMOVED BUG-455 (…)</span></td>
+  <td class="center"><span class="twobox"><span class="box added">9</span><span class="ulbl">pkt</span><span class="box added">0</span><span class="ulbl">gm</span></span><span class="note add">ADDED two-box</span></td>
+  <td class="center"><span class="badge b-short">↓ 0 pkt 200 gm</span></td>
+  <td><select><option>Wastage (Loss)</option></select></td>
+</tr>
+<tr>
+  <td><div class="name">BBQ JUMBO WINGS</div><div class="cat">UAT Raw Conversion</div></td>
+  <td class="center qty"><b>8.5</b><span class="unit">pkt</span></td>
+  <td class="center"><span class="twobox"><span class="box">8</span><span class="ulbl">pkt</span><span class="box">10</span><span class="ulbl">piece</span></span></td>
+  <td class="center"><span class="badge b-match">Match</span></td>
+  <td><select><option>N/A — no drift</option></select></td>
+</tr>
+<tr>
+  <td><div class="name">BLACK OLIVE</div><div class="cat">UAT Raw Conversion</div></td>
+  <td class="center qty"><b>4.9</b><span class="unit">tin</span></td>
+  <td class="center"><span class="twobox"><span class="box">5</span><span class="ulbl">tin</span><span class="box">0</span><span class="ulbl">gm</span></span></td>
+  <td class="center"><span class="badge b-over">↑ +0 tin 160 gm</span></td>
+  <td><select><option>Found extra</option></select></td>
+</tr>
+<tr class="callout">
+  <td><div class="name">ACHARI TIKKA</div><div class="cat">UAT Raw Conversion · no conversion</div></td>
+  <td class="center qty"><b>0</b><span class="unit">kg</span></td>
+  <td class="center"><span class="twobox"><span class="box">0</span><span class="ulbl">kg</span></span><span class="note add" style="background:#eff6ff;color:#1d4ed8;border-color:#93c5fd">UNCHANGED single box</span></td>
+  <td class="center"><span class="dash">—</span></td>
+  <td><select><option>N/A — no drift</option></select></td>
+</tr>
+<tr>
+  <td><div class="name">Cashew Corn Masala</div><div class="cat">Packed Items · no conversion</div></td>
+  <td class="center qty"><b>0</b><span class="unit">piece</span></td>
+  <td class="center"><span class="twobox"><span class="box">0</span><span class="ulbl">piece</span></span></td>
+  <td class="center"><span class="dash">—</span></td>
+  <td><select><option>N/A — no drift</option></select></td>
+</tr>
+</tbody></table>
+<div class="legend">
+<b>What changed (converted rows only):</b> SYSTEM QTY drops the muted <s>(9 pkt 200 gm)</s> parenthetical → plain <b>9.4 pkt</b>. PHYSICAL QTY becomes a <b>two-box converter</b> [ major ] displayUnit [ minor ] smallUnit. DRIFT renders as a signed breakdown badge — <span class="badge b-short">↓ shortage</span> <span class="badge b-match">Match</span> <span class="badge b-over">↑ overage</span>.<br>
+<b>No-conversion rows</b> (kg-only, piece-only): single input box + single unit label — <b>unchanged</b>. Breakdown now appears exactly once per row.
+</div>
+</div></body></html>
