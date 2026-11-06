@@ -36262,16 +36262,16 @@
       "id": "CR-513",
       "sprint_key": "TBD",
       "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
-      "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open (OD-513-01..05). Backend verified.",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE — awaiting OD-513-04/06/07/08 → Gate 3 GO",
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
       "area": "Printing / Printer Agent",
-      "files": "src/api/transforms/orderTransform.js (R5); possibly CollectPaymentPanel.jsx (R5)",
+      "files": "orderTransform.js (R5) · CollectPaymentPanel.jsx (R5) · OrderEntry.jsx (R5) [Option A]",
       "registered": "2026-11-06",
       "registered_by": "INTAKE agent",
       "source": "OWNER-REPORTED",
-      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch).",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch). | 2026-11-06 Gate 2: 9 print paths mapped. P1-P4 (CPP Print Bill + 5 OrderEntry auto-print sites) have live % + roundOff. P5-P7 (dashboard/report/PMS reprint) lack sources: get-single-order-new has no discount/round_up; employee-orders-list has no order_discount_type/round_up. Recommend Option A (live paths) + C (backend exposes fields). Blast re-graded MEDIUM (3 R5 files).",
       "blocked_on": "",
       "assignee": "",
       "related": [
@@ -36290,13 +36290,23 @@
           "label": "Probe",
           "path": "memory/evidence/CR-513/CR-513_order_temp_store_probe_2026_11_06.json",
           "type": "evidence"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-513_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Source probe",
+          "path": "memory/evidence/CR-513/CR-513_order_source_field_probe_2026_11_06.json",
+          "type": "evidence"
         }
       ]
     }
   ],
   "meta": {
     "last_updated": "2026-11-06",
-    "last_action": "INTAKE: CR-513 registered (order-temp-store discount_percentage + roundoff). RELATED BUG-592/CR-487/CR-502.",
+    "last_action": "PLANNING Gate 2: CR-513 Impact Analysis complete.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
