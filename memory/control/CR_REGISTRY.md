@@ -30,7 +30,7 @@
 | **CR-486** | Multiple counter logins — two users operating simultaneously at the same counter | **P1** | **HIGH** | GATE_1_INTAKE_FROZEN — TRACKING ONLY (OD-486-01 at Gate 2) | `change_requests/CR-486_MULTIPLE_COUNTER_LOGINS_INTAKE.md` |
 | **CR-487** | Printed bill — show discount % and discount ₹ amount | **P1** | **CRITICAL** | GATE_1_INTAKE_FROZEN — TRACKING ONLY (Old POS Printer Agent team) | `change_requests/CR-487_DISCOUNT_PERCENT_AND_AMOUNT_ON_BILL_INTAKE.md` |
 | **CR-488** | Credit Management — print option for each bill (credit order) | **P1** | **HIGH** | GATE_1_INTAKE_FROZEN | `change_requests/CR-488_CREDIT_PRINT_EACH_BILL_INTAKE.md` |
-| **CR-489** | Configurable lock — once bill is printed, only employees with a specific right can edit the order | **P1** | **CRITICAL** | GATE_2_IMPACT_ANALYSIS_COMPLETE | `change_requests/CR-489_EDIT_AFTER_BILL_PRINT_PERMISSION_INTAKE.md` |
+| **CR-489** | Configurable lock — once bill is printed, only employees with a specific right can edit the order | **P1** | **CRITICAL** | GATE_3_PLAN_COMPLETE — 4 edits / 4 files. Awaiting Gate 4 GO. | `change_requests/CR-489_EDIT_AFTER_BILL_PRINT_PERMISSION_INTAKE.md` |
 | **CR-490** | Report permission split — a user can be given Daily Report access only, with no other reports/insights | **P1** | **HIGH** | GATE_2_IMPACT_ANALYSIS_COMPLETE | `change_requests/CR-490_DAILY_REPORT_ONLY_PERMISSION_INTAKE.md` |
 | **CR-491** | Codebase cleanup — remove hardcoded API calls, URLs, mock/sample data from Reports and other sections | **P1** | **HIGH** | GATE_1_INTAKE_FROZEN — OD-491-06 carried to Gate 2 | `change_requests/CR-491_HARDCODED_VALUES_CLEANUP_INTAKE.md` |
 
