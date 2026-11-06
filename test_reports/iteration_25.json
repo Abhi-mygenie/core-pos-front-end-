@@ -1,0 +1,15 @@
+{
+  "summary": "Verified the fix for 'ReferenceError: restaurant is not defined' in DashboardPage.jsx. Line 178 destructures settings from useRestaurant(), and line 454 now uses settings?.keyboardShortcuts. In RestaurantContext, settings is a memo of restaurant?.settings || defaults, so the fix behaves the same as the original intent. ESLint with no-undef found 0 errors in DashboardPage.jsx. The served dev bundle contains the fixed code ('settings !== null && ... settings.keyboardShortcuts'). The webpack build compiles with 1 unrelated warning. The login page (from REACT_APP_BACKEND_URL) renders correctly: all testids are present, there is no ErrorBoundary and there are 0 console or page errors. Other places that use restaurant?.settings (OrderEntry.jsx, CollectPaymentPanel.jsx) destructure restaurant correctly. The post-login dashboard was NOT tested in the browser because no credentials are available (the auth API is external at preprod.mygenie.online).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "action_items": ["Optional: run the full post-login dashboard flow once preprod credentials are added to /app/memory/test_credentials.md"],
+  "critical_code_review_comments": ["DashboardPage.jsx is very large (>1800 lines); consider splitting it", "There are no project-level no-undef lint gates in CI; adding eslint no-undef as an error would have caught this bug at build time"],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (external API)", "frontend": "100% of testable checks"},
+  "test_credentials": "/app/memory/test_credentials.md missing; no credentials available",
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Fix verified at code, lint and bundle level, and on the login page. Post-login DashboardPage render is untested because there are no credentials."
+}
