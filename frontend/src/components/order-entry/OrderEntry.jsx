@@ -3240,12 +3240,12 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       {showKbdLeaveConfirm && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} data-kbd-modal="kbd-leave-confirm" data-testid="kbd-leave-confirm">
           <div className="bg-white rounded-xl shadow-2xl p-6 mx-4 max-w-xs text-center" onKeyDown={e => {
-            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setShowKbdLeaveConfirm(false); }
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setShowKbdLeaveConfirm(false); searchInputRef.current?.focus(); }
           }}>
             <p className="font-semibold text-base mb-1" style={{ color: COLORS.darkText }}>Unsaved items</p>
             <p className="text-sm mb-5" style={{ color: COLORS.grayText }}>Items not yet placed will be lost. Leave?</p>
             <div className="flex gap-3">
-              <button autoFocus onClick={() => setShowKbdLeaveConfirm(false)} className="flex-1 py-2.5 rounded-lg font-medium text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="kbd-leave-confirm-stay">Stay</button>
+              <button autoFocus onClick={() => { setShowKbdLeaveConfirm(false); searchInputRef.current?.focus(); }} className="flex-1 py-2.5 rounded-lg font-medium text-white" style={{ backgroundColor: COLORS.primaryGreen }} data-testid="kbd-leave-confirm-stay">Stay</button>
               <button onClick={() => { setShowKbdLeaveConfirm(false); onClose(); }} className="flex-1 py-2.5 rounded-lg font-medium border" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }} data-testid="kbd-leave-confirm-leave">Leave</button>
             </div>
           </div>

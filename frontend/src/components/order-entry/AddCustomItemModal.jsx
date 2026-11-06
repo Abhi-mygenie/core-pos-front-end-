@@ -88,7 +88,7 @@ const AddCustomItemModal = ({ categories = [], products = [], onClose, onAdd, sh
   const selectedCategoryName = categories.find(c => String(c.categoryId) === String(categoryId))?.categoryName || '';
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="add-custom-item-modal" data-kbd-modal="custom-item" onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center" data-testid="add-custom-item-modal" data-kbd-modal="custom-item" tabIndex={-1} ref={el => { if (el) el.focus(); }} onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); } }}>{/* CR-482 P17 */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-hidden flex flex-col">

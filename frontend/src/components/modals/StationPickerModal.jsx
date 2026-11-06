@@ -63,6 +63,8 @@ const StationPickerModal = ({
         onClick={e => e.stopPropagation()}
         data-testid="station-picker-modal"
         data-kbd-modal="station-picker"
+        tabIndex={-1}
+        ref={el => { if (el) el.focus(); }}
         onKeyDown={e => { // CR-482 P13
           if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onClose(); }
           if (e.key === 'Enter' && selectedStations.length > 0 && !isLoading) { e.preventDefault(); handleConfirm(); }

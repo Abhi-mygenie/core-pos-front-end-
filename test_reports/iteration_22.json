@@ -1,0 +1,31 @@
+{
+  "summary": "CR-482 Batch 2 QA (P13, P16, P17) on the preview URL against preprod, logged in as owner@cafe103.com. Safety measures: a capture click interceptor on place-order, print-bill, collect-bill and reprint-kot, and page.route aborts on order-temp-store, place-order, update-place-order and order-bill-payment. Nothing reached the server: no orders placed, nothing printed, nothing settled. One check hit the real reprint path, but its order-temp-store call was aborted. PASS: P13 F7 on C1 clicks reprint-kot-btn with defaultPrevented=true, so no Caret Browsing prompt. F7 on a new table does nothing. P16 Esc clears the search (3 items back to 428), focus stays in search and OE stays open. Esc on an empty table closes OE. Esc on placed-only C1 closes OE with no confirm. Esc with unplaced items shows the 'Unsaved items' dialog with Stay auto-focused (green); Enter=Stay keeps the cart, Esc on the dialog dismisses it with the cart intact, Tab then Enter on Leave closes OE, and F2 is inert while the dialog is open. Mouse Back (category-back-btn) with unplaced items leaves with no confirm (OD-482-A7). P10 Ctrl+Down, arrows and Esc-to-search still work. Batch 1 F2, F8 and F4 still work and F9 clicks collect-bill. With the flag OFF, Esc does not clear the search or show a confirm, F7 does nothing and the mouse flows work. FAIL: P17 Esc does not close the Customer, Order Notes or Item Notes modals in the normal case. After a mouse click opens the modal, focus stays on the opener button outside the modal. The window capture handler then sees data-kbd-modal and returns, and the modal's own React onKeyDown never fires because focus is not inside it. Esc only works after the user clicks or types inside the modal (for example the Order Notes input) or happens to Tab into it. Add Custom Item works because its name input has autoFocus. NOT TESTABLE: the Station Picker. C1's items map to one station, so RePrintButton prints directly and the picker never opens. Code review shows the same flaw there: F7 keeps focus in the search box, the picker has no autofocus, so Esc and Enter would not reach its onKeyDown.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CustomerModal / OrderNotesModal / ItemNotesModal (P17)", "issue": "Esc does not close the modal right after opening. Focus stays on the opener button (customer-info-btn, order-notes-btn, add-note-btn-*), which is outside the modal root, so the modal root's onKeyDown never receives the key. The global P16 handler bails because isKbdModalOpen() is true, so Esc is dead. Reproduce: shortcuts ON, click customer-info-btn, press Esc: the modal stays open. Tab from the opener also moves focus to OE buttons behind the modal (shift-table-btn, merge-tables-btn, menu items). There is no focus trap.", "selector": "[data-testid=customer-modal],[data-testid=order-notes-modal],[data-testid=item-notes-modal]", "priority": "HIGH"},
+      {"component": "StationPickerModal (P13)", "issue": "Code review, not reproducible with the current data (C1 has a single station). It has the same pattern: the onKeyDown is on the modal div, there is no autoFocus, and F7 is pressed from search, so focus stays in search. Esc and Enter would be dead.", "selector": "[data-testid=station-picker-modal]", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "P16 kbd-leave-confirm", "issues": ["After Stay or Esc-dismiss, focus goes to BODY instead of back to the search input. The keyboard user has to press F2. Suggest refocusing searchInputRef on close.", "There is no focus trap in the dialog. Tab past Leave can move to elements behind it."]}
+    ]
+  },
+  "test_report_links": ["/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "action_items": [
+    "P17/P13: make Esc work regardless of where focus is. Option A: on mount, focus the modal (root tabIndex=-1 plus ref.focus(), or autoFocus on the first input or close button) in CustomerModal, OrderNotesModal, ItemNotesModal and StationPickerModal. Option B, more robust: in each modal, add a window keydown listener in the capture phase for Escape (and Enter for the station picker), gated on kbdEnabled.",
+    "Optional: refocus the search input after the P16 confirm Stay or Esc, and add a focus trap to the modals and the confirm dialog."
+  ],
+  "critical_code_review_comments": [
+    "The P17 modals depend on focus being inside the modal root for onKeyDown, but nothing moves focus there on open (only AddCustomItemModal has autoFocus).",
+    "The StationPickerModal outer overlay (z-[300]) has no data-kbd-modal; only the inner div does. That is fine for detection, but the same focus problem applies.",
+    "OrderEntry.jsx is more than 3200 lines and should be split."
+  ],
+  "updated_files": ["/app/tests/cr482_batch2_p13_p16_p17.md"],
+  "success_rate": {"backend": "N/A", "frontend": "~85% (20/24 checks pass: 3 P17 modal Esc fails; the station picker could not be tested)"},
+  "seed_data_creation": "None. No orders were placed and the carts were discarded via Leave or Back. The 'Walk-in Rs1,155' card on the dashboard was already there before our flows ran, and every place-order call was blocked (netlog empty).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Use the recipe in /app/tests/cr482_batch2_p13_p16_p17.md. After fixing P17, retest by mouse-clicking customer-info-btn, order-notes-btn and add-note-btn-* (on C2 after adding item nth(1)), then pressing Esc without clicking inside the modal. The Station Picker needs an order whose placed items span 2 or more stations. C1 (#021102) is single-station, and its F7 goes straight to order-temp-store, so keep the network route abort in place.",
+  "rca of the issue": "The modals attach a React onKeyDown to their root div. React keydown only reaches elements on the path from document.activeElement. On open, activeElement is still the opener button in the OE header or cart (or the search input for F7), which is a sibling subtree, so the modal handler never runs. Meanwhile the window capture-phase P16 handler deliberately returns when [data-kbd-modal] exists. The result is that Esc is swallowed by nobody and does nothing."
+}
