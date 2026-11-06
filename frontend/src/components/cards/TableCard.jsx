@@ -280,9 +280,10 @@ const TableCard = ({ table, onClick, onOpenModal, onUpdateStatus, onBillClick, o
   // Border color is neutral gray for all cards (status shown via labels/buttons)
   const cardStyle = useMemo(() => ({
     ...CARD_BASE_STYLE,
-    border: `2px solid ${getStatusColor(table.fOrderStatus, COLORS.borderGray)}`, // CR-433
+    backgroundColor: table.billPrinted ? COLORS.billPrintedBg : COLORS.lightBg, // BUG-583: green bg when bill printed
+    border: `2px solid ${table.billPrinted ? COLORS.primaryGreen : getStatusColor(table.fOrderStatus, COLORS.borderGray)}`, // CR-433 // BUG-583
     minHeight: CONFIG.CARD_MIN_HEIGHT,
-  }), [table.fOrderStatus]); // CR-433: react to status changes
+  }), [table.fOrderStatus, table.billPrinted]); // CR-433 + BUG-583: react to status + print changes
 
   const headerPillStyle = useMemo(() => {
     // Neutral header for all order types - no colored backgrounds

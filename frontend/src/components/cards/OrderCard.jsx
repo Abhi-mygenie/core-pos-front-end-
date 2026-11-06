@@ -455,7 +455,7 @@ const OrderCard = ({
       data-testid={`order-card-${orderId}`}
       {...(kbdEnabled && !isEngaged && !isAggregator ? { tabIndex: 0, 'data-kbd-card': '', 'data-kbd-label': tableLabel || '' } : {})}
       className={`relative rounded-lg shadow-sm overflow-hidden mb-2 ${isSnoozed ? "opacity-60" : ""} ${isEngaged ? "pointer-events-none" : "cursor-pointer"} ${kbdEnabled ? 'kbd-focus' : ''} ${kbdHighlight ? 'kbd-highlight' : ''}`}
-      style={{ backgroundColor: COLORS.lightBg, border: `2px solid ${getStatusColor(fOrderStatus, COLORS.borderGray)}`, breakInside: 'avoid' }} // CR-433
+      style={{ backgroundColor: order.billPrinted ? COLORS.billPrintedBg : COLORS.lightBg, border: `2px solid ${order.billPrinted ? COLORS.primaryGreen : getStatusColor(fOrderStatus, COLORS.borderGray)}`, breakInside: 'avoid' }} // CR-433 // BUG-583
       onClick={isEngaged || isAggregator ? undefined : () => onEdit?.()} // CR-106: no-op for aggregator
       onKeyDown={kbdEnabled && !isEngaged && !isAggregator ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEdit?.(); } } : undefined}
     >

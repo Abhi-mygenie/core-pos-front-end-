@@ -307,7 +307,7 @@ export const fromAPI = {
 
       // Print status
       kotPrinted: api.print_kot === 'Yes',
-      billPrinted: api.print_bill_status === 'Yes',
+      billPrinted: api.bill_print === 'Yes' || api.print_bill_status === 'Yes', // BUG-583: bill_print is the new field; print_bill_status kept as fallback
 
       // Delivery (basic — detailed mapping deferred)
       deliveryAddress: api.delivery_address || null,

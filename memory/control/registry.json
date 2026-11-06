@@ -33279,7 +33279,7 @@
       "id": "BUG-583",
       "type": "BUG",
       "title": "When bill is printed, table card and order card borders must turn solid green",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "priority": "P0",
       "risk": "LOW-MEDIUM",
       "sprint_key": "nov_cr_batch",

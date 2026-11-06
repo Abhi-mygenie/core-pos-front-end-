@@ -1223,7 +1223,8 @@ const DashboardPage = () => {
           phone: orderData.phone || "",
           status: orderData.status || table.status || "available",
           amount: orderData.amount || table.amount,
-          fOrderStatus: orderData.fOrderStatus || table.fOrderStatus
+          fOrderStatus: orderData.fOrderStatus || table.fOrderStatus,
+          billPrinted: orderData.billPrinted || false, // BUG-583: thread print status to TableCard
         };
       });
 
