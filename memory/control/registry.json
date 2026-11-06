@@ -36256,11 +36256,47 @@
           "type": "intake"
         }
       ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-513",
+      "sprint_key": "TBD",
+      "title": "order-temp-store: send discount_percentage + roundoff in bill print payload",
+      "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open (OD-513-01..05). Backend verified.",
+      "priority": "P1",
+      "severity": "P1",
+      "risk": "CRITICAL",
+      "area": "Printing / Printer Agent",
+      "files": "src/api/transforms/orderTransform.js (R5); possibly CollectPaymentPanel.jsx (R5)",
+      "registered": "2026-11-06",
+      "registered_by": "INTAKE agent",
+      "source": "OWNER-REPORTED",
+      "notes": "Backend accepts both fields (owner probe 2026-11-06). Code reality NONE. Finding: order model has no discountPercent/roundoff mapping — scope > 2-3 lines, source per print path TBD at Gate 2. Risk upgraded MEDIUM→CRITICAL (print+discount). Fast Lane NO. CR-512 skipped per owner (other branch).",
+      "blocked_on": "",
+      "assignee": "",
+      "related": [
+        "BUG-592",
+        "CR-487",
+        "CR-502"
+      ],
+      "intake_doc": "change_requests/CR-513_ORDER_TEMP_STORE_DISCOUNT_PERCENTAGE_ROUNDOFF_INTAKE.md",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-513_ORDER_TEMP_STORE_DISCOUNT_PERCENTAGE_ROUNDOFF_INTAKE.md",
+          "type": "intake"
+        },
+        {
+          "label": "Probe",
+          "path": "memory/evidence/CR-513/CR-513_order_temp_store_probe_2026_11_06.json",
+          "type": "evidence"
+        }
+      ]
     }
   ],
   "meta": {
-    "last_updated": "2026-11-05",
-    "last_action": "BUG FIX: CR-485 first item — Settled tab Amount/Actions column overlap in OrderTable.jsx.",
+    "last_updated": "2026-11-06",
+    "last_action": "INTAKE: CR-513 registered (order-temp-store discount_percentage + roundoff). RELATED BUG-592/CR-487/CR-502.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
