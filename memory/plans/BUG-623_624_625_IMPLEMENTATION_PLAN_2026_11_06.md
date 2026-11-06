@@ -140,3 +140,8 @@ Already implemented and QA-passed (`iteration_11`). Code at `StatusConfigPage.js
 
 ## Next
 Owner: **Gate 4 GO** for BUG-623 (R5) and BUG-625 · OD-625-01 · smoke BUG-624.
+
+
+## IMPLEMENTED 2026-11-06
+- OD-625-01 = **NO** (owner: functionality mirrors desktop, which has no count).
+- BUG-623 E1-E6 + test file (3/3). BUG-625 E1. testing_agent `iteration_27` 100%. BUG-624 unchanged (awaiting smoke).

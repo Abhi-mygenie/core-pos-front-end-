@@ -2248,3 +2248,7 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/order-entry/CollectPaymentPanel.jsx` | **~L1310-1314 (CR-513 E3):** `handlePrintBill` overrides +`discountPercent` (manual % else preset %) +`roundoff: roundOff`. | CR-513 IMPL 2026-11-06 |
 | `src/components/order-entry/OrderEntry.jsx` | **L1724-1725, L1769-1770, L1848-1849, L2299-2300, L2587-2588 (CR-513 E4a-e):** +`discountPercent` +`roundoff` in 5 auto-print override objects. | CR-513 IMPL 2026-11-06 |
 | `src/__tests__/api/transforms/orderTransform.cr513.test.js` | **NEW (E5):** 8 tests U1-U8. | CR-513 + BUG-592 IMPL 2026-11-06 |
+| `src/api/transforms/orderTransform.js` | **L707, L723, L1556, L2004 (BUG-623):** `filter(Boolean)` before variation map/reduce loops. | BUG-623 IMPL 2026-11-06 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **L260, L262:** marker `BUG-NEW` → `BUG-618` (comment only). | BUG-623 IMPL 2026-11-06 |
+| `src/components/layout/Header.jsx` | **~L436-447 (BUG-625):** Active First toggle in tablet filter dropdown (channel view), mirrors CR-429 xl pill. | BUG-625 IMPL 2026-11-06 |
+| `src/__tests__/api/transforms/orderTransform.bug623.test.js` | **NEW:** 3 tests (null variation guard). | BUG-623 IMPL 2026-11-06 |

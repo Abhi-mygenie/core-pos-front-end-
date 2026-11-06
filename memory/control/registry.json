@@ -34717,7 +34717,7 @@
       "title": "Null variation entry crashes orderTransform.reduce + BUG-618 markers labelled BUG-NEW",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_3_PLAN_COMPLETE (refreshed 2026-11-06) — awaiting Gate 4 GO (R5)",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-06 — 4 filter(Boolean) + 2 markers; unit 3/3; testing_agent iteration_27 PASS. Awaiting QA 5b.",
       "area": "Order Entry / Transforms",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",
@@ -34727,7 +34727,7 @@
         "BUG-618"
       ],
       "intake_doc": "change_requests/BUG-623_NULL_VARIATION_ORDERTRANSFORM_CRASH_INTAKE.md",
-      "notes": "QA batch 2026-10-28: orderTransform.js L722 reduce on possibly-null v. BUG-618 fix incomplete — guarded symptom not source. Also: CollectPaymentPanel markers say BUG-NEW not BUG-618. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-06 plan refresh: drift L707/L723/L1556, CPP markers L260/L262; NEW 4th site E4 L2004 (buildBillPrintPayload variationPerUnit). 4 code lines + 2 markers + U1-U4 tests.",
+      "notes": "QA batch 2026-10-28: orderTransform.js L722 reduce on possibly-null v. BUG-618 fix incomplete — guarded symptom not source. Also: CollectPaymentPanel markers say BUG-NEW not BUG-618. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-06 plan refresh: drift L707/L723/L1556, CPP markers L260/L262; NEW 4th site E4 L2004 (buildBillPrintPayload variationPerUnit). 4 code lines + 2 markers + U1-U4 tests. | 2026-11-06 IMPLEMENTED per plans/BUG-623_624_625_IMPLEMENTATION_PLAN_2026_11_06.md; testing_agent iteration_27 100%.",
       "assignee": "",
       "artifact_refs": [
         {
@@ -34760,7 +34760,7 @@
       "title": "CR-429 Active First pill missing from tablet dropdown (<1280px)",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_3_PLAN_COMPLETE (refreshed 2026-11-06) — awaiting Gate 4 GO; OD-625-01 open",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-06 — tablet dropdown Active First; OD-625-01=NO (mirrors desktop, no count). testing_agent iteration_27 100%. Awaiting QA 5b.",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "risk": "LOW",
@@ -34770,7 +34770,7 @@
         "CR-429"
       ],
       "intake_doc": "change_requests/BUG-625_CR429_ACTIVE_FIRST_TABLET_MISSING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-06 plan refresh: exact JSX insert after Header.jsx L435 (channel branch), props channelActiveFirst/onChannelActiveFirstToggle already in Header. Non-R5.",
+      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-06 plan refresh: exact JSX insert after Header.jsx L435 (channel branch), props channelActiveFirst/onChannelActiveFirstToggle already in Header. Non-R5. | 2026-11-06 IMPLEMENTED per plans/BUG-623_624_625_IMPLEMENTATION_PLAN_2026_11_06.md; testing_agent iteration_27 100%.",
       "assignee": "",
       "artifact_refs": [
         {

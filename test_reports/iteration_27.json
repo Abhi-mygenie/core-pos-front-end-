@@ -1,0 +1,22 @@
+{
+  "summary": "BUG-625 (tablet Active First toggle) and BUG-623 (null variation guard) verified. Unit test bug623 3/3 pass. UI on preprod (reachable): at 1024x768 Channel View the tablet dropdown shows status items, Schedule, a divider, then Active First; toggling works both ways (check icon goes visible/hidden, text turns orange rgb(242,107,51) / grey rgb(102,102,102), localStorage mygenie_channel_active_first true/false), the count badge stays at 9. In Status View the dropdown shows only channel items and no Active First (count 0). At 1920 the tablet dropdown is hidden and the desktop pill filter-active-first works. Toggle state is shared both ways: turned on at tablet width, the pill shows active at desktop; turned off at desktop, the tablet item shows off. No error boundary and no pageerrors. Collect Payment opens on table 101 (order #021108) without crash.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/frontend/src/__tests__/api/transforms/orderTransform.bug623.test.js"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Header.jsx tablet Active First button reuses onChannelActiveFirstToggle and channelActiveFirst, the same as the desktop pill. It is rendered only in the channel-view branch, and the count badge formula does not include it. Correct.",
+    "orderTransform.js filter(Boolean) added at L707, L723, L1556, L2004 as described.",
+    "Note: card order did not visibly change when toggling Active First on current preprod data. In every section the occupied tables already sort before the available ones by label order (e.g. C1..103 occupied, 104+ available), so there was no reordering to observe. The sort logic (ChannelColumn.jsx L174) is the same path the desktop pill uses."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100%"},
+  "seed_data_creation": "None. No orders placed or paid; order-temp-store intercepted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Channel/Status toggle is in the sidebar: data-testid=group-toggle. At 1024px, first click sidebar-hamburger-btn to expand, then click outside (700,400) to close it before opening tablet-filter-dropdown-btn. Active First localStorage key: mygenie_channel_active_first. table-card-8276 (101) -> collect-bill-btn -> collect-payment-panel works; table-card-8277 (102) collect-bill-btn is disabled (items not served). No live order with variant items was found; BUG-623 is covered by unit tests only."
+}
