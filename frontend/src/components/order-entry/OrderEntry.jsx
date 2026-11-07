@@ -566,7 +566,21 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setCartItems(prev => {
       // Keep unplaced items that are NOT delta items (delta items are invalidated by server update)
       const unplaced = prev.filter(i => !i.placed && !i._deltaForId);
-      const placed = orderFromContext.items.map(i => ({ ...i, placed: true, _originalQty: i.qty || 1 }));
+      const placed = orderFromContext.items.map(i => {
+        // BUG-NEW-COMP-DESELECT: preserve runtime comp state toggled locally by cashier.
+        // CR-512 triggers an update-order socket after Print Bill; without this merge the
+        // re-seed overwrites isComplementaryRuntime with the backend value ('No') because
+        // comp is not persisted to the backend until payment is collected.
+        const prevItem = prev.find(p => p.id === i.id);
+        const keepComp = prevItem?.isComplementaryRuntime === true;
+        return {
+          ...i,
+          placed: true,
+          _originalQty: i.qty || 1,
+          isComplementaryRuntime: keepComp ? true : i.isComplementaryRuntime,
+          compReason: keepComp ? (prevItem?.compReason ?? '') : (i.compReason ?? ''),
+        };
+      });
       return [...placed, ...unplaced];
     });
 

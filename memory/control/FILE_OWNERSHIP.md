@@ -2245,6 +2245,7 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/order-entry/CollectPaymentPanel.jsx` | **L260,L262:** Relabelled `BUG-NEW` → `BUG-618` on null guard markers. | BUG-623 2026-11-07 |
 | `src/components/layout/Header.jsx` | **L436-445:** Active First button inserted in tablet dropdown else-branch (channel view) — mirrors xl pill (CR-429). `data-testid="tablet-filter-active-first"`. | BUG-625 2026-11-07 |
 | `src/pages/reports-module/OrderReportBetaPage.jsx` | **L59-61:** Added `Upi`, `Card` → 'Paid' blue and `Room` → 'Room' purple to `getStatusBadge` map. 3 new entries, existing 7 unchanged. | BUG-626 2026-11-07 |
+| `src/components/order-entry/OrderEntry.jsx` | **L569-585:** Socket re-seed `setCartItems` — added `prevItem` merge to preserve `isComplementaryRuntime` + `compReason` from local state during CR-512-triggered update-order socket. Prevents comp checkbox deselection after Print Bill. | BUG-NEW-COMP-DESELECT 2026-11-07 |
 | `src/components/modals/RoomCheckInModal.jsx` | **L20:** +PhoneInputField import. **L301:** +countryCode state. **L946-972:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/pages/pms/CheckInPage.jsx` | **L13-14:** +PhoneInputField+validatePhone imports. **L295:** validation uses validatePhone. **L671-674:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/api/services/customerService.js` | **L40:** lookupCustomer +countryCode param, sends country_code for international. | CR-479 IMPL 2026-11-01 |

@@ -1,0 +1,24 @@
+{
+  "summary": "Static code analysis of BUG-658 fix in OrderEntry.jsx. All 9 test cases verified against L565-585 and L1070-1100.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "test_cases": {
+    "TC-1": { "status": "PASS", "detail": "prevItem = prev.find(p => p.id === i.id) present at L574" },
+    "TC-2": { "status": "PASS", "detail": "keepComp = prevItem?.isComplementaryRuntime === true at L575" },
+    "TC-3": { "status": "PASS", "detail": "isComplementaryRuntime: keepComp ? true : i.isComplementaryRuntime at L580" },
+    "TC-4": { "status": "PASS", "detail": "When keepComp false, i.isComplementaryRuntime (backend/socket value) is used" },
+    "TC-5": { "status": "PASS", "detail": "undefined?.isComplementaryRuntime === true evaluates to false — socket value used for new items" },
+    "TC-6": { "status": "PASS", "detail": "compReason: keepComp ? (prevItem?.compReason ?? '') : (i.compReason ?? '') at L581" },
+    "TC-7": { "status": "PASS", "detail": "BUG-NEW-COMP-DESELECT comment marker present at L570" },
+    "TC-8": { "status": "PASS", "detail": "toggleItemComplimentary (L1072-1079) and handleMarkComp (L1090-1099) are unaffected — direct setCartItems on specific items, no socket re-seed path" },
+    "TC-9": { "status": "PASS", "detail": "webpack compiled with 1 warning (pre-existing react-hooks/exhaustive-deps), no new errors" }
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100% (9/9 static checks passed)" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-658 fix verified. setCartItems socket re-seed callback at L566-585 correctly preserves isComplementaryRuntime and compReason when keepComp=true. No regressions in handleToggleComplementary or handleMarkComp. Webpack clean (1 pre-existing warning)."
+}

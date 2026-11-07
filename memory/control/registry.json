@@ -36489,6 +36489,26 @@
       ],
       "gate": "GATE_5A_IMPLEMENTED",
       "current_gate": 5
+    },
+    {
+      "id": "BUG-658",
+      "title": "Runtime comp deselected after Print Bill \u2014 CR-512 socket re-seed overwrites isComplementaryRuntime",
+      "type": "BUG",
+      "priority": "P1",
+      "status": "GATE_5A_IMPLEMENTED",
+      "area": "Order Entry / Printing",
+      "sprint_key": "nov_cr_batch",
+      "risk": "MEDIUM",
+      "registered": "2026-11-07",
+      "registered_by": "INVESTIGATION agent (owner-reported 2026-11-07)",
+      "related": [
+        "CR-512",
+        "BUG-021",
+        "BUG-018"
+      ],
+      "intake_doc": "investigations/INVESTIGATION_COMP_DESELECT_PRINT_BILL_2026_11_07.md",
+      "notes": "2026-11-07: OWNER-REPORTED. When cashier marks item comp then clicks Print Bill, CR-512 triggers update-order socket which re-seeds cartItems from backend \u2014 isComplementaryRuntime reset to false, checkbox deselected. Fix: preserve isComplementaryRuntime from prev state during socket re-seed in OrderEntry L566-585. GATE_5A_IMPLEMENTED 2026-11-07. Investigation: investigations/INVESTIGATION_COMP_DESELECT_PRINT_BILL_2026_11_07.md",
+      "assignee": ""
     }
   ],
   "meta": {
