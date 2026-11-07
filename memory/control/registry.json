@@ -34748,7 +34748,7 @@
         "CR-429"
       ],
       "intake_doc": "change_requests/BUG-625_CR429_ACTIVE_FIRST_TABLET_MISSING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md",
+      "notes": "QA batch 2026-10-28: Active First only in xl nav, not in tablet filter dropdown. Tablet users can't toggle. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-07: Standalone plan written + validated against main HEAD. Plan: plans/BUG-625_IMPLEMENTATION_PLAN_2026_11_07.md. All line numbers, imports, props, anchor strings confirmed exact. Gate 3 closed.",
       "assignee": ""
     },
     {
