@@ -35428,7 +35428,7 @@
       "priority": "P0",
       "risk": "HIGH",
       "area": "Permissions / Security",
-      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE",
+      "status": "GATE_3_PLAN_COMPLETE",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-05",
       "registered_by": "INTAKE agent",
@@ -35440,7 +35440,7 @@
       ],
       "intake_doc": "change_requests/CR-490_DAILY_REPORT_ONLY_PERMISSION_INTAKE.md",
       "description": "Owner: \"there is already a CR for role gating; need another CR specific to make a user only daily reports rights, nothing else in report\". Granular report rights so a role can see Daily Report and nothing else under Reports/Insights.",
-      "notes": "2026-11-05: Intake. NONE (granular) \u2014 Sidebar.jsx L41-52 SIDEBAR_PERMISSIONS: `reports` and `insights` both gated by single `report` permission \u2192 all-or-nothing. No per-report permission. CR-071 (app-wide role gating) is DEFERRED; this is a | 2026-11-05: owner ODs locked \u2014 A single daily_report key; Day Closure separate; route guard YES. | 2026-11-05 r3: All owner ODs closed (all tabs, export yes, Insights hidden). | 2026-11-05 r5 FROZEN. | 2026-11-05: Backend brief filed `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` \u00a7D. | 2026-11-05: PRIORITY UPGRADE P1\u2192P0 (owner directive). | 2026-11-06: Backend unblocked \u2014 show_daily_report permission key delivered (module ID 106, settings handover). OD-490-04 CLOSED: key = show_daily_report. IA: impact/P0_BATCH_BUG583_CR483_CR484_CR489_CR490_IMPACT_ANALYSIS.md \u00a7CR-490. 5 edits / 4 files. Awaiting Gate 3 GO.",
+      "notes": "2026-11-05: Intake. NONE (granular) \u2014 Sidebar.jsx L41-52 SIDEBAR_PERMISSIONS: `reports` and `insights` both gated by single `report` permission \u2192 all-or-nothing. No per-report permission. CR-071 (app-wide role gating) is DEFERRED; this is a | 2026-11-05: owner ODs locked \u2014 A single daily_report key; Day Closure separate; route guard YES. | 2026-11-05 r3: All owner ODs closed (all tabs, export yes, Insights hidden). | 2026-11-05 r5 FROZEN. | 2026-11-05: Backend brief filed `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` \u00a7D. | 2026-11-05: PRIORITY UPGRADE P1\u2192P0 (owner directive). | 2026-11-06: Backend unblocked \u2014 show_daily_report permission key delivered (module ID 106, settings handover). OD-490-04 CLOSED: key = show_daily_report. IA: impact/P0_BATCH_BUG583_CR483_CR484_CR489_CR490_IMPACT_ANALYSIS.md \u00a7CR-490. 5 edits / 4 files. Awaiting Gate 3 GO. | 2026-11-07: Gate 3 closed. Standalone plan at plans/CR-490_IMPLEMENTATION_PLAN_2026_11_07.md. Revalidation: 12/14 exact matches; 2 corrections applied \u2014 (1) inner component renamed PermissionGate\u2192PermissionInner (shadows CR-069 PermissionGate.jsx); (2) App.js closing tag line corrected L247\u2192L246. Plan updated and confirmed accurate against HEAD.",
       "backend_brief": "backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md",
       "blocked_on": "BACKEND",
       "assignee": "Gyan"

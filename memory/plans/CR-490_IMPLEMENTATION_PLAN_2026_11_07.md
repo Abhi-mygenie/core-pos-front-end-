@@ -114,15 +114,17 @@ const PermissionRoute = ({ children, requiredAny }) => {
   // Wrap in ProtectedRoute first (handles auth + context hydration)
   return (
     <ProtectedRoute>
-      <PermissionGate requiredAny={requiredAny} hasAnyPermission={hasAnyPermission}>
+      <PermissionInner requiredAny={requiredAny} hasAnyPermission={hasAnyPermission}>
         {children}
-      </PermissionGate>
+      </PermissionInner>
     </ProtectedRoute>
   );
 };
 
-// Separate inner component — only renders after ProtectedRoute confirms auth + hydration
-const PermissionGate = ({ children, requiredAny, hasAnyPermission }) => {
+// Renamed PermissionInner (not PermissionGate) to avoid shadowing the existing
+// guards/PermissionGate.jsx (CR-069 named export). Behaviour identical.
+// Only renders after ProtectedRoute confirms auth + hydration.
+const PermissionInner = ({ children, requiredAny, hasAnyPermission }) => {
   if (requiredAny && !hasAnyPermission(requiredAny)) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -132,7 +134,9 @@ const PermissionGate = ({ children, requiredAny, hasAnyPermission }) => {
 export default PermissionRoute;
 ```
 
-**Why:** `ProtectedRoute` only checks authentication, not permissions. We need a reusable guard that also checks permissions. The inner `PermissionGate` component ensures permission check runs AFTER auth + context hydration (otherwise `permissions` array would be empty during loading).
+**Why:** `ProtectedRoute` only checks authentication, not permissions. We need a reusable guard that also checks permissions. The inner `PermissionInner` component (renamed from `PermissionGate` — see revalidation note below) ensures permission check runs AFTER auth + context hydration (otherwise `permissions` array would be empty during loading).
+
+> **Revalidation note (2026-11-07):** Original plan named the inner component `PermissionGate`, which shadows the existing named export in `guards/PermissionGate.jsx` (CR-069). Renamed to `PermissionInner` to avoid developer confusion. Behaviour is identical.
 
 ---
 
@@ -219,9 +223,9 @@ import { ProtectedRoute, PermissionRoute, ErrorBoundary } from "./components/gua
               <Route path="/reports-module/*" element={<PermissionRoute requiredAny={['report']}><InsightsCacheProvider><Routes> {/* CR-490: all insights/report-module require report */}
 ```
 
-And the closing tag at L247:
+And the closing tag at **L246** *(revalidated — plan originally said L247, actual line is L246)*:
 
-**Current (L247):**
+**Current (L246):**
 ```javascript
               </Routes></InsightsCacheProvider>} />
 ```
