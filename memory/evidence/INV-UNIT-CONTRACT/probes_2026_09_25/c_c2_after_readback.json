@@ -1,0 +1,24 @@
+{
+ "id": 20320,
+ "stock_title": "ANGARA GREAVY",
+ "unit": "pkt",
+ "small_unit": "gm",
+ "has_unit_conversion": true,
+ "converion_factor": 500,
+ "consumption_unit": "gm",
+ "quantity": "4700.000",
+ "cal_quantity": "4700.00",
+ "display_qty": "9.40",
+ "display_unit": "pkt",
+ "display_qty_text": "9 pkt 200 gm",
+ "physical_qty": "9.4",
+ "is_sub_recipe": false,
+ "subrecipe_id": null,
+ "display_qty_parts": {
+  "major": 9,
+  "major_unit": "pkt",
+  "minor": 200,
+  "minor_unit": "gm",
+  "sign": ""
+ }
+}

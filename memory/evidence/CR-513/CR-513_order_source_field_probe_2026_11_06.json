@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "date": "2026-11-06",
+    "account": "cafe103 owner alias (token ***)",
+    "note": "Sanitized field-presence probe for CR-513 Gate 2. Only discount/round-off fields kept."
+  },
+  "order_logs_report (POST /api/v2/vendoremployee/report/order-logs-report, 2026-11-03) orders_table": [
+    {
+      "id": 1537319,
+      "restaurant_order_id": "021100",
+      "discount_value": "0.00",
+      "order_discount_type": "Percent",
+      "order_discount": "0.00",
+      "restaurant_discount_amount": 0,
+      "round_up": "0.05",
+      "order_amount": 797,
+      "payment_status": "paid"
+    },
+    {
+      "id": 1537042,
+      "restaurant_order_id": "021098",
+      "discount_value": "10.00",
+      "order_discount_type": "Percent",
+      "order_discount": "41.00",
+      "restaurant_discount_amount": 41,
+      "round_up": "0.55",
+      "order_amount": 388,
+      "payment_status": "paid"
+    },
+    {
+      "id": 1535248,
+      "restaurant_order_id": "021081",
+      "discount_value": "100.00",
+      "order_discount_type": "Percent",
+      "order_discount": "60.00",
+      "restaurant_discount_amount": 60,
+      "round_up": "0.00",
+      "order_amount": 0,
+      "payment_status": "paid"
+    },
+    {
+      "id": 1534681,
+      "restaurant_order_id": "021069",
+      "discount_value": "40.00",
+      "order_discount_type": "Percent",
+      "order_discount": "96.00",
+      "restaurant_discount_amount": 96,
+      "round_up": "0.14",
+      "order_amount": 151,
+      "payment_status": "paid"
+    },
+    {
+      "id": 1534579,
+      "restaurant_order_id": "021068",
+      "discount_value": "3.00",
+      "order_discount_type": "Fixed",
+      "order_discount": "3.00",
+      "restaurant_discount_amount": 3,
+      "round_up": "0.76",
+      "order_amount": 270,
+      "payment_status": "paid"
+    }
+  ],
+  "employee-orders-list (GET /api/v1/vendoremployee/pos/employee-orders-list) disc/round keys": [
+    "coupon_discount",
+    "coupon_discount_amount",
+    "discount_member_category",
+    "discount_value",
+    "order_discount",
+    "order_discount_json",
+    "restaurant_discount_amount",
+    "room_discount"
+  ],
+  "employee-orders-list sample": {
+    "id": 1537757,
+    "discount_value": null,
+    "order_discount": "0.00",
+    "restaurant_discount_amount": 0,
+    "order_discount_json": null,
+    "order_discount_type": "<absent>",
+    "round_up": "<absent>"
+  },
+  "get-single-order-new (POST /api/v2/vendoremployee/get-single-order-new, order 1537042 = paid 10% disc) disc/round keys": [
+    "room_discount"
+  ],
+  "get-single-order-new sample": {
+    "id": 1537042,
+    "discount_value": "<absent>",
+    "order_discount_type": "<absent>",
+    "restaurant_discount_amount": "<absent>",
+    "round_up": "<absent>",
+    "order_amount": 388,
+    "payment_status": "paid"
+  }
+}

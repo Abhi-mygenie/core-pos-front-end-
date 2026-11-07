@@ -1,0 +1,42 @@
+{
+ "http": 200,
+ "body": {
+  "purchase_details": {
+   "tot_amount": 1,
+   "item_total": 1,
+   "tot_fair": 0,
+   "payment_type": "Cash",
+   "tot_tax": 0,
+   "purchase_date": "2026-09-25",
+   "vendor_id": 280,
+   "waiter_id": 5145,
+   "restaurant_id": 835,
+   "updated_at": "2026-09-25T06:11:22.000000Z",
+   "created_at": "2026-09-25T06:11:22.000000Z",
+   "id": 7965,
+   "transaction_id": "PUR-835-20260925-7965"
+  },
+  "transaction_id": "PUR-835-20260925-7965",
+  "added_items": [
+   {
+    "ingredient": 20326,
+    "stock_quantity": 1,
+    "price": 1,
+    "sunit": "pkt",
+    "purchase_id": 7965,
+    "calculate_quantity": 800,
+    "purchase_date": "2026-09-25",
+    "restaurant_id": 835,
+    "batch": null,
+    "brand": null,
+    "expiry": null,
+    "expiry_date": null,
+    "converion_factor": null,
+    "consumption_unit": null,
+    "created_at": "2026-09-25T06:11:22.000000Z",
+    "updated_at": "2026-09-25T06:11:22.000000Z",
+    "id": 13757
+   }
+  ]
+ }
+}

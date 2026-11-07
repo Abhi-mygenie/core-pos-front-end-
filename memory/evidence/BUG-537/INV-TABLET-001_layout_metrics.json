@@ -1,0 +1,8 @@
+{
+  "captured": "2026-10-10, preview build 09_oct_gyan @ ef1ba89, account QA_CAFE103, Table view, Dine-In maxColumns=2 (default)",
+  "p600":  {"viewport": [600, 960],  "header_clientW": 530,  "header_scrollW": 1008, "offscreen_in_header": ["Web 0", "POS 13", "Search", "Add"], "layout_W": 514,  "dineIn_col_W": 344, "card_W": 160, "empty_right_px": 170},
+  "l960":  {"viewport": [960, 600],  "header_clientW": 890,  "header_scrollW": 1008, "offscreen_in_header": ["Add"],                           "layout_W": 874,  "dineIn_col_W": 344, "card_W": 160, "empty_right_px": 530},
+  "p800":  {"viewport": [800, 1280], "header_clientW": 730,  "header_scrollW": 1008, "offscreen_in_header": ["Search", "Add"],                 "layout_W": 714,  "dineIn_col_W": 344, "card_W": 160, "empty_right_px": 370},
+  "l1280": {"viewport": [1280, 800], "header_clientW": 1210, "header_scrollW": 1210, "offscreen_in_header": [],                                "layout_W": 1194, "dineIn_col_W": 344, "card_W": 160, "empty_right_px": 850},
+  "screenshots": ["p600.png", "l960.png", "p800.png", "l1280.png"]
+}

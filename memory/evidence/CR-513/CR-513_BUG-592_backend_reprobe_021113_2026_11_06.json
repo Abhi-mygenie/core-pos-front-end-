@@ -1,0 +1,42 @@
+{
+  "_meta": {
+    "date": "2026-11-06",
+    "order": "#021113 (id 1537795) \u2014 owner-placed prepaid order, 30% discount, status queue (unserved)",
+    "account": "cafe103 manager alias (token ***)",
+    "note": "BUG-592 backend re-probe for CR-513 Gate 2"
+  },
+  "employee-orders-list (role_name=Manager \u2014 as FE sends)": {
+    "payment_status": "paid",
+    "discount_value": "30.00",
+    "order_discount": "630.00",
+    "restaurant_discount_amount": 630,
+    "order_discount_json": null,
+    "order_discount_type": "<absent>",
+    "round_up": "<absent>",
+    "order_amount": 1544
+  },
+  "get-single-order-new (socket refresh + report/PMS reprint source)": {
+    "payment_status": "paid",
+    "order_status": "queue",
+    "discount_value": "<absent>",
+    "order_discount": "<absent>",
+    "restaurant_discount_amount": "<absent>",
+    "order_discount_json": "<absent>",
+    "round_up": "<absent>",
+    "order_amount": 1544
+  },
+  "order-logs-report": {
+    "payment_type": "prepaid",
+    "discount_value": "30.00",
+    "order_discount_type": "Percent",
+    "order_discount": "630.00",
+    "restaurant_discount_amount": 630,
+    "round_up": "0.50",
+    "order_amount": 1544
+  },
+  "correction": "Earlier 2026-11-06 probe used role_name=Owner and got 0 running orders; FE sends role_name=Manager (orderService.js L13). Manager \u2192 10 running orders.",
+  "math_check": {
+    "021113 (id 1537795)": "items 1100+1000 = 2100 subtotal; 30% of 2100 = 630 = restaurant_discount_amount \u2705; 2100-630 = 1470 (order_sub_total_without_tax) \u2705; +5% GST 73.50 = 1543.50 \u2192 1544 (round_up 0.50) \u2705",
+    "021114 (id 1537796)": "items 400+50 = 450; 30% = 135 = restaurant_discount_amount \u2705; 450-135 = 315 \u2705; order_amount 331 (315 + GST, rounded) \u2705"
+  }
+}

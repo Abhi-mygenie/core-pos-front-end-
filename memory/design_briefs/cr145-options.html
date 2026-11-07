@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-145 — Pick Your Options</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+/* ── Top bar ── */
+.topbar { background: #fff; border-bottom: 2px solid #e2e8f0; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.topbar h1 { font-size: 17px; font-weight: 700; color: #0f172a; }
+.topbar p { font-size: 12px; color: #64748b; margin-top: 2px; }
+.progress-pill { display: flex; gap: 6px; }
+.dot { width: 28px; height: 28px; border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; color: #94a3b8; background: #fff; transition: all 0.2s; }
+.dot.done { background: #22c55e; border-color: #22c55e; color: #fff; }
+.dot.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+
+/* ── Layout ── */
+.page { max-width: 1140px; margin: 0 auto; padding: 32px 24px; }
+
+/* ── Section header ── */
+.q-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.q-badge { background: #3b82f6; color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+.q-header h2 { font-size: 18px; font-weight: 700; color: #0f172a; }
+.q-header p { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+/* ── Option tabs ── */
+.opt-tabs { display: flex; gap: 0; margin-bottom: 0; border-radius: 10px 10px 0 0; overflow: hidden; border: 2px solid #e2e8f0; border-bottom: none; width: fit-content; }
+.opt-tab { padding: 10px 22px; font-size: 13px; font-weight: 600; cursor: pointer; background: #f8fafc; color: #64748b; border-right: 1px solid #e2e8f0; transition: all 0.15s; user-select: none; }
+.opt-tab:last-child { border-right: none; }
+.opt-tab.active { background: #fff; color: #3b82f6; }
+.opt-tab.selected-a { background: #fff; color: #22c55e; }
+.opt-tab.selected-b { background: #fff; color: #f59e0b; }
+
+/* ── Mockup frame ── */
+.mockup-frame { background: #fff; border: 2px solid #e2e8f0; border-radius: 0 10px 10px 10px; overflow: hidden; margin-bottom: 8px; transition: border-color 0.2s; }
+.mockup-frame.green { border-color: #22c55e; }
+.mockup-frame.amber { border-color: #f59e0b; }
+.mockup-inner { padding: 20px; }
+
+/* ── Pick buttons ── */
+.pick-row { display: flex; gap: 10px; margin-bottom: 40px; }
+.pick-btn { padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; }
+.pick-btn.a { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+.pick-btn.a:hover, .pick-btn.a.chosen { background: #22c55e; color: #fff; border-color: #22c55e; }
+.pick-btn.b { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.pick-btn.b:hover, .pick-btn.b.chosen { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.pick-hint { font-size: 12px; color: #94a3b8; margin-top: 8px; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: #e2e8f0; margin: 8px 0 32px; }
+
+/* ── Simulated BulkEditor ── */
+.bt { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.bt th { background: #f8fafc; padding: 9px 12px; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+.bt td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.bt tr:hover > td { background: #fafafa; }
+.bt tr.exp-row td { border-bottom: none; background: #f0fdf4; }
+.bt tr.sub-row td { background: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 0; }
+.bt tr.dimmed > td { opacity: 0.25; pointer-events: none; }
+.food-bold { font-weight: 600; color: #0f172a; }
+.st-active { display: inline-flex; align-items: center; gap: 4px; background: #dcfce7; color: #16a34a; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+.st-off { display: inline-flex; align-items: center; gap: 4px; background: #fee2e2; color: #dc2626; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 3px 10px; border-radius: 12px; cursor: pointer; border: 1px solid; transition: all 0.12s; white-space: nowrap; }
+.chip.add { background: #eff6ff; color: #3b82f6; border-color: #bfdbfe; }
+.chip.add:hover { background: #dbeafe; }
+.chip.var { background: #fdf4ff; color: #9333ea; border-color: #e9d5ff; }
+.chip.var:hover { background: #f3e8ff; }
+.chip.none { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: default; }
+.th-new { position: relative; background: #f0fdf4 !important; color: #15803d !important; }
+.th-new::after { content: 'NEW'; position: absolute; top: 3px; right: 4px; font-size: 9px; background: #22c55e; color: #fff; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+
+/* ── Expand panels ── */
+.exp-panel { padding: 16px 20px; }
+.exp-panel h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.addon-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.aitem { display: flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 12px; cursor: pointer; transition: all 0.12s; }
+.aitem.on { background: #f0fdf4; border-color: #86efac; }
+.aitem input[type=checkbox] { width: 13px; height: 13px; accent-color: #22c55e; cursor: pointer; }
+.aitem label { cursor: pointer; color: #374151; }
+.aitem .pr { color: #94a3b8; font-size: 11px; }
+.exp-footer { display: flex; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; align-items: center; }
+.btn-g { background: #22c55e; color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.btn-w { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.dirty-badge { background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
+
+/* Variation panels */
+.vg { margin-bottom: 12px; }
+.vg-title { font-size: 11px; font-weight: 700; color: #7c3aed; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.vvalues { display: flex; flex-wrap: wrap; gap: 6px; }
+.vval { background: #fdf4ff; border: 1px solid #e9d5ff; color: #6b21a8; padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+.vval-editable { background: #fdf4ff; border: 1px solid #a78bfa; color: #6b21a8; padding: 3px 10px; border-radius: 12px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
+.vval-editable .del { color: #dc2626; font-size: 13px; cursor: pointer; line-height: 1; }
+.add-val-btn { background: #fff; border: 1px dashed #a78bfa; color: #9333ea; padding: 3px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; }
+
+/* ── Side drawer mockup ── */
+.drawer-overlay { position: absolute; inset: 0; background: rgba(15,23,42,0.35); z-index: 10; border-radius: 0 10px 10px 10px; display: flex; justify-content: flex-end; }
+.drawer-panel { width: 320px; background: #fff; padding: 20px; height: 100%; border-left: 1px solid #e2e8f0; }
+.drawer-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+.close-x { color: #94a3b8; cursor: pointer; font-size: 18px; }
+
+/* ── Summary box ── */
+.summary-box { background: #fff; border: 2px solid #22c55e; border-radius: 12px; padding: 22px 24px; margin-top: 32px; }
+.summary-box h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
+.sum-row { display: flex; align-items: center; gap: 14px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; }
+.sum-row:last-child { border-bottom: none; }
+.sum-oq { font-size: 12px; font-weight: 700; color: #64748b; min-width: 36px; }
+.sum-q { font-size: 13px; color: #374151; flex: 1; }
+.sum-sel { font-size: 12px; font-weight: 700; padding: 3px 12px; border-radius: 20px; }
+.sum-sel.a { background: #dcfce7; color: #16a34a; }
+.sum-sel.b { background: #fef3c7; color: #92400e; }
+.sum-sel.none { background: #f1f5f9; color: #94a3b8; }
+.approve-btn { width: 100%; margin-top: 18px; background: #22c55e; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.approve-btn:hover { background: #16a34a; }
+.approve-btn:disabled { background: #d1fae5; color: #86efac; cursor: not-allowed; }
+.note { font-size: 12px; color: #94a3b8; text-align: center; margin-top: 8px; }
+
+/* relative frame for drawer */
+.rel { position: relative; overflow: hidden; }
+
+.chosen-banner { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+.chosen-banner.a { background: #dcfce7; color: #16a34a; }
+.chosen-banner.b { background: #fef3c7; color: #92400e; }
+
+.oq5-row { display: flex; gap: 16px; }
+.oq5-card { flex: 1; border: 2px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 12px; background: #fff; transition: all 0.15s; cursor: pointer; }
+.oq5-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #0f172a; }
+.oq5-card .code { background: #f8fafc; border-radius: 6px; padding: 8px 10px; font-family: monospace; font-size: 11px; color: #475569; margin-top: 8px; line-height: 1.5; }
+.oq5-card.green { border-color: #22c55e; background: #f0fdf4; }
+.oq5-card.amber { border-color: #f59e0b; background: #fffbeb; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>CR-145 — Pick Your Options</h1>
+    <p>Click each option to see the live mockup, then select what you prefer</p>
+  </div>
+  <div class="progress-pill" id="dots">
+    <div class="dot active" id="d1">1</div>
+    <div class="dot" id="d2">2</div>
+    <div class="dot" id="d3">3</div>
+    <div class="dot" id="d4">4</div>
+    <div class="dot" id="d5">5</div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ═══════════════════════════════════════════════
+     OQ-1  EXPAND PATTERN
+════════════════════════════════════════════════ -->
+<div class="q-header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-badge">OQ-1</span>
+      <h2>Expand Pattern</h2>
+    </div>
+    <p>When you click "3 add-ons" chip on a food row — how does the editor open?</p>
+  </div>
+</div>
+
+<div class="opt-tabs">
+  <div class="opt-tab active" id="t1a" onclick="showOpt(1,'A')">Option A — Sub-row inline</div>
+  <div class="opt-tab" id="t1b" onclick="showOpt(1,'B')">Option B — Side drawer</div>
+</div>
+
+<div class="mockup-frame" id="mf1">
+  <div class="mockup-inner">
+
+    <!-- OQ-1A: sub-row -->
+    <div id="oq1a">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">▸ Click the blue "3 add-ons" chip on Paneer Tikka to see it expand inline</p>
+      <div style="overflow-x:auto">
+      <table class="bt">
+        <thead><tr>
+          <th>Name</th><th>Category</th><th>Price</th><th>Status</th>
+          <th class="th-new">Add-ons</th>
+          <th class="th-new">Variations</th>
+          <th>Type</th>
+        </tr></thead>
+        <tbody>
+          <tr id="r1a-row" class="exp-row">
+            <td><span class="food-bold">Paneer Tikka</span></td>
+            <td>Starters</td><td>₹280</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add" onclick="toggle1a()">3 add-ons ▾</span></td>
+            <td><span class="chip var">2 groups ▾</span></td>
+            <td>Veg</td>
+          </tr>
+          <tr id="r1a-sub" class="sub-row" style="display:none">
+            <td colspan="7">
+              <div class="exp-panel">
+                <h4><span style="color:#3b82f6">Add-ons</span> for Paneer Tikka
+                  <span style="font-size:11px;color:#94a3b8;font-weight:400">Check/uncheck to assign · 5 available</span>
+                  <span class="dirty-badge" id="dirty1a" style="display:none">● Unsaved changes</span>
+                </h4>
+                <div class="addon-grid">
+                  <div class="aitem on" onclick="toggleAddon(this,'dirty1a')"><input type="checkbox" checked/><label>Extra Cheese</label><span class="pr">₹40</span></div>
+                  <div class="aitem on" onclick="toggleAddon(this,'dirty1a')"><input type="checkbox" checked/><label>Garlic Sauce</label><span class="pr">₹25</span></div>
+                  <div class="aitem on" onclick="toggleAddon(this,'dirty1a')"><input type="checkbox" checked/><label>Extra Masala</label><span class="pr">₹15</span></div>
+                  <div class="aitem" onclick="toggleAddon(this,'dirty1a')"><input type="checkbox"/><label>Dark Choco</label><span class="pr">₹10</span></div>
+                  <div class="aitem" onclick="toggleAddon(this,'dirty1a')"><input type="checkbox"/><label>Butter Naan</label><span class="pr">₹35</span></div>
+                </div>
+                <div class="exp-footer">
+                  <button class="btn-g" onclick="toggle1a()">Apply Changes</button>
+                  <button class="btn-w" onclick="toggle1a()">Cancel</button>
+                  <span style="font-size:11px;color:#94a3b8;margin-left:6px">Changes saved to row — use Bulk Save toolbar to push to API</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="food-bold">Chicken Biryani</span></td>
+            <td>Mains</td><td>₹320</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add">1 add-on ▾</span></td>
+            <td><span class="chip none">None</span></td>
+            <td>Non-Veg</td>
+          </tr>
+          <tr>
+            <td><span class="food-bold">Masala Chai</span></td>
+            <td>Beverages</td><td>₹40</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip none">None</span></td>
+            <td><span class="chip none">None</span></td>
+            <td>Veg</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- OQ-1B: side drawer -->
+    <div id="oq1b" style="display:none">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">▸ Click the blue "3 add-ons" chip — a drawer slides from the right, covering the table</p>
+      <div style="overflow-x:auto" class="rel" id="rel1b">
+      <table class="bt">
+        <thead><tr>
+          <th>Name</th><th>Category</th><th>Price</th><th>Status</th>
+          <th class="th-new">Add-ons</th><th class="th-new">Variations</th><th>Type</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="food-bold">Paneer Tikka</span></td>
+            <td>Starters</td><td>₹280</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add" onclick="toggle1b()">3 add-ons ▾</span></td>
+            <td><span class="chip var">2 groups ▾</span></td>
+            <td>Veg</td>
+          </tr>
+          <tr>
+            <td><span class="food-bold">Chicken Biryani</span></td>
+            <td>Mains</td><td>₹320</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add">1 add-on ▾</span></td>
+            <td><span class="chip none">None</span></td>
+            <td>Non-Veg</td>
+          </tr>
+          <tr>
+            <td><span class="food-bold">Masala Chai</span></td>
+            <td>Beverages</td><td>₹40</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip none">None</span></td>
+            <td><span class="chip none">None</span></td>
+            <td>Veg</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="drawer1b" class="drawer-overlay" style="display:none">
+        <div class="drawer-panel">
+          <h3>Add-ons — Paneer Tikka <span class="close-x" onclick="toggle1b()">✕</span></h3>
+          <div style="font-size:11px;color:#64748b;margin-bottom:14px">Check/uncheck to assign addons to this food</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="aitem on" style="width:100%"><input type="checkbox" checked/><label>Extra Cheese</label><span class="pr" style="margin-left:auto">₹40</span></div>
+            <div class="aitem on" style="width:100%"><input type="checkbox" checked/><label>Garlic Sauce</label><span class="pr" style="margin-left:auto">₹25</span></div>
+            <div class="aitem on" style="width:100%"><input type="checkbox" checked/><label>Extra Masala</label><span class="pr" style="margin-left:auto">₹15</span></div>
+            <div class="aitem" style="width:100%"><input type="checkbox"/><label>Dark Choco</label><span class="pr" style="margin-left:auto">₹10</span></div>
+            <div class="aitem" style="width:100%"><input type="checkbox"/><label>Butter Naan</label><span class="pr" style="margin-left:auto">₹35</span></div>
+          </div>
+          <div class="exp-footer" style="margin-top:20px">
+            <button class="btn-g" onclick="toggle1b()">Apply</button>
+            <button class="btn-w" onclick="toggle1b()">Cancel</button>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:#fffbeb;border-radius:6px;font-size:11px;color:#92400e">
+            ⚠ Drawer covers the table — you can't see other rows while editing
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="pick-row">
+  <button class="pick-btn a" id="p1a" onclick="pick(1,'A')">✔ Choose Option A — Sub-row inline</button>
+  <button class="pick-btn b" id="p1b" onclick="pick(1,'B')">Choose Option B — Side drawer</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     OQ-2  ROW DIMMING
+════════════════════════════════════════════════ -->
+<div class="q-header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-badge">OQ-2</span>
+      <h2>Row Dimming</h2>
+    </div>
+    <p>When one row is expanded — should the other rows go dim?</p>
+  </div>
+</div>
+
+<div class="opt-tabs">
+  <div class="opt-tab active" id="t2a" onclick="showOpt(2,'A')">Option A — No dimming</div>
+  <div class="opt-tab" id="t2b" onclick="showOpt(2,'B')">Option B — Dim other rows</div>
+</div>
+
+<div class="mockup-frame" id="mf2">
+  <div class="mockup-inner">
+
+    <!-- OQ-2A: no dim -->
+    <div id="oq2a">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">All rows remain fully visible when Paneer Tikka is expanded</p>
+      <div style="overflow-x:auto"><table class="bt">
+        <thead><tr><th>Name</th><th>Price</th><th>Status</th><th class="th-new">Add-ons</th><th class="th-new">Variations</th></tr></thead>
+        <tbody>
+          <tr class="exp-row">
+            <td><span class="food-bold">Paneer Tikka</span></td><td>₹280</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add" style="border-color:#22c55e;background:#f0fdf4;color:#16a34a">3 add-ons ▴ (open)</span></td>
+            <td><span class="chip var">2 groups ▾</span></td>
+          </tr>
+          <tr class="sub-row"><td colspan="5">
+            <div class="exp-panel">
+              <h4><span style="color:#3b82f6">Add-ons</span> for Paneer Tikka</h4>
+              <div class="addon-grid">
+                <div class="aitem on"><input type="checkbox" checked/><label>Extra Cheese</label><span class="pr">₹40</span></div>
+                <div class="aitem on"><input type="checkbox" checked/><label>Garlic Sauce</label><span class="pr">₹25</span></div>
+                <div class="aitem on"><input type="checkbox" checked/><label>Extra Masala</label><span class="pr">₹15</span></div>
+                <div class="aitem"><input type="checkbox"/><label>Dark Choco</label><span class="pr">₹10</span></div>
+              </div>
+              <div class="exp-footer"><button class="btn-g">Apply</button><button class="btn-w">Cancel</button></div>
+            </div>
+          </td></tr>
+          <!-- other rows — NOT dimmed -->
+          <tr><td><span class="food-bold">Chicken Biryani</span></td><td>₹320</td><td><span class="st-active">● Active</span></td><td><span class="chip add">1 add-on ▾</span></td><td><span class="chip none">None</span></td></tr>
+          <tr><td><span class="food-bold">Masala Chai</span></td><td>₹40</td><td><span class="st-active">● Active</span></td><td><span class="chip none">None</span></td><td><span class="chip none">None</span></td></tr>
+          <tr><td><span class="food-bold">Butter Chicken</span></td><td>₹340</td><td><span class="st-active">● Active</span></td><td><span class="chip add">2 add-ons ▾</span></td><td><span class="chip var">1 group ▾</span></td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:11px;color:#64748b;margin-top:8px">✔ You can still see and compare all other rows while editing Paneer Tikka</p>
+    </div>
+
+    <!-- OQ-2B: dim others -->
+    <div id="oq2b" style="display:none">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">Other rows go dim (opacity 25%) when Paneer Tikka is expanded — focus is on the active row</p>
+      <div style="overflow-x:auto"><table class="bt">
+        <thead><tr><th>Name</th><th>Price</th><th>Status</th><th class="th-new">Add-ons</th><th class="th-new">Variations</th></tr></thead>
+        <tbody>
+          <tr class="exp-row">
+            <td><span class="food-bold">Paneer Tikka</span></td><td>₹280</td>
+            <td><span class="st-active">● Active</span></td>
+            <td><span class="chip add" style="border-color:#22c55e;background:#f0fdf4;color:#16a34a">3 add-ons ▴ (open)</span></td>
+            <td><span class="chip var">2 groups ▾</span></td>
+          </tr>
+          <tr class="sub-row"><td colspan="5">
+            <div class="exp-panel">
+              <h4><span style="color:#3b82f6">Add-ons</span> for Paneer Tikka</h4>
+              <div class="addon-grid">
+                <div class="aitem on"><input type="checkbox" checked/><label>Extra Cheese</label><span class="pr">₹40</span></div>
+                <div class="aitem on"><input type="checkbox" checked/><label>Garlic Sauce</label><span class="pr">₹25</span></div>
+                <div class="aitem"><input type="checkbox"/><label>Dark Choco</label><span class="pr">₹10</span></div>
+              </div>
+              <div class="exp-footer"><button class="btn-g">Apply</button><button class="btn-w">Cancel</button></div>
+            </div>
+          </td></tr>
+          <!-- other rows — DIMMED -->
+          <tr class="dimmed"><td><span class="food-bold">Chicken Biryani</span></td><td>₹320</td><td><span class="st-active">● Active</span></td><td><span class="chip add">1 add-on ▾</span></td><td><span class="chip none">None</span></td></tr>
+          <tr class="dimmed"><td><span class="food-bold">Masala Chai</span></td><td>₹40</td><td><span class="st-active">● Active</span></td><td><span class="chip none">None</span></td><td><span class="chip none">None</span></td></tr>
+          <tr class="dimmed"><td><span class="food-bold">Butter Chicken</span></td><td>₹340</td><td><span class="st-active">● Active</span></td><td><span class="chip add">2 add-ons ▾</span></td><td><span class="chip var">1 group ▾</span></td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:11px;color:#f59e0b;margin-top:8px">⚠ Other rows are not clickable while one row is expanded — you must Apply/Cancel first</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="pick-row">
+  <button class="pick-btn a" id="p2a" onclick="pick(2,'A')">✔ Choose Option A — No dimming</button>
+  <button class="pick-btn b" id="p2b" onclick="pick(2,'B')">Choose Option B — Dim other rows</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     OQ-3  VARIATION COLUMN
+════════════════════════════════════════════════ -->
+<div class="q-header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-badge">OQ-3</span>
+      <h2>Variation Column Depth</h2>
+    </div>
+    <p>When you expand the Variations chip — read-only display, or allow editing option values?</p>
+  </div>
+</div>
+
+<div class="opt-tabs">
+  <div class="opt-tab active" id="t3a" onclick="showOpt(3,'A')">Option A — Read-only summary</div>
+  <div class="opt-tab" id="t3b" onclick="showOpt(3,'B')">Option B — Allow option edits</div>
+</div>
+
+<div class="mockup-frame" id="mf3">
+  <div class="mockup-inner">
+
+    <!-- OQ-3A: read-only -->
+    <div id="oq3a">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">Variations panel shows group names + values — <strong>view only</strong>. Full edit still available in Product Form.</p>
+      <div style="overflow-x:auto"><table class="bt">
+        <thead><tr><th>Name</th><th>Price</th><th class="th-new">Add-ons</th><th class="th-new">Variations</th></tr></thead>
+        <tbody>
+          <tr class="exp-row">
+            <td><span class="food-bold">Paneer Tikka</span></td><td>₹280</td>
+            <td><span class="chip add">3 add-ons ▾</span></td>
+            <td><span class="chip var" style="border-color:#9333ea;background:#f3e8ff">2 groups ▴ (open)</span></td>
+          </tr>
+          <tr class="sub-row"><td colspan="4">
+            <div class="exp-panel" style="background:#fdf4ff">
+              <h4><span style="color:#9333ea">Variations</span> for Paneer Tikka
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">Read-only — edit in Product Form for changes</span>
+              </h4>
+              <div class="vg"><div class="vg-title">Size</div>
+                <div class="vvalues">
+                  <span class="vval">Half · ₹180</span><span class="vval">Full · ₹280</span>
+                </div>
+              </div>
+              <div class="vg"><div class="vg-title">Spice Level</div>
+                <div class="vvalues">
+                  <span class="vval">Mild · ₹0</span><span class="vval">Medium · ₹0</span><span class="vval">Hot · ₹0</span>
+                </div>
+              </div>
+              <div class="exp-footer">
+                <button class="btn-w">Close</button>
+                <span style="font-size:11px;color:#94a3b8;margin-left:8px">Full variation editing → open Product Form for this item</span>
+              </div>
+            </div>
+          </td></tr>
+          <tr><td><span class="food-bold">Chicken Biryani</span></td><td>₹320</td><td><span class="chip add">1 add-on ▾</span></td><td><span class="chip none">None</span></td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:11px;color:#16a34a;margin-top:8px">✔ Simpler · No new write paths · Safe for P2 item · Variations are rarely bulk-edited</p>
+    </div>
+
+    <!-- OQ-3B: editable -->
+    <div id="oq3b" style="display:none">
+      <p style="font-size:11px;color:#64748b;margin-bottom:12px">Variations panel shows groups + values with <strong>add/remove option</strong> capability per group.</p>
+      <div style="overflow-x:auto"><table class="bt">
+        <thead><tr><th>Name</th><th>Price</th><th class="th-new">Add-ons</th><th class="th-new">Variations</th></tr></thead>
+        <tbody>
+          <tr class="exp-row">
+            <td><span class="food-bold">Paneer Tikka</span></td><td>₹280</td>
+            <td><span class="chip add">3 add-ons ▾</span></td>
+            <td><span class="chip var" style="border-color:#9333ea;background:#f3e8ff">2 groups ▴ (open)</span></td>
+          </tr>
+          <tr class="sub-row"><td colspan="4">
+            <div class="exp-panel" style="background:#fdf4ff">
+              <h4><span style="color:#9333ea">Variations</span> for Paneer Tikka
+                <span style="font-size:11px;color:#94a3b8;font-weight:400">Add or remove options per group</span>
+              </h4>
+              <div class="vg"><div class="vg-title">Size</div>
+                <div class="vvalues" style="align-items:center">
+                  <span class="vval-editable">Half · ₹180 <span class="del">✕</span></span>
+                  <span class="vval-editable">Full · ₹280 <span class="del">✕</span></span>
+                  <button class="add-val-btn">+ Add option</button>
+                </div>
+              </div>
+              <div class="vg"><div class="vg-title">Spice Level</div>
+                <div class="vvalues" style="align-items:center">
+                  <span class="vval-editable">Mild · ₹0 <span class="del">✕</span></span>
+                  <span class="vval-editable">Medium · ₹0 <span class="del">✕</span></span>
+                  <span class="vval-editable">Hot · ₹0 <span class="del">✕</span></span>
+                  <button class="add-val-btn">+ Add option</button>
+                </div>
+              </div>
+              <div class="exp-footer">
+                <button class="btn-g">Save Changes</button><button class="btn-w">Cancel</button>
+              </div>
+            </div>
+          </td></tr>
+          <tr><td><span class="food-bold">Chicken Biryani</span></td><td>₹320</td><td><span class="chip add">1 add-on ▾</span></td><td><span class="chip none">None</span></td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:11px;color:#f59e0b;margin-top:8px">⚠ Each "✕" or "+ Add option" calls a different API endpoint · Higher implementation risk (HIGH→CRITICAL) · Recommend separating to a future CR</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="pick-row">
+  <button class="pick-btn a" id="p3a" onclick="pick(3,'A')">✔ Choose Option A — Read-only</button>
+  <button class="pick-btn b" id="p3b" onclick="pick(3,'B')">Choose Option B — Allow edits</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     OQ-4  FETCH STRATEGY  (technical — quick confirm)
+════════════════════════════════════════════════ -->
+<div class="q-header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-badge">OQ-4</span>
+      <h2>Addon List Fetch</h2>
+    </div>
+    <p>The full restaurant addon pool is needed for the checkbox list. When should it be fetched?</p>
+  </div>
+</div>
+
+<div class="oq5-row" style="margin-bottom:10px">
+  <div class="oq5-card green" id="oq4a" onclick="pick(4,'A');highlightCard(4,'A')">
+    <h4>✔ Option A — Use existing prop (recommended)</h4>
+    <p style="color:#166534">MenuManagementPanel already fetches addons when the panel opens and passes them as a prop to BulkEditor. Zero extra API calls. Addon pool is typically &lt;50 items — no performance concern.</p>
+    <div class="code">// BulkEditor already receives:
+&lt;BulkEditor addons={addons} ... /&gt;
+// Just use this.addons prop for the checkbox list</div>
+  </div>
+  <div class="oq5-card" id="oq4b" onclick="pick(4,'B');highlightCard(4,'B')">
+    <h4>Option B — Fetch lazily per row</h4>
+    <p style="color:#92400e">Fetch addon list only when user first clicks a chip. Cache for subsequent uses.</p>
+    <div class="code">// On first expand:
+const addons = await menuService.getAddons();
+// Cache in component state</div>
+    <p style="color:#dc2626;font-size:11px;margin-top:6px">⚠ Unnecessary — the list is already in memory. Extra network call adds latency for no benefit.</p>
+  </div>
+</div>
+<div class="pick-row">
+  <button class="pick-btn a" id="p4a" onclick="pick(4,'A')">✔ Choose Option A — Use existing prop</button>
+  <button class="pick-btn b" id="p4b" onclick="pick(4,'B')">Choose Option B — Lazy fetch</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     OQ-5  DIRTY TRACKING
+════════════════════════════════════════════════ -->
+<div class="q-header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-badge">OQ-5</span>
+      <h2>Array Dirty Tracking</h2>
+    </div>
+    <p>How to detect when addon assignments have changed (to show the "unsaved" indicator and include <code>addon_ids</code> in save)?</p>
+  </div>
+</div>
+
+<div class="oq5-row" style="margin-bottom:10px">
+  <div class="oq5-card green" id="oq5a" onclick="pick(5,'A');highlightCard(5,'A')">
+    <h4>✔ Option A — Sorted JSON.stringify (recommended)</h4>
+    <p style="color:#166534">Sort both arrays and compare as strings. Simple, accurate, order-independent.</p>
+    <div class="code">const isDirty = (original, current) =>
+  JSON.stringify([...original].sort()) !==
+  JSON.stringify([...current].sort());</div>
+    <p style="color:#16a34a;font-size:11px;margin-top:6px">✔ Works regardless of check/uncheck order · Easy to reason about</p>
+  </div>
+  <div class="oq5-card" id="oq5b" onclick="pick(5,'B');highlightCard(5,'B')">
+    <h4>Option B — Set symmetric difference</h4>
+    <p style="color:#92400e">Build Sets from both arrays and check for differences.</p>
+    <div class="code">const isDirty = (original, current) => {
+  const oSet = new Set(original);
+  const cSet = new Set(current);
+  return current.some(id => !oSet.has(id)) ||
+         original.some(id => !cSet.has(id));
+}</div>
+    <p style="color:#94a3b8;font-size:11px;margin-top:6px">Works fine but more verbose. No real benefit for &lt;50 addons.</p>
+  </div>
+</div>
+<div class="pick-row">
+  <button class="pick-btn a" id="p5a" onclick="pick(5,'A')">✔ Choose Option A — JSON.stringify</button>
+  <button class="pick-btn b" id="p5b" onclick="pick(5,'B')">Choose Option B — Set comparison</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SUMMARY
+════════════════════════════════════════════════ -->
+<div class="summary-box">
+  <h3>Your Selections</h3>
+  <div class="sum-row">
+    <span class="sum-oq">OQ-1</span>
+    <span class="sum-q">Expand pattern</span>
+    <span class="sum-sel none" id="s1">Not chosen yet</span>
+  </div>
+  <div class="sum-row">
+    <span class="sum-oq">OQ-2</span>
+    <span class="sum-q">Dim other rows on expand?</span>
+    <span class="sum-sel none" id="s2">Not chosen yet</span>
+  </div>
+  <div class="sum-row">
+    <span class="sum-oq">OQ-3</span>
+    <span class="sum-q">Variation column depth</span>
+    <span class="sum-sel none" id="s3">Not chosen yet</span>
+  </div>
+  <div class="sum-row">
+    <span class="sum-oq">OQ-4</span>
+    <span class="sum-q">Addon list fetch strategy</span>
+    <span class="sum-sel none" id="s4">Not chosen yet</span>
+  </div>
+  <div class="sum-row">
+    <span class="sum-oq">OQ-5</span>
+    <span class="sum-q">Array dirty tracking method</span>
+    <span class="sum-sel none" id="s5">Not chosen yet</span>
+  </div>
+  <button class="approve-btn" id="approveBtn" disabled onclick="approve()">Choose all 5 options to approve</button>
+  <p class="note" id="noteText">Select one option for each OQ above, then click Approve to unblock Gate 2</p>
+</div>
+
+</div><!-- /page -->
+
+<script>
+var picks = {1:null,2:null,3:null,4:null,5:null};
+var labels = {
+  1: {A:'Sub-row inline', B:'Side drawer'},
+  2: {A:'No dimming', B:'Dim others'},
+  3: {A:'Read-only', B:'Allow edits'},
+  4: {A:'Use existing prop', B:'Lazy fetch'},
+  5: {A:'JSON.stringify', B:'Set comparison'}
+};
+
+function showOpt(q, opt) {
+  var a = document.getElementById('oq'+q+'a');
+  var b = document.getElementById('oq'+q+'b');
+  var ta = document.getElementById('t'+q+'a');
+  var tb = document.getElementById('t'+q+'b');
+  if (!a || !b) return;
+  a.style.display = opt==='A' ? '' : 'none';
+  b.style.display = opt==='B' ? '' : 'none';
+  ta.className = 'opt-tab' + (opt==='A' ? ' active' : '');
+  tb.className = 'opt-tab' + (opt==='B' ? ' active' : '');
+}
+
+function pick(q, opt) {
+  picks[q] = opt;
+  var pa = document.getElementById('p'+q+'a');
+  var pb = document.getElementById('p'+q+'b');
+  if (pa) pa.className = 'pick-btn a' + (opt==='A' ? ' chosen' : '');
+  if (pb) pb.className = 'pick-btn b' + (opt==='B' ? ' chosen' : '');
+  // Update summary
+  var sel = document.getElementById('s'+q);
+  if (sel) {
+    sel.textContent = opt + ' — ' + labels[q][opt];
+    sel.className = 'sum-sel ' + (opt==='A' ? 'a' : 'b');
+  }
+  // Update dot
+  var dot = document.getElementById('d'+q);
+  if (dot) dot.className = 'dot done';
+  // Check all done
+  var done = Object.values(picks).every(function(v){ return v !== null; });
+  var btn = document.getElementById('approveBtn');
+  var note = document.getElementById('noteText');
+  if (done) {
+    btn.disabled = false;
+    btn.textContent = 'Approve my selections → unblock Gate 2';
+    note.textContent = 'These choices will be confirmed to the planning agent to proceed with Impact Analysis (Gate 2)';
+  }
+  // Show opt in frame
+  showOpt(q, opt);
+}
+
+function highlightCard(q, opt) {
+  var ca = document.getElementById('oq'+q+'a');
+  var cb = document.getElementById('oq'+q+'b');
+  if (ca) ca.className = 'oq5-card' + (opt==='A' ? ' green' : '');
+  if (cb) cb.className = 'oq5-card' + (opt==='B' ? ' amber' : '');
+}
+
+function toggle1a() {
+  var sub = document.getElementById('r1a-sub');
+  sub.style.display = sub.style.display === 'none' ? 'table-row' : 'none';
+}
+function toggle1b() {
+  var d = document.getElementById('drawer1b');
+  d.style.display = d.style.display === 'none' ? 'flex' : 'none';
+}
+function toggleAddon(el, dirtyId) {
+  var cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  el.className = cb.checked ? 'aitem on' : 'aitem';
+  document.getElementById(dirtyId).style.display = 'inline-flex';
+}
+
+function approve() {
+  var msg = 'Your CR-145 selections:\n\n';
+  for (var q=1; q<=5; q++) {
+    msg += 'OQ-'+q+': Option '+picks[q]+' — '+labels[q][picks[q]]+'\n';
+  }
+  msg += '\nSend these selections to the planning agent to proceed with Gate 2 (Impact Analysis).';
+  alert(msg);
+}
+</script>
+</body>
+</html>

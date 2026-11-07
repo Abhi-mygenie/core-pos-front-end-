@@ -1,0 +1,290 @@
+{
+  "GET addon-recipe-list": {
+    "status": 200,
+    "body": {
+      "recipes": [
+        {
+          "recipe_id": 11029,
+          "addon_id": 13252,
+          "name": "with fingertips",
+          "addon_name": "with fingertips",
+          "food_name": "with fingertips",
+          "addon_price": "15.00",
+          "preparation_time": "5",
+          "serve_time": "2",
+          "unit": "portion",
+          "serve_people": 1,
+          "qty": "1",
+          "type": "addon_recipe",
+          "ingredients": [
+            {
+              "ingredient_id": 20291,
+              "ingredient_name": "Finger Tip Stock",
+              "ingredient_unit": "piece",
+              "ingredient_qty": 1
+            }
+          ],
+          "is_pushed_managed": false
+        }
+      ]
+    }
+  },
+  "addon_recipe_sample_keys": [
+    "recipe_id",
+    "addon_id",
+    "name",
+    "addon_name",
+    "food_name",
+    "addon_price",
+    "preparation_time",
+    "serve_time",
+    "unit",
+    "serve_people",
+    "qty",
+    "type",
+    "ingredients",
+    "is_pushed_managed"
+  ],
+  "GET delete-reasons (menu)": {
+    "status": 404,
+    "body": {
+      "message": "",
+      "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
+      "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Routing/AbstractRouteCollection.php",
+      "line": 43,
+      "trace": [
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Routing/RouteCollection.php",
+          "line": 162,
+          "function": "handleMatchedRoute",
+          "class": "Illuminate\\Routing\\AbstractRouteCollection",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+          "line": 673,
+          "function": "match",
+          "class": "Illuminate\\Routing\\RouteCollection",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+          "line": 662,
+          "function": "findRoute",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+          "line": 651,
+          "function": "dispatchToRoute",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+          "line": 167,
+          "function": "dispatch",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 128,
+          "function": "Illuminate\\Foundation\\Http\\{closure}",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/barryvdh/laravel-debugbar/src/Middleware/InjectDebugbar.php",
+          "line": 66,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Barryvdh\\Debugbar\\Middleware\\InjectDebugbar",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+          "line": 21,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php",
+          "line": 31,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php",
+          "line": 21,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php",
+          "line": 40,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php",
+          "line": 27,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php",
+          "line": 86,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/fideloper/proxy/src/TrustProxies.php",
+          "line": 57,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 167,
+          "function": "handle",
+          "class": "Fideloper\\Proxy\\TrustProxies",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php",
+          "line": 103,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+          "line": 142,
+          "function": "then",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php",
+          "line": 111,
+          "function": "sendRequestThroughRouter",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        },
+        {
+          "file": "/var/www/html/public/index.php",
+          "line": 52,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        }
+      ]
+    }
+  },
+  "DELETE addon no-body": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Add-on recipe not found."
+    }
+  },
+  "DELETE addon {reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Add-on recipe not found."
+    }
+  },
+  "DELETE addon {delete_reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Add-on recipe not found."
+    }
+  },
+  "DELETE standard no-body": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Recipe not found."
+    }
+  },
+  "DELETE standard {reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Recipe not found."
+    }
+  },
+  "DELETE standard {delete_reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Recipe not found."
+    }
+  },
+  "DELETE sub no-body": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  },
+  "DELETE sub {reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  },
+  "DELETE sub {delete_reason}": {
+    "status": 404,
+    "body": {
+      "status": false,
+      "message": "Sub-recipe not found."
+    }
+  }
+}

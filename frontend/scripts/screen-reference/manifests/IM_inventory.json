@@ -1,0 +1,71 @@
+{
+  "_comment": "CR-390: Inventory Management module manifest",
+  "module_code": "IM",
+  "module_name": "Inventory Management",
+  "eyebrow": "INVENTORY MANAGEMENT",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    {
+      "route": "/inventory-setup",
+      "section": "Ingredients & Setup",
+      "states": [
+        { "slug": "inventory-setup-list", "title": "Ingredients List", "description": "All ingredients with unit, conversion factor and current stock.", "pre_actions": [] },
+        { "slug": "inventory-setup-edit", "title": "Edit Ingredient", "description": "Edit ingredient name, unit, conversion factor and alert level.", "pre_actions": [ { "type": "click", "selector": "[data-testid='edit-ingredient-btn']:first-child, tr:first-child [data-testid*='edit']" }, { "type": "wait", "ms": 600 } ] }
+      ]
+    },
+    {
+      "route": "/inventory-current-stock",
+      "section": "Current Stock",
+      "states": [
+        { "slug": "current-stock-table", "title": "Current Stock", "description": "Real-time stock levels for all ingredients with display quantity and unit.", "pre_actions": [] },
+        { "slug": "current-stock-search", "title": "Current Stock \u2014 Filtered", "description": "Stock filtered by ingredient name or category.", "pre_actions": [ { "type": "type", "selector": "input[placeholder*='Search'], [data-testid='stock-search']", "value": "flour" }, { "type": "wait", "ms": 500 } ] }
+      ]
+    },
+    {
+      "route": "/inventory-smart-purchase",
+      "section": "Smart Purchase",
+      "states": [
+        { "slug": "smart-purchase-list", "title": "Smart Purchase", "description": "AI-suggested purchase quantities based on sales velocity and current stock.", "pre_actions": [] },
+        { "slug": "smart-purchase-vendor", "title": "Vendor Preview", "description": "Purchase order grouped by vendor with quantities and estimated cost.", "pre_actions": [ { "type": "click", "selector": "[data-testid='vendor-preview-btn'], button:has-text('Preview')" }, { "type": "wait", "ms": 800 } ] }
+      ]
+    },
+    {
+      "route": "/inventory-receive",
+      "section": "Receive Stock",
+      "states": [
+        { "slug": "inventory-receive-form", "title": "Receive Stock", "description": "Record incoming stock: ingredient, quantity, vendor and purchase price.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/inventory-sub-recipe-stock",
+      "section": "Sub-Recipe Stock",
+      "states": [
+        { "slug": "sub-recipe-stock", "title": "Sub-Recipe Stock", "description": "Stock levels for prepared sub-recipes (bases, sauces, mixes).", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/inventory-audit",
+      "section": "Stock Audit",
+      "states": [
+        { "slug": "stock-audit-list", "title": "Stock Audit", "description": "Compare physical count against system stock. Record variances.", "pre_actions": [] },
+        { "slug": "stock-audit-edit", "title": "Stock Audit \u2014 Edit Entry", "description": "Enter physical quantity for an ingredient to record variance.", "pre_actions": [ { "type": "click", "selector": "tr:first-child input, [data-testid='audit-qty-input']:first-child" }, { "type": "wait", "ms": 400 } ] }
+      ]
+    },
+    {
+      "route": "/inventory-dashboard",
+      "section": "Inventory Intelligence",
+      "states": [
+        { "slug": "inventory-dashboard", "title": "Inventory Intelligence", "description": "Dashboard: low-stock alerts, top consumed items, purchase recommendations.", "pre_actions": [] }
+      ]
+    },
+    {
+      "route": "/recipes",
+      "section": "Recipe Management",
+      "states": [
+        { "slug": "recipe-list", "title": "Recipes", "description": "All recipes with linked ingredients and quantities.", "pre_actions": [] },
+        { "slug": "recipe-detail", "title": "Recipe Detail", "description": "Ingredients, quantities and yield for a single recipe.", "pre_actions": [ { "type": "click", "selector": "[data-testid='recipe-row']:first-child, tr:first-child [data-testid*='view']" }, { "type": "wait", "ms": 600 } ] }
+      ]
+    }
+  ]
+}

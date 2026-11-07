@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-24",
+  "endpoint": "GET /api/v2/vendoremployee/inventory/vendor-item-list",
+  "restaurant": "kunafamahal.com",
+  "total_rows": 1591,
+  "field_name_in_api": "Vendor_Name",
+  "field_name_read_by_fe": "vendor_name / vendorName",
+  "null_vendor_id_rows": 893,
+  "valid_vendor_id_with_name": 698,
+  "valid_vendor_id_empty_name": 0,
+  "sample_row": {
+    "Vendor_Name": "Kunafabake",
+    "vendor_id": 173,
+    "Ingredient_Name": "Pista Base Kunafa",
+    "unit_price": "example"
+  },
+  "distinct_vendor_ids": [
+    "173",
+    "174",
+    "175",
+    "176",
+    "177",
+    "178",
+    "180",
+    "181",
+    "182",
+    "185"
+  ],
+  "break_point": "vendorRanking.js:52 \u2014 r.vendor_name ?? r.vendorName ?? '' \u2014 field Vendor_Name never read",
+  "symptom": "VendorSuggestionCell.jsx:58 \u2014 c.vendor_name || '(unnamed)' shows '(unnamed)' for all history-based vendors"
+}

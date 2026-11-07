@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUG-597 — Update Banner Design</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f4f4f5; }
+
+    /* ── Layout ───────────────────────────────────────────── */
+    .page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── Fake POS app shell ───────────────────────────────── */
+    .app-shell { flex: 1; display: flex; overflow: hidden; position: relative; }
+    .sidebar {
+      width: 220px; background: #fff; border-right: 1px solid #e4e4e7;
+      display: flex; flex-direction: column; padding: 16px 0; flex-shrink: 0;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 8px; padding: 0 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .logo-circle {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: #329937; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 13px;
+    }
+    .sidebar-name { font-size: 13px; font-weight: 700; color: #18181b; }
+    .sidebar-sub  { font-size: 11px; color: #71717a; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px; font-size: 13px; color: #52525b; cursor: pointer;
+      margin: 1px 8px; border-radius: 8px;
+    }
+    .nav-item:hover, .nav-item.active { background: #f4f4f5; color: #18181b; }
+    .nav-item.active { background: #ecfdf5; color: #329937; font-weight: 600; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fafafa; }
+    .topbar {
+      height: 52px; background: #fff; border-bottom: 1px solid #e4e4e7;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; flex-shrink: 0;
+    }
+    .topbar-title { font-size: 15px; font-weight: 700; color: #18181b; }
+    .topbar-right  { display: flex; align-items: center; gap: 8px; }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 50%; background: #329937;
+      color: #fff; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .content { flex: 1; padding: 20px; overflow-y: auto; }
+    .table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap: 12px; }
+    .table-card {
+      background: #fff; border: 1px solid #e4e4e7; border-radius: 10px;
+      padding: 14px 12px; text-align: center; cursor: pointer;
+    }
+    .table-card.occ { border-color: #329937; background: #f0fdf4; }
+    .table-card.occ .tc-num { color: #329937; }
+    .tc-num  { font-size: 16px; font-weight: 700; color: #18181b; }
+    .tc-name { font-size: 11px; color: #71717a; margin-top: 2px; }
+    .tc-amt  { font-size: 12px; font-weight: 600; color: #329937; margin-top: 4px; }
+
+    /* ── Scenario cards ───────────────────────────────────── */
+    .scenarios { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 24px; }
+
+    .scenario-card {
+      background: #fff; border: 1px solid #e4e4e7; border-radius: 14px;
+      overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .sc-header {
+      padding: 14px 18px; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sc-badge {
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+    }
+    .sc-badge.green  { background: #ecfdf5; color: #329937; }
+    .sc-badge.amber  { background: #fffbeb; color: #b45309; }
+    .sc-badge.red    { background: #fef2f2; color: #dc2626; }
+    .sc-title { font-size: 13px; font-weight: 700; color: #18181b; }
+    .sc-desc  { font-size: 12px; color: #71717a; }
+
+    .sc-body { padding: 18px; }
+
+    /* ── Phone mockup ───────────────────────────────────── */
+    .phone {
+      width: 220px; height: 420px; border: 2px solid #d4d4d8; border-radius: 28px;
+      background: #fafafa; position: relative; overflow: hidden;
+      margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
+    .phone-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 22px; background: #18181b; border-radius: 0 0 14px 14px; z-index: 10;
+    }
+    .phone-screen { height: 100%; background: #fff; padding-top: 22px; overflow: hidden; }
+    .phone-topbar {
+      height: 40px; background: #fff; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; padding: 0 10px;
+      font-size: 11px; font-weight: 700; color: #18181b;
+    }
+    .phone-content { padding: 8px; }
+    .phone-table-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .phone-table-card {
+      background: #f4f4f5; border-radius: 8px; padding: 8px 4px; text-align: center;
+    }
+    .phone-table-card.occ { background: #ecfdf5; }
+    .ptc-num  { font-size: 13px; font-weight: 700; color: #18181b; }
+    .phone-table-card.occ .ptc-num { color: #329937; }
+    .ptc-label { font-size: 9px; color: #71717a; }
+
+    /* ── Update Banner ───────────────────────────────────── */
+    .update-banner {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: #18181b; color: #fff; border-radius: 10px;
+      padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+      white-space: nowrap; z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,.35);
+      animation: slideUp .3s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+    }
+    .banner-text { font-size: 11px; font-weight: 500; line-height: 1.3; }
+    .banner-text small { display: block; font-size: 9px; color: #a1a1aa; margin-top: 1px; }
+    .banner-btn {
+      background: #329937; color: #fff; border: none; border-radius: 6px;
+      padding: 5px 10px; font-size: 10px; font-weight: 700; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .banner-btn:hover { background: #2d8532; }
+
+    /* Countdown ring */
+    .countdown-ring {
+      width: 28px; height: 28px; flex-shrink: 0;
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .countdown-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .countdown-num { font-size: 9px; font-weight: 700; color: #fff; }
+
+    /* ── White screen mockup ──────────────────────────────── */
+    .white-screen {
+      width: 220px; height: 420px; border: 2px solid #d4d4d8; border-radius: 28px;
+      background: #fff; margin: 0 auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+      position: relative; overflow: hidden;
+    }
+    .ws-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 22px; background: #18181b; border-radius: 0 0 14px 14px; z-index: 10;
+    }
+
+    /* ── Flow arrows ──────────────────────────────────────── */
+    .flow { display: flex; align-items: center; gap: 8px; margin: 14px 0 6px; flex-wrap: wrap; }
+    .flow-step {
+      background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 8px;
+      padding: 6px 10px; font-size: 11px; color: #52525b; line-height: 1.4;
+    }
+    .flow-step.highlight { background: #ecfdf5; border-color: #86efac; color: #15803d; font-weight: 600; }
+    .flow-step.red       { background: #fff7ed; border-color: #fcd34d; color: #92400e; }
+    .flow-arrow { color: #a1a1aa; font-size: 14px; flex-shrink: 0; }
+
+    /* ── Detail panel ─────────────────────────────────────── */
+    .detail { font-size: 12px; color: #52525b; line-height: 1.7; }
+    .detail strong { color: #18181b; }
+
+    /* ── Full-width card ──────────────────────────────────── */
+    .full-card {
+      margin: 0 24px 24px; background: #fff; border: 1px solid #e4e4e7;
+      border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .full-header {
+      padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .full-body { padding: 20px; display: flex; gap: 32px; align-items: flex-start; }
+    .banner-preview-area { flex-shrink: 0; }
+
+    .section-label {
+      font-size: 10px; font-weight: 700; color: #71717a; text-transform: uppercase;
+      letter-spacing: .06em; margin-bottom: 8px;
+    }
+
+    /* ── Page title ───────────────────────────────────────── */
+    .page-title {
+      padding: 20px 24px 8px; border-bottom: 1px solid #e4e4e7; background: #fff;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-title h1 { font-size: 18px; font-weight: 800; color: #18181b; }
+    .page-title p  { font-size: 12px; color: #71717a; margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Title -->
+  <div class="page-title">
+    <div>
+      <h1>BUG-597 — Update Banner Design</h1>
+      <p>What happens when a new version is deployed to production</p>
+    </div>
+  </div>
+
+  <!-- ── Scenario 1 + 2 side by side ───────────────────── -->
+  <div class="scenarios">
+
+    <!-- SCENARIO A: Deploy detected → banner shows -->
+    <div class="scenario-card">
+      <div class="sc-header">
+        <span class="sc-badge green">Scenario A</span>
+        <div>
+          <div class="sc-title">New deploy detected while app is open</div>
+          <div class="sc-desc">Owner / cashier already on dashboard when you push</div>
+        </div>
+      </div>
+      <div class="sc-body">
+
+        <div class="flow">
+          <div class="flow-step">You deploy</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">New SW downloads</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">skipWaiting fires</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">Banner appears</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">Auto-reload in 10s</div>
+        </div>
+
+        <!-- Phone with banner -->
+        <div style="margin-top:16px; display:flex; justify-content:center;">
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-topbar">Dashboard · Kunafa Mahal</div>
+              <div class="phone-content">
+                <div class="phone-table-grid">
+                  <div class="phone-table-card occ"><div class="ptc-num">T1</div><div class="ptc-label">₹480</div></div>
+                  <div class="phone-table-card"><div class="ptc-num">T2</div><div class="ptc-label">Free</div></div>
+                  <div class="phone-table-card occ"><div class="ptc-num">T3</div><div class="ptc-label">₹210</div></div>
+                  <div class="phone-table-card"><div class="ptc-num">T4</div><div class="ptc-label">Free</div></div>
+                  <div class="phone-table-card occ"><div class="ptc-num">T5</div><div class="ptc-label">₹950</div></div>
+                  <div class="phone-table-card"><div class="ptc-num">T6</div><div class="ptc-label">Free</div></div>
+                  <div class="phone-table-card"><div class="ptc-num">T7</div><div class="ptc-label">Free</div></div>
+                  <div class="phone-table-card occ"><div class="ptc-num">T8</div><div class="ptc-label">₹320</div></div>
+                  <div class="phone-table-card"><div class="ptc-num">T9</div><div class="ptc-label">Free</div></div>
+                </div>
+              </div>
+            </div>
+            <!-- THE BANNER -->
+            <div class="update-banner">
+              <div class="countdown-ring">
+                <svg width="28" height="28" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#3f3f46" stroke-width="2.5"/>
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#329937" stroke-width="2.5"
+                    stroke-dasharray="69" stroke-dashoffset="20"
+                    stroke-linecap="round"/>
+                </svg>
+                <span class="countdown-num">7</span>
+              </div>
+              <div class="banner-text">
+                App updated
+                <small>Reloading in a moment…</small>
+              </div>
+              <button class="banner-btn">Reload now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail" style="margin-top:16px;">
+          <strong>What the user sees:</strong><br>
+          Dashboard stays fully usable. Small dark bar slides up from the bottom.
+          A green countdown ring ticks down from 10. After 10 seconds the page
+          reloads automatically — they can also tap <em>Reload now</em> to skip the wait.
+          Reload takes ~2 seconds. App comes back on the same page.
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO B: Stale cache → ChunkLoadError → auto-retry -->
+    <div class="scenario-card">
+      <div class="sc-header">
+        <span class="sc-badge amber">Scenario B</span>
+        <div>
+          <div class="sc-title">Stale cache — the white screen you showed</div>
+          <div class="sc-desc">Old index.html + deleted chunk files → 404 → freeze</div>
+        </div>
+      </div>
+      <div class="sc-body">
+
+        <div class="flow">
+          <div class="flow-step red">Stale cache serves old index.html</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step red">Chunk 404</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">ErrorBoundary catches it</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">Silent reload + ?retry=1</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight">Fresh app loads ✅</div>
+        </div>
+
+        <!-- Before / After phones -->
+        <div style="margin-top:16px; display:flex; gap:16px; justify-content:center; align-items:flex-end;">
+          <!-- BEFORE -->
+          <div style="text-align:center;">
+            <div class="section-label" style="color:#dc2626;">TODAY (broken)</div>
+            <div class="white-screen">
+              <div class="ws-notch"></div>
+              <!-- truly blank -->
+            </div>
+            <div style="font-size:11px; color:#dc2626; margin-top:8px; font-weight:600;">
+              Frozen white screen
+            </div>
+          </div>
+          <!-- Arrow -->
+          <div style="font-size:24px; color:#a1a1aa; padding-bottom:40px;">→</div>
+          <!-- AFTER -->
+          <div style="text-align:center;">
+            <div class="section-label" style="color:#329937;">AFTER FIX</div>
+            <div class="phone">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div style="height:22px;"></div>
+                <div style="padding:40px 20px 0; text-align:center;">
+                  <div style="width:48px;height:48px;border-radius:50%;background:#ecfdf5;
+                    display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#329937" stroke-width="2.5">
+                      <path d="M23 4v6h-6M1 20v-6h6"/>
+                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                  </div>
+                  <div style="font-size:12px;font-weight:700;color:#18181b;">Refreshing…</div>
+                  <div style="font-size:10px;color:#71717a;margin-top:4px;">Loading latest version</div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:11px; color:#329937; margin-top:8px; font-weight:600;">
+              Silent reload → fresh app
+            </div>
+          </div>
+        </div>
+
+        <div class="detail" style="margin-top:16px;">
+          <strong>What the user sees:</strong><br>
+          Instead of a frozen white screen, the page flickers once (a very brief blank
+          during reload) and the app loads normally. The whole thing takes under 1 second.
+          The user doesn't need to do anything — no manual refresh, no cache clearing.
+          If it fails even after the retry, the existing red
+          <em>"Something went wrong"</em> screen appears with a Retry button.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end scenarios -->
+
+  <!-- ── Banner close-up ──────────────────────────────────── -->
+  <div class="full-card">
+    <div class="full-header">
+      <span class="sc-badge green">Banner close-up</span>
+      <span style="font-size:13px; font-weight:700; color:#18181b;">
+        Exact appearance on desktop POS (tablet / browser)
+      </span>
+    </div>
+    <div class="full-body">
+
+      <div class="banner-preview-area">
+        <div class="section-label">Live preview</div>
+        <!-- Desktop banner mock -->
+        <div style="width:340px; height:100px; background:#f4f4f5; border-radius:12px;
+          position:relative; border:1px solid #e4e4e7; overflow:hidden;">
+          <div style="position:absolute; bottom:14px; left:50%; transform:translateX(-50%);">
+            <div class="update-banner" style="position:static; transform:none; animation:none; width:max-content;">
+              <div class="countdown-ring">
+                <svg width="28" height="28" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#3f3f46" stroke-width="2.5"/>
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#329937" stroke-width="2.5"
+                    stroke-dasharray="69" stroke-dashoffset="20" stroke-linecap="round"/>
+                </svg>
+                <span class="countdown-num">7</span>
+              </div>
+              <div class="banner-text">
+                App updated — reloading shortly
+                <small>Or tap Reload now to update immediately</small>
+              </div>
+              <button class="banner-btn">Reload now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Behaviour</div>
+        <div class="detail">
+          <strong>Position:</strong> Fixed to the bottom-centre of the screen — never blocks the order table or collect bill panel.<br><br>
+          <strong>Countdown:</strong> Green ring ticks from 10 → 0. At 0, page reloads automatically.<br><br>
+          <strong>Reload now button:</strong> Tapping reloads immediately without waiting.<br><br>
+          <strong>During reload:</strong> The page briefly goes blank (≈ 1–2 s) then the fresh app loads. The user lands on the same route they were on.<br><br>
+          <strong>Cashier mid-order:</strong> If a cashier has a bill open, the order is already saved server-side. After reload they reopen the order — nothing is lost.<br><br>
+          <strong>Z-index:</strong> Banner is always on top — even above modals and overlays.
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end banner close-up -->
+
+</div><!-- end page -->
+</body>
+</html>

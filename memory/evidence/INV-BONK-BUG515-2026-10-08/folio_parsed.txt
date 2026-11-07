@@ -1,0 +1,21 @@
+=== room_info ===
+  room_price: 3000.00
+  gst_tax: None
+  advance_payment: 1500.00
+  balance_payment: 500.00
+  receive_balance: None
+  room_discount_amount: 1000.00
+  room_discount_type: Amount
+  room_discount_value: None
+  room_discount_at: check_in
+  room_discount_detail: {'check_in': {'type': 'Amount', 'value': '1000', 'amount': 1000, 'reason': None}}
+  room_discount_reason: None
+  ALL keys: ['room_price', 'advance_payment', 'balance_payment', 'room_discount_amount', 'room_discount_type', 'room_discount_reason', 'room_discount_at', 'room_discount_detail']
+
+=== orderDetails (rows) ===
+  [check in] price=3000 unit_price=3000.00 food_status=5 gst=None
+
+=== order top level money ===
+  order_amount: 0
+  total_gst_tax_amount: None
+  order_sub_total_amount: 0
