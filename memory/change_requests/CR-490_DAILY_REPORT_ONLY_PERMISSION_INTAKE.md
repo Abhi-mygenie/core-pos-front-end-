@@ -33,15 +33,19 @@ Owner ODs + backend confirmation → Planning Gate 2.
 
 ## Owner Decisions (locked 2026-11-05)
 - OD-490-01 **LOCKED: A** — one new permission key (e.g. `daily_report`) granting Daily Report only.
-- OD-490-02 **LOCKED** — scope = Daily Report screen only. Day Closure already has its own separate right — out of scope.
+- OD-490-02 **REVISED 2026-11-07: Order Report screen only** (`/reports/audit` = `AllOrdersReportPage`). NOT Sales Summary. Day Closure already has its own separate right — out of scope.
 - OD-490-03 **LOCKED: YES** — route guard blocks direct URL access to all other Reports/Insights pages for such users.
-- OD-490-04 backend permission key — OPEN (backend confirmation).
+- OD-490-04 backend permission key — CLOSED: `show_daily_report` (module ID 106).
 
 ## Owner Decisions (locked 2026-11-05, round 3)
-- All Daily Report tabs visible: **YES** · Excel/PDF export: **YES** · Insights section hidden: **YES**.
-All owner ODs CLOSED. Remaining: backend `daily_report` permission key.
+- All Order Report tabs visible: **YES** · Excel/PDF export: **YES** · Insights section hidden: **YES**.
+All owner ODs CLOSED. Remaining: backend `daily_report` permission key — **CLOSED** (show_daily_report, ID 106).
 
 ## (2026-11-05) INTAKE FROZEN — backend dependency only.
+
+## (2026-11-07) OD-490-02 REVISED — visible screen = Order Report (`/reports/audit`), NOT Sales Summary. Owner directive: "Order Report also should be visible not Sales Summary". IA REFRESHED and CLOSED.
+
+## (2026-11-07) GATE 2 CLOSED — IA refreshed at `impact/CR-490_IMPACT_ANALYSIS_REFRESHED_2026_11_07.md`. R11 probe done, backend confirmed (show_daily_report ID 106). 5 edits / 4 files. Next: Gate 3.
 
 ## Backend brief (2026-11-05)
 - `backend_briefs/BACKEND_BRIEF_INTAKE_BATCH_2026_11_05.md` §D
