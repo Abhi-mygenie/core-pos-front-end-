@@ -56,6 +56,9 @@ const getStatusBadge = (pt) => {
     TAB: { label: 'TAB', cls: 'bg-amber-100 text-amber-800' },           // BUG-354
     prepaid: { label: 'Prepaid', cls: 'bg-green-100 text-green-800' },    // BUG-354
     postpaid: { label: 'Postpaid', cls: 'bg-zinc-200 text-zinc-700' },    // BUG-354
+    Upi:      { label: 'Paid',     cls: 'bg-blue-100 text-blue-800'    },  // BUG-626
+    Card:     { label: 'Paid',     cls: 'bg-blue-100 text-blue-800'    },  // BUG-626
+    Room:     { label: 'Room',     cls: 'bg-purple-100 text-purple-800'},  // BUG-626
   };
   return map[pt] || { label: pt || '—', cls: 'bg-zinc-100 text-zinc-600' };
 };
