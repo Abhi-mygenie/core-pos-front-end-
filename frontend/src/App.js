@@ -83,7 +83,7 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as SonnerToaster } from "./components/ui/sonner"; // BUG-254: sonner toast host for aggregator error toasts
 import { AppProviders, useNotifications } from "./contexts"; // BUG-597: +useNotifications for SwUpdateBanner
 import { useRestaurant } from "./contexts";
-import { ProtectedRoute, ErrorBoundary } from "./components/guards";
+import { ProtectedRoute, PermissionRoute, ErrorBoundary } from "./components/guards"; // CR-490
 import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
 // CR-358-P1 (+P2 +P3 +P4 route re-point): PMS Module pages
 import ChannelManagerPage  from './pages/pms/ChannelManagerPage';
@@ -168,13 +168,13 @@ function App() {
               <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
               {/* Order Reports Routes */}
               <Route path="/reports" element={<Navigate to="/reports/audit" replace />} />
-              <Route path="/reports/audit" element={<ProtectedRoute><AllOrdersReportPage /></ProtectedRoute>} />
+              <Route path="/reports/audit" element={<PermissionRoute requiredAny={['report', 'show_daily_report']}><AllOrdersReportPage /></PermissionRoute>} /> {/* CR-490 */}
               <Route path="/reports/all-orders" element={<Navigate to="/reports/audit" replace />} />
-              <Route path="/reports/summary" element={<ProtectedRoute><OrderSummaryPage /></ProtectedRoute>} />
+              <Route path="/reports/summary" element={<PermissionRoute requiredAny={['report']}><OrderSummaryPage /></PermissionRoute>} /> {/* CR-490: report only */}
               {/* CR-004: Room Orders Report (PMS-style view, read-only Phase 1) */}
-              <Route path="/reports/rooms" element={<ProtectedRoute><RoomOrdersReportPage /></ProtectedRoute>} />
+              <Route path="/reports/rooms" element={<PermissionRoute requiredAny={['report']}><RoomOrdersReportPage /></PermissionRoute>} /> {/* CR-490: report only */}
               {/* CR-044: InsightsCacheProvider wraps all /reports-module/* routes for shared date + response cache */}
-              <Route path="/reports-module/*" element={<InsightsCacheProvider><Routes>
+              <Route path="/reports-module/*" element={<PermissionRoute requiredAny={['report']}><InsightsCacheProvider><Routes> {/* CR-490: all insights/report-module require report */}
               <Route path="dashboard" element={<ProtectedRoute><DashboardMockup /></ProtectedRoute>} />
               <Route path="items" element={<ProtectedRoute><ItemSalesHybridMockup /></ProtectedRoute>} />
               <Route path="items-hybrid" element={<ProtectedRoute><ItemSalesHybridMockup /></ProtectedRoute>} />
@@ -243,7 +243,7 @@ function App() {
               <Route path="order-report-beta" element={<ProtectedRoute><OrderReportBetaPage /></ProtectedRoute>} />
               <Route path="preview" element={<DashboardMockup />} />
               <Route path="items-hybrid/preview" element={<ItemSalesHybridMockup />} />
-              </Routes></InsightsCacheProvider>} />
+              </Routes></InsightsCacheProvider></PermissionRoute>} />
               {/* Visibility Settings Routes */}
               <Route path="/visibility/status-config" element={<ProtectedRoute><StatusConfigPage /></ProtectedRoute>} />
               {/* CR-015: Settlement Module (panel on dashboard, preview for mockup) */}

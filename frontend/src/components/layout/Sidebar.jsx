@@ -44,7 +44,7 @@ const SIDEBAR_PERMISSIONS = {
   'expenses': 'pos',           // CR-059
   'menu-management': 'menu',
   credit: 'pos',
-  reports: 'report',
+  reports: ['report', 'show_daily_report'],  // CR-490: either permission grants section access
   settings: 'restaurant_settings',
   inventory: 'inventory',      // CR-072
   insights: 'report',
@@ -260,7 +260,7 @@ const Sidebar = ({
   const navigate = useNavigate();
   const { navRef, saveScroll } = useSidebarScroll(); // BUG-136
   const { toast } = useToast();
-  const { user, logout: authLogout, hasPermission } = useAuth();
+  const { user, logout: authLogout, hasPermission, hasAnyPermission } = useAuth(); // CR-490: array permission support
   const { restaurant, clearRestaurant, restaurantTypeFlag } = useRestaurant();
   const { clearMenu } = useMenu();
   const { clearTables } = useTables();
@@ -363,6 +363,7 @@ const Sidebar = ({
     if (item.id === 'pms' && !restaurant?.features?.room) return false;
     const perm = SIDEBAR_PERMISSIONS[item.id];
     if (!perm) return true;
+    if (Array.isArray(perm)) return hasAnyPermission(perm); // CR-490
     return hasPermission(perm);
   });
 
@@ -701,7 +702,10 @@ const Sidebar = ({
               {/* Children Items */}
               {hasChildren && isExpanded && isOpen && (
                 <div className="ml-4 border-l" style={{ borderColor: COLORS.borderGray }}>
-                  {item.children.map((child) => {
+                  {(item.id === 'reports' && !hasPermission('report') && hasPermission('show_daily_report')
+                    ? item.children.filter(c => c.id === 'audit') // CR-490: daily-report-only users see Order Report only
+                    : item.children
+                  ).map((child) => {
                     // CR-011 Phase 3: Group headers (non-clickable category labels)
                     if (child.isGroup) {
                       return (
@@ -761,7 +765,10 @@ const Sidebar = ({
             </span>
           </div>
           <div className="overflow-y-auto" style={{ maxHeight: `${Math.min(window.innerHeight - Math.min(flyoutTop, window.innerHeight - 400) - 56, window.innerHeight * 0.7 - 48)}px` }}>
-            {flyoutItem.children.map((child) => {
+            {(flyoutItem.id === 'reports' && !hasPermission('report') && hasPermission('show_daily_report')
+              ? flyoutItem.children.filter(c => c.id === 'audit') // CR-490
+              : flyoutItem.children
+            ).map((child) => {
               if (child.isGroup) {
                 return (
                   <div key={child.id} className="px-4 pt-3 pb-1">

@@ -101,6 +101,7 @@ export const PERMISSION_GROUPS = [
       { key: 'cancellation_report', label: 'Cancellation Report', desc: 'Cancelled orders and reasons' },
       { key: 'pl_report', label: 'P&L Report', desc: 'Profit and loss statement' },
       { key: 'wastage_report', label: 'Wastage Report', desc: 'Food wastage tracking' },
+      { key: 'show_daily_report', label: 'Daily Report Only', desc: 'Access only the Order Report screen (no other reports or insights)' }, // CR-490
     ],
   },
 ];
