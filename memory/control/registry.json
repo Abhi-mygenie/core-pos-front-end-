@@ -34766,7 +34766,7 @@
         "BUG-354"
       ],
       "intake_doc": "change_requests/BUG-626_STATUS_BADGE_UPI_CARD_ROOM_MISSING_INTAKE.md",
-      "notes": "QA batch 2026-10-28: Same pattern as BUG-354. 3 more entries needed. ~148 rows affected on Palm House. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md",
+      "notes": "QA batch 2026-10-28: Same pattern as BUG-354. 3 more entries needed. ~148 rows affected on Palm House. | 2026-10-28: IA+Plan complete (batch). Doc: impact/QA_BATCH_BUGS_623_627_IMPACT_ANALYSIS_2026_10_28.md | 2026-11-07: Standalone plan written + revalidated against main HEAD. One change: insertion line corrected from L57 \u2192 after L58 (postpaid line drift +1). All entries, map structure, fallback, conflict check confirmed exact. Plan: plans/BUG-626_IMPLEMENTATION_PLAN_2026_11_07.md. Gate 3 closed.",
       "assignee": ""
     },
     {
