@@ -2241,6 +2241,8 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/order-entry/CustomerModal.jsx` | **L1:** +PhoneInputField import. **L31:** +countryCode state. **L140:** selectModalCustomer auto-populates cc. **L649-652:** maxLength adapts to cc. | CR-479 IMPL 2026-11-01 |
 | `src/api/transforms/customerTransform.js` | **L57:** searchResult +countryCode. **L91:** customerLookup +countryCode. **L256:** updateCustomer +countryCode param + country_code payload. | CR-479 IMPL 2026-11-01 |
 | `src/api/transforms/orderTransform.js` | **L1084,L1217,L1378,L1743:** +cust_country_code in 4 order payloads. | CR-479 IMPL 2026-11-01 |
+| `src/api/transforms/orderTransform.js` | **L708:** `.filter(Boolean)` before variation `.map()`. **L724:** `.filter(Boolean)` before variation `.reduce()` (buildCartItem path). **L1558:** `.filter(Boolean)` before variation `.reduce()` (collectBill path). **L2007:** `.filter(Boolean)` before variation `.reduce()` (GST/tax path). | BUG-623 2026-11-07 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | **L260,L262:** Relabelled `BUG-NEW` → `BUG-618` on null guard markers. | BUG-623 2026-11-07 |
 | `src/components/modals/RoomCheckInModal.jsx` | **L20:** +PhoneInputField import. **L301:** +countryCode state. **L946-972:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/pages/pms/CheckInPage.jsx` | **L13-14:** +PhoneInputField+validatePhone imports. **L295:** validation uses validatePhone. **L671-674:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/api/services/customerService.js` | **L40:** lookupCustomer +countryCode param, sends country_code for international. | CR-479 IMPL 2026-11-01 |

@@ -257,9 +257,9 @@ const CollectPaymentPanel = ({
     const chargedQty = cq > 0 && cq < qty ? qty - cq : qty;
     if (item.totalPrice && cq === 0) return item.totalPrice;
     const base = (item.price || 0) * chargedQty;
-    const addonSum = (item.addOns || []).reduce((s, a) => s + (a ? (parseFloat(a.price) || 0) * (a.quantity || a.qty || 1) : 0), 0); // BUG-NEW: null guard — aggregator socket data can include null addon entries
+    const addonSum = (item.addOns || []).reduce((s, a) => s + (a ? (parseFloat(a.price) || 0) * (a.quantity || a.qty || 1) : 0), 0); // BUG-618: null guard — aggregator socket data can include null addon entries
     const varSum = (item.variation || []).reduce((s, group) => {
-      if (!group) return s; // BUG-NEW: null guard — aggregator/scan order socket re-hydration can include null variation entries; accessing group.values on null throws TypeError caught by ErrorBoundary
+      if (!group) return s; // BUG-618: null guard — aggregator/scan order socket re-hydration can include null variation entries; accessing group.values on null throws TypeError caught by ErrorBoundary
       // variation format: {name, values: [{label, optionPrice}]}
       const groupSum = Array.isArray(group.values)
         ? group.values.reduce((gs, val) => gs + (val ? (parseFloat(val.optionPrice) || 0) : 0), 0)

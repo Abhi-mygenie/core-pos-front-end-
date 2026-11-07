@@ -34702,7 +34702,7 @@
       "title": "Null variation entry crashes orderTransform.reduce + BUG-618 markers labelled BUG-NEW",
       "type": "BUG",
       "priority": "P0",
-      "status": "GATE_3_PLAN_COMPLETE",
+      "status": "GATE_5A_IMPLEMENTED",
       "area": "Order Entry / Transforms",
       "sprint_key": "nov_cr_batch",
       "risk": "MEDIUM",

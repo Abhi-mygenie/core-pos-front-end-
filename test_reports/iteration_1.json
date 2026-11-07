@@ -1,0 +1,36 @@
+{
+  "summary": "BUG-623 regression testing. Verified all 4 filter(Boolean) fixes in orderTransform.js and BUG-618 marker relabels in CollectPaymentPanel.jsx. All TC-1–TC-5 pass. TC-6 (webpack compile) not tested (no compile step in test env). TC-7: pre-existing failure confirmed (1 fail, 98 pass total — matches expected 92/93 base + 6 new BUG-623 tests).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransform.bug623.test.js"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/frontend/src/__tests__/api/transforms/orderTransform.bug623.test.js"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "98/99 tests pass (1 pre-existing failure in orderTransform.roomInfo.test.js — not a BUG-623 regression)"
+  },
+  "tc_results": {
+    "TC-1": "PASS — variation:[null] does not crash buildCartItem; null filtered; variationAmount correct",
+    "TC-2": "PASS — variation:[null] in collectBillExisting path does not crash",
+    "TC-3": "PASS — variation:[null, {values:[{optionPrice:30}]}] returns variationPerUnit=30 without crash",
+    "TC-4": "PASS — normal variation:[{name:'Size',values:[{optionPrice:20}]}] gives variationAmount=20",
+    "TC-5": "PASS — CollectPaymentPanel.jsx L260 and L262 both read BUG-618 (confirmed via grep)",
+    "TC-6": "NOT TESTED — webpack compile step skipped in unit test environment",
+    "TC-7": "PASS — 1 pre-existing failure (orderTransform.roomInfo — order_amount PRESENT when roomBalance>0); not a BUG-623 regression; confirmed identical before/after fix"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-623 fix verified. 4x filter(Boolean) in orderTransform.js at L708, L724, L1558, L2007. BUG-618 markers at CPP L260/L262 confirmed. Pre-existing test failure at orderTransform.roomInfo.test.js L75 (order_amount=1134 not 1234) is an unrelated pre-existing bug."
+}
