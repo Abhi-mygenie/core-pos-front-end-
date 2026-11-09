@@ -210,7 +210,7 @@ export const fromAPI = {
     return list.map((s) => ({
       id: s.id,
       name: s.area_name || s.station_name || s.name,
-      printerId: s.printer_id || s.restaurant_printer_id || '',
+      printerId: s.id || s.printer_id || s.restaurant_printer_id || '', // BUG-663
     }));
   },
 

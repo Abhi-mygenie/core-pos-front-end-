@@ -36681,18 +36681,69 @@
    "plan_doc": "plans/BUG-661_IMPLEMENTATION_PLAN.md",
    "assignee": "",
    "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed. IMPLEMENTED 2026-11-09: F1 craco BUILD_ID+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck 5-min poll hook; F4 App.js banner text\u2192\"New version available\"/button\u2192\"Update now\", auto-timer removed (OD-661-01), versionUpdatePending added (OD-661-06); F5 NotificationContext SW detection ungated+hadController guard; F6 index.html inline boot guard (session-scoped one-shot reload); F7 index.js __APP_BOOTED__ flag; F8 ErrorBoundary 60s sessionStorage retry."
+  },
+  {
+   "id": "BUG-663",
+   "type": "BUG",
+   "title": "New category stationPrinterList transform reads wrong API key \u2192 printerId always empty \u2192 station_name: null \u2192 KOT routes to 'Others'",
+   "status": "FAST_LANE_IMPLEMENTED 2026-11-09 \u2014 L213 s.id|| added. Webpack 0 new warnings.",
+   "priority": "P1",
+   "severity": "P1",
+   "risk": "MEDIUM",
+   "area": "Menu Management / Category Station / KOT Routing",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_5A",
+   "current_gate": 5,
+   "registered": "2026-11-09",
+   "files": [
+    "src/api/transforms/menuManagementTransform.js"
+   ],
+   "intake_doc": "change_requests/BUG-663_NEW_CATEGORY_STATION_NULL_KOT_ROUTING_BROKEN_INTAKE.md",
+   "impact_doc": "impact/BUG-663_IMPACT_ANALYSIS.md",
+   "owner_decisions": {
+    "OD-663-03": "FAST LANE APPROVED",
+    "fast_lane": "YES"
+   },
+   "notes": "stationPrinterList transform L213 reads s.printer_id first; API returns s.id as the printer id. Fix: add s.id || before s.printer_id. 1 line, 1 file. Post-fix: owner to re-save 7 null-station categories manually.",
+   "assignee": ""
+  },
+  {
+   "id": "BUG-662",
+   "type": "BUG",
+   "title": "Prepaid manual SC missing from place-order payload \u2014 cashier ticks SC ON (auto=No) \u2192 UI collects \u20b912.38+GST but service_tax:0 in payload",
+   "status": "GATE_3_PLAN_COMPLETE 2026-11-09 \u2014 awaiting Gate 4 GO",
+   "priority": "P0",
+   "severity": "P0",
+   "risk": "CRITICAL",
+   "area": "Order Entry / Prepaid / Service Charge",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_3",
+   "current_gate": 3,
+   "registered": "2026-11-09",
+   "files": [
+    "src/components/order-entry/OrderEntry.jsx"
+   ],
+   "intake_doc": "change_requests/BUG-662_PREPAID_MANUAL_SC_MISSING_FROM_PAYLOAD_INTAKE.md",
+   "impact_doc": "impact/BUG-662_IMPACT_ANALYSIS.md",
+   "plan_doc": "plans/BUG-662_IMPLEMENTATION_PLAN.md",
+   "owner_decisions": {
+    "OD-662-01": "(a) Option A \u2014 thread paymentData.serviceCharge>0 signal",
+    "OD-662-02": "(a) prepaid paths only (E1+E2 in OrderEntry.jsx)"
+   },
+   "notes": "E1 L1679-1680: add || paymentData?.serviceCharge>0 to scApplicable. E2 L2462-2464: same in inline ternary. Postpaid collectBillExisting untouched. R5 hotspot \u2014 additive OR only.",
+   "assignee": ""
   }
  ],
  "meta": {
   "last_updated": "2026-11-09",
-  "last_action": "BUG-661 GATE_5A_IMPLEMENTED \u2014 PWA update banner+version check+boot guard. 8 files. V1-V7 PASS.",
+  "last_action": "BUG-663 FAST_LANE_IMPLEMENTED \u2014 menuManagementTransform.js L213.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
   "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
   "gate_5b_complete": true,
-  "total": 734,
-  "total_items": 734,
+  "total": 736,
+  "total_items": 736,
   "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
   "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
  }

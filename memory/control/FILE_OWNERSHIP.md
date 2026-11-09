@@ -1,6 +1,11 @@
 # Layer 7 — File Ownership Map
 
 
+## FILE_OWNERSHIP — BUG-663 FAST LANE (2026-11-09) — marker `// BUG-663`
+| `frontend/src/api/transforms/menuManagementTransform.js` | L213: `printerId: s.id \|\| s.printer_id \|\| s.restaurant_printer_id \|\| ''` — added `s.id \|\|` as first fallback so the correct printer id from the API is used. | BUG-663 Fast Lane |
+
+
+
 ## FILE_OWNERSHIP — BUG-661 IMPL (2026-11-09) — marker `// BUG-661`
 | `frontend/craco.config.js` | F1 E1.1 L4 (REACT_APP_BUILD_ID baked at build time). F1 E1.2 L78-89 (BuildVersion webpack plugin emits build/version.json in production). | BUG-661 F1 |
 | `frontend/public/version.json` | F2 NEW — dev/preview stub `{"buildId":"dev"}`. Change to `dev2` to test banner in preview. | BUG-661 F2 |
