@@ -1,0 +1,17 @@
+# CR-386 code-reality — 2026-09-23 @ HEAD 1be4055
+## public/ PWA assets
+(none — manifest.json / logo192.png / logo512.png / favicon.ico ABSENT)
+
+## index.html head
+6:        <meta name="theme-color" content="#000000" />
+8:        <link rel="icon" type="image/svg+xml" href="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" />
+12:        <title>MyGenie POS</title>
+
+## firebase-messaging-sw.js icon refs
+40:      icon: '/logo192.png',
+41:      badge: '/logo192.png',
+
+## SW registration
+68:    const registration = await navigator.serviceWorker.register(
+## root route
+133:              <Route path="/" element={<LoginPage />} />

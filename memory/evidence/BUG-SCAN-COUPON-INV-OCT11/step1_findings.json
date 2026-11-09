@@ -1,0 +1,28 @@
+{
+  "investigation": "BUG-SCAN-COUPON-INV-OCT11",
+  "order_id": 1233112,
+  "list_api_coupon_fields": {
+    "coupon_code": "MARRY",
+    "coupon_discount": 197,
+    "coupon_discount_amount": 197,
+    "order_amount": 1242,
+    "order_sub_total_amount": 1379,
+    "loyalty_info": {
+      "earned": true,
+      "redeemed": false,
+      "applied_at": "2026-10-11 13:52:11",
+      "order_sub_total": 1379,
+      "redeemed_amount": 0
+    }
+  },
+  "single_order_api_coupon_fields": {
+    "coupon_code": null,
+    "coupon_discount": null,
+    "loyalty_info": null,
+    "note": "get-single-order-new does NOT return coupon/loyalty fields"
+  },
+  "transform_gap": "fromAPI.order (orderTransform.js) does NOT read coupon_code/coupon_discount/loyalty_info from API response",
+  "cpm_behavior": "CollectPaymentPanel starts with selectedCoupon=null, then auto-applies best CRM coupon via /available endpoint",
+  "auto_apply_logic": "CPP line 882-886: if no selectedCoupon/couponCode, picks best displayedCoupons item and runs runValidate()",
+  "answer_to_question": "COUPON IS AUTO-SELECTED \u2014 cashier does NOT choose; POS fetches from CRM and applies automatically"
+}

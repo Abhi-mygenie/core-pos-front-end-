@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-449 — Station Mapping Mockup (All 3 Views)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, -apple-system, sans-serif; background: #F1F5F9; color: #0F172A; }
+
+  /* ── Tokens ── */
+  :root {
+    --green: #329937; --orange: #F26B33; --dark: #0F172A; --muted: #64748B;
+    --border: #E2E8F0; --surface: #fff; --bg: #F8FAFC;
+    --inherit-bg: #F1F5F9; --inherit-text: #475569; --inherit-border: #CBD5E1; --inherit-dot: #94A3B8;
+    --override-bg: #EFF6FF; --override-text: #1D4ED8; --override-border: #BFDBFE; --override-dot: #2563EB;
+    --kds-bg: #FEF3C7; --kds-text: #92400E; --kds-border: #FDE68A;
+    --bar-bg: #EDE9FE; --bar-text: #5B21B6; --bar-border: #DDD6FE;
+    --bill-bg: #DCFCE7; --bill-text: #166534; --bill-border: #BBF7D0;
+    --yoga-bg: #FCE7F3; --yoga-text: #9D174D; --yoga-border: #FBCFE8;
+  }
+
+  .page-title { font-size: 28px; font-weight: 700; color: var(--dark); padding: 32px 40px 8px; }
+  .page-sub { font-size: 14px; color: var(--muted); padding: 0 40px 24px; }
+  .section { background: var(--surface); border-radius: 16px; margin: 0 24px 32px; padding: 28px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.04); border: 1px solid var(--border); }
+  .section-title { font-size: 17px; font-weight: 700; color: var(--dark); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+  .section-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+  .badge-view { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
+  .badge-mock { background: #DBEAFE; color: #1E40AF; }
+
+  /* ── 1. BULK EDITOR TABLE ── */
+  .bulk-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  .bulk-table thead th {
+    position: sticky; top: 0; z-index: 2;
+    padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700;
+    letter-spacing: .8px; text-transform: uppercase; color: #64748B;
+    background: #F8FAFC; border-bottom: 2px solid var(--border); white-space: nowrap;
+  }
+  .bulk-table tbody td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+  .bulk-table tbody tr:hover { background: #FAFBFC; }
+  .cat-row td { background: #F8FAFC !important; padding: 8px 12px !important; }
+  .cat-label { font-size: 13px; font-weight: 700; color: var(--orange); display: flex; align-items: center; gap: 8px; }
+  .cat-count { font-size: 11px; font-weight: 600; color: var(--muted); background: #F1F5F9; padding: 2px 8px; border-radius: 10px; }
+  .item-img { width: 36px; height: 36px; border-radius: 6px; background: #F1F5F9; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #CBD5E1; font-size: 12px; }
+  .cell-select { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; color: var(--dark); outline: none; min-width: 100px; cursor: pointer; appearance: auto; }
+  .cell-select:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(50,153,55,.12); }
+  .cell-input { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; color: var(--dark); outline: none; width: 100%; }
+  .cell-input:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(50,153,55,.12); }
+  .status-active { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--green); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .addons-pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+  .none-text { color: #94A3B8; font-size: 12px; }
+
+  /* ── Station pills ── */
+  .station-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; position: relative; }
+  .station-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .station-pill.inherited { background: var(--inherit-bg); color: var(--inherit-text); border: 1px dashed var(--inherit-border); }
+  .station-pill.inherited .dot { background: var(--inherit-dot); }
+  .station-pill.inherited:hover { border-color: #94A3B8; background: #E2E8F0; }
+  .station-pill.overridden { background: var(--override-bg); color: var(--override-text); border: 1px solid var(--override-border); font-weight: 600; }
+  .station-pill.overridden .dot { background: var(--override-dot); }
+  .station-pill.overridden:hover { background: #DBEAFE; }
+  .station-pill .chevron { font-size: 9px; margin-left: 2px; opacity: .5; }
+  .station-pill .reset-x { font-size: 11px; margin-left: 3px; opacity: .4; font-weight: 700; line-height: 1; }
+  .station-pill .reset-x:hover { opacity: 1; color: #DC2626; }
+
+  /* station dropdown (fake) */
+  .station-dropdown { position: absolute; top: calc(100% + 4px); left: 0; z-index: 20; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.1); min-width: 200px; padding: 4px; }
+  .station-dropdown .opt { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--dark); }
+  .station-dropdown .opt:hover { background: #F1F5F9; }
+  .station-dropdown .opt.default-opt { color: var(--muted); font-style: italic; }
+  .station-dropdown .opt .opt-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .station-dropdown .opt .check { color: var(--green); font-weight: 700; margin-left: auto; font-size: 14px; }
+  .station-dropdown .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+  /* ── 2. QUICK EDIT ── */
+  .quick-edit-wrap { border: 2px solid var(--orange); border-radius: 12px; padding: 16px 20px; background: rgba(242,107,51,.02); margin: 12px 0; }
+  .quick-edit-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .quick-edit-hr { border: none; border-top: 1px solid var(--border); margin-bottom: 14px; }
+  .qe-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .qe-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+  .qe-field input, .qe-field select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: #fff; outline: none; }
+  .qe-field input:focus, .qe-field select:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(50,153,55,.12); }
+  .qe-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+  .btn-cancel { padding: 7px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--muted); background: #fff; cursor: pointer; }
+  .btn-save { padding: 7px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; background: var(--green); cursor: pointer; }
+
+  /* station indicator in quick edit */
+  .qe-station-indicator { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .qe-station-badge { font-size: 10px; font-weight: 600; letter-spacing: .3px; padding: 2px 7px; border-radius: 4px; }
+  .qe-station-badge.default { background: var(--inherit-bg); color: var(--inherit-text); }
+  .qe-station-badge.custom { background: var(--override-bg); color: var(--override-text); }
+
+  /* ── 3. PRODUCT FORM ── */
+  .pf-panel { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); max-width: 520px; }
+  .pf-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .pf-header-title { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .pf-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: var(--muted); background: #fff; }
+  .pf-section { border: 1px solid var(--border); border-radius: 10px; margin: 12px 16px; overflow: hidden; }
+  .pf-section-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; background: #FAFBFC; }
+  .pf-section-title { font-size: 13px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .pf-section-body { padding: 14px; border-top: 1px solid var(--border); }
+  .pf-field { margin-bottom: 14px; }
+  .pf-field:last-child { margin-bottom: 0; }
+  .pf-label { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+  .pf-helper { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  .pf-select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: #fff; outline: none; }
+  .pf-select:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(50,153,55,.12); }
+  .pf-override-banner { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: var(--override-bg); border: 1px solid var(--override-border); margin-bottom: 12px; }
+  .pf-override-text { font-size: 12px; color: var(--override-text); font-weight: 500; flex: 1; }
+  .pf-reset-btn { font-size: 11px; font-weight: 600; color: #DC2626; background: #FEF2F2; border: 1px solid #FECACA; padding: 3px 10px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+  .pf-station-options { display: flex; flex-direction: column; gap: 6px; }
+  .pf-station-opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all .12s; }
+  .pf-station-opt:hover { background: #F8FAFC; border-color: #CBD5E1; }
+  .pf-station-opt.selected { background: var(--override-bg); border-color: var(--override-border); }
+  .pf-station-opt .radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pf-station-opt.selected .radio { border-color: var(--override-dot); }
+  .pf-station-opt.selected .radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--override-dot); }
+  .pf-station-opt.default-selected { background: var(--inherit-bg); border-color: var(--inherit-border); }
+  .pf-station-opt.default-selected .radio { border-color: var(--inherit-dot); }
+  .pf-station-opt.default-selected .radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--inherit-dot); }
+  .pf-opt-label { font-size: 13px; font-weight: 500; color: var(--dark); }
+  .pf-opt-sub { font-size: 11px; color: var(--muted); }
+  .pf-opt-badge { margin-left: auto; }
+
+  /* station color dots */
+  .sd-kds  { background: var(--kds-bg); color: var(--kds-text); border-color: var(--kds-border); }
+  .sd-bar  { background: var(--bar-bg); color: var(--bar-text); border-color: var(--bar-border); }
+  .sd-bill { background: var(--bill-bg); color: var(--bill-text); border-color: var(--bill-border); }
+  .sd-yoga { background: var(--yoga-bg); color: var(--yoga-text); border-color: var(--yoga-border); }
+  .dot-kds  { background: var(--kds-text) !important; }
+  .dot-bar  { background: var(--bar-text) !important; }
+  .dot-bill { background: var(--bill-text) !important; }
+  .dot-yoga { background: var(--yoga-text) !important; }
+
+  /* util */
+  .new-col-highlight th.new-col, .new-col-highlight td.new-col { background: rgba(37,99,235,.03); }
+  .arrow { font-size: 18px; color: var(--orange); margin: 0 40px; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13px; padding: 20px 0; }
+</style>
+</head>
+<body>
+
+<div class="page-title">CR-449 — Station Mapping Mockup</div>
+<div class="page-sub">Exact HTML reference for all 3 views. Green highlighted column = NEW station column.</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- VIEW 1: BULK EDITOR TABLE -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">
+    1. Bulk Editor — Table View
+    <span class="badge-view badge-mock">NEW COLUMN</span>
+  </div>
+  <div class="section-desc">
+    A new "STATION" column is inserted <strong>after CATEGORY, before PRICE</strong>.<br>
+    Inherited stations show a gray dashed pill. Overridden items show a blue solid pill with a reset (&times;) button.<br>
+    Clicking the pill opens a dropdown to switch stations.
+  </div>
+
+  <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;">
+    <table class="bulk-table new-col-highlight">
+      <thead>
+        <tr>
+          <th style="width:32px"><input type="checkbox" /></th>
+          <th style="width:36px">#</th>
+          <th style="width:44px">IMG</th>
+          <th style="min-width:180px">NAME</th>
+          <th style="min-width:130px">CATEGORY</th>
+          <th class="new-col" style="min-width:160px; color:#1D4ED8;">STATION</th>
+          <th style="min-width:80px; text-align:right">PRICE</th>
+          <th style="min-width:100px">ADD-ONS</th>
+          <th style="min-width:90px">VARIATIONS</th>
+          <th style="min-width:80px">STATUS</th>
+          <th style="min-width:80px">TYPE</th>
+          <th style="min-width:80px">TAX TYPE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Category header -->
+        <tr class="cat-row"><td colspan="12"><div class="cat-label"><span style="width:3px;height:16px;background:var(--orange);border-radius:2px"></span> PASTA <span class="cat-count">4</span></div></td></tr>
+        <!-- Item 1: Inherited from category (KDS) -->
+        <tr>
+          <td><input type="checkbox" /></td>
+          <td style="color:var(--muted)">1</td>
+          <td><div class="item-img">img</div></td>
+          <td><input class="cell-input" value="Alfredo Pasta" /></td>
+          <td><select class="cell-select"><option selected>Pasta</option></select></td>
+          <td class="new-col">
+            <div class="station-pill inherited" title="Inherited from Pasta category">
+              <span class="dot dot-kds"></span>
+              KDS
+              <span style="font-size:10px;opacity:.5;font-style:italic">(default)</span>
+              <span class="chevron">&#x25BE;</span>
+            </div>
+          </td>
+          <td style="text-align:right"><input class="cell-input" value="290" style="width:70px;text-align:right" /></td>
+          <td><span class="addons-pill">3 add-ons</span></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="status-active"><span class="status-dot"></span> Active</span></td>
+          <td><select class="cell-select" style="min-width:70px"><option>Veg</option></select></td>
+          <td><select class="cell-select" style="min-width:60px"><option>GST</option></select></td>
+        </tr>
+        <!-- Item 2: Inherited (KDS) -->
+        <tr>
+          <td><input type="checkbox" /></td>
+          <td style="color:var(--muted)">2</td>
+          <td><div class="item-img">img</div></td>
+          <td><input class="cell-input" value="Arrabiata Pasta" /></td>
+          <td><select class="cell-select"><option selected>Pasta</option></select></td>
+          <td class="new-col">
+            <div class="station-pill inherited">
+              <span class="dot dot-kds"></span>
+              KDS
+              <span style="font-size:10px;opacity:.5;font-style:italic">(default)</span>
+              <span class="chevron">&#x25BE;</span>
+            </div>
+          </td>
+          <td style="text-align:right"><input class="cell-input" value="290" style="width:70px;text-align:right" /></td>
+          <td><span class="addons-pill">3 add-ons</span></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="status-active"><span class="status-dot"></span> Active</span></td>
+          <td><select class="cell-select" style="min-width:70px"><option>Veg</option></select></td>
+          <td><select class="cell-select" style="min-width:60px"><option>GST</option></select></td>
+        </tr>
+        <!-- Item 3: ★ OVERRIDDEN to BAR -->
+        <tr>
+          <td><input type="checkbox" /></td>
+          <td style="color:var(--muted)">3</td>
+          <td><div class="item-img">img</div></td>
+          <td><input class="cell-input" value="Pasta al Limone" /></td>
+          <td><select class="cell-select"><option selected>Pasta</option></select></td>
+          <td class="new-col" style="position:relative;">
+            <div class="station-pill overridden" title="Item-level override (category default: KDS)">
+              <span class="dot dot-bar"></span>
+              BAR
+              <span class="reset-x" title="Reset to Category Default">&times;</span>
+            </div>
+          </td>
+          <td style="text-align:right"><input class="cell-input" value="300" style="width:70px;text-align:right" /></td>
+          <td><span class="addons-pill">3 add-ons</span></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="status-active"><span class="status-dot"></span> Active</span></td>
+          <td><select class="cell-select" style="min-width:70px"><option>Veg</option></select></td>
+          <td><select class="cell-select" style="min-width:60px"><option>GST</option></select></td>
+        </tr>
+        <!-- Item 4: Inherited (KDS) + DROPDOWN OPEN demo -->
+        <tr>
+          <td><input type="checkbox" /></td>
+          <td style="color:var(--muted)">4</td>
+          <td><div class="item-img">img</div></td>
+          <td><input class="cell-input" value="Spaghetti Pasta" /></td>
+          <td><select class="cell-select"><option selected>Pasta</option></select></td>
+          <td class="new-col" style="position:relative;">
+            <div class="station-pill inherited" style="border-color:var(--green); box-shadow: 0 0 0 2px rgba(50,153,55,.12);">
+              <span class="dot dot-kds"></span>
+              KDS
+              <span style="font-size:10px;opacity:.5;font-style:italic">(default)</span>
+              <span class="chevron">&#x25BE;</span>
+            </div>
+            <!-- DROPDOWN OPEN STATE -->
+            <div class="station-dropdown">
+              <div class="opt default-opt">
+                <span class="opt-dot" style="background:var(--inherit-dot)"></span>
+                Category Default (KDS)
+                <span class="check">&#x2713;</span>
+              </div>
+              <div class="divider"></div>
+              <div class="opt">
+                <span class="opt-dot dot-kds" style="background:var(--kds-text)"></span>
+                KDS
+              </div>
+              <div class="opt">
+                <span class="opt-dot dot-bar" style="background:var(--bar-text)"></span>
+                BAR
+              </div>
+              <div class="opt">
+                <span class="opt-dot dot-bill" style="background:var(--bill-text)"></span>
+                Bill
+              </div>
+              <div class="opt">
+                <span class="opt-dot dot-yoga" style="background:var(--yoga-text)"></span>
+                Yoga &amp; Massage
+              </div>
+            </div>
+          </td>
+          <td style="text-align:right"><input class="cell-input" value="320" style="width:70px;text-align:right" /></td>
+          <td><span class="addons-pill">3 add-ons</span></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="status-active"><span class="status-dot"></span> Active</span></td>
+          <td><select class="cell-select" style="min-width:70px"><option>Veg</option></select></td>
+          <td><select class="cell-select" style="min-width:60px"><option>GST</option></select></td>
+        </tr>
+        <!-- Category header: BREADS -->
+        <tr class="cat-row"><td colspan="12"><div class="cat-label"><span style="width:3px;height:16px;background:var(--orange);border-radius:2px"></span> BREADS <span class="cat-count">15</span></div></td></tr>
+        <tr>
+          <td><input type="checkbox" /></td>
+          <td style="color:var(--muted)">6</td>
+          <td><div class="item-img">img</div></td>
+          <td><input class="cell-input" value="Amritsari Kulcha" /></td>
+          <td><select class="cell-select"><option selected>Breads</option></select></td>
+          <td class="new-col">
+            <div class="station-pill inherited">
+              <span class="dot dot-kds"></span>
+              KDS
+              <span style="font-size:10px;opacity:.5;font-style:italic">(default)</span>
+              <span class="chevron">&#x25BE;</span>
+            </div>
+          </td>
+          <td style="text-align:right"><input class="cell-input" value="200" style="width:70px;text-align:right" /></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="none-text">None</span></td>
+          <td><span class="status-active"><span class="status-dot"></span> Active</span></td>
+          <td><select class="cell-select" style="min-width:70px"><option>Veg</option></select></td>
+          <td><select class="cell-select" style="min-width:60px"><option>GST</option></select></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- VIEW 2: QUICK EDIT (inline card form) -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">
+    2. Quick Edit — Inline Card Form
+    <span class="badge-view badge-mock">NEW FIELD</span>
+  </div>
+  <div class="section-desc">
+    A new "Station" dropdown is added in the second row alongside Tax Type and Tax %.<br>
+    Shows a source badge below the dropdown indicating "DEFAULT" (inherited) or "OVERRIDDEN" (item-level).
+  </div>
+
+  <div style="max-width:700px;">
+    <!-- Simulated product card row above -->
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#FAFBFC;border-radius:10px 10px 0 0;border:1px solid var(--border);border-bottom:none;">
+      <div class="item-img">img</div>
+      <span style="font-size:14px;font-weight:600;color:var(--dark)">Pasta al Limone</span>
+      <span style="margin-left:auto;font-size:14px;font-weight:700">&#x20B9;300</span>
+    </div>
+
+    <!-- Quick edit form -->
+    <div class="quick-edit-wrap" style="border-radius:0 0 12px 12px;margin:0;">
+      <div class="quick-edit-title">Quick Edit</div>
+      <hr class="quick-edit-hr">
+
+      <!-- Row 1: Name, Category, Price -->
+      <div class="qe-grid">
+        <div class="qe-field">
+          <label>Name</label>
+          <input value="Pasta al Limone" />
+        </div>
+        <div class="qe-field">
+          <label>Category</label>
+          <select><option selected>Pasta</option><option>Breads</option><option>Extras</option></select>
+        </div>
+        <div class="qe-field">
+          <label>Price</label>
+          <input type="number" value="300" />
+        </div>
+      </div>
+
+      <!-- Row 2: Tax Type, Tax %, ★ Station -->
+      <div class="qe-grid">
+        <div class="qe-field">
+          <label>Tax Type</label>
+          <select><option selected>GST</option><option>VAT</option></select>
+        </div>
+        <div class="qe-field">
+          <label>Tax %</label>
+          <input type="number" value="5" />
+        </div>
+        <div class="qe-field" data-testid="quick-edit-station-select">
+          <label style="color:#1D4ED8;font-weight:700;">Station</label>
+          <select style="border-color:var(--override-border);background:var(--override-bg);">
+            <option>Category Default (KDS)</option>
+            <option>KDS</option>
+            <option selected>BAR</option>
+            <option>Bill</option>
+            <option>Yoga &amp; Massage</option>
+          </select>
+          <div class="qe-station-indicator">
+            <span class="qe-station-badge custom">OVERRIDDEN</span>
+            <span style="font-size:11px;color:var(--muted)">Category default: KDS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="qe-actions">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-save">Save</button>
+      </div>
+    </div>
+
+    <!-- ── Second example: inherited state ── -->
+    <div style="margin-top:20px;padding:10px 0 0;border-top:1px dashed var(--border)">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500;">Same form when station is inherited (no override):</div>
+      <div style="max-width:220px;">
+        <div class="qe-field">
+          <label>Station</label>
+          <select>
+            <option selected>Category Default (KDS)</option>
+            <option>KDS</option>
+            <option>BAR</option>
+            <option>Bill</option>
+            <option>Yoga &amp; Massage</option>
+          </select>
+          <div class="qe-station-indicator">
+            <span class="qe-station-badge default">DEFAULT</span>
+            <span style="font-size:11px;color:var(--muted)">From category: Pasta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- VIEW 3: PRODUCT FORM (full edit panel) -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">
+    3. Full Edit — Product Form Panel
+    <span class="badge-view badge-mock">NEW SECTION</span>
+  </div>
+  <div class="section-desc">
+    A new collapsible "Station &amp; Routing" section inside the product form.<br>
+    Shows radio-style options: "Category Default" + each station. Override state has a reset banner.
+  </div>
+
+  <div style="display:flex;gap:32px;flex-wrap:wrap;">
+    <!-- Panel A: With Override Active -->
+    <div class="pf-panel" style="flex:1;min-width:340px;">
+      <div class="pf-header">
+        <div class="pf-header-title">Edit Food — Pasta al Limone</div>
+        <div class="pf-close">&times;</div>
+      </div>
+
+      <!-- Existing section (collapsed) -->
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <span class="pf-section-title">Basic Details</span>
+          <span style="font-size:12px;color:var(--muted)">&#x25B8;</span>
+        </div>
+      </div>
+
+      <!-- ★ NEW Station Section — Override Active -->
+      <div class="pf-section" data-testid="product-form-station-select">
+        <div class="pf-section-header" style="background:#FAFCFF;">
+          <span class="pf-section-title">
+            Station &amp; Routing
+            <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--override-bg);color:var(--override-text);border:1px solid var(--override-border);">OVERRIDDEN</span>
+          </span>
+          <span style="font-size:12px;color:var(--muted)">&#x25BE;</span>
+        </div>
+        <div class="pf-section-body">
+          <!-- Override banner -->
+          <div class="pf-override-banner">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="pf-override-text">This item routes to <strong>BAR</strong> instead of its category default (KDS).</span>
+            <button class="pf-reset-btn" data-testid="reset-station-button">Reset to Default</button>
+          </div>
+
+          <div class="pf-field">
+            <div class="pf-label">Kitchen Station</div>
+            <div class="pf-station-options">
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div>
+                  <div class="pf-opt-label">Category Default</div>
+                  <div class="pf-opt-sub">Uses Pasta category station (KDS)</div>
+                </div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">KDS</div>
+                <div class="pf-opt-badge"><span class="station-pill" style="font-size:11px;padding:2px 8px;background:var(--kds-bg);color:var(--kds-text);border:1px solid var(--kds-border)"><span class="dot dot-kds"></span>KDS</span></div>
+              </div>
+              <div class="pf-station-opt selected">
+                <div class="radio"></div>
+                <div class="pf-opt-label">BAR</div>
+                <div class="pf-opt-badge"><span class="station-pill" style="font-size:11px;padding:2px 8px;background:var(--bar-bg);color:var(--bar-text);border:1px solid var(--bar-border)"><span class="dot dot-bar"></span>BAR</span></div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">Bill</div>
+                <div class="pf-opt-badge"><span class="station-pill" style="font-size:11px;padding:2px 8px;background:var(--bill-bg);color:var(--bill-text);border:1px solid var(--bill-border)"><span class="dot dot-bill"></span>Bill</span></div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">Yoga &amp; Massage</div>
+                <div class="pf-opt-badge"><span class="station-pill" style="font-size:11px;padding:2px 8px;background:var(--yoga-bg);color:var(--yoga-text);border:1px solid var(--yoga-border)"><span class="dot dot-yoga"></span>Yoga</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Existing sections -->
+      <div class="pf-section"><div class="pf-section-header"><span class="pf-section-title">Pricing &amp; Tax</span><span style="font-size:12px;color:var(--muted)">&#x25B8;</span></div></div>
+      <div class="pf-section"><div class="pf-section-header"><span class="pf-section-title">Availability</span><span style="font-size:12px;color:var(--muted)">&#x25B8;</span></div></div>
+
+      <div style="padding:16px;display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-save" style="padding:9px 24px;">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- Panel B: Default / No Override -->
+    <div class="pf-panel" style="flex:1;min-width:340px;">
+      <div class="pf-header">
+        <div class="pf-header-title">Edit Food — Alfredo Pasta</div>
+        <div class="pf-close">&times;</div>
+      </div>
+
+      <div class="pf-section">
+        <div class="pf-section-header">
+          <span class="pf-section-title">Basic Details</span>
+          <span style="font-size:12px;color:var(--muted)">&#x25B8;</span>
+        </div>
+      </div>
+
+      <!-- ★ Station Section — Default (no override) -->
+      <div class="pf-section">
+        <div class="pf-section-header" style="background:#FAFCFF;">
+          <span class="pf-section-title">
+            Station &amp; Routing
+            <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--inherit-bg);color:var(--inherit-text);">DEFAULT</span>
+          </span>
+          <span style="font-size:12px;color:var(--muted)">&#x25BE;</span>
+        </div>
+        <div class="pf-section-body">
+          <div class="pf-field">
+            <div class="pf-label">Kitchen Station</div>
+            <div class="pf-helper" style="margin-bottom:10px;">KOTs for this item will route to the station assigned to its category. Select a specific station below to override.</div>
+            <div class="pf-station-options">
+              <div class="pf-station-opt default-selected">
+                <div class="radio"></div>
+                <div>
+                  <div class="pf-opt-label">Category Default</div>
+                  <div class="pf-opt-sub">Uses Pasta category station (KDS)</div>
+                </div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">KDS</div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">BAR</div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">Bill</div>
+              </div>
+              <div class="pf-station-opt">
+                <div class="radio"></div>
+                <div class="pf-opt-label">Yoga &amp; Massage</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pf-section"><div class="pf-section-header"><span class="pf-section-title">Pricing &amp; Tax</span><span style="font-size:12px;color:var(--muted)">&#x25B8;</span></div></div>
+
+      <div style="padding:16px;display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-save" style="padding:9px 24px;">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:24px 40px 40px;font-size:12px;color:var(--muted);">
+  CR-449 Mockup &middot; MyGenie POS &middot; Generated 2026-10-24
+</div>
+
+</body>
+</html>
