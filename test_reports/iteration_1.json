@@ -1,0 +1,50 @@
+{
+  "summary": "BUG-660 fix testing on order #021115 (prashant/9535004327). Core V1 fix is working - Credit panel opens with prefilled name+phone, NO CRM dropdown auto-opens. V3/V7 also pass. V5 has a bug: phone suggestions appear after name edit (should stay closed). V12: suggestion elements exist in JSX but use conditional rendering (not in DOM when empty - acceptable).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "CollectPaymentPanel - Credit tab",
+        "issue": "V5 FAIL: After editing name field (append 'x'), the phone suggestions dropdown opens (shows 'prashant / 9535004327'). Root cause: handleTabNameChange calls setTabIsCustomerSelected(false) which triggers the phone search useEffect (tabIsCustomerSelected is in its deps). With phone still set to '9535004327', CRM search fires and returns results, showing phone dropdown. Expected: phone dropdown should stay closed when only name field is edited.",
+        "selector": "[data-testid='tab-customer-phone-suggestions']",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "CollectPaymentPanel - Cash mode (V11)",
+        "issue": "V11 partial: After switching from Credit → Cash, the CRM name input still exists in DOM (Credit tab stays selected). This may be a timing/overlay issue in test - initial Cash state correctly shows NO CRM fields. Needs manual verification.",
+        "selector": "button:has-text('Cash')",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "V1_primary_fix": "PASS - name='prashant', phone='9535004327', neither tab-customer-name-suggestions nor tab-customer-phone-suggestions in DOM",
+    "V3_late_enrichment": "PASS - waited 3s for CRM lookup, no dropdowns appeared",
+    "V4_stale_guard": "NOT TESTED separately (covered by V1/V3 waiting)",
+    "V5_name_edit_reenables": "PARTIAL FAIL - name suggestions correctly absent for 'prashantx' (no CRM match), but phone suggestions dropdown OPENS after name edit (OD-660-03 side effect)",
+    "V7_blankout_parity": "PASS - clear name clears phone; clear phone clears name",
+    "V11_non_tab_methods": "PASS (initial state) - Cash/UPI show no CRM fields before Credit is selected",
+    "V12_data_testids_in_JSX": "PASS - data-testid='tab-customer-name-suggestions' at L3300, data-testid='tab-customer-phone-suggestions' at L3332 exist in JSX; they use conditional rendering so not in DOM when closed (acceptable)"
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": [
+    "V5 BUG: When name field is edited (setTabIsCustomerSelected=false in handleTabNameChange), the phone search useEffect re-fires because tabIsCustomerSelected is in its deps. Fix: in phone search effect, also check a 'phoneChangedRef' or track last-changed-field to prevent phone search from firing when only name was edited. File: CollectPaymentPanel.jsx lines 561-580"
+  ],
+  "critical_code_review_comments": [
+    "CollectPaymentPanel.jsx L561-580: Phone search useEffect depends on [tabPhone, tabIsCustomerSelected, isTabPayment]. When name edit resets tabIsCustomerSelected=false, the phone effect runs even though tabPhone didn't change. This is correct per React rules but causes phone dropdown to open on name edit (V5 failure). Consider adding a nameChangedRef or separate 'searchEnabled' per field."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "75%"
+  },
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "BUG-660 primary fix (V1) is working. V5 has a regression where phone suggestions open after name edit. The issue is in CollectPaymentPanel.jsx phone search effect (L561-580) - tabIsCustomerSelected in deps means any field reset triggers phone search. Order #021115 for prashant is accessible via dashboard > Dine-In first card > Bill button. Do NOT submit/pay the order.",
+  "rca_of_v5_issue": "Root cause: handleTabNameChange (L670-677) calls setTabIsCustomerSelected(false) via OD-660-03 logic. This triggers the phone search useEffect (L561-580) which has tabIsCustomerSelected in its dependency array [tabPhone, tabIsCustomerSelected, isTabPayment]. When tabIsCustomerSelected goes false and tabPhone='9535004327' (>=3 chars), CRM search fires for phone and returns prashant's record, showing the phone dropdown. Fix: Add a ref (e.g. lastEditedFieldRef) or track phone changes independently to guard phone search from running when only name changed."
+}

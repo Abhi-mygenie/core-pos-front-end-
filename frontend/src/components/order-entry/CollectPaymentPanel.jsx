@@ -538,8 +538,11 @@ const CollectPaymentPanel = ({
   // Pre-fix value `!!customer?.id` permanently blocked search on
   // re-engaged orders. Picking a suggestion still flips this true via
   // selectTabCustomer; blank-out still resets via handleTab*Change.
-  const [tabIsCustomerSelected, setTabIsCustomerSelected] = useState(false);
-  const [tabCrmId, setTabCrmId] = useState(null); // BUG-183: CRM customer ID for TAB billing (reversed BUG-038 owner decision 2026-08-26)
+  const tabSeedMatched = !!(customer?.id && customer?.phone); // BUG-660: prefilled customer already CRM-matched
+  const [tabIsCustomerSelected, setTabIsCustomerSelected] = useState(tabSeedMatched); // BUG-660 (OD-660-01); edits still reset (OD-660-03)
+  const [tabCrmId, setTabCrmId] = useState(tabSeedMatched ? customer.id : null); // BUG-183 + BUG-660
+  const tabAutoSelectedPhoneRef = useRef(tabSeedMatched ? customer.phone : null); // BUG-660: auto-select once per phone
+  const tabPhoneWasUserTypedRef = useRef(false); // BUG-660 V5-fix: guard phone search from name-edit reset
   const tabPhoneInputRef = useRef(null);
   const tabNameInputRef = useRef(null);
 
@@ -564,10 +567,14 @@ const CollectPaymentPanel = ({
       return;
     }
     if (tabPhone.trim() && tabPhone.length >= 3) {
+      if (!tabPhoneWasUserTypedRef.current) return; // BUG-660 V5-fix: skip if phone not user-typed (name-edit reset)
+      let cancelled = false; // BUG-660: drop results that resolve after selection/next keystroke
       searchCustomers(tabPhone).then((filtered) => {
+        if (cancelled) return; // BUG-660
         setTabFilteredByPhone(filtered);
         setTabShowPhoneSuggestions(filtered.length > 0);
       });
+      return () => { cancelled = true; }; // BUG-660
     } else {
       setTabFilteredByPhone([]);
       setTabShowPhoneSuggestions(false);
@@ -593,6 +600,10 @@ const CollectPaymentPanel = ({
         .then((found) => {
           if (found?.id) {
             setTabCrmId(found.id);
+            if (tabAutoSelectedPhoneRef.current !== tabPhone) { // BUG-660 OD-660-01: phone match = selected, keep typed name
+              tabAutoSelectedPhoneRef.current = tabPhone;
+              setTabIsCustomerSelected(true);
+            }
           } else if (tabName.trim()) {
             createCustomer({ name: tabName.trim(), phone: tabPhone, countryCode: tabCountryCode }, restaurant?.id) // BUG-636 E2: +countryCode
               .then((created) => { if (created?.id) setTabCrmId(created.id); })
@@ -612,10 +623,13 @@ const CollectPaymentPanel = ({
       return;
     }
     if (tabName.trim() && tabName.length >= 2) {
+      let cancelled = false; // BUG-660
       searchCustomers(tabName).then((filtered) => {
+        if (cancelled) return; // BUG-660
         setTabFilteredByName(filtered);
         setTabShowNameSuggestions(filtered.length > 0);
       });
+      return () => { cancelled = true; }; // BUG-660
     } else {
       setTabFilteredByName([]);
       setTabShowNameSuggestions(false);
@@ -646,6 +660,8 @@ const CollectPaymentPanel = ({
     setTabName(c.name);
     setTabPhone(c.phone);
     setTabCrmId(c.id || null); // BUG-183
+    tabAutoSelectedPhoneRef.current = c.phone; // BUG-660: no re-auto-select after later name edit
+    tabPhoneWasUserTypedRef.current = false; // BUG-660 V5-fix: dropdown pick is not "user typed"
     setTabShowPhoneSuggestions(false);
     setTabShowNameSuggestions(false);
     setTabIsCustomerSelected(true);
@@ -657,9 +673,8 @@ const CollectPaymentPanel = ({
   const handleTabNameChange = (e) => {
     const newName = e.target.value;
     setTabName(newName);
-    if (!newName.trim() && tabIsCustomerSelected) {
-      setTabPhone("");
-      setTabCrmId(null); // BUG-183
+    if (tabIsCustomerSelected) { // BUG-660 OD-660-03: any edit re-enables search
+      if (!newName.trim()) { setTabPhone(""); setTabCrmId(null); } // BUG-183 blank-out preserved
       setTabIsCustomerSelected(false);
     }
   };
@@ -669,9 +684,9 @@ const CollectPaymentPanel = ({
     const maxLen = tabCountryCode === '+91' ? 10 : 15;
     const newPhone = raw.replace(/\D/g, '').slice(0, maxLen);
     setTabPhone(newPhone);
-    if (!newPhone.trim() && tabIsCustomerSelected) {
-      setTabName("");
-      setTabCrmId(null); // BUG-183
+    if (newPhone !== tabPhone) { setTabCrmId(null); tabPhoneWasUserTypedRef.current = true; } // BUG-660: user typing phone
+    if (tabIsCustomerSelected) { // BUG-660 OD-660-03
+      if (!newPhone.trim()) setTabName(""); // BUG-038 blank-out preserved
       setTabIsCustomerSelected(false);
     }
   };

@@ -1,5 +1,11 @@
 # Layer 7 — File Ownership Map
 
+
+## FILE_OWNERSHIP — BUG-660 IMPL (2026-11-09) — marker `// BUG-660`
+| `frontend/src/components/order-entry/CollectPaymentPanel.jsx` | E1 L541-549 (tabSeedMatched, tabIsCustomerSelected seed, tabCrmId seed, tabAutoSelectedPhoneRef, tabPhoneWasUserTypedRef). E2 L570-583 (phone search stale cancel + user-typed guard). E3 L601-607 (lookup auto-select once per phone). E4 L628-640 (name search stale cancel). E5 L663 (selectTabCustomer records phone ref, resets user-typed ref). E6 L676-692 (any-edit reset + phone crmId clear + tabPhoneWasUserTypedRef). V5-fix: tabPhoneWasUserTypedRef=useRef(false) guard prevents phone dropdown opening on name edit. | BUG-660 E1-E6 + V5-fix |
+NOT touched: `orderTransform.js` · `OrderEntry.jsx` · `CartPanel.jsx` · `customerService.js` · `crmAxios.js` · sockets · contexts · JSX markup/testids · payload builder · validation · Pay-disable · discount/loyalty/coupon/print.
+
+
 ## FILE_OWNERSHIP — CR-482 IMPL Phase A P0–P10 (2026-11-05) — marker `// CR-482`
 | `frontend/src/constants/keyboardShortcuts.js` | NEW (P0). Key map + `HAS_POINTER_DEVICE()`. | CR-482 P0 |
 | `frontend/src/hooks/useKeyboardShortcuts.js` | NEW (P0). Capture-phase keydown hook + `isTypingTarget` / `isKbdModalOpen` / `clickIfEnabled`. | CR-482 P0 |

@@ -36597,7 +36597,7 @@
    "id": "BUG-660",
    "type": "BUG",
    "title": "Collect Bill Credit \u2014 prefilled customer shows duplicate CRM suggestions (name + phone dropdowns both auto-open)",
-   "status": "GATE_3_PLAN_COMPLETE \u2014 awaiting Gate 4 GO (6 edits, 1 file)",
+   "status": "GATE_5A_IMPLEMENTED 2026-11-09 \u2014 E1-E6 + V5-fix applied. 7 edits, ~25 lines. V1/V5/V6/V7 PASS (100%). Webpack 0 new warnings. QA handover: handover/QA_HANDOVER_BUG660_2026_11_09.md",
    "severity": "P0",
    "priority": "P0",
    "risk": "HIGH",
@@ -36614,10 +36614,10 @@
     "BUG-636"
    ],
    "intake_doc": "change_requests/BUG-660_CPP_CREDIT_PREFILLED_CUSTOMER_DOUBLE_SUGGESTIONS_INTAKE.md",
-   "notes": "Root cause: tabIsCustomerSelected seeded false (L541) so name (L607) + phone (L559) typeahead effects both auto-open on prefilled values. CRM has 1 record. Owner decision: option (c) treat prefilled CRM-matching customer as selected. Investigation: INV-021115_INVESTIGATION_REPORT.md.",
+   "notes": "Root cause: tabIsCustomerSelected seeded false (L541) so name (L607) + phone (L559) typeahead effects both auto-open on prefilled values. CRM has 1 record. Owner decision: option (c) treat prefilled CRM-matching customer as selected. Investigation: INV-021115_INVESTIGATION_REPORT.md. Fix: tabSeedMatched (E1), stale guards (E2/E4), lookup auto-select (E3), phone ref (E5), any-edit reset (E6), tabPhoneWasUserTypedRef V5-fix. All in CollectPaymentPanel.jsx.",
    "assignee": "",
-   "gate": "GATE_3",
-   "current_gate": 3,
+   "gate": "GATE_5A",
+   "current_gate": 5,
    "impact_doc": "impact/BUG-660_IMPACT_ANALYSIS.md",
    "owner_decisions": {
     "OD-660-01": "YES",
@@ -36630,7 +36630,7 @@
  ],
  "meta": {
   "last_updated": "2026-11-09",
-  "last_action": "BUG-660 registered \u2014 Collect Bill Credit prefilled customer duplicate CRM suggestions. GATE_3_PLAN_COMPLETE, awaiting Gate 4 GO.",
+  "last_action": "BUG-660 GATE_5A_IMPLEMENTED \u2014 Collect Bill Credit duplicate dropdown fix. E1-E6 + V5-fix. 100% tests pass.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
