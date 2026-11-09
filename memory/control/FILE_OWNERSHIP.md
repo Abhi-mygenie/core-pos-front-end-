@@ -2,6 +2,12 @@
 
 
 ## FILE_OWNERSHIP — BUG-663 FAST LANE (2026-11-09) — marker `// BUG-663`
+
+## FILE_OWNERSHIP — BUG-662 IMPL (2026-11-09) — marker `// BUG-662`
+| `frontend/src/components/order-entry/OrderEntry.jsx` | E1 L1679-1680: `scApplicable` condition extended with `|| paymentData?.serviceCharge > 0` (QSR prepaid path). E2 L2464: same in inline prepaid ternary. Additive OR only — no logic restructuring. | BUG-662 E1+E2 |
+NOT touched: `CollectPaymentPanel.jsx` · `orderTransform.js` · `collectBillExisting` · report/print/settlement code.
+
+
 | `frontend/src/api/transforms/menuManagementTransform.js` | L213: `printerId: s.id \|\| s.printer_id \|\| s.restaurant_printer_id \|\| ''` — added `s.id \|\|` as first fallback so the correct printer id from the API is used. | BUG-663 Fast Lane |
 
 

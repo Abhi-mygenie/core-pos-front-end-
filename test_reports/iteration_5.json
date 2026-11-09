@@ -1,0 +1,50 @@
+{
+  "summary": "BUG-662 code verification complete. Both edit sites confirmed in OrderEntry.jsx with correct additive OR pattern and BUG-662 markers. collectBillExisting (postpaid path) untouched. Webpack compiled with 1 warning (pre-existing, not from BUG-662 changes).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": { "ui_bugs": [], "integration_issues": [], "design_issues": [] },
+  "code_verification": {
+    "V8_webpack_compile": {
+      "status": "PASS",
+      "result": "webpack compiled with 1 warning",
+      "warning_source": "ConsumptionTrendsWidget.jsx (pre-existing, unrelated to BUG-662)",
+      "note": "SettlementReportMockup warning also present in log history. No new warnings introduced."
+    },
+    "V9_E1_marker": {
+      "status": "PASS",
+      "line_1679": "// BUG-662: honour cashier's manual SC toggle on prepaid. paymentData.serviceCharge > 0",
+      "line_1681_1682": "const scApplicable = (orderType === 'dineIn' || orderType === 'walkIn' || effectiveTable?.isRoom) && (!!restaurant?.autoServiceCharge || paymentData?.serviceCharge > 0);",
+      "marker_present": true,
+      "or_condition_present": true
+    },
+    "V10_E2_marker": {
+      "status": "PASS",
+      "line_2465_2466": "&& (!!restaurant?.autoServiceCharge || paymentData?.serviceCharge > 0) // BUG-662",
+      "marker_present": true,
+      "approximate_line": 2466
+    },
+    "V5_postpaid_regression": {
+      "status": "PASS",
+      "collectBillExisting_at_L1843": "No BUG-662 marker, unchanged postpaid path",
+      "collectBillExisting_at_L2574": "No BUG-662 marker, unchanged postpaid path",
+      "conclusion": "collectBillExisting function untouched by BUG-662 fix"
+    },
+    "V4_regression_safe": {
+      "status": "PASS",
+      "analysis": "Fix uses additive OR: (!!restaurant?.autoServiceCharge || paymentData?.serviceCharge > 0). When autoServiceCharge=true, first operand is true, OR short-circuits — no behavior change. When autoServiceCharge=false and cashier sets SC, paymentData.serviceCharge > 0 is true, enabling SC correctly."
+    },
+    "logic_trace_V1": {
+      "status": "PASS (code-verified, no live order needed)",
+      "scenario": "autoServiceCharge=false, paymentData.serviceCharge=12.38",
+      "evaluation": "(!!false || 12.38 > 0) = (false || true) = true → scApplicable=true → serviceChargePercentage = restaurant.serviceChargePercentage > 0 → service_tax > 0 in payload",
+      "conclusion": "Logic trace confirms fix is correct"
+    },
+    "live_testing_note": "V1-V3/V6-V7 require live prepaid order on preprod with manual SC toggle — marked for QA Gate 5B per owner instruction"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100% (code-verified)" },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-662 fully code-verified. E1 at L1679-1682, E2 at L2465-2466. collectBillExisting untouched. Live prepaid SC flow needs QA Gate 5B on preprod."
+}

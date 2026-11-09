@@ -36711,14 +36711,14 @@
    "id": "BUG-662",
    "type": "BUG",
    "title": "Prepaid manual SC missing from place-order payload \u2014 cashier ticks SC ON (auto=No) \u2192 UI collects \u20b912.38+GST but service_tax:0 in payload",
-   "status": "GATE_3_PLAN_COMPLETE 2026-11-09 \u2014 awaiting Gate 4 GO",
+   "status": "GATE_5A_IMPLEMENTED 2026-11-09 \u2014 E1 L1679+E2 L2464. Webpack 0 new warnings. QA handover: handover/QA_HANDOVER_BUG662_2026_11_09.md",
    "priority": "P0",
    "severity": "P0",
    "risk": "CRITICAL",
    "area": "Order Entry / Prepaid / Service Charge",
    "sprint_key": "nov_cr_batch",
-   "gate": "GATE_3",
-   "current_gate": 3,
+   "gate": "GATE_5A",
+   "current_gate": 5,
    "registered": "2026-11-09",
    "files": [
     "src/components/order-entry/OrderEntry.jsx"
@@ -36736,7 +36736,7 @@
  ],
  "meta": {
   "last_updated": "2026-11-09",
-  "last_action": "BUG-663 FAST_LANE_IMPLEMENTED \u2014 menuManagementTransform.js L213.",
+  "last_action": "BUG-662 GATE_5A_IMPLEMENTED \u2014 OrderEntry.jsx E1+E2 prepaid SC fix.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
