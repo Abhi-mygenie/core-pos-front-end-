@@ -1,6 +1,8 @@
 // craco.config.js
 const path = require("path");
 require("dotenv").config();
+// BUG-661: build id baked into bundle + written to version.json (prod) — 'dev' in craco start
+process.env.REACT_APP_BUILD_ID = process.env.NODE_ENV === 'production' ? String(Date.now()) : 'dev';
 
 // Check if we're in development/preview mode (not production build)
 // Craco sets NODE_ENV=development for start, NODE_ENV=production for build
@@ -73,6 +75,18 @@ let webpackConfig = {
           path.resolve(__dirname, 'node_modules/es-toolkit/compat/isPlainObject.mjs')
         )
       );
+
+      // BUG-661: emit build/version.json with the same build id (overwrites public/version.json stub)
+      if (process.env.NODE_ENV === 'production') {
+        webpackConfig.plugins.push({
+          apply: (compiler) => compiler.hooks.thisCompilation.tap('BuildVersion', (compilation) => {
+            compilation.hooks.processAssets.tap(
+              { name: 'BuildVersion', stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL },
+              () => compilation.emitAsset('version.json', new webpack.sources.RawSource(JSON.stringify({ buildId: process.env.REACT_APP_BUILD_ID })))
+            );
+          }),
+        });
+      }
 
       // 2. Downgrade export-presence errors → warnings (CJS modules webpack can't tree-shake)
       webpackConfig.module = webpackConfig.module || {};

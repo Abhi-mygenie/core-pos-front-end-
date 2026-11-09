@@ -236,46 +236,38 @@ export const NotificationProvider = ({ children }) => {
     // BUG-621 OD-621-02: visibilitychange handler defined here so cleanup return() can reference it.
     // Covers iOS Safari PWA where the SW may update while app is backgrounded/frozen —
     // when user brings app to foreground, re-check reg.waiting.
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        navigator.serviceWorker?.ready.then((reg) => {
-          if (reg.waiting) { regRef.current = reg; setSwUpdatePending(true); }
-        });
-      }
-    };
-
-    // BUG-621: detect SW waiting reliably via statechange on the installing worker
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.ready.then((reg) => {
-        regRef.current = reg; // BUG-621: store for triggerSwUpdate postMessage
-        // Check on load — covers app reopened after a background SW update
-        if (reg.waiting) setSwUpdatePending(true);
-        // Watch for new SW installing and transitioning to 'installed/waiting'
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && reg.waiting) {
-              setSwUpdatePending(true);
-            }
-          });
-        });
-      });
-      // BUG-597 (kept): when new SW takes over after skipWaiting, reload the page
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        window.location.reload();
-      });
-      // BUG-621 OD-621-02: visibilitychange fallback for iOS Safari PWA
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-    }
+    // BUG-661: moved to separate ungated effect below — removed from auth gate here.
 
     return () => {
       if (foregroundUnsubRef.current) foregroundUnsubRef.current();
       navigator.serviceWorker?.removeEventListener('message', handleSWMessage);
-      document.removeEventListener('visibilitychange', handleVisibilityChange); // BUG-621
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
+
+  // BUG-661: SW update detection — NOT gated by auth (OD-661); reload only after user-triggered skipWaiting (hadController guard)
+  useEffect(() => {
+    const sw = navigator.serviceWorker;
+    if (!sw) return undefined;
+    const hadController = !!sw.controller; // BUG-661: first-time install claim must not reload the page
+    const markIfWaiting = (reg) => { regRef.current = reg; if (reg.waiting) setSwUpdatePending(true); };
+    const onVisible = () => { if (document.visibilityState === 'visible') sw.ready.then(markIfWaiting); };
+    const onControllerChange = () => { if (hadController) window.location.reload(); }; // BUG-661: hadController guard
+    sw.ready.then((reg) => {
+      markIfWaiting(reg);
+      reg.addEventListener('updatefound', () => {
+        const w = reg.installing;
+        if (!w) return;
+        w.addEventListener('statechange', () => { if (w.state === 'installed' && reg.waiting) setSwUpdatePending(true); });
+      });
+    });
+    sw.addEventListener('controllerchange', onControllerChange);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      sw.removeEventListener('controllerchange', onControllerChange);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
 
   // Reset on logout
   useEffect(() => {

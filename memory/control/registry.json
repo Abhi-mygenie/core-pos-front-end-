@@ -36632,14 +36632,14 @@
    "id": "BUG-661",
    "type": "BUG",
    "title": "PWA manual update \u2014 banner never shows (SW never changes per release) + white screen on release (stale index.html \u2192 deleted bundles); persistent manual 'Update now' banner + app-version check. Supersedes BUG-621 (v1).",
-   "status": "GATE_3_PLAN_COMPLETE 2026-11-09 \u2014 awaiting Gate 4 GO (8 files, F1-F8)",
+   "status": "GATE_5A_IMPLEMENTED 2026-11-09 \u2014 F1-F8 applied, 0 new webpack warnings. V1/V2/V3/V4/V5/V7 PASS. QA handover: handover/QA_HANDOVER_BUG661_2026_11_09.md",
    "severity": "P0",
    "priority": "P0",
    "risk": "HIGH",
    "area": "PWA / Service Worker / Deployment",
    "sprint_key": "nov_cr_batch",
-   "gate": "GATE_3",
-   "current_gate": 3,
+   "gate": "GATE_5A",
+   "current_gate": 5,
    "related": [
     "BUG-597",
     "BUG-621",
@@ -36649,14 +36649,14 @@
    "registered": "2026-11-09",
    "registered_by": "PLANNING agent (reopened/reassigned from BUG-621 v2 investigation 2026-11-09)",
    "files": [
-    "craco.config.js",
-    "public/version.json (NEW)",
-    "src/hooks/useAppVersionCheck.js (NEW)",
-    "src/App.js",
-    "src/contexts/NotificationContext.jsx",
-    "public/index.html",
-    "src/index.js",
-    "src/components/guards/ErrorBoundary.jsx"
+    "craco.config.js (F1)",
+    "public/version.json (F2 \u2014 NEW)",
+    "src/hooks/useAppVersionCheck.js (F3 \u2014 NEW)",
+    "src/App.js (F4)",
+    "src/contexts/NotificationContext.jsx (F5)",
+    "public/index.html (F6)",
+    "src/index.js (F7)",
+    "src/components/guards/ErrorBoundary.jsx (F8)"
    ],
    "owner_decisions": {
     "OD-661-01": "NO auto-reload timer",
@@ -36680,12 +36680,12 @@
    "impact_doc": "impact/BUG-661_IMPACT_ANALYSIS.md",
    "plan_doc": "plans/BUG-661_IMPLEMENTATION_PLAN.md",
    "assignee": "",
-   "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed."
+   "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed. IMPLEMENTED 2026-11-09: F1 craco BUILD_ID+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck 5-min poll hook; F4 App.js banner text\u2192\"New version available\"/button\u2192\"Update now\", auto-timer removed (OD-661-01), versionUpdatePending added (OD-661-06); F5 NotificationContext SW detection ungated+hadController guard; F6 index.html inline boot guard (session-scoped one-shot reload); F7 index.js __APP_BOOTED__ flag; F8 ErrorBoundary 60s sessionStorage retry."
   }
  ],
  "meta": {
   "last_updated": "2026-11-09",
-  "last_action": "BUG-661 registered \u2014 PWA update banner+white screen full fix (supersedes BUG-621). GATE_3_PLAN_COMPLETE, awaiting Gate 4 GO.",
+  "last_action": "BUG-661 GATE_5A_IMPLEMENTED \u2014 PWA update banner+version check+boot guard. 8 files. V1-V7 PASS.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",

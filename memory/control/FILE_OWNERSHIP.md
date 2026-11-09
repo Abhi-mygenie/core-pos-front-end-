@@ -1,6 +1,19 @@
 # Layer 7 — File Ownership Map
 
 
+## FILE_OWNERSHIP — BUG-661 IMPL (2026-11-09) — marker `// BUG-661`
+| `frontend/craco.config.js` | F1 E1.1 L4 (REACT_APP_BUILD_ID baked at build time). F1 E1.2 L78-89 (BuildVersion webpack plugin emits build/version.json in production). | BUG-661 F1 |
+| `frontend/public/version.json` | F2 NEW — dev/preview stub `{"buildId":"dev"}`. Change to `dev2` to test banner in preview. | BUG-661 F2 |
+| `frontend/src/hooks/useAppVersionCheck.js` | F3 NEW — polling hook: fetch /version.json every 5 min + on load + on visibilitychange; compare vs REACT_APP_BUILD_ID; returns updateAvailable bool. Auth-independent. | BUG-661 F3 |
+| `frontend/src/App.js` | F4 E4.1 (import useAppVersionCheck). F4 E4.2 SwUpdateBanner: removed useEffect auto-timer (OD-661-01), added versionUpdatePending, text→"New version available", button→"Update now". | BUG-661 F4 |
+| `frontend/src/contexts/NotificationContext.jsx` | F5: removed SW detection from auth-gated effect; added new ungated useEffect with hadController guard, updatefound/statechange/controllerchange/visibilitychange listeners. | BUG-661 F5 |
+| `frontend/public/index.html` | F6: inline boot guard after DataCloneError script — session-scoped one-shot reload on /static/js/ 404 or 5s timeout with __APP_BOOTED__ check. | BUG-661 F6 |
+| `frontend/src/index.js` | F7: window.__APP_BOOTED__=true + sessionStorage.removeItem('mg_boot_retry') after root.render. | BUG-661 F7 |
+| `frontend/src/components/guards/ErrorBoundary.jsx` | F8: replaced sticky ?retry=1 with sessionStorage mg_chunk_retry_at timestamp (max once per 60s, session-scoped). | BUG-661 F8 |
+NOT touched: `firebase-messaging-sw.js` · `firebase.js` · `package.json` · notification sounds · logout logic · any route/guard · any order/payment/API/transform code.
+
+
+
 ## FILE_OWNERSHIP — BUG-660 IMPL (2026-11-09) — marker `// BUG-660`
 | `frontend/src/components/order-entry/CollectPaymentPanel.jsx` | E1 L541-549 (tabSeedMatched, tabIsCustomerSelected seed, tabCrmId seed, tabAutoSelectedPhoneRef, tabPhoneWasUserTypedRef). E2 L570-583 (phone search stale cancel + user-typed guard). E3 L601-607 (lookup auto-select once per phone). E4 L628-640 (name search stale cancel). E5 L663 (selectTabCustomer records phone ref, resets user-typed ref). E6 L676-692 (any-edit reset + phone crmId clear + tabPhoneWasUserTypedRef). V5-fix: tabPhoneWasUserTypedRef=useRef(false) guard prevents phone dropdown opening on name edit. | BUG-660 E1-E6 + V5-fix |
 NOT touched: `orderTransform.js` · `OrderEntry.jsx` · `CartPanel.jsx` · `customerService.js` · `crmAxios.js` · sockets · contexts · JSX markup/testids · payload builder · validation · Pay-disable · discount/loyalty/coupon/print.

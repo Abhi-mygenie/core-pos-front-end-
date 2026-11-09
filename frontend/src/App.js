@@ -82,6 +82,7 @@ import InventoryReceivePage from "./pages/InventoryReceivePage";     // CR-077
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as SonnerToaster } from "./components/ui/sonner"; // BUG-254: sonner toast host for aggregator error toasts
 import { AppProviders, useNotifications } from "./contexts"; // BUG-597: +useNotifications for SwUpdateBanner
+import { useAppVersionCheck } from "./hooks/useAppVersionCheck"; // BUG-661
 import { useRestaurant } from "./contexts";
 import { ProtectedRoute, PermissionRoute, ErrorBoundary } from "./components/guards"; // CR-490
 import RestaurantPickerPage from './pages/RestaurantPickerPage'; // CR-166
@@ -112,19 +113,12 @@ function AppTitleSync() {
   return null;
 }
 
-// BUG-597: shows when a new SW version is ready; auto-reloads after 10 s.
+// BUG-597 / BUG-661: manual update banner — persistent until "Update now" is tapped (OD-661-04)
 // Must be rendered inside AppProviders so it can read NotificationContext.
 function SwUpdateBanner() {
-  const { swUpdatePending, triggerSwUpdate } = useNotifications(); // BUG-621: +triggerSwUpdate
-  useEffect(() => {
-    if (!swUpdatePending) return;
-    // BUG-621 fix: call triggerSwUpdate() so SW activates → controllerchange → reload
-    // Previously called window.location.reload() directly which left SW in 'waiting' state
-    // causing reg.waiting to be re-detected on every reload → infinite loop
-    const timer = setTimeout(() => triggerSwUpdate(), 10000); // BUG-621 loop fix
-    return () => clearTimeout(timer);
-  }, [swUpdatePending, triggerSwUpdate]);
-  if (!swUpdatePending) return null;
+  const { swUpdatePending, triggerSwUpdate } = useNotifications();
+  const versionUpdatePending = useAppVersionCheck(); // BUG-661
+  if (!swUpdatePending && !versionUpdatePending) return null;
   return (
     <div
       data-testid="sw-update-banner"
@@ -136,17 +130,17 @@ function SwUpdateBanner() {
         whiteSpace: 'nowrap',
       }}
     >
-      App updated — reloading shortly
+      New version available
       <button
         data-testid="sw-update-reload-btn"
-        onClick={() => { triggerSwUpdate(); window.location.reload(); }} // BUG-621: signal SW to activate before reload
+        onClick={() => { triggerSwUpdate(); window.location.reload(); }} // BUG-661: signal SW to activate before reload
         style={{
           background: '#329937', color: '#fff', border: 'none',
           borderRadius: 6, padding: '4px 12px', cursor: 'pointer',
           fontSize: 12, fontWeight: 600,
         }}
       >
-        Reload now
+        Update now
       </button>
     </div>
   );

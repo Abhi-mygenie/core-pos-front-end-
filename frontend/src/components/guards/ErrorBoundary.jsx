@@ -11,15 +11,18 @@ class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
-    // BUG-597: ChunkLoadError = a hashed JS chunk 404'd after a new deploy.
-    // Auto-reload once. The ?retry=1 guard prevents an infinite reload loop.
+    // BUG-597 / BUG-661 OD-661-07: ChunkLoadError = a hashed JS chunk 404'd after a new deploy.
+    // Session-scoped, time-boxed retry (max once per 60 s) instead of sticky ?retry=1.
     const isChunkError =
       error?.name === 'ChunkLoadError' ||
       error?.message?.includes('Loading chunk') ||
       error?.message?.includes('Loading CSS chunk');
-    if (isChunkError && !window.location.search.includes('retry=1')) {
-      const sep = window.location.search ? '&' : '?';
-      window.location.replace(window.location.href + sep + 'retry=1');
+    // BUG-661: session-scoped 60s retry guard (no sticky ?retry=1)
+    let last = 0;
+    try { last = Number(sessionStorage.getItem('mg_chunk_retry_at')) || 0; } catch (e) { /* storage unavailable */ }
+    if (isChunkError && Date.now() - last > 60000) {
+      try { sessionStorage.setItem('mg_chunk_retry_at', String(Date.now())); } catch (e) { /* storage unavailable */ }
+      window.location.reload();
       return { hasError: false, error: null }; // reload in progress — suppress red screen
     }
     return { hasError: true, error };

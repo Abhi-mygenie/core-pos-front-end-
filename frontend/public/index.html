@@ -13,6 +13,26 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
         <title>MyGenie POS</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
+        <!-- BUG-661: boot guard — stale index.html after a release → bundle 404 → reload once with cache-buster -->
+        <script>
+          (function () {
+            var KEY = 'mg_boot_retry';
+            function retry() {
+              try {
+                if (window.__APP_BOOTED__ || sessionStorage.getItem(KEY)) return;
+                sessionStorage.setItem(KEY, '1');
+              } catch (e) { return; }
+              var u = new URL(window.location.href);
+              u.searchParams.set('v', Date.now());
+              window.location.replace(u.toString());
+            }
+            window.addEventListener('error', function (e) {
+              var t = e.target;
+              if (t && t.tagName === 'SCRIPT' && t.src && t.src.indexOf('/static/js/') !== -1) retry();
+            }, true);
+            window.addEventListener('load', function () { setTimeout(function () { if (!window.__APP_BOOTED__) retry(); }, 5000); });
+          })();
+        </script>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

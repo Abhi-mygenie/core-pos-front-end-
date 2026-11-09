@@ -9,3 +9,5 @@ root.render(
     <App />
   </React.StrictMode>,
 );
+window.__APP_BOOTED__ = true; // BUG-661: boot guard (public/index.html)
+try { sessionStorage.removeItem('mg_boot_retry'); } catch (e) { /* storage unavailable */ }
