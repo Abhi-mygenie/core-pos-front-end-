@@ -34655,13 +34655,14 @@
    "id": "BUG-621",
    "title": "PWA update banner never shows \u2014 skipWaiting() prevents reg.waiting state, SwUpdateBanner never triggered",
    "type": "BUG",
-   "status": "GATE_5B_QA_PASS",
+   "status": "GATE_5B_QA_PASS | SUPERSEDED_BY BUG-661 (2026-11-09) \u2014 reopened as BUG-661 with revised root cause + 8-file plan",
    "priority": "P1",
    "risk": "MEDIUM",
    "sprint_key": "nov_cr_batch",
    "qa_date": "2026-10-26",
    "assignee": "",
-   "area": "Aggregator / Sockets"
+   "area": "Aggregator / Sockets",
+   "notes": " SUPERSEDED_BY BUG-661 2026-11-09: original v1 fix only removed skipWaiting; root cause deeper (SW never changes per release). Full fix in BUG-661 (version.json check, boot guard, NotificationContext hygiene, ErrorBoundary session retry)."
   },
   {
    "id": "CR-475",
@@ -36626,18 +36627,72 @@
     "severity": "P0 (owner override of P2)"
    },
    "plan_doc": "plans/BUG-660_IMPLEMENTATION_PLAN.md"
+  },
+  {
+   "id": "BUG-661",
+   "type": "BUG",
+   "title": "PWA manual update \u2014 banner never shows (SW never changes per release) + white screen on release (stale index.html \u2192 deleted bundles); persistent manual 'Update now' banner + app-version check. Supersedes BUG-621 (v1).",
+   "status": "GATE_3_PLAN_COMPLETE 2026-11-09 \u2014 awaiting Gate 4 GO (8 files, F1-F8)",
+   "severity": "P0",
+   "priority": "P0",
+   "risk": "HIGH",
+   "area": "PWA / Service Worker / Deployment",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_3",
+   "current_gate": 3,
+   "related": [
+    "BUG-597",
+    "BUG-621",
+    "BUG-622"
+   ],
+   "supersedes": "BUG-621 (v1 fix 2026-10-26)",
+   "registered": "2026-11-09",
+   "registered_by": "PLANNING agent (reopened/reassigned from BUG-621 v2 investigation 2026-11-09)",
+   "files": [
+    "craco.config.js",
+    "public/version.json (NEW)",
+    "src/hooks/useAppVersionCheck.js (NEW)",
+    "src/App.js",
+    "src/contexts/NotificationContext.jsx",
+    "public/index.html",
+    "src/index.js",
+    "src/components/guards/ErrorBoundary.jsx"
+   ],
+   "owner_decisions": {
+    "OD-661-01": "NO auto-reload timer",
+    "OD-661-02": "YES visibilitychange re-check",
+    "OD-661-03": "NOT NEEDED",
+    "OD-661-04": "MANUAL persistent banner, stays until tapped",
+    "OD-661-05": "NOT NEEDED",
+    "OD-661-06": "App-version check via version.json",
+    "OD-661-07": "YES sessionStorage retry guard (ErrorBoundary)",
+    "OD-661-08": "5-min poll + load + foreground",
+    "OD-661-09": "KEEP existing banner design; text change only",
+    "OD-661-10": "Own deployment (nginx Cache-Control snippet in plan)",
+    "severity": "P0 (owner upgrade from P1)",
+    "preview": "Testable via public/version.json \u2192 dev2"
+   },
+   "investigation_docs": [
+    "investigations/BUG-661_INVESTIGATION_REPORT_2026_11_09.md",
+    "investigations/BUG-661_INVESTIGATION_REVIEW_2026_11_09.md"
+   ],
+   "intake_doc": "change_requests/BUG-661_PWA_MANUAL_UPDATE_BANNER_INTAKE.md",
+   "impact_doc": "impact/BUG-661_IMPACT_ANALYSIS.md",
+   "plan_doc": "plans/BUG-661_IMPLEMENTATION_PLAN.md",
+   "assignee": "",
+   "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed."
   }
  ],
  "meta": {
   "last_updated": "2026-11-09",
-  "last_action": "BUG-660 GATE_5A_IMPLEMENTED \u2014 Collect Bill Credit duplicate dropdown fix. E1-E6 + V5-fix. 100% tests pass.",
+  "last_action": "BUG-661 registered \u2014 PWA update banner+white screen full fix (supersedes BUG-621). GATE_3_PLAN_COMPLETE, awaiting Gate 4 GO.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
   "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
   "gate_5b_complete": true,
-  "total": 733,
-  "total_items": 733,
+  "total": 734,
+  "total_items": 734,
   "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
   "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
  }
