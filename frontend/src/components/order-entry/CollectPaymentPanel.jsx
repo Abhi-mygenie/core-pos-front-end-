@@ -279,6 +279,7 @@ const CollectPaymentPanel = ({
   const taxTotals = useMemo(() => {
     let sgst = 0, cgst = 0, vat = 0;
     let dSgst = 0, dCgst = 0, dVat = 0; // BUG-304: discountable-only buckets
+    let gstAcc = 0, dGstAcc = 0; // BUG-666: whole-item GST totals (not halved per item — matches orderTransform rounding)
     billableItems.forEach(item => {
       const tax = item.tax;
       if (!tax || tax.percentage === 0) return;
@@ -299,6 +300,7 @@ const CollectPaymentPanel = ({
       if ((tax.type || 'GST').toUpperCase() === 'GST') {
         sgst += taxAmt / 2; cgst += taxAmt / 2;
         if (isDiscountable) { dSgst += taxAmt / 2; dCgst += taxAmt / 2; } // BUG-304
+        gstAcc += taxAmt; if (isDiscountable) dGstAcc += taxAmt; // BUG-666: accumulate full (not halved)
       } else if ((tax.type || '').toUpperCase() === 'VAT') {
         // VAT items: full taxAmt accumulates into single VAT bucket
         // (no SGST/CGST half-split). See VAT_FIX_IMPLEMENTATION_HANDOVER.md.
@@ -313,6 +315,8 @@ const CollectPaymentPanel = ({
       dSgst: Math.round(dSgst * 100) / 100, // BUG-304: discountable portion only
       dCgst: Math.round(dCgst * 100) / 100,
       dVat:  Math.round(dVat  * 100) / 100,
+      gstTotal:  Math.round(gstAcc  * 100) / 100, // BUG-666: 5.71 for ₹114.29×5% (matches orderTransform parseFloat)
+      dGstTotal: Math.round(dGstAcc * 100) / 100, // BUG-666: discountable portion for discount orders
     };
   }, [billableItems, restaurant, isRoom]); // BUG-336, BUG-338
 
@@ -778,9 +782,10 @@ const CollectPaymentPanel = ({
   const delTaxRate        = (restaurant?.deliveryChargeGstPct || 0) / 100;
 
   // BUG-304: discountable GST reduced by ratio; non-discountable GST unchanged
+  // BUG-666: use whole-item rounded GST total (matches orderTransform.calcOrderTotals L846 parseFloat(gst_amount))
   const itemGstPostDiscount =
-    (taxTotals.dSgst + taxTotals.dCgst) * (1 - discountableRatio)
-    + (taxTotals.sgst - taxTotals.dSgst) + (taxTotals.cgst - taxTotals.dCgst);
+    taxTotals.dGstTotal * (1 - discountableRatio)   // BUG-666: discountable, reduced by ratio
+    + (taxTotals.gstTotal - taxTotals.dGstTotal);   // BUG-666: non-discountable, unchanged
   const scGst               = serviceCharge  * scTaxRate;
   const tipGst              = tip            * scTaxRate;
   const deliveryGst         = deliveryCharge * delTaxRate;

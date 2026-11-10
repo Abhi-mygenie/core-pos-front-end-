@@ -1,0 +1,28 @@
+{
+  "summary": "BUG-666 code-review verification. All 4 edit sites correct, 7 BUG-666 markers found, math chain produces 132.00=order_amount for the owner's example order.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "bug_666_verification": {
+    "V8_code_markers": "PASS — 7 BUG-666 occurrences found at L282, L303, L318, L319, L785, L787, L788",
+    "E1a_gstAcc_dGstAcc_declared": "PASS — L282: let gstAcc = 0, dGstAcc = 0;",
+    "E1b_accumulation_full_not_halved": "PASS — L303: gstAcc += taxAmt; if (isDiscountable) dGstAcc += taxAmt;",
+    "E1c_return_gstTotal_dGstTotal": "PASS — L318-319: gstTotal: Math.round(gstAcc*100)/100, dGstTotal: Math.round(dGstAcc*100)/100",
+    "E2_itemGstPostDiscount_formula": "PASS — L787-788: taxTotals.dGstTotal*(1-discountableRatio) + (taxTotals.gstTotal-taxTotals.dGstTotal)",
+    "V6_sgst_cgst_unchanged": "PASS — L312-317: sgst/cgst/dSgst/dCgst lines unchanged (Math.round(sgst*100)/100 etc.)",
+    "math_trace_V1": {
+      "item_price_114_29_at_5pct": "taxAmt=5.7145 → gstAcc=5.7145 → gstTotal=Math.round(571.45)/100=5.71 ✓",
+      "sc_11_43_at_5pct": "scGst=0.5715",
+      "totalGst": "5.71+0.5715=6.2815",
+      "splitGst": "Math.round(628.15)/100=6.28",
+      "rawSplitBase": "Math.round((125.72+6.28)*100)/100=132.00=order_amount ✓"
+    }
+  },
+  "test_report_links": [],
+  "action_items": ["Deploy BOTH BUG-665 and BUG-666 to UAT; Gate 5B QA to place live prepaid split order on Ruby ZAP preprod with item ₹114.29 to confirm E2E."],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (code review)"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-666 fix verified by code review. Live E2E test on preprod still needed (Gate 5B). Both BUG-665 and BUG-666 must be deployed together."
+}

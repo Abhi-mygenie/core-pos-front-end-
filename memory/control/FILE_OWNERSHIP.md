@@ -3,6 +3,11 @@
 
 ## FILE_OWNERSHIP — BUG-663 FAST LANE (2026-11-09) — marker `// BUG-663`
 
+## FILE_OWNERSHIP — BUG-666 IMPL (2026-11-10) — marker `// BUG-666`
+| `frontend/src/components/order-entry/CollectPaymentPanel.jsx` | E1a L282: `let gstAcc=0,dGstAcc=0` declarations. E1b L302: `gstAcc+=taxAmt; if(isDiscountable) dGstAcc+=taxAmt` inside GST branch. E1c L318-319: `gstTotal`+`dGstTotal` added to taxTotals return. E2 L784-787: `itemGstPostDiscount` uses `taxTotals.dGstTotal*(1-ratio)+(gstTotal-dGstTotal)`. Existing `sgst/cgst/dSgst/dCgst` unchanged. | BUG-666 E1a+E1b+E1c+E2 |
+
+
+
 ## FILE_OWNERSHIP — BUG-664 IMPL (2026-11-10) — marker `// BUG-664`
 | `src/api/transforms/orderTransform.js` | L313: `billPrinted: api.bill_print === 'Yes'` — removed `|| api.print_bill_status === 'Yes'` fallback. `print_bill_status` means "auto-bill requested at placement", NOT "bill printed". | BUG-664 |
 | `src/__tests__/api/transforms/orderTransform.bug583.test.js` | Updated 2 test cases to expect `false` for `print_bill_status`-only scenarios (fallback removed). 6/6 PASS. | BUG-664 test update |
