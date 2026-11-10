@@ -158,3 +158,42 @@ The code is correct. Only server config is missing.
 ---
 
 **Contact:** Frontend team — reference BUG-661 (`plans/BUG-661_IMPLEMENTATION_PLAN.md` §3)
+
+---
+
+## ADDENDUM — 2026-11-10 (Post-UAT investigation)
+
+### Current UAT state (probed 2026-11-10 04:43 UTC)
+
+| File | Required | Currently set | Status |
+|---|---|---|---|
+| `index.html` | `no-cache` | `no-cache` | ✓ Done |
+| `version.json` | `no-store` | `no-store` | ✓ Done |
+| `/static/*` | `immutable` | `public, max-age=31536000, immutable` | ✓ Done |
+| `firebase-messaging-sw.js` | **`no-cache`** | **`max-age=14400` (4 hrs)** | ✗ **NOT DONE** |
+
+### Action still needed
+`firebase-messaging-sw.js` must be set to `Cache-Control: no-cache`.
+Currently it caches for 4 hours, so after a new deploy:
+- Browser may serve stale SW for up to 4 hours
+- `swUpdatePending` (SW waiting state) detection may not fire for 4 hours
+- `versionUpdatePending` (version.json polling) still works within 5 min — partial mitigation
+
+### nginx fix (add this line if not already present)
+```nginx
+location = /firebase-messaging-sw.js { add_header Cache-Control "no-cache" always; }
+```
+
+### Cloudflare fix
+Add a Cache Rule: URL = `pos-uat.mygenie.online/firebase-messaging-sw.js` → Cache Level: Bypass
+
+### Verification
+```bash
+curl -sI https://pos-uat.mygenie.online/firebase-messaging-sw.js | grep -i cache-control
+# Expected: cache-control: no-cache
+```
+
+### Why browser shows no banner (design clarification — NOT a bug)
+Browser fresh-opens load the new bundle immediately (`index.html` is `no-cache`).
+The banner only shows for users who had the app OPEN before the deploy.
+To test in browser: open app → deploy → keep tab open → switch away and back → banner appears.

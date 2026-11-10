@@ -36670,7 +36670,10 @@
     "OD-661-09": "KEEP existing banner design; text change only",
     "OD-661-10": "Own deployment (nginx Cache-Control snippet in plan)",
     "severity": "P0 (owner upgrade from P1)",
-    "preview": "Testable via public/version.json \u2192 dev2"
+    "preview": "Testable via public/version.json \u2192 dev2",
+    "OD-BUG661-INV-01": "LOCKED \u2014 no banner on fresh browser open is correct (user has latest build)",
+    "OD-BUG661-INV-02": "OPEN \u2014 DevOps must apply no-cache to firebase-messaging-sw.js (currently max-age=14400)",
+    "OD-BUG661-INV-03": "LOCKED \u2014 version.json polling (5 min + visibilitychange) is primary browser mechanism; SW path is secondary"
    },
    "investigation_docs": [
     "investigations/BUG-661_INVESTIGATION_REPORT_2026_11_09.md",
@@ -36680,7 +36683,7 @@
    "impact_doc": "impact/BUG-661_IMPACT_ANALYSIS.md",
    "plan_doc": "plans/BUG-661_IMPLEMENTATION_PLAN.md",
    "assignee": "",
-   "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed. IMPLEMENTED 2026-11-09: F1 craco BUILD_ID+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck 5-min poll hook; F4 App.js banner text\u2192\"New version available\"/button\u2192\"Update now\", auto-timer removed (OD-661-01), versionUpdatePending added (OD-661-06); F5 NotificationContext SW detection ungated+hadController guard; F6 index.html inline boot guard (session-scoped one-shot reload); F7 index.js __APP_BOOTED__ flag; F8 ErrorBoundary 60s sessionStorage retry."
+   "notes": "Root cause: SW file never changes per release \u2192 no 'waiting' worker \u2192 banner never triggers. White screen: stale index.html \u2192 deleted hashed bundles 404 before React boots. 8-file fix: F1 craco build-id+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck hook; F4 App.js banner text+no-auto-reload; F5 NotificationContext ungated SW detection+hadController guard; F6 index.html inline boot guard; F7 index.js boot flag; F8 ErrorBoundary session-scoped 60s retry. OD prefix mapping: OD-621-xx \u2192 OD-661-xx (all same decisions). Testing: preview via public/version.json change to dev2. No login needed. IMPLEMENTED 2026-11-09: F1 craco BUILD_ID+version.json emit; F2 public/version.json stub; F3 useAppVersionCheck 5-min poll hook; F4 App.js banner text\u2192\"New version available\"/button\u2192\"Update now\", auto-timer removed (OD-661-01), versionUpdatePending added (OD-661-06); F5 NotificationContext SW detection ungated+hadController guard; F6 index.html inline boot guard (session-scoped one-shot reload); F7 index.js __APP_BOOTED__ flag; F8 ErrorBoundary 60s sessionStorage retry. INVESTIGATION 2026-11-10 (INV-BUG661-BROWSER-PWA-BANNER-GAP): Browser fresh open shows no banner \u2014 CORRECT (user loads new bundle, BUILD_ID matches version.json). PWA shows banner \u2014 CORRECT (cached old bundle, BUILD_ID \u2260 new version.json). NOT a code bug. F-2: firebase-messaging-sw.js has max-age=14400 instead of no-cache \u2014 DevOps action needed. Full report: investigations/INV-BUG661-BROWSER-PWA-BANNER-GAP_2026_11_10.md"
   },
   {
    "id": "BUG-663",
@@ -36802,7 +36805,7 @@
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-664 GATE_5A_IMPLEMENTED \u2014 orderTransform.js L313 print_bill_status fallback removed.",
+  "last_action": "BUG-661 investigation addendum: browser vs PWA banner gap. F-2 (SW no-cache) DevOps action needed.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
