@@ -36732,18 +36732,51 @@
    },
    "notes": "E1 L1679-1680: add || paymentData?.serviceCharge>0 to scApplicable. E2 L2462-2464: same in inline ternary. Postpaid collectBillExisting untouched. R5 hotspot \u2014 additive OR only.",
    "assignee": ""
+  },
+  {
+   "id": "BUG-664",
+   "type": "BUG",
+   "title": "Tile turns green on Place Order with no bill printed \u2014 print_bill_status fallback in orderTransform.js:313 reads 'auto-bill requested' flag as 'bill printed'",
+   "status": "GATE_3_PLAN_COMPLETE 2026-11-10 \u2014 fix known (1 line, R5 hotspot). Needs Gate 4 GO \u2192 IMPLEMENTATION.",
+   "priority": "P1",
+   "severity": "P1",
+   "risk": "HIGH",
+   "area": "Dashboard / Order Transform / Bill Print Status",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_3",
+   "current_gate": 3,
+   "registered": "2026-11-10",
+   "files": [
+    "src/api/transforms/orderTransform.js"
+   ],
+   "investigation_doc": "investigations/INV-TILE-GREEN_INVESTIGATION_REPORT.md",
+   "related": [
+    "BUG-583",
+    "CR-512",
+    "CR-433",
+    "CR-489"
+   ],
+   "owner_decisions": {
+    "OD-INV-01": "OPEN \u2014 does green apply to all restaurants or only with a setting?",
+    "OD-INV-02": "OPEN \u2014 cancel test orders #021116-021118 (cafe103), #000695-000696 (Ruby)?",
+    "H3": "OPEN \u2014 queued = printed, or printer agent must confirm?",
+    "F-B": "OPEN \u2014 needs order number + backend answer on print_bill_status at queue time"
+   },
+   "notes": "INV-TILE-GREEN 9/10 steps. Root cause: orderTransform.js:313 OR-fallback `api.print_bill_status === 'Yes'` treats backend 'auto-bill requested' flag as 'bill printed'. Fix: remove the OR fallback, keep only `api.bill_print === 'Yes'`. R5 hotspot \u2014 NOT Fast Lane eligible. Side-effect: CR-489 edit lock also cleans up. F-A (Ruby fOS-5 green border via CR-433): separate issue from def_ord_status=5 setting. F-B (green background on postpaid screenshot): still open, needs backend confirm.",
+   "assignee": "",
+   "fast_lane": "NOT eligible (R5 hotspot)"
   }
  ],
  "meta": {
-  "last_updated": "2026-11-09",
-  "last_action": "BUG-662 GATE_5A_IMPLEMENTED \u2014 OrderEntry.jsx E1+E2 prepaid SC fix.",
+  "last_updated": "2026-11-10",
+  "last_action": "BUG-664 registered \u2014 INV-TILE-GREEN: tile turns green on Place Order with no bill printed. GATE_3_PLAN_COMPLETE, awaiting Gate 4 GO.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
   "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
   "gate_5b_complete": true,
-  "total": 736,
-  "total_items": 736,
+  "total": 737,
+  "total_items": 737,
   "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
   "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
  }
