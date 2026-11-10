@@ -36770,14 +36770,14 @@
    "id": "BUG-665",
    "type": "BUG",
    "title": "Prepaid split payment fails with SC \u2014 1-paisa rounding mismatch: CPP splitCap uses sgst+cgst half-rounding (193.00) while orderTransform uses whole-GST rounding (192.99) \u2192 partial_payments sum \u2260 order_amount \u2192 backend error",
-   "status": "GATE_2_IMPACT_COMPLETE 2026-11-10 \u2014 IA: impact/BUG-665_IMPACT_ANALYSIS.md. ODs all locked. 2 edits, 1 file, R5. Awaiting Gate 3 GO.",
+   "status": "GATE_3_PLAN_COMPLETE 2026-11-10 \u2014 3 edits (E1a L851 +4 lines, E1b L3034 1\u21921 line, E2 L3094 1 word), 1 file. Awaiting Gate 4 GO.",
    "priority": "P0",
    "severity": "P0",
    "risk": "CRITICAL",
    "area": "Payments / Coupons / Credit",
    "sprint_key": "nov_cr_batch",
-   "gate": "GATE_2",
-   "current_gate": 2,
+   "gate": "GATE_3",
+   "current_gate": 3,
    "registered": "2026-11-10",
    "files": [
     "src/components/order-entry/CollectPaymentPanel.jsx",
@@ -36796,12 +36796,13 @@
    "assignee": "",
    "reported_by": "owner@ruby.com (Ruby ZAP RID 672)",
    "evidence": "Owner payload in chat 2026-11-10 + mathematical proof + code trace CPP L784-790/L3034, orderTransform L14-39",
-   "impact_doc": "impact/BUG-665_IMPACT_ANALYSIS.md"
+   "impact_doc": "impact/BUG-665_IMPACT_ANALYSIS.md",
+   "plan_doc": "plans/BUG-665_IMPLEMENTATION_PLAN.md"
   }
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-665 GATE_2_IMPACT_COMPLETE \u2014 CPP split SC GST rounding. 2 edits, 1 file. Awaiting Gate 3 GO.",
+  "last_action": "BUG-665 GATE_3_PLAN_COMPLETE \u2014 CPP split SC GST rounding fix. 3 edits, 1 file. Awaiting Gate 4 GO.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
