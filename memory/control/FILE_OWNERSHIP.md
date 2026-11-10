@@ -3,6 +3,11 @@
 
 ## FILE_OWNERSHIP — BUG-663 FAST LANE (2026-11-09) — marker `// BUG-663`
 
+## FILE_OWNERSHIP — BUG-665 IMPL (2026-11-10) — marker `// BUG-665`
+| `frontend/src/components/order-entry/CollectPaymentPanel.jsx` | E1a L852-860: added `splitGst`/`rawSplitBase`/`finalSplitBase` block (whole-GST rounding to match orderTransform PATH A). E1b L3044: `splitCap = finalSplitBase` (replaces BUG-530 isRoom ternary). E2 L3104: Remaining display uses `finalSplitBase`. `orderTransform.js` NOT touched (OD-665-01 Option A). | BUG-665 E1a+E1b+E2 |
+
+
+
 ## FILE_OWNERSHIP — BUG-662 IMPL (2026-11-09) — marker `// BUG-662`
 | `frontend/src/components/order-entry/OrderEntry.jsx` | E1 L1679-1680: `scApplicable` condition extended with `|| paymentData?.serviceCharge > 0` (QSR prepaid path). E2 L2464: same in inline prepaid ternary. Additive OR only — no logic restructuring. | BUG-662 E1+E2 |
 NOT touched: `CollectPaymentPanel.jsx` · `orderTransform.js` · `collectBillExisting` · report/print/settlement code.

@@ -849,6 +849,16 @@ const CollectPaymentPanel = ({
     (isRoom && associatedOrders.length > 0 ? associatedTotal : 0) +
     roomBalance;
 
+  // BUG-665: split cap uses whole-GST rounding to match order_amount path in orderTransform.
+  // orderTransform L29: totalTax = Math.round(totalGst × 100)/100 → 192.99 → order_amount = 4052.89
+  // CPP raw path:       sgst + cgst = 96.50 + 96.50 = 193.00  → effectiveTotal  = 4052.90 (1p higher)
+  // A 0.5-paisa SC GST intermediate (e.g. ₹350.9 × 5% = ₹17.5449...) causes the split.
+  // Fix: derive split cap from whole-GST rounding so splitCap == order_amount (OD-665-01 Option A).
+  const splitGst       = Math.round(totalGst * 100) / 100; // BUG-665: matches orderTransform rounding
+  const rawSplitBase   = Math.round((subtotal + splitGst + vat) * 100) / 100; // BUG-665
+  const finalSplitBase = applyGrandTotalRoundOff(rawSplitBase, roundOffEnabled) // BUG-665
+    + (isRoom && associatedOrders.length > 0 ? associatedTotal : 0); // BUG-665: room assoc. mirrors effectiveTotal pattern; roomBalance excluded per BUG-530
+
   // BUG-CASH-PREFILL (Apr-2026): auto-seed Cash Received with the live grand
   // total so the cashier doesn't need to click the exact-tender quick-pill on
   // the most common flow. Stays in sync with discount/tip/SC changes until the
@@ -3031,7 +3041,7 @@ const CollectPaymentPanel = ({
                               const newSplit = prev.map(s => ({ ...s }));
                               const typedNum = parseFloat(newSplit[idx].amount) || 0;
                               const othersSum = newSplit.reduce((sum, s, i) => i !== idx ? sum + (parseFloat(s.amount) || 0) : sum, 0);
-                              const splitCap = isRoom ? effectiveTotal - roomBalance : effectiveTotal; // BUG-530: food-only cap for room orders; mirrors BUG-527 E3 threshold
+                              const splitCap = finalSplitBase; // BUG-530+BUG-665: matches order_amount rounding; room assoc. already included, roomBalance excluded
                               const maxForThisRow = Math.max(0, Math.round((splitCap - othersSum) * 100) / 100);
                               // Clamp if over max
                               if (typedNum > maxForThisRow) {
@@ -3091,7 +3101,7 @@ const CollectPaymentPanel = ({
                     </div>
                   ))}
                   <div className="text-xs text-right" style={{ color: COLORS.grayText }}>
-                    Remaining: ₹{Math.max(0, finalTotal - splitPayments.reduce((sum, sp) => sum + (parseFloat(sp.amount) || 0), 0)).toFixed(2)}
+                    Remaining: ₹{Math.max(0, finalSplitBase - splitPayments.reduce((sum, sp) => sum + (parseFloat(sp.amount) || 0), 0)).toFixed(2)} {/* BUG-665 */}
                   </div>
                 </div>
               )}
