@@ -36765,18 +36765,49 @@
    "notes": "INV-TILE-GREEN 9/10 steps. Root cause: orderTransform.js:313 OR-fallback `api.print_bill_status === 'Yes'` treats backend 'auto-bill requested' flag as 'bill printed'. Fix: remove the OR fallback, keep only `api.bill_print === 'Yes'`. R5 hotspot \u2014 NOT Fast Lane eligible. Side-effect: CR-489 edit lock also cleans up. F-A (Ruby fOS-5 green border via CR-433): separate issue from def_ord_status=5 setting. F-B (green background on postpaid screenshot): still open, needs backend confirm.",
    "assignee": "",
    "fast_lane": "NOT eligible (R5 hotspot)"
+  },
+  {
+   "id": "BUG-665",
+   "type": "BUG",
+   "title": "Prepaid split payment fails with SC \u2014 1-paisa rounding mismatch: CPP splitCap uses sgst+cgst half-rounding (193.00) while orderTransform uses whole-GST rounding (192.99) \u2192 partial_payments sum \u2260 order_amount \u2192 backend error",
+   "status": "GATE_1_INTAKE_COMPLETE 2026-11-10",
+   "priority": "P0",
+   "severity": "P0",
+   "risk": "CRITICAL",
+   "area": "Payments / Coupons / Credit",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_1",
+   "current_gate": 1,
+   "registered": "2026-11-10",
+   "files": [
+    "src/components/order-entry/CollectPaymentPanel.jsx",
+    "src/api/transforms/orderTransform.js"
+   ],
+   "intake_doc": "change_requests/BUG-665_CPP_SPLIT_SC_GST_ROUNDING_MISMATCH_INTAKE.md",
+   "duplicate_check": "DISTINCT \u2014 BUG-530 was room-balance cap, BUG-645 was reports display, CR-021 was split feature",
+   "code_reality": "PARTIAL \u2014 both buggy rounding paths present in code",
+   "blast_radius": "SMALL (1-2 lines each file) \u2014 both R5 hotspots",
+   "fast_lane": "NOT eligible (R5 \u00d7 2, financial)",
+   "owner_decisions": {
+    "OD-665-01": "OPEN \u2014 fix in CPP (splitCap) or orderTransform (align rounding)?",
+    "OD-665-02": "OPEN \u2014 verify postpaid split with SC too?"
+   },
+   "notes": "Trigger: SC \u00d7 SC-GST-rate produces 0.5-paisa intermediate (e.g. 350.9 \u00d7 5% = 17.5449). orderTransform L29 rounds totalGst as whole \u2192 192.99. CPP L789-790 rounds sgst/cgst halves separately \u2192 96.50+96.50=193.00. Split cap uses CPP total (4052.90), payload uses orderTransform total (4052.89). Backend sees 1-paisa mismatch \u2192 rejects order. Reported by owner@ruby.com on RID 672 2026-11-10.",
+   "assignee": "",
+   "reported_by": "owner@ruby.com (Ruby ZAP RID 672)",
+   "evidence": "Owner payload in chat 2026-11-10 + mathematical proof + code trace CPP L784-790/L3034, orderTransform L14-39"
   }
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-664 registered \u2014 INV-TILE-GREEN: tile turns green on Place Order with no bill printed. GATE_3_PLAN_COMPLETE, awaiting Gate 4 GO.",
+  "last_action": "BUG-665 registered \u2014 prepaid split SC GST 1-paisa rounding mismatch. GATE_1_INTAKE_COMPLETE.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
   "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
   "gate_5b_complete": true,
-  "total": 737,
-  "total_items": 737,
+  "total": 738,
+  "total_items": 738,
   "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
   "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
  }
