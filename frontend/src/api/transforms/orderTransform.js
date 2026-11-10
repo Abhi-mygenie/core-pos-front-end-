@@ -310,7 +310,7 @@ export const fromAPI = {
 
       // Print status
       kotPrinted: api.print_kot === 'Yes',
-      billPrinted: api.bill_print === 'Yes' || api.print_bill_status === 'Yes', // BUG-583: bill_print is the new field; print_bill_status kept as fallback
+      billPrinted: api.bill_print === 'Yes', // BUG-583 + BUG-664: print_bill_status removed — it means "auto-bill requested", NOT "bill printed"
 
       // CR-483: Received amount (probe confirmed on order #021109: received_amount=13934)
       receivedAmount: parseFloat(api.received_amount) || null, // CR-483: ₹ amount; null = not entered

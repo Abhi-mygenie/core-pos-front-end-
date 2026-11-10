@@ -36737,14 +36737,14 @@
    "id": "BUG-664",
    "type": "BUG",
    "title": "Tile turns green on Place Order with no bill printed \u2014 print_bill_status fallback in orderTransform.js:313 reads 'auto-bill requested' flag as 'bill printed'",
-   "status": "GATE_3_PLAN_COMPLETE 2026-11-10 \u2014 fix known (1 line, R5 hotspot). Needs Gate 4 GO \u2192 IMPLEMENTATION.",
+   "status": "GATE_5A_IMPLEMENTED 2026-11-10 \u2014 L313: print_bill_status fallback removed. 6/6 unit tests PASS. 0 new webpack warnings. QA handover: handover/QA_HANDOVER_BUG664_2026_11_10.md",
    "priority": "P1",
    "severity": "P1",
    "risk": "HIGH",
    "area": "Dashboard / Order Transform / Bill Print Status",
    "sprint_key": "nov_cr_batch",
-   "gate": "GATE_3",
-   "current_gate": 3,
+   "gate": "GATE_5A",
+   "current_gate": 5,
    "registered": "2026-11-10",
    "files": [
     "src/api/transforms/orderTransform.js"
@@ -36802,7 +36802,7 @@
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-665 GATE_5A_IMPLEMENTED \u2014 CPP split SC GST 1-paisa fix. E1a+E1b+E2. 0 new webpack warnings.",
+  "last_action": "BUG-664 GATE_5A_IMPLEMENTED \u2014 orderTransform.js L313 print_bill_status fallback removed.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
