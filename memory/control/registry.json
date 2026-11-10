@@ -36806,14 +36806,14 @@
    "id": "BUG-666",
    "type": "BUG",
    "title": "Split payment still fails after BUG-665 \u2014 CPP taxTotals useMemo computes item GST from price\u00d7rate (live), orderTransform reads pre-rounded gst_amount string \u2192 item-level SGST/CGST half-rounding creates 0.01 gap per affected item \u2192 splitCap \u2260 order_amount \u2192 backend error",
-   "status": "GATE_1_INTAKE_COMPLETE 2026-11-10",
+   "status": "GATE_2_IMPACT_COMPLETE 2026-11-10 \u2014 IA: impact/BUG-666_IMPACT_ANALYSIS.md. ODs locked. 2 edits, 1 file, R5. Awaiting Gate 3 GO.",
    "priority": "P0",
    "severity": "P0",
    "risk": "CRITICAL",
    "area": "Payments / Coupons / Credit",
    "sprint_key": "nov_cr_batch",
-   "gate": "GATE_1",
-   "current_gate": 1,
+   "gate": "GATE_2",
+   "current_gate": 2,
    "registered": "2026-11-10",
    "files": [
     "src/components/order-entry/CollectPaymentPanel.jsx",
@@ -36830,18 +36830,19 @@
     "BUG-305"
    ],
    "owner_decisions": {
-    "OD-666-01": "OPEN \u2014 align CPP to read gst_amount from cart (Option A, recommended) OR align orderTransform to recompute from price\u00d7rate (Option B, riskier)?",
-    "OD-666-02": "OPEN \u2014 all payment types (prepaid, postpaid, QSR) same as BUG-665?"
+    "OD-666-01": "LOCKED \u2014 Option A: CPP internal fix (accumulate whole-item GST rounded; no backend gst_amount mapping)",
+    "OD-666-02": "LOCKED \u2014 ALL types (prepaid, postpaid, QSR)"
    },
    "trigger": "item price \u00d7 GST% produces half-paisa intermediate when split into SGST/CGST + SC on + restaurant.totalRound=false",
    "reported_by": "owner@ruby.com (Ruby ZAP RID 672) 2026-11-10",
    "notes": "Layer 1 (this bug): CPP taxTotals L296 taxAmt=linePrice\u00d7rate/100, L300 sgst+=taxAmt/2 \u2014 for 114.29\u00d75%=5.7145, halved=2.857250, rounded=2.86\u00d72=5.72. orderTransform L846 parseFloat('5.71')=5.71. Gap=0.01/item. Layer 2 (BUG-665): totalGst half-rounding \u2014 fixed. Combined: pre-665 gap=0.02, post-665 gap=0.01, post-666 gap=0.00. Ruby has totalRound=false \u2192 neither BUG-665 alone nor round-off absorption saves it. Order amount 132=correct from orderTransform (gst_amount=5.71\u2192totalTax=6.28\u2192132.00). CPP gives 132.01 after BUG-665.",
-   "assignee": ""
+   "assignee": "",
+   "impact_doc": "impact/BUG-666_IMPACT_ANALYSIS.md"
   }
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-666 registered \u2014 CPP taxTotals item-level GST source mismatch. GATE_1_INTAKE_COMPLETE.",
+  "last_action": "BUG-666 GATE_2_IMPACT_COMPLETE \u2014 CPP taxTotals whole-item GST fix. 2 edits, 1 file. Awaiting Gate 3 GO.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
