@@ -36801,18 +36801,54 @@
    "evidence": "Owner payload in chat 2026-11-10 + mathematical proof + code trace CPP L784-790/L3034, orderTransform L14-39",
    "impact_doc": "impact/BUG-665_IMPACT_ANALYSIS.md",
    "plan_doc": "plans/BUG-665_IMPLEMENTATION_PLAN.md"
+  },
+  {
+   "id": "BUG-666",
+   "type": "BUG",
+   "title": "Split payment still fails after BUG-665 \u2014 CPP taxTotals useMemo computes item GST from price\u00d7rate (live), orderTransform reads pre-rounded gst_amount string \u2192 item-level SGST/CGST half-rounding creates 0.01 gap per affected item \u2192 splitCap \u2260 order_amount \u2192 backend error",
+   "status": "GATE_1_INTAKE_COMPLETE 2026-11-10",
+   "priority": "P0",
+   "severity": "P0",
+   "risk": "CRITICAL",
+   "area": "Payments / Coupons / Credit",
+   "sprint_key": "nov_cr_batch",
+   "gate": "GATE_1",
+   "current_gate": 1,
+   "registered": "2026-11-10",
+   "files": [
+    "src/components/order-entry/CollectPaymentPanel.jsx",
+    "src/api/transforms/orderTransform.js"
+   ],
+   "intake_doc": "change_requests/BUG-666_CPP_TAXINGTOTALS_ITEM_GST_SOURCE_MISMATCH_INTAKE.md",
+   "duplicate_check": "DISTINCT \u2014 BUG-665 fixed Layer 2 (totalGst half-rounding); BUG-666 is Layer 1 (item-level GST source difference). BUG-304/336/338 touched taxTotals for unrelated reasons.",
+   "code_reality": "PARTIAL \u2014 both buggy paths in code; BUG-665 reduces but doesn't eliminate",
+   "blast_radius": "SMALL-MEDIUM (1-2 files, R5 \u00d7 2)",
+   "fast_lane": "NOT eligible (R5 \u00d7 2, financial)",
+   "related": [
+    "BUG-665",
+    "BUG-304",
+    "BUG-305"
+   ],
+   "owner_decisions": {
+    "OD-666-01": "OPEN \u2014 align CPP to read gst_amount from cart (Option A, recommended) OR align orderTransform to recompute from price\u00d7rate (Option B, riskier)?",
+    "OD-666-02": "OPEN \u2014 all payment types (prepaid, postpaid, QSR) same as BUG-665?"
+   },
+   "trigger": "item price \u00d7 GST% produces half-paisa intermediate when split into SGST/CGST + SC on + restaurant.totalRound=false",
+   "reported_by": "owner@ruby.com (Ruby ZAP RID 672) 2026-11-10",
+   "notes": "Layer 1 (this bug): CPP taxTotals L296 taxAmt=linePrice\u00d7rate/100, L300 sgst+=taxAmt/2 \u2014 for 114.29\u00d75%=5.7145, halved=2.857250, rounded=2.86\u00d72=5.72. orderTransform L846 parseFloat('5.71')=5.71. Gap=0.01/item. Layer 2 (BUG-665): totalGst half-rounding \u2014 fixed. Combined: pre-665 gap=0.02, post-665 gap=0.01, post-666 gap=0.00. Ruby has totalRound=false \u2192 neither BUG-665 alone nor round-off absorption saves it. Order amount 132=correct from orderTransform (gst_amount=5.71\u2192totalTax=6.28\u2192132.00). CPP gives 132.01 after BUG-665.",
+   "assignee": ""
   }
  ],
  "meta": {
   "last_updated": "2026-11-10",
-  "last_action": "BUG-661 investigation addendum: browser vs PWA banner gap. F-2 (SW no-cache) DevOps action needed.",
+  "last_action": "BUG-666 registered \u2014 CPP taxTotals item-level GST source mismatch. GATE_1_INTAKE_COMPLETE.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
   "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
   "gate_5b_complete": true,
-  "total": 738,
-  "total_items": 738,
+  "total": 739,
+  "total_items": 739,
   "last_session": "BATCH-09 Gate 2 \u2014 PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
   "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
  }
