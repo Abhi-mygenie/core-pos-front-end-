@@ -89,12 +89,16 @@ Backend validates: `3000 + 1052.90 = 4052.90 ≠ order_amount 4052.89` → **ERR
 
 ## 7. Owner Decisions Needed
 
-| OD | Question | Why needed |
+| OD | Decision | Status |
 |---|---|---|
-| OD-665-01 | Fix in CPP (make splitCap use order_amount-compatible total) OR fix in orderTransform (align rounding to match CPP)? | Two valid fix directions |
-| OD-665-02 | Should postpaid split with SC be verified too, or prepaid only? | Same code path likely affects postpaid |
+| OD-665-01 | Fix in CPP — make `splitCap` use whole-GST rounding to match `orderTransform`. `orderTransform` untouched. | **LOCKED — Option A** |
+| OD-665-02 | ALL payment types: prepaid, postpaid (collect-bill), QSR. One fix covers all — single `splitCap` on L3034 is shared by every split payment path in CPP. | **LOCKED — ALL** |
 
-**Recommended (OD-665-01):** Fix in CPP — make `splitCap` use `Math.round(effectiveTotal × 100) / 100` applied AFTER adding sgst+cgst, OR pass `orderAmount` from the payload builder into CPP as the authoritative cap. Lower risk — single additive change, orderTransform untouched.
+**Scope recheck after OD lock:**
+- Fix point: **1 line** (`CollectPaymentPanel.jsx` L3034 `splitCap`)  
+- Covers: prepaid split, postpaid split, QSR split — all in one place  
+- `orderTransform.js` **not touched** (Option A)  
+- Blast radius confirmed **SMALL** even with ALL types in scope
 
 ---
 
