@@ -27,7 +27,7 @@ export function Toaster() {
           </Toast>
         );
       })}
-      <ToastViewport />
+      <ToastViewport hotkey={[]} /> {/* CR-482: disable default F8 hotkey to avoid conflict with P12 Place Order shortcut */}
     </ToastProvider>
   );
 }

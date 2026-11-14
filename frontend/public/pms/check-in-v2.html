@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Check-In v2 (OD-08 Meal Plan)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A}
+.sb{width:64px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+.sb-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:#666;transition:background .15s}
+.sb-icon:hover{background:#F7F7F7}
+.sb-nav-item{width:100%;height:44px;display:flex;align-items:center;justify-content:center;border-left:3px solid transparent;cursor:pointer;border:none;background:transparent;color:#666}
+.sb-nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.08);color:#329937}
+.field-label{font-size:11px;font-weight:500;color:#666;margin-bottom:4px;display:block}
+.field-input{width:100%;height:40px;border:1px solid #E5E5E5;border-radius:8px;padding:0 12px;font-size:13px;color:#1A1A1A;background:#fff;outline:none;font-family:Poppins,sans-serif}
+.field-input:focus{border-color:#329937}
+.field-readonly{width:100%;height:40px;border:1px solid #E5E5E5;border-radius:8px;padding:0 12px;font-size:13px;color:#1A1A1A;background:#F7F7F7;display:flex;align-items:center;gap:8px}
+/* Variant toggle */
+.variant-toggle-btn{height:32px;padding:0 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;border:1px solid #E5E5E5;background:#fff;color:#666;transition:background .12s}
+.variant-toggle-btn.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A}
+/* Meal plan badge variants */
+.meal-badge-room-only{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(100,116,139,.1);border:1px solid rgba(100,116,139,.25);border-radius:6px;font-size:11px;font-weight:600;color:#475569}
+.meal-badge-breakfast{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:6px;font-size:11px;font-weight:600;color:#92400E}
+.meal-badge-halfboard{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:6px;font-size:11px;font-weight:600;color:#065F46}
+.meal-badge-fullboard{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:6px;font-size:11px;font-weight:600;color:#3730A3}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+input,select{font-family:'Poppins',sans-serif}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- SIDEBAR collapsed -->
+<aside class="sb">
+  <div style="padding:12px 0 10px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:28px;width:28px;object-fit:contain">
+    <button class="sb-icon"><i data-lucide="panel-left" style="width:18px;height:18px"></i></button>
+  </div>
+  <div style="padding:8px 0;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:4px">
+    <button class="sb-icon" style="color:#F26B33;background:rgba(242,107,51,.08)"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></button>
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)"><i data-lucide="columns" style="width:18px;height:18px"></i></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;padding:6px 0;display:flex;flex-direction:column;align-items:center">
+    <button class="sb-nav-item" title="Dashboard"><i data-lucide="home" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Day Closure"><i data-lucide="banknote" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item active" title="Rooms"><i data-lucide="bed-double" style="width:18px;height:18px"></i></button>
+    <div style="height:1px;background:#F0F0F0;margin:4px 8px;width:calc(100% - 16px)"></div>
+    <button class="sb-nav-item" title="Settings"><i data-lucide="settings" style="width:18px;height:18px"></i></button>
+  </nav>
+  <div style="padding:8px 0 10px;border-top:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:2px">
+    <button class="sb-icon" style="color:#F26B33"><i data-lucide="refresh-cw" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon"><div style="width:28px;height:28px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div></button>
+    <button class="sb-icon" style="color:#EF4444"><i data-lucide="log-out" style="width:17px;height:17px"></i></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto">
+
+  <!-- Header -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="front-desk.html" style="color:#666;text-decoration:none;display:flex"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></a>
+      <h1 style="font-size:18px;font-weight:700">Check-In Guest</h1>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 10px;background:#fff;border:1px solid #E5E5E5;border-left:3px solid #003580;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.05)">
+        <img src="https://www.google.com/s2/favicons?domain=booking.com&sz=14" style="width:14px;height:14px;border-radius:2px">
+        <span style="font-size:12px;font-weight:500">Booking.com</span>
+        <span style="color:#ccc">·</span>
+        <span style="font-size:12px;color:#666;font-family:monospace">BK-88213</span>
+      </div>
+    </div>
+    <!-- OD-08 VARIANT TOGGLE -->
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:#888;font-weight:500">OD-08 Design Variant:</span>
+      <button class="variant-toggle-btn active" id="btn-a" onclick="setVariant('a')">A — Meal Plan Badge</button>
+      <button class="variant-toggle-btn" id="btn-b" onclick="setVariant('b')">B — Raw Code Only</button>
+    </div>
+  </div>
+
+  <!-- OD-08 context banner -->
+  <div style="background:rgba(99,102,241,.04);border-bottom:1px solid rgba(99,102,241,.15);padding:10px 28px;display:flex;align-items:center;gap:10px">
+    <i data-lucide="info" style="width:14px;height:14px;color:#6366F1;flex-shrink:0"></i>
+    <span style="font-size:12px;color:#4338CA"><strong>OD-08 Pending:</strong> Choose A (decode rateplan to meal badge) or B (raw code). The Rate section below changes based on your choice.</span>
+  </div>
+
+  <div style="padding:20px 28px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+    <!-- LEFT: Guest Info + Document -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Guest Info -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 style="font-size:14px;font-weight:600">Guest Information</h2>
+          <span style="font-size:11px;color:#666;background:#F7F7F7;padding:3px 8px;border-radius:6px">Pre-filled from Booking.com</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="grid-column:1/-1">
+            <label class="field-label">Full Name</label>
+            <div class="field-readonly"><i data-lucide="user" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:13px;font-weight:500">Rahul Sharma</span></div>
+          </div>
+          <div>
+            <label class="field-label">Phone</label>
+            <div class="field-readonly"><i data-lucide="phone" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:13px">+91 98765 43210</span></div>
+          </div>
+          <div>
+            <label class="field-label">Email</label>
+            <div class="field-readonly"><i data-lucide="mail" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">rahul.s@email.com</span></div>
+          </div>
+          <div>
+            <label class="field-label">Adults</label>
+            <div class="field-readonly"><i data-lucide="users" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:13px;font-weight:500">2</span><span style="font-size:10px;color:#aaa;margin-left:auto;font-style:italic">From Booking.com</span></div>
+          </div>
+          <div>
+            <label class="field-label">Children</label>
+            <div class="field-readonly"><i data-lucide="user" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:13px;font-weight:500">1</span></div>
+          </div>
+          <div style="grid-column:1/-1">
+            <label class="field-label">Special Requests</label>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);border-radius:8px;font-size:13px;color:#96600A">
+              <i data-lucide="message-circle" style="width:15px;height:15px;color:#F4A11A;flex-shrink:0;margin-top:1px"></i>
+              <span>Late check-in after 10 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Document -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 style="font-size:14px;font-weight:600">Document Verification</h2>
+          <span style="font-size:11px;color:#329937;background:rgba(50,153,55,.1);border:1px solid rgba(50,153,55,.2);padding:3px 8px;border-radius:20px;font-weight:500">Required (Settings: ON)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label class="field-label">ID Type</label>
+            <div style="display:flex;align-items:center;height:40px;padding:0 12px;border:1px solid #E5E5E5;border-radius:8px;cursor:pointer;background:#fff">
+              <span style="font-size:13px;flex:1">Aadhaar Card</span>
+              <i data-lucide="chevron-down" style="width:15px;height:15px;color:#999"></i>
+            </div>
+          </div>
+          <div><label class="field-label">ID Number</label><input class="field-input" placeholder="XXXX-XXXX-XXXX"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(50,153,55,.06);border:1px solid rgba(50,153,55,.2);border-radius:8px">
+          <div style="width:32px;height:32px;background:rgba(50,153,55,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="file-check" style="width:16px;height:16px;color:#329937"></i></div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:500;color:#329937">aadhaar_front.jpg</div><div style="font-size:11px;color:#329937">Uploaded · 2.1 MB</div></div>
+          <button style="font-size:12px;color:#329937;background:transparent;border:none;cursor:pointer;font-family:Poppins,sans-serif">Re-upload</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Room Assignment + Rate (OD-08 variants) + Summary + CTA -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Room Assignment -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 style="font-size:14px;font-weight:600">Room Assignment</h2>
+          <span style="font-size:11px;color:#F4A11A;background:#FFF8EC;border:1px solid rgba(244,161,26,.25);padding:3px 8px;border-radius:20px;font-weight:500">Assign Required</span>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="field-label">Booked Room Type</label>
+          <div class="field-readonly"><i data-lucide="bed-double" style="width:15px;height:15px;color:#999;flex-shrink:0"></i><span style="font-size:13px;font-weight:500">Executive</span></div>
+        </div>
+        <div>
+          <label class="field-label">Assign Specific Room</label>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+            <button style="height:44px;border-radius:8px;border:2px solid #329937;background:rgba(50,153,55,.08);font-size:14px;font-weight:600;color:#329937;cursor:pointer;font-family:Poppins,sans-serif">r1</button>
+            <button style="height:44px;border-radius:8px;border:1px solid #E5E5E5;background:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:Poppins,sans-serif">r2</button>
+            <button style="height:44px;border-radius:8px;border:1px solid #E5E5E5;background:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:Poppins,sans-serif">r3</button>
+            <button style="height:44px;border-radius:8px;border:1px solid #F4A11A;background:#FFF8EC;font-size:12px;font-weight:400;color:#966800;cursor:not-allowed;font-family:Poppins,sans-serif">r4<br><span style="font-size:10px">HK</span></button>
+            <button style="height:44px;border-radius:8px;border:1px solid #FECACA;background:#FEF2F2;font-size:12px;font-weight:400;color:#B91C1C;cursor:not-allowed;font-family:Poppins,sans-serif">r5<br><span style="font-size:10px">OOO</span></button>
+          </div>
+          <p style="font-size:11px;color:#666;margin-top:6px">Room r1 selected · Floor 1 · Garden view</p>
+        </div>
+      </div>
+
+      <!-- RATE SECTION — OD-08 VARIANT A (meal plan badge) -->
+      <div id="rate-variant-a" style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <h2 style="font-size:14px;font-weight:600">Rate</h2>
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6366F1;background:rgba(99,102,241,.08);padding:2px 8px;border-radius:12px">Variant A — Meal Badge</span>
+        </div>
+        <!-- Rateplan decoded -->
+        <div style="margin-bottom:12px">
+          <label class="field-label">Rate Plan</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="field-readonly" style="flex:1">
+              <i data-lucide="tag" style="width:14px;height:14px;color:#999;flex-shrink:0"></i>
+              <span style="font-size:12px;color:#666">executive-s-ep</span>
+            </div>
+            <!-- MEAL PLAN BADGE decoded from -ep suffix -->
+            <div class="meal-badge-room-only">
+              <i data-lucide="coffee" style="width:12px;height:12px"></i>
+              Room Only
+            </div>
+          </div>
+          <div style="font-size:11px;color:#888;margin-top:4px">European Plan (EP) — no meals included</div>
+        </div>
+        <!-- Second example: CP = Breakfast -->
+        <div style="padding:10px 12px;background:#FAFAFA;border:1px dashed #E5E5E5;border-radius:8px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:600;color:#888;margin-bottom:8px">Other rate plan examples (for reference):</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px"><code style="background:#F0F0F0;padding:1px 5px;border-radius:3px;font-size:10px">executive-d-cp</code><div class="meal-badge-breakfast"><i data-lucide="sun" style="width:11px;height:11px"></i>Breakfast Incl.</div></div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px"><code style="background:#F0F0F0;padding:1px 5px;border-radius:3px;font-size:10px">executive-d-map</code><div class="meal-badge-halfboard"><i data-lucide="utensils" style="width:11px;height:11px"></i>Half Board</div></div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px"><code style="background:#F0F0F0;padding:1px 5px;border-radius:3px;font-size:10px">executive-d-ap</code><div class="meal-badge-fullboard"><i data-lucide="chef-hat" style="width:11px;height:11px"></i>Full Board</div></div>
+          </div>
+        </div>
+        <label class="field-label">Rate per Night</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="flex:1;display:flex;align-items:center;height:40px;padding:0 12px;border:1px solid #E5E5E5;border-radius:8px;background:#F7F7F7;gap:8px">
+            <span style="font-size:14px;font-weight:600">₹ 7,400</span>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,53,128,.1);border-radius:5px">
+              <i data-lucide="lock" style="width:11px;height:11px;color:#003580"></i>
+              <span style="font-size:11px;font-weight:600;color:#003580">AIOSELL</span>
+            </div>
+          </div>
+          <button style="height:40px;padding:0 14px;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;color:#666;background:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Poppins,sans-serif;flex-shrink:0"><i data-lucide="pencil" style="width:13px;height:13px"></i> Override</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);border-radius:6px">
+            <i data-lucide="credit-card" style="width:12px;height:12px;color:#F4A11A"></i>
+            <span style="font-size:11px;font-weight:600;color:#96600A">PAY AT HOTEL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATE SECTION — OD-08 VARIANT B (raw code only) -->
+      <div id="rate-variant-b" style="display:none;background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <h2 style="font-size:14px;font-weight:600">Rate</h2>
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;background:#F5F5F5;padding:2px 8px;border-radius:12px">Variant B — Raw Code</span>
+        </div>
+        <label class="field-label">Rate per Night</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <div style="flex:1;display:flex;align-items:center;height:40px;padding:0 12px;border:1px solid #E5E5E5;border-radius:8px;background:#F7F7F7;gap:8px">
+            <span style="font-size:14px;font-weight:600">₹ 7,400</span>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(0,53,128,.1);border-radius:5px">
+              <i data-lucide="lock" style="width:11px;height:11px;color:#003580"></i>
+              <span style="font-size:11px;font-weight:600;color:#003580">AIOSELL</span>
+            </div>
+          </div>
+          <button style="height:40px;padding:0 14px;border:1px solid #E5E5E5;border-radius:8px;font-size:12px;color:#666;background:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Poppins,sans-serif;flex-shrink:0"><i data-lucide="pencil" style="width:13px;height:13px"></i> Override</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#FFF8EC;border:1px solid rgba(244,161,26,.3);border-radius:6px">
+            <i data-lucide="credit-card" style="width:12px;height:12px;color:#F4A11A"></i>
+            <span style="font-size:11px;font-weight:600;color:#96600A">PAY AT HOTEL</span>
+          </div>
+          <!-- Raw rateplan code pill only -->
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:6px">
+            <i data-lucide="tag" style="width:12px;height:12px;color:#666"></i>
+            <span style="font-size:11px;color:#666">Rate Plan: </span>
+            <span style="font-size:11px;font-weight:600;color:#1A1A1A;font-family:monospace">executive-s-ep</span>
+          </div>
+        </div>
+        <p style="font-size:11px;color:#999;margin-top:6px">OTA rate · Override requires reason · Not synced back to AIOSELL</p>
+      </div>
+
+      <!-- Booking Summary -->
+      <div style="background:#fff;border:1px solid #E5E5E5;border-radius:12px;padding:20px">
+        <h2 style="font-size:14px;font-weight:600;margin-bottom:14px">Booking Summary</h2>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Guest</span><span style="font-weight:500">Rahul Sharma</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Room</span><span style="font-weight:500">r1 — Executive</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Check-in</span><span style="font-weight:500">7 Sep 2026</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Check-out</span><span style="font-weight:500">9 Sep 2026</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#666">Nights</span><span style="font-weight:500">2</span></div>
+          <div style="border-top:1px solid #F0F0F0;padding-top:8px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between"><span style="color:#666">Room total</span><span>₹14,800</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:#666">GST (12%)</span><span>₹1,776</span></div>
+            <div style="display:flex;justify-content:space-between;font-weight:600"><span>Total</span><span>₹16,576</span></div>
+            <div style="display:flex;justify-content:space-between;color:#329937"><span>Advance paid</span><span>− ₹0</span></div>
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;border-top:1px solid #F0F0F0;padding-top:8px"><span>Balance Due</span><span style="color:#EF4444">₹16,576</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button style="width:100%;height:52px;background:#329937;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(50,153,55,.3)">
+        <i data-lucide="check-circle" style="width:20px;height:20px"></i> CHECK IN GUEST
+      </button>
+    </div>
+  </div>
+</main>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+lucide.createIcons();
+
+function setVariant(v) {
+  document.getElementById('rate-variant-a').style.display = v === 'a' ? '' : 'none';
+  document.getElementById('rate-variant-b').style.display = v === 'b' ? '' : 'none';
+  document.getElementById('btn-a').className = 'variant-toggle-btn' + (v === 'a' ? ' active' : '');
+  document.getElementById('btn-b').className = 'variant-toggle-btn' + (v === 'b' ? ' active' : '');
+}
+</script>
+</body>
+</html>

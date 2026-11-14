@@ -1,0 +1,91 @@
+/**
+ * ROOM_CHECKIN_GAP3 Stage 1 + Stage 2 transform-level tests
+ * Verifies:
+ *  - fromAPI.order exposes roomInfo struct when api.room_info present
+ *  - fromAPI.order returns roomInfo:null when api.room_info absent
+ *  - collectBillExisting payload emits `order_amount` ONLY when roomBalance > 0
+ */
+import { fromAPI, toAPI } from '../orderTransform';
+const orderTransform = { fromAPI, toAPI };
+
+describe('Stage 1 — fromAPI.order roomInfo exposure', () => {
+  const baseApi = {
+    id: 731700, restaurant_order_id: 'r-test-1',
+    order_status: 'placed', order_type: 'room', cart: [],
+    associated_order_list: [], grand_amount: '0', sub_total_amount: '0',
+  };
+
+  test('roomInfo populated when api.room_info present', () => {
+    const out = orderTransform.fromAPI.order({
+      ...baseApi,
+      room_info: { room_price: '1500', advance_payment: '500', balance_payment: '1000' },
+    });
+    // toMatchObject (not toEqual) — roomInfo schema was expanded under
+    // CR-004 Phase 4.1 ADDITIVE EXTENSION + BE-2 §4.1 (wired 2026-05-01) to
+    // include receiveBalance, paymentStatus, balancePaymentMode, roomNo,
+    // discountAmount, discountReason, checkInDate, checkOutDate, bookingType,
+    // and guestName. We assert the original 3 financial fields here; the
+    // additional fields are covered by their own consumer-layer suites.
+    expect(out.roomInfo).toMatchObject({ roomPrice: 1500, advancePayment: 500, balancePayment: 1000 });
+  });
+
+  test('roomInfo null when api.room_info missing', () => {
+    const out = orderTransform.fromAPI.order(baseApi);
+    expect(out.roomInfo).toBeNull();
+  });
+
+  test('roomInfo coerces strings -> numbers, null fields -> 0', () => {
+    const out = orderTransform.fromAPI.order({
+      ...baseApi,
+      room_info: { room_price: null, advance_payment: '750.5', balance_payment: undefined },
+    });
+    // toMatchObject: see explanation on the previous test — schema is the
+    // CR-004 P4.1 + BE-2 §4.1 expanded shape; we assert the 3 coerced fields.
+    expect(out.roomInfo).toMatchObject({ roomPrice: 0, advancePayment: 750.5, balancePayment: 0 });
+  });
+});
+
+describe('Stage 2 — collectBillExisting order_amount emission', () => {
+  const table = { orderId: 731700 };
+  const customer = {};
+
+  test('order_amount ABSENT when roomBalance = 0 (non-room)', () => {
+    const payload = orderTransform.toAPI.collectBillExisting(
+      table, [], customer,
+      { method: 'cash', finalTotal: 500, roomBalance: 0 }
+    );
+    expect('order_amount' in payload).toBe(false);
+    expect(payload.payment_amount).toBe(500);
+    expect(payload.grant_amount).toBe(500);
+  });
+
+  test('order_amount ABSENT when roomBalance unset', () => {
+    const payload = orderTransform.toAPI.collectBillExisting(
+      table, [], customer,
+      { method: 'cash', finalTotal: 500 }
+    );
+    expect('order_amount' in payload).toBe(false);
+  });
+
+  test('order_amount PRESENT when roomBalance > 0', () => {
+    const payload = orderTransform.toAPI.collectBillExisting(
+      table, [], customer,
+      { method: 'cash', finalTotal: 1234, roomBalance: 100 }
+    );
+    expect(payload.order_amount).toBe(1234);
+    expect(payload.payment_amount).toBe(1234);
+  });
+
+  test('food_detail filters out check-in marker', () => {
+    const items = [
+      { id: 1, foodId: 11, placed: true, status: 'placed', isCheckInMarker: true, price: 0, qty: 1 },
+      { id: 2, foodId: 22, placed: true, status: 'placed', price: 100, unitPrice: 100, qty: 1 },
+    ];
+    const payload = orderTransform.toAPI.collectBillExisting(
+      table, items, customer,
+      { method: 'cash', finalTotal: 100 }
+    );
+    expect(payload.food_detail).toHaveLength(1);
+    expect(payload.food_detail[0].food_id).toBe(22);
+  });
+});
