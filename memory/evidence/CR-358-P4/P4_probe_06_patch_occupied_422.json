@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/api/v2/vendoremployee/aiosell/room-status/8524",
+    "body": {
+      "status": "hk"
+    },
+    "note": "occupied room"
+  },
+  "http_status": 422,
+  "body": {
+    "status": false,
+    "message": "Cannot set HK/OOO while the room is occupied."
+  }
+}

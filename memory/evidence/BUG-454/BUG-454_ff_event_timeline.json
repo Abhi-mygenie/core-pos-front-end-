@@ -1,0 +1,143 @@
+{
+  "forty_five_sec_buzzer/clone": {
+    "res": {
+      "result": "PLAY_OK",
+      "ms": 3004
+    },
+    "timeline": [
+      "cache:loadstart@2ms rs=0 ns=2",
+      "cache:progress@461ms rs=0 ns=2",
+      "cache:loadedmetadata@690ms rs=1 ns=2",
+      "cache:loadeddata@691ms rs=3 ns=2",
+      "cache:canplay@691ms rs=3 ns=2",
+      "cache:progress@910ms rs=3 ns=2",
+      "cache:canplaythrough@910ms rs=4 ns=2",
+      "cache:progress@1351ms rs=4 ns=2",
+      "cache:progress@1753ms rs=4 ns=2",
+      "cache:progress@2103ms rs=4 ns=2",
+      "cache:progress@2456ms rs=4 ns=2",
+      "cache:progress@2810ms rs=4 ns=2",
+      "clone:waiting@3003ms rs=0 ns=2",
+      "clone:loadstart@3003ms rs=0 ns=2",
+      "clone:progress@3003ms rs=0 ns=1",
+      "clone:progress@3003ms rs=0 ns=1",
+      "clone:suspend@3003ms rs=0 ns=1",
+      "clone:loadedmetadata@3004ms rs=1 ns=1",
+      "clone:loadeddata@3004ms rs=3 ns=1",
+      "clone:canplay@3004ms rs=3 ns=1",
+      "clone:playing@3004ms rs=3 ns=1"
+    ]
+  },
+  "forty_five_sec_buzzer/fresh": {
+    "res": {
+      "result": "PLAY_OK",
+      "ms": 3002
+    },
+    "timeline": [
+      "cache:loadstart@1ms rs=0 ns=2",
+      "cache:progress@1ms rs=0 ns=1",
+      "cache:progress@1ms rs=0 ns=1",
+      "cache:suspend@1ms rs=0 ns=1",
+      "cache:loadedmetadata@1ms rs=1 ns=1",
+      "cache:loadeddata@2ms rs=3 ns=1",
+      "cache:canplay@2ms rs=3 ns=1",
+      "cache:canplaythrough@41ms rs=4 ns=2",
+      "cache:progress@97ms rs=4 ns=2",
+      "cache:progress@471ms rs=4 ns=2",
+      "cache:progress@895ms rs=4 ns=2",
+      "cache:progress@951ms rs=4 ns=1",
+      "cache:suspend@951ms rs=4 ns=1",
+      "cache:progress@1190ms rs=4 ns=2",
+      "cache:progress@1190ms rs=4 ns=1",
+      "cache:suspend@1190ms rs=4 ns=1",
+      "cache:progress@1407ms rs=4 ns=2",
+      "cache:progress@1719ms rs=4 ns=1",
+      "cache:suspend@1719ms rs=4 ns=1",
+      "cache:progress@1767ms rs=4 ns=2",
+      "cache:progress@1838ms rs=4 ns=1",
+      "cache:suspend@1838ms rs=4 ns=1",
+      "cache:progress@1839ms rs=4 ns=2",
+      "cache:progress@1925ms rs=4 ns=1",
+      "cache:suspend@1925ms rs=4 ns=1",
+      "fresh:waiting@3001ms rs=0 ns=2",
+      "fresh:loadstart@3002ms rs=0 ns=2",
+      "fresh:progress@3002ms rs=0 ns=1",
+      "fresh:progress@3002ms rs=0 ns=1",
+      "fresh:suspend@3002ms rs=0 ns=1",
+      "fresh:loadedmetadata@3002ms rs=1 ns=1",
+      "fresh:loadeddata@3002ms rs=4 ns=1",
+      "fresh:canplay@3002ms rs=4 ns=1",
+      "fresh:playing@3002ms rs=4 ns=1"
+    ]
+  },
+  "forty_five_sec_buzzer/cache": {
+    "res": {
+      "result": "PLAY_OK",
+      "ms": 3000
+    },
+    "timeline": [
+      "cache:loadstart@0ms rs=0 ns=2",
+      "cache:progress@0ms rs=0 ns=1",
+      "cache:progress@0ms rs=0 ns=1",
+      "cache:suspend@0ms rs=0 ns=1",
+      "cache:loadedmetadata@0ms rs=1 ns=1",
+      "cache:loadeddata@0ms rs=4 ns=1",
+      "cache:canplay@0ms rs=4 ns=1",
+      "cache:canplaythrough@0ms rs=4 ns=1",
+      "cache:playing@3000ms rs=4 ns=1",
+      "cache:playing@3000ms rs=4 ns=1"
+    ]
+  },
+  "order_accepted/clone": {
+    "res": {
+      "result": "PLAY_OK",
+      "ms": 3003
+    },
+    "timeline": [
+      "cache:loadstart@1ms rs=0 ns=2",
+      "cache:progress@438ms rs=0 ns=2",
+      "cache:loadedmetadata@641ms rs=1 ns=2",
+      "cache:loadeddata@642ms rs=3 ns=2",
+      "cache:canplay@642ms rs=3 ns=2",
+      "cache:progress@846ms rs=3 ns=2",
+      "cache:canplaythrough@846ms rs=4 ns=2",
+      "cache:progress@847ms rs=4 ns=1",
+      "cache:suspend@847ms rs=4 ns=1",
+      "clone:waiting@3002ms rs=0 ns=2",
+      "clone:loadstart@3002ms rs=0 ns=2",
+      "clone:progress@3002ms rs=0 ns=1",
+      "clone:progress@3002ms rs=0 ns=1",
+      "clone:suspend@3002ms rs=0 ns=1",
+      "clone:loadedmetadata@3002ms rs=1 ns=1",
+      "clone:loadeddata@3003ms rs=4 ns=1",
+      "clone:canplay@3003ms rs=4 ns=1",
+      "clone:playing@3003ms rs=4 ns=1"
+    ]
+  },
+  "five_sec_buzzer/clone": {
+    "res": {
+      "result": "PLAY_OK",
+      "ms": 3113
+    },
+    "timeline": [
+      "cache:loadstart@0ms rs=0 ns=2",
+      "cache:progress@1097ms rs=0 ns=2",
+      "cache:loadedmetadata@1318ms rs=1 ns=2",
+      "cache:loadeddata@1319ms rs=3 ns=2",
+      "cache:canplay@1319ms rs=3 ns=2",
+      "cache:progress@1541ms rs=3 ns=2",
+      "cache:canplaythrough@1542ms rs=4 ns=2",
+      "cache:progress@1761ms rs=4 ns=1",
+      "cache:suspend@1761ms rs=4 ns=1",
+      "clone:waiting@3111ms rs=0 ns=2",
+      "clone:loadstart@3111ms rs=0 ns=2",
+      "clone:progress@3112ms rs=1 ns=1",
+      "clone:progress@3112ms rs=1 ns=1",
+      "clone:suspend@3112ms rs=1 ns=1",
+      "clone:loadedmetadata@3112ms rs=1 ns=1",
+      "clone:loadeddata@3113ms rs=4 ns=1",
+      "clone:canplay@3113ms rs=4 ns=1",
+      "clone:playing@3113ms rs=4 ns=1"
+    ]
+  }
+}

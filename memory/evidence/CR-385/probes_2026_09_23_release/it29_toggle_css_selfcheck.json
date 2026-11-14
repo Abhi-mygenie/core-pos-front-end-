@@ -1,0 +1,16 @@
+{
+ "mutating_requests": [
+  "POST /api/v1/vendoremployee/station-order-list",
+  "POST /api/v1/vendoremployee/station-order-list"
+ ],
+ "url": "/pms/front-desk-v2?tab=arrivals",
+ "computed_display": {
+  "checkout-room-booking-toggle": "none",
+  "checkout-transferred-toggle": "none",
+  "checkout-room-service-toggle": "none",
+  "payment-split-btn": "none",
+  "tab-customer-section": "inline-block",
+  "bare_outside_host_checkout-room-booking-toggle": "inline-block",
+  "rule_in_stylesheets": true
+ }
+}

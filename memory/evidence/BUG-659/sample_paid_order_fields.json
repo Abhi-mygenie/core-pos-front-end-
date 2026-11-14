@@ -1,0 +1,15 @@
+{
+  "order_amount": 14.29,
+  "partial_payments": [],
+  "payment_method": "cash",
+  "payment_status": "paid",
+  "payment_type": "prepaid",
+  "razorpay_payment_status": null,
+  "restaurant_discount_amount": 100,
+  "tip_amount": "0.00",
+  "total_gst_tax_amount": "0.00",
+  "total_service_tax_amount": "0.00",
+  "total_vat_tax_amount": "0.00",
+  "id": 1537802,
+  "restaurant_order_id": "001414"
+}

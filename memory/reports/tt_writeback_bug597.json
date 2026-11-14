@@ -1,0 +1,14 @@
+[
+  {
+    "id": "TT-006",
+    "status": "In Progress",
+    "note": "Reverted from Done: BUG-597 is IMPLEMENTED (Gate 5A), not CLOSED. Will set Done when BUG-597 is CLOSED.",
+    "registry_id": "BUG-597"
+  },
+  {
+    "id": "TT-030",
+    "status": "In Progress",
+    "note": "Reverted from Done: BUG-597 is IMPLEMENTED (Gate 5A), not CLOSED. Will set Done when BUG-597 is CLOSED.",
+    "registry_id": "BUG-597"
+  }
+]

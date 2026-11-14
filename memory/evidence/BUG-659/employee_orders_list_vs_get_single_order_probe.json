@@ -1,0 +1,71 @@
+{
+  "probe_date": "2026-11-07",
+  "order_id": 1537857,
+  "restaurant_order_id": "001423",
+  "summary": "employee-orders-list returns 6 more financial fields than get-single-order-new for the SAME order",
+  "employee_orders_list": {
+    "restaurant_discount_amount": 119.05,
+    "discount_value": "50.00",
+    "order_discount": "119.05",
+    "gst_tax": 5.96,
+    "vat_tax": 0,
+    "service_tax": 11.91,
+    "order_amount": 138.01,
+    "order_sub_total_amount": 238.1,
+    "order_sub_total_without_tax": 130.96,
+    "order_details_count": 2,
+    "item_discount_on_food": [
+      61.91,
+      57.14
+    ],
+    "item_gst_tax_amount": [
+      3.1,
+      2.86
+    ],
+    "discount_type": null,
+    "round_up": null
+  },
+  "get_single_order_new": {
+    "restaurant_discount_amount": null,
+    "discount_value": null,
+    "order_discount": null,
+    "gst_tax": null,
+    "vat_tax": null,
+    "service_tax": null,
+    "order_amount": 138.01,
+    "order_sub_total_amount": 238.1,
+    "order_sub_total_without_tax": 130.96,
+    "order_details_count": 2,
+    "item_discount_on_food": [
+      null,
+      null
+    ],
+    "item_gst_tax_amount": [
+      null,
+      null
+    ],
+    "discount_type": null,
+    "round_up": null
+  },
+  "fields_only_in_employee_orders_list": [
+    "restaurant_discount_amount",
+    "discount_value",
+    "order_discount",
+    "gst_tax",
+    "vat_tax",
+    "service_tax",
+    "item-level discount_on_food",
+    "item-level gst_tax_amount"
+  ],
+  "fields_missing_from_both": [
+    "discount_type",
+    "round_up",
+    "order_discount_json"
+  ],
+  "discount_type_inference": {
+    "method": "if (discount_value/100 * order_sub_total_amount) \u2248 restaurant_discount_amount \u2192 percent, else flat",
+    "order_1537857": "50/100 * 238.1 = 119.05 == 119.05 \u2192 PERCENT \u2705",
+    "order_1537800": "100/100 * 114.29 = 114.29 \u2260 100 \u2192 FLAT \u2705",
+    "risk": "Edge case: discount_value=X flat on subtotal=X*2 \u2192 falsely classified as 50%. Unlikely but possible."
+  }
+}

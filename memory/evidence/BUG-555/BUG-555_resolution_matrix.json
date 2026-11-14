@@ -1,0 +1,764 @@
+{
+ "dashboard": {
+  "iPadPro12.9 L": {
+   "vw": 1366,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "SurfacePro7 L": {
+   "vw": 1368,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android10in DPR1 L": {
+   "vw": 1280,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPadAir L": {
+   "vw": 1180,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPad L": {
+   "vw": 1024,
+   "vh": 768,
+   "docH": 1354,
+   "bodyScrolls": true,
+   "clipped": 5,
+   "maxR": 1078,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "Android10 DPR1.25 L": {
+   "vw": 1024,
+   "vh": 640,
+   "docH": 1354,
+   "bodyScrolls": true,
+   "clipped": 5,
+   "maxR": 1078,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "GalaxyTabA10 DPR2 L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 1723,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Owner DPR1.5 L": {
+   "vw": 853,
+   "vh": 533,
+   "docH": 1723,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android7in L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 1723,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "SurfacePro7 P": {
+   "vw": 912,
+   "vh": 780,
+   "docH": 1723,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPadAir P": {
+   "vw": 820,
+   "vh": 780,
+   "docH": 1888,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android10in DPR1 P": {
+   "vw": 800,
+   "vh": 780,
+   "docH": 1888,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPad P": {
+   "vw": 768,
+   "vh": 780,
+   "docH": 1888,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "GalaxyTab P": {
+   "vw": 712,
+   "vh": 780,
+   "docH": 1888,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android7in P": {
+   "vw": 600,
+   "vh": 780,
+   "docH": 1886,
+   "bodyScrolls": true,
+   "clipped": 5,
+   "maxR": 658,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "Owner DPR1.5 P": {
+   "vw": 533,
+   "vh": 780,
+   "docH": 2217,
+   "bodyScrolls": true,
+   "clipped": 12,
+   "maxR": 658,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex-1 flex justify-end px-2",
+    "DIV|relative flex-1 lg:flex-init"
+   ]
+  }
+ },
+ "order_entry": {
+  "iPadPro12.9 L": {
+   "vw": 1366,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 1366,
+   "top": []
+  },
+  "SurfacePro7 L": {
+   "vw": 1368,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 1368,
+   "top": []
+  },
+  "Android10in DPR1 L": {
+   "vw": 1280,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 1280,
+   "top": []
+  },
+  "iPadAir L": {
+   "vw": 1180,
+   "vh": 780,
+   "docH": 1352,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 1180,
+   "top": []
+  },
+  "iPad L": {
+   "vw": 1024,
+   "vh": 768,
+   "docH": 1354,
+   "bodyScrolls": true,
+   "clipped": 5,
+   "maxR": 1078,
+   "oeTotal": 1024,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "Android10 DPR1.25 L": {
+   "vw": 1024,
+   "vh": 640,
+   "docH": 1354,
+   "bodyScrolls": true,
+   "clipped": 5,
+   "maxR": 1078,
+   "oeTotal": 1024,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "GalaxyTabA10 DPR2 L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 1723,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 960,
+   "top": []
+  },
+  "Owner DPR1.5 L": {
+   "vw": 853,
+   "vh": 533,
+   "docH": 2450,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "Android7in L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 2450,
+   "bodyScrolls": true,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": 960,
+   "top": []
+  },
+  "SurfacePro7 P": {
+   "vw": 912,
+   "vh": 780,
+   "docH": 2450,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "iPadAir P": {
+   "vw": 820,
+   "vh": 780,
+   "docH": 2789,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "Android10in DPR1 P": {
+   "vw": 800,
+   "vh": 780,
+   "docH": 2789,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "iPad P": {
+   "vw": 768,
+   "vh": 780,
+   "docH": 2789,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "GalaxyTab P": {
+   "vw": 712,
+   "vh": 780,
+   "docH": 2789,
+   "bodyScrolls": true,
+   "clipped": 1,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|w-96 flex-shrink-0 flex flex"
+   ]
+  },
+  "Android7in P": {
+   "vw": 600,
+   "vh": 780,
+   "docH": 3121,
+   "bodyScrolls": true,
+   "clipped": 6,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "add-table-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "Owner DPR1.5 P": {
+   "vw": 533,
+   "vh": 780,
+   "docH": 3925,
+   "bodyScrolls": true,
+   "clipped": 16,
+   "maxR": 927,
+   "oeTotal": 927,
+   "top": [
+    "DIV|flex-1 flex justify-end px-2",
+    "DIV|relative flex-1 lg:flex-init"
+   ]
+  }
+ },
+ "report_settlement": {
+  "iPadPro12.9 L": {
+   "vw": 1366,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "SurfacePro7 L": {
+   "vw": 1368,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android10in DPR1 L": {
+   "vw": 1280,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 3,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "DIV|relative"
+   ]
+  },
+  "iPadAir L": {
+   "vw": 1180,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 11,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-refresh-btn|p-2 hover:bg-zinc-100 rounde"
+   ]
+  },
+  "iPad L": {
+   "vw": 1024,
+   "vh": 768,
+   "docH": 768,
+   "bodyScrolls": false,
+   "clipped": 16,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android10 DPR1.25 L": {
+   "vw": 1024,
+   "vh": 640,
+   "docH": 640,
+   "bodyScrolls": false,
+   "clipped": 16,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "GalaxyTabA10 DPR2 L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 600,
+   "bodyScrolls": false,
+   "clipped": 17,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Owner DPR1.5 L": {
+   "vw": 853,
+   "vh": 533,
+   "docH": 533,
+   "bodyScrolls": false,
+   "clipped": 20,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android7in L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 600,
+   "bodyScrolls": false,
+   "clipped": 17,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "SurfacePro7 P": {
+   "vw": 912,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 18,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "iPadAir P": {
+   "vw": 820,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 20,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android10in DPR1 P": {
+   "vw": 800,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 20,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "iPad P": {
+   "vw": 768,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 21,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "GalaxyTab P": {
+   "vw": 712,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 22,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-apply-btn|flex items-center gap-1.5 px"
+   ]
+  },
+  "Android7in P": {
+   "vw": 600,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 27,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-daterange|flex items-center gap-2 px-3"
+   ]
+  },
+  "Owner DPR1.5 P": {
+   "vw": 533,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 27,
+   "maxR": 1317,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "settlement-report-daterange|flex items-center gap-2 px-3"
+   ]
+  }
+ },
+ "report_items": {
+  "iPadPro12.9 L": {
+   "vw": 1366,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "SurfacePro7 L": {
+   "vw": 1368,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "Android10in DPR1 L": {
+   "vw": 1280,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPadAir L": {
+   "vw": 1180,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 0,
+   "maxR": 0,
+   "oeTotal": null,
+   "top": []
+  },
+  "iPad L": {
+   "vw": 1024,
+   "vh": 768,
+   "docH": 768,
+   "bodyScrolls": false,
+   "clipped": 5,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "DIV|relative"
+   ]
+  },
+  "Android10 DPR1.25 L": {
+   "vw": 1024,
+   "vh": 640,
+   "docH": 640,
+   "bodyScrolls": false,
+   "clipped": 5,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "DIV|relative"
+   ]
+  },
+  "GalaxyTabA10 DPR2 L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 600,
+   "bodyScrolls": false,
+   "clipped": 8,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "DIV|relative"
+   ]
+  },
+  "Owner DPR1.5 L": {
+   "vw": 853,
+   "vh": 533,
+   "docH": 533,
+   "bodyScrolls": false,
+   "clipped": 12,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android7in L": {
+   "vw": 960,
+   "vh": 600,
+   "docH": 600,
+   "bodyScrolls": false,
+   "clipped": 8,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "DIV|relative"
+   ]
+  },
+  "SurfacePro7 P": {
+   "vw": 912,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 10,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "iPadAir P": {
+   "vw": 820,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 12,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android10in DPR1 P": {
+   "vw": 800,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 13,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "iPad P": {
+   "vw": 768,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 14,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "GalaxyTab P": {
+   "vw": 712,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 14,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-date-presets|flex items-center gap-1 px-1"
+   ]
+  },
+  "Android7in P": {
+   "vw": 600,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 20,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-daterange-picker|flex items-center gap-2 px-3"
+   ]
+  },
+  "Owner DPR1.5 P": {
+   "vw": 533,
+   "vh": 780,
+   "docH": 780,
+   "bodyScrolls": false,
+   "clipped": 20,
+   "maxR": 1095,
+   "oeTotal": null,
+   "top": [
+    "DIV|flex items-center gap-3",
+    "reports-daterange-picker|flex items-center gap-2 px-3"
+   ]
+  }
+ }
+}

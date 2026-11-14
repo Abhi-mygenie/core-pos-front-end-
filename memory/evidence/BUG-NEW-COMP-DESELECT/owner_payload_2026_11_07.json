@@ -1,0 +1,32 @@
+{
+  "source": "owner-provided 2026-11-07",
+  "order_id": 1537806,
+  "restaurant_order_id": "000627",
+  "payment_amount": 299,
+  "grant_amount": 299,
+  "comp_item": {
+    "id": 3862837,
+    "food_name": "Cream of Broccoli",
+    "is_complementary": "Yes",
+    "complementary": 0,
+    "price": 0,
+    "food_amount": 0,
+    "line_total": 2790,
+    "food_details_complementary": "Yes"
+  },
+  "normal_item": {
+    "id": 3862838,
+    "food_name": "Hot Garlic Sauce",
+    "is_complementary": "ABSENT (key not present)",
+    "complementary": 0,
+    "price": 299,
+    "line_total": 299
+  },
+  "findings": {
+    "line_total_not_zeroed": true,
+    "complementary_integer_not_set": true,
+    "is_complementary_string_set": true,
+    "food_details_complementary_set": true,
+    "payment_totals_correct": true
+  }
+}
