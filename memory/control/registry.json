@@ -30305,8 +30305,18 @@
       "area": "Menu / Order Entry",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Menu needs restructuring with better add-on grouping. Requires Menu Management UI changes and potentially backend category/addon schema changes.",
-      "assignee": "Parth"
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Menu needs restructuring with better add-on grouping. Requires Menu Management UI changes and potentially backend category/addon schema changes.",
+      "assignee": "Parth",
+      "priority": "P1",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-484",
@@ -33673,12 +33683,21 @@
       "title": "New Settings Keys Including Menu Master",
       "type": "CR",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "backlog",
       "area": "Settings / Profile",
-      "notes": "Audit and map all new backend settings keys. OD-437-01: full key list from backend. OD-437-03: what is Menu Master endpoint.",
-      "assignee": "Abhishek"
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Audit and map all new backend settings keys. OD-437-01: full key list from backend. OD-437-03: what is Menu Master endpoint.",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-438",
@@ -37190,18 +37209,27 @@
       "type": "CR",
       "title": "PMS: Separate Check-In Button on Dashboard",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P2",
       "risk": "HIGH",
       "area": "PMS / Rooms",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5, PMS flow)",
       "intake_doc": "change_requests/04_CR-516_CHECKIN_BUTTON_DASHBOARD_INTAKE.md",
-      "notes": "Add dedicated Check-In button on dashboard (R5 hotspot DashboardPage, PMS check-in flow, routing).",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Add dedicated Check-In button on dashboard (R5 hotspot DashboardPage, PMS check-in flow, routing).",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-517",
@@ -37235,18 +37263,27 @@
       "type": "CR",
       "title": "Walk-In: Separate Tab on Dashboard (like Takeaway and Delivery)",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P2",
       "risk": "HIGH",
       "area": "Menu / Order Entry",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5, dashboard layout)",
       "intake_doc": "change_requests/06_CR-518_WALKIN_SEPARATE_TAB_INTAKE.md",
-      "notes": "Walk-In orders should have own tab like Takeaway/Delivery. Touches DashboardPage R5.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Walk-In orders should have own tab like Takeaway/Delivery. Touches DashboardPage R5.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-519",
@@ -37270,7 +37307,7 @@
       "id": "BUG-667",
       "type": "BUG",
       "title": "Sidebar: Restaurant Name Overflows When Name Is Too Long",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P2",
       "risk": "LOW",
@@ -37278,11 +37315,20 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "ELIGIBLE (1 file, ≤5 lines CSS — owner approval needed)",
       "intake_doc": "change_requests/08_BUG-667_SIDEBAR_RESTAURANT_NAME_OVERFLOW_INTAKE.md",
-      "notes": "Restaurant name overflows sidebar into dashboard. CSS/layout fix only. Fast Lane eligible with owner approval.",
+      "notes": "[2026-11-14 owner decisions] Sidebar bottom restaurant name → wrap 2 lines. Confirm screen at impact. || Restaurant name overflows sidebar into dashboard. CSS/layout fix only. Fast Lane eligible with owner approval.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-668",
@@ -37333,7 +37379,7 @@
       "id": "BUG-669",
       "type": "BUG",
       "title": "Add-On Creation Requires Price: Cannot Create Without Entering Amount",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37341,17 +37387,26 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/12_BUG-669_ADDON_CREATION_REQUIRES_PRICE_INTAKE.md",
-      "notes": "Add-on creation forces price entry. Should allow ₹0. Validation logic change in menu management.",
+      "notes": "[2026-11-14 owner decisions] Add-ons + variations with ₹0; price must be typed, 0 allowed; Menu Mgmt + Bulk Editor (impact to check). || Add-on creation forces price entry. Should allow ₹0. Validation logic change in menu management.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-521",
       "type": "CR",
       "title": "Color Effect After Bill Print: Make It More Attractive",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P3",
       "risk": "LOW",
@@ -37359,11 +37414,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "ELIGIBLE (CSS/animation only — owner approval needed)",
       "intake_doc": "change_requests/14_CR-521_COLOR_EFFECT_AFTER_BILL_PRINT_ENHANCEMENT_INTAKE.md",
-      "notes": "Enhance color effect after bill print. CSS-only, cosmetic. Fast Lane eligible.",
+      "notes": "[2026-11-14 owner decisions] Keep green border, background orange (table+order cards). Shade by design agent at impact. || Enhance color effect after bill print. CSS-only, cosmetic. Fast Lane eligible.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "CR-525 (shared card files)",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-522",
@@ -37397,7 +37462,7 @@
       "id": "CR-523",
       "type": "CR",
       "title": "Link Customer to Order After Placing (Without Completing/Updating)",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37405,11 +37470,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/16_CR-523_LINK_CUSTOMER_AFTER_ORDER_WITHOUT_UPDATE_INTAKE.md",
-      "notes": "Allow linking customer to placed order without triggering full order update. Touches order flow, customer modal.",
+      "notes": "[2026-11-14 owner decisions] Save customer link immediately on pop-up save, also after print. Change customer if possible. || Allow linking customer to placed order without triggering full order update. Touches order flow, customer modal.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-524",
@@ -37471,7 +37546,7 @@
       "id": "CR-525",
       "type": "CR",
       "title": "After Bill Print: Replace KOT and Bill Buttons with Collect Bill Button",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P2",
       "risk": "HIGH",
@@ -37479,11 +37554,20 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5, state logic)",
       "intake_doc": "change_requests/20_CR-525_AFTER_BILL_PRINT_REPLACE_KOT_BILL_WITH_COLLECT_INTAKE.md",
-      "notes": "After bill printed, replace KOT/Bill buttons with Collect Bill. Touches OrderCard R5, bill-print state, CR-489.",
+      "notes": "[2026-11-14 owner decisions] After print: one Collect Bill button (table+order cards); button + card tap open Collect Bill screen; edit after print restores KOT+Bill. || After bill printed, replace KOT/Bill buttons with Collect Bill. Touches OrderCard R5, bill-print state, CR-489.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-526",
@@ -37659,7 +37743,7 @@
       "id": "BUG-673",
       "type": "BUG",
       "title": "Keyboard Navigation: First Alphabetical Food Auto-Selected on Short Code Search",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37667,11 +37751,20 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5, CR-482 keyboard nav)",
       "intake_doc": "change_requests/27_BUG-673_KEYBOARD_NAV_AUTO_SELECT_SHORTCODE_SEARCH_INTAKE.md",
-      "notes": "Keyboard shortcode search auto-selects wrong item. R5 OrderEntry.jsx, CR-482 hotspot.",
+      "notes": "[2026-11-14 owner decisions] After search+add, Enter re-adds default item. Fix: selection returns to search box after add. || Keyboard shortcode search auto-selects wrong item. R5 OrderEntry.jsx, CR-482 hotspot.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-D-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch D owner decisions",
+          "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-530",
@@ -38020,7 +38113,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-14",
-    "last_action": "Batch C owner decisions applied: 4 P0 ready for impact, CR-505/CR-510 need investigation validation, BUG-605→CR-526 merged, 13 moved to P1.",
+    "last_action": "Batch D owner decisions applied: 6 P0 ready for impact, 4 moved to P1.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -38028,7 +38121,7 @@
     "gate_5b_complete": true,
     "total": 1098,
     "total_items": 1098,
-    "last_session": "Intake Q&A 2026-11-14 — Batch A, B, C (P0) closed. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
-    "last_note": "Next: Batch D intake (P0) or PLANNING Gate 2 for A/B/C after owner GO; INVESTIGATION to validate CR-505/CR-510."
+    "last_session": "Intake Q&A 2026-11-14 — Batch A, B, C, D (P0) closed. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
+    "last_note": "Next: Batch E intake (P0) or PLANNING Gate 2 for A–D after owner GO; INVESTIGATION to validate CR-505/CR-510."
   }
 }

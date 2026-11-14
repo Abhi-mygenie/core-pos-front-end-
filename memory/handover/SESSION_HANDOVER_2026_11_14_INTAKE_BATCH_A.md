@@ -67,6 +67,12 @@ Role: **PLANNING** (per `control/AGENT_PROMPT_ALPHA.md` §PLANNING, Gate 2).
 - **Moved to P1:** CR-504, 506, 507, 508, 509, 511, 532, 444, 497, 537, 539, 138, BUG-192.
 - Next intake batch: **D (Dashboard, Order Entry & Order Cards)**, lines 1824-2309 of the briefs file, P0 only.
 
+## 7c. Batch D Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
+- Source of truth: `change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md`. Applied via `reports/apply_batch_d_decisions.py` (already run — do not re-run).
+- **P0 ready for impact (6):** BUG-667 (sidebar name wrap 2 lines), BUG-669 (₹0 add-ons + variations), BUG-673 (Enter re-adds default item → selection back to search box), CR-525 (Collect Bill replaces KOT+Bill after print), CR-521 (orange background, green border — design agent picks shade), CR-523 (link customer without update).
+- **Moved to P1:** CR-518, CR-516, CR-437, CR-404. **Open:** CR-376-FU-C priority; BUG-667 screen confirmation at impact.
+- Next intake batch: **E (Scan Order & Aggregator / Sockets)**, lines 2310-2557 of the briefs file, P0 only.
+
 ## 8. Owner Working Style
 - "Do not assume" — ask every open point; owner answers in short form (`A1 a, A2 b`).
 - Summarise understanding back before writing to the registry.
