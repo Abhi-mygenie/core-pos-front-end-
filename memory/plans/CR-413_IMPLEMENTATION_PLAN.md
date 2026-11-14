@@ -393,7 +393,7 @@ EXIT GATE: [ ] 5/5 PASS
 
 ### 5. Credentials
 - Owner: owner@thegoankitchen.com / Qplazm@10 (RID 69)
-- Preview: https://genie-core-pos.preview.emergentagent.com
+- Preview: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 - Backend: https://preprod.mygenie.online
 ```
 

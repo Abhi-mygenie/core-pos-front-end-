@@ -41,5 +41,5 @@ EXIT GATE: 5/5 PASS
 ```
 
 ## 4. Credentials
-- App URL: https://genie-pos-app.preview.emergentagent.com
+- App URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 - Email: owner@cafe103.com · Password: Qplazm@10

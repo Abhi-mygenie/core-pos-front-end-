@@ -64,5 +64,5 @@
 
 ## 5. Environment
 
-- App URL: https://core-frontend-dev.preview.emergentagent.com
+- App URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 - Route: navigate to Orders (Beta) from sidebar

@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used:** DEPLOYMENT → INVESTIGATION (multiple) → IMPLEMENTATION (BUG-509/510 gate violation) → INTAKE (BUG-509/510/511/512)
-**App URL:** https://core-pos-preview-19.preview.emergentagent.com
+**App URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` · 0 warnings
 
@@ -262,7 +262,7 @@ All upcoming bookings are 26 Oct. Options:
 
 | Item | Value |
 |------|-------|
-| App URL | `https://core-pos-preview-19.preview.emergentagent.com` |
+| App URL | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

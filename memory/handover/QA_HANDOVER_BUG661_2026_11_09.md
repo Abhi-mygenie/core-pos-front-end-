@@ -52,7 +52,7 @@ Gate: GATE_5A
 EXIT GATE: 5/5 PASS (registry ✓, BUG_TRACKER ✓, FILE_OWNERSHIP ✓, code markers ✓, compile ✓)
 
 ## 5. Credentials + Environment
-- POS URL: https://c4220e7e-e76a-4ba7-b323-bd65e8947f74.preview.emergentagent.com
+- POS URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 - Login: owner@cafe103.com / Qplazm@10 (see `/app/memory/control/test_credentials.md`)
 - **Preview test method:** `echo '{"buildId":"dev2"}' > /app/frontend/public/version.json` → reload tab → banner appears. Revert: `echo '{"buildId":"dev"}' > /app/frontend/public/version.json`
 - No backend/API credentials needed for most tests

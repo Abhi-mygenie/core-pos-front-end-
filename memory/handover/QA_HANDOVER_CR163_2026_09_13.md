@@ -79,7 +79,7 @@ Free dine-in tables:
   Table 2 → id: 8530
   Table 3 → id: 8531
 
-Local preview: https://pos-frontend-deploy-31.preview.emergentagent.com
+Local preview: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 ```
 
 ---
@@ -94,5 +94,5 @@ Local preview: https://pos-frontend-deploy-31.preview.emergentagent.com
 
 ## 7. Design Reference
 
-Approved mockup: `https://pos-frontend-deploy-31.preview.emergentagent.com/cr163-design-comparison.html`
+Approved mockup: `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com/cr163-design-comparison.html`
 Design tokens: `COLORS.primaryGreen #329937`, `COLORS.primaryOrange #F26B33`

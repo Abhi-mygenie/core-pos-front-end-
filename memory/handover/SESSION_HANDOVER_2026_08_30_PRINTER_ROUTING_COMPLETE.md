@@ -67,7 +67,7 @@ Validated on preprod — KDS does not appear in any Printer Agent Config tab dro
 |---|---|---|---|---|
 | Direct Printer | owner@18march.com | Qplazm@10 | printer_agent="No" | Restaurant 478 |
 | Printer Agent | owner@shimlaqohfoodcourt.com | Qplazm@10 | printer_agent="Yes" | Food court |
-| App URL | https://ac7e8e21-2fea-4559-a64e-e9d302552f9d.preview.emergentagent.com | — | — | — |
+| App URL | https://fetch-build-2--4vbg6x1d.preview.emergentagent.com | — | — | — |
 | Settings wizard | `/restaurant-settings` | — | — | Direct URL |
 | Printer Agent config | Settings → All Settings → Printers tile | — | — | Requires localStorage='agent' |
 

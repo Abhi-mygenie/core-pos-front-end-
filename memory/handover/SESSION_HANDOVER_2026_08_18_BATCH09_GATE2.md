@@ -3,7 +3,7 @@
 **Written by:** Planning agent (Gate 2 session)
 **For:** Next Planning/Implementation agent picking up BATCH-09
 **Status:** PAUSED — Team discussion required before proceeding
-**Mockup URL:** https://core-pos-deploy-10.preview.emergentagent.com/batch09-design-approval.html
+**Mockup URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com/batch09-design-approval.html
 
 ---
 
@@ -264,7 +264,7 @@ All 7 printer-related endpoints — none are currently built in the frontend.
 ## 7. Design Mockup Status
 
 **File:** `/app/frontend/public/batch09-design-approval.html`
-**URL:** `https://core-pos-deploy-10.preview.emergentagent.com/batch09-design-approval.html`
+**URL:** `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com/batch09-design-approval.html`
 
 | Screen | Status | Pending |
 |---|---|---|

@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used:** PLANNING (Gate 2 + Gate 3) → IMPLEMENTATION (Gate 5A)
-**App URL:** https://pos-front-5oct.preview.emergentagent.com
+**App URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` · 0 new warnings
 
@@ -136,7 +136,7 @@ webpack: `compiled successfully` · 0 new warnings · EXIT GATE 5/5 PASS
 
 | Item | Value |
 |------|-------|
-| App URL | `https://pos-front-5oct.preview.emergentagent.com` |
+| App URL | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Socket | `https://presocket.mygenie.online` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |

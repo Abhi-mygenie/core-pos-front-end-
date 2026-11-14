@@ -38,3 +38,7 @@ Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-po
 - P0: Supply real REACT_APP_CRM_API_KEYS and REACT_APP_GOOGLE_MAPS_KEY values
 - P1: Verify login flow against preprod API
 - P2: Test socket connections to presocket.mygenie.online
+
+## 2026-11-14 — Rebuild Session
+- frontend/.env and backend/.env recreated (were missing); yarn install + pip install done
+- All services RUNNING; webpack compiled (lint warnings only); login page renders on preview

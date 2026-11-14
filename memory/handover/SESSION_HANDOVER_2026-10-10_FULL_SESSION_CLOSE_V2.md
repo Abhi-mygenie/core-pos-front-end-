@@ -150,7 +150,7 @@ Two new bugs discovered after BUG-533 (ExtendStayForm enrich+discount/collect-no
 | Backend | RUNNING port 8001 |
 | MongoDB | RUNNING |
 
-**App URL:** `https://genie-pos-preview.preview.emergentagent.com`
+**App URL:** `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
 
 ---
 

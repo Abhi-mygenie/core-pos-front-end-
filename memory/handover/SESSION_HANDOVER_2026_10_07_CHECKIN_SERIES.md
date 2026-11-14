@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used:** DEPLOYMENT → PLANNING (Gate 2+3 BUG-505) → IMPLEMENTATION (BUG-505) → INVESTIGATION → PLANNING (Gate 2+3 BUG-506+507) → IMPLEMENTATION (BUG-506+507) → INVESTIGATION → PLANNING (Gate 2+3 BUG-506-REV+508) → IMPLEMENTATION (BUG-506-REV+508)
-**App URL:** https://pos-front-5oct.preview.emergentagent.com
+**App URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` · 0 warnings
 
@@ -154,7 +154,7 @@ For the combined QA sweep of the check-in discount series:
 
 | Item | Value |
 |------|-------|
-| App URL | `https://pos-front-5oct.preview.emergentagent.com` |
+| App URL | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

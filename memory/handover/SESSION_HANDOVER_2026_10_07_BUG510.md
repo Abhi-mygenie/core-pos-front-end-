@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Role:** INVESTIGATION → IMPLEMENTATION (direct fix, pre-Gate-2)
-**App URL:** https://core-pos-preview-19.preview.emergentagent.com
+**App URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 **webpack:** compiled successfully · 0 new warnings
 
 ---
@@ -78,7 +78,7 @@ The investigation task requested is complete. Ready to proceed:
 
 | Item | Value |
 |------|-------|
-| App URL | `https://core-pos-preview-19.preview.emergentagent.com` |
+| App URL | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Branch | `5oct-1` |

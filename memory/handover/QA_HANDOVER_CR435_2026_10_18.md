@@ -63,5 +63,5 @@ EXIT GATE: ALL 5 PASSED
 
 - Any restaurant account works (change is UI navigation only)
 - Test account: `owner@hyatt.com / Qplazm@10`
-- URL: `https://pos-frontend-app-6.preview.emergentagent.com`
+- URL: `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
 - Inventory pages: `/inventory-dashboard`, `/inventory-current-stock`, `/inventory-audit`

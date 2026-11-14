@@ -220,7 +220,7 @@ Lines 830–852 (inside `handlePrintBillFromAudit`, inside `try` block)
 | T4 | Orders (Beta) → Reprint on a cancelled order (f_order_status ≠ 6) | Button does not appear | MINOR |
 
 ### Environment
-- URL: https://react-app-deploy-8.preview.emergentagent.com
+- URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
 - Account: owner@ruby.com / *** (see test_credentials.md)
 - Restaurant: uat Ruby (id 672)
 - Test order: restaurant_order_id 000301, internal order_id 1232186

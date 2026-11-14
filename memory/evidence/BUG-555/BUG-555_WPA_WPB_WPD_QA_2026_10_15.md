@@ -1,7 +1,7 @@
 # BUG-555 WP-A/B/D Comprehensive QA Report
 **Date:** 2026-10-15  
 **Tested by:** T1 Testing Agent (Iteration 6)  
-**App:** https://pos-frontend-app-4.preview.emergentagent.com  
+**App:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com  
 **Login:** owner@cafe103.com  
 **Viewports:** V1=893×533, V2=1006×600, V3=533×893 (portrait), V4=800×500, V5=1024×768, V6=1920×1080
 

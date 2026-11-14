@@ -172,7 +172,7 @@
 **Prior:** 2026-09-08 — **AUDIT TRACK: INTAKE complete.** 6 active audit CRs registered (CR-368/369/370/371/372-A/372-B). All D1–D6 decisions locked. `control/PUBLIC_ROUTES.md` created. `control/AGENT_PROMPT_GAP_ANALYSIS_v0.8.md` §5 decisions section added. registry.json → 625 items. Source: `handover/SESSION_HANDOVER_2026_09_08_AUDIT_INTAKE.md`.
 **Prior:** 2026-09-06 — **INVESTIGATION: CR-363/364/366 API impact analysis** (`INV_CR363_CR364_CR366_API_IMPACT_ANALYSIS.md`). CR-363 🟡 partial (no no-show field → OG-PMS-015), CR-364 🟡 partial (`pos/room-payment` 403 → OG-PMS-014), CR-366 🟢 mostly unblocked. v1 endpoints 404 → v2 live (OG-PMS-016). Also delivered `frontend/public/MyGenie_PMS_Screen_Reference.pdf` (14 pp, landscape, dummy data, no AIOSELL refs). **Next: owner picks Gate 2 order; backend ruling on OG-PMS-014.**
 **Prior:** 2026-09-04 — CR-358-P4 GATE 3 — Implementation Plan WRITTEN (`plans/CR-358-P4_IMPLEMENTATION_PLAN.md`) per PLANNING agent (ALPHA v0.7). Local `/app/frontend/src` re-synced to `origin/PMS1` @ `0c3d3c0` (9 drifted P3/BUG-380 files; git remote was missing). G3 re-probes unchanged. **Next: owner Gate 4 GO + SC-P4-01 ack → IMPLEMENTATION.**
-**Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://pos-front-pull.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
+**Deployment Reconciliation:** 2026-06-11 — branch `main` @ `1f05d05`; preview URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com (env restored from ENV_REGISTRY; yarn install fixed incomplete node_modules; webpack compiles clean)
 
 ---
 
@@ -192,7 +192,7 @@
 | Field | Value |
 |---|---|
 | Branch | `pms8sep` (working copy — sync via Save to GitHub after each coding session) |
-| Preview URL | https://pos-front-staging-1.preview.emergentagent.com |
+| Preview URL | https://fetch-build-2--4vbg6x1d.preview.emergentagent.com |
 | Last Deploy | 2026-09-08 (fresh pod — repo clone + npm install + env configured) |
 | Source of truth | `pms8sep` branch. Pod = working copy; sync via Save to GitHub after each coding session. |
 | Node.js | v20.x |
