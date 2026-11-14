@@ -36,3 +36,10 @@ Status: DRAFT — not yet written to registry. Scope: P0 only.
 | CR-524 | Duration in minutes; punch time = when item was added. |
 
 Still not answered: CR-506, CR-511, 505-03.
+
+## Round 3 answers (2026-11-14)
+| Q | Answer |
+|---|---|
+| BUG-675 | Screenshot received. "definition pending" is gone; highlighted part = Cash Collected card subtitle "Total sale: ₹2,015". Code: SettlementPanel.jsx L249, SettlementPage.jsx L224 (SettlementMockup.jsx L181 is being deleted under CR-372-B). BUG-629 was P2 (registry). Pending owner confirm: remove subtitle vs replace. |
+| CR-506 | → P1, take later. |
+| CR-511 | → P1, take later. |
