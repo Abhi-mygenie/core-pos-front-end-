@@ -42,3 +42,27 @@ Owner rule: only P0 items discussed now; P1/P2 parked.
 | 536-04 | One CR. |
 | BUG-607 | If GST enabled, tax must be at item/category level per restaurant; backend work (today restaurant-level setting). Assign Gyan. |
 | CR-394 | "Always has to be exclusive" (screenshot referenced — NOT received) — re-asked, conflicts with CR-394 inclusive request. |
+
+## Round 2 answers (2026-11-14)
+| Q | Answer |
+|---|---|
+| 671-03 | Backend handles already-paid amount when bill made unpaid. |
+| 672-04 | Credit (no TAB option in Collect Bill). |
+| 672-03 | No extra right — prepaid→credit is done by choosing Credit payment method in Collect Bill. |
+| 514-04 | Owner: question not clear — re-asked. |
+| 514-05 | Decide at impact. |
+| 522-01 | Free-typed %. |
+| 526-07 | Backend handles credit/money side. |
+| 526-08 | New separate unpaid-reasons list from backend. |
+| 526-09 | Reason required on every make-unpaid, everywhere. |
+| 526-10 | Order Report (Audit) and Order Beta are different screens — button in Audit, Order Beta and Credit Management. |
+| 526-11 | Reason-on-unpaid = its own new CR. |
+| 536-05 | Owner asked for detailed re-explanation — re-asked. |
+| 536-06 | Drop "Prana" from title. |
+| 607-04 | POS already has the key — detail at impact. |
+| CR-394 | Not sure — discuss at impact. |
+| B-client | ALL. |
+| B-assign | Yes — Abhishek FE, waiting on Gyan; BUG-607 → Gyan. |
+
+Code note (536): Collect Payment today has "Credit Customer Details" (name + phone, shown only for Credit) and a separate "B2B Invoice (Optional)" section (GST Number + GST Registered Name, shown for all methods) — CollectPaymentPanel.jsx L3292-3404. No address or UPI ID fields exist.
+
