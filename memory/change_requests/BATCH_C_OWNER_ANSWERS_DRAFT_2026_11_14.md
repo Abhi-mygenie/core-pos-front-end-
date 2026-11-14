@@ -19,4 +19,20 @@ Status: DRAFT — not yet written to registry. Scope: P0 only.
 | C-client | ALL |
 | C-assign | Yes — Abhishek FE, waiting on Gyan; Gyan keeps BUG-605 (merged), CR-497, CR-138, BUG-192. |
 
-Not answered (re-asked): CR-504, 505, 506, 507, 508, 509, 510, 511, 532, 528, 524; 503-02/03.
+## Round 2 answers (2026-11-14)
+| Q | Answer |
+|---|---|
+| BUG-675 | Screenshot referenced again — still NOT received. |
+| 503-02 | Already behaves by existing rules (moves after collection). |
+| 503-03 | Yes — use CR-515 rights. |
+| CR-504 | → P1 |
+| CR-505 | 505-01 a, 505-02 a — owner believes already done. Code check: BUG-645 (QA PASS 2026-11-08) already gives Order Beta + Audit: split legs in Payment dropdown, partial orders shown under any matching mode with leg amount "(of ₹full)", day/summary totals sum leg amounts only. → propose CLOSE as covered by BUG-645. |
+| CR-507 | → P1 |
+| CR-508 | → P1 |
+| CR-509 | → P1 |
+| CR-510 | Owner: already done. Code check: OrderDetailSheet.jsx L337-395 renders variations + add-ons with prices for every item; BUG-601 (aggregator variations dropped) is GATE_5B_QA_PASS. → propose CLOSE (verify on one Swiggy/Zomato order). |
+| CR-532 | → P1 |
+| CR-528 | Goes in the Audit report; rest at impact. |
+| CR-524 | Duration in minutes; punch time = when item was added. |
+
+Still not answered: CR-506, CR-511, 505-03.
