@@ -1,60 +1,74 @@
-# MyGenie POS Frontend — Deployment Record
+# MyGenie POS — PRD
 
-## Original Problem Statement
-Deploy the existing React frontend repo (https://github.com/Abhi-mygenie/core-pos-front-end-.git, main branch)
-directly into `/app` and run it as-is with no code edits.
+## Product
+Point-of-Sale web application (React + FastAPI + MongoDB) for restaurant management.
 
-## Architecture
-- **Frontend**: React (CRA + CRACO) running on port 3000 via supervisor (`yarn start`)
-- **Backend**: FastAPI placeholder on port 8001 (platform template, unused by this app)
-- **Package Manager**: Yarn (`.yarnrc` → `ignore-engines true`)
-- **Build Tool**: CRACO (Create React App Configuration Override)
-- **Source**: `frontend/` subdirectory inside the GitHub repo
+## Repository
+`https://github.com/Abhi-mygenie/core-pos-front-end-.git` · branch `main`
 
-## What's Been Implemented
+---
 
-### 2026-11-14 — Re-sync from new remote push (commit 5f40a4c2)
-- Remote branch checked: `main` @ `5f40a4c2` ("Auto-generated changes")
-- Fresh clone to `/root/pos-repo-new` (persistent, not /tmp)
-- Repo's `frontend/` rsync'd into `/app/frontend/` — node_modules and .env excluded
-- `/app/memory/` fully replaced with remote memory folder (change_requests/, control/, design_briefs/, backend_briefs/, etc. — hundreds of files)
-- Platform files preserved throughout: `.emergent/`, `backend/`, supervisor configs
-- `yarn install` re-run — lockfile saved, all deps in sync
-- Supervisor frontend restarted; webpack compiled with 1 lint warning only
-- App confirmed live on port 3000 — MyGenie login page visible
+## Current Status (2026-11-14)
 
-### 2026-11-14 — Initial deploy
-- Repo cloned, frontend rsync'd, full .env written, yarn install, supervisor started
+### Batch A — Cancellation, Complimentary & Permissions (13 items)
+- **Gate 1 Intake:** CLOSED
+- **Gate 2 Impact Analysis:** CLOSED 2026-11-14 (rounds R1–R12)
+- **Gate 2.5 Design Approval:** CLOSED 2026-11-14 (M1–M10 all approved)
+- **Gate 3 Implementation Plan:** NOT STARTED
+- **Gate 4 GO:** Pending (owner, after Gate 3)
+- Backend briefs sent (Gyan BA-01..22, Parth B-495-1..7). Reply not received.
+- Handover: `handover/HANDOVER_BATCH_A_GATE3_IMPLEMENTATION_AGENT.md`
 
-## Environment Variables (frontend/.env)
-- `REACT_APP_BACKEND_URL` — platform preview URL (platform-managed, do not remove)
-- `WDS_SOCKET_PORT=443`
-- `ENABLE_HEALTH_CHECK=false`
-- `REACT_APP_FIREBASE_API_KEY` — set via secrets secure card
-- `REACT_APP_FIREBASE_VAPID_KEY` — set via secrets secure card
-- `REACT_APP_GOOGLE_MAPS_KEY` — set via secrets secure card
-- `REACT_APP_API_BASE_URL=https://preprod.mygenie.online/`
-- `REACT_APP_SOCKET_URL=https://presocket.mygenie.online`
-- `REACT_APP_FIREBASE_AUTH_DOMAIN=mygenie-restaurant.firebaseapp.com`
-- `REACT_APP_FIREBASE_PROJECT_ID=mygenie-restaurant`
-- `REACT_APP_FIREBASE_STORAGE_BUCKET=mygenie-restaurant.firebasestorage.app`
-- `REACT_APP_FIREBASE_MESSAGING_SENDER_ID=969625631640`
-- `REACT_APP_FIREBASE_APP_ID=1:969625631640:web:2f2a2987f740b6fc8e09ed`
-- `REACT_APP_FIREBASE_MEASUREMENT_ID=G-WFK75QN54E`
-- `REACT_APP_CRM_BASE_URL=https://crm.mygenie.online/api`
-- `REACT_APP_CRM_API_KEYS` — NOT YET SET (CRM features pending)
-- `CORS_ORIGINS=*`
-- `REACT_APP_SHOW_AUDIT_TAB=true`
+### Batch B — Payments, Credit & GST (9 P0 items)
+- **Gate 1 Intake:** CLOSED (P0 only)
+- **Gate 2:** NOT STARTED
+- Handover: `handover/HANDOVER_BATCH_BCD_IMPACT_ANALYSIS_AGENT.md`
 
-## Re-sync Procedure (for future remote pushes)
-1. `git clone https://github.com/Abhi-mygenie/core-pos-front-end-.git /root/pos-repo-new`
-2. `rsync -av --delete --exclude=node_modules --exclude=.env /root/pos-repo-new/frontend/ /app/frontend/`
-3. `rsync -av --delete /root/pos-repo-new/memory/ /app/memory/` then restore PRD.md on top
-4. `cd /app/frontend && yarn install`
-5. `sudo supervisorctl restart frontend`
+### Batch C — Order Beta Report & Reports (4 P0 items + 2 investigations)
+- **Gate 1 Intake:** CLOSED (P0 only)
+- **Gate 2:** NOT STARTED
+- Handover: `handover/HANDOVER_BATCH_BCD_IMPACT_ANALYSIS_AGENT.md`
 
-## Prioritized Backlog
-- **P0**: Supply `REACT_APP_CRM_API_KEYS` via secrets secure card
-- **P1**: Verify login flow against preprod API with real credentials
-- **P2**: Test socket connections to presocket.mygenie.online
-- **P3**: Switch `REACT_APP_API_BASE_URL` to production URL when ready to go live
+### Batch D — Dashboard, Order Entry & Order Cards (6 P0 items)
+- **Gate 1 Intake:** CLOSED (P0 only)
+- **Gate 2:** NOT STARTED
+- Handover: `handover/HANDOVER_BATCH_BCD_IMPACT_ANALYSIS_AGENT.md`
+
+### Batches E–J
+- **Gate 0:** Intake questions not asked yet. Briefs in `change_requests/INTAKE_REQUIREMENT_BRIEFS_2026_11_14.md`.
+
+---
+
+## What was done this session (2026-11-14)
+
+1. Synced local `/app` with remote `main` branch (commit 9b1fc198), preserving `.env` and `.emergent`.
+2. Imported Batch A IA docs from v1 zip (impact, evidence, handover, change_requests).
+3. Imported v2 zip (added backend briefs + updated summary/decisions).
+4. Imported planning merge kit (Gate 2.5 mockups, Gate 3 handover, Gate 2 closed handover).
+5. Updated CR_REGISTRY.md: Batch A summary table at top, all 13 items → GATE_2_IA_CLOSED, priorities (CR-445 P1, CR-372-B P0, CR-540 P1), CR-496 → SUBSUMED into CR-443.
+6. Updated registry.json: all 13 items synced with CR_REGISTRY.md.
+7. Deleted nested duplicate `evidence/BATCH-A-IA/BATCH-A-IA/` (held unmasked PII).
+8. Wrote 2 handover docs for next agents (Batch A Gate 3 + Batch B/C/D IA).
+
+---
+
+## Key files
+
+| Purpose | Path |
+|---|---|
+| Batch A summary | `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md` |
+| Batch A decisions | `change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md` |
+| Backend brief (Gyan) | `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` |
+| Backend brief (Parth) | `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` |
+| Backend tracker | `backend_briefs/BACKEND_BRIEF_TRACKER.html` |
+| Design mockups | `design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html` |
+| Gate 3 handover (detailed) | `handover/SESSION_HANDOVER_2026_11_14_BATCH_A_GATE3_PLANNING.md` |
+| Gate 2 close summary | `handover/SESSION_HANDOVER_2026_11_14_BATCH_A_GATE2_CLOSED.md` |
+| Registry (markdown) | `control/CR_REGISTRY.md` |
+| Registry (JSON) | `control/registry.json` |
+| All intake briefs | `change_requests/INTAKE_REQUIREMENT_BRIEFS_2026_11_14.md` |
+| Batch B/C/D decisions | `change_requests/BATCH_{B,C,D}_OWNER_DECISIONS_2026_11_14.md` |
+
+---
+
+## Zero code changes this session. All work was documentation merge and registry sync.
