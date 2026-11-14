@@ -1,7 +1,9 @@
 # BATCH-A — Impact Analysis Summary (Gate 2) — 2026-11-14
 
-Role: PLANNING (Gate 2). **GATE 2 CLOSED 2026-11-14.** All 13 items analysed, all ODs answered (rounds 1–10), backend briefs written.
-Scope: all 13 items in one go (owner choice). Zero source code changes. Gate 3 awaiting backend reply.
+> **STATUS: GATE 2 CLOSED 2026-11-14 (owner instruction "close IA").** All owner questions answered (R1–R12). Briefs: `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan), `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth). Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html`. Registries synced. Next: backend reply → Gate 3.
+
+Role: PLANNING (Gate 2 only). Owner GO: "planning role for impact analysis of batch A, do every probe, don't assume anything".
+Scope: all 13 items in one go (owner choice). Zero source code changes. Gate 3 NOT started.
 Probe account: cafe103 owner alias (RID 644). Credentials NOT stored (owner: session only). Tokens masked `***` in all evidence.
 Write probes owner-approved on test orders only: #021537 (id 1578756) and #021538 (id 1578757), both cancelled (clean).
 
@@ -50,7 +52,7 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | 6 | CR-540 | CR-540_IMPACT_ANALYSIS.md | HIGH | Scope OD open |
 | 6 | CR-372-B | CR-372-B_IMPACT_ANALYSIS.md | LOW | NO |
 
-## Owner decisions log (rounds 1–10, 2026-11-14)
+## Owner decisions log (rounds 1–4, 2026-11-14)
 | OD | Decision |
 |---|---|
 | Scope | All 13 items in one go; write probes allowed on test orders; credentials session-only |
@@ -78,6 +80,9 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | CR-495 brief (R9) | Owner: non-PMS outlets have no meal package / guest data → CR-495 backend brief WRITTEN: `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth) |
 | OD-515-A (R9, locked) | Owner OK with item cancel on `order_cancel`. Owner believes it is already gated so; CODE FACT: OrderEntry.jsx L353 `canCancelItem = hasPermission('food')` → CartPanel.jsx L68 hides item cancel button. Gate 3 = one-line gate change to `order_cancel` |
 | CR-495 (R10) | Non-PMS AND PMS together; half-board second meal + meal-slot rule = discuss with backend (OPEN, tracked as BLOCKED in tracker) |
+| Priorities (R11) | CR-071 = P1 · CR-445 = P1 · CR-372-B = P0 · CR-540 = P1. Both registries synced, Gate 2 CLOSED for all 13 items |
+| R12 | BA-17/BA-18 (CR-445) marked P1 in brief + tracker. Owner: close IA → GATE 2 CLOSED |
+| Gate 2.5 | Design mockups `design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html` M1–M10 ALL APPROVED 2026-11-14. Item comp reason REQUIRED; alert switch on new sidebar link Notifications under Settings. Next: Gate 3 plans G1–G6 |
 | OD-529-P (R8) | Owner meant CR-529: ALL OTP-related work = P1 (phase 2). CR_REGISTRY.md row updated P0→P1 (registry.json already P1). PIN (CR-494) stays P0. OD-529-A (OTP channel) deferred with P1 |
 | OD-372B-B (R8, info) | `/restaurant-picker` (CR-166) = screen shown after an ADMIN login (LoginPage.jsx L90) to choose which restaurant to open; also reached from Sidebar switch (L487, L901). Route App.js L160 has no ProtectedRoute; page uses auth token helpers. Owner decision (R8): KEEP AS IT IS (no login guard added) |
 | OD-495-B (R6) | Half/full board: SEPARATE limit per meal (backend needs per-meal limit keys + per-meal tracking) |
@@ -87,30 +92,20 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | OD-443-B (R7) | Delivery via Firebase (FCM) token, same as existing notifications (token sent at login: LoginPage.jsx L54-83 → authTransform.js L52 `fcm_token`) |
 | OD-372B-A (R7) | `/local-printer-setup` must require login. Code check: route App.js L251 has NO ProtectedRoute; same `LocalPrinterSetupView` also used inside Settings (ListFormViews.jsx L189-192, printerType 'direct') → in use there; standalone route has no in-app link found (direct URL only). Live-device usage NOT verified |
 
-## Owner decisions — all rounds answered
+## Pending owner questions (next IA agent asks these, 5 per round)
 Round 5: ANSWERED 2026-11-14 (see decisions log).
 Round 6: ANSWERED 2026-11-14 (items 6–10 resolved, see log).
 Round 7: ANSWERED 2026-11-14 (OD-492-B, 495-C, 443-A, 443-B, 372B-A).
 Round 8: ANSWERED 2026-11-14 (OD-372B-B keep, CR-540 P1, CR-529/all OTP P1).
-Round 9: ANSWERED 2026-11-14 (CR-495 backend brief written).
-Round 10: ANSWERED 2026-11-14 (owner GO → Batch A backend brief written, Gate 2 closed).
-**GATE 2 CLOSED 2026-11-14.** Backend briefs: `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan, BA-01..22 + R-1..3) + `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth). Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html`.
-Still open (not blocking Gate 2 — deferred to Gate 3 / backend discussion):
+Remaining before brief: CR-515 reprint right P1 confirm (already recorded P1 in R1–4); CR-529 + CR-540 IA docs stay dependency-level (P1). Missing-backend list shown to owner 2026-11-14. CR-495 brief written (R9). Owner GO (R10) → `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan, BA-01..22 + R-1..3) WRITTEN. Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html` (batch-wise status).
+**GATE 2 CLOSED 2026-11-14** — owner confirmed close; CR_REGISTRY.md updated (Batch A table at top + 13 rows) (open discussion items: CR-495 half-board meal + meal-slot rule, owner + backend). Next: Gate 3 after backend reply.
+Former items 6–16: ALL ANSWERED R6–R8 (see decisions log).
+Item 17 (Gyan): IN BRIEF — OD-492-C = BA-08, B-674-3 = BA-03; awaiting backend reply.
+Still open (not blocking Gate 2):
 - CR-495 half-board second meal (lunch/dinner) — owner + backend discussion.
 - CR-495 meal-slot rule (time window vs cashier) — owner + backend discussion.
 - OD-540-02 which CR-540 ideas in phase 1 — deferred with CR-540 (P1).
 - OD-529-A OTP channel — deferred with CR-529 (P1, phase 2).
-- OD-492-C restaurant `complementary` flag meaning — in brief as BA-08, awaiting Gyan.
-- B-674-3 line reason overwrite quirk — in brief as BA-03, awaiting Gyan.
-
-## Priority updates (owner 2026-11-14)
-| Item | Priority |
-|---|---|
-| CR-071 | P1 |
-| CR-445 (+CR-058) | P1 |
-| CR-372-B | P0 |
-| CR-540 | P1 |
-| CR-529 | P1 (phase 2 OTP) |
 
 ## Backend gaps
 Confirmed by owner 2026-11-14 and written into `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` and `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`.

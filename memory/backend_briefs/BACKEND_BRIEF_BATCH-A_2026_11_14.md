@@ -33,11 +33,11 @@ Owner rule: all changes ADDITIVE — existing behaviour must keep working (excep
 | BA-15 | APIs: (a) read PIN config/thresholds/limits for POS, (b) verify PIN for an action (never return PIN value), (c) read current user's used counters, (d) reject protected actions without a valid PIN when required. | — |
 | BA-16 | Phase 2 (NOT now): OTP for all PIN actions (CR-529, P1). | Owner R8. |
 
-## 4. Whole-order complimentary (CR-445 + CR-058)
+## 4. Whole-order complimentary (CR-445 + CR-058) — **P1** (owner 2026-11-14; can follow after P0 asks)
 | ID | Ask | Detail |
 |---|---|---|
-| BA-17 | Whole-order comp saved as the existing 100% "Complementary" discount preset, with required reason; counted in Discount report comp section. | `restaurant_discount_type[0]` (file 02). |
-| BA-18 | Rules: `complementary_food` right required, NO PIN; normal orders only — reject on room and credit (TAB) orders. | OD-445-B / OD-445-C. |
+| BA-17 (P1) | Whole-order comp saved as the existing 100% "Complementary" discount preset, with required reason; counted in Discount report comp section. | `restaurant_discount_type[0]` (file 02). |
+| BA-18 (P1) | Rules: `complementary_food` right required, NO PIN; normal orders only — reject on room and credit (TAB) orders. | OD-445-B / OD-445-C. |
 
 ## 5. Alerts (CR-443 + CR-496)
 | ID | Ask | Detail |
@@ -57,6 +57,7 @@ CR-372-B (delete `/settlement/preview`, guard `/local-printer-setup`), CR-071 (F
 
 ## Out of scope (P1 / later)
 CR-529 OTP, CR-540 revenue-leakage controls, reprint right, separate item-cancel right.
+P1 but still in this brief: BA-17, BA-18 (CR-445) — deliver after the P0 asks.
 
 ## Please reply with
 Field names / endpoints per BA-ID, ETA, and anything not feasible. Reply file: `backend_replies/BACKEND_REPLY_BATCH-A_<date>.md`.

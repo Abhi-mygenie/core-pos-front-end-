@@ -1,5 +1,7 @@
 # CR-445 (+CR-058) — Whole-Order Complimentary in Payment Methods — Impact Analysis (Gate 2) — 2026-11-14
 
+> **GATE 2 CLOSED 2026-11-14.** Priority P1. Decisions: OD-445-A = 100% discount preset · OD-445-B = right only, no PIN · OD-445-C = normal orders only. Backend: BA-17, BA-18 (P1) in `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md`.
+
 Code Reality: PARTIAL — item comp exists (CPP checkbox, MarkCompModal, `is_complementary`, `complementary_reason`). Order-level comp today = "Complementary 100%" discount preset (profile `restaurant_discount_type`, CPP L1525-1530). No comp entry in payment-method rail.
 Risk: CRITICAL (bill total, settlement, reports; R6). Backend-blocked: PARTIAL (contract).
 

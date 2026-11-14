@@ -1,5 +1,7 @@
 # CR-372-B — Delete /settlement/preview + Unguarded Routes — Impact Analysis (Gate 2) — 2026-11-14
 
+> **GATE 2 CLOSED 2026-11-14.** Priority P0. Decisions: delete `/settlement/preview` · OD-372B-A = `/local-printer-setup` requires login · OD-372B-B = `/restaurant-picker` keep as is. FE only (App.js), sequence after BUG-661.
+
 Code Reality: PARTIAL (most routes guarded). Risk: LOW. File: `src/App.js` (BUG-661 open GATE_5A on App.js — sequence after).
 
 ## Owner decision (locked)
