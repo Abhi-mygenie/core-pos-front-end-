@@ -49,7 +49,7 @@ Owner rule: only P0 items discussed now; P1/P2 parked.
 | 671-03 | Backend handles already-paid amount when bill made unpaid. |
 | 672-04 | Credit (no TAB option in Collect Bill). |
 | 672-03 | No extra right — prepaid→credit is done by choosing Credit payment method in Collect Bill. |
-| 514-04 | Owner: question not clear — re-asked. |
+| 514-04 | (re-asked, answered b) Backend sets per method: show/hide AND required/optional; required → Pay locked until filled. |
 | 514-05 | Decide at impact. |
 | 522-01 | Free-typed %. |
 | 526-07 | Backend handles credit/money side. |
