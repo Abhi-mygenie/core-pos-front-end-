@@ -51,8 +51,13 @@ Role: **PLANNING** (per `control/AGENT_PROMPT_ALPHA.md` §PLANNING, Gate 2).
 - Ready status text: `GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.`
 - Not yet synced to Google Sheet (run `reports/sheets_sync.py` push only if owner asks; `TECH_TASKS_SHEET_ID` still missing for Part B).
 
-## 7. Batch B Status (for later)
-17 items: BUG-671, BUG-672, CR-514, CR-522, CR-526, CR-527, CR-536, CR-517, BUG-607, CR-394, BUG-475, BUG-118, CR-126, CR-425, CR-520, CR-438, CR-447. Questions posted, **zero answers**. Draft order: bugs (671/672/475/607) → payment panel (514/522/394) → credit (526/527/536) → wallet (520/425) → separate (517/438/447/126/118). Payment-panel items wait for Batch A PIN work.
+## 7. Batch B Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
+- Source of truth: `change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md` (answers detail in `BATCH_B_OWNER_ANSWERS_DRAFT_2026_11_14.md`). Applied via `reports/apply_batch_b_decisions.py` (already run — do not re-run).
+- **P0 ready for impact (9):** BUG-671, BUG-672, CR-514, CR-522, CR-526, CR-527, CR-536 (Prana removed from title), BUG-607 (Gyan), CR-394.
+- **New:** CR-541 (reference-box settings in POS Settings, P1), CR-542 (reason mandatory on every Make Unpaid, priority TBD).
+- **Re-prioritised:** P1 — CR-517, BUG-475, BUG-118, CR-425, CR-520 · P2 — CR-126, CR-438 · CR-447 parked.
+- **Owner still to answer:** CR-542 priority; merge CR-522 phase 2 into CR-541?; confirm impact order 671/672 → 526/542 → 514 then 522 (after Batch A PIN) → 536/527 → 607/394. Items deferred to impact: 514-05, 527, 536-05 (entry point / UPI owner), 607-04, CR-394 inclusive vs exclusive.
+- Owner said "stay in intake" — next intake batch is **C (Order Beta report)**, lines 1049-1823 of the briefs file, P0 only.
 
 ## 8. Owner Working Style
 - "Do not assume" — ask every open point; owner answers in short form (`A1 a, A2 b`).

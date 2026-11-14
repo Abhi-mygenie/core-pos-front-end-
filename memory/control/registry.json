@@ -12151,7 +12151,7 @@
       "title": "Nth-item coupon / BOGO coupon not working",
       "type": "bug",
       "sprint": "pos_4_0",
-      "priority": "P0",
+      "priority": "P1",
       "status": "INTAKE",
       "area": "Payments / Coupons / Credit",
       "completeness": "1/7",
@@ -12159,7 +12159,17 @@
       "intake_doc": "/app/memory/memory/bugs/BUG_118_NTH_ITEM_BOGO_COUPON_INTAKE.md",
       "sprint_key": "pos_5_0",
       "severity": "P0",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "notes": "[2026-11-14 owner decisions] Moved to P1. || ",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-119",
@@ -19235,15 +19245,24 @@
       "id": "CR-126",
       "title": "Backdated Billing Date — User-selectable billing date on order punch (backend-config gated)",
       "type": "CR",
-      "priority": "P3",
+      "priority": "P2",
       "risk": "MEDIUM",
       "status": "INTAKE",
       "sprint_key": "pos_5_1",
       "files": [],
-      "notes": "INTAKE ONLY. User can set billing date (incl. backdate) during order punch. Backend configuration controls feature availability. No implementation yet.",
+      "notes": "[2026-11-14 owner decisions] Moved to P2. || INTAKE ONLY. User can set billing date (incl. backdate) during order punch. Backend configuration controls feature availability. No implementation yet.",
       "area": "Payments / Coupons / Credit",
       "severity": "P3",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-127",
@@ -29910,9 +29929,18 @@
       "area": "Payments / Coupons / Credit",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Prepaid orders auto-settled before user can see them. Likely a backend auto-settlement config or socket-triggered early settlement. Need to check auto_settle_prepaid setting and socket flow.",
-      "priority": "P0",
-      "assignee": "Gyan"
+      "notes": "[2026-11-14 owner decisions] Moved to P1. || Prepaid orders auto-settled before user can see them. Likely a backend auto-settlement config or socket-triggered early settlement. Need to check auto_settle_prepaid setting and socket flow.",
+      "priority": "P1",
+      "assignee": "Gyan",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-476",
@@ -30091,15 +30119,25 @@
       "type": "CR",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "sprint_key": "oct_cr_batch",
       "area": "Payments / Coupons / Credit",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "Open/custom items need backward (inclusive) GST calculation — extract GST from entered price instead of adding on top.",
+      "notes": "[2026-11-14 owner decisions] Inclusive vs exclusive unclear — discuss at impact. || Open/custom items need backward (inclusive) GST calculation — extract GST from entered price instead of adding on top.",
       "blocked_by": "BACKEND",
       "assignee": "Gyan",
-      "priority": "P0"
+      "priority": "P0",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-395",
@@ -32354,8 +32392,18 @@
       "registered": "2026-10-15",
       "registered_by": "INTAKE agent",
       "risk": "MEDIUM",
-      "priority": "P3",
-      "assignee": "Abhishek"
+      "priority": "P1",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "notes": "[2026-11-14 owner decisions] Moved to P1. || ",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-426",
@@ -33621,12 +33669,21 @@
       "title": "E-Invoice Upload to Govt GST Portal for B2B Customers",
       "type": "CR",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P1",
+      "priority": "P2",
       "risk": "HIGH",
       "sprint_key": "backlog",
       "area": "Billing / GST / B2B",
-      "notes": "IRN generation via IRP for B2B customers. RELATED: CR-431 (download link), CR-116 (GSTIN capture). OD-438-01: backend vs FE responsibility. OD-438-02: trigger point.",
-      "assignee": "Abhishek"
+      "notes": "[2026-11-14 owner decisions] Moved to P2. || IRN generation via IRP for B2B customers. RELATED: CR-431 (download link), CR-116 (GSTIN capture). OD-438-01: backend vs FE responsibility. OD-438-02: trigger point.",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-593",
@@ -34088,7 +34145,7 @@
       "id": "BUG-607",
       "title": "Item-Level GST Not Working in New POS",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -34109,9 +34166,18 @@
         "OD-607-03",
         "OD-607-04"
       ],
-      "notes": "from TT-027",
+      "notes": "[2026-11-14 owner decisions] Item/category-level GST when GST enabled — backend. POS key exists; FE part at impact. || from TT-027",
       "assignee": "Gyan",
-      "priority": "P0"
+      "priority": "P0",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-448",
@@ -36935,7 +37001,7 @@
       "id": "CR-514",
       "type": "CR",
       "title": "Payment: Optional Transaction ID / Reference Field per Payment Method",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -36943,11 +37009,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5 hotspot, financial-adjacent)",
       "intake_doc": "change_requests/01_CR-514_PAYMENT_TRANSACTION_ID_FIELD_INTAKE.md",
-      "notes": "Add optional transaction ID/reference field per payment method on CollectPaymentPanel. R5 hotspot, payment payload change.",
+      "notes": "[2026-11-14 owner decisions] Backend sets per method show/hide + required/optional; required locks Pay; one box per split part. || Add optional transaction ID/reference field per payment method on CollectPaymentPanel. R5 hotspot, payment payload change.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-515",
@@ -37028,18 +37104,27 @@
       "type": "CR",
       "title": "Advance Payment for Bulk / Scheduled Orders",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P1",
       "risk": "HIGH",
       "area": "Payments / Coupons / Credit",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/05_CR-517_ADVANCE_PAYMENT_BULK_SCHEDULED_ORDERS_INTAKE.md",
-      "notes": "Support advance payment collection for bulk/scheduled orders.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1. Idea: Advance option during payment collection. || Support advance payment collection for bulk/scheduled orders.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-518",
@@ -37118,18 +37203,27 @@
       "type": "CR",
       "title": "Wallet Configuration in New CRM",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
       "area": "CRM / Customer Intelligence",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/11_CR-520_WALLET_CONFIGURATION_NEW_CRM_INTAKE.md",
-      "notes": "Wallet configuration unavailable in New CRM. Touches CRM integration, payment flow, customer data.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1. || Wallet configuration unavailable in New CRM. Touches CRM integration, payment flow, customer data.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-669",
@@ -37171,7 +37265,7 @@
       "id": "CR-522",
       "type": "CR",
       "title": "Reconcile Amount Range Should Be Customizable Per Restaurant",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P2",
       "risk": "HIGH",
@@ -37179,11 +37273,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (settings + payment panel R5)",
       "intake_doc": "change_requests/15_CR-522_RECONCILE_AMOUNT_RANGE_CUSTOMIZABLE_INTAKE.md",
-      "notes": "±3% reconcile range hardcoded. Add restaurant-level setting. Touches CollectPaymentPanel R5.",
+      "notes": "[2026-11-14 owner decisions] Free-typed %, same both ways, outside blocked. P1 backend admin, P2 POS Settings. || ±3% reconcile range hardcoded. Add restaurant-level setting. Touches CollectPaymentPanel R5.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-523",
@@ -37271,7 +37375,7 @@
       "id": "CR-526",
       "type": "CR",
       "title": "Credit Management: Remove / Void Unpaid Order",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37279,17 +37383,27 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (financial, credit data)",
       "intake_doc": "change_requests/21_CR-526_CREDIT_REMOVE_UNPAID_ORDER_INTAKE.md",
-      "notes": "No way to clear bad debts or erroneously created credit entries. Add remove/void action on Credit Management.",
+      "notes": "[2026-11-14 owner decisions] Make-unpaid/remove button in Audit, Order Beta, Credit Mgmt; make-unpaid right; no PIN; same as existing unpaid. || No way to clear bad debts or erroneously created credit entries. Add remove/void action on Credit Management.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-527",
       "type": "CR",
       "title": "Credit Management: Filter Orders by Same Phone Number with Different Names",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37297,11 +37411,20 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/22_CR-527_CREDIT_FILTER_SAME_PHONE_DIFF_NAME_INTAKE.md",
-      "notes": "Credit list filter: same phone number showing different names. Display/filter only, no payment logic.",
+      "notes": "[2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-528",
@@ -37353,7 +37476,7 @@
       "id": "BUG-671",
       "type": "BUG",
       "title": "Unable to Mark Partial-Payment Orders as Unpaid",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37361,17 +37484,27 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/25_BUG-671_UNPAID_PARTIAL_PAYMENT_ORDER_REPORT_INTAKE.md",
-      "notes": "Partial-payment orders cannot be reversed to unpaid. Payment reversal, credit flow, partial payment state.",
+      "notes": "[2026-11-14 owner decisions] Show Unpaid for partly-paid orders; whole bill unpaid; backend handles paid amount. || Partial-payment orders cannot be reversed to unpaid. Payment reversal, credit flow, partial payment state.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-672",
       "type": "BUG",
       "title": "Prepaid Order Unable to Move to Credit",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37379,11 +37512,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/26_BUG-672_PREPAID_ORDER_UNABLE_TO_CREDIT_INTAKE.md",
-      "notes": "Prepaid orders stuck — cannot transition to credit payment. Payment status transitions, credit system.",
+      "notes": "[2026-11-14 owner decisions] Prepaid (scan/online + cashier) → Credit via Collect Bill Credit method broken. No extra right. || Prepaid orders stuck — cannot transition to credit payment. Payment status transitions, credit system.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-673",
@@ -37552,8 +37695,8 @@
     {
       "id": "CR-536",
       "type": "CR",
-      "title": "Prana Restaurant: 3 Pending Features — GST in Credit Payment, Address Field, UPI ID in Credit",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "title": "Credit / B2B: GST Number, Address and UPI ID in Credit Payment (report + print)",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch B). Next: IMPACT ANALYSIS BATCH-B.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37564,7 +37707,17 @@
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "source": "TT-050",
-      "notes": "3 features for Prana restaurant: (1) GST number field in credit/TAB payment, (2) Address field in credit, (3) UPI ID in credit. Note: BUG-668 covers UPI ID in printer agent (separate issue). These 3 may be split into separate CRs at Gate 2."
+      "notes": "[2026-11-14 owner decisions] All restaurants, one CR, Prana removed from title. Entry point + UPI owner decided at impact. || 3 features for Prana restaurant: (1) GST number field in credit/TAB payment, (2) Address field in credit, (3) UPI ID in credit. Note: BUG-668 covers UPI ID in printer agent (separate issue). These 3 may be split into separate CRs at Gate 2.",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch B owner decisions",
+          "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-537",
@@ -37645,19 +37798,74 @@
           "type": "intake"
         }
       ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-541",
+      "sprint_key": "TBD",
+      "title": "Payment Reference-Box Settings in POS Settings",
+      "status": "INTAKE",
+      "priority": "P1",
+      "risk": "MEDIUM",
+      "area": "Payments / Coupons / Credit",
+      "files": "TBD",
+      "notes": "From CR-514: per-method reference box show/required config editable in POS Settings.",
+      "blocked_on": "Gyan — backend",
+      "related": [
+        "CR-514",
+        "CR-522"
+      ],
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-541_PAYMENT_REFERENCE_SETTINGS_POS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
+    },
+    {
+      "type": "CR",
+      "id": "CR-542",
+      "sprint_key": "TBD",
+      "title": "Reason Mandatory on Every Make Unpaid",
+      "status": "INTAKE",
+      "priority": "TBD",
+      "risk": "HIGH",
+      "area": "Payments / Coupons / Credit",
+      "files": "TBD",
+      "notes": "Every make-unpaid requires reason from new backend unpaid-reasons list, everywhere.",
+      "blocked_on": "Gyan — backend",
+      "related": [
+        "CR-526",
+        "CR-515",
+        "BUG-671"
+      ],
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-B-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-542_UNPAID_REASON_MANDATORY_INTAKE.md",
+          "type": "intake"
+        }
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-11-14",
-    "last_action": "Batch A owner decisions applied: 12 items ready for impact, CR-058→CR-445, CR-496→CR-443 merged, CR-529 P1 phase 2, CR-540 registered.",
+    "last_action": "Batch B owner decisions applied: 9 P0 items ready for impact, 7 re-prioritised, CR-541 + CR-542 registered.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 1096,
-    "total_items": 1096,
-    "last_session": "Intake Q&A 2026-11-14 — Batch A closed, Batch B open. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
-    "last_note": "Next: PLANNING Gate 2 (Impact Analysis) for Batch A after owner read-back + GO."
+    "total": 1098,
+    "total_items": 1098,
+    "last_session": "Intake Q&A 2026-11-14 — Batch A + Batch B (P0) closed. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
+    "last_note": "Next: Batch C intake (P0) or PLANNING Gate 2 for Batch A/B after owner GO."
   }
 }
