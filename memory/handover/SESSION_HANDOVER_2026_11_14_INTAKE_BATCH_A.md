@@ -51,33 +51,8 @@ Role: **PLANNING** (per `control/AGENT_PROMPT_ALPHA.md` §PLANNING, Gate 2).
 - Ready status text: `GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.`
 - Not yet synced to Google Sheet (run `reports/sheets_sync.py` push only if owner asks; `TECH_TASKS_SHEET_ID` still missing for Part B).
 
-## 7. Batch B Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
-- Source of truth: `change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md` (answers detail in `BATCH_B_OWNER_ANSWERS_DRAFT_2026_11_14.md`). Applied via `reports/apply_batch_b_decisions.py` (already run — do not re-run).
-- **P0 ready for impact (9):** BUG-671, BUG-672, CR-514, CR-522, CR-526, CR-527, CR-536 (Prana removed from title), BUG-607 (Gyan), CR-394.
-- **New:** CR-541 (reference-box settings in POS Settings, P1), CR-542 (reason mandatory on every Make Unpaid, priority TBD).
-- **Re-prioritised:** P1 — CR-517, BUG-475, BUG-118, CR-425, CR-520 · P2 — CR-126, CR-438 · CR-447 parked.
-- **Owner still to answer:** CR-542 priority; merge CR-522 phase 2 into CR-541?; confirm impact order 671/672 → 526/542 → 514 then 522 (after Batch A PIN) → 536/527 → 607/394. Items deferred to impact: 514-05, 527, 536-05 (entry point / UPI owner), 607-04, CR-394 inclusive vs exclusive.
-- Owner said "stay in intake" — next intake batch is **C (Order Beta report)**, lines 1049-1823 of the briefs file, P0 only.
-
-## 7b. Batch C Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
-- Source of truth: `change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md`. Applied via `reports/apply_batch_c_decisions.py` (already run — do not re-run).
-- **P0 ready for impact (4):** CR-503 (Collect pop-up + Print Bill, CR-515 rights), CR-528 (in Audit report), CR-524 (punch time = item added, duration minutes), BUG-675 (remove "Total sale: ₹X" subtitle under Cash Collected).
-- **INVESTIGATION to validate with code (kept open by owner):** CR-505 (likely covered by BUG-645), CR-510 (variations/add-ons already rendered; check a real aggregator order).
-- **Merged:** BUG-605 → CR-526.
-- **Moved to P1:** CR-504, 506, 507, 508, 509, 511, 532, 444, 497, 537, 539, 138, BUG-192.
-- Next intake batch: **D (Dashboard, Order Entry & Order Cards)**, lines 1824-2309 of the briefs file, P0 only.
-
-## 7a. Batch A Gate 2 — Impact Analysis DRAFT (merged from parallel agent 2026-11-14)
-- Read `handover/SESSION_HANDOVER_2026_11_14_BATCH_A_GATE2_IMPACT.md` + `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`.
-- 14 impact docs in `impact/`, evidence (contact details masked) in `evidence/BATCH-A-IA/probes_2026_11_14/`. Applied via `reports/apply_batch_a_gate2_merge.py` (already run — do not re-run).
-- 11 items → `GATE_2_IMPACT_ANALYSIS — DRAFT`; CR-529, CR-540 stay INTAKE. Round 5 owner questions (1–5) asked, not answered; 6–16 not asked; backend brief not written.
-- Not pushed to GitHub (owner: merge local first).
-
-## 7c. Batch D Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
-- Source of truth: `change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md`. Applied via `reports/apply_batch_d_decisions.py` (already run — do not re-run).
-- **P0 ready for impact (6):** BUG-667 (sidebar name wrap 2 lines), BUG-669 (₹0 add-ons + variations), BUG-673 (Enter re-adds default item → selection back to search box), CR-525 (Collect Bill replaces KOT+Bill after print), CR-521 (orange background, green border — design agent picks shade), CR-523 (link customer without update).
-- **Moved to P1:** CR-518, CR-516, CR-437, CR-404. **Open:** CR-376-FU-C priority; BUG-667 screen confirmation at impact.
-- Next intake batch: **E (Scan Order & Aggregator / Sockets)**, lines 2310-2557 of the briefs file, P0 only.
+## 7. Batch B Status (for later)
+17 items: BUG-671, BUG-672, CR-514, CR-522, CR-526, CR-527, CR-536, CR-517, BUG-607, CR-394, BUG-475, BUG-118, CR-126, CR-425, CR-520, CR-438, CR-447. Questions posted, **zero answers**. Draft order: bugs (671/672/475/607) → payment panel (514/522/394) → credit (526/527/536) → wallet (520/425) → separate (517/438/447/126/118). Payment-panel items wait for Batch A PIN work.
 
 ## 8. Owner Working Style
 - "Do not assume" — ask every open point; owner answers in short form (`A1 a, A2 b`).
