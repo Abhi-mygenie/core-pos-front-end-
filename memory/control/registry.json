@@ -15194,7 +15194,7 @@
       "id": "BUG-192",
       "title": "Prep & Serve Time — Handover time showing 0 + full logic investigation",
       "type": "BUG",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "status": "GATE_1_INTAKE_COMPLETE",
       "gate": "0-1",
@@ -15203,8 +15203,17 @@
       "intake_doc": "change_requests/BUG_192_PREP_SERVE_TIME_HANDOVER_INVESTIGATION.md",
       "area": "Reports / Analytics",
       "severity": "P0",
-      "notes": "FE code correct. Shows 0/dash when backend does not populate ready_at/serve_at. Only works for restaurants using per-item KOT marking. Backend brief needed to confirm KOT timestamp population per restaurant.",
-      "assignee": "Gyan"
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || FE code correct. Shows 0/dash when backend does not populate ready_at/serve_at. Only works for restaurants using per-item KOT marking. Backend brief needed to confirm KOT timestamp population per restaurant.",
+      "assignee": "Gyan",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-193",
@@ -20063,13 +20072,18 @@
       "type": "CR",
       "title": "Dual Excel Download — Add Backend Excel Endpoint to CR-136 Screens",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "sprint_key": "oct_cr_batch",
       "artifact_refs": [
         "change_requests/CR-138_DUAL_EXCEL_DOWNLOAD_CR136_AMENDMENT_INTAKE.md",
         "investigation/INV-CR136-EXCEL_2026_08_12.md",
-        "evidence/CR-136-INV/endpoint_evidence.json"
+        "evidence/CR-136-INV/endpoint_evidence.json",
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
       ],
       "related": [
         "CR-136",
@@ -20083,8 +20097,10 @@
       ],
       "hotspot_files": false,
       "area": "Reports / Analytics",
-      "notes": "Backend aggregation IS available via fetchInsightsItems (insights-items endpoint already has variation+addon breakdown in drill.variations/addons). Fix: migrate VariationAddonMockup from order-logs FE agg to insights-items. Re-titled: migrate VariationAddon to backend aggregation.",
-      "assignee": "Gyan"
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Backend aggregation IS available via fetchInsightsItems (insights-items endpoint already has variation+addon breakdown in drill.variations/addons). Fix: migrate VariationAddonMockup from order-logs FE agg to insights-items. Re-titled: migrate VariationAddon to backend aggregation.",
+      "assignee": "Gyan",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "id": "BUG-308",
@@ -33970,7 +33986,7 @@
       "id": "BUG-605",
       "title": "Order Report Beta: Make Unpaid / Change Payment Method Buttons Not Working",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "CLOSED — MERGED INTO CR-526 (2026-11-14, owner)",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -33988,10 +34004,19 @@
         "OD-605-01",
         "OD-605-02"
       ],
-      "notes": "from TT-002 | Excel Item #3 (Unpaid Button) is a DUPLICATE of this bug.",
+      "notes": "[2026-11-14 owner decisions] Make Unpaid does nothing on click (all order types); Change Payment Method works. Merged into CR-526. || from TT-002 | Excel Item #3 (Unpaid Button) is a DUPLICATE of this bug.",
       "blocked_by": "BACKEND",
       "assignee": "Gyan",
-      "priority": "P0"
+      "priority": "P0",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-444",
@@ -34015,10 +34040,19 @@
         "OD-444-04",
         "OD-444-05"
       ],
-      "notes": "from TT-004",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || from TT-004",
       "blocked_by": "BACKEND",
       "assignee": "Abhishek",
-      "priority": "P0"
+      "priority": "P1",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-445",
@@ -36273,11 +36307,11 @@
       "sprint_key": "TBD",
       "title": "Daily and Weekly Crisp Summary (Revenue, Orders, Cancellations, Payment Split, Top Items)",
       "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "",
-      "notes": "Quick at-a-glance view. Daily Report + insights exist but no crisp summary. PARTIAL code reality — existing report infrastructure reusable.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Quick at-a-glance view. Daily Report + insights exist but no crisp summary. PARTIAL code reality — existing report infrastructure reusable.",
       "blocked_on": "",
       "related": [],
       "assignee": "Gyan",
@@ -36286,8 +36320,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-497_DAILY_WEEKLY_CRISP_SUMMARY_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36420,13 +36461,13 @@
       "id": "CR-503",
       "sprint_key": "TBD",
       "title": "Order Beta: Pay Later - Print Bill and Collect Payment Actions",
-      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open. Next: PLANNING.",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx, OrderTable.jsx, reportService.js",
-      "notes": "Excel Item #1. Add Print Bill + Collect Payment actions for Pay Later orders. Extends CR-003 Actions pattern. Related: BUG-605 (buttons not working).",
-      "blocked_on": "",
+      "notes": "[2026-11-14 owner decisions] Collect pop-up incl. Print Bill; CR-515 rights; move-to-Paid already works. || Excel Item #1. Add Print Bill + Collect Payment actions for Pay Later orders. Extends CR-003 Actions pattern. Related: BUG-605 (buttons not working).",
+      "blocked_on": "CR-515",
       "assignee": "Abhishek",
       "related": [
         "BUG-605",
@@ -36437,8 +36478,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-503_ORDER_BETA_PAY_LATER_PRINT_COLLECT_ACTIONS_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36446,11 +36494,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Table Section-wise Filter",
       "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx, FilterBar.jsx",
-      "notes": "Excel Item #2. Add filter dropdown for table sections (e.g. Ground Floor, Terrace). Parallel with CR-506.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #2. Add filter dropdown for table sections (e.g. Ground Floor, Terrace). Parallel with CR-506.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36461,20 +36509,27 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-504_ORDER_BETA_TABLE_SECTION_FILTER_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-505",
       "sprint_key": "TBD",
       "title": "Order Beta: Partial Payment Split + Payment-wise Totals",
-      "status": "GATE_1_INTAKE_COMPLETE — 4 ODs open. Financial display (R6).",
+      "status": "GATE_1_INTAKE_COMPLETE — INVESTIGATION VALIDATION NEEDED 2026-11-14 (possibly already done).",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx, OrderTable.jsx, reportService.js",
-      "notes": "Excel Item #4. Show per-mode split for partial payments + payment-wise header totals. No double-counting. Related: BUG-272 (partial payment breakdown), BUG-645 (payment filter wrong amount).",
+      "notes": "[2026-11-14 owner decisions] Likely covered by BUG-645. Owner: any cash part shows under Cash; Cash total = cash part only. Investigation to validate with code. || Excel Item #4. Show per-mode split for partial payments + payment-wise header totals. No double-counting. Related: BUG-272 (partial payment breakdown), BUG-645 (payment filter wrong amount).",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36486,8 +36541,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-505_ORDER_BETA_PARTIAL_PAYMENT_SPLIT_TOTALS_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36495,11 +36557,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Room Number Filter",
       "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx, FilterBar.jsx",
-      "notes": "Excel Item #5. Add filter dropdown for room numbers. Parallel with CR-504.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #5. Add filter dropdown for room numbers. Parallel with CR-504.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36510,8 +36572,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-506_ORDER_BETA_ROOM_NUMBER_FILTER_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36519,11 +36588,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Separate Table # and Room # Columns",
       "status": "GATE_1_INTAKE_COMPLETE — 1 OD open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "LOW",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx, OrderTable.jsx",
-      "notes": "Excel Item #6. Split combined Table/Room column into separate Table # and Room # columns.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #6. Split combined Table/Room column into separate Table # and Room # columns.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [],
@@ -36532,8 +36601,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-507_ORDER_BETA_SEPARATE_TABLE_ROOM_COLUMNS_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36541,11 +36617,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Total Cancelled Revenue Metric",
       "status": "GATE_1_INTAKE_COMPLETE — 2 ODs open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderReportBetaPage.jsx",
-      "notes": "Excel Item #7. Add cancelled revenue KPI to header. Respects selected date range.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #7. Add cancelled revenue KPI to header. Respects selected date range.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [],
@@ -36554,8 +36630,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-508_ORDER_BETA_TOTAL_CANCELLED_REVENUE_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36563,11 +36646,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Order Details Drill-Down + Activity Logs",
       "status": "GATE_1_INTAKE_COMPLETE — 5 ODs open. Largest item — unblocks CR-510 + CR-511.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "HIGH",
       "area": "Reports / Analytics",
       "files": "OrderDetailSheet.jsx, OrderReportBetaPage.jsx, reportService.js",
-      "notes": "Excel Item #8. Full order details sheet + chronological activity log (append-only, employee + timestamp). Dependency: CR-510 and CR-511 depend on this.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #8. Full order details sheet + chronological activity log (append-only, employee + timestamp). Dependency: CR-510 and CR-511 depend on this.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36579,20 +36662,27 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-509_ORDER_BETA_ORDER_DETAILS_ACTIVITY_LOGS_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-510",
       "sprint_key": "TBD",
       "title": "Order Beta: Aggregator Item Details (Variations/Add-ons in Drill-Down)",
-      "status": "GATE_1_INTAKE_COMPLETE — depends on CR-509. 2 ODs open.",
+      "status": "GATE_1_INTAKE_COMPLETE — INVESTIGATION VALIDATION NEEDED 2026-11-14 (possibly already done).",
       "priority": "P0",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderDetailSheet.jsx, reportService.js",
-      "notes": "Excel Item #9. Show aggregator item variations and add-ons in the order details sheet. Related: BUG-601 (variations silently dropped). Depends on CR-509.",
+      "notes": "[2026-11-14 owner decisions] OrderDetailSheet renders variations/add-ons; BUG-601 QA-passed. Investigation to validate on real aggregator order. || Excel Item #9. Show aggregator item variations and add-ons in the order details sheet. Related: BUG-601 (variations silently dropped). Depends on CR-509.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36604,8 +36694,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-510_ORDER_BETA_AGGREGATOR_ITEM_DETAILS_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "type": "CR",
@@ -36613,11 +36710,11 @@
       "sprint_key": "TBD",
       "title": "Order Beta: Aggregator Complete Amount Breakdown (Customer vs Platform)",
       "status": "GATE_1_INTAKE_COMPLETE — depends on CR-509. 3 ODs open.",
-      "priority": "P0",
+      "priority": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderDetailSheet.jsx, OrderReportBetaPage.jsx, reportService.js",
-      "notes": "Excel Item #10. Customer-facing amounts vs platform commissions in aggregator orders. Depends on CR-509.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Excel Item #10. Customer-facing amounts vs platform commissions in aggregator orders. Depends on CR-509.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -36628,8 +36725,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-511_ORDER_BETA_AGGREGATOR_AMOUNT_BREAKDOWN_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14"
     },
     {
       "id": "CR-512",
@@ -37311,7 +37415,7 @@
       "id": "CR-524",
       "type": "CR",
       "title": "Cancellation Report: Punch Time and Cancellation Duration Columns",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37319,11 +37423,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/18_CR-524_CANCELLATION_REPORT_PUNCH_TIME_DURATION_INTAKE.md",
-      "notes": "Add punch time and duration columns to cancellation report. Report page + transform change.",
+      "notes": "[2026-11-14 owner decisions] Punch Time = item added time; duration in minutes. || Add punch time and duration columns to cancellation report. Report page + transform change.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-670",
@@ -37397,6 +37511,9 @@
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
         }
+      ],
+      "related": [
+        "BUG-605"
       ]
     },
     {
@@ -37430,7 +37547,7 @@
       "id": "CR-528",
       "type": "CR",
       "title": "Report: Order Edit and Cancel Operations After Bill Print",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37438,11 +37555,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/23_CR-528_REPORT_ORDER_EDIT_CANCEL_AFTER_BILL_PRINT_INTAKE.md",
-      "notes": "New report for edits/cancels post-bill-print. Backend dependency. Audit/compliance gap.",
+      "notes": "[2026-11-14 owner decisions] Inside Audit report; rest at impact. || New report for edits/cancels post-bill-print. Backend dependency. Audit/compliance gap.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "blocked_on": "Gyan — backend",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-529",
@@ -37587,24 +37714,33 @@
       "type": "CR",
       "title": "Order Beta Report: GST Audit Tab / View",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P0",
       "risk": "HIGH",
       "area": "Reports / Analytics",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (financial/tax data, new report)",
       "intake_doc": "change_requests/30_CR-532_ORDER_BETA_GST_AUDIT_INTAKE.md",
-      "notes": "Tax compliance/audit requirement. GST breakout per order in Order Beta reports. Backend dependency.",
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || Tax compliance/audit requirement. GST breakout per order in Order Beta reports. Backend dependency.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-675",
       "type": "BUG",
       "title": "BUG-629 Fix Not Working: 'definition pending' Text Still Showing in Settlement",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
       "priority": "P0",
       "severity": "P1",
       "risk": "LOW",
@@ -37612,14 +37748,23 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (root cause unconfirmed — deployment or conditional render?)",
       "intake_doc": "change_requests/31_BUG-675_BUG629_FIX_NOT_WORKING_DEFINITION_PENDING_INTAKE.md",
-      "notes": "BUG-629 marked QA-pass but 'definition pending' still visible. May be deployment issue or conditional render. Investigate before fixing.",
+      "notes": "[2026-11-14 owner decisions] Remove 'Total sale: ₹X' subtitle under Cash Collected (SettlementPanel L249, SettlementPage L224). || BUG-629 marked QA-pass but 'definition pending' still visible. May be deployment issue or conditional render. Investigate before fixing.",
       "related": [
         "BUG-629"
       ],
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-676",
@@ -37724,7 +37869,7 @@
       "type": "CR",
       "title": "Item-Wise Hourly Sales Report — Custom report to track item sales on hourly basis for comparison",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P1",
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
@@ -37734,7 +37879,16 @@
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "source": "TT-071",
-      "notes": "New report screen showing each food item's sales broken down by hour. Useful for comparing peak vs off-peak item performance. Backend API dependency likely."
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || New report screen showing each food item's sales broken down by hour. Useful for comparing peak vs off-peak item performance. Backend API dependency likely.",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-538",
@@ -37758,7 +37912,7 @@
       "type": "CR",
       "title": "Weekly Café Cancellation Export — Spreadsheet of weekly café cancellation numbers including order details",
       "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "priority": "P1",
       "severity": "P1",
       "risk": "LOW",
       "area": "Reports / Analytics",
@@ -37768,7 +37922,16 @@
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "source": "TT-078",
-      "notes": "DISTINCT from CR-497 (Daily/Weekly Revenue Summary). This is specifically a data export/spreadsheet of weekly cancellation numbers per café including order-level details. May require Excel/CSV export functionality."
+      "notes": "[2026-11-14 owner decisions] Moved to P1 (take later). || DISTINCT from CR-497 (Daily/Weekly Revenue Summary). This is specifically a data export/spreadsheet of weekly cancellation numbers per café including order-level details. May require Excel/CSV export functionality.",
+      "client": "ALL",
+      "batch": "BATCH-C-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Batch C owner decisions",
+          "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "type": "CR",
@@ -37857,7 +38020,7 @@
   ],
   "meta": {
     "last_updated": "2026-11-14",
-    "last_action": "Batch B owner decisions applied: 9 P0 items ready for impact, 7 re-prioritised, CR-541 + CR-542 registered.",
+    "last_action": "Batch C owner decisions applied: 4 P0 ready for impact, CR-505/CR-510 need investigation validation, BUG-605→CR-526 merged, 13 moved to P1.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -37865,7 +38028,7 @@
     "gate_5b_complete": true,
     "total": 1098,
     "total_items": 1098,
-    "last_session": "Intake Q&A 2026-11-14 — Batch A + Batch B (P0) closed. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
-    "last_note": "Next: Batch C intake (P0) or PLANNING Gate 2 for Batch A/B after owner GO."
+    "last_session": "Intake Q&A 2026-11-14 — Batch A, B, C (P0) closed. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_14_INTAKE_BATCH_A.md",
+    "last_note": "Next: Batch D intake (P0) or PLANNING Gate 2 for A/B/C after owner GO; INVESTIGATION to validate CR-505/CR-510."
   }
 }

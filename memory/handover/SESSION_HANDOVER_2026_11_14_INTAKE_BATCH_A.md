@@ -59,6 +59,14 @@ Role: **PLANNING** (per `control/AGENT_PROMPT_ALPHA.md` §PLANNING, Gate 2).
 - **Owner still to answer:** CR-542 priority; merge CR-522 phase 2 into CR-541?; confirm impact order 671/672 → 526/542 → 514 then 522 (after Batch A PIN) → 536/527 → 607/394. Items deferred to impact: 514-05, 527, 536-05 (entry point / UPI owner), 607-04, CR-394 inclusive vs exclusive.
 - Owner said "stay in intake" — next intake batch is **C (Order Beta report)**, lines 1049-1823 of the briefs file, P0 only.
 
+## 7b. Batch C Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
+- Source of truth: `change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md`. Applied via `reports/apply_batch_c_decisions.py` (already run — do not re-run).
+- **P0 ready for impact (4):** CR-503 (Collect pop-up + Print Bill, CR-515 rights), CR-528 (in Audit report), CR-524 (punch time = item added, duration minutes), BUG-675 (remove "Total sale: ₹X" subtitle under Cash Collected).
+- **INVESTIGATION to validate with code (kept open by owner):** CR-505 (likely covered by BUG-645), CR-510 (variations/add-ons already rendered; check a real aggregator order).
+- **Merged:** BUG-605 → CR-526.
+- **Moved to P1:** CR-504, 506, 507, 508, 509, 511, 532, 444, 497, 537, 539, 138, BUG-192.
+- Next intake batch: **D (Dashboard, Order Entry & Order Cards)**, lines 1824-2309 of the briefs file, P0 only.
+
 ## 8. Owner Working Style
 - "Do not assume" — ask every open point; owner answers in short form (`A1 a, A2 b`).
 - Summarise understanding back before writing to the registry.
