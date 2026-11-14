@@ -14008,13 +14008,18 @@
       "title": "Order-level \"Mark Order Complimentary\" action + mandatory discount note",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "INTAKE — PARKED (2026-08-22, deferred by owner. OQ-1 through OQ-8 unanswered. Do not plan or implement until owner explicitly resumes.)",
+      "status": "CLOSED — MERGED INTO CR-445 (2026-11-14, owner)",
       "sprint_key": "pos_5_0",
       "area": "Payments / Coupons / Credit",
       "created_at": "2026-07-04",
       "registered": "2026-07-04",
       "artifact_refs": [
-        "/app/memory/change_requests/CR_058_ORDER_LEVEL_COMPLIMENTARY_INTAKE.md"
+        "/app/memory/change_requests/CR_058_ORDER_LEVEL_COMPLIMENTARY_INTAKE.md",
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
       ],
       "files": [
         "src/components/order-entry/CollectPaymentPanel.jsx",
@@ -14025,8 +14030,10 @@
         "BUG-018",
         "BUG-021"
       ],
-      "notes": "R6 CRITICAL. Order-level comp: flip all items + mandatory note. SUBSUMES BUG-145 (owner ruling 2026-07-04). 8 owner rulings required at Planning. Full E2E money regression required.",
-      "assignee": ""
+      "notes": "[2026-11-14 owner decisions] Merged into CR-445. || R6 CRITICAL. Order-level comp: flip all items + mandatory note. SUBSUMES BUG-145 (owner ruling 2026-07-04). 8 owner rulings required at Planning. Full E2E money regression required.",
+      "assignee": "",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "id": "CR-059",
@@ -15336,7 +15343,7 @@
       "type": "CR",
       "priority": "P1",
       "risk": "CRITICAL",
-      "status": "INTAKE — DEFERRED (post CR-057 + CR-058 close, and CR-069 ship)",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "gate": "0",
       "sprint_key": "pos_5_0_wave_2",
       "registered": "2026-02-15",
@@ -15359,7 +15366,18 @@
       "gate_infrastructure": "Reuses existing AuthContext.hasPermission()/usePermission() hook that already exists. Adds a thin PermissionGate.jsx JSX wrapper as convenience.",
       "sequencing_reason": "Deferred behind CR-057 (Menu No-Tax, CRITICAL) and CR-058 (Order Complimentary, HIGH) to avoid R5 hotspot merge conflicts per R16.",
       "area": "Permissions / Security",
-      "assignee": ""
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "notes": "[2026-11-14 owner decisions] Pulled into Batch A. || ",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-072",
@@ -25148,7 +25166,7 @@
       "id": "CR-372-B",
       "title": "Security: Add ProtectedRoute to 23 Unguarded Routes (App.js only)",
       "type": "CR",
-      "status": "INTAKE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P3",
       "risk": "MEDIUM",
       "gate": "1",
@@ -25179,6 +25197,11 @@
           "label": "Public Routes",
           "path": "memory/control/PUBLIC_ROUTES.md",
           "type": "reference"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
       ],
       "note": "Split from CR-372. F-SEC-03. 23 routes wrapped in App.js. 2 kept public (/ and /local-printer-setup). Needs Gate 2 → Gate 4 GO → Impl → QA.",
@@ -25189,9 +25212,11 @@
           "note": "INTAKE agent — split from CR-372 2026-09-08. App.js only src/ change."
         }
       ],
-      "notes": "INVESTIGATION 2026-10-14: ~90% done. 86 ProtectedRoute usages in App.js; all core routes guarded. Remaining: preview sub-routes in reports-module (order-ledger/preview, kitchen-ops/preview, room-orders/preview) are unguarded but mockup-only. Low risk. Can close with targeted Gate 2-3 for preview routes.",
+      "notes": "[2026-11-14 owner decisions] Delete /settlement/preview. /local-printer-setup decide at impact. Report previews already guarded. || INVESTIGATION 2026-10-14: ~90% done. 86 ProtectedRoute usages in App.js; all core routes guarded. Remaining: preview sub-routes in reports-module (order-ledger/preview, kitchen-ops/preview, room-orders/preview) are unguarded but mockup-only. Low risk. Can close with targeted Gate 2-3 for preview routes.",
       "severity": "P3",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "id": "BUG-383",
@@ -33848,7 +33873,7 @@
       "id": "CR-443",
       "title": "Employee-Level Notification Mapping Dashboard",
       "type": "CR",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -33869,10 +33894,20 @@
         "OD-443-03",
         "OD-443-04"
       ],
-      "notes": "from TT-001, TT-003",
+      "notes": "[2026-11-14 owner decisions] Absorbs CR-496. POS + push; right decides eligibility, employee can mute per device. Phase 2: read tick + open order. || from TT-001, TT-003",
       "blocked_by": "BACKEND",
-      "assignee": "Gyan",
-      "priority": "P0"
+      "assignee": "Abhishek",
+      "priority": "P0",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-605",
@@ -33932,7 +33967,7 @@
       "id": "CR-445",
       "title": "One-Click Complimentary Button in Payment Flow + Complimentary Tracking",
       "type": "CR",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "severity": "P2",
       "risk": "MEDIUM",
       "sprint_key": "oct_cr_batch",
@@ -33951,9 +33986,19 @@
         "OD-445-03",
         "OD-445-04"
       ],
-      "notes": "from TT-007, TT-008",
+      "notes": "[2026-11-14 owner decisions] Absorbs CR-058. Comp in payment-methods list, reason required, count in Discount report comp section. || from TT-007, TT-008",
       "blocked_by": "BACKEND",
-      "assignee": "Gyan"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-446",
@@ -36003,13 +36048,13 @@
       "id": "CR-492",
       "sprint_key": "TBD",
       "title": "Runtime Complementary Should Be Rights-Based (complementary_food role)",
-      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open (OD-492-01/02/03). Next: PLANNING Gate 2-3.",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
       "files": "OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, MarkCompModal.jsx",
-      "notes": "Only employees with complementary_food permission should mark items as comp at runtime. hasPermission() pattern exists for cancel but NOT for comp. Related: CR-058, CR-104, BUG-298/299. Dependency: CR-495 depends on this. PRIORITY UPGRADED P1→P0 (2026-11-12, batch intake).",
-      "blocked_on": "",
+      "notes": "[2026-11-14 owner decisions] No right → hidden. Item + order comp (100% discount hidden as fallback). || Only employees with complementary_food permission should mark items as comp at runtime. hasPermission() pattern exists for cancel but NOT for comp. Related: CR-058, CR-104, BUG-298/299. Dependency: CR-495 depends on this. PRIORITY UPGRADED P1→P0 (2026-11-12, batch intake).",
+      "blocked_on": "Gyan — backend keys/rights",
       "related": [
         "CR-058",
         "CR-104",
@@ -36023,21 +36068,28 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-492_COMPLEMENTARY_RIGHTS_BASED_ROLE_GATING_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-493",
       "sprint_key": "TBD",
       "title": "Cancellation Reason Mandatory on Every Cancellation (Order + Item Level)",
-      "status": "GATE_1_INTAKE_COMPLETE — 3 ODs open. Next: PLANNING Gate 2-3.",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Menu / Order Entry",
       "files": "CancelFoodModal.jsx, CancelOrderModal.jsx, OrderEntry.jsx",
-      "notes": "Every cancel must require reason from backend reasons list. CANCELLATION_REASONS endpoint exists, used in insights, enforcement inconsistent. Related: BUG-440 (empty reasons dropdown). Dependency: CR-494 extends this. PRIORITY UPGRADED P1→P0 (2026-11-12, batch intake).",
-      "blocked_on": "",
+      "notes": "[2026-11-14 owner decisions] Reason always mandatory; one setting (Gyan key) for notes mandatory/optional, default optional. || Every cancel must require reason from backend reasons list. CANCELLATION_REASONS endpoint exists, used in insights, enforcement inconsistent. Related: BUG-440 (empty reasons dropdown). Dependency: CR-494 extends this. PRIORITY UPGRADED P1→P0 (2026-11-12, batch intake).",
+      "blocked_on": "Gyan — backend keys/rights",
       "related": [
         "BUG-440",
         "CR-494"
@@ -36048,45 +36100,59 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-493_CANCELLATION_REASON_MANDATORY_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-494",
       "sprint_key": "TBD",
       "title": "Cancellation Rights: Min Amount Threshold + Manager PIN for Higher Values",
-      "status": "GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY (PIN endpoint + threshold settings). 5 ODs open.",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
       "files": "",
-      "notes": "Below threshold: normal cancel. Above: manager PIN required. No amount check or PIN flow exists in FE. BACKEND must provide PIN endpoint + threshold in settings. Extends CR-493 (reason + threshold + PIN).",
-      "blocked_on": "BACKEND",
+      "notes": "[2026-11-14 owner decisions] Separate PIN per action (6 actions incl. discount + comp), per-action ₹ threshold (0 = always), daily per-user ₹+count limits for cancels+discounts, over limit → PIN. Config in backend admin. || Below threshold: normal cancel. Above: manager PIN required. No amount check or PIN flow exists in FE. BACKEND must provide PIN endpoint + threshold in settings. Extends CR-493 (reason + threshold + PIN).",
+      "blocked_on": "Gyan — backend keys/rights",
       "related": [
         "CR-493"
       ],
-      "assignee": "Gyan",
+      "assignee": "Abhishek",
       "artifact_refs": [
         {
           "label": "Intake",
           "path": "memory/change_requests/CR-494_CANCELLATION_AMOUNT_THRESHOLD_PIN_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-495",
       "sprint_key": "TBD",
       "title": "Complementary Marking Only for Rooms with Breakfast Meal Plan",
-      "status": "GATE_1_INTAKE_COMPLETE — DEPENDS ON CR-492. 4 ODs open.",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "PMS / Rooms",
       "files": "MarkCompModal.jsx, orderTransform.js",
-      "notes": "Comp only for rooms booked with breakfast/meal plan, not Room Only. mealPlan exists in transforms but NOT checked in comp flow. Double gate: CR-492 permission + meal plan.",
-      "blocked_on": "",
+      "notes": "[2026-11-14 owner decisions] Package at check-in (walk-in too), OTA meal plan auto. Comp any food up to ₹/guest × guests per day; above → PIN. || Comp only for rooms booked with breakfast/meal plan, not Room Only. mealPlan exists in transforms but NOT checked in comp flow. Double gate: CR-492 permission + meal plan.",
+      "blocked_on": "CR-492; backend package keys",
       "related": [
         "CR-492"
       ],
@@ -36096,20 +36162,27 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-495_COMPLEMENTARY_ONLY_ROOMS_WITH_BREAKFAST_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "type": "CR",
       "id": "CR-496",
       "sprint_key": "TBD",
       "title": "After-Serve Cancellation: In-App Notification to Manager/Owner",
-      "status": "GATE_1_INTAKE_COMPLETE — BACKEND DEPENDENCY (after-serve cancel event). 3 ODs open.",
+      "status": "CLOSED — MERGED INTO CR-443 (2026-11-14, owner)",
       "priority": "P0",
       "risk": "MEDIUM",
       "area": "Aggregator / Sockets",
       "files": "",
-      "notes": "When served item cancelled, alert manager/owner via in-app notification. No code for this trigger exists. Backend must differentiate after-serve cancel events.",
+      "notes": "[2026-11-14 owner decisions] Merged into CR-443. || When served item cancelled, alert manager/owner via in-app notification. No code for this trigger exists. Backend must differentiate after-serve cancel events.",
       "blocked_on": "BACKEND",
       "related": [],
       "assignee": "Gyan",
@@ -36118,8 +36191,15 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-496_AFTER_SERVE_CANCELLATION_IN_APP_NOTIFICATION_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
         }
-      ]
+      ],
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14"
     },
     {
       "type": "CR",
@@ -36873,7 +36953,7 @@
       "id": "CR-515",
       "type": "CR",
       "title": "Order Beta: Staff Rights for Reprint and Collect Pay-Later",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "severity": "P0",
       "risk": "CRITICAL",
@@ -36881,17 +36961,27 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (permissions, financial flow)",
       "intake_doc": "change_requests/02_CR-515_ORDER_BETA_STAFF_REPRINT_COLLECT_PAYLATER_RIGHTS_INTAKE.md",
-      "notes": "Staff can trigger reprints and collect pay-later unintentionally. Needs permissions system update and Order Beta page fix.",
+      "notes": "[2026-11-14 owner decisions] 4 new rights: reprint, change payment method, make unpaid, collect pay-later. No right → hidden. || Staff can trigger reprints and collect pay-later unintentionally. Needs permissions system update and Order Beta page fix.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-674",
       "type": "BUG",
       "title": "Order-Level Cancellation Dialog Missing Notes / Additional Notes Field",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "severity": "P0",
       "risk": "MEDIUM",
@@ -36899,11 +36989,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/03_BUG-674_ORDER_LEVEL_CANCEL_DIALOG_MISSING_NOTES_INTAKE.md",
-      "notes": "Order-level cancel dialog has no notes field. Audit gap. Add notes field to dialog and API payload.",
+      "notes": "[2026-11-14 owner decisions] Add notes to order cancel dialog (all modes); show in Cancellation report + Order Beta. || Order-level cancel dialog has no notes field. Audit gap. Add notes field to dialog and API payload.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-516",
@@ -37125,7 +37225,7 @@
       "id": "BUG-670",
       "type": "BUG",
       "title": "Item-Wise Cancellation Missing Notes / Additional Notes Field",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch A). Next: IMPACT ANALYSIS BATCH-A.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37133,11 +37233,21 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/19_BUG-670_ITEM_CANCEL_MISSING_NOTES_FIELD_INTAKE.md",
-      "notes": "Item-cancel dialog has no notes field. Parity gap with BUG-674. Cancel dialog + API payload.",
+      "notes": "[2026-11-14 owner decisions] RE-SCOPED: item notes collected in CancelFoodModal but never sent (cancelItem payload has no notes). Fix payload + show in Cancellation report + Order Beta. || Item-cancel dialog has no notes field. Parity gap with BUG-674. Cancel dialog + API payload.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "Gyan — backend keys/rights",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "CR-525",
@@ -37215,19 +37325,29 @@
       "id": "CR-529",
       "type": "CR",
       "title": "Password / OTP Guard for Cancel, Discount, and Complementary Actions",
-      "status": "GATE_1_INTAKE_COMPLETE",
-      "priority": "P0",
+      "status": "INTAKE — PHASE 2 (OTP for all PIN actions). Decided 2026-11-14.",
+      "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/24_CR-529_PASSWORD_OTP_GUARD_CANCEL_DISCOUNT_COMPLEMENTARY_INTAKE.md",
-      "notes": "PIN/OTP guard before high-impact actions. Touches cancel flow, payment/discount R5, complementary gating.",
+      "notes": "[2026-11-14 owner decisions] Phase 1 PIN = CR-494. This CR = OTP phase 2. || PIN/OTP guard before high-impact actions. Touches cancel flow, payment/discount R5, complementary gating.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
-      "assignee": "Abhishek"
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "blocked_on": "CR-494",
+      "artifact_refs": [
+        {
+          "label": "Batch A owner decisions",
+          "path": "memory/change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md",
+          "type": "decisions"
+        }
+      ]
     },
     {
       "id": "BUG-671",
@@ -37496,18 +37616,47 @@
       "assignee": "Abhishek",
       "source": "TT-078",
       "notes": "DISTINCT from CR-497 (Daily/Weekly Revenue Summary). This is specifically a data export/spreadsheet of weekly cancellation numbers per café including order-level details. May require Excel/CSV export functionality."
+    },
+    {
+      "type": "CR",
+      "id": "CR-540",
+      "sprint_key": "TBD",
+      "title": "Revenue Leakage Controls (Cancels, Discounts, Comps)",
+      "status": "INTAKE",
+      "priority": "TBD",
+      "risk": "HIGH",
+      "area": "Permissions / Security",
+      "files": "TBD",
+      "notes": "Owner accepted 8 leakage ideas as one CR (2026-11-14).",
+      "blocked_on": "Gyan — backend keys/rights",
+      "related": [
+        "CR-494",
+        "CR-443",
+        "CR-515",
+        "CR-497"
+      ],
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "batch": "BATCH-A-2026-11-14",
+      "artifact_refs": [
+        {
+          "label": "Intake",
+          "path": "memory/change_requests/CR-540_REVENUE_LEAKAGE_CONTROLS_INTAKE.md",
+          "type": "intake"
+        }
+      ]
     }
   ],
   "meta": {
     "last_updated": "2026-11-14",
-    "last_action": "TT batch 2026-11-12: CR-535 to CR-539 registered (5 items from Tech Tasks). Duplicates: TT-041=CR-470, TT-047=BUG-221, TT-048=CR-530, TT-062=CR-477, TT-066=CR-478. Related (no new ID): TT-040, TT-042. Skipped: TT-051, TT-060, TT-075.",
+    "last_action": "Batch A owner decisions applied: 12 items ready for impact, CR-058→CR-445, CR-496→CR-443 merged, CR-529 P1 phase 2, CR-540 registered.",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 775,
-    "total_items": 775,
+    "total": 1096,
+    "total_items": 1096,
     "last_session": "BATCH-09 Gate 2 — PAUSED for team discussion. Handover at /app/memory/handover/SESSION_HANDOVER_2026_08_18_BATCH09_GATE2.md",
     "last_note": "Session closed 2026-09-24; entry point handover/SESSION_HANDOVER_2026_09_24_INVENTORY_INTAKE_BUG455_457.md. Next: PLANNING Gate 2 for BUG-455/456/457 after owner explanation + \"Gate 2 GO\"."
   }
