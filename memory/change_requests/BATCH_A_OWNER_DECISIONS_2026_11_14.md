@@ -25,6 +25,43 @@ Client for all Batch A items: **ALL**. Assignment rule (A32): Abhishek on fronte
 | CR-372-B | Delete `/settlement/preview` demo page. `/local-printer-setup` (unguarded) — decide at impact. Report preview routes already guarded by PermissionRoute. |
 | CR-540 (NEW) | Revenue leakage controls (ideas 1–8). Priority TBD by owner. |
 
+## Round 5 answers (2026-11-14, Gate 2 IA)
+- **OD-515-A:** item cancel uses the existing cancellation right already in use (option a). If not found, owner shares screenshot; fallback a.
+  - Code check (agent): right key `order_cancel` ("Cancel Orders", permissionCatalog.js L13) exists and gates order cancel (OrderEntry.jsx L352, DashboardPage, ChannelColumn). Item cancel today uses `food` (OrderEntry.jsx L353) → Gate 3 switches item cancel to `order_cancel`. No screenshot needed.
+- **OD-494-B:** discount threshold in ₹.
+- **OD-494-C:** daily counters in backend (shared across devices).
+- **OD-494-D:** edit-after-bill PIN for everyone.
+- **OD-445-B:** whole-order comp = right only, no PIN (note: differs from item comp, which keeps PIN per CR-494).
+
+- **OD-515-A amend (owner):** Separate rights for item cancel and order cancel are the target. New backend item-cancel key = PHASE 2 (not now). Phase 1 uses existing `order_cancel` for item cancel.
+
+## Round 6 answers (2026-11-14)
+- **OD-493-A:** "No reason provided" cancels investigated inside CR-493.
+- **OD-492-B:** Owner rule: all changes ADDITIVE, present system not affected. Conflict with CR-492 hide rule → clarification pending (R7).
+- **OD-445-C:** Whole-order comp on normal orders only; not room / credit-tab.
+- **OD-495-A:** Room comp limit resets per business day.
+- **OD-495-B:** Separate comp limit per meal (half/full board).
+
+## Round 7 answers (2026-11-14)
+- **OD-492-B:** Hide comp for everyone without `complementary_food`. Release impact (owners losing comp) to be noted and confirmed with backend before release.
+- **OD-495-C:** Room-only booking → comp allowed with PIN.
+- **OD-443-A:** Extra alerts: discount above set ₹, complimentary given, cancel after bill print.
+- **OD-443-B:** Alerts via Firebase token, same as existing notifications.
+- **OD-372B-A:** `/local-printer-setup` requires login. Same screen is used inside Settings (in use); standalone route has no in-app link found. Live usage to be confirmed.
+
+## Round 8 answers (2026-11-14)
+- **OD-372B-B:** `/restaurant-picker` (admin restaurant chooser) — keep as it is, no change.
+- **CR-540:** P1 (not P0).
+- **CR-529:** all OTP-related work moves to P1 (phase 2). PIN (CR-494) stays P0.
+
+## Round 9 answers (2026-11-14)
+- **CR-495:** non-PMS outlets lack meal package + guest count → backend brief written (`backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`).
+- **Item cancel → `order_cancel`:** owner OK. Code today gates item cancel with `food` (OrderEntry.jsx L353); Gate 3 changes it.
+
+## Round 10 answers (2026-11-14)
+- **CR-495:** non-PMS and PMS outlets in the same release. Half-board meal + meal-slot rule → discuss with backend.
+- **GO:** Batch A backend brief written (`backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md`). Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html`. Gate 2 closed.
+
 ## Impact-analysis order
 1. Rights: CR-071, CR-492, CR-515
 2. Cancel: CR-493, BUG-674, BUG-670

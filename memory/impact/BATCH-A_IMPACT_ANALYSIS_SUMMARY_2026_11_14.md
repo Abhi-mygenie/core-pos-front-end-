@@ -38,11 +38,11 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 |---|---|---|---|---|
 | 1 | CR-071 | CR-071_IMPACT_ANALYSIS.md | HIGH | NO (scope OD open) |
 | 1 | CR-492 | CR-492_IMPACT_ANALYSIS.md | CRITICAL | PARTIAL (enforcement + owner key) |
-| 1 | CR-515 | CR-515_IMPACT_ANALYSIS.md | HIGH | DEPENDS on OD-515-A |
+| 1 | CR-515 | CR-515_IMPACT_ANALYSIS.md | HIGH | NO for item-cancel gate (OD-515-A = reuse existing cancel right; owner to send screenshot if key missing) |
 | 2 | CR-493 | CR-493_IMPACT_ANALYSIS.md | HIGH | YES (notes setting key) |
 | 2 | BUG-674 | BUG-674_IMPACT_ANALYSIS.md | HIGH | PARTIAL (Order Beta fields) |
 | 2 | BUG-670 | BUG-670_IMPACT_ANALYSIS.md | HIGH | YES (item note field) |
-| 3 | CR-494 | CR-494_IMPACT_ANALYSIS.md | CRITICAL | YES (all) |
+| 3 | CR-494 | CR-494_IMPACT_ANALYSIS.md | CRITICAL | YES (all; counters server-side per OD-494-C) |
 | 4 | CR-445 | CR-445_IMPACT_ANALYSIS.md | CRITICAL | PARTIAL (contract OD) |
 | 4 | CR-495 | CR-495_IMPACT_ANALYSIS.md | CRITICAL | YES + probe blocked (no PMS on cafe103) |
 | 5 | CR-443 | CR-443_IMPACT_ANALYSIS.md | HIGH | YES (events, right key) |
@@ -64,29 +64,43 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | CR-445 | Whole-order comp saved as the 100% discount preset |
 | CR-495 | Probed on The Palm House (RID 541): no meal plan / guest count anywhere |
 | Brief | Backend brief WAITS until all Batch A answers are in |
+| OD-515-A (R5) | Item cancel gated by the EXISTING cancellation right already used today (= option a, Cancel Orders). If the key is not found in code/login, owner will share role-editor screenshot to validate; fallback = option a |
+| OD-494-B (R5) | Discount threshold = ₹ amount of discount (not % of bill) |
+| OD-494-C (R5) | Daily per-user cancel/discount counters kept in BACKEND (shared across devices) → backend must expose counter/limit check |
+| OD-494-D (R5) | Edit-after-bill PIN required for EVERYONE (no skip for `order_edit_access`) |
+| OD-445-B (R5) | Whole-order comp = `complementary_food` right only, NO PIN |
+| OD-515-A (amend) | Owner: target = SEPARATE rights for item cancel and order cancel. If backend needs a new item-cancel key → PHASE 2, not now. Phase 1 = item cancel on existing `order_cancel` (fallback a). Note: today item cancel is gated by `food`; moving it to `order_cancel` changes who can cancel items → check against additive rule (OD-492-B) at brief review |
+| OD-493-A (R6) | Investigate 5 "No reason provided" cancels inside CR-493 |
+| OD-492-B (R6) | Owner: all Batch A changes must be ADDITIVE; present system must not be affected. CONFLICT flagged: CR-492 "no right → comp hidden" would remove comp from cafe103/Palm House owners today → clarification asked in R7 |
+| OD-445-C (R6) | Whole-order comp on normal orders only (NOT room / credit-tab) |
+| OD-495-A (R6) | Room comp limit resets per BUSINESS day |
+| OD-540-01 (R8) | CR-540 priority = P1 (NOT P0). Phase-1 idea selection (OD-540-02) deferred with P1 |
+| CR-495 brief (R9) | Owner: non-PMS outlets have no meal package / guest data → CR-495 backend brief WRITTEN: `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth) |
+| OD-515-A (R9, locked) | Owner OK with item cancel on `order_cancel`. Owner believes it is already gated so; CODE FACT: OrderEntry.jsx L353 `canCancelItem = hasPermission('food')` → CartPanel.jsx L68 hides item cancel button. Gate 3 = one-line gate change to `order_cancel` |
+| CR-495 (R10) | Non-PMS AND PMS together; half-board second meal + meal-slot rule = discuss with backend (OPEN, tracked as BLOCKED in tracker) |
+| OD-529-P (R8) | Owner meant CR-529: ALL OTP-related work = P1 (phase 2). CR_REGISTRY.md row updated P0→P1 (registry.json already P1). PIN (CR-494) stays P0. OD-529-A (OTP channel) deferred with P1 |
+| OD-372B-B (R8, info) | `/restaurant-picker` (CR-166) = screen shown after an ADMIN login (LoginPage.jsx L90) to choose which restaurant to open; also reached from Sidebar switch (L487, L901). Route App.js L160 has no ProtectedRoute; page uses auth token helpers. Owner decision (R8): KEEP AS IT IS (no login guard added) |
+| OD-495-B (R6) | Half/full board: SEPARATE limit per meal (backend needs per-meal limit keys + per-meal tracking) |
+| OD-492-B (R7, resolved) | Hide comp for EVERYONE without `complementary_food` (CR-492 rule wins). RELEASE IMPACT: owners lacking the right today (cafe103 RID 644, Palm House RID 541, likely others) lose comp → note in release notes and confirm with backend (role defaults / admin update) BEFORE release |
+| OD-495-C (R7) | Room-only booking: comp allowed WITH PIN |
+| OD-443-A (R7) | Extra alert events: discount above set ₹ amount, complimentary given, cancel after bill print (7 events total) |
+| OD-443-B (R7) | Delivery via Firebase (FCM) token, same as existing notifications (token sent at login: LoginPage.jsx L54-83 → authTransform.js L52 `fcm_token`) |
+| OD-372B-A (R7) | `/local-printer-setup` must require login. Code check: route App.js L251 has NO ProtectedRoute; same `LocalPrinterSetupView` also used inside Settings (ListFormViews.jsx L189-192, printerType 'direct') → in use there; standalone route has no in-app link found (direct URL only). Live-device usage NOT verified |
 
 ## Pending owner questions (next IA agent asks these, 5 per round)
-Round 5 (asked, NOT answered):
-1. Item cancel right: a) needs Cancel Orders, b) keep as today (View Menu Items), c) new right only for item cancel.
-2. OD-494-B discount threshold: ₹ of discount or % of bill.
-3. OD-494-C daily cancel/discount counter: backend or per device.
-4. OD-494-D edit-after-bill PIN: everyone, or `order_edit_access` holders skip.
-5. OD-445-B whole-order comp checks: same as item comp (right + comp PIN) or right only.
-Not yet asked:
-6. OD-493-A: 5 cancels "No reason provided" in Nov — investigate source in CR-493 or separate item.
-7. OD-492-B: cafe103 + Palm House owners lack `complementary_food` — update roles in admin before release?
-8. OD-445-C: whole-order comp allowed on room / credit (TAB) orders?
-9. OD-495-A: comp limit "day" = calendar day or business day.
-10. OD-495-B: half/full board — one daily pool or separate limit per meal.
-11. OD-495-C: room-only booking — comp hidden, or allowed with PIN.
-12. OD-443-A: extra alert events (discount above ₹X, comp, cancel after bill)?
-13. OD-443-B: alerts on POS + phone — need backend multi-device push?
-14. OD-372B-A: `/local-printer-setup` — require login or keep open for printer device.
-15. OD-372B-B: `/restaurant-picker` unguarded — intended?
-16. OD-540-01/02: CR-540 priority + which of ideas 3/5/6/7/8 in phase 1.
-17. Backend questions for Gyan (no owner answer needed, go in brief): OD-492-C restaurant `complementary` flag meaning; B-674-3 line reason overwrite.
-Later: OD-529-A (phase 2 OTP channel); CR-515 reprint right (P1).
-After all answered → show owner final missing-backend list → write `backend_briefs/BACKEND_BRIEF_BATCH-A_<date>.md` (Gyan + Parth for CR-495) → close Gate 2.
+Round 5: ANSWERED 2026-11-14 (see decisions log).
+Round 6: ANSWERED 2026-11-14 (items 6–10 resolved, see log).
+Round 7: ANSWERED 2026-11-14 (OD-492-B, 495-C, 443-A, 443-B, 372B-A).
+Round 8: ANSWERED 2026-11-14 (OD-372B-B keep, CR-540 P1, CR-529/all OTP P1).
+Remaining before brief: CR-515 reprint right P1 confirm (already recorded P1 in R1–4); CR-529 + CR-540 IA docs stay dependency-level (P1). Missing-backend list shown to owner 2026-11-14. CR-495 brief written (R9). Owner GO (R10) → `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan, BA-01..22 + R-1..3) WRITTEN. Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html` (batch-wise status).
+**GATE 2 CLOSED 2026-11-14** (open discussion items: CR-495 half-board meal + meal-slot rule, owner + backend). Next: Gate 3 after backend reply.
+Former items 6–16: ALL ANSWERED R6–R8 (see decisions log).
+Item 17 (Gyan): IN BRIEF — OD-492-C = BA-08, B-674-3 = BA-03; awaiting backend reply.
+Still open (not blocking Gate 2):
+- CR-495 half-board second meal (lunch/dinner) — owner + backend discussion.
+- CR-495 meal-slot rule (time window vs cashier) — owner + backend discussion.
+- OD-540-02 which CR-540 ideas in phase 1 — deferred with CR-540 (P1).
+- OD-529-A OTP channel — deferred with CR-529 (P1, phase 2).
 
-## Backend gaps found (to confirm with owner BEFORE writing the backend brief)
-See §"Missing from backend" in the session handover / owner message. Brief NOT written yet (owner: show + confirm first).
+## Backend gaps
+Confirmed by owner 2026-11-14 and written into `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` and `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`.

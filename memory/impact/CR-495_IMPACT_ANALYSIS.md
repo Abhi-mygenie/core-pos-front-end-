@@ -12,9 +12,10 @@ Package at check-in (walk-in too): breakfast / half board / full board. OTA: use
 - Room order comp entry: same CPP comp checkbox as CR-492.
 
 ## Open owner decisions
-- OD-495-A: "day" for the limit = calendar day or business day (restaurant schedule)? OPEN.
-- OD-495-B: half/full board — separate ₹ limit per meal (breakfast/lunch/dinner) or one daily pool? OPEN (tracking TBD).
-- OD-495-C: comp on a room order with no package (room only) → hidden, or allowed with PIN? OPEN.
+- OD-495-A: business day. CLOSED R6.
+- OD-495-B: separate ₹ limit per meal. CLOSED R6.
+- OD-495-C: room only → comp allowed with PIN. CLOSED R7.
+- OD-495-E: owner — non-PMS outlets have no package/guest data today → backend brief written: `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`.
 - OD-495-D: PMS restaurant + login for probes. OPEN — needed before Gate 3.
 
 ## Probe — The Palm House (RID 541), owner-provided login, read-only (2026-11-14)
@@ -30,4 +31,5 @@ Evidence: `evidence/BATCH-A-IA/probes_2026_11_14/cr495_palmhouse/`
 - B-495-1: meal package field on check-in (walk-in) + returned on booking/room.
 - B-495-2: per-package ₹/guest/day limit keys.
 - B-495-3: per-room daily comp used amount (server-side counter).
-- B-495-4: OTA meal-plan mapping to the 3 packages.
+- B-495-4: OTA meal-plan mapping to the packages.
+- Full list (B-495-1..7) in the brief above.
