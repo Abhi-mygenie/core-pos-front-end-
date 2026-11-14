@@ -1,0 +1,77 @@
+{
+  "probe_date": "2026-11-07",
+  "context": "Backend fixed get-single-order-new to return discount/roundoff fields",
+  "order_id": 1537857,
+  "restaurant_order_id": "001423",
+  "backend_fix_status": "FIELDS NOW RETURNED",
+  "new_fields_in_get_single_order_new": {
+    "restaurant_discount_amount": {
+      "before": null,
+      "after": 119.05,
+      "correct": true
+    },
+    "discount_value": {
+      "before": null,
+      "after": "50.00",
+      "correct": true
+    },
+    "discount_type": {
+      "before": null,
+      "after": "Percent",
+      "correct": true,
+      "note": "NEW \u2014 not even in employee-orders-list"
+    },
+    "order_discount_type": {
+      "before": null,
+      "after": "Percent",
+      "correct": true,
+      "note": "NEW \u2014 not even in employee-orders-list"
+    },
+    "order_discount": {
+      "before": null,
+      "after": "119.05",
+      "correct": true
+    },
+    "round_up": {
+      "before": null,
+      "after": "0.49",
+      "correct": "MOSTLY \u2014 1 paise off from FE auto-print (0.50)"
+    },
+    "gst_tax": {
+      "before": null,
+      "after": "6.56",
+      "note": "Includes SC GST; EOL had 5.96 (items-only)"
+    },
+    "per_item_discount_on_food": {
+      "before": [
+        null,
+        null
+      ],
+      "after": [
+        61.91,
+        57.14
+      ],
+      "correct": true
+    },
+    "per_item_gst_tax_amount": {
+      "before": [
+        null,
+        null
+      ],
+      "after": [
+        3.1,
+        2.86
+      ],
+      "correct": true
+    }
+  },
+  "round_up_discrepancy": {
+    "backend_value": 0.49,
+    "frontend_auto_print_value": 0.5,
+    "difference": "1 paise",
+    "root_cause": "FE applies discount-ratio to GST \u2192 6.54; backend straight 5% \u2192 6.56. 2-paise GST diff cascades to roundoff.",
+    "is_backend_bug": false,
+    "is_preexisting": true
+  },
+  "verdict": "Backend fix is CORRECT. All discount fields now populated. round_up has 1-paise pre-existing divergence from FE computation \u2014 not a new bug."
+}

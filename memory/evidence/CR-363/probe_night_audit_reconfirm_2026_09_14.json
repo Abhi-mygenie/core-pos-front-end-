@@ -1,0 +1,606 @@
+{
+  "status": true,
+  "message": "Night audit fetched successfully",
+  "data": {
+    "date": "2026-09-13",
+    "business_day": {
+      "start": "2026-09-12T18:30:00+00:00",
+      "end": "2026-09-13T18:29:59+00:00"
+    },
+    "is_forecast": false,
+    "status_as_of": "current",
+    "occupancy": {
+      "rooms_total": 5,
+      "rooms_ooo": 0,
+      "rooms_available": 5,
+      "rooms_sold": 2,
+      "rooms_complimentary": 0,
+      "occupancy_percent": 40,
+      "occupancy_percent_physical": 40,
+      "arrivals_expected": 0,
+      "arrivals_actual": 0,
+      "departures_expected": 0,
+      "departures_actual": 0,
+      "in_house": 1,
+      "day_use": 0,
+      "by_room_type": [
+        {
+          "room_code": "suite",
+          "capacity": 4,
+          "available": 4,
+          "sold": 1,
+          "occupancy_percent": 25
+        },
+        {
+          "room_code": "executive",
+          "capacity": 1,
+          "available": 1,
+          "sold": 1,
+          "occupancy_percent": 100
+        }
+      ]
+    },
+    "revenue": {
+      "room_sales_booked": 1952.38,
+      "room_revenue_collected": 1904.76,
+      "room_gst_collected": 0,
+      "collected_by_tender": {
+        "cash": 1904.76,
+        "card": 0,
+        "upi": 0,
+        "tab": 0,
+        "ota_remittance": 0,
+        "other": 0
+      },
+      "collected_by_stage": {
+        "advance_at_booking": 0,
+        "advance_at_checkin": 0,
+        "mid_stay": 0,
+        "checkout": 1904.76
+      },
+      "refunds": 0,
+      "adr_booked": 976.19,
+      "adr_collected": 952.38,
+      "revpar_booked": 390.48,
+      "revpar_collected": 380.95,
+      "other_revenue_posted": 0
+    },
+    "fnb_posted_to_rooms": {
+      "orders": null,
+      "amount": 0,
+      "gst": 0,
+      "collected": 0,
+      "outstanding": 0,
+      "trevpar": 390.48
+    },
+    "outstanding": {
+      "total_room_balance": 8100,
+      "total_fnb_balance": 0,
+      "total_balance": 8100,
+      "rows": [
+        {
+          "order_id": 1232245,
+          "reservation_id": "MG-69-7D37A1DB-1DF0-495C-AF63-78FE43DD5CAF",
+          "room_no": "r3",
+          "room_code": null,
+          "guest_name": null,
+          "checkin": null,
+          "checkout": null,
+          "channel": "WalkIn",
+          "booking_payment_type": "walkin_postpaid",
+          "room_booked": 8000,
+          "room_collected": 0,
+          "room_balance": 8000,
+          "fnb_posted": 0,
+          "fnb_collected": 0,
+          "fnb_balance": 0,
+          "payment_status": "unpaid"
+        },
+        {
+          "order_id": 1232314,
+          "reservation_id": "MG-69-FE89463D-F683-4846-91F9-2486FC7D8B0F",
+          "room_no": "r5",
+          "room_code": null,
+          "guest_name": null,
+          "checkin": null,
+          "checkout": null,
+          "channel": "WalkIn",
+          "booking_payment_type": "direct_prepaid",
+          "room_booked": 100,
+          "room_collected": 0,
+          "room_balance": 100,
+          "fnb_posted": 0,
+          "fnb_collected": 0,
+          "fnb_balance": 0,
+          "payment_status": "unpaid"
+        }
+      ]
+    },
+    "no_shows": {
+      "count": 0,
+      "fee_charged": 0,
+      "rows": []
+    },
+    "departures": {
+      "checked_out_paid": [],
+      "checked_out_unpaid": [],
+      "overdue_in_house": [
+        {
+          "order_id": 1232245,
+          "room_no": "r3",
+          "guest_name": null,
+          "checkout": "2026-09-10",
+          "days_overdue": 3,
+          "room_balance": 8000
+        }
+      ],
+      "early_checkouts": []
+    },
+    "room_status_close": {
+      "available": 0,
+      "occupied": 1,
+      "occupied_hk": 1,
+      "booked": 2,
+      "hk": 1,
+      "ooo": 0,
+      "status_as_of": "current",
+      "rows": [
+        {
+          "room_no": "r3",
+          "room_code": "suite",
+          "status": "occupied_hk",
+          "hk_status": "hk"
+        },
+        {
+          "room_no": "r4",
+          "room_code": "suite",
+          "status": "hk",
+          "hk_status": "hk"
+        },
+        {
+          "room_no": "r2",
+          "room_code": "executive",
+          "status": "booked",
+          "hk_status": null
+        },
+        {
+          "room_no": "r5",
+          "room_code": "suite",
+          "status": "occupied",
+          "hk_status": null
+        },
+        {
+          "room_no": "r1",
+          "room_code": "suite",
+          "status": "booked",
+          "hk_status": null
+        }
+      ]
+    },
+    "reconciliation": {
+      "settlement_total_collection": null,
+      "settlement_room_share": 1904.76,
+      "settlement_fnb_share": null,
+      "night_audit_room_cash_card_upi": 1904.76,
+      "delta": 0,
+      "by_waiter": [
+        {
+          "waiter_id": 5117,
+          "name": null,
+          "today_collection": null,
+          "room_share": 95.24,
+          "fnb_share": null
+        },
+        {
+          "waiter_id": 5118,
+          "name": null,
+          "today_collection": null,
+          "room_share": 1809.52,
+          "fnb_share": null
+        }
+      ]
+    },
+    "audit_trail": [
+      {
+        "at": "2026-09-13T10:24:27+05:30",
+        "type": "order_edit",
+        "order_id": 1232329,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T10:35:10+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232329,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": 8526,
+          "current_table_id": 8526
+        }
+      },
+      {
+        "at": "2026-09-13T10:35:10+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232331,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 0
+        }
+      },
+      {
+        "at": "2026-09-13T10:35:10+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232329,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T10:35:10+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232331,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 0
+        }
+      },
+      {
+        "at": "2026-09-13T10:38:34+05:30",
+        "type": "table_room_switch",
+        "order_id": 1232331,
+        "by": 5117,
+        "detail": {
+          "previous_table_id": 0,
+          "current_table_id": 8553
+        }
+      },
+      {
+        "at": "2026-09-13T11:52:38+05:30",
+        "type": "transfer_to_room",
+        "order_id": 1232329,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T11:53:01+05:30",
+        "type": "order_bill_payment",
+        "order_id": 1232331,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:03:48+05:30",
+        "type": "order_edit",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:10:29+05:30",
+        "type": "transfer_food_item_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:10:29+05:30",
+        "type": "transfer_food_item_in",
+        "order_id": 1232272,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:14:09+05:30",
+        "type": "order_shifted_room",
+        "order_id": 1232332,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8530,
+          "current_table_id": 8525
+        }
+      },
+      {
+        "at": "2026-09-13T14:16:52+05:30",
+        "type": "order_edit",
+        "order_id": 1232314,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:30:47+05:30",
+        "type": "order_edit",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:35:48+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232314,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8527,
+          "current_table_id": 8527
+        }
+      },
+      {
+        "at": "2026-09-13T14:35:48+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232333,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8529
+        }
+      },
+      {
+        "at": "2026-09-13T14:35:48+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232314,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:35:48+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232333,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8529
+        }
+      },
+      {
+        "at": "2026-09-13T14:36:51+05:30",
+        "type": "order_bill_payment",
+        "order_id": 1232333,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:37:27+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8524,
+          "current_table_id": 8524
+        }
+      },
+      {
+        "at": "2026-09-13T14:37:27+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232334,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8530
+        }
+      },
+      {
+        "at": "2026-09-13T14:37:27+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:37:27+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232334,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8530
+        }
+      },
+      {
+        "at": "2026-09-13T14:49:08+05:30",
+        "type": "order_edit",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:49:30+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8524,
+          "current_table_id": 8524
+        }
+      },
+      {
+        "at": "2026-09-13T14:49:30+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232335,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8531
+        }
+      },
+      {
+        "at": "2026-09-13T14:49:30+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T14:49:30+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232335,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8531
+        }
+      },
+      {
+        "at": "2026-09-13T14:52:55+05:30",
+        "type": "order_edit",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T15:02:31+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8524,
+          "current_table_id": 8524
+        }
+      },
+      {
+        "at": "2026-09-13T15:02:31+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232336,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8529
+        }
+      },
+      {
+        "at": "2026-09-13T15:02:31+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T15:02:31+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232336,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 8529
+        }
+      },
+      {
+        "at": "2026-09-13T15:02:52+05:30",
+        "type": "order_edit",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T15:03:13+05:30",
+        "type": "room_split_order_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 8524,
+          "current_table_id": 8524
+        }
+      },
+      {
+        "at": "2026-09-13T15:03:13+05:30",
+        "type": "room_split_order_in",
+        "order_id": 1232337,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 0
+        }
+      },
+      {
+        "at": "2026-09-13T15:03:13+05:30",
+        "type": "room_split_item_out",
+        "order_id": 1232245,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      },
+      {
+        "at": "2026-09-13T15:03:13+05:30",
+        "type": "room_split_item_in",
+        "order_id": 1232337,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": 0
+        }
+      },
+      {
+        "at": "2026-09-13T15:03:16+05:30",
+        "type": "table_room_switch",
+        "order_id": 1232337,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": 0,
+          "current_table_id": 8554
+        }
+      },
+      {
+        "at": "2026-09-13T15:04:21+05:30",
+        "type": "order_bill_payment",
+        "order_id": 1232337,
+        "by": 5118,
+        "detail": {
+          "previous_table_id": null,
+          "current_table_id": null
+        }
+      }
+    ]
+  }
+}

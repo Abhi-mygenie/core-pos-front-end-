@@ -1,0 +1,38 @@
+{
+  "found": {
+    "232": [
+      "fd-chip-arrivals-today"
+    ],
+    "233": [
+      "fd-chip-arrivals-tomorrow"
+    ]
+  },
+  "requests": [
+    {
+      "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+      "method": "GET",
+      "post": null,
+      "ts": 1790018605.994264
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v1/vendoremployee/cancellation-reasons?limit=100&offset=1",
+      "method": "GET",
+      "post": null,
+      "ts": 1790018623.9747407
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+      "method": "GET",
+      "post": null,
+      "ts": 1790018627.0640216
+    }
+  ],
+  "responses": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+      "status": 200,
+      "method": "GET",
+      "ts": 1790018629.5261989
+    }
+  ]
+}

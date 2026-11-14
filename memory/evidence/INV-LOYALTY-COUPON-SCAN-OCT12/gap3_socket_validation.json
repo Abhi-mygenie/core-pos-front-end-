@@ -1,0 +1,17 @@
+{
+  "gap3_validation": "CONFIRMED",
+  "order_id": 1233149,
+  "rid": 689,
+  "socket_event": "update-order",
+  "socket_payload_loyalty_info": "ABSENT \u2014 key not present",
+  "socket_payload_loyalty_points": 0,
+  "list_api_loyalty_info": "{earned:true, redeemed:true, redeemed_amount:7}",
+  "list_api_loyalty_points": 7,
+  "impact": "Socket update overwrites order in context. fromAPI.order(socketPayload) produces loyaltyRedeemed=false because loyalty_info absent. If cashier opens CPP after any order edit, loyalty pre-tick is LOST.",
+  "fix_options": {
+    "A_fe_guard": "In handleOrderDataEvent (socketHandlers.js): preserve loyaltyRedeemed from existing order if new socket payload has no loyalty_info",
+    "B_backend_brief": "Ask backend to include loyalty_info in update-order socket payload",
+    "C_cpp_only": "CPP mount effect is one-time; if CPP is already open, state is safe. But if CPP opens AFTER socket update, loyalty is lost."
+  },
+  "recommended_fix": "A (FE guard in socketHandlers.js) \u2014 no backend change needed"
+}

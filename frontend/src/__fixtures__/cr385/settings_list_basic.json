@@ -1,0 +1,13 @@
+{
+ "status": true,
+ "data": {
+  "basic": {
+   "auto_print_checkin_receipt": false,
+   "pms.auto_print_checkin_receipt": false,
+   "allow_early_checkin": false,
+   "pms.allow_early_checkin": false,
+   "extend_rate_mode": "held",
+   "pms.extend_rate_mode": "held"
+  }
+ }
+}

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-144 — Design Confirmation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+.topbar { background: #0f172a; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+.topbar h1 { font-size: 16px; font-weight: 700; color: #fff; }
+.topbar p { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+.badge { background: #3b82f6; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+
+.page { max-width: 960px; margin: 0 auto; padding: 28px 24px; }
+
+/* Context banner */
+.context-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+.ctx-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; }
+.ctx-card h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 6px; }
+.ctx-card p { font-size: 13px; color: #374151; line-height: 1.5; }
+.ctx-card.green { border-color: #86efac; background: #f0fdf4; }
+.ctx-card.blue { border-color: #bfdbfe; background: #eff6ff; }
+
+/* The panel wrapper */
+.panel-shell { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+
+/* Panel header — exact replica */
+.panel-header { padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff; }
+.panel-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-right: 4px; }
+.menu-type-select { font-size: 12px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; color: #374151; background: #f8fafc; cursor: pointer; }
+.header-spacer { flex: 1; }
+.h-btn { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #e2e8f0; background: #fff; color: #64748b; transition: all 0.12s; white-space: nowrap; }
+.h-btn:hover { background: #f8fafc; }
+.h-btn.active { border-color: #22c55e; color: #22c55e; background: #f0fdf4; font-weight: 600; }
+.h-btn.bulk { border-color: #e2e8f0; color: #64748b; }
+.h-btn.close { color: #94a3b8; }
+
+/* Addon management panel */
+.addon-panel { padding: 0; }
+.addon-toolbar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f1f5f9; }
+.add-btn { display: flex; align-items: center; gap: 5px; background: #22c55e; color: #fff; border: none; padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.search-box { flex: 1; max-width: 220px; border: 1px solid #e2e8f0; border-radius: 7px; padding: 7px 12px; font-size: 12px; color: #374151; outline: none; }
+.search-box:focus { border-color: #22c55e; }
+.count-tag { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+/* Addon table */
+.at { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.at th { background: #f8fafc; padding: 9px 12px; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.at td { padding: 10px 12px; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
+.at tr:hover > td { background: #fafafa; }
+.at tr.editing > td { background: #f0fdf4; border-bottom: none; }
+.at tr.edit-row > td { background: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 0; }
+.at tr.inactive-row > td { opacity: 0.5; }
+
+.vdot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+.vdot.veg { background: #22c55e; }
+.vdot.nonveg { background: #ef4444; }
+.vdot.egg { background: #f59e0b; }
+.vdot.unset { background: #d1d5db; }
+
+.aname { font-weight: 500; color: #0f172a; }
+.price-cell { color: #374151; }
+.wt-badge { background: #f1f5f9; color: #64748b; font-size: 11px; padding: 2px 7px; border-radius: 5px; }
+.st-on { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; cursor: pointer; color: #16a34a; }
+.st-off { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; cursor: pointer; color: #dc2626; }
+.inv-yes { background: #eff6ff; color: #3b82f6; font-size: 11px; padding: 2px 7px; border-radius: 5px; }
+.inv-no { color: #94a3b8; font-size: 11px; }
+.inv-dis { color: #d1d5db; font-size: 11px; cursor: not-allowed; }
+.act-btn { font-size: 11.5px; padding: 4px 10px; border-radius: 5px; border: 1px solid; cursor: pointer; transition: all 0.12s; }
+.act-btn.edit { border-color: #e2e8f0; color: #374151; background: #fff; }
+.act-btn.edit:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+.act-btn.del { border-color: #fee2e2; color: #dc2626; background: #fff; margin-left: 5px; }
+.act-btn.del:hover { background: #fee2e2; }
+
+/* Inline edit row */
+.edit-panel { padding: 12px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.edit-panel label { font-size: 11px; font-weight: 600; color: #64748b; display: flex; flex-direction: column; gap: 4px; }
+.edit-panel input, .edit-panel select { padding: 5px 9px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; outline: none; }
+.edit-panel input:focus, .edit-panel select:focus { border-color: #22c55e; }
+.inv-toggle-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #374151; }
+.inv-toggle-row .toggle { width: 34px; height: 18px; background: #d1fae5; border-radius: 9px; position: relative; cursor: pointer; }
+.inv-toggle-row .toggle::after { content:''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #22c55e; border-radius: 50%; transition: left 0.15s; }
+.inv-toggle-row .toggle.off { background: #e5e7eb; }
+.inv-toggle-row .toggle.off::after { background: #9ca3af; }
+.inv-toggle-row .toggle.disabled { background: #f3f4f6; cursor: not-allowed; }
+.inv-toggle-row .toggle.disabled::after { background: #d1d5db; }
+.tooltip-text { font-size: 11px; color: #94a3b8; font-style: italic; }
+.ep-save { background: #22c55e; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.ep-cancel { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+
+/* Add form */
+.add-form-row { background: #f0fdf4; border-bottom: 2px solid #86efac; display: flex; align-items: center; gap: 10px; padding: 10px 12px; flex-wrap: wrap; }
+.add-form-row input, .add-form-row select { padding: 6px 10px; border: 1px solid #86efac; border-radius: 6px; font-size: 12px; outline: none; background: #fff; }
+.add-form-row input:focus, .add-form-row select:focus { border-color: #22c55e; }
+.add-form-row .save-add { background: #22c55e; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.add-form-row .cancel-add { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.field-label { font-size: 11px; color: #64748b; font-weight: 600; }
+
+/* annotation callouts */
+.callout { display: flex; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-top: 10px; }
+.callout.green { background: #f0fdf4; border: 1px solid #86efac; color: #15803d; }
+.callout.blue { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+.callout.amber { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+/* Notes section */
+.notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.note-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+.note-card h4 { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+.note-card ul { font-size: 12px; color: #374151; line-height: 2; padding-left: 16px; }
+
+.arrow-label { font-size: 11px; font-weight: 600; background: #22c55e; color: #fff; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>CR-144 — Addon Master · Design Confirmation</h1>
+    <p>Gate 2 complete · No design study required · Confirming for Gate 4 GO</p>
+  </div>
+  <span class="badge">Gate 2 ✅ — awaiting Gate 4 GO</span>
+</div>
+
+<div class="page">
+
+  <!-- Context -->
+  <div class="context-row">
+    <div class="ctx-card">
+      <h4>What is CR-144?</h4>
+      <p>Add a full <strong>Addon Master</strong> panel inside the existing Menu Management slide-over. Manage all restaurant addons (add / edit / delete / toggle active) from one place, visible for <strong>all menu types</strong>.</p>
+    </div>
+    <div class="ctx-card blue">
+      <h4>Where does it live?</h4>
+      <p>A new <strong>"Add-ons" button</strong> in the Menu Management header — sits next to the existing "Bulk Edit" button. Clicking it switches the panel to Addon Master view. No new route, no new page.</p>
+    </div>
+    <div class="ctx-card green">
+      <h4>Why no design study needed?</h4>
+      <p>Unlike CR-145 (BulkEditor — 5 UX unknowns), CR-144's design was <strong>fully specified in the intake doc</strong>. Both OQs were minor and adopted as defaults. No owner decision was blocked.</p>
+    </div>
+  </div>
+
+  <!-- PANEL MOCKUP -->
+  <p style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px">Live mockup — Menu Management Panel with "Add-ons" mode active</p>
+  <div class="panel-shell">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <span class="panel-title">Menu Management</span>
+      <select class="menu-type-select">
+        <option>Normal ▾</option>
+        <option>Aggregator</option>
+        <option>Party</option>
+      </select>
+      <div style="width:8px;height:8px;border-radius:50%;background:#22c55e;margin:0 2px"></div>
+      <div class="header-spacer"></div>
+
+      <!-- Add-ons button — ACTIVE (new) -->
+      <button class="h-btn active" id="addonsBtn" onclick="switchMode('addons')">
+        ⚙ Add-ons
+        <span class="arrow-label" id="newLabel">NEW</span>
+      </button>
+
+      <!-- Bulk Edit button -->
+      <button class="h-btn bulk" id="bulkBtn" onclick="switchMode('bulk')">
+        ⊞ Bulk Edit
+      </button>
+
+      <!-- Card View button -->
+      <button class="h-btn" id="cardBtn" onclick="switchMode('card')">
+        ⊟ Card View
+      </button>
+
+      <button class="h-btn close">✕</button>
+    </div>
+
+    <!-- Mode: Addon Master (default shown) -->
+    <div id="modeAddons" class="addon-panel">
+      <div class="addon-toolbar">
+        <button class="add-btn" onclick="toggleAddForm()">+ Add Addon</button>
+        <input class="search-box" placeholder="Search add-ons..." id="searchBox" oninput="filterAddons(this.value)"/>
+        <span class="count-tag" id="countTag">6 add-ons</span>
+      </div>
+
+      <div style="overflow-x:auto">
+      <table class="at" id="addonTable">
+        <thead>
+          <tr>
+            <th style="width:36px">Type</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Weight</th>
+            <th>Stock</th>
+            <th>Inventory</th>
+            <th style="width:120px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="addonBody">
+
+          <!-- Add form row (hidden initially) -->
+          <tr id="addFormRow" style="display:none">
+            <td colspan="7">
+              <div class="add-form-row">
+                <div><span class="field-label">Name</span><br><input id="af-name" placeholder="e.g. Extra Sauce" style="width:150px"/></div>
+                <div><span class="field-label">Price (₹)</span><br><input id="af-price" type="number" placeholder="0" style="width:70px"/></div>
+                <div><span class="field-label">Weight (g)</span><br><input id="af-weight" type="number" placeholder="0" style="width:70px"/></div>
+                <div><span class="field-label">Type</span><br>
+                  <select id="af-veg">
+                    <option value="1">Veg</option>
+                    <option value="2">Non-Veg</option>
+                    <option value="3">Egg</option>
+                  </select>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:16px">
+                  <button class="save-add" onclick="saveAdd()">Save</button>
+                  <button class="cancel-add" onclick="toggleAddForm()">Cancel</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 1 -->
+          <tr data-name="extra cheese" id="row1">
+            <td><span class="vdot veg" title="Veg"></span></td>
+            <td><span class="aname">Extra Cheese</span></td>
+            <td class="price-cell">₹40</td>
+            <td><span class="wt-badge">50g</span></td>
+            <td><span class="st-on" onclick="toggleStatus(1)">● Active</span></td>
+            <td><span class="inv-no">No</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(1)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row1')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow1" style="display:none" class="edit-row">
+            <td colspan="7">
+              <div class="edit-panel">
+                <label>Name<input value="Extra Cheese" style="width:140px"/></label>
+                <label>Price ₹<input type="number" value="40" style="width:65px"/></label>
+                <label>Weight g<input type="number" value="50" style="width:65px"/></label>
+                <label>Type<select><option selected>Veg</option><option>Non-Veg</option><option>Egg</option></select></label>
+                <div class="inv-toggle-row">
+                  <span style="font-size:12px;font-weight:500">Inventory</span>
+                  <div class="toggle disabled" title="Attach a recipe first"></div>
+                  <span class="tooltip-text">Attach a recipe first</span>
+                </div>
+                <button class="ep-save" onclick="editRow(1)">Save</button>
+                <button class="ep-cancel" onclick="editRow(1)">Cancel</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr data-name="garlic sauce" id="row2">
+            <td><span class="vdot veg" title="Veg"></span></td>
+            <td><span class="aname">Garlic Sauce</span></td>
+            <td class="price-cell">₹25</td>
+            <td><span class="wt-badge">0g</span></td>
+            <td><span class="st-on" onclick="toggleStatus(2)">● Active</span></td>
+            <td><span class="inv-yes">Yes</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(2)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row2')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow2" style="display:none" class="edit-row">
+            <td colspan="7">
+              <div class="edit-panel">
+                <label>Name<input value="Garlic Sauce" style="width:140px"/></label>
+                <label>Price ₹<input type="number" value="25" style="width:65px"/></label>
+                <label>Weight g<input type="number" value="0" style="width:65px"/></label>
+                <label>Type<select><option selected>Veg</option><option>Non-Veg</option><option>Egg</option></select></label>
+                <div class="inv-toggle-row">
+                  <span style="font-size:12px;font-weight:500">Inventory</span>
+                  <div class="toggle" title="Toggle inventory tracking"></div>
+                  <span style="font-size:11px;color:#16a34a">Recipe attached — toggle available</span>
+                </div>
+                <button class="ep-save" onclick="editRow(2)">Save</button>
+                <button class="ep-cancel" onclick="editRow(2)">Cancel</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 3 — NonVeg -->
+          <tr data-name="extra masala" id="row3">
+            <td><span class="vdot nonveg" title="Non-Veg"></span></td>
+            <td><span class="aname">Extra Masala</span></td>
+            <td class="price-cell">₹15</td>
+            <td><span class="wt-badge">30g</span></td>
+            <td><span class="st-on" onclick="toggleStatus(3)">● Active</span></td>
+            <td><span class="inv-no">No</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(3)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row3')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow3" style="display:none" class="edit-row"><td colspan="7"><div class="edit-panel"><label>Name<input value="Extra Masala" style="width:140px"/></label><label>Price ₹<input type="number" value="15" style="width:65px"/></label><label>Weight g<input type="number" value="30" style="width:65px"/></label><label>Type<select><option>Veg</option><option selected>Non-Veg</option><option>Egg</option></select></label><button class="ep-save" onclick="editRow(3)">Save</button><button class="ep-cancel" onclick="editRow(3)">Cancel</button></div></td></tr>
+
+          <!-- Row 4 — Egg -->
+          <tr data-name="butter naan" id="row4">
+            <td><span class="vdot egg" title="Egg"></span></td>
+            <td><span class="aname">Butter Naan</span></td>
+            <td class="price-cell">₹35</td>
+            <td><span class="wt-badge">0g</span></td>
+            <td><span class="st-on" onclick="toggleStatus(4)">● Active</span></td>
+            <td><span class="inv-no">No</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(4)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row4')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow4" style="display:none" class="edit-row"><td colspan="7"><div class="edit-panel"><label>Name<input value="Butter Naan" style="width:140px"/></label><label>Price ₹<input type="number" value="35" style="width:65px"/></label><button class="ep-save" onclick="editRow(4)">Save</button><button class="ep-cancel" onclick="editRow(4)">Cancel</button></div></td></tr>
+
+          <!-- Row 5 — Inactive -->
+          <tr data-name="dark choco" class="inactive-row" id="row5">
+            <td><span class="vdot unset" title="Unset"></span></td>
+            <td><span class="aname">Dark Choco <span style="font-size:10px;color:#94a3b8">(inactive)</span></span></td>
+            <td class="price-cell">₹10</td>
+            <td><span class="wt-badge">0g</span></td>
+            <td><span class="st-off" onclick="toggleStatus(5)" id="st5">○ Inactive</span></td>
+            <td><span class="inv-no">No</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(5)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row5')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow5" style="display:none" class="edit-row"><td colspan="7"><div class="edit-panel"><label>Name<input value="Dark Choco" style="width:140px"/></label><label>Price ₹<input type="number" value="10" style="width:65px"/></label><button class="ep-save" onclick="editRow(5)">Save</button><button class="ep-cancel" onclick="editRow(5)">Cancel</button></div></td></tr>
+
+          <!-- Row 6 -->
+          <tr data-name="mint chutney" id="row6">
+            <td><span class="vdot veg"></span></td>
+            <td><span class="aname">Mint Chutney</span></td>
+            <td class="price-cell">₹20</td>
+            <td><span class="wt-badge">0g</span></td>
+            <td><span class="st-on" onclick="toggleStatus(6)">● Active</span></td>
+            <td><span class="inv-no">No</span></td>
+            <td>
+              <button class="act-btn edit" onclick="editRow(6)">Edit</button>
+              <button class="act-btn del" onclick="delRow('row6')">Del</button>
+            </td>
+          </tr>
+          <tr id="editrow6" style="display:none" class="edit-row"><td colspan="7"><div class="edit-panel"><label>Name<input value="Mint Chutney" style="width:140px"/></label><label>Price ₹<input type="number" value="20" style="width:65px"/></label><button class="ep-save" onclick="editRow(6)">Save</button><button class="ep-cancel" onclick="editRow(6)">Cancel</button></div></td></tr>
+
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- Mode: Bulk Edit (placeholder) -->
+    <div id="modeBulk" style="display:none;padding:40px;text-align:center;color:#94a3b8">
+      <p style="font-size:14px">⊞ BulkEditor spreadsheet (existing — unchanged by CR-144)</p>
+    </div>
+
+    <!-- Mode: Card View (placeholder) -->
+    <div id="modeCard" style="display:none;padding:40px;text-align:center;color:#94a3b8">
+      <p style="font-size:14px">⊟ Card View with categories (existing — unchanged by CR-144)</p>
+    </div>
+
+  </div>
+
+  <!-- Callouts -->
+  <div class="callout green">
+    ✔ <strong>Always visible rule (CR-144 core):</strong> The "Add-ons" button appears for ALL menu types — Normal, Aggregator, Party, Premium. No menuType guard. Try changing the dropdown above — the button stays.
+  </div>
+  <div class="callout blue" style="margin-top:8px">
+    ℹ <strong>Inline edit:</strong> Click any Edit button to see the row expand inline for editing. Inventory toggle is disabled when no recipe is attached ("Attach a recipe first" tooltip).
+  </div>
+  <div class="callout amber" style="margin-top:8px">
+    ⚠ <strong>Inactive addon:</strong> "Dark Choco" is shown at 50% opacity with an "(inactive)" label. Click "○ Inactive" to toggle it active. Status calls POST /status-change/{id}.
+  </div>
+
+  <!-- Design rules -->
+  <div class="notes-grid">
+    <div class="note-card">
+      <h4>What this panel does</h4>
+      <ul>
+        <li>List all restaurant addons (veg dot + weight + stock + inventory)</li>
+        <li>Add new addon (name, price, weight, veg type)</li>
+        <li>Edit existing addon inline (click Edit → row expands)</li>
+        <li>Toggle active/inactive per addon</li>
+        <li>Delete addon (with confirm dialog)</li>
+        <li>Search/filter by name</li>
+      </ul>
+    </div>
+    <div class="note-card">
+      <h4>What it does NOT do (out of scope)</h4>
+      <ul>
+        <li>No food-level addon assignment here (that's ProductForm)</li>
+        <li>No aggregator-specific scoping (addons are restaurant-wide)</li>
+        <li>No bulk addon operations</li>
+        <li>Inventory toggle gated by "has recipe" — no recipe = disabled</li>
+        <li>No separate page or route added</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var editOpen = {};
+
+function switchMode(m) {
+  document.getElementById('modeAddons').style.display = m==='addons' ? '' : 'none';
+  document.getElementById('modeBulk').style.display = m==='bulk' ? 'block' : 'none';
+  document.getElementById('modeCard').style.display = m==='card' ? 'block' : 'none';
+  document.getElementById('addonsBtn').className = 'h-btn' + (m==='addons' ? ' active' : '');
+  document.getElementById('bulkBtn').className = 'h-btn' + (m==='bulk' ? ' active bulk' : ' bulk');
+  document.getElementById('cardBtn').className = 'h-btn' + (m==='card' ? ' active' : '');
+  document.getElementById('newLabel').style.display = m==='addons' ? '' : 'none';
+}
+
+function editRow(n) {
+  var er = document.getElementById('editrow'+n);
+  var r = document.getElementById('row'+n);
+  var open = er.style.display !== 'none';
+  er.style.display = open ? 'none' : 'table-row';
+  r.className = open ? '' : 'editing';
+}
+
+function delRow(id) {
+  if (confirm('Delete this addon? This cannot be undone.')) {
+    var row = document.getElementById(id);
+    if (row) row.style.display = 'none';
+    updateCount();
+  }
+}
+
+function toggleStatus(n) {
+  var row = document.getElementById('row'+n);
+  var st = row.querySelector('.st-on, .st-off');
+  if (st.className === 'st-on') {
+    st.className = 'st-off';
+    st.textContent = '○ Inactive';
+    row.className = 'inactive-row';
+  } else {
+    st.className = 'st-on';
+    st.textContent = '● Active';
+    row.className = '';
+  }
+}
+
+function toggleAddForm() {
+  var r = document.getElementById('addFormRow');
+  r.style.display = r.style.display === 'none' ? 'table-row' : 'none';
+}
+
+function saveAdd() {
+  var name = document.getElementById('af-name').value.trim();
+  if (!name) { alert('Name is required'); return; }
+  toggleAddForm();
+  document.getElementById('af-name').value = '';
+  document.getElementById('af-price').value = '';
+  document.getElementById('af-weight').value = '';
+  updateCount();
+}
+
+function filterAddons(v) {
+  var rows = document.querySelectorAll('#addonBody tr[data-name]');
+  var q = v.toLowerCase();
+  rows.forEach(function(r) {
+    var name = r.getAttribute('data-name') || '';
+    r.style.display = name.includes(q) ? '' : 'none';
+  });
+  updateCount();
+}
+
+function updateCount() {
+  var visible = document.querySelectorAll('#addonBody tr[data-name]:not([style*="display: none"])').length;
+  document.getElementById('countTag').textContent = visible + ' add-on' + (visible!==1?'s':'');
+}
+</script>
+</body>
+</html>

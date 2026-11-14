@@ -1,0 +1,15 @@
+{
+  "id": null,
+  "restaurant_order_id": null,
+  "restaurant_discount_amount": null,
+  "discount_value": null,
+  "discount_type": null,
+  "order_discount_json": null,
+  "round_up": null,
+  "order_amount": null,
+  "order_sub_total_amount": null,
+  "payment_status": null,
+  "coupon_discount": null,
+  "payment_type": null,
+  "order_sub_total_without_tax": null
+}

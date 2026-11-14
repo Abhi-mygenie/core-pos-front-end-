@@ -1,0 +1,107 @@
+{
+  "results": {
+    "BUG-437_arrivals": {
+      "pass": true,
+      "first_nonempty": "fd-chip-arrivals-late",
+      "info": {
+        "fd-chip-arrivals-late": {
+          "sel": "true",
+          "text": "Late 10",
+          "n": 10
+        },
+        "fd-chip-arrivals-today": {
+          "sel": "false",
+          "text": "Today 0",
+          "n": 0
+        },
+        "fd-chip-arrivals-tomorrow": {
+          "sel": "false",
+          "text": "Tomorrow 0",
+          "n": 0
+        },
+        "fd-chip-arrivals-upcoming": {
+          "sel": "false",
+          "text": "Upcoming 4",
+          "n": 4
+        }
+      },
+      "empty_absent": true
+    },
+    "BUG-437_departures": {
+      "pass": true,
+      "first_nonempty": "fd-chip-departures-today",
+      "info": {
+        "fd-chip-departures-overdue": {
+          "sel": "false",
+          "text": "Overdue 0",
+          "n": 0
+        },
+        "fd-chip-departures-today": {
+          "sel": "true",
+          "text": "Today 2",
+          "n": 2
+        },
+        "fd-chip-departures-tomorrow": {
+          "sel": "false",
+          "text": "Tomorrow 0",
+          "n": 0
+        },
+        "fd-chip-departures-upcoming": {
+          "sel": "false",
+          "text": "Upcoming 0",
+          "n": 0
+        }
+      }
+    },
+    "BUG-437_inhouse": {
+      "pass": true,
+      "info": {
+        "sel": "true",
+        "text": "All 2",
+        "n": 2
+      }
+    },
+    "BUG-437_rooms": {
+      "pass": true,
+      "info": {
+        "sel": "true",
+        "text": "All 5",
+        "n": 5
+      }
+    },
+    "BUG-437_userpin": {
+      "pass": true,
+      "today_n": 0,
+      "after_click_sel": "true",
+      "empty_text": "No today arrivals",
+      "after_refresh_sel": "true"
+    },
+    "BUG-437_error": "Page.wait_for_selector: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-tab-strip\\\"]\") to be visible\n",
+    "BUG-434_error": "Page.wait_for_selector: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-page-error\\\"]\") to be visible\n",
+    "BUG-435_caseA": {
+      "pass": false,
+      "new_reqs": 1
+    },
+    "BUG-435_caseB": {
+      "pass": true,
+      "new_reqs": 1
+    },
+    "BUG-435_caseC": {
+      "pass": true,
+      "new_reqs": 1
+    },
+    "BUG-435_caseD": {
+      "pass": true,
+      "new_reqs": 1
+    },
+    "BUG-436_error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-tab-arrivals\\\"]\")\n",
+    "BUG-438_error": "Page.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-testid=\\\"fd-tab-arrivals\\\"]\")\n"
+  },
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ]
+}

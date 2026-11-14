@@ -1,0 +1,29 @@
+[
+ {
+  "parentOrderId": 1232632,
+  "roomNumber": "r4",
+  "guestName": "QA BUG-433",
+  "balance": 2212.35,
+  "roomBalance": 2100,
+  "roomOrdersBalance": 112.35,
+  "transferredFnbBalance": 0
+ },
+ {
+  "parentOrderId": 1232610,
+  "roomNumber": "r5",
+  "guestName": "D14",
+  "balance": 18688,
+  "roomBalance": 18688,
+  "roomOrdersBalance": 0,
+  "transferredFnbBalance": 0
+ },
+ {
+  "parentOrderId": 9999,
+  "roomNumber": "r1",
+  "guestName": "paise<10",
+  "balance": 2212.05,
+  "roomBalance": 2212.05,
+  "roomOrdersBalance": 0,
+  "transferredFnbBalance": 0
+ }
+]

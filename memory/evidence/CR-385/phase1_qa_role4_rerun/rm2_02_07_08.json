@@ -1,0 +1,135 @@
+{
+  "R-M2-02_audit": {
+    "outcome_total": "\u20b937,170",
+    "outcome_prepaid": "\u20b90",
+    "outcome_advance": "\u20b90",
+    "phase2_ribbon": true,
+    "dialog_class": "w-full",
+    "dialog_has_fixed": false,
+    "reason_opts": [
+      "Select reason\u2026",
+      "guest cancelled"
+    ],
+    "confirm_disabled": true,
+    "header_greeting": "Good morning"
+  },
+  "R-M2-02_post_body": [
+    {
+      "t": 1790016029.0528493,
+      "phase": "req",
+      "method": "POST",
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/225/cancel",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"staff\",\"notify_cm\":true}"
+    }
+  ],
+  "R-M2-02_post_status": [
+    200
+  ],
+  "R-M2-02_row_gone": true,
+  "R-M2-02_late_after": "Late 12",
+  "R-M2-07_audit": {
+    "outcome_card": true,
+    "phase2_ribbon": true,
+    "noshow_dialog": true,
+    "overlay_class": "w-full",
+    "overlay_has_fixed": false,
+    "overlay_style_attr": null
+  },
+  "R-M2-07_remark": "QA read-only test",
+  "R-M2-07_closed": true,
+  "R-M2-07_row_unchanged": true,
+  "R-M2-08_items": [
+    {
+      "tid": "fd-alert-bar",
+      "text": "Overdue check-out \u00b7 blpi \u00b7 Room r3 \u00b7 1 d\nOverdue check-out \u00b7 bkol \u00b7 Room r2 \u00b7 1 d\nHousekeeping > 13 h \u00b7 Room r5\n+14 more\nOVERDUE\nOverdue che"
+    },
+    {
+      "tid": "fd-alert-item-0",
+      "text": "Overdue check-out \u00b7 blpi \u00b7 Room r3 \u00b7 1 d"
+    },
+    {
+      "tid": "fd-alert-item-1",
+      "text": "Overdue check-out \u00b7 bkol \u00b7 Room r2 \u00b7 1 d"
+    },
+    {
+      "tid": "fd-alert-item-2",
+      "text": "Housekeeping > 13 h \u00b7 Room r5"
+    },
+    {
+      "tid": "fd-alert-more",
+      "text": "+14 more"
+    },
+    {
+      "tid": "fd-alert-popover",
+      "text": "OVERDUE\nOverdue check-out \u00b7 blpi \u00b7 Room r3 \u00b7 1 d\nOVERDUE\nOverdue check-out \u00b7 bkol \u00b7 Room r2 \u00b7 1 d\nHOUSEKEEPING\nHousekeeping > 13 h \u00b7 Room r5"
+    },
+    {
+      "tid": "fd-alert-item-p-0",
+      "text": "Overdue check-out \u00b7 blpi \u00b7 Room r3 \u00b7 1 d"
+    },
+    {
+      "tid": "fd-alert-item-p-1",
+      "text": "Overdue check-out \u00b7 bkol \u00b7 Room r2 \u00b7 1 d"
+    },
+    {
+      "tid": "fd-alert-item-p-2",
+      "text": "Housekeeping > 13 h \u00b7 Room r5"
+    },
+    {
+      "tid": "fd-alert-item-p-3",
+      "text": "Housekeeping > 13 h \u00b7 Room r1"
+    },
+    {
+      "tid": "fd-alert-item-p-4",
+      "text": "Housekeeping > 5 h \u00b7 Room r4"
+    },
+    {
+      "tid": "fd-alert-item-p-5",
+      "text": "Stay expired \u00b7 TEST TEST \u00b7 arrived 3 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-6",
+      "text": "Stay expired \u00b7 Loki Loki \u00b7 arrived 3 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-7",
+      "text": "Stay expired \u00b7 poii poii \u00b7 arrived 4 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-8",
+      "text": "Stay expired \u00b7 boii \u00b7 arrived 5 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-9",
+      "text": "Stay expired \u00b7 Test Guest \u00b7 arrived 7 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-10",
+      "text": "Stay expired \u00b7 Validation Guest \u00b7 arrived 7 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-11",
+      "text": "Stay expired \u00b7 boki boki \u00b7 arrived 10 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-12",
+      "text": "Stay expired \u00b7 Test Guest \u00b7 arrived 10 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-13",
+      "text": "Stay expired \u00b7 saurav \u00b7 arrived 14 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-14",
+      "text": "Stay expired \u00b7 test booking \u00b7 arrived 16 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-15",
+      "text": "Stay expired \u00b7 QA-R4-Modify \u00b7 arrived 21 Sep"
+    },
+    {
+      "tid": "fd-alert-item-p-16",
+      "text": "Stay expired \u00b7 QA-R4-Legacy \u00b7 arrived 21 Sep"
+    }
+  ]
+}

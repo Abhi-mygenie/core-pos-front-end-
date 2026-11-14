@@ -1,0 +1,15 @@
+{
+  "probe_date": "2026-11-07",
+  "probe_target": "paid-order-list date=2026-11-07",
+  "finding": "Backend returns restaurant_discount_amount for paid orders but does NOT return round_up or discount_percentage at the order level. Order 1537857 (001423) not yet in paid-order-list (4 orders visible: up to 001417).",
+  "sample_order_with_discount": {
+    "id": 1537802,
+    "restaurant_order_id": "001414",
+    "restaurant_discount_amount": 100,
+    "order_amount": 14.29,
+    "payment_status": "paid",
+    "payment_type": "prepaid",
+    "note": "Backend fields visible: restaurant_discount_amount, order_amount, payment_status, payment_type, tip_amount, total_gst_tax_amount, total_service_tax_amount. NO round_up, NO discount_percentage, NO discount_value."
+  },
+  "api_fields_absent_from_order_record": ["round_up", "discount_percentage", "discount_value"]
+}

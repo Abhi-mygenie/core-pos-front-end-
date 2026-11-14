@@ -1,0 +1,37 @@
+{
+  "auto_generated_bill_payload": {
+    "source": "user_provided",
+    "order_id": 1537857,
+    "restaurant_order_id": "001423",
+    "payment_amount": 138,
+    "grant_amount": 138,
+    "discount_amount": 119.05,
+    "discount_percentage": 50,
+    "roundoff": 0.5,
+    "gst_tax": 6.54,
+    "cgst_amount": 3.27,
+    "sgst_amount": 3.27,
+    "note": "AUTO-PRINT on prepaid order placement. Uses LIVE paymentData overrides from CollectPaymentPanel."
+  },
+  "manual_print_bill_payload": {
+    "source": "user_provided",
+    "order_id": 1537857,
+    "restaurant_order_id": "001423",
+    "payment_amount": 138.01,
+    "grant_amount": 138.01,
+    "discount_amount": 0,
+    "discount_percentage": "MISSING — key not in payload",
+    "roundoff": "MISSING — key not in payload",
+    "gst_tax": 6.56,
+    "cgst_amount": 3.28,
+    "sgst_amount": 3.28,
+    "note": "MANUAL Print Bill from order entry page. PrintBillButton passes minimal overrides (only serviceChargeTaxPct + deliveryChargeGstPct). Falls into buildBillPrintPayload default branch."
+  },
+  "delta": {
+    "discount_amount": "119.05 → 0 (fallback to order.discount which is 0)",
+    "discount_percentage": "50 → OMITTED (conditional spread, no override.discountPercent)",
+    "roundoff": "0.5 → OMITTED (conditional spread, no override.roundoff)",
+    "payment_amount": "138 → 138.01 (no roundoff applied)",
+    "gst_tax": "6.54 → 6.56 (manual path doesn't discount-reduce tax)"
+  }
+}

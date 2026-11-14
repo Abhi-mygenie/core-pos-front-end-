@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Unit Display Proposals — Inv 1 & 2 & 3</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px}
+  .page{max-width:1280px;margin:0 auto;padding:24px}
+  h1{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:4px}
+  .subtitle{color:#64748b;font-size:13px;margin-bottom:32px}
+  .section{background:#fff;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:32px;overflow:hidden}
+  .sec-header{padding:14px 20px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:12px}
+  .sec-title{font-size:14px;font-weight:700;color:#0f172a}
+  .badge-inv{background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .badge-proposed{background:#dcfce7;color:#15803d;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .badge-info{background:#dbeafe;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+
+  /* legend */
+  .legend{display:flex;gap:16px;padding:12px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#475569}
+  .dot-red{width:12px;height:12px;border-radius:3px;background:#fecaca;border:2px solid #f87171;flex-shrink:0}
+  .dot-green{width:12px;height:12px;border-radius:3px;background:#bbf7d0;border:2px solid #34d399;flex-shrink:0}
+  .dot-yellow{width:12px;height:12px;border-radius:3px;background:#fef08a;border:2px dashed #f59e0b;flex-shrink:0}
+
+  /* table */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:900px}
+  th{background:#f8fafc;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#64748b;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f8fafc}
+
+  /* highlight cells */
+  .cell-bad{background:#fef2f2 !important;border:1.5px solid #fca5a5 !important;border-radius:4px;position:relative}
+  .cell-good{background:#f0fdf4 !important;border:1.5px solid #86efac !important;border-radius:4px}
+  .cell-same{background:#fff}
+
+  .arrow{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#64748b;padding:3px 8px;background:#f1f5f9;border-radius:4px;width:100%}
+  .val-old{color:#dc2626;font-weight:600;text-decoration:line-through;font-size:12px}
+  .val-new{color:#16a34a;font-weight:700;font-size:12px}
+  .lbl{font-size:10px;color:#94a3b8;display:block;margin-top:1px}
+
+  .tag-changed{position:absolute;top:-8px;right:4px;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap}
+  .tag-new{position:absolute;top:-8px;right:4px;background:#22c55e;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap}
+
+  .ingredient-name{font-weight:600;color:#0f172a;font-size:13px}
+  .category{color:#94a3b8;font-size:11px}
+  .on-hand-good{color:#16a34a;font-weight:600}
+  .gap-neg{color:#dc2626;font-weight:600}
+  .status-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700}
+  .badge-red{background:#fee2e2;color:#dc2626}
+  .badge-amber{background:#fef3c7;color:#d97706}
+
+  input.qty-input{width:90px;border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:12px;text-align:center;color:#0f172a}
+  input.qty-input:focus{outline:none;border-color:#f97316}
+
+  .suggest{font-size:10px;color:#f97316;font-weight:600;margin-top:2px}
+
+  /* audit table */
+  .sys-qty{font-size:13px;font-weight:600;color:#334155}
+  .sys-unit{font-size:11px;color:#94a3b8;margin-left:3px}
+  .sys-text{font-size:11px;color:#cbd5e1;margin-left:3px}
+
+  .phys-box-old{width:90px;border:1.5px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;text-align:center;color:#64748b;background:#f8fafc;display:inline-block}
+  .phys-box-new{width:140px;border-radius:8px;overflow:hidden;display:inline-block;vertical-align:top}
+  .phys-input-new{width:100%;border:1.5px solid #e2e8f0;border-radius:6px 6px 0 0;padding:5px 8px;font-size:12px;text-align:center;color:#0f172a;background:#fff;display:block;border-bottom:none}
+  .phys-hint{background:#fef3c7;border:1.5px solid #fde68a;border-top:none;border-radius:0 0 6px 6px;padding:2px 6px;font-size:10px;color:#92400e;font-weight:600;text-align:center;display:block}
+
+  .drift-old{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 8px;border-radius:20px}
+  .drift-new{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .drift-new-main{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#d97706;background:#fef3c7;padding:3px 8px;border-radius:20px}
+  .drift-new-sub{font-size:10px;color:#94a3b8;text-align:center}
+
+  .file-chip{display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:3px 8px;font-size:11px;font-family:monospace;color:#334155;margin:2px}
+
+  .panel-note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin:0 20px 16px;font-size:12px;color:#166534}
+  .panel-warn{background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin:16px 20px;font-size:12px;color:#713f12}
+
+  .col-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:#64748b;display:block;margin-bottom:2px}
+  .divider{height:1px;background:#f1f5f9;margin:0 20px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:20px}
+  .half{padding:0}
+  .half-title{font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  .scope-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .scope-item{display:flex;align-items:flex-start;gap:8px;font-size:12px}
+  .scope-num{width:20px;height:20px;border-radius:50%;background:#f1f5f9;color:#64748b;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .scope-file{font-family:monospace;font-size:11px;color:#7c3aed}
+  .scope-line{color:#94a3b8;font-size:11px}
+  .scope-desc{color:#334155;font-size:12px;font-weight:500}
+  .change-arrow{color:#94a3b8;margin:0 4px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Unit Display Fix — Proposals</h1>
+  <p class="subtitle">Investigations 1, 2 & 3 — exact fields, before → after. No code changed yet. Awaiting Gate 4 GO.</p>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- INVESTIGATION 1 — Smart Purchase                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-title">Investigation 1 — Smart Purchase (Stock Update) — Option A: Convert all to display unit</span>
+      <span class="badge-inv">CURRENT — mixed units</span>
+      <span style="margin-left:auto;font-size:11px;color:#94a3b8">Pages: /inventory-smart-purchase</span>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="dot-red"></div>Field currently WRONG (base unit, will change)</div>
+      <div class="legend-item"><div class="dot-green"></div>Field already correct (display unit, no change)</div>
+      <div class="legend-item"><div class="dot-yellow"></div>New sub-label added below</div>
+    </div>
+
+    <!-- PURCHASE LIST TABLE (top section) -->
+    <div style="padding:12px 20px 4px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px">Section 1 — Purchase List (selected items)</div>
+    <div class="tbl-wrap" style="padding:0 0 8px 0">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Ingredient</th>
+            <th style="color:#16a34a">On-Hand ✅ no change</th>
+            <th>Status</th>
+            <th style="color:#dc2626">Projected Need ❌ changes</th>
+            <th style="color:#dc2626">Gap ❌ changes</th>
+            <th style="color:#dc2626">Qty to Buy * ❌ changes</th>
+            <th>Total Price</th>
+            <th>Vendor *</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><div class="ingredient-name">UAT BAR BEER</div><div class="badge-amber" style="display:inline-flex;margin-top:3px">Low stock</div></td>
+
+            <!-- ON-HAND — no change -->
+            <td class="cell-same">
+              <span class="on-hand-good">8.49 bottle</span>
+              <span class="lbl">(6 bottle 319ml)</span>
+            </td>
+
+            <!-- STATUS — no change -->
+            <td class="cell-same"><span class="status-badge badge-red">infinityd left</span></td>
+
+            <!-- PROJECTED NEED — CHANGES -->
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow">
+                <span class="val-old">422500 ml</span>
+              </div>
+              <div class="arrow" style="margin-top:4px">
+                <span class="val-new">1325.5 bottle</span>
+              </div>
+              <span class="lbl">÷ 319ml per bottle</span>
+            </td>
+
+            <!-- GAP — CHANGES -->
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow">
+                <span class="val-old">-416980</span>
+              </div>
+              <div class="arrow" style="margin-top:4px">
+                <span class="gap-neg">-1307.5 bottle</span>
+              </div>
+              <span class="lbl">÷ 319ml per bottle</span>
+            </td>
+
+            <!-- QTY TO BUY — CHANGES -->
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div>
+                <span class="val-old" style="display:block;margin-bottom:4px">pre-fills: 416980</span>
+                <input class="qty-input" value="1308" style="border-color:#86efac"/>
+                <div class="suggest" style="color:#16a34a">suggest: 1308 bottle</div>
+              </div>
+            </td>
+
+            <td><input type="number" placeholder="₹" style="width:80px;border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:12px"/></td>
+            <td style="font-size:11px;color:#64748b">System Vendor · ₹0</td>
+          </tr>
+
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><div class="ingredient-name">UAT COOKING OIL</div><div class="badge-amber" style="display:inline-flex;margin-top:3px">Low stock</div></td>
+            <td class="cell-same"><span class="on-hand-good">11 tin</span><span class="lbl">(11 tin 35 ml)</span></td>
+            <td class="cell-same"><span class="status-badge badge-amber">infinityd left</span></td>
+
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">490000 ml</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="val-new">163.3 tin</span></div>
+              <span class="lbl">÷ 3000ml per tin</span>
+            </td>
+
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">-482265</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="gap-neg">-161.1 tin</span></div>
+            </td>
+
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div>
+                <span class="val-old" style="display:block;margin-bottom:4px">pre-fills: 482265</span>
+                <input class="qty-input" value="162" style="border-color:#86efac"/>
+                <div class="suggest" style="color:#16a34a">suggest: 162 tin</div>
+              </div>
+            </td>
+
+            <td><input type="number" placeholder="₹" style="width:80px;border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:12px"/></td>
+            <td style="font-size:11px;color:#64748b">System Vendor · ₹0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ALL INGREDIENTS TABLE (lower section) -->
+    <div style="padding:12px 20px 4px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-top:1px solid #f1f5f9">Section 2 — All Ingredients · 7-Day Horizon</div>
+    <div class="tbl-wrap" style="padding:0 0 8px 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th>Category</th>
+            <th style="color:#16a34a">On-Hand ✅ no change</th>
+            <th>Status</th>
+            <th>Velocity</th>
+            <th style="color:#dc2626">Projected Need ❌ changes</th>
+            <th style="color:#dc2626">Suggested Qty ❌ changes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="ingredient-name">UAT BAR BEER</div><div class="badge-red" style="display:inline-flex;margin-top:3px;font-size:10px;padding:1px 5px;border-radius:10px">Low stock</div></td>
+            <td class="category">UAT Biryani Kitchen</td>
+            <td class="cell-same"><span class="on-hand-good">8.49 bottle</span><span class="lbl">(6 bottle 319ml)</span></td>
+            <td class="cell-same"><span class="status-badge badge-red">Low · 0d</span></td>
+            <td style="font-size:11px;color:#64748b">—</td>
+
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">422500 ml</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="val-new">1325.5 bottle</span></div>
+            </td>
+
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">482265</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="val-new">1308 bottle</span></div>
+            </td>
+
+            <td><button style="background:#fff7ed;border:1px solid #fed7aa;color:#ea580c;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ Add</button></td>
+          </tr>
+          <tr>
+            <td><div class="ingredient-name">UAT COOKING OIL</div><div class="badge-red" style="display:inline-flex;margin-top:3px;font-size:10px;padding:1px 5px;border-radius:10px">Low stock</div></td>
+            <td class="category">UAT Biryani Kitchen</td>
+            <td class="cell-same"><span class="on-hand-good">11 tin</span></td>
+            <td class="cell-same"><span class="status-badge badge-red">Low · 0d</span></td>
+            <td style="font-size:11px;color:#64748b">—</td>
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">490000 ml</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="val-new">163.3 tin</span></div>
+            </td>
+            <td class="cell-bad" style="position:relative">
+              <span class="tag-changed">CHANGES</span>
+              <div class="arrow"><span class="val-old">482265</span></div>
+              <div class="arrow" style="margin-top:4px"><span class="val-new">162 tin</span></div>
+            </td>
+            <td><button style="background:#fff7ed;border:1px solid #fed7aa;color:#ea580c;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ Add</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel-note">
+      ✅ <strong>On-Hand column is already correct and will NOT change.</strong>
+      Only the 5 red-highlighted fields change across 2 sections.
+      The API purchase submission continues to send base units — that contract is unchanged.
+    </div>
+
+    <!-- Scope summary -->
+    <div class="two-col" style="border-top:1px solid #f1f5f9">
+      <div class="half">
+        <div class="half-title">Files that will change</div>
+        <ul class="scope-list">
+          <li class="scope-item">
+            <div class="scope-num">1</div>
+            <div>
+              <span class="scope-file">utils/purchasePlanner.js</span><br/>
+              <span class="scope-line">+3 fields added to each row shape:</span><br/>
+              <span class="scope-desc"><code>projected_need_display</code>, <code>gap_display</code>, <code>suggest_qty_display</code> (each = value ÷ conversionFactor)</span>
+            </div>
+          </li>
+          <li class="scope-item">
+            <div class="scope-num">2</div>
+            <div>
+              <span class="scope-file">components/inventory/smart/AutoShoppingList.jsx</span><br/>
+              <span class="scope-line">5 render locations change:</span><br/>
+              <span class="scope-desc">Projected Need (×2), Gap (×1), Qty-to-Buy input + suggest hint (×1), Suggested Qty column (×1)</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="half">
+        <div class="half-title">Files that will NOT change</div>
+        <ul class="scope-list">
+          <li class="scope-item"><div class="scope-num">—</div><span class="scope-file">SmartPurchasePanel.jsx</span> <span class="scope-line">API submit unchanged</span></li>
+          <li class="scope-item"><div class="scope-num">—</div><span class="scope-file">inventoryTransform.js</span> <span class="scope-line">transform unchanged</span></li>
+          <li class="scope-item"><div class="scope-num">—</div><span class="scope-file">inventoryService.js</span> <span class="scope-line">API calls unchanged</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- INVESTIGATION 2 — Stock Audit Physical Qty                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-title">Investigation 2 — Stock Audit — Physical Qty input: show unit label + display qty hint in bracket</span>
+      <span class="badge-inv">CURRENT — confusing</span>
+      <span style="margin-left:auto;font-size:11px;color:#94a3b8">Page: /inventory-audit</span>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="dot-red"></div>Current state (before fix)</div>
+      <div class="legend-item"><div class="dot-green"></div>Proposed state (after fix)</div>
+    </div>
+
+    <div class="tbl-wrap" style="padding:0 0 8px">
+      <table>
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th style="color:#16a34a">System Qty ✅ no change</th>
+            <th style="color:#dc2626">Physical Qty ❌ changes</th>
+            <th style="color:#dc2626">Drift ❌ changes</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ACHARI TIKKA — no conversion, no change -->
+          <tr>
+            <td><div class="ingredient-name">ACHARI TIKKA</div><div class="category">UAT Raw Conversion</div></td>
+            <td class="cell-same"><span class="sys-qty">0</span><span class="sys-unit">kg</span></td>
+            <td class="cell-same" style="text-align:center">
+              <div class="phys-box-old">0</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:3px">no conversion → no change</div>
+            </td>
+            <td class="cell-same" style="text-align:center"><span style="color:#cbd5e1">—</span></td>
+            <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px" disabled><option>N/A — no drift</option></select></td>
+          </tr>
+
+          <!-- ANGARA GREAVY — has conversion, changes -->
+          <tr>
+            <td><div class="ingredient-name">ANGARA GREAVY</div><div class="category">UAT Raw Conversion</div></td>
+
+            <!-- SYSTEM QTY — no change -->
+            <td class="cell-same" style="text-align:right">
+              <span class="sys-qty">9.4</span><span class="sys-unit">pkt</span>
+              <span class="sys-text">(9 pkt 200 gm)</span>
+            </td>
+
+            <!-- PHYSICAL QTY — CHANGES -->
+            <td class="cell-bad" style="position:relative;text-align:center">
+              <span class="tag-changed">CHANGES</span>
+
+              <div style="margin-bottom:10px">
+                <div class="col-label" style="color:#dc2626">CURRENT</div>
+                <div class="phys-box-old">4600</div>
+                <div style="font-size:10px;color:#dc2626;margin-top:3px">❌ No unit shown — user confused (gm or pkt?)</div>
+              </div>
+
+              <div>
+                <div class="col-label" style="color:#16a34a">PROPOSED</div>
+                <div class="phys-box-new">
+                  <input class="phys-input-new" type="number" value="4600" placeholder="Enter in gm"/>
+                  <span class="phys-hint">enter in gm &nbsp;·&nbsp; shelf count: 9.4 pkt</span>
+                </div>
+                <div style="font-size:10px;color:#16a34a;margin-top:3px">✅ Unit label (gm) + shelf count hint in bracket below</div>
+              </div>
+            </td>
+
+            <!-- DRIFT — CHANGES -->
+            <td class="cell-bad" style="position:relative;text-align:center">
+              <span class="tag-changed">CHANGES</span>
+
+              <div style="margin-bottom:10px">
+                <div class="col-label" style="color:#dc2626">CURRENT (wrong label)</div>
+                <span class="drift-old">↓ -100.00 pkt</span>
+                <div style="font-size:10px;color:#dc2626;margin-top:3px">❌ -100 gm shown as pkt</div>
+              </div>
+
+              <div>
+                <div class="col-label" style="color:#16a34a">PROPOSED (Option A)</div>
+                <div class="drift-new">
+                  <span class="drift-new-main">↓ -100.00 gm</span>
+                  <span class="drift-new-sub">(≈ -0.20 pkt on shelf)</span>
+                </div>
+                <div style="font-size:10px;color:#16a34a;margin-top:3px">✅ Correct base unit label + display hint below</div>
+              </div>
+            </td>
+
+            <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px"><option>Select reason...</option></select></td>
+          </tr>
+
+          <!-- BBQ JUMBO WINGS — entered correctly, drift 0 -->
+          <tr>
+            <td><div class="ingredient-name">BBQ JUMBO WINGS</div><div class="category">UAT Raw Conversion</div></td>
+            <td class="cell-same" style="text-align:right"><span class="sys-qty">8.5</span><span class="sys-unit">pkt</span><span class="sys-text">(8 pkt 50 pieces)</span></td>
+            <td class="cell-bad" style="position:relative;text-align:center">
+              <span class="tag-changed">CHANGES (label only)</span>
+              <div class="phys-box-new">
+                <input class="phys-input-new" type="number" value="170" placeholder="Enter in pieces"/>
+                <span class="phys-hint">enter in pieces &nbsp;·&nbsp; shelf: 8.5 pkt</span>
+              </div>
+            </td>
+            <td class="cell-same" style="text-align:center"><span style="color:#cbd5e1">—</span></td>
+            <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px" disabled><option>N/A — no drift</option></select></td>
+          </tr>
+
+          <!-- BIG BOX -->
+          <tr>
+            <td><div class="ingredient-name">BIG BOX</div><div class="category">UAT Raw Conversion</div></td>
+            <td class="cell-same" style="text-align:right"><span class="sys-qty">4.96</span><span class="sys-unit">bundle</span><span class="sys-text">(4 bundle 48 pieces)</span></td>
+            <td class="cell-bad" style="position:relative;text-align:center">
+              <span class="tag-changed">CHANGES (label only)</span>
+              <div class="phys-box-new">
+                <input class="phys-input-new" type="number" value="248" placeholder="Enter in pieces"/>
+                <span class="phys-hint">enter in pieces &nbsp;·&nbsp; shelf: 4.96 bundle</span>
+              </div>
+            </td>
+            <td class="cell-same" style="text-align:center"><span style="color:#cbd5e1">—</span></td>
+            <td><select style="font-size:11px;border:1px solid #e2e8f0;border-radius:5px;padding:4px 6px" disabled><option>N/A — no drift</option></select></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel-note">
+      ✅ <strong>API send is unchanged.</strong> Still sends <code>physical_qty: 4600</code> in base units — the backend contract stays the same.
+      Only the <em>display</em> changes: the input box gets a unit label + shelf-count hint, and the drift badge shows the correct unit.
+    </div>
+
+    <div class="panel-warn">
+      ⚠️ <strong>Note for items WITHOUT unit conversion</strong> (like ACHARI TIKKA with <code>unit = kg</code>, no conversion factor):
+      No hint strip is added — the box stays simple as today. The hint only appears when <code>item.conversionFactor</code> is present and > 0.
+    </div>
+
+    <div class="two-col" style="border-top:1px solid #f1f5f9">
+      <div class="half">
+        <div class="half-title">Files that will change</div>
+        <ul class="scope-list">
+          <li class="scope-item">
+            <div class="scope-num">1</div>
+            <div>
+              <span class="scope-file">components/inventory/StockAuditPanel.jsx</span><br/>
+              <span class="scope-line">3 locations:</span><br/>
+              <span class="scope-desc">① getDrift() line 53 — unit label fix (Option A: <code>smallUnit</code>)<br/>② Physical Qty placeholder (line 184) — add unit label below input<br/>③ Drift badge render (line 197) — add display-unit hint in smaller text below</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="half">
+        <div class="half-title">Files that will NOT change</div>
+        <ul class="scope-list">
+          <li class="scope-item"><div class="scope-num">—</div><span class="scope-file">inventoryService.js / inventoryTransform.js</span><span class="scope-line"> API payload unchanged</span></li>
+          <li class="scope-item"><div class="scope-num">—</div><span class="scope-file">handleSaveAll()</span><span class="scope-line"> physicalQty value sent as-is</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- INVESTIGATION 3 — What is sent to backend as drift?        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="sec-header">
+      <span class="sec-title">Investigation 3 — What does the FE send to the backend for drift?</span>
+      <span class="badge-info">API PAYLOAD ANALYSIS</span>
+    </div>
+    <div style="padding:20px">
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;line-height:1.8;margin-bottom:16px">
+        <div style="color:#64748b;margin-bottom:8px">// POST /api/v2/vendoremployee/inventory/add-stock/{itemId}</div>
+        <div>{</div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"quantity"</span>: <span style="color:#059669">0</span>, <span style="color:#94a3b8">// no stock being added — recount only</span></div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"unit"</span>: <span style="color:#dc2626">"pkt"</span>, <span style="color:#94a3b8">// item.displayUnit — e.g. "pkt" for ANGARA GREAVY</span></div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"physicalqty_master"</span>: <span style="color:#059669">true</span>, <span style="color:#94a3b8">// flags this as a physical count operation</span></div>
+        <div style="padding-left:20px"><span style="color:#dc2626"><strong>"physical_qty"</strong></span>: <span style="color:#059669">4600</span>, <span style="color:#94a3b8">// raw user-entered value (gm) — this is what backend uses</span></div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"waste_reason"</span>: <span style="color:#059669">"Select reason..."</span>,</div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"wastage_reason_id"</span>: <span style="color:#059669">null</span>,</div>
+        <div style="padding-left:20px"><span style="color:#7c3aed">"notes"</span>: <span style="color:#059669">""</span></div>
+        <div>}</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px">
+          <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px">⚠️ Potential mismatch in current payload</div>
+          <div style="font-size:12px;color:#7f1d1d;line-height:1.6">
+            <code>unit: "pkt"</code> is sent alongside <code>physical_qty: 4600</code>.<br/><br/>
+            If the backend reads <code>unit</code> to interpret <code>physical_qty</code>, it would see 4600 <em>packets</em> which is wildly wrong.<br/><br/>
+            Owner confirmed the API result is correct, which means the backend likely <strong>ignores the unit field for physical_qty</strong> and treats it as base units, OR reads the ingredient's own conversion factor from its record.
+          </div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px">
+          <div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:8px">✅ What Option A fix changes in backend send</div>
+          <div style="font-size:12px;color:#14532d;line-height:1.6">
+            <strong>Nothing.</strong> The drift fix (Option A) only changes the display label shown in the UI.<br/><br/>
+            <code>physical_qty: 4600</code> still goes to the backend unchanged.<br/><br/>
+            The backend calculates the actual drift internally — the FE never sends a <code>drift</code> field. The FE only sends the user's physical count and the backend does the comparison against its stored quantity.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-warn" style="margin:16px 0 0">
+        ⚠️ <strong>Recommendation before fixing:</strong> Verify with backend team whether <code>unit: "pkt"</code> is used to interpret <code>physical_qty</code> or ignored. If it's used, then <code>unit</code> should be changed to <code>item.smallUnit</code> ("gm") in <code>handleSaveAll()</code> as well — otherwise the backend could misread 4600 as 4600 pkt. This is a <strong>backend API contract clarification question</strong> before any code change.
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

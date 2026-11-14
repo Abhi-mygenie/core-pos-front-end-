@@ -1,0 +1,96 @@
+{
+  "results": [
+    {
+      "case": "SMOKE-LOGIN",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "https://core-pos-deploy-20.preview.emergentagent.com/loading"
+    },
+    {
+      "case": "\u00a71-M0-01-route",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "https://core-pos-deploy-20.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+    },
+    {
+      "case": "\u00a71-M0-01-tabparam",
+      "status": "PASS",
+      "severity": "MINOR",
+      "evidence": "https://core-pos-deploy-20.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+    },
+    {
+      "case": "\u00a71-X-15-kpi-200",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "kpi=[200, 200]"
+    },
+    {
+      "case": "\u00a71-X-15-kpi-singleday",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "start=2026-09-21 end=2026-09-21"
+    },
+    {
+      "case": "\u00a71-X-15-lrparams",
+      "status": "PASS",
+      "severity": "MAJOR",
+      "evidence": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+    },
+    {
+      "case": "\u00a71-M0-09-header",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "Good afternoon, Owner / Monday, 21 September 2026 / synced just now"
+    },
+    {
+      "case": "\u00a71-M0-09-new-booking",
+      "status": "PASS",
+      "severity": "MINOR",
+      "evidence": "dis=True t=Available in Phase 2"
+    },
+    {
+      "case": "\u00a71-M0-09-no-cm",
+      "status": "FAIL",
+      "severity": "MAJOR",
+      "evidence": ""
+    },
+    {
+      "case": "\u00a71-M0-02-tiles",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "a=0 d=2 i=2 r='0 free' sub='20% occupancy'"
+    },
+    {
+      "case": "\u00a71-M0-03-chips-arr",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "late=10 today=0 tmr=0 up=4 sum=14"
+    },
+    {
+      "case": "\u00a71-M0-06-area",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "['2nd Floor \u00b7 1', '3rd Floor \u00b7 1', 'First Floor \u00b7 1', 'Ground Floor \u00b7 1', 'Patal Lok \u00b7 1']"
+    },
+    {
+      "case": "\u00a71-M0-06-persist",
+      "status": "PASS",
+      "severity": "MINOR",
+      "evidence": "ls=area"
+    },
+    {
+      "case": "\u00a72-A7-dup-1920",
+      "status": "PASS",
+      "severity": "NOTE",
+      "evidence": "[]"
+    }
+  ],
+  "net": {
+    "lr": 1,
+    "board": 2,
+    "kpi": 2
+  },
+  "kpi_url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+  "lr_url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+  "console": []
+}

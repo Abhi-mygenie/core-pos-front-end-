@@ -1,0 +1,10 @@
+{
+  "results": [
+    {
+      "case": "SMOKE-LOGIN",
+      "status": "FAIL",
+      "severity": "BLOCKER",
+      "evidence": "no email input found; url=https://core-pos-deploy-20.preview.emergentagent.com/login; html_snippet=<!DOCTYPE html><html lang=\"en\"><head>\n        <meta charset=\"utf-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n        <meta name=\"theme-color\" content=\"#000000\">\n        <meta name=\"description\" content=\"MyGenie restaurant point-of-sale\">\n        <link rel=\"icon\" t"
+    }
+  ]
+}

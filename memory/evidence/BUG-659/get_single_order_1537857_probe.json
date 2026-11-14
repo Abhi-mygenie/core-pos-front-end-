@@ -1,0 +1,19 @@
+{
+  "id": 1537857,
+  "restaurant_order_id": "001423",
+  "order_amount": 138.01,
+  "restaurant_discount_amount": null,
+  "discount_value": null,
+  "discount_type": null,
+  "order_discount": null,
+  "order_discount_type": null,
+  "order_discount_json": null,
+  "round_up": null,
+  "gst_tax": null,
+  "vat_tax": null,
+  "order_sub_total_amount": 238.1,
+  "order_sub_total_without_tax": 130.96,
+  "service_tax": null,
+  "total_service_tax_amount": "11.91",
+  "order_details_count": null
+}
