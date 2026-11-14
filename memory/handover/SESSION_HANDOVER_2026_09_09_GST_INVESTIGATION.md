@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-09
 **Branch:** audit8 (deployed to /app/frontend)
-**Preview URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+**Preview URL:** https://core-pos-preview-15.preview.emergentagent.com
 **Sprint:** pos_pms_1
 **Roles used:** INVESTIGATION
 

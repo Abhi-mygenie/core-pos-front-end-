@@ -95,7 +95,7 @@ No warning, success toast: *“N rooms marked clean”*
 
 ## 5. Credentials + Environment
 
-- App URL: `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
+- App URL: `https://pos-frontend-deploy-30.preview.emergentagent.com`
 - Account: owner@thegoankitchen.com (***)
 - Preprod API: `https://preprod.mygenie.online/`
 - Navigate to `/pms/room-status` after login

@@ -57,5 +57,5 @@
 
 ## 5. Environment
 
-- App: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+- App: https://core-frontend-dev.preview.emergentagent.com
 - Routes: /restaurant-settings (Step 4) · /menu (ProductForm/BulkEditor)

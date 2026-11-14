@@ -44,7 +44,7 @@ REACT_APP_CRM_API_KEYS={"364":"...","475":"...","478":"...","509":"..."}
 REACT_APP_GOOGLE_MAPS_KEY=AIzaSyCS9rZcttTxbair3abltZ3Fm1vEnmY0mj4
 CORS_ORIGINS=*
 REACT_APP_SHOW_AUDIT_TAB=true
-REACT_APP_BACKEND_URL=https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://pos-front-preview-10.preview.emergentagent.com
 ```
 
 ## Verification

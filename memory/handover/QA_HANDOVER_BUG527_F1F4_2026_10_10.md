@@ -71,7 +71,7 @@ BUG-528: CLOSED_DUPLICATE
 | Owner | `owner@thegoankitchen.com` | `Qplazm@10` | RID 69, The Goan Kitchen |
 | bonk booking | MG-69-2C201998-53D8-4980-A6A8-B042088BFC9D | — | room r4, order #000361 |
 | bonk key values | booking_charge ₹3,000 · discount ₹1,000 · advance ₹1,500 · expected roomBal ₹600 · expected tile total ~₹827 | — | All F1-F4 tests |
-| App URL | https://fetch-build-2--4vbg6x1d.preview.emergentagent.com | — | |
+| App URL | https://core-pos-frontend-12.preview.emergentagent.com | — | |
 | Dashboard | `/dashboard` → Room tab | — | TC-F1 |
 | Order entry | Dashboard → bonk r4 tile | — | TC-F2/F3 |
 

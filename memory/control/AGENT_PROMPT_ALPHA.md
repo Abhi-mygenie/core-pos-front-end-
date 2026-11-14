@@ -403,7 +403,7 @@ Record in intake doc: "Duplicate check: DISTINCT | RELATED to <ID> | DUPLICATE o
 
 #### Step 1 — Classify + Severity
 
-Ask owner 5 questions: Describe → Classify (bug/feature) → Evidence → Area+Priority → Confirm
+Ask owner 5 questions: Describe → Classify (bug/feature) → Evidence → Area+Priority → Client+Confirm
 
 **Severity Rubric (apply before asking owner to confirm priority):**
 
@@ -426,6 +426,31 @@ Record in intake doc:
 - Process required: FAST LANE eligible? YES/NO
 
 FAST LANE can only be recommended for LOW risk and still needs owner approval.
+
+#### Step 1c — Client + Assignee (MANDATORY for every intake)
+
+**Client:**
+Ask the owner: "Which client / restaurant is this for?" Record the answer as `client` in the intake doc and registry entry. If the item is platform-wide / applies to all clients, record `client: ALL`.
+
+**Assignee auto-routing:**
+Agent applies the decision tree below, proposes the name, and asks owner to confirm.
+
+| Condition (evaluate top-to-bottom, first match wins) | Proposed assignee |
+|---|---|
+| Area = **Old POS** or **Printer / Printer Agent** | **Piyush** |
+| Area = **Inventory / Stock** or **PMS / Rooms** AND item is blocked at backend | **Parth** |
+| Any other area AND item is blocked at backend | **Gyan** |
+| Everything else (frontend work, not blocked at backend) | **Abhishek** |
+
+Agent says: `"Based on area (<area>) and blocked status (<yes/no>), I'd assign this to <Name>. Agree?"`
+Owner can override. Record final assignee in intake doc and registry entry.
+
+Record in intake doc:
+```
+- Client:   <client name or ALL>
+- Assignee: <Name> (auto-routed | owner-overridden)
+- Routing reason: <e.g. "Printer Agent area → Piyush" or "PMS + backend blocked → Parth">
+```
 
 #### Step 2 — Evidence Capture (MANDATORY for every intake)
 ```
@@ -451,17 +476,19 @@ Record in intake doc:
 
 #### Step 4 — Register
 - Auto-generate intake doc at `/app/memory/change_requests/<ID>_<TITLE>.md`
-- Register in `/app/memory/control/registry.json`
+- Register in `/app/memory/control/registry.json` — include `client` and `assignee` fields
 - Update `CR_REGISTRY.md` or `BUG_TRACKER.md`
 - Surface owner decisions needed (Open Questions)
 
 ### Output
-- Intake doc (with evidence section, severity, duplicate check, blast radius)
-- `registry.json` entry
+- Intake doc (with evidence section, severity, duplicate check, blast radius, client, assignee)
+- `registry.json` entry — includes `client` and `assignee` fields
 - Updated registry/tracker
 - **Code reality status:** NONE / PARTIAL / FULL
 - **Duplicate check:** DISTINCT / RELATED / DUPLICATE
 - **Blast radius:** SMALL / MEDIUM / LARGE
+- **Client:** <name or ALL>
+- **Assignee:** <Name> (routing reason)
 
 ### Handover to Next (→ PLANNING)
 ```
@@ -471,6 +498,8 @@ Record in intake doc:
  Severity: <P0-P3> (<owner-confirmed or agent-classified>).
  Blast radius: <SMALL/MEDIUM/LARGE> (~N files, hotspots: <YES list/NO>).
  Evidence: <captured / not provided>.
+ Client: <name or ALL>.
+ Assignee: <Name> (<routing reason>).
  Owner decisions needed: <list or none>.
  Next: Planning agent for Gates 2-3."
 ```

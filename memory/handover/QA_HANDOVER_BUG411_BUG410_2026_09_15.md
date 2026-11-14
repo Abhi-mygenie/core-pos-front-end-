@@ -76,7 +76,7 @@ Compile: **PASS** (webpack compiled successfully, 0 new warnings)
 ## 5. Credentials + Environment
 
 ```
-URL:      https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+URL:      https://f66d5e4f-7aa2-4f84-ad4a-42a88864b5bd.preview.emergentagent.com
 Login:    owner@thegoankitchen.com  /  Qplazm@10
 Note:     Firebase auth — must login manually before testing
 PMS Check-In: /pms/check-in

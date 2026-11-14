@@ -48,5 +48,5 @@ const ROTATE_MQ = '(orientation: portrait) and (max-width: 767px), (max-width: 7
 
 ## 3. Credentials + Environment
 - Login: owner@cafe103.com / *** (masked)
-- Preview: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+- Preview: https://pos-frontend-app-4.preview.emergentagent.com
 - Compile: 1 pre-existing warning (SettlementReportMockup), 0 new

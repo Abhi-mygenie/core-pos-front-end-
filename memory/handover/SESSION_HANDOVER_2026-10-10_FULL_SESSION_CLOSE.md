@@ -13,7 +13,7 @@
 - Cloned `5oct-1` from `github.com/Abhi-mygenie/core-pos-front-end-.git`
 - Synced `frontend/` → `/app/frontend/`, `memory/` → `/app/memory/`
 - Wrote all env vars (Firebase, API, Socket, Maps), `yarn install --ignore-engines`, supervisor restarted
-- App live at `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
+- App live at `https://core-pos-frontend-12.preview.emergentagent.com`
 - webpack: 1 pre-existing ESLint warning (no new warnings)
 
 ---
@@ -172,7 +172,7 @@ Absorbed into BUG-527 scope revision. Not a separate bug.
 | Backend | RUNNING port 8001 |
 | MongoDB | RUNNING |
 
-**App URL:** `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
+**App URL:** `https://core-pos-frontend-12.preview.emergentagent.com`
 
 ---
 

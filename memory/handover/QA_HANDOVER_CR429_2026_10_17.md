@@ -60,4 +60,4 @@ EXIT GATE: 5/5 PASS
 | owner@palmhouse.com | Qplazm@10 |
 | owner@cafe103.com | Qplazm@10 |
 
-**URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+**URL:** https://pos-front-preview-10.preview.emergentagent.com

@@ -42,5 +42,5 @@
 
 ## 5. Credentials + Environment
   Account: OWNER_PREPROD (see memory/test_credentials.md)
-  URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+  URL: https://pos-app-deploy-1.preview.emergentagent.com
   QA report: test_reports/iteration_3.json

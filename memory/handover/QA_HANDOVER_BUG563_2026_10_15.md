@@ -43,5 +43,5 @@ EXIT GATE: ALL 5 PASSED
 
 ## 4. Credentials + Environment
 - Login: owner@cafe103.com / *** (masked)
-- Preview: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+- Preview: https://pos-frontend-app-4.preview.emergentagent.com
 - Compile: 1 pre-existing warning, 0 new

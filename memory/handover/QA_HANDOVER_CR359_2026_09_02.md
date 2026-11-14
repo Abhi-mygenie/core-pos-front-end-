@@ -73,7 +73,7 @@ EXIT GATE: ALL 5 PASSED (see below)
 | Test account (printer agent, full setup) | owner@hogwarts.com / Qplazm@10 |
 | Test account (printer agent, has mappings) | owner@ruby.com / Qplazm@10 |
 | Test account (local printer, no default_users) | owner@cafeclub.com / Qplazm@10 |
-| App URL | https://fetch-build-2--4vbg6x1d.preview.emergentagent.com |
+| App URL | https://core-frontend-live.preview.emergentagent.com |
 | Printer Settings path | Settings → Printer Settings → Station Mapping tab |
 
 ---

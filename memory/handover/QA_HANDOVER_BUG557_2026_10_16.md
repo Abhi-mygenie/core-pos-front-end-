@@ -40,7 +40,7 @@ EXIT GATE: 5/5 PASS
 ```
 
 ## 4. Credentials + Environment
-- App URL: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+- App URL: https://genie-pos-app.preview.emergentagent.com
 - **Primary test account: `owner@18march.com` / `Qplazm@10`** (uat Ruby — Default Order Status = Bill configured)
 - Secondary: `owner@cafe103.com` / `Qplazm@10` (for normal flow regression)
 - Note: preprod /products has been timing out — code checks will pass; browser tests need live preprod

@@ -13,7 +13,7 @@
 - Cloned `core-pos-front-end-` repo branch `5oct-1` into `/app/frontend/`
 - Synced `/app/memory/` (38 files), wrote all env vars to `/app/frontend/.env`
 - App running: `yarn start` (CRACO) on port 3000
-- **Pod URL: `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`**
+- **Pod URL: `https://core-pos-front-6.preview.emergentagent.com`**
 
 ### B. BUG-516..519 — Checkout Discount Batch (GATE_5A_IMPLEMENTED)
 All 4 implemented, QA handover written. See `handover/QA_HANDOVER_BUG516_519_2026_10_09.md`.
@@ -102,7 +102,7 @@ All 3 touch `FolioCheckoutPanel.jsx`. Line numbers may shift — entry verificat
 
 | Service | Status | URL |
 |---|---|---|
-| Frontend | RUNNING (supervisor, port 3000) | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com` |
+| Frontend | RUNNING (supervisor, port 3000) | `https://core-pos-front-6.preview.emergentagent.com` |
 | Webpack | Compiled successfully, 0 warnings | — |
 | Backend | RUNNING (port 8001) | — |
 | MongoDB | RUNNING | — |
@@ -115,7 +115,7 @@ All 3 touch `FolioCheckoutPanel.jsx`. Line numbers may shift — entry verificat
 |---|---|---|---|
 | Owner (The Goan Kitchen) | `owner@thegoankitchen.com` | `Qplazm@10` | RID 69 |
 | Test booking (bonk) | MG-69-2C201998-53D8-4980-A6A8-B042088BFC9D | — | RID 69, order 1233012 |
-| URL | `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` | — | — |
+| URL | `https://core-pos-front-6.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` | — | — |
 | bonk key values | booking_charge=₹3,000 · advance=₹1,500 · baseBalance=₹600 · maxCheckoutDiscount=₹525 · maxPct=17% | — | — |
 
 ---

@@ -76,7 +76,7 @@ Key browser tests (V-3, V-4, V-5, V-6):
 - Type "MA" → MARRY auto-completes
 - Click MARRY in dropdown → coupon applies
 
-Credentials: owner@kunafamahal.com / Qplazm@10 | Preview: https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+Credentials: owner@kunafamahal.com / Qplazm@10 | Preview: https://mygenie-pos-app-3.preview.emergentagent.com
 Live scan order with coupon: Order 1233112, customer phone 9653078028.
 
 ---

@@ -43,7 +43,7 @@ EXIT GATE:        5/5 PASS
 ## §3 Test Cases
 
 **Credentials:** owner@thegoankitchen.com / Q***@10
-**URL:** https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+**URL:** https://react-app-direct-3.preview.emergentagent.com
 
 ### BLOCK 1 — Cancel Booking (Arrivals page)
 

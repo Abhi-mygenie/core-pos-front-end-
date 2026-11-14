@@ -15,7 +15,7 @@
 7. Restarted frontend via supervisor — compiled successfully on port 3000
 
 ## Env Variables Set
-- REACT_APP_BACKEND_URL=https://fetch-build-2--4vbg6x1d.preview.emergentagent.com
+- REACT_APP_BACKEND_URL=https://pos-frontend-app-6.preview.emergentagent.com
 - WDS_SOCKET_PORT=443
 - REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
 - REACT_APP_SOCKET_URL=https://presocket.mygenie.online

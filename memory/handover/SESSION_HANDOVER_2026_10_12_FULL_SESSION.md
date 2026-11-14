@@ -174,7 +174,7 @@ See full test credentials: `/app/memory/test_credentials.md`
 
 External backend: `https://preprod.mygenie.online`
 Socket: `https://presocket.mygenie.online`
-Preview URL: `https://fetch-build-2--4vbg6x1d.preview.emergentagent.com`
+Preview URL: `https://genie-core-pos.preview.emergentagent.com`
 
 ---
 

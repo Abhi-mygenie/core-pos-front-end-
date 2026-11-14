@@ -331,7 +331,7 @@ if __name__ == "__main__":
 
 **CLI usage:**
 ```bash
-python3 runner.py --module MM --url https://fetch-build-2--4vbg6x1d.preview.emergentagent.com --email owner@palmhouse.com --password ****
+python3 runner.py --module MM --url https://core-pos-deploy-25.preview.emergentagent.com --email owner@palmhouse.com --password ****
 ```
 
 ---
