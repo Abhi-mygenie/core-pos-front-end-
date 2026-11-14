@@ -1,0 +1,12 @@
+{
+ "status": 200,
+ "body": {
+  "success": true,
+  "message": "Cancel handled successfully",
+  "data": {
+   "order_amount": 210,
+   "subtotal": 200,
+   "tax": 10
+  }
+ }
+}

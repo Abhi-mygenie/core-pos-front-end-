@@ -67,6 +67,12 @@ Role: **PLANNING** (per `control/AGENT_PROMPT_ALPHA.md` §PLANNING, Gate 2).
 - **Moved to P1:** CR-504, 506, 507, 508, 509, 511, 532, 444, 497, 537, 539, 138, BUG-192.
 - Next intake batch: **D (Dashboard, Order Entry & Order Cards)**, lines 1824-2309 of the briefs file, P0 only.
 
+## 7a. Batch A Gate 2 — Impact Analysis DRAFT (merged from parallel agent 2026-11-14)
+- Read `handover/SESSION_HANDOVER_2026_11_14_BATCH_A_GATE2_IMPACT.md` + `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`.
+- 14 impact docs in `impact/`, evidence (contact details masked) in `evidence/BATCH-A-IA/probes_2026_11_14/`. Applied via `reports/apply_batch_a_gate2_merge.py` (already run — do not re-run).
+- 11 items → `GATE_2_IMPACT_ANALYSIS — DRAFT`; CR-529, CR-540 stay INTAKE. Round 5 owner questions (1–5) asked, not answered; 6–16 not asked; backend brief not written.
+- Not pushed to GitHub (owner: merge local first).
+
 ## 7c. Batch D Status — INTAKE CLOSED (P0 only), registry updated 2026-11-14
 - Source of truth: `change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md`. Applied via `reports/apply_batch_d_decisions.py` (already run — do not re-run).
 - **P0 ready for impact (6):** BUG-667 (sidebar name wrap 2 lines), BUG-669 (₹0 add-ons + variations), BUG-673 (Enter re-adds default item → selection back to search box), CR-525 (Collect Bill replaces KOT+Bill after print), CR-521 (orange background, green border — design agent picks shade), CR-523 (link customer without update).

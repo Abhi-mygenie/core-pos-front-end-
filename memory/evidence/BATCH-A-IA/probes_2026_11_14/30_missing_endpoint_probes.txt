@@ -1,0 +1,5 @@
+/api/v2/vendoremployee/verify-pin 404
+/api/v2/vendoremployee/restaurant-settings/verify-pin 404
+/api/v1/vendoremployee/verify-manager-pin 404
+/api/v2/vendoremployee/employee/notification-preferences 404
+/api/v2/vendoremployee/restaurant-settings/cancel-config 404
