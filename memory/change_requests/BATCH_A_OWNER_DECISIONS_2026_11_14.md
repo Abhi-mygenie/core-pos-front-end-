@@ -1,7 +1,8 @@
 # Batch A — Owner Decisions (FINAL) — 2026-11-14
 
-Source: owner Q&A rounds 1–3 (2026-11-14). Supersedes `BATCH_A_OWNER_ANSWERS_DRAFT_2026_11_14.md`.
+Source: owner Q&A rounds 1–10 (2026-11-14). Supersedes `BATCH_A_OWNER_ANSWERS_DRAFT_2026_11_14.md`.
 Client for all Batch A items: **ALL**. Assignment rule (A32): Abhishek on frontend, "waiting on Gyan" where backend keys/rights are needed.
+**Gate 2 CLOSED 2026-11-14.** Backend briefs written. Next: Gate 3 after backend reply.
 
 ## Code findings (agent, 2026-11-14, code-traced — not yet probed on preprod)
 - **BUG-670:** `CancelFoodModal.jsx` collects `additionalNotes` (L201-216) but `handleCancel` (L35) never passes it to `onCancel`; `orderToAPI.cancelItem` (orderTransform.js L995-1006) has no notes field. Notes are dropped in the FE → can never reach reports. Reports read `cancel_reason_text` per line (reportTransform.js L789, insightsService.js L301-305). **Backend Q (Gyan):** which field does `cancel-food-item` accept for item notes (`cancel_reason_text`?) and is it returned in cancel-order-list?
@@ -23,7 +24,16 @@ Client for all Batch A items: **ALL**. Assignment rule (A32): Abhishek on fronte
 | CR-443 (+CR-496) | CR-496 merged into CR-443. Alerts: cancel before serve, cancel after serve, unpaid, payment method changed (more at impact). Content: order, item, table/room, who, reason. Delivery: POS + phone push. A right decides who CAN receive; employee can switch off on this device. Phase 2: read tick (model TBD) + tap opens order. |
 | CR-071 | Into Batch A. Abhishek. |
 | CR-372-B | Delete `/settlement/preview` demo page. `/local-printer-setup` (unguarded) — decide at impact. Report preview routes already guarded by PermissionRoute. |
-| CR-540 (NEW) | Revenue leakage controls (ideas 1–8). Priority TBD by owner. |
+| CR-540 (NEW) | Revenue leakage controls (ideas 1–8). **P1** (owner 2026-11-14). |
+
+## Priority updates (owner 2026-11-14)
+| Item | Priority | Note |
+|---|---|---|
+| CR-071 | P1 | Scoped to Batch A rights only |
+| CR-445 (+CR-058) | P1 | Whole-order comp |
+| CR-372-B | P0 | Route guarding |
+| CR-540 | P1 | Revenue leakage controls |
+| CR-529 | P1 | Phase 2 OTP — PIN stays P0 in CR-494 |
 
 ## Round 5 answers (2026-11-14, Gate 2 IA)
 - **OD-515-A:** item cancel uses the existing cancellation right already in use (option a). If not found, owner shares screenshot; fallback a.

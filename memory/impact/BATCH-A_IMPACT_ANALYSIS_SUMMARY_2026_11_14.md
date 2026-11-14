@@ -1,7 +1,7 @@
 # BATCH-A — Impact Analysis Summary (Gate 2) — 2026-11-14
 
-Role: PLANNING (Gate 2 only). Owner GO: "planning role for impact analysis of batch A, do every probe, don't assume anything".
-Scope: all 13 items in one go (owner choice). Zero source code changes. Gate 3 NOT started.
+Role: PLANNING (Gate 2). **GATE 2 CLOSED 2026-11-14.** All 13 items analysed, all ODs answered (rounds 1–10), backend briefs written.
+Scope: all 13 items in one go (owner choice). Zero source code changes. Gate 3 awaiting backend reply.
 Probe account: cafe103 owner alias (RID 644). Credentials NOT stored (owner: session only). Tokens masked `***` in all evidence.
 Write probes owner-approved on test orders only: #021537 (id 1578756) and #021538 (id 1578757), both cancelled (clean).
 
@@ -50,7 +50,7 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | 6 | CR-540 | CR-540_IMPACT_ANALYSIS.md | HIGH | Scope OD open |
 | 6 | CR-372-B | CR-372-B_IMPACT_ANALYSIS.md | LOW | NO |
 
-## Owner decisions log (rounds 1–4, 2026-11-14)
+## Owner decisions log (rounds 1–10, 2026-11-14)
 | OD | Decision |
 |---|---|
 | Scope | All 13 items in one go; write probes allowed on test orders; credentials session-only |
@@ -87,20 +87,30 @@ Many open items at GATE_5A/5B touch the same hotspots (CollectPaymentPanel, Orde
 | OD-443-B (R7) | Delivery via Firebase (FCM) token, same as existing notifications (token sent at login: LoginPage.jsx L54-83 → authTransform.js L52 `fcm_token`) |
 | OD-372B-A (R7) | `/local-printer-setup` must require login. Code check: route App.js L251 has NO ProtectedRoute; same `LocalPrinterSetupView` also used inside Settings (ListFormViews.jsx L189-192, printerType 'direct') → in use there; standalone route has no in-app link found (direct URL only). Live-device usage NOT verified |
 
-## Pending owner questions (next IA agent asks these, 5 per round)
+## Owner decisions — all rounds answered
 Round 5: ANSWERED 2026-11-14 (see decisions log).
 Round 6: ANSWERED 2026-11-14 (items 6–10 resolved, see log).
 Round 7: ANSWERED 2026-11-14 (OD-492-B, 495-C, 443-A, 443-B, 372B-A).
 Round 8: ANSWERED 2026-11-14 (OD-372B-B keep, CR-540 P1, CR-529/all OTP P1).
-Remaining before brief: CR-515 reprint right P1 confirm (already recorded P1 in R1–4); CR-529 + CR-540 IA docs stay dependency-level (P1). Missing-backend list shown to owner 2026-11-14. CR-495 brief written (R9). Owner GO (R10) → `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan, BA-01..22 + R-1..3) WRITTEN. Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html` (batch-wise status).
-**GATE 2 CLOSED 2026-11-14** (open discussion items: CR-495 half-board meal + meal-slot rule, owner + backend). Next: Gate 3 after backend reply.
-Former items 6–16: ALL ANSWERED R6–R8 (see decisions log).
-Item 17 (Gyan): IN BRIEF — OD-492-C = BA-08, B-674-3 = BA-03; awaiting backend reply.
-Still open (not blocking Gate 2):
+Round 9: ANSWERED 2026-11-14 (CR-495 backend brief written).
+Round 10: ANSWERED 2026-11-14 (owner GO → Batch A backend brief written, Gate 2 closed).
+**GATE 2 CLOSED 2026-11-14.** Backend briefs: `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan, BA-01..22 + R-1..3) + `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth). Tracker: `backend_briefs/BACKEND_BRIEF_TRACKER.html`.
+Still open (not blocking Gate 2 — deferred to Gate 3 / backend discussion):
 - CR-495 half-board second meal (lunch/dinner) — owner + backend discussion.
 - CR-495 meal-slot rule (time window vs cashier) — owner + backend discussion.
 - OD-540-02 which CR-540 ideas in phase 1 — deferred with CR-540 (P1).
 - OD-529-A OTP channel — deferred with CR-529 (P1, phase 2).
+- OD-492-C restaurant `complementary` flag meaning — in brief as BA-08, awaiting Gyan.
+- B-674-3 line reason overwrite quirk — in brief as BA-03, awaiting Gyan.
+
+## Priority updates (owner 2026-11-14)
+| Item | Priority |
+|---|---|
+| CR-071 | P1 |
+| CR-445 (+CR-058) | P1 |
+| CR-372-B | P0 |
+| CR-540 | P1 |
+| CR-529 | P1 (phase 2 OTP) |
 
 ## Backend gaps
 Confirmed by owner 2026-11-14 and written into `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` and `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`.
