@@ -8,6 +8,8 @@
 
 > **ROUND 3 2026-11-15:** see `BATCH-C_GATE2_OWNER_ROUND3_2026_11_15.md`. CR-510 "covered by BUG-601" claim CORRECTED (BUG-601 = menu save, not orders) → NEEDS VERIFY. CR-505 needs no-filter breakdown check. IA not frozen: waiting owner data (Hold/Credit orders, screenshots, aggregator order). Backend brief stays DRAFT until freeze.
 
+> **ROUND 4 (contracts session, 2026-11-15): OD-503-06 RESOLVED — Collect button is for Pay Later rows only; Credit/TAB rows show Unpaid button (CR-526, Batch B); paid TAB rows do not appear in Order Beta. Hold status code (fos 8 vs 9) deferred to Gate 3. CR-510 investigation put on hold by owner. CR-505 preprod check pending owner confirmation. STATUS: NEAR-FROZEN — only CR-505 verify outstanding before IA can freeze.**
+
 Role: PLANNING (Gate 2 only). Owner GO: "Task: Run Gate 2 Impact Analysis for Batch C" (2026-11-15).
 Scope: 4 P0 items + 2 investigations. Zero source code changes. Gate 3 NOT started.
 Probe account: CAFE 103 (RID 644), credentials via secure card, session-only. Read-only probes only.

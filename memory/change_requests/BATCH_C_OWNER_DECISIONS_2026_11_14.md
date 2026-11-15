@@ -25,3 +25,14 @@ CR-504, CR-506, CR-507, CR-508, CR-509, CR-511, CR-532, CR-444, CR-497, CR-537, 
 
 ## Not in scope this round
 CR-050 (P3), CR-424 (P1), CR-446 (no priority).
+
+---
+
+## Round 4 — contracts session (2026-11-15)
+
+| OD | Decision |
+|---|---|
+| OD-503-06 | **RESOLVED.** Collect button is for **Pay Later rows only** (paylater method). Credit/TAB rows in Order Beta show the **Unpaid button** (CR-526, Batch B — separate scope). Owner: "none of rows can have paid status" — paid TAB rows do not appear in Order Beta. Edge case OD-503-06 = does not exist. |
+| OD-C-HOLD-CODE | **DEFERRED to Gate 3.** FE uses `f_order_status === 8 \|\| f_order_status === 9` for Hold rows. Exact code confirmed at Gate 3 when writing the CR-503 plan (probe a real Hold order). |
+| OD-C-510 | **CR-510 investigation put on hold** by owner — Swiggy/Zomato order verification deferred. |
+| OD-C-505 | **CR-505 preprod check PENDING** — owner checking Order Beta with no payment filter. |
