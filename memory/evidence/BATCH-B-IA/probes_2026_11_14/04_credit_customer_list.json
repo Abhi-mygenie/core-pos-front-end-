@@ -1,0 +1,534 @@
+{
+ "status": 200,
+ "body": {
+  "employee-tap-list": [
+   {
+    "id": 1796,
+    "name": "Mr. Jolly",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "29,607.70",
+    "total_debit": "10,296.00",
+    "balance": 19311.7
+   },
+   {
+    "id": 1802,
+    "name": "Mr. Manoj",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "1,442.90",
+    "total_debit": "1,215.90",
+    "balance": 227
+   },
+   {
+    "id": 1818,
+    "name": "Mr. Vivek Dogra",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "36,363.40",
+    "total_debit": "8,588.99",
+    "balance": 27774.41
+   },
+   {
+    "id": 1822,
+    "name": "Mr. Ishaan Gupta",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "7,486.85",
+    "total_debit": "3,398.85",
+    "balance": 4088
+   },
+   {
+    "id": 1825,
+    "name": "Mr. Nishant",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "13,370.81",
+    "total_debit": "0.00",
+    "balance": 13370.81
+   },
+   {
+    "id": 1828,
+    "name": "Pnb Bank",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "19,938.95",
+    "total_debit": "7,642.95",
+    "balance": 12296
+   },
+   {
+    "id": 1829,
+    "name": "Mrs. Dipanjli Dogra",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "8,211.20",
+    "total_debit": "6,430.20",
+    "balance": 1781
+   },
+   {
+    "id": 1830,
+    "name": "Mr. bhart ram",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,719.50",
+    "total_debit": "1,719.50",
+    "balance": 0
+   },
+   {
+    "id": 1835,
+    "name": "Mr. LokRaj",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,721.60",
+    "total_debit": "2,721.60",
+    "balance": 0
+   },
+   {
+    "id": 1850,
+    "name": "Mr. Dogra lodge",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "180,976.35",
+    "total_debit": "65,570.35",
+    "balance": 115406
+   },
+   {
+    "id": 1866,
+    "name": "Mr. Boxer",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,675.70",
+    "total_debit": "0.00",
+    "balance": 2675.7
+   },
+   {
+    "id": 1867,
+    "name": "Mr. Ramneek Goel",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "1,753.50",
+    "total_debit": "892.50",
+    "balance": 861
+   },
+   {
+    "id": 1880,
+    "name": "Mr Roshan HPSEB",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "2,852.96",
+    "total_debit": "0.00",
+    "balance": 2852.96
+   },
+   {
+    "id": 1893,
+    "name": "HPASCS OFFICE",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,392,237.44",
+    "total_debit": "506,662.65",
+    "balance": 1885574.79
+   },
+   {
+    "id": 1898,
+    "name": "Dogra Lodge",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "11,455.50",
+    "total_debit": "11,455.50",
+    "balance": 0
+   },
+   {
+    "id": 1910,
+    "name": "THE OBEROI CECIL SHIMLA",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "191,925.50",
+    "total_debit": "141,382.50",
+    "balance": 50543
+   },
+   {
+    "id": 1917,
+    "name": "Zain",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,197.00",
+    "total_debit": "0.00",
+    "balance": 1197
+   },
+   {
+    "id": 1927,
+    "name": "Hotel Firhill",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "34,653.39",
+    "total_debit": "6,456.00",
+    "balance": 28197.39
+   },
+   {
+    "id": 1940,
+    "name": "Diretor Tronspot Shimla",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "40,645.50",
+    "total_debit": "23,740.00",
+    "balance": 16905.5
+   },
+   {
+    "id": 1953,
+    "name": "Mr. Subham",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "543.50",
+    "total_debit": "543.50",
+    "balance": 0
+   },
+   {
+    "id": 1962,
+    "name": "Mr. Rattan Dev",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "182.70",
+    "total_debit": "182.70",
+    "balance": 0
+   },
+   {
+    "id": 1975,
+    "name": "Mr. Prince",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,179.00",
+    "total_debit": "756.00",
+    "balance": 423
+   },
+   {
+    "id": 1990,
+    "name": "Mr. Ayush Tahim",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "18,389.97",
+    "total_debit": "18,389.97",
+    "balance": 0
+   },
+   {
+    "id": 2052,
+    "name": " ",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "89,127.52",
+    "total_debit": "89,127.52",
+    "balance": 0
+   },
+   {
+    "id": 2074,
+    "name": "Mr. Pratap Sharma",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "670.95",
+    "total_debit": "670.95",
+    "balance": 0
+   },
+   {
+    "id": 2114,
+    "name": "Mr. Ravi",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "1,663.20",
+    "total_debit": "1,663.20",
+    "balance": 0
+   },
+   {
+    "id": 2119,
+    "name": "Mr. Rajat malhotra",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "5,018.00",
+    "total_debit": "5,018.00",
+    "balance": 0
+   },
+   {
+    "id": 2190,
+    "name": "Panasonic Life Solutions India Private Limited",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "62,749.47",
+    "total_debit": "62,749.47",
+    "balance": 0
+   },
+   {
+    "id": 2203,
+    "name": "Mr.",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "4,872.00",
+    "total_debit": "4,872.00",
+    "balance": 0
+   },
+   {
+    "id": 2239,
+    "name": "Mrs. Niyati Rathor",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "2,855.45",
+    "total_debit": "2,855.44",
+    "balance": 0.01
+   },
+   {
+    "id": 2408,
+    "name": "Ravi chaf",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2418,
+    "name": "ALTRUIST TECHNOLOGIES PRIVATE LIMITED",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "47,250.00",
+    "total_debit": "47,250.00",
+    "balance": 0
+   },
+   {
+    "id": 2435,
+    "name": "Treval Desk Studio",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "68,013.00",
+    "total_debit": "0.00",
+    "balance": 68013
+   },
+   {
+    "id": 2495,
+    "name": "MR. TARUN",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "900.00",
+    "total_debit": "0.00",
+    "balance": 900
+   },
+   {
+    "id": 2500,
+    "name": "Mr. Raghav Khullar",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "20,118.00",
+    "total_debit": "0.00",
+    "balance": 20118
+   },
+   {
+    "id": 2521,
+    "name": "Mr.Rohit sharma",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "13,047.00",
+    "total_debit": "0.00",
+    "balance": 13047
+   },
+   {
+    "id": 2556,
+    "name": "Pnb Bank",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "10,659.00",
+    "total_debit": "0.00",
+    "balance": 10659
+   },
+   {
+    "id": 2604,
+    "name": "Mr. Kesar Singh",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,462.00",
+    "total_debit": "0.00",
+    "balance": 1462
+   },
+   {
+    "id": 2605,
+    "name": "Unknown",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "36,431.00",
+    "total_debit": "0.00",
+    "balance": 36431
+   },
+   {
+    "id": 2635,
+    "name": "MR. SUMMER SINGH",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "14,043.00",
+    "total_debit": "0.00",
+    "balance": 14043
+   },
+   {
+    "id": 2699,
+    "name": "Ms. Nurpur",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "3,025.00",
+    "total_debit": "0.00",
+    "balance": 3025
+   },
+   {
+    "id": 2732,
+    "name": "Mr. Sahil Walia",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "189.00",
+    "total_debit": "189.00",
+    "balance": 0
+   },
+   {
+    "id": 2745,
+    "name": "Mr. Alex",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "2,403.00",
+    "total_debit": "0.00",
+    "balance": 2403
+   },
+   {
+    "id": 2748,
+    "name": "Diretor Tronspot Shimla",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "6,248.00",
+    "total_debit": "0.00",
+    "balance": 6248
+   },
+   {
+    "id": 2775,
+    "name": "Director Transport Shimla",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "16,160.00",
+    "total_debit": "0.00",
+    "balance": 16160
+   },
+   {
+    "id": 2800,
+    "name": "Mr. Alex",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "11,922.00",
+    "total_debit": "0.00",
+    "balance": 11922
+   },
+   {
+    "id": 2850,
+    "name": "Hotel Firhill",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "5,545.00",
+    "total_debit": "0.00",
+    "balance": 5545
+   },
+   {
+    "id": 2882,
+    "name": "Mr. Pankaj",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "756.00",
+    "total_debit": "0.00",
+    "balance": 756
+   },
+   {
+    "id": 2918,
+    "name": "Mr.Ashok",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "9,507.00",
+    "total_debit": "0.00",
+    "balance": 9507
+   },
+   {
+    "id": 2933,
+    "name": "Mr. Naresh",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,520.00",
+    "total_debit": "0.00",
+    "balance": 2520
+   },
+   {
+    "id": 2943,
+    "name": "Mrs. Bina Thakur",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "347.00",
+    "total_debit": "0.00",
+    "balance": 347
+   },
+   {
+    "id": 2999,
+    "name": "Mr. Gulchain",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "3,119.00",
+    "total_debit": "0.00",
+    "balance": 3119
+   },
+   {
+    "id": 3019,
+    "name": "Mr. Dogra lodge",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "630.00",
+    "total_debit": "0.00",
+    "balance": 630
+   },
+   {
+    "id": 3033,
+    "name": "Park Woods",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "4,678.00",
+    "total_debit": "4,678.00",
+    "balance": 0
+   },
+   {
+    "id": 3063,
+    "name": "Mr. Roshan",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "227.00",
+    "total_debit": "0.00",
+    "balance": 227
+   },
+   {
+    "id": 3064,
+    "name": "Mr Abhimanyu Sharma",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "706.00",
+    "total_debit": "0.00",
+    "balance": 706
+   },
+   {
+    "id": 3076,
+    "name": "Mr. Kamal",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "486.00",
+    "total_debit": "0.00",
+    "balance": 486
+   },
+   {
+    "id": 3112,
+    "name": "Mr. Rajeev Pathania",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "410.00",
+    "total_debit": "0.00",
+    "balance": 410
+   }
+  ],
+  "restaurant-tap-summary": {
+   "total_credit": "3,449,288.51",
+   "total_debit": "1,037,119.24",
+   "balance": "2,412,169.27"
+  }
+ }
+}
