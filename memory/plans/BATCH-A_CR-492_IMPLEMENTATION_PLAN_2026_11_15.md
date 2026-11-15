@@ -1,10 +1,12 @@
 # BATCH-A · CR-492 (Comp rights + comp reason) — Implementation Plan (Gate 3) — 2026-11-15
 
-> Status: **GATE_3_PLAN_READY_FE — NOT FROZEN**. READY: G2-E1…E6. BLOCKED: G2-B3 (BA-08). QA check (R16, not blocker): G2-B2 (BA-07).
+> Status: **GATE_3_PLAN_FROZEN (READY rows) — 2026-11-15**. FROZEN: G2-E1…E6. BLOCKED: G2-B3 (BA-08, Gyan reply pending — skipped). QA check (R16, not blocker): G2-B2 (BA-07).
+> Re-anchored at HEAD `66ffe518` (2026-11-15): all READY row line numbers verified — no shifts from b5d7a42.
 > Source rows: G2 E1–E6 + B2, B3 (moved unchanged from `plans/BATCH-A_G2_RIGHTS_IMPLEMENTATION_PLAN_2026_11_15.md`, now superseded).
 > Risk: CRITICAL. Mockups: M5 `#m5`, M5b Option B `#m5b` (approved R15).
 > Decisions: OD-492-A (no right → checkbox hidden, existing comp read-only) · OD-492-B (hide for everyone) · R14 (item comp checkbox only; discounts independent; reason required full + part; blocks Pay only) · R15 (no right + no reason → Pay blocked).
 > Build only after Gate 4 GO **and** QA pass BUG-660/665/666 (CPP). Sequence BUG-639 before or with this CR. Release only after R-1.
+> **G2-B3 stays BLOCKED pending Gyan reply to BA-07/08. Do not implement B3 until unblocked.**
 
 ## 1. Code reality — rechecked at HEAD `b5d7a42` 2026-11-15 (Code Reality: NONE for rights; PARTIAL for reason box)
 | File | Line | Current |
