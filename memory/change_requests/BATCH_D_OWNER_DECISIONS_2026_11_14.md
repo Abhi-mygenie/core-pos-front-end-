@@ -60,3 +60,14 @@ CR-441 (P3), BUG-594 (P2), CR-439 (P2), BUG-609 (P2).
 
 ## Impact order
 BUG-667 → BUG-669 → BUG-673 → CR-525 then CR-521 (shared card files, sequential) → CR-523.
+
+---
+
+## Contracts round — R1 (2026-11-15)
+
+| OD | Decision |
+|---|---|
+| OD-D-BD01-EVENT | **CR-525 BD-01 LOCKED:** socket event name = `update-order` (existing event). Owner note: "backend is already sending this on one of the sockets — need to check first." Backend to confirm in sign-off whether this event is already emitted on `update-place-order` and whether bill_print reset piggybacks on the same emit or needs a dedicated one. |
+| OD-D-BD06 | **CR-523 BD-06 LOCKED:** unlink = **empty `cust_name` (empty string) + empty `cust_mobile` (empty string)** on `update-place-order`. No new field. Behaviour change: today empty strings keep the old customer (probe P3_08); new behaviour: empty strings = unlink. Owner explanation: needed when cashier linked the wrong customer and wants to remove them without replacing. |
+| OD-D-BD07 | **CR-523 BD-07 LOCKED:** no change — `order_edit_count` keeps incrementing on customer-only updates (current behaviour preserved). |
+| OD-D-BD08 | **CR-523 BD-08 DROPPED:** message "Items added to order successfully!" stays as-is. No backend change. |

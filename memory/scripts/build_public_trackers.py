@@ -54,7 +54,7 @@ BATCHES = {
         "contracts": sorted(p.name for p in (MEM / "contracts").glob("BATCH-B_*_API_CONTRACT_2026_11_15.md")),
     },
     "C": {"brief": [("BACKEND_BRIEF_BATCH-C_2026_11_15.md", "Brief (ASK 1 + ASK 2) — draft, send after IA freeze", "backend_briefs")], "contracts": []},
-    "D": {"brief": [("BACKEND_BRIEF_BATCH-D_2026_11_15.md", "Brief (BD-01..BD-09)", "backend_briefs")], "contracts": []},
+    "D": {"brief": [("BACKEND_BRIEF_BATCH-D_2026_11_15.md", "Brief (BD-01..BD-09)", "backend_briefs")], "contracts": sorted(p.name for p in (MEM / "contracts").glob("BATCH-D_*_API_CONTRACT_2026_11_15.md"))},
 }
 
 HEADINGS = {
