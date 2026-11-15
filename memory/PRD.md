@@ -32,3 +32,6 @@ Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core1-
 
 ## Pending
 - P0: User to supply real values for masked/placeholder keys (Firebase API key, Firebase VAPID key, CRM API keys, Google Maps key) via secrets tool
+
+## Batch B API Contracts — FINAL v1 LOCKED 2026-11-15
+8 contracts approved by owner 2026-11-15: BUG-672, CR-526, CR-542, CR-514, CR-522, CR-527, CR-536, BUG-607. See `contracts/BATCH-B_*_API_CONTRACT_2026_11_15.md` and decisions `change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md`.

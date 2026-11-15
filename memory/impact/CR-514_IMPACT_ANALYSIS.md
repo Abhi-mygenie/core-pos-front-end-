@@ -33,3 +33,7 @@ None (Q18 answered).
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M5 approved as shown.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-514_API_CONTRACT_2026_11_15.md`

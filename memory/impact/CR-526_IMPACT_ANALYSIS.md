@@ -43,3 +43,7 @@ Edge (for Gate 2.5): Remove on rows that are FIFO-covered ("Covered"/"Partial" b
 - M3 + M4 approved.
 - OD-526-D: **Remove** shows on **Open** credit rows only. Partial (part paid back) rows show Remove greyed with hint "Part already paid back". Covered rows: no button.
 - Remove dialog title: "Remove order #<no> from credit?" + CR-542 reason.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-526_API_CONTRACT_2026_11_15.md`

@@ -26,3 +26,7 @@ Conflict Pre-Check: CPP + orderTransform (see CR-514). OrderEntry print calls �
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M7 approved. OD-536-C: **pre-fill** GST no. / name / address from the selected customer profile when it has a GST number; fields stay editable. (Address pre-fill source: customer profile has only delivery `addresses[]` (customerTransform L101/L138), no billing address → Gate 3 picks: default/first address, or backend adds a billing address with `gst_number` (BB-10b).)
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-536_API_CONTRACT_2026_11_15.md`

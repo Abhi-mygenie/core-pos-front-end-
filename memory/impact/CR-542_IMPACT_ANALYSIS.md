@@ -30,3 +30,7 @@ None (room scope confirm at Gate 2.5).
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M3 approved. OD-542-B: reason is **also required** for Room Orders "Remove from Room" → all 4 callers in scope.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-542_API_CONTRACT_2026_11_15.md`

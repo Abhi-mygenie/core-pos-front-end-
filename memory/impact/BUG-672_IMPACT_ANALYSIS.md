@@ -36,3 +36,7 @@ None.
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M2 approved. OD-672-C: when TAB `prepaid:0`, Credit button is **HIDDEN** on prepaid orders (not greyed).
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_BUG-672_API_CONTRACT_2026_11_15.md`

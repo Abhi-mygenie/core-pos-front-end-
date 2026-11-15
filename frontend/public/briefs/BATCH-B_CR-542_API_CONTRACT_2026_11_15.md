@@ -1,4 +1,4 @@
-# API Contract — CR-542 Reason mandatory on Make Unpaid — DRAFT v1 — 2026-11-15
+# API Contract — CR-542 Reason mandatory on Make Unpaid — FINAL v1 — LOCKED 2026-11-15
 
 Backend: Gyan · IDs: BB-04, BB-05 · IA doc: `impact/CR-542_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**

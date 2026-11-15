@@ -61,6 +61,21 @@ Source: owner answers to Round 1a questions on DRAFT v1 contracts.
 | OD-B-BB12 | **BUG-607 BB-12 CONFIRMED:** data request only — Gyan to share one order ID with wrong GST applied. No API field, no contract. |
 | OD-B-BB13 | **CR-394 BB-13 CONFIRMED:** one-time backend data fix only (Inclusive → Exclusive for GST-ON outlets). No API change. **FE QA note (owner):** after data fix, FE team validates reports for inconsistencies — "we always had exclusive so reports need to be validated". |
 
+## ALL 8 BATCH B CONTRACTS APPROVED — 2026-11-15
+
+Owner: "approved" — all 8 contracts approved simultaneously 2026-11-15.
+
+| Contract | File | Status |
+|---|---|---|
+| BUG-672 | `contracts/BATCH-B_BUG-672_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-526 | `contracts/BATCH-B_CR-526_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-542 | `contracts/BATCH-B_CR-542_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-514 | `contracts/BATCH-B_CR-514_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-522 | `contracts/BATCH-B_CR-522_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-527 | `contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-536 | `contracts/BATCH-B_CR-536_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| BUG-607 | `contracts/BATCH-B_BUG-607_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+
 | OD | Decision |
 |---|---|
 | OD-B-BB01-FINAL | **BUG-672 BB-01 DROPPED:** owner decided FE hiding the Credit button is sufficient. No backend enforcement needed. BB-01 = FE-only. BUG-672 contract updated to reflect no backend action required. |

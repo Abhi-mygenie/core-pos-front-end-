@@ -36,3 +36,7 @@ Conflict Pre-Check: CPP (see CR-514). Owner earlier: implement after Batch A PIN
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M6 approved. OD-522-B: admin sets **0% → same as blank = no check** (tolerance OFF). Only a % > 0 enables the range check. Supersedes the "0 = exact" row in the behaviour matrix.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-522_API_CONTRACT_2026_11_15.md`

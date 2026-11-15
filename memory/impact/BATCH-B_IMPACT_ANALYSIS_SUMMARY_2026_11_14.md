@@ -108,3 +108,20 @@ Account supplied by owner 2026-11-15 = **RID 541 "The Palm House"** (not cafe103
 - Backend (Gyan): reply BB-01..BB-13 (+BB-10b).
 - Gate 3 order: BUG-671/672 (no backend) → CR-526 FE part + CR-394 → rest after backend reply. CPP single owner; rebase on Batch A Gate 3 CPP/orderTransform edits.
 - Owner housekeeping: delete credit customer `TEST_BATCHB_CREDIT` (id 3118, ₹0) on cafe103; enable TAB prepaid for cafe103 (OD-672-B).
+
+## Contracts — FINAL v1 LOCKED 2026-11-15
+
+All 8 contracts approved by owner 2026-11-15. Gate 2 IA + contracts complete for Batch B.
+
+| CR | Contract file | Locked names |
+|---|---|---|
+| BUG-672 | `contracts/BATCH-B_BUG-672_API_CONTRACT_2026_11_15.md` | BB-01 FE-only (`prepaid` flag) |
+| CR-526 | `contracts/BATCH-B_CR-526_API_CONTRACT_2026_11_15.md` | `day_settled`, `DAY_ALREADY_SETTLED` |
+| CR-542 | `contracts/BATCH-B_CR-542_API_CONTRACT_2026_11_15.md` | `unpaid-reasons` endpoint, `reason`, `UNPAID_REASON_REQUIRED` |
+| CR-514 | `contracts/BATCH-B_CR-514_API_CONTRACT_2026_11_15.md` | `ref_enabled`, `ref_required`, `ref_label`, `ref_max_len` (default 50) |
+| CR-522 | `contracts/BATCH-B_CR-522_API_CONTRACT_2026_11_15.md` | `reconcile_tolerance_pct` (no max cap) |
+| CR-527 | `contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md` | `diner_name`, `diner_mobile` |
+| CR-536 | `contracts/BATCH-B_CR-536_API_CONTRACT_2026_11_15.md` | `custGSTAddress`, `cust_gst_address`, `gst_address` (all max 255) |
+| BUG-607 | `contracts/BATCH-B_BUG-607_API_CONTRACT_2026_11_15.md` | BB-11 behaviour; BB-12 data request; BB-13 data-fix note |
+
+No contract: BUG-671 (FE only), BB-12, BB-13.

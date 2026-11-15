@@ -1,4 +1,4 @@
-# API Contract — CR-536 B2B invoice billing address — DRAFT v1 — 2026-11-15
+# API Contract — CR-536 B2B invoice billing address — FINAL v1 — LOCKED 2026-11-15
 
 Backend: Gyan · IDs: BB-10, BB-10b · IA doc: `impact/CR-536_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**

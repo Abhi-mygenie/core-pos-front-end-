@@ -33,3 +33,7 @@ None for FE. Backend reply needed for BB-11/12.
 
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M9 approved. OD-607-B: show "GST is set per item" note + restaurant GST % read-only when `restaurant_gst = category`.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_BUG-607_API_CONTRACT_2026_11_15.md`

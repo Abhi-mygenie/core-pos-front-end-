@@ -29,3 +29,7 @@ None (design at Gate 2.5 M4).
 ## Gate 2.5 owner decisions (2026-11-15) — design APPROVED
 - M4 + M4b approved.
 - OD-527-C (many diners): **2–5 distinct diners → chips** with order count; **6+ → one searchable dropdown** ("Diner: All (N orders · M diners)"), each entry shows order count + open amount, sorted by most orders, "(no name)" bucket last. Selecting filters the table and shows a "<diner>: N orders · ₹X open" line. Diner column one line, long names truncated with full name on hover. 0–1 distinct diners → no filter.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md`

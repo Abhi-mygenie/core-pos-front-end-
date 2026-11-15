@@ -1,4 +1,4 @@
-# API Contract — BUG-607 GST mode "category" — always item tax — DRAFT v1 — 2026-11-15
+# API Contract — BUG-607 GST mode "category" — always item tax — FINAL v1 — LOCKED 2026-11-15
 
 Backend: Gyan · IDs: BB-11, BB-12 · IA doc: `impact/BUG-607_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**
