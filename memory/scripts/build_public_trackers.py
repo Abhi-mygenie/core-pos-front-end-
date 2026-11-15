@@ -142,6 +142,15 @@ def batch_links(key):
                 f' <button class="copy-md" data-src="{md_href}" title="Copy .md to clipboard">Copy&nbsp;.md</button>]</li>'
             )
         status_label = "DRAFT v1" if key != "A" else "locked, R19/R20"
+        if key not in ("A",) and cfg["contracts"]:
+            try:
+                if all(
+                    "FINAL v1 \u2014 LOCKED" in (MEM / "contracts" / n).read_text(encoding="utf-8")
+                    for n in cfg["contracts"]
+                ):
+                    status_label = "FINAL v1 \u2014 LOCKED 2026-11-15"
+            except Exception:
+                pass
         items.append(f"<li>API contracts ({status_label}):<ul>{''.join(cons)}</ul></li>")
     else:
         items.append("<li>API contracts: none written yet — the brief is the contract for now.</li>")
