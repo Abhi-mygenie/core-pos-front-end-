@@ -79,3 +79,13 @@ Point-of-Sale web application (React + FastAPI + MongoDB) for restaurant managem
 ---
 
 ## Zero code changes this session. All work was documentation merge and registry sync.
+
+## 2026-11-15 — Batch A Gate 3 planning (partial)
+- G6 (CR-372-B routes): PLAN READY — FE only, no backend dependency.
+- G1 (cancel: BUG-674, BUG-670, CR-493): PARTIAL — modal note + transform fix ready; reports/Order Beta + BA-01 field name blocked on backend.
+- G2 (rights: CR-492, CR-515): PARTIAL — item comp gating + comp reason (M5b Option B) ready; pay-later BA-09 blocked.
+- G3/G4/G5 (PIN, room comp, alerts): NOT PLANNED — wait for backend reply.
+- M5b Option B approved (comp reason box under every comp line; Pay blocked until filled).
+- BA-23, BA-24 added to Gyan's brief (auto-cancel reason + refund-cancel note key).
+- Owner decisions R13–R15 recorded.
+- Build blocked on QA of BUG-660/661/662/665/666/656, CR-512 (same files).

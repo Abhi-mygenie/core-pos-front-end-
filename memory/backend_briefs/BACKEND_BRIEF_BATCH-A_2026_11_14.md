@@ -14,6 +14,8 @@ Owner rule: all changes ADDITIVE — existing behaviour must keep working (excep
 | BA-04 | Order cancel note: save EMPTY when blank (FE stops sending reason text as note). | OD-674-A. |
 | BA-05 | Restaurant setting: cancel notes mandatory / optional (one key for order + item), default optional. | CR-493; settings-list has no key (file 03). |
 | BA-06 | Confirm the cancellation-reasons list keeps `item_type` Order / Food; FE blocks cancel when none configured. | File 06; OD-493-B. Info only. |
+| BA-23 (added 2026-11-15) | When the last item is cancelled, backend auto-cancels the order with `cancellation_reason` = null and `canceled_by` = null. Insights cancellations then counts those lines again as ORDER cancels "No reason provided". Ask: (a) on auto-cancel, store the reason (e.g. last item's reason) + who; (b) Insights must not double count item cancels as order cancels. Same for merge cancels (`cancel_state: Merge`). | Orders 021028, 021319, 021432 (RID 644): items have `reason_type` 332/337/333 + `cancel_by` 3092; order reason null. Insights Nov 1–14: 5 rows / ₹1,360 "No reason provided". `evidence/BATCH-A-G3/05_*, 07_*`. |
+| BA-24 (added 2026-11-15) | Razorpay refund-cancel: FE will send the Refund Note also as `cancellation_note` on `order-status-update` (same note on refund call). Confirm this key is correct for refund cancels. | Owner R14-Q1 (owner rechecking with backend). |
 
 ## 2. Rights (CR-492, CR-515)
 | ID | Ask | Detail |

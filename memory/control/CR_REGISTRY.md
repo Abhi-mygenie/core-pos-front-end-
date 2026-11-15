@@ -1,19 +1,19 @@
-**BATCH A — GATE 2 IMPACT ANALYSIS CLOSED 2026-11-14 (owner-approved)** — awaiting backend reply → Gate 3
+**BATCH A — GATE 3 PLANNING 2026-11-15** — G6 READY; G1/G2 PARTIAL (FE-only); G3/G4/G5 wait backend. Index: `plans/BATCH-A_GATE3_PLANNING_INDEX_2026_11_15.md`
 Sources: `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`, `change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md`, `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan), `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth), tracker `backend_briefs/BACKEND_BRIEF_TRACKER.html`.
 
 | ID | Pri | Status | IA doc | Backend asks |
 |---|---|---|---|---|
 | **CR-071** | P1 (owner 2026-11-14; Batch A rights only; full wiring HOLD) | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-071_IMPACT_ANALYSIS.md` | none |
-| **CR-492** | P0 | GATE_2_IA_CLOSED 2026-11-14 — all ODs answered; release impact R-1 | `impact/CR-492_IMPACT_ANALYSIS.md` | BA-07, BA-08 |
-| **CR-515** | P0 | GATE_2_IA_CLOSED 2026-11-14 — item cancel → `order_cancel`; separate right phase 2 | `impact/CR-515_IMPACT_ANALYSIS.md` | BA-09, BA-10 (ph2) |
-| **CR-493** | P0 | GATE_2_IA_CLOSED 2026-11-14 — all ODs answered | `impact/CR-493_IMPACT_ANALYSIS.md` | BA-05, BA-06 |
-| **BUG-674** | P0 | GATE_2_IA_CLOSED 2026-11-14 | `impact/BUG-674_IMPACT_ANALYSIS.md` | BA-02, BA-03, BA-04 |
-| **BUG-670** | P0 | GATE_2_IA_CLOSED 2026-11-14 | `impact/BUG-670_IMPACT_ANALYSIS.md` | BA-01 |
+| **CR-492** | P0 | GATE_3_PLAN_READY_FE 2026-11-15 — item comp gating + comp reason (M5b Option B) ready | `plans/BATCH-A_G2_RIGHTS_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-07, BA-08 |
+| **CR-515** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — Orders Beta buttons + item-cancel right ready; pay-later BA-09 | `plans/BATCH-A_G2_RIGHTS_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-09, BA-10 (ph2) |
+| **CR-493** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — label + no-reasons block ready; BA-05 blocked | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-05, BA-06, BA-23 |
+| **BUG-674** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — modal note + transform fix ready; reports blocked | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-02, BA-03, BA-04, BA-24 |
+| **BUG-670** | P0 | GATE_3_BLOCKED 2026-11-15 — waits BA-01 | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01 |
 | **CR-494** | P0 | GATE_2_IA_CLOSED 2026-11-14 — all ODs answered | `impact/CR-494_IMPACT_ANALYSIS.md` | BA-11..BA-15 |
 | **CR-445** (+CR-058) | P1 (owner 2026-11-14) | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-445_IMPACT_ANALYSIS.md` | BA-17, BA-18 |
 | **CR-495** | P0 | GATE_2_IA_CLOSED 2026-11-14 — open for backend discussion: half-board meal, meal-slot rule | `impact/CR-495_IMPACT_ANALYSIS.md` | B-495-1..7 |
 | **CR-443** (+CR-496) | P0 | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-443_IMPACT_ANALYSIS.md` | BA-19..BA-22 |
-| **CR-372-B** | P0 (owner 2026-11-14) | GATE_2_IA_CLOSED 2026-11-14 — FE only | `impact/CR-372-B_IMPACT_ANALYSIS.md` | none |
+| **CR-372-B** | P0 (owner 2026-11-14) | GATE_3_PLAN_READY 2026-11-15 — FE only | `plans/BATCH-A_G6_ROUTES_IMPLEMENTATION_PLAN_2026_11_15.md` | none |
 | **CR-529** | P1 (phase 2, all OTP) | GATE_2_IA_CLOSED 2026-11-14 — dependency-level; deferred | `impact/CR-529_IMPACT_ANALYSIS.md` | BA-16 (ph2) |
 | **CR-540** | P1 | GATE_2_IA_CLOSED 2026-11-14 — scope-level; phase-1 ideas deferred | `impact/CR-540_IMPACT_ANALYSIS.md` | — |
 

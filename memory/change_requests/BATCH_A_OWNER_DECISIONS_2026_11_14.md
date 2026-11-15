@@ -88,3 +88,22 @@ Both registries (`control/CR_REGISTRY.md`, `control/registry.json`) updated; Gat
 4. Comp: CR-445, CR-495
 5. Alerts: CR-443
 6. Phase 2: CR-529 · Track: CR-540, CR-372-B
+
+## Gate 3 rounds — 2026-11-15 (PLANNING role)
+### R13
+- Plan only backend-free groups now (G6 full; FE parts of G1, G2). G3/G4/G5 wait for backend reply.
+- Plan on today's code; build after QA of open items on the same files.
+- Collect pay-later right: wait for BA-09.
+- Plans delivered together.
+- Read-only preprod probes allowed (creds via secure window; done, token deleted).
+### R14
+- Q1 Refund Note: also saved as the order cancel note (same box). Owner to recheck key with backend → BA-24.
+- Q2 Order-level comp: discounts are independent; NO preset hidden. Comp right hides the future "Complimentary" payment button (CR-445, P1). Batch A CR-492 = item comp checkbox only.
+- Q3 Comp reason required for full AND part comp. Owner believes part comp doesn't exist → to revalidate (code: MarkCompModal, BUG-298/299). Location of reason → M5b (Option A popup / Option B line box) pending.
+- Q4 Missing comp reason blocks Pay only (bill never prints the reason).
+- Q5 Existing comp on an order opened by a user without the right → read-only.
+- "No reason provided" cancels = backend auto-cancel after last item cancelled → BA-23 added to Gyan's brief.
+- M5b drawn 2026-11-15.
+### R15
+- M5b **Option B approved**: reason box under every comp line (full + part); label "Reason (required)"; Pay disabled while any comp reason is empty; Print Bill unchanged. (Owner: box already exists — change = label, box on part-comp lines, Pay check.)
+- Comp line without reason + cashier without the comp right → **Pay stays blocked** (box read-only; a user with the right adds the reason).

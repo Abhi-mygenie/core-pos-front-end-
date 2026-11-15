@@ -60,7 +60,7 @@ th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{backgroun
 <p style="margin-top:8px;font-weight:700;color:#86EFAC">STATUS: ALL M1–M10 APPROVED BY OWNER 2026-11-14 — Gate 2.5 closed.</p>
 </header>
 <nav>
-<a href="#m1">M1 Order cancel</a><a href="#m2">M2 Item cancel</a><a href="#m3">M3 No reasons</a><a href="#m4">M4 PIN popup</a><a href="#m5">M5 Comp in payment</a><a href="#m6">M6 Reports notes</a><a href="#m7">M7 Rights buttons</a><a href="#m8">M8 Check-in meal</a><a href="#m9">M9 Alerts</a><a href="#m10">M10 Pages login</a>
+<a href="#m1">M1 Order cancel</a><a href="#m2">M2 Item cancel</a><a href="#m3">M3 No reasons</a><a href="#m4">M4 PIN popup</a><a href="#m5">M5 Comp in payment</a><a href="#m5b">M5b Comp reason (Option B approved)</a><a href="#m6">M6 Reports notes</a><a href="#m7">M7 Rights buttons</a><a href="#m8">M8 Check-in meal</a><a href="#m9">M9 Alerts</a><a href="#m10">M10 Pages login</a>
 </nav>
 
 <section id="m1" data-testid="mockup-m1">
@@ -162,6 +162,26 @@ th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{backgroun
 <li><b>Changed:</b> comp reason required. Above comp limit → PIN popup (M4).</li>
 <li><b>Room orders:</b> remaining comp for the meal shown; over → PIN. <span class="tbd">TBD</span> how a comp maps to breakfast/lunch/dinner (owner + backend).</li>
 <li><b>Release impact:</b> owners without the right today (cafe103, Palm House) lose this checkbox until roles are updated.</li></ul>
+</section>
+
+<section id="m5b" data-testid="mockup-m5b">
+<h2>M5b · Required complimentary reason (full + part comp) <span class="chg">OPTION B APPROVED BY OWNER 2026-11-15</span></h2>
+<p class="meta">CR-492 · Owner R14: reason required for full AND part comp; block Pay only; bill never prints the reason · Files: CollectPaymentPanel.jsx, MarkCompModal.jsx</p>
+<div class="panel" style="margin-bottom:14px"><b style="font-size:12px">Part comp today (to revalidate):</b> in Collect Bill, ticking the comp box on an item with qty 2+ opens the <b>Mark Complementary</b> popup with a <b>Comp Qty</b> stepper (e.g. 1 of 3). Code: MarkCompModal.jsx (BUG-298/299, QA PASS 2026-09-15). Part-comped lines show NO reason box today.</div>
+<div class="cmp">
+<div class="col new"><h3 style="color:#777">Option A — reason in the popup (NOT chosen)</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Mark Complementary</b><p>Masala Dosa</p></div>
+<div class="mb"><div class="sel"><span>Current Quantity: <b>3</b></span><span>Comp Qty: <b>1</b></span></div>
+<p class="hint" style="margin:-6px 0 10px">1 complimentary (₹0) · 2 remain charged normally</p>
+<div class="add" style="padding:4px"><p class="lbl">Reason * <span class="chg">NEW</span></p><div class="ta" style="height:44px">Type reason…</div></div></div>
+<div class="mf"><button class="btn g dis">Mark 1 Complementary</button><p class="hint" style="margin:6px 0 0">Button disabled until a reason is typed</p></div></div></div>
+<ul class="diff"><li>Popup opens for EVERY comp (also qty 1) — reason typed at the moment of marking.</li><li>An item can never be comped without a reason → bill can never show a comp without a reason.</li><li>Existing inline reason box under the line becomes read-only text.</li></ul></div>
+<div class="col new"><h3>Option B — reason under every comp line (APPROVED)</h3><div class="frame"><div class="panel">
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini">Reason (required)</span></span><span class="amt">₹0</span></div>
+<div class="line add"><span class="box on"></span><span class="grow">Cold Coffee <b style="color:#329937;font-size:10px">(1 of 3 Complimentary)</b><span class="mini" style="border-color:#EF4444">Reason (required) <span class="chg">NEW</span></span></span><span class="amt">₹360</span></div>
+<div style="margin-top:10px"><button class="btn g dis">Pay ₹360</button><p class="hint" style="margin:6px 0 0">Pay disabled while any comp reason is empty (red outline)</p></div></div></div>
+<ul class="diff"><li>Part-comped lines get the same reason box as full comp.</li><li>Pay blocked until filled; Print Bill still works (bill shows item as complimentary, no reason).</li><li>Label changes "Reason (optional)" → "Reason (required)".</li><li>R15: if a comp line has no reason and the cashier has no comp right, Pay stays blocked (box read-only).</li></ul></div>
+</div>
 </section>
 
 <section id="m6" data-testid="mockup-m6">
