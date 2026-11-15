@@ -45,7 +45,11 @@ export default function AddonManagementPanel({ addons = [], currencySymbol = 'â‚
   };
 
   const handleAdd = useCallback(async () => {
-    if (!addForm.name.trim() || !addForm.price) return;
+    if (!addForm.name.trim()) return;
+    if (addForm.price === '' || addForm.price == null) { // BUG-669: allow 0, block empty
+      toast({ title: 'Price required', description: 'Enter a price (0 is allowed)', variant: 'destructive' });
+      return;
+    }
     setSaving(true);
     try {
       await menuService.addAddon({
@@ -153,7 +157,7 @@ export default function AddonManagementPanel({ addons = [], currencySymbol = 'â‚
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <input value={addForm.name} onChange={e => setAddForm(p => ({ ...p, name: e.target.value }))}
                       placeholder="Name" style={{ ...inputStyle, width: 150 }} autoFocus />
-                    <input type="number" value={addForm.price} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, price: n })); }} onBlur={e => { if (e.target.value === '') setAddForm(p => ({ ...p, price: 0 })); }} // BUG-392 // BUG-394 // BUG-608
+                    <input type="number" value={addForm.price} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { const v = e.target.value; if (v === '') { setAddForm(p => ({ ...p, price: '' })); return; } const n = parseFloat(v); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, price: n })); }} onBlur={e => { /* BUG-669: keep empty â€” save guard shows toast */ }} // BUG-392 // BUG-394 // BUG-608 // BUG-669
                       placeholder="Price" style={{ ...inputStyle, width: 70 }} min={0} />
                     <input type="number" value={addForm.weight} onWheel={e => e.target.blur()} onFocus={e => e.target.select()} onChange={e => { if (e.target.value === '') return; const n = parseFloat(e.target.value); if (!isNaN(n) && n >= 0) setAddForm(p => ({ ...p, weight: n })); }} onBlur={e => { if (e.target.value === '') setAddForm(p => ({ ...p, weight: 0 })); }} // BUG-392 // BUG-394 // BUG-608
                       placeholder="Weight g" style={{ ...inputStyle, width: 80 }} min={0} />

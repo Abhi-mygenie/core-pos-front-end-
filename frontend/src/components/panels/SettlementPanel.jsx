@@ -245,8 +245,7 @@ const SettlementPanel = ({ isOpen, onClose, sidebarWidth }) => {
           {/* KPI Strip */}
           <div className="flex gap-2 mb-4">
             <KpiCard icon={Banknote} label="Opening Balance" value={totals.openingBalance} color={COLORS.primaryOrange} sub="Cash float given" />
-            <KpiCard icon={TrendingUp} label="Cash Collected" value={totals.cashCollected} color={COLORS.primaryGreen}
-              sub={<span data-testid="settlement-panel-total-sale-footnote">{`Total sale: ${fmt(totals.totalSale)}`}</span>} />
+            <KpiCard icon={TrendingUp} label="Cash Collected" value={totals.cashCollected} color={COLORS.primaryGreen} /> {/* BUG-675: subtitle removed */}
             <KpiCard icon={CreditCard} label="Total Funds" value={totals.totalFunds} color={COLORS.darkText} sub={`Opening ${fmt(totals.openingBalance)} + Cash ${fmt(totals.cashCollected)}`} />
             <KpiCard icon={ArrowDownToLine} label="Settled" value={totals.settled} color="#3B82F6" sub={totals.totalFunds ? `${Math.round(totals.settled / totals.totalFunds * 100)}% of funds` : "No funds today"} />
             <KpiCard icon={Wallet} label="Remaining" value={totals.remaining} color={COLORS.amber} sub="To be settled" />

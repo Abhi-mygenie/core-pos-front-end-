@@ -138,9 +138,9 @@ export default function FrontDeskPage() {
       <main className="flex-1 overflow-auto">
         {/* Header */}
         <div className="bg-white border-b border-[#E5E5E5] px-6 py-4 flex items-center justify-between">
-          <div>
+          <div className="min-w-0 flex-1"> {/* BUG-667 */}
             <h1 className="text-[18px] font-bold text-[#1A1A1A]" style={{ fontFamily: 'Poppins, sans-serif' }}>{greeting()}</h1>
-            <p className="text-[12px] text-[#888] mt-0.5">{longDate}{restaurant?.name ? ` · ${restaurant.name}` : ''}</p>
+            <p className="text-[12px] text-[#888] mt-0.5 line-clamp-2 break-words">{longDate}{restaurant?.name ? ` · ${restaurant.name}` : ''}</p>
           </div>
           <button data-testid="fd-new-booking-btn" onClick={() => navigate('/pms/new-booking')}
             className="flex items-center gap-1.5 px-4 h-9 rounded-lg text-[13px] font-semibold text-white" style={{ background: '#329937' }}>

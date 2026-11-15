@@ -96,6 +96,7 @@ const CollectBillPanelDrawer = ({
   onCollectStart,
   onCollectSuccess,
   onCollectError,
+  onPrintBill, // CR-503: accept external print handler
 }) => {
   const { restaurant } = useRestaurant();
   const { settings } = useSettings();
@@ -272,7 +273,7 @@ const CollectBillPanelDrawer = ({
               onPaymentComplete={handlePaymentComplete}
               // Print bill is supported (see plan); CollectPaymentPanel
               // calls its native printer pipeline. We pass through.
-              onPrintBill={null}
+              onPrintBill={onPrintBill ?? null} // CR-503: accept external print handler
               // Split-bill / runtime-complimentary toggling are
               // intentionally not wired from a held-row collect — the
               // operator should use the dashboard for those flows.

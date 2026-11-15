@@ -245,9 +245,11 @@ const getColumns = (tabId, filters = {}, orders = []) => {
 // NOTE: Hold-tab "Collect Bill" reuses the base eligibility check — held
 // aggregator/room rows (if any leak in) should not expose Collect Bill from
 // the report either.
-const PAID_ACTIONS_ALLOWED_METHODS = ['cash', 'card', 'upi'];
+// BUG-671: Unpaid is allowed for partial (split) payments; Change Method is not (Phase 2)
+const UNPAID_ALLOWED_METHODS = ['cash', 'card', 'upi', 'partial'];
+const CHANGE_METHOD_ALLOWED_METHODS = ['cash', 'card', 'upi'];
 
-const isOrderEligibleForRowActions = (order, tabId) => {
+const isOrderEligibleForRowActions = (order, tabId, action) => {
   if (!order || order._isMissing) return false;
   const orderIn = (order.orderIn || '').toUpperCase();
   if (orderIn === 'RM' || orderIn === 'SRM') return false;
@@ -255,7 +257,8 @@ const isOrderEligibleForRowActions = (order, tabId) => {
   if (['zomato', 'swiggy'].includes((order.orderIn || '').toLowerCase())) return false;
   if (tabId === 'paid') {
     const pm = (order.paymentMethod || '').toLowerCase();
-    if (!PAID_ACTIONS_ALLOWED_METHODS.includes(pm)) return false;
+    const allowList = action === 'changeMethod' ? CHANGE_METHOD_ALLOWED_METHODS : UNPAID_ALLOWED_METHODS; // BUG-671
+    if (!allowList.includes(pm)) return false;
   }
   // POS2-005-FU: status-8 (Active/Unpaid Running, typically guest-prepaid via
   // PG/Razorpay) is Hold-classified for visibility but is NOT manually
@@ -346,7 +349,8 @@ const renderActionsCell = (order, tabId, actionsConfig) => {
     return (
       <div className="flex items-center justify-end gap-1.5">
         {/* BUG-348: suppress Change Method for Razorpay PG orders */}
-        {canChangeMethod && !order.razorpayOrderId && (
+        {/* BUG-671: Change Method not available for partial/split orders (Phase 2) */}
+        {canChangeMethod && !order.razorpayOrderId && CHANGE_METHOD_ALLOWED_METHODS.includes((order.paymentMethod || '').toLowerCase()) && (
           <PaymentMethodPicker
             order={order}
             currentMethod={currentMethod}

@@ -216,17 +216,12 @@ const QuickEditForm = ({ product, categories, currencySymbol, onSave, onCancel, 
             onWheel={e => e.target.blur()} // BUG-392
           />
         </div>
+        {/* CR-394: Tax Calc always Exclusive — select removed. Old Inclusive products show "Tax Incl." badge (L392) */}
         <div>
           <label className="text-xs mb-1 block" style={{ color: COLORS.grayText }}>Tax Calc</label>
-          <select
-            value={form.taxCalc}
-            onChange={(e) => update("taxCalc", e.target.value)}
-            className="w-full px-3 py-2 text-sm rounded-lg border outline-none bg-white"
-            style={{ borderColor: COLORS.borderGray }}
-          >
-            <option value="Inclusive">Inclusive</option>
-            <option value="Exclusive">Exclusive</option>
-          </select>
+          <div className="w-full px-3 py-2 text-sm rounded-lg border bg-zinc-50" style={{ borderColor: COLORS.borderGray, color: COLORS.grayText }}>
+            Exclusive
+          </div>
         </div>
       </div>
 

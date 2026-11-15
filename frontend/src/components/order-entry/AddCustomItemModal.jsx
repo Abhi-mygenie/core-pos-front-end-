@@ -249,21 +249,7 @@ const AddCustomItemModal = ({ categories = [], products = [], onClose, onAdd, sh
                   data-testid="custom-item-tax-percent"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-                  Tax Calc
-                </label>
-                <select
-                  value={taxCalc}
-                  onChange={(e) => setTaxCalc(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 bg-white"
-                  style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
-                  data-testid="custom-item-tax-calc"
-                >
-                  <option value="Exclusive">Exclusive</option>
-                  <option value="Inclusive">Inclusive</option>
-                </select>
-              </div>
+              {/* CR-394: Tax Calc always Exclusive — select removed. Value stays 'Exclusive' from useState(L16) */}
             </div>
           )}
 

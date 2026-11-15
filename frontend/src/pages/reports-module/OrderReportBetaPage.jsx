@@ -20,6 +20,7 @@ import api from '../../api/axios'; // CR-349
 import { API_ENDPOINTS } from '../../api/constants'; // CR-349
 import { isMutationAllowedForSelectedDate } from '../../utils/businessDay'; // CR-349
 import WhatsAppPaymentModal from '../../components/cards/WhatsAppPaymentModal'; // CR-164
+import CollectBillPanelDrawer from '../../components/reports/CollectBillPanelDrawer'; // CR-503
 import { fmtISO, DATE_PRESETS, computePresetRange } from '../../utils/datePresets'; // BUG-640 + CR-481
 
 // CR-117: Platform badge
@@ -273,6 +274,10 @@ export default function OrderReportBetaPage() {
   const [optimisticUnpaidIds, setOptimisticUnpaidIds]       = useState(() => new Set());
   const [printingIds, setPrintingIds]                       = useState(() => new Set());
   const [paymentLinkTarget, setPaymentLinkTarget]            = useState(null); // CR-164: Hold order selected for payment link
+  // CR-503: Collect Bill for Hold/Credit rows
+  const [collectBillTarget, setCollectBillTarget]             = useState(null);
+  const [collectBillPending, setCollectBillPending]           = useState(false);
+  const [optimisticCollectedBetaIds, setOptimisticCollectedBetaIds] = useState(() => new Set());
   // BUG-361: persist sidebar state across reloads
   const [sidebarExpanded, setSidebarExpanded] = useState(
     () => localStorage.getItem('mygenie_sidebar_expanded') === 'true'
@@ -392,6 +397,39 @@ export default function OrderReportBetaPage() {
       toast({ title: 'Failed to print bill', description: err?.readableMessage, variant: 'destructive' });
     } finally {
       setPrintingIds(prev => { const n = new Set(prev); n.delete(row.order_id); return n; });
+    }
+  }, [printerAgents, toast]);
+
+  // CR-503: Collect Bill handlers for Hold/Credit rows
+  const openCollectBillDrawer = useCallback((row) => {
+    setCollectBillTarget(row);
+  }, []);
+
+  const closeCollectBillDrawer = useCallback(() => {
+    if (!collectBillPending) setCollectBillTarget(null);
+  }, [collectBillPending]);
+
+  const handleCollectSuccess = useCallback(() => {
+    if (collectBillTarget?.order_id) {
+      setOptimisticCollectedBetaIds(prev => new Set(prev).add(collectBillTarget.order_id));
+    }
+    setCollectBillTarget(null);
+    setCollectBillPending(false);
+    fetchData(appliedFrom, appliedTo);
+  }, [collectBillTarget, fetchData, appliedFrom, appliedTo]);
+
+  const handlePrintBillFromBeta = useCallback(async (row) => {
+    // CR-503: Mirror AllOrdersReportPage.handlePrintBillFromAudit pattern
+    try {
+      const resp = await api.post(API_ENDPOINTS.SINGLE_ORDER_NEW, { order_id: row?.order_id || row?.id });
+      const raw = resp.data?.data;
+      if (!raw) throw new Error('No order data');
+      const transformed = orderFromAPI.order(raw);
+      const items = (transformed.items || []).map(it => ({ ...it, placed: true }));
+      await printOrder(items, printerAgents || [], { orderType: transformed.orderType, orderId: transformed.orderId });
+      toast({ title: 'Bill request sent', description: `Order #${row.restaurant_order_id || row.order_id}` });
+    } catch (err) {
+      toast({ title: 'Print failed', description: err?.message || 'Could not print bill', variant: 'destructive' });
     }
   }, [printerAgents, toast]);
 
@@ -765,6 +803,18 @@ export default function OrderReportBetaPage() {
                                       Pay Link
                                     </button>
                                   )}
+                                  {/* CR-503: Collect — Hold/Credit unpaid rows */}
+                                  {(((row.payment_method || '').toLowerCase() === 'paylater') || ((row.payment_method || '').toUpperCase() === 'TAB')) &&
+                                   (row.payment_status || '').toLowerCase() !== 'paid' &&
+                                   !optimisticCollectedBetaIds.has(row.order_id) && (
+                                    <button
+                                      onClick={() => openCollectBillDrawer(row)}
+                                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-sm border transition-colors border-emerald-300 text-emerald-700 hover:bg-emerald-50 cursor-pointer"
+                                      data-testid={`collect-btn-${row.order_id}`}
+                                    >
+                                      Collect
+                                    </button>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -855,6 +905,18 @@ export default function OrderReportBetaPage() {
           isPending={markUnpaidPending}
           onConfirm={() => handleUnpaidConfirm(markUnpaidTarget)}
           onClose={() => setMarkUnpaidTarget(null)}
+        />
+      )}
+      {/* CR-503: Collect Bill Drawer for Hold/Credit rows */}
+      {collectBillTarget && (
+        <CollectBillPanelDrawer
+          open={!!collectBillTarget}
+          order={collectBillTarget}
+          onClose={closeCollectBillDrawer}
+          onCollectStart={() => setCollectBillPending(true)}
+          onCollectSuccess={handleCollectSuccess}
+          onCollectError={() => setCollectBillPending(false)}
+          onPrintBill={handlePrintBillFromBeta}
         />
       )}
     </div>

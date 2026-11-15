@@ -98,9 +98,9 @@ export default function ReservationsPage() {
       <main className="flex-1 overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-white border-b border-[#E5E5E5] px-6 py-4 flex items-center justify-between shrink-0">
-          <div>
+          <div className="min-w-0 flex-1"> {/* BUG-667 */}
             <h1 className="text-[18px] font-semibold text-[#1A1A1A]" style={{ fontFamily: 'Poppins, sans-serif' }}>Reservations · Tape Chart</h1>
-            <p className="text-[13px] text-[#888] mt-0.5">{fmtDate()} · {restaurant?.name ?? ''}</p>
+            <p className="text-[13px] text-[#888] mt-0.5 line-clamp-2 break-words">{fmtDate()} · {restaurant?.name ?? ''}</p>
           </div>
           <div className="flex items-center gap-2">
             <button data-testid="tc-refresh-btn" onClick={load} disabled={loading}

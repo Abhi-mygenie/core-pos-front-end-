@@ -220,8 +220,7 @@ const SettlementPage = () => {
             {/* KPI Strip */}
             <div className="flex gap-2 mb-4">
               <KpiCard icon={Banknote} label="Opening Balance" value={totals.openingBalance} color={COLORS.primaryOrange} sub="Cash float given" />
-              <KpiCard icon={TrendingUp} label="Cash Collected" value={totals.cashCollected} color={COLORS.primaryGreen}
-                sub={<span data-testid="settlement-total-sale-footnote">{`Total sale: ${fmt(totals.totalSale)}`}</span>} />
+              <KpiCard icon={TrendingUp} label="Cash Collected" value={totals.cashCollected} color={COLORS.primaryGreen} /> {/* BUG-675: subtitle removed */}
               <KpiCard icon={ArrowDownToLine} label="Settled" value={totals.settled} color="#3B82F6" sub={totals.totalFunds ? `${Math.round(totals.settled / totals.totalFunds * 100)}% of funds` : ""} />
               <KpiCard icon={Wallet} label="Remaining" value={totals.remaining} color={COLORS.amber} sub="To be settled" />
               <KpiCard icon={AlertTriangle} label="Pilferage" value={totals.pilferage} color={totals.pilferage > 0 ? "#EF4444" : COLORS.primaryGreen} sub={totals.pilferage === 0 ? "All clear" : "Discrepancy"} />

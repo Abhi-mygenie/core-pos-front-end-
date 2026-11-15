@@ -877,13 +877,13 @@ const Sidebar = ({
             <User className="w-4 h-4 text-white" />
           </div>
           {isExpanded && (
-            <div className="flex-1 text-left">
+            <div className="flex-1 text-left min-w-0"> {/* BUG-667: constrain flex child width */}
               <div className="text-sm font-medium truncate" style={{ color: COLORS.darkText }}>
                 {user?.firstName
                   ? `${user.firstName} (${user.roleName || 'Staff'})`
                   : (user?.roleName || 'Staff')}
               </div>
-              <div className="text-xs truncate" style={{ color: COLORS.grayText }}>
+              <div className="text-xs line-clamp-2 break-words" style={{ color: COLORS.grayText }}> {/* BUG-667: wrap long name to 2 lines */}
                 {restaurant?.id
                   ? `${restaurant?.name ? `${restaurant.name} · ` : ''}#${restaurant.id}`
                   : (user?.roleName || '')} {/* CR-378: show restaurant name alongside ID */}

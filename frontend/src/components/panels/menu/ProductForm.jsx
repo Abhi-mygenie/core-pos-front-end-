@@ -625,7 +625,8 @@ const ProductForm = ({ product, categories, addons: allAddons, stations, currenc
                   className="w-full px-2 py-1.5 text-xs rounded border outline-none" style={{ borderColor: COLORS.borderGray }} min={0} data-testid="new-addon-price" />
               </div>
               <button onClick={async () => {
-                if (!newAddonName.trim() || !newAddonPrice) return;
+                if (!newAddonName.trim()) return;
+                if (newAddonPrice === '') { toast({ title: 'Price required', description: 'Enter a price (0 is allowed)', variant: 'destructive' }); return; } // BUG-669
                 try {
                   await menuService.addAddon({ name: newAddonName.trim(), price: newAddonPrice, veg: newAddonVeg }); // CR-142
                   toast({ title: "Added", description: `Add-on "${newAddonName}" created.` });

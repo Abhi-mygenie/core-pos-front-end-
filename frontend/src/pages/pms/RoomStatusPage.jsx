@@ -116,9 +116,9 @@ export default function RoomStatusPage() {
       <main className="flex-1 overflow-auto">
         {/* Header */}
         <div className="bg-white border-b border-[#E5E5E5] px-6 py-4 flex items-center justify-between">
-          <div>
+          <div className="min-w-0 flex-1"> {/* BUG-667 */}
             <h1 className="text-[18px] font-semibold text-[#1A1A1A]" style={{ fontFamily: 'Poppins, sans-serif' }}>Room Status Board</h1>
-            <p className="text-[13px] text-[#888] mt-0.5">{fmtDate()} · {restaurant?.name ?? ''}</p>
+            <p className="text-[13px] text-[#888] mt-0.5 line-clamp-2 break-words">{fmtDate()} · {restaurant?.name ?? ''}</p>
           </div>
           <button data-testid="rs-refresh-btn" onClick={load} disabled={loading}
             className="p-2 rounded-lg hover:bg-[#F7F7F7] text-[#888] disabled:opacity-40 transition-colors">

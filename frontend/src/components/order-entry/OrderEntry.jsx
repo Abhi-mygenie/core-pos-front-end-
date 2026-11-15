@@ -118,7 +118,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const [activeCategory, setActiveCategory] = useState("all"); // CR-376-FU-B: B3 — "All" is always the default tab (was popular when setting ON)
   const [searchQuery, setSearchQuery] = useState("");
   // CR-482 P2: highlight index for keyboard navigation in menu grid
-  const [highlightIndex, setHighlightIndex] = useState(0);
+  const [highlightIndex, setHighlightIndex] = useState(-1); // BUG-673: -1 = no item highlighted
   const [showKbdLeaveConfirm, setShowKbdLeaveConfirm] = useState(false); // CR-482 P16: Esc unsaved-items confirm
   const [isRotateBlocked, setIsRotateBlocked] = useState(() => window.matchMedia(ROTATE_MQ).matches); // BUG-555 A3
   useEffect(() => { const mq = window.matchMedia(ROTATE_MQ); const h = (e) => setIsRotateBlocked(e.matches); mq.addEventListener('change', h); return () => mq.removeEventListener('change', h); }, []); // BUG-555 A3
@@ -636,13 +636,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const filteredItems = useMemo(() => getFilteredItems(), [activeCategory, searchQuery, primaryFilter, secondaryFilters, activeMenuProducts, popularProducts, products]); // eslint-disable-line react-hooks/exhaustive-deps
   // CR-482 P2: reset highlight to best match whenever search or category changes
   useEffect(() => {
-    if (!kbdEnabled || filteredItems.length === 0) { setHighlightIndex(0); return; }
+    if (!kbdEnabled || filteredItems.length === 0) { setHighlightIndex(-1); return; } // BUG-673: -1
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const exactIdx = filteredItems.findIndex(item => item.itemCode && item.itemCode.toLowerCase() === q);
-      setHighlightIndex(exactIdx >= 0 ? exactIdx : 0); // CR-482 R8: exact itemCode match prioritized
+      setHighlightIndex(exactIdx >= 0 ? exactIdx : 0); // CR-482 R8: exact itemCode match prioritized; name search still highlights first result
     } else {
-      setHighlightIndex(0);
+      setHighlightIndex(-1); // BUG-673: empty search = no highlight
     }
   }, [searchQuery, activeCategory, filteredItems.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -766,6 +766,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       const isOnGridItem = active?.hasAttribute('data-kbd-item');
       if (!isInSearch && !isOnGridItem) return;
       if (filteredItems.length === 0) return;
+      if (highlightIndex < 0) return; // BUG-673: no highlight = Enter does nothing
       const item = filteredItems[highlightIndex];
       if (!item) return;
       e.preventDefault(); // CR-482: prevent form submit
@@ -792,7 +793,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
     e.preventDefault(); // CR-482: stop caret move / page scroll
 
-    const currentEl = menuGridRef.current?.querySelectorAll('[data-kbd-item]')[highlightIndex];
+    const currentEl = highlightIndex >= 0 ? menuGridRef.current?.querySelectorAll('[data-kbd-item]')[highlightIndex] : undefined; // BUG-673: -1 = start from nothing
     const nextEl = moveFocus(menuGridRef.current, currentEl, key, '[data-kbd-item]');
     if (nextEl) {
       const items = Array.from(menuGridRef.current.querySelectorAll('[data-kbd-item]'));
@@ -1098,6 +1099,34 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       };
     }));
   }, []);
+
+  // CR-523: Save customer to server immediately on placed orders
+  const saveCustomerToServer = useCallback(async (customerData) => {
+    const orderId = effectiveTable?.orderId;
+    if (!orderId) return; // not placed yet — save happens with place-order
+    if (isEditLocked) return; // BUG-656: locked orders can't change customer
+    try {
+      const payload = orderToAPI.updateOrder(effectiveTable, [], customerData, orderType, {
+        restaurantId: restaurant?.id,
+        orderNotes: [],
+        printAllKOT: false,
+        allCartItems: cartItems.filter(i => i.placed), // only placed items for totals
+        serviceChargePercentage: (
+          (orderType === 'dineIn' || orderType === 'walkIn' || table?.isRoom)
+          && !!restaurant?.autoServiceCharge
+        ) ? (restaurant?.serviceChargePercentage || 0) : 0,
+        serviceChargeTaxPct: restaurant?.serviceChargeTaxPct || 0,
+        deliveryChargeGstPct: restaurant?.deliveryChargeGstPct || 0,
+        printerAgents: printerAgents || [],
+        roundOffEnabled: restaurant?.totalRound !== false,
+      });
+      await api.post(API_ENDPOINTS.UPDATE_PLACE_ORDER, payload);
+      toast({ title: 'Customer saved', description: customerData?.name || 'Customer linked to order' });
+    } catch (err) {
+      console.error('CR-523: customer save failed', err);
+      toast({ title: 'Save failed', description: 'Customer change not saved to server. Try again.', variant: 'destructive' });
+    }
+  }, [effectiveTable, isEditLocked, orderType, restaurant, table, cartItems, orderToAPI, printerAgents, toast]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cart total: final payable amount including tax (for Collect Bill button)
   // Before placing: calculate locally (subtotal + tax)
@@ -2082,7 +2111,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                     key={item.id}
                     data-testid={`menu-item-${item.id}`}
                     data-kbd-item=""
-                    onClick={() => { if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; } item.customizable ? setCustomizationItem(item) : addToCart(item); }}
+                    onClick={() => { if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return; } item.customizable ? setCustomizationItem(item) : addToCart(item); if (kbdEnabled) { setSearchQuery(''); searchInputRef.current?.focus(); } }} /* BUG-673: clear + refocus after mouse add */
                     className={`relative px-5 py-3 rounded-full text-sm font-medium whitespace-nowrap flex items-center gap-2${isHighlighted ? ' kbd-highlight' : ''}`}
                     style={{
                       backgroundColor: isFlashing ? `${COLORS.primaryGreen}20` : "white",
@@ -2916,7 +2945,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onAddNote={(item, cartIndex) => setItemNotesModal({ item, cartIndex })}
                 onCustomize={(item) => setCustomizationItem(item)}
                 customer={customer}
-                onCustomerChange={isEditLocked ? undefined : setCustomer} // BUG-656: disable customer edit when locked
+                onCustomerChange={isEditLocked ? undefined : (customerData) => { setCustomer(customerData); saveCustomerToServer(customerData); }} // BUG-656 + CR-523
                 selectedAddress={selectedAddress}
                 onAddressClick={() => {
                   if (customer?.phone) fetchDeliveryAddresses(customer.phone);
@@ -3149,7 +3178,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       {showCustomerModal && (
         <CustomerModal
           onClose={() => setShowCustomerModal(false)}
-          onSave={(customerData) => setCustomer(customerData)}
+          onSave={(customerData) => { setCustomer(customerData); saveCustomerToServer(customerData); }} // CR-523
           initialData={customer}
           restaurantId={restaurant?.id}
           customerIntel={customerIntel}
