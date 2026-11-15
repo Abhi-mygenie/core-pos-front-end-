@@ -10,7 +10,7 @@ Status: v2.26 — QA-audit fixes applied (D44) · re-QA against this plan + plan
 
 ## 0. How to run it
 - **URL:** `{REACT_APP_BACKEND_URL}/cr385-frontdesk-mockup.html`
-  (REACT_APP_BACKEND_URL is in `/app/frontend/.env`; currently `https://pos-front-staging-2.preview.emergentagent.com`)
+  (REACT_APP_BACKEND_URL is in `/app/frontend/.env`; currently `https://project-build-173--7p508o4t.preview.emergentagent.com`)
 - **Viewport for all checks: 1920×800** (the no-scroll invariant is defined at this size).
 - **File under test:** `/app/frontend/public/cr385-frontdesk-mockup.html` (single self-contained file).
 - Tabs (left nav): Front Desk (dashboard strip) · Arrivals · Departures · In-House · Room Status · (Tape Chart / POS / OTA are placeholders).

@@ -3,7 +3,7 @@
 **Written by:** E1 (Emergent agent)
 **Session date:** 2026-10-17
 **Branch:** `main` — https://github.com/Abhi-mygenie/core-pos-front-end-.git
-**App URL:** https://genie-pos-app.preview.emergentagent.com
+**App URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
 **Backend:** https://preprod.mygenie.online/
 **Compile:** `webpack compiled with 1 warning` (pre-existing — 0 new errors)
 

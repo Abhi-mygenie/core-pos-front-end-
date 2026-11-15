@@ -2,7 +2,7 @@
 
 **Written by:** E1 · **Date:** 2026-10-16
 **Branch:** `main` — https://github.com/Abhi-mygenie/core-pos-front-end-.git
-**App URL:** https://genie-pos-app.preview.emergentagent.com · **Backend:** https://preprod.mygenie.online
+**App URL:** https://project-build-173--7p508o4t.preview.emergentagent.com · **Backend:** https://preprod.mygenie.online
 **Compile:** `webpack compiled successfully` (0 warnings)
 
 ---

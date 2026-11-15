@@ -95,8 +95,8 @@ Backend brief sent. FE fix is correct but backend doesn't persist `order_dispatc
 | Mantri | owner@mantri.com | Qplazm@10 | roleBaseDiscount=Yes |
 | Konaseema | owner@konaseemaruchulu.com | Qplazm@10 | Delivery dispatch test (fOS=5) |
 
-**Preview URL:** https://mygenie-pos-app-5--951ioyr8.preview.emergentagent.com
-**CRM Preview:** https://mygenie-crm-app-1--1mjjz4pi.preview.emergentagent.com/api
+**Preview URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
+**CRM Preview:** https://project-build-173--7p508o4t.preview.emergentagent.com/api
 **Preprod API:** https://preprod.mygenie.online
 
 ---

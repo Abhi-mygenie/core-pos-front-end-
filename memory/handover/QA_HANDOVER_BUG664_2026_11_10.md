@@ -31,6 +31,6 @@
 ## 5. Registry: GATE_5A — EXIT GATE 5/5 PASS
 
 ## 6. Credentials
-- POS: https://c4220e7e-e76a-4ba7-b323-bd65e8947f74.preview.emergentagent.com
+- POS: https://project-build-173--7p508o4t.preview.emergentagent.com
 - cafe103: owner@cafe103.com / Qplazm@10
 - Ruby: owner@ruby.com / Qplazm@10

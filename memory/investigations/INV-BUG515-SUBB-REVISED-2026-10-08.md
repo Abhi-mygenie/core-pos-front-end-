@@ -34,9 +34,9 @@ Even if the user were on the correct pod, on `core-pos-front-5` the expansion st
 
 | Evidence | Value |
 |---|---|
-| This pod `REACT_APP_BACKEND_URL` | `https://react-app-deploy-20.preview.emergentagent.com` |
-| This pod `APP_URL` (supervisor) | `https://a4ac9ff7-296e-490d-9003-ce2a4bae50c8.preview.emergentagent.com` |
-| User testing URL (from screenshots) | `https://core-pos-front-5.preview.emergentagent.com` |
+| This pod `REACT_APP_BACKEND_URL` | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| This pod `APP_URL` (supervisor) | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| User testing URL (from screenshots) | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
 | E-5 in this pod's frontDeskService.js | ✅ Present (L149-153) |
 | E-6 in this pod's InHousePanel.jsx | ✅ Present (L23/L27/L31) |
 | E-7 in this pod's DeparturesPanel.jsx | ✅ Present (L42/L46/L50) |

@@ -142,7 +142,7 @@ Root cause: `RoomDiscountControls.onChange` clamps via `Math.min(maxPct)` → `d
 
 | Service | Status | URL |
 |---|---|---|
-| Frontend | RUNNING (port 3000, webpack 1 pre-existing warning) | `https://mygenie-pos-ui-6.preview.emergentagent.com` |
+| Frontend | RUNNING (port 3000, webpack 1 pre-existing warning) | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
 | Backend | RUNNING (port 8001) | — |
 | MongoDB | RUNNING | — |
 

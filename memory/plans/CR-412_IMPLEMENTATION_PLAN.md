@@ -399,7 +399,7 @@ Registry synced: [ ] YES — EXIT GATE: [ ] 5/5 PASS
 
 ### 6. Credentials
 - Owner: owner@thegoankitchen.com / Qplazm@10 (RID 69)
-- Preview: https://genie-core-pos.preview.emergentagent.com
+- Preview: https://project-build-173--7p508o4t.preview.emergentagent.com
 - Backend: https://preprod.mygenie.online
 ```
 

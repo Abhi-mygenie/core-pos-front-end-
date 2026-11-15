@@ -26,6 +26,6 @@
 - REACT_APP_SHOW_AUDIT_TAB=true
 
 ## Status
-- App live at: https://core-pos-react-6.preview.emergentagent.com
+- App live at: https://project-build-173--7p508o4t.preview.emergentagent.com
 - Login page rendered correctly (MyGenie branding, email/password form)
 - Memory dir fully synced from remote branch 5oct-1

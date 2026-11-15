@@ -32,7 +32,7 @@ Room Discount in the Bill panel is now **independent** of CollectPaymentPanel's 
 ## 3. Test Cases
 
 **Test account:** `owner@thegoankitchen.com` / `Qplazm@10` (RID 69)
-**URL:** `https://core-pos-front-6.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse`
+**URL:** `https://project-build-173--7p508o4t.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse`
 **Test booking:** bonk — MG-69-2C201998-53D8-4980-A6A8-B042088BFC9D
 
 ### TC-522-1 — Three buttons gone (VISUAL)
@@ -113,6 +113,6 @@ Room Discount in the Bill panel is now **independent** of CollectPaymentPanel's 
 |---|---|---|
 | Owner (The Goan Kitchen) | owner@thegoankitchen.com | Qplazm@10 |
 
-- URL: https://core-pos-front-6.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse
+- URL: https://project-build-173--7p508o4t.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse
 - Test booking: bonk — MG-69-2C201998-53D8-4980-A6A8-B042088BFC9D (order 1233012, RID 69)
 - bonk: booking_charge=₹3,000 · advance=₹1,500 · baseBalance=₹600 · maxCheckoutDiscount=₹525 · maxPct=17%

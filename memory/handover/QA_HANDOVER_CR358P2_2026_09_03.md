@@ -61,6 +61,6 @@
 
 ## 5. Credentials + Environment
   Account: OWNER_PREPROD (see memory/test_credentials.md)
-  URL: https://pos-app-deploy-1.preview.emergentagent.com
+  URL: https://project-build-173--7p508o4t.preview.emergentagent.com
   Login → wait for boot → /pms/new-booking or /pms/check-in
   QA report: test_reports/iteration_1.json

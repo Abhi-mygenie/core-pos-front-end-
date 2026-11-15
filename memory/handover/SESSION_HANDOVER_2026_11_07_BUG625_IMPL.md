@@ -64,5 +64,5 @@ Inserted inside the `else` branch of `dashboardView === 'status'` ternary — on
 ## Next
 
 QA agent → execute TC-1 through TC-8 from `handover/QA_HANDOVER_BUG625_2026_11_07.md`
-Environment: https://genie-pos-web-2--312lqkk9.preview.emergentagent.com
+Environment: https://project-build-173--7p508o4t.preview.emergentagent.com
 Viewport: <1280px for tablet mode

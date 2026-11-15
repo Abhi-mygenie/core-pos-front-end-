@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used:** INVESTIGATION → IMPLEMENTATION
-**App URL:** https://core-pos-preview-19.preview.emergentagent.com
+**App URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING · webpack `compiled successfully` · 0 new warnings
 
@@ -72,7 +72,7 @@ This universal formula always removes the embedded gstOnAdv component before GST
 
 | Item | Value |
 |------|-------|
-| App URL | `https://core-pos-preview-19.preview.emergentagent.com` |
+| App URL | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

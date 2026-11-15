@@ -52,7 +52,7 @@ EXIT GATE: ALL 5 PASSED
 
 ## 5. Credentials + Environment
 
-- Preview URL: https://genie-pos-web-2--312lqkk9.preview.emergentagent.com
+- Preview URL: https://project-build-173--7p508o4t.preview.emergentagent.com
 - Test viewport: set browser/DevTools to <1280px to trigger tablet mode
 - Test account: see `/app/memory/control/test_credentials.md`
 - File changed: `src/components/layout/Header.jsx` (L436-445)

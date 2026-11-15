@@ -6,7 +6,7 @@ Status at close:  MULTI-SESSION HANDOVER — full QA backlog batched and ready f
 Next agent role:  QA (PLANNING + APPROVAL first — do NOT start executing until owner approves plan)
 Workspace:        /app  (branch 14sep, frontend-only)
 Credentials:      /app/memory/test_credentials.md  (goankitchen_owner alias)
-App URL:          https://react-pos-deploy-4.preview.emergentagent.com
+App URL:          https://project-build-173--7p508o4t.preview.emergentagent.com
 ```
 
 ---
@@ -99,7 +99,7 @@ These have been sitting since earlier sprints. Full list:
 3. Read /app/memory/control/CR_REGISTRY.md + BUG_TRACKER.md (skim for context)
 4. Check environment:
    tail -5 /var/log/supervisor/frontend.out.log   → expect "webpack compiled successfully"
-   curl -s https://react-pos-deploy-4.preview.emergentagent.com | grep -i mygenie
+   curl -s https://project-build-173--7p508o4t.preview.emergentagent.com | grep -i mygenie
 5. Verify test credentials work (see §5 below)
 ```
 
@@ -198,7 +198,7 @@ Only after owner says YES → execute the batch using the QA handover docs.
 Account alias:  goankitchen_owner
 Email:          owner@thegoankitchen.com  password: ***
 Login endpoint: POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/common-login
-App URL:        https://react-pos-deploy-4.preview.emergentagent.com
+App URL:        https://project-build-173--7p508o4t.preview.emergentagent.com
 Night Audit:    /pms/night-audit
 Revenue:        /pms/revenue
 Folio:          /pms/folio/:orderId  (e.g. /pms/folio/1232245)

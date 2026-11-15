@@ -29,7 +29,7 @@
 ## 2. Test Cases for QA Agent
 
 **Credentials:** `owner@thegoankitchen.com` / `Qplazm@10` — Front Desk (Beta) → Arrivals tab → expand a booking row with room discount entered
-**URL:** https://pos-front-5oct.preview.emergentagent.com/pms/front-desk-v2 (or use preprod)
+**URL:** https://project-build-173--7p508o4t.preview.emergentagent.com/pms/front-desk-v2 (or use preprod)
 **Test restaurant:** RID 69 (The Goan Kitchen) — bc=₹9,000, advance=₹1,000, 18% GST (booking-time)
 
 ### TC-01 — Static bill grid at zero discount (P0 — baseline)
@@ -169,7 +169,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Item | Value |
 |------|-------|
-| App URL | https://pos-front-5oct.preview.emergentagent.com |
+| App URL | https://project-build-173--7p508o4t.preview.emergentagent.com |
 | Preprod API | https://preprod.mygenie.online/ |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

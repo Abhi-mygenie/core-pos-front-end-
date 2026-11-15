@@ -85,7 +85,7 @@ This session completed CR-358-P3 implementation (Gate 4), BUG-380 full lifecycle
 - Email: owner1@thegoankitchen.com
 - Password: Qplazm@10
 - Login at root URL `/` (NOT /login)
-- Preview: https://pos-react-deploy-7.preview.emergentagent.com
+- Preview: https://project-build-173--7p508o4t.preview.emergentagent.com
 
 ## Design Tokens
 - Brand Orange: #F26B33 | Action Green: #329937 | Danger: #EF4444 | Warning: #F59E0B

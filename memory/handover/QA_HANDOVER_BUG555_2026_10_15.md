@@ -74,6 +74,6 @@ EXIT GATE: ALL 5 PASSED
 ## 4. Credentials + Environment
 
 - Login: preprod.mygenie.online (test restaurant credentials from `/app/memory/test_credentials.md`)
-- Preview URL: https://pos-frontend-app-4.preview.emergentagent.com
+- Preview URL: https://project-build-173--7p508o4t.preview.emergentagent.com
 - Port: 3000 (local), supervisor: running, PID: see `supervisorctl status frontend`
 - WP-C HELD: Header.jsx NOT touched — CR-414 header QA cases unchanged.
