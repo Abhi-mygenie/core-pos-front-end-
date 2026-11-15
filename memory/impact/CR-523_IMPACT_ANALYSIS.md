@@ -40,3 +40,7 @@ V2 Change the customer → the new one is shown.
 V3 Printed + lock OFF → allowed, no reprint. V4 Printed + lock ON + no permission → blocked (both entry points). V5 Printed + lock ON + permission → allowed.
 V6 New order → unchanged. V7 Save fails (offline) → error toast, local state kept.
 Regression: BUG-270 cust_mobile, CR-479 country code, BUG-656 lock, loyalty/wallet on collect, CRM customer lookup.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-D_CR-523_API_CONTRACT_2026_11_15.md`

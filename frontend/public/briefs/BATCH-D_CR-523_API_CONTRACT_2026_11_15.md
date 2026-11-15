@@ -1,4 +1,4 @@
-# API Contract — CR-523 Customer-only order update — DRAFT v1 — 2026-11-15
+# API Contract — CR-523 Customer-only order update — FINAL v1 — LOCKED 2026-11-15
 
 Backend: Gyan · IDs: BD-05, BD-06, BD-07 · IA doc: `impact/CR-523_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**

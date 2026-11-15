@@ -35,3 +35,9 @@ Deploy the existing React frontend repo (`https://github.com/Abhi-mygenie/core1-
 
 ## Batch B API Contracts — FINAL v1 LOCKED 2026-11-15
 8 contracts approved by owner 2026-11-15: BUG-672, CR-526, CR-542, CR-514, CR-522, CR-527, CR-536, BUG-607. See `contracts/BATCH-B_*_API_CONTRACT_2026_11_15.md` and decisions `change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md`.
+
+## Batch D API Contracts — FINAL v1 LOCKED 2026-11-15
+2 contracts approved by owner 2026-11-15: CR-525 (+ CR-521), CR-523. See `contracts/BATCH-D_*_API_CONTRACT_2026_11_15.md` and decisions `change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md`.
+
+## Batch C API Contracts — DRAFT v1 (2026-11-15)
+2 contracts written, awaiting Gyan backend reply before FINAL: CR-524 (punched_at), CR-528 (bill_printed_at). Gate 2 frozen 2026-11-15. See `contracts/BATCH-C_*_API_CONTRACT_2026_11_15.md`.

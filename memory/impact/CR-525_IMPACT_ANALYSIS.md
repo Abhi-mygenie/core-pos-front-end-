@@ -55,3 +55,7 @@ V4 Back from Collect → order screen. Add item (with edit permission) → after
 V5 Preparing-stage print → Collect Bill only (OD-525-D).
 V6 Keyboard Enter on a printed card → Collect Payment.
 Regression: BUG-583/664 colour, BUG-628 On The Way, CR-489 lock, CR-512 print confirm, merge/shift/cancel header icons.
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md`

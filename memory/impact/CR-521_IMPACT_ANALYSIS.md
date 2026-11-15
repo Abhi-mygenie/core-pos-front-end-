@@ -43,3 +43,7 @@ V1 Print bill → card turns light orange with the green border (table + order c
 V2 Ready (unprinted) card still white with an orange border.
 V3 Collect payment → card leaves the printed state as today.
 V4 Edit after print → colour follows `bill_print` (see CR-525 P2).
+
+## API Contract — FINAL v1 LOCKED 2026-11-15
+
+`contracts/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md`

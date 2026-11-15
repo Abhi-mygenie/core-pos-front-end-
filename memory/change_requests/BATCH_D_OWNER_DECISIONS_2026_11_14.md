@@ -71,3 +71,12 @@ BUG-667 → BUG-669 → BUG-673 → CR-525 then CR-521 (shared card files, seque
 | OD-D-BD06 | **CR-523 BD-06 LOCKED:** unlink = **empty `cust_name` (empty string) + empty `cust_mobile` (empty string)** on `update-place-order`. No new field. Behaviour change: today empty strings keep the old customer (probe P3_08); new behaviour: empty strings = unlink. Owner explanation: needed when cashier linked the wrong customer and wants to remove them without replacing. |
 | OD-D-BD07 | **CR-523 BD-07 LOCKED:** no change — `order_edit_count` keeps incrementing on customer-only updates (current behaviour preserved). |
 | OD-D-BD08 | **CR-523 BD-08 DROPPED:** message "Items added to order successfully!" stays as-is. No backend change. |
+
+## ALL BATCH D CONTRACTS APPROVED — 2026-11-15
+
+Owner: "approved batch D" — both contracts approved simultaneously 2026-11-15.
+
+| Contract | File | Status |
+|---|---|---|
+| CR-525 (+ CR-521) | `contracts/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+| CR-523 | `contracts/BATCH-D_CR-523_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |

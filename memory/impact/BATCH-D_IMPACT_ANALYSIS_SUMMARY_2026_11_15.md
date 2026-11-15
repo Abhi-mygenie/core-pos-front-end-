@@ -37,3 +37,14 @@ Mockup: `mockups/CR-521_CURRENT_VS_PROPOSED_2026_11_15.html` · design decision 
 
 ## Next
 Gate 3 plan GO from the owner (per item or batch). Backend: send the brief to Gyan. CR-525/CR-521 release after the BD-01 reply.
+
+## Contracts — FINAL v1 LOCKED 2026-11-15
+
+Both contracts approved by owner 2026-11-15.
+
+| CR | Contract file | Locked names |
+|---|---|---|
+| CR-525 (+ CR-521) | `contracts/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md` | `bill_print` reset on non-empty cart-update · `update-order` socket event · `bill_print_count` unchanged |
+| CR-523 | `contracts/BATCH-D_CR-523_API_CONTRACT_2026_11_15.md` | Customer-only update confirmed · empty name+mobile = unlink · edit count kept · BD-08 dropped |
+
+No contract: BD-09 (test-data cleanup), BUG-667/BUG-669/BUG-673 (FE only).

@@ -1,4 +1,4 @@
-# API Contract — CR-525 (+ CR-521) After-print Collect Bill / bill_print reset — DRAFT v1 — 2026-11-15
+# API Contract — CR-525 (+ CR-521) After-print Collect Bill / bill_print reset — FINAL v1 — LOCKED 2026-11-15
 
 Backend: Gyan · IDs: BD-01, BD-02, BD-03, BD-04 · IA docs: `impact/CR-525_IMPACT_ANALYSIS.md` · `impact/CR-521_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**
