@@ -18,6 +18,26 @@ PAGE_CSS = (
     "blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}"
     ":target{background:#ffe2c2;outline:2px solid #b4471b}"
     ".top{font-size:13px;margin-bottom:16px}"
+    ".copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;"
+    "color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}"
+    ".copy-md:hover{background:#b4471b;color:#fff}"
+)
+
+COPY_JS = (
+    "<script>"
+    "document.querySelectorAll('.copy-md').forEach(function(b){"
+    "b.onclick=function(e){e.preventDefault();"
+    "fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){"
+    "if(navigator.clipboard){"
+    "navigator.clipboard.writeText(t).then(function(){"
+    "b.textContent='Copied!';setTimeout(function(){b.textContent='Copy\u00a0.md'},2000)});"
+    "}else{"
+    "var ta=document.createElement('textarea');ta.value=t;"
+    "document.body.appendChild(ta);ta.select();document.execCommand('copy');"
+    "document.body.removeChild(ta);"
+    "b.textContent='Copied!';setTimeout(function(){b.textContent='Copy\u00a0.md'},2000);}"
+    "}).catch(function(){b.textContent='Error'});}});"
+    "</script>"
 )
 
 BATCHES = {
@@ -29,7 +49,10 @@ BATCHES = {
         ],
         "contracts": sorted(p.name for p in (MEM / "contracts").glob("BATCH-A_*_API_CONTRACT_2026_11_15.md")),
     },
-    "B": {"brief": [("BACKEND_BRIEF_BATCH-B_2026_11_15.md", "Brief (BB-01..BB-13 + BB-10b)", "backend_briefs")], "contracts": []},
+    "B": {
+        "brief": [("BACKEND_BRIEF_BATCH-B_2026_11_15.md", "Brief (BB-01..BB-13 + BB-10b)", "backend_briefs")],
+        "contracts": sorted(p.name for p in (MEM / "contracts").glob("BATCH-B_*_API_CONTRACT_2026_11_15.md")),
+    },
     "C": {"brief": [("BACKEND_BRIEF_BATCH-C_2026_11_15.md", "Brief (ASK 1 + ASK 2) — draft, send after IA freeze", "backend_briefs")], "contracts": []},
     "D": {"brief": [("BACKEND_BRIEF_BATCH-D_2026_11_15.md", "Brief (BD-01..BD-09)", "backend_briefs")], "contracts": []},
 }
@@ -46,12 +69,20 @@ def page_name(src):
     return Path(src).stem + ".html"
 
 
-def wrap_page(title, body):
+def wrap_page(title, body, src_name=None):
+    md_link = ""
+    if src_name and not src_name.endswith(".html"):
+        md_href = f"/briefs/{src_name}"
+        md_link = (
+            f" \u00b7 <a href=\"{md_href}\" target=\"_blank\">Open&nbsp;.md</a>"
+            f" <button class=\"copy-md\" data-src=\"{md_href}\" title=\"Copy .md to clipboard\">Copy&nbsp;.md</button>"
+        )
     return (
-        f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>{html.escape(title)} — MyGenie POS</title>'
+        f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>{html.escape(title)} \u2014 MyGenie POS</title>'
         f"<style>{PAGE_CSS}</style></head><body><div class=\"wrap\">"
-        f'<p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · '
-        f'<a href="/design-tracker.html">Design tracker</a></p>{body}</div></body></html>'
+        f'<p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> \u00b7 '
+        f'<a href="/design-tracker.html">Design tracker</a>{md_link}</p>{body}'
+        f"{COPY_JS}</div></body></html>"
     )
 
 
@@ -70,21 +101,48 @@ def render_doc(folder, name):
     if name.endswith(".html"):
         out = fix_links(src.read_text(encoding="utf-8"))
     else:
-        body = markdown.markdown(src.read_text(encoding="utf-8"), extensions=["tables", "fenced_code"])
-        out = wrap_page(Path(name).stem, add_anchors(fix_links(body)))
+        raw_md = src.read_text(encoding="utf-8")
+        # Also serve the raw .md from briefs/ (enables Open .md / Copy .md)
+        (OUT / name).write_text(raw_md, encoding="utf-8")
+        body = markdown.markdown(raw_md, extensions=["tables", "fenced_code"])
+        out = wrap_page(Path(name).stem, add_anchors(fix_links(body)), src_name=name)
     (OUT / page_name(name)).write_text(out, encoding="utf-8")
     return f"/briefs/{page_name(name)}"
+
+
+def contract_links_for(batch_key, item, row_id):
+    """Return HTML + MD + Copy .md links if the contract file exists; else None."""
+    ids = re.findall(r"(?:CR|BUG)-\d+", item)
+    for i in ids:
+        contract_file = f"BATCH-{batch_key}_{i}_API_CONTRACT_2026_11_15.md"
+        if (MEM / "contracts" / contract_file).exists():
+            stem = contract_file[:-3]
+            html_href = f"/briefs/{stem}.html"
+            md_href = f"/briefs/{contract_file}"
+            return (
+                f'<a href="{html_href}" target="_blank">HTML</a>'
+                f" \u00b7 <a href=\"{md_href}\" target=\"_blank\">MD</a>"
+                f" <button class=\"copy-md\" data-src=\"{md_href}\" title=\"Copy .md to clipboard\">Copy&nbsp;.md</button>"
+            )
+    return None
 
 
 def batch_links(key):
     cfg = BATCHES[key]
     items = [f'<li><a href="{render_doc(folder, n)}" target="_blank">{html.escape(label)}</a></li>' for n, label, folder in cfg["brief"]]
     if cfg["contracts"]:
-        cons = [
-            f'<li><a href="{render_doc("contracts", n)}" target="_blank">{re.sub(r"^BATCH-A_|_API_CONTRACT_2026_11_15.md$", "", n)} contract</a></li>'
-            for n in cfg["contracts"]
-        ]
-        items.append(f"<li>API contracts (locked, R19/R20):<ul>{''.join(cons)}</ul></li>")
+        cons = []
+        for n in cfg["contracts"]:
+            html_href = render_doc("contracts", n)
+            label = re.sub(r"^BATCH-[A-Z]_|_API_CONTRACT_2026_11_15\.md$", "", n)
+            md_href = f"/briefs/{n}"
+            cons.append(
+                f'<li><a href="{html_href}" target="_blank">{label} contract</a>'
+                f' [<a href="{md_href}" target="_blank">MD</a>'
+                f' <button class="copy-md" data-src="{md_href}" title="Copy .md to clipboard">Copy&nbsp;.md</button>]</li>'
+            )
+        status_label = "DRAFT v1" if key != "A" else "locked, R19/R20"
+        items.append(f"<li>API contracts ({status_label}):<ul>{''.join(cons)}</ul></li>")
     else:
         items.append("<li>API contracts: none written yet — the brief is the contract for now.</li>")
     return f'<div class="docs" data-testid="tracker-docs-batch-{key.lower()}"><b>Documents</b><ul>{"".join(items)}</ul></div>'
@@ -106,8 +164,13 @@ def contract_cell(batch, row_id, item):
             if (MEM / "contracts" / f"BATCH-A_{i}_API_CONTRACT_2026_11_15.md").exists()
         ]
         return "<br>".join(links) or '<span class="nc">No contract (P1 / phase 2)</span>'
+    # Batches B, C, D — link to contract when file exists
+    if batch in ("b", "c", "d"):
+        links = contract_links_for(batch.upper(), item, row_id)
+        if links:
+            return links
     anchor = row_id.replace(" ", "-")
-    return f'<a href="{BRIEF_PAGE[batch]}#{anchor}" target="_blank">Brief §{row_id}</a><br><span class="nc">no contract yet</span>'
+    return f'<a href="{BRIEF_PAGE[batch]}#{anchor}" target="_blank">Brief \u00a7{row_id}</a><br><span class="nc">no contract yet</span>'
 
 
 def add_contract_column(src):
@@ -138,16 +201,23 @@ def build_backend():
         src = src[:end] + f'<a id="batch-{key.lower()}"></a>' + batch_links(key) + src[end:]
     src = add_contract_column(src)
     nav = (
-        '<p class="nav" data-testid="tracker-nav">Jump to: <a href="#batch-a">Batch A</a> · <a href="#batch-b">Batch B</a> · '
-        '<a href="#batch-c">Batch C</a> · <a href="#batch-d">Batch D</a> · <a href="/design-tracker.html">Design tracker &rarr;</a></p>'
+        '<p class="nav" data-testid="tracker-nav">Jump to: <a href="#batch-a">Batch A</a> \u00b7 <a href="#batch-b">Batch B</a> \u00b7 '
+        '<a href="#batch-c">Batch C</a> \u00b7 <a href="#batch-d">Batch D</a> \u00b7 <a href="/design-tracker.html">Design tracker &rarr;</a></p>'
     )
     src = src.replace("</h1>", "</h1>" + nav, 1)
     src = src.replace(
         "</style>",
         ".docs{background:#fff;border:1px solid #d6d2c4;padding:8px 14px;margin:6px 0 12px;font-size:13px}"
-        ".nc{color:#888;font-size:11px}.docs ul{margin:4px 0 0 18px;padding:0}.docs li{margin:2px 0}a{color:#b4471b}.nav{font-size:14px}</style>",
+        ".nc{color:#888;font-size:11px}.docs ul{margin:4px 0 0 18px;padding:0}.docs li{margin:2px 0}"
+        "a{color:#b4471b}.nav{font-size:14px}"
+        ".copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;"
+        "color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}"
+        ".copy-md:hover{background:#b4471b;color:#fff}"
+        "</style>",
         1,
     )
+    # Inject Copy .md JS before </body>
+    src = src.replace("</body>", COPY_JS + "</body>", 1)
     (PUB / "backend-tracker.html").write_text(src, encoding="utf-8")
 
 
@@ -160,7 +230,7 @@ DESIGN_TABS = [
 
 STATUS = {
     "C": "No design mockups in the Batch C pack yet (Gate 2 paused, not frozen).",
-    "D": "CR-521 printed-card colour #FFEDD5 (owner decision R1–R6). Releases with CR-525 after backend BD-01.",
+    "D": "CR-521 printed-card colour #FFEDD5 (owner decision R1\u2013R6). Releases with CR-525 after backend BD-01.",
 }
 
 
@@ -188,7 +258,7 @@ def build_design():
             body += '<div class="empty" data-testid="design-empty-c">No mockups yet for this batch.</div>'
         panels.append(f'<section class="panel{active}" id="tab-{k}">{body}</section>')
     page = (
-        '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Design Mockup Tracker — Batches A–D — MyGenie POS</title><style>'
+        '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Design Mockup Tracker \u2014 Batches A\u2013D \u2014 MyGenie POS</title><style>'
         "body{margin:0;font-family:Georgia,serif;background:#faf8f3;color:#1d1d1b}header{padding:22px 32px 0}h1{font-size:26px;margin:0 0 4px}"
         ".meta{font-size:13px;color:#555;margin:2px 0 10px}a{color:#b4471b}"
         ".tabs{display:flex;gap:4px;padding:14px 32px 0;border-bottom:2px solid #1d1d1b}"
