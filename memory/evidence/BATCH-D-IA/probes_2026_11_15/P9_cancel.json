@@ -1,0 +1,19 @@
+{
+ "request": {
+  "method": "PUT",
+  "path": "/api/v2/vendoremployee/order/order-status-update",
+  "json": {
+   "order_id": 1578761,
+   "role_name": "Manager",
+   "order_status": "cancelled",
+   "cancellation_reason": "Guest Changed the order",
+   "cancellation_note": "TEST_BATCHD_IA_PROBE",
+   "printer_agent": []
+  },
+  "data": null
+ },
+ "status": 200,
+ "response": {
+  "message": "Order status updated successfully"
+ }
+}

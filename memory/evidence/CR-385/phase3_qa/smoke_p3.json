@@ -3,12 +3,12 @@
     {
       "name": "post-login-landed",
       "ok": true,
-      "detail": "https://project-build-173--7p508o4t.preview.emergentagent.com/dashboard"
+      "detail": "https://core-frontend-live-1.preview.emergentagent.com/dashboard"
     },
     {
       "name": "nav-fdv2",
       "ok": true,
-      "detail": "https://project-build-173--7p508o4t.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+      "detail": "https://core-frontend-live-1.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
     },
     {
       "name": "inhouse-balance-testids",

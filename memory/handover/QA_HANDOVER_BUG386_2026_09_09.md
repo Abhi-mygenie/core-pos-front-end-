@@ -113,7 +113,7 @@
 
 ## 5. Credentials + Environment
 
-- App URL: `https://project-build-173--7p508o4t.preview.emergentagent.com`
+- App URL: `https://pos-frontend-deploy-30.preview.emergentagent.com`
 - Test accounts: see `/app/memory/test_credentials.md` (currently empty — use preprod accounts)
 - Preprod API: `https://preprod.mygenie.online/`
 - **Key account for PMS:** palmhouse or kunafamahal (restaurants with `room_gst_applicable = Yes`)

@@ -18567,7 +18567,7 @@
         },
         {
           "label": "Mockup",
-          "path": "https://project-build-173--7p508o4t.preview.emergentagent.com/cr119-mockup.html",
+          "path": "https://pos-react-deploy-6.preview.emergentagent.com/cr119-mockup.html",
           "type": "mockup"
         },
         {
@@ -25211,7 +25211,7 @@
       "id": "CR-372-B",
       "title": "Security: Add ProtectedRoute to 23 Unguarded Routes (App.js only)",
       "type": "CR",
-      "status": "GATE_3_PLAN_READY 2026-11-15 (Batch A G6; plans/BATCH-A_G6_ROUTES_IMPLEMENTATION_PLAN_2026_11_15.md; build after BUG-661 QA + Gate 4 GO)",
+      "status": "GATE_3_PLAN_FROZEN 2026-11-15 (Batch A; owner approved freeze R16; plans/BATCH-A_CR-372-B_IMPLEMENTATION_PLAN_2026_11_15.md; build after BUG-661 QA + Gate 4 GO; release check R-3)",
       "priority": "P0",
       "risk": "MEDIUM",
       "gate": "1",
@@ -30151,16 +30151,16 @@
     },
     {
       "id": "CR-394",
-      "title": "Backward GST calculation required for Open Items",
+      "title": "Open items & menu: GST Exclusive only (remove Inclusive choice) \u2014 was: Backward GST for Open Items",
       "type": "CR",
       "severity": "P1",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M8 (old Inclusive -> Exclusive in GST-on outlets, backend BB-13) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "sprint_key": "oct_cr_batch",
       "area": "Payments / Coupons / Credit",
       "source": "OWNER-REPORTED",
       "registered": "2026-09-27",
-      "notes": "[2026-11-14 owner decisions] Inclusive vs exclusive unclear \u2014 discuss at impact. || Open/custom items need backward (inclusive) GST calculation \u2014 extract GST from entered price instead of adding on top.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-394_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Inclusive vs exclusive unclear \u2014 discuss at impact. || Open/custom items need backward (inclusive) GST calculation \u2014 extract GST from entered price instead of adding on top.",
       "blocked_by": "BACKEND",
       "assignee": "Gyan",
       "priority": "P0",
@@ -30172,6 +30172,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-394_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -33985,7 +34000,7 @@
       "id": "CR-443",
       "title": "Employee-Level Notification Mapping Dashboard",
       "type": "CR",
-      "status": "GATE_2_IA_CLOSED 2026-11-14 (Batch A; owner Q&A R1-R10 answered; backend briefs written; next: Gate 3 after backend reply)",
+      "status": "GATE_3_SKELETON 2026-11-15 (Batch A; plans/BATCH-A_CR-443_IMPLEMENTATION_PLAN_2026_11_15.md; waits BA-19..22)",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -34239,7 +34254,7 @@
       "id": "BUG-607",
       "title": "Item-Level GST Not Working in New POS",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M9 (note yes) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "severity": "P1",
       "risk": "HIGH",
       "sprint_key": "oct_cr_batch",
@@ -34260,7 +34275,7 @@
         "OD-607-03",
         "OD-607-04"
       ],
-      "notes": "[2026-11-14 owner decisions] Item/category-level GST when GST enabled \u2014 backend. POS key exists; FE part at impact. || from TT-027",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/BUG-607_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Item/category-level GST when GST enabled \u2014 backend. POS key exists; FE part at impact. || from TT-027",
       "assignee": "Gyan",
       "priority": "P0",
       "client": "ALL",
@@ -34270,6 +34285,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/BUG-607_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -36208,7 +36238,7 @@
       "id": "CR-492",
       "sprint_key": "TBD",
       "title": "Runtime Complementary Should Be Rights-Based (complementary_food role)",
-      "status": "GATE_3_PLAN_READY_FE 2026-11-15 (Batch A G2; item comp gating + comp reason M5b Option B ready; BA-07/08 open)",
+      "status": "GATE_3_PLAN_READY_FE 2026-11-15 (Batch A; plans/BATCH-A_CR-492_IMPLEMENTATION_PLAN_2026_11_15.md; B3 BLOCKED BA-08; B2 (BA-07) = QA check per R16)",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
@@ -36295,7 +36325,7 @@
       "id": "CR-494",
       "sprint_key": "TBD",
       "title": "Cancellation Rights: Min Amount Threshold + Manager PIN for Higher Values",
-      "status": "GATE_2_IA_CLOSED 2026-11-14 (Batch A; owner Q&A R1-R10 answered; backend briefs written; next: Gate 3 after backend reply)",
+      "status": "GATE_3_SKELETON 2026-11-15 (Batch A; plans/BATCH-A_CR-494_IMPLEMENTATION_PLAN_2026_11_15.md; waits BA-11..15)",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
@@ -36336,7 +36366,7 @@
       "id": "CR-495",
       "sprint_key": "TBD",
       "title": "Complementary Marking Only for Rooms with Breakfast Meal Plan",
-      "status": "GATE_2_IA_CLOSED 2026-11-14 (Batch A; owner Q&A R1-R10 answered; backend briefs written; next: Gate 3 after backend reply)",
+      "status": "GATE_3_SKELETON 2026-11-15 (Batch A; plans/BATCH-A_CR-495_IMPLEMENTATION_PLAN_2026_11_15.md; R16 half-board 2nd meal = guest chooses at check-in, meal slot = cashier picks per comp -> new mockups M8b/M5c needed (Gate 2.5); waits B-495-1..7)",
       "priority": "P0",
       "risk": "HIGH",
       "area": "PMS / Rooms",
@@ -36782,7 +36812,7 @@
       "risk": "MEDIUM",
       "area": "Reports / Analytics",
       "files": "OrderDetailSheet.jsx, reportService.js",
-      "notes": "[2026-11-14 owner decisions] OrderDetailSheet renders variations/add-ons; BUG-601 QA-passed. Investigation to validate on real aggregator order. || Excel Item #9. Show aggregator item variations and add-ons in the order details sheet. Related: BUG-601 (variations silently dropped). Depends on CR-509.",
+      "notes": "[2026-11-14 owner decisions] OrderDetailSheet renders variations/add-ons; BUG-601 QA-passed. Investigation to validate on real aggregator order. || Excel Item #9. Show aggregator item variations and add-ons in the order details sheet. Related: BUG-601 (variations silently dropped). Depends on CR-509. || [2026-11-15 Batch C IA round 3] NEEDS VERIFY (BUG-601 was about menu saving, not orders) — check on a real Swiggy/Zomato order.",
       "blocked_on": "",
       "assignee": "Abhishek",
       "related": [
@@ -37205,7 +37235,7 @@
       "id": "CR-514",
       "type": "CR",
       "title": "Payment: Optional Transaction ID / Reference Field per Payment Method",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M5 approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37213,7 +37243,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (R5 hotspot, financial-adjacent)",
       "intake_doc": "change_requests/01_CR-514_PAYMENT_TRANSACTION_ID_FIELD_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Backend sets per method show/hide + required/optional; required locks Pay; one box per split part. || Add optional transaction ID/reference field per payment method on CollectPaymentPanel. R5 hotspot, payment payload change.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-514_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Backend sets per method show/hide + required/optional; required locks Pay; one box per split part. || Add optional transaction ID/reference field per payment method on CollectPaymentPanel. R5 hotspot, payment payload change.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37226,6 +37256,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-514_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -37271,7 +37316,7 @@
       "id": "BUG-674",
       "type": "BUG",
       "title": "Order-Level Cancellation Dialog Missing Notes / Additional Notes Field",
-      "status": "GATE_3_PLAN_PARTIAL 2026-11-15 (Batch A G1; FE edits ready; report/Order Beta parts BLOCKED BA-01/02/03/04/24)",
+      "status": "GATE_3_PLAN_PARTIAL 2026-11-15 (Batch A; plans/BATCH-A_BUG-674_IMPLEMENTATION_PLAN_2026_11_15.md; FE edits ready; B2 BLOCKED BA-01/02, B7 BLOCKED BA-24; B3/B4 = QA checks per R16)",
       "priority": "P0",
       "severity": "P0",
       "risk": "MEDIUM",
@@ -37408,7 +37453,7 @@
       "id": "BUG-667",
       "type": "BUG",
       "title": "Sidebar: Restaurant Name Overflows When Name Is Too Long",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P2",
       "risk": "LOW",
@@ -37480,7 +37525,7 @@
       "id": "BUG-669",
       "type": "BUG",
       "title": "Add-On Creation Requires Price: Cannot Create Without Entering Amount",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37507,7 +37552,7 @@
       "id": "CR-521",
       "type": "CR",
       "title": "Color Effect After Bill Print: Make It More Attractive",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P3",
       "risk": "LOW",
@@ -37535,7 +37580,7 @@
       "id": "CR-522",
       "type": "CR",
       "title": "Reconcile Amount Range Should Be Customizable Per Restaurant",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M6 (0% = no check) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P2",
       "risk": "HIGH",
@@ -37543,7 +37588,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (settings + payment panel R5)",
       "intake_doc": "change_requests/15_CR-522_RECONCILE_AMOUNT_RANGE_CUSTOMIZABLE_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Free-typed %, same both ways, outside blocked. P1 backend admin, P2 POS Settings. || \u00b13% reconcile range hardcoded. Add restaurant-level setting. Touches CollectPaymentPanel R5.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-522_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Free-typed %, same both ways, outside blocked. P1 backend admin, P2 POS Settings. || \u00b13% reconcile range hardcoded. Add restaurant-level setting. Touches CollectPaymentPanel R5.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37556,6 +37601,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-522_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -37563,7 +37623,7 @@
       "id": "CR-523",
       "type": "CR",
       "title": "Link Customer to Order After Placing (Without Completing/Updating)",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37657,7 +37717,7 @@
       "id": "CR-525",
       "type": "CR",
       "title": "After Bill Print: Replace KOT and Bill Buttons with Collect Bill Button",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P2",
       "risk": "HIGH",
@@ -37684,7 +37744,7 @@
       "id": "CR-526",
       "type": "CR",
       "title": "Credit Management: Remove / Void Unpaid Order",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M3, M4 (Remove on Open rows only) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37692,7 +37752,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible (financial, credit data)",
       "intake_doc": "change_requests/21_CR-526_CREDIT_REMOVE_UNPAID_ORDER_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Make-unpaid/remove button in Audit, Order Beta, Credit Mgmt; make-unpaid right; no PIN; same as existing unpaid. || No way to clear bad debts or erroneously created credit entries. Add remove/void action on Credit Management.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-526_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Make-unpaid/remove button in Audit, Order Beta, Credit Mgmt; make-unpaid right; no PIN; same as existing unpaid. || No way to clear bad debts or erroneously created credit entries. Add remove/void action on Credit Management.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37705,6 +37765,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-526_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ],
       "related": [
@@ -37715,7 +37790,7 @@
       "id": "CR-527",
       "type": "CR",
       "title": "Credit Management: Filter Orders by Same Phone Number with Different Names",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M4, M4b (chips 2-5 / dropdown 6+) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -37723,7 +37798,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/22_CR-527_CREDIT_FILTER_SAME_PHONE_DIFF_NAME_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-527_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37735,6 +37810,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-527_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -37803,7 +37893,7 @@
       "id": "BUG-671",
       "type": "BUG",
       "title": "Unable to Mark Partial-Payment Orders as Unpaid",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M1 approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37811,7 +37901,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/25_BUG-671_UNPAID_PARTIAL_PAYMENT_ORDER_REPORT_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Show Unpaid for partly-paid orders; whole bill unpaid; backend handles paid amount. || Partial-payment orders cannot be reversed to unpaid. Payment reversal, credit flow, partial payment state.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/BUG-671_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Show Unpaid for partly-paid orders; whole bill unpaid; backend handles paid amount. || Partial-payment orders cannot be reversed to unpaid. Payment reversal, credit flow, partial payment state.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37824,6 +37914,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/BUG-671_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -37831,7 +37936,7 @@
       "id": "BUG-672",
       "type": "BUG",
       "title": "Prepaid Order Unable to Move to Credit",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M2 (hidden) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37839,7 +37944,7 @@
       "sprint_key": "nov_cr_batch",
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/26_BUG-672_PREPAID_ORDER_UNABLE_TO_CREDIT_INTAKE.md",
-      "notes": "[2026-11-14 owner decisions] Prepaid (scan/online + cashier) \u2192 Credit via Collect Bill Credit method broken. No extra right. || Prepaid orders stuck \u2014 cannot transition to credit payment. Payment status transitions, credit system.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/BUG-672_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Prepaid (scan/online + cashier) \u2192 Credit via Collect Bill Credit method broken. No extra right. || Prepaid orders stuck \u2014 cannot transition to credit payment. Payment status transitions, credit system.",
       "gate": "GATE_1",
       "current_gate": 1,
       "registered": "2026-11-12",
@@ -37852,6 +37957,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/BUG-672_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -37859,7 +37979,7 @@
       "id": "BUG-673",
       "type": "BUG",
       "title": "Keyboard Navigation: First Alphabetical Food Auto-Selected on Short Code Search",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch D). Next: IMPACT ANALYSIS BATCH-D.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38050,7 +38170,7 @@
       "id": "CR-536",
       "type": "CR",
       "title": "Credit / B2B: GST Number, Address and UPI ID in Credit Payment (report + print)",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch B). GATE_2_IA_IN_PROGRESS 2026-11-15 (code reality + live probes done, owner R1-R4 answered, R5 Q15-Q18 open) \u2014 see impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M7 (pre-fill yes) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38061,7 +38181,7 @@
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "source": "TT-050",
-      "notes": "[2026-11-14 owner decisions] All restaurants, one CR, Prana removed from title. Entry point + UPI owner decided at impact. || 3 features for Prana restaurant: (1) GST number field in credit/TAB payment, (2) Address field in credit, (3) UPI ID in credit. Note: BUG-668 covers UPI ID in printer agent (separate issue). These 3 may be split into separate CRs at Gate 2.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-536_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] All restaurants, one CR, Prana removed from title. Entry point + UPI owner decided at impact. || 3 features for Prana restaurant: (1) GST number field in credit/TAB payment, (2) Address field in credit, (3) UPI ID in credit. Note: BUG-668 covers UPI ID in printer agent (separate issue). These 3 may be split into separate CRs at Gate 2.",
       "blocked_on": "Gyan \u2014 backend",
       "client": "ALL",
       "batch": "BATCH-B-2026-11-14",
@@ -38070,6 +38190,21 @@
           "label": "Batch B owner decisions",
           "path": "memory/change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-536_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     },
@@ -38208,12 +38343,12 @@
       "id": "CR-542",
       "sprint_key": "TBD",
       "title": "Reason Mandatory on Every Make Unpaid",
-      "status": "GATE_2_IA_IN_PROGRESS 2026-11-15 \u2014 owner R1: P0 (analysed with CR-526); R4: dropdown of configured reasons (backend item_type 'Unpaid', like cancellation reasons) + Other text. See impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md.",
+      "status": "GATE_2.5_DESIGN_APPROVED 2026-11-15 (Batch B; Gate 2 IA closed; mockup M3 (room reason yes) approved). Next: Gate 3 plan. Backend brief BACKEND_BRIEF_BATCH-B_2026_11_15.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Payments / Coupons / Credit",
       "files": "TBD",
-      "notes": "Every make-unpaid requires reason from new backend unpaid-reasons list, everywhere.",
+      "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-542_IMPACT_ANALYSIS.md || Every make-unpaid requires reason from new backend unpaid-reasons list, everywhere.",
       "blocked_on": "Gyan \u2014 backend",
       "related": [
         "CR-526",
@@ -38228,13 +38363,28 @@
           "label": "Intake",
           "path": "memory/change_requests/CR-542_UNPAID_REASON_MANDATORY_INTAKE.md",
           "type": "intake"
+        },
+        {
+          "label": "Impact analysis",
+          "path": "memory/impact/CR-542_IMPACT_ANALYSIS.md",
+          "type": "impact"
+        },
+        {
+          "label": "Backend brief",
+          "path": "memory/backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md",
+          "type": "backend_brief"
+        },
+        {
+          "label": "Gate 2.5 mockups",
+          "path": "memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html",
+          "type": "design"
         }
       ]
     }
   ],
   "meta": {
-    "last_updated": "2026-11-14",
-    "last_action": "Merged Batch A Gate 2 IA pack from parallel agent: 11 items \u2192 GATE_2 DRAFT, 14 impact docs + masked evidence added.",
+    "last_updated": "2026-11-15",
+    "last_action": "Batch D Gate 2 IA closed: BUG-667, BUG-669, BUG-673, CR-525, CR-521, CR-523 \u2192 GATE_2_IA_CLOSED; 6 impact docs + summary + backend brief + masked probe evidence. (Earlier 2026-11-15: Batch B Gate 2.5 CLOSED: M1-M9 + M4b approved by owner; decisions logged; BB-10b + BB-13 added to backend brief.)",
     "current_gate": "5b",
     "last_qa_batch": "Group C (28 items + BUG-271)",
     "last_qa_date": "2026-07-31",
@@ -38242,7 +38392,7 @@
     "gate_5b_complete": true,
     "total": 1098,
     "total_items": 1098,
-    "last_session": "Batch B Gate 2 IA (partial) 2026-11-15 \u2014 code reality + live probes + owner R1-R4. Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_15_BATCH_B_GATE2_IA_PARTIAL.md",
-    "last_note": "Next: Batch B IA owner R5 (Q15-Q18), then per-item impact docs + backend brief + registry GATE_2_IA_CLOSED."
+    "last_session": "Batch B Gate 2 IA close 2026-11-15 \u2014 owner R5 answered, R5 read-only probes (RID 541). Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_15_BATCH_B_GATE2_IA_CLOSED.md",
+    "last_note": "Batch B Gate 2 IA + Gate 2.5 CLOSED 2026-11-15. Backend brief DRAFT not sent (owner to decide channel). Next: Gate 3 plans (FE-ready items first; backend-blocked items as PARTIAL/BLOCKED per Batch A pattern)."
   }
 }

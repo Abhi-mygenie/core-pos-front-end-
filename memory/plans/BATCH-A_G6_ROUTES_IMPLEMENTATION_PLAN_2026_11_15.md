@@ -1,5 +1,7 @@
 # BATCH-A · G6 Routes (CR-372-B) — Implementation Plan (Gate 3) — 2026-11-15
 
+> **SUPERSEDED 2026-11-15 by per-CR plan** — `BATCH-A_CR-372-B_IMPLEMENTATION_PLAN_2026_11_15.md`. Kept for history; do not build from this file.
+
 > Status: **GATE_3_PLAN_READY** (FE only, no backend dependency). Build only after Gate 4 GO **and** BUG-661 (App.js, GATE_5A) passes QA.
 > Mockup: `design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html#m10` (approved 2026-11-14).
 > Decisions: delete `/settlement/preview` · OD-372B-A `/local-printer-setup` requires login · OD-372B-B `/restaurant-picker` unchanged.

@@ -7,7 +7,7 @@ Role:            INVESTIGATION → BUG FIX
 Next agent:      Owner must answer ODs → PLANNING for remaining items
 Workspace:       /app (branch 15sep, frontend-only)
 Credentials:     /app/memory/test_credentials.md (goankitchen_owner alias)
-App URL:         https://project-build-173--7p508o4t.preview.emergentagent.com
+App URL:         https://f66d5e4f-7aa2-4f84-ad4a-42a88864b5bd.preview.emergentagent.com
 ```
 
 ---

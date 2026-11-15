@@ -60,7 +60,7 @@ Self-test: 6/6 PASS · Webpack: PASS (0 new warnings) · EXIT GATE: 5/5 PASS
 | Service | Status |
 |---|---|
 | Frontend | RUNNING (port 3000, webpack compiled 0 new warnings) |
-| URL | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| URL | `https://core-pos-front-6.preview.emergentagent.com` |
 
 ---
 

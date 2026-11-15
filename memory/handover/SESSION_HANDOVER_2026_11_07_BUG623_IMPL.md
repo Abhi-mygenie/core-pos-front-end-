@@ -63,4 +63,4 @@ BUG-623 (Null variation entry crashes orderTransform.reduce + BUG-618 markers wr
 
 QA agent → execute test cases in `handover/QA_HANDOVER_BUG623_2026_11_07.md`
 TC-1 through TC-7 (7 test cases, 3 regression checks)
-Environment: https://project-build-173--7p508o4t.preview.emergentagent.com
+Environment: https://genie-pos-web-2--312lqkk9.preview.emergentagent.com

@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used:** DEPLOYMENT → INVESTIGATION → INTAKE (BUG-502/503/504) → PLANNING Gate 2+3 → IMPLEMENTATION → INVESTIGATION → INTAKE (BUG-505, complete)
-**App URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
+**App URL:** https://frontend-pos-live-4.preview.emergentagent.com
 **Branch:** `5oct-1` — `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` · 0 new warnings
 
@@ -229,7 +229,7 @@ Total registry: 788 items · Sprint: `oct_bug_batch`
 
 | Item | Value |
 |------|-------|
-| App URL | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| App URL | `https://frontend-pos-live-4.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Socket | `https://presocket.mygenie.online` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |

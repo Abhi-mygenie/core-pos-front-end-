@@ -1,5 +1,7 @@
 # BATCH-A · G2 Rights (CR-492, CR-515) — Implementation Plan (Gate 3) — 2026-11-15
 
+> **SUPERSEDED 2026-11-15 by per-CR plans** — `BATCH-A_CR-492_…`, `BATCH-A_CR-515_…` `_IMPLEMENTATION_PLAN_2026_11_15.md`. Kept for history; do not build from this file.
+
 > Status: **GATE_3_PLAN_PARTIAL** — rights edits + comp reason (M5b Option B) READY; pay-later collect BLOCKED on BA-09.
 > Build only after Gate 4 GO **and** QA pass of BUG-660/665/666 (CollectPaymentPanel) and BUG-656/662/CR-512 (OrderEntry).
 > Mockups: M5 `#m5` (comp in payment), **M5b `#m5b` Option B — APPROVED 2026-11-15**, M7 `#m7` (rights buttons).

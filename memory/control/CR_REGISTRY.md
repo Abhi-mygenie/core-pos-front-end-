@@ -1,19 +1,35 @@
-**BATCH A — GATE 3 PLANNING 2026-11-15** — G6 READY; G1/G2 PARTIAL (FE-only); G3/G4/G5 wait backend. Index: `plans/BATCH-A_GATE3_PLANNING_INDEX_2026_11_15.md`
+**BATCH B — GATE 2 IA CLOSED · GATE 2.5 DESIGN APPROVED 2026-11-15 (M1–M9 + M4b)** — Payments · Credit · GST (10 P0). Owner R1–R5 answered.
+Sources: `impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`, `change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md`, `backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md` (Gyan, BB-01..BB-12), mockups `design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html` (M1–M9 + M4b, ALL APPROVED 2026-11-15). Next: Gate 3.
+
+| ID | Pri | Status | IA doc | Mockup | Backend asks |
+|---|---|---|---|---|---|
+| **BUG-671** | P0 | GATE_2_IA_CLOSED 2026-11-15 — FE only | `impact/BUG-671_IMPACT_ANALYSIS.md` | M1 | none |
+| **BUG-672** | P0 | GATE_2_IA_CLOSED 2026-11-15 — FE root cause | `impact/BUG-672_IMPACT_ANALYSIS.md` | M2 | BB-01 (soft) |
+| **CR-526** (+BUG-605) | P0 | GATE_2_IA_CLOSED 2026-11-15 — settled-day block waits backend | `impact/CR-526_IMPACT_ANALYSIS.md` | M3, M4 | BB-02, BB-03 |
+| **CR-542** | P0 | GATE_2_IA_CLOSED 2026-11-15 — backend-blocked | `impact/CR-542_IMPACT_ANALYSIS.md` | M3 | BB-04, BB-05 |
+| **CR-514** | P0 | GATE_2_IA_CLOSED 2026-11-15 — backend-blocked (Q18: per method) | `impact/CR-514_IMPACT_ANALYSIS.md` | M5 | BB-06, BB-07 |
+| **CR-522** | P0 | GATE_2_IA_CLOSED 2026-11-15 — backend-blocked (Q17: blank = off) | `impact/CR-522_IMPACT_ANALYSIS.md` | M6 | BB-08 |
+| **CR-527** | P0 | GATE_2_IA_CLOSED 2026-11-15 — backend-blocked (Q15: diner per order) | `impact/CR-527_IMPACT_ANALYSIS.md` | M4 | BB-09 |
+| **CR-536** | P0 | GATE_2_IA_CLOSED 2026-11-15 — backend-blocked | `impact/CR-536_IMPACT_ANALYSIS.md` | M7 | BB-10 |
+| **BUG-607** | P0 | GATE_2_IA_CLOSED 2026-11-15 — fix is backend (Gyan); FE note only | `impact/BUG-607_IMPACT_ANALYSIS.md` | M9 | BB-11, BB-12 |
+| **CR-394** | P0 | GATE_2_IA_CLOSED 2026-11-15 — scope reversed (Q16): Exclusive only, remove Inclusive choice | `impact/CR-394_IMPACT_ANALYSIS.md` | M8 | BB-13 (data fix) |
+
+**BATCH A — GATE 3 PLANNING 2026-11-15 (per-CR plans)** — CR-372-B FROZEN; others NOT FROZEN (backend replies pending). Group plans G1/G2/G6 superseded. Index: `plans/BATCH-A_GATE3_PLANNING_INDEX_2026_11_15.md`
 Sources: `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`, `change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md`, `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_14.md` (Gyan), `backend_briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth), tracker `backend_briefs/BACKEND_BRIEF_TRACKER.html`.
 
 | ID | Pri | Status | IA doc | Backend asks |
 |---|---|---|---|---|
 | **CR-071** | P1 (owner 2026-11-14; Batch A rights only; full wiring HOLD) | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-071_IMPACT_ANALYSIS.md` | none |
-| **CR-492** | P0 | GATE_3_PLAN_READY_FE 2026-11-15 — item comp gating + comp reason (M5b Option B) ready | `plans/BATCH-A_G2_RIGHTS_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-07, BA-08 |
-| **CR-515** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — Orders Beta buttons + item-cancel right ready; pay-later BA-09 | `plans/BATCH-A_G2_RIGHTS_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-09, BA-10 (ph2) |
-| **CR-493** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — label + no-reasons block ready; BA-05 blocked | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-05, BA-06, BA-23 |
-| **BUG-674** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — modal note + transform fix ready; reports blocked | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-02, BA-03, BA-04, BA-24 |
-| **BUG-670** | P0 | GATE_3_BLOCKED 2026-11-15 — waits BA-01 | `plans/BATCH-A_G1_CANCEL_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01 |
-| **CR-494** | P0 | GATE_2_IA_CLOSED 2026-11-14 — all ODs answered | `impact/CR-494_IMPACT_ANALYSIS.md` | BA-11..BA-15 |
+| **CR-492** | P0 | GATE_3_PLAN_READY_FE 2026-11-15 — item comp gating + comp reason (M5b Option B) ready; BA-07 = QA check (R16) | `plans/BATCH-A_CR-492_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-08 (BA-07 QA) |
+| **CR-515** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — Orders Beta buttons + item-cancel right ready; pay-later BA-09 | `plans/BATCH-A_CR-515_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-09, BA-10 (ph2) |
+| **CR-493** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — label + no-reasons block ready; BA-05 blocked | `plans/BATCH-A_CR-493_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-05, BA-06, BA-23 |
+| **BUG-674** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — modal note + transform fix ready; reports blocked; BA-03/04 = QA checks (R16) | `plans/BATCH-A_BUG-674_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01, BA-02, BA-24 (BA-03/04 QA) |
+| **BUG-670** | P0 | GATE_3_BLOCKED 2026-11-15 — waits BA-01 | `plans/BATCH-A_BUG-670_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01 |
+| **CR-494** | P0 | GATE_3_SKELETON 2026-11-15 — waits BA-11..15 | `plans/BATCH-A_CR-494_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-11..BA-15 |
 | **CR-445** (+CR-058) | P1 (owner 2026-11-14) | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-445_IMPACT_ANALYSIS.md` | BA-17, BA-18 |
-| **CR-495** | P0 | GATE_2_IA_CLOSED 2026-11-14 — open for backend discussion: half-board meal, meal-slot rule | `impact/CR-495_IMPACT_ANALYSIS.md` | B-495-1..7 |
-| **CR-443** (+CR-496) | P0 | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-443_IMPACT_ANALYSIS.md` | BA-19..BA-22 |
-| **CR-372-B** | P0 (owner 2026-11-14) | GATE_3_PLAN_READY 2026-11-15 — FE only | `plans/BATCH-A_G6_ROUTES_IMPLEMENTATION_PLAN_2026_11_15.md` | none |
+| **CR-495** | P0 | GATE_3_SKELETON 2026-11-15 — R16: half-board 2nd meal = guest chooses at check-in; meal slot = cashier picks per comp; new mockups M8b/M5c needed | `plans/BATCH-A_CR-495_IMPLEMENTATION_PLAN_2026_11_15.md` | B-495-1..7 |
+| **CR-443** (+CR-496) | P0 | GATE_3_SKELETON 2026-11-15 — waits BA-19..22 | `plans/BATCH-A_CR-443_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-19..BA-22 |
+| **CR-372-B** | P0 (owner 2026-11-14) | **GATE_3_PLAN_FROZEN 2026-11-15** — FE only; owner approved R16 | `plans/BATCH-A_CR-372-B_IMPLEMENTATION_PLAN_2026_11_15.md` | none |
 | **CR-529** | P1 (phase 2, all OTP) | GATE_2_IA_CLOSED 2026-11-14 — dependency-level; deferred | `impact/CR-529_IMPACT_ANALYSIS.md` | BA-16 (ph2) |
 | **CR-540** | P1 | GATE_2_IA_CLOSED 2026-11-14 — scope-level; phase-1 ideas deferred | `impact/CR-540_IMPACT_ANALYSIS.md` | — |
 
@@ -1237,3 +1253,6 @@ All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate
 | **CR-537** | Item-Wise Hourly Sales Report — new report showing each item's sales per hour for peak/off-peak comparison. Source: TT-071. | **P1** | **MEDIUM** | **GATE_1_INTAKE_COMPLETE 2026-11-12** — Backend API dependency likely. Sprint: nov_cr_batch. Next: Gate 2. | New report page |
 | **CR-538** | Sutra: Multi-Bag and Station Level Features — scope TBD (multiple bags per order, kitchen station routing). Source: TT-074. | **P1** | **MEDIUM** | **GATE_1_INTAKE_COMPLETE 2026-11-12** — Assignee: Parth. Scope to be defined before Gate 2. Sprint: nov_cr_batch. | TBD |
 | **CR-539** | Weekly Café Cancellation Export — spreadsheet/export of weekly cancellation numbers per café including order details. DISTINCT from CR-497. Source: TT-078. | **P1** | **LOW** | **GATE_1_INTAKE_COMPLETE 2026-11-12** — Excel/CSV export. Sprint: nov_cr_batch. Next: Gate 2. | Cancellation report · export |
+
+> **2026-11-15 Batch D Gate 2 update:** CR-525, CR-521, CR-523 → **GATE_2_IA_CLOSED**, priority **P0** (owner intake; supersedes the P1 shown above for 521/525). Docs: `impact/CR-525_IMPACT_ANALYSIS.md`, `impact/CR-521_IMPACT_ANALYSIS.md`, `impact/CR-523_IMPACT_ANALYSIS.md`. Backend brief `backend_briefs/BACKEND_BRIEF_BATCH-D_2026_11_15.md` (BD-01 blocks the CR-525/521 release; BD-06 = remove customer for CR-523). CR-376-FU-C confirmed P3, not in Batch D.
+

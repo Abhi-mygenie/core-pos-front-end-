@@ -62,7 +62,7 @@
 
 | Service | Status | URL |
 |---|---|---|
-| Frontend | RUNNING | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| Frontend | RUNNING | `https://core-pos-front-6.preview.emergentagent.com` |
 | Webpack | Compiled successfully, 0 new warnings | — |
 
 ---

@@ -18,7 +18,7 @@ Full-day intake + investigation + batch-planning session (no code written). 8 ne
 | Component | Status |
 |---|---|
 | Frontend | RUNNING — `webpack compiled with 1 warning` (pre-existing lint warning) |
-| Preview URL | `https://project-build-173--7p508o4t.preview.emergentagent.com` (check `/app/frontend/.env` for current value) |
+| Preview URL | `https://react-front-end.preview.emergentagent.com` (check `/app/frontend/.env` for current value) |
 | Preprod API | `https://preprod.mygenie.online` |
 | Socket | `https://presocket.mygenie.online` |
 | Branch | `main` (cloned 2026-08-18 from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`) |

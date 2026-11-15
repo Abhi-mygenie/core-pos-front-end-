@@ -107,3 +107,33 @@ Both registries (`control/CR_REGISTRY.md`, `control/registry.json`) updated; Gat
 ### R15
 - M5b **Option B approved**: reason box under every comp line (full + part); label "Reason (required)"; Pay disabled while any comp reason is empty; Print Bill unchanged. (Owner: box already exists — change = label, box on part-comp lines, Pay check.)
 - Comp line without reason + cashier without the comp right → **Pay stays blocked** (box read-only; a user with the right adds the reason).
+### Owner request (2026-11-15): one plan per CR, each plan frozen
+- Group plans G1/G2/G6 split into 9 per-CR plans (`plans/BATCH-A_<ID>_IMPLEMENTATION_PLAN_2026_11_15.md`); group plans marked superseded.
+### R16 (2026-11-15)
+- Backend replies (Gyan BA-01..24, Parth B-495-1..7): **none yet** → BLOCKED rows stay BLOCKED.
+- CR-495 half board: second meal = **guest chooses (lunch or dinner) at check-in**.
+- CR-495 meal slot: **cashier picks the meal for each comp**.
+- Both are new on-screen choices not drawn in M8 / M5 → need new mockups (M8b check-in second-meal choice, M5c meal pick on room comp) at Gate 2.5 before planning. Parth's brief Q3/Q4 answered by owner.
+- CR-372-B: **freeze approved** → GATE_3_PLAN_FROZEN 2026-11-15.
+- Mockups M8b + M5c drawn 2026-11-15 (`design/BATCH-A_GATE2_5_MOCKUPS_M8B_M5C_2026_11_15.html`) — awaiting owner approval. Backend brief HTML (Gyan + Parth, incl. BA-23/24 + R16): `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_15.html`.
+- Backend-only rows with no FE change (BUG-674 B3 = BA-03, B4 = BA-04; CR-492 B2 = BA-07) → **QA checks, not plan blockers**.
+### R17 (2026-11-15)
+- **M8b approved** (half board → required "Second meal" Lunch/Dinner at check-in).
+- **M5c approved** (meal buttons on each room comp line; Pay blocked until meal + reason filled).
+- Default meal on room comp = **none** (cashier must pick), as drawn.
+- Comp for a meal outside the package — asked in R18.
+### R18 (2026-11-15)
+- Comp for a meal outside the package (e.g. dinner on Half board + Lunch) → **allowed with the comp PIN** (same as Room only). Gate 2.5 for CR-495 additions (M8b, M5c) closed.
+### R19 (2026-11-15)
+- One FE↔backend API contract per CR in `contracts/` (index `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md`; 8 contracts — no contract for CR-372-B).
+- Owner 2026-11-15: item cancel note key = **`cancel_item_note`** (was drafted `cancel_note`). Existing keys are **never renamed**: if a key already exists (e.g. collect pay-later right), FE uses it as is; a new key (e.g. `collect_pay_later`) is added only when none exists. `cancel_source` explained to owner.
+### R20 (2026-11-15)
+- **All 8 API contracts APPROVED** by owner, including `cancel_source` (`manual` / `auto_last_item` / `merge`) and all new names (`cancel_item_note`, `cancel_note_mandatory`, `collect_pay_later` only if no key exists, `pin/config` · `pin/usage` · `pin/verify` · `pin_token`, `meal_package` · `half_board_meal` · `guest_count` · `room_comp_limits` · `room-comp-usage` · `comp_meal`, `receive_staff_alerts`, `staff_*` alert types, `alert_discount_above_amount`, error format `{ error_code, message }`).
+- Contracts are ready to send to Gyan (BA-xx) and Parth (B-495-x). Backend replies are checked against them; any rename or change → rejected.
+### R21 (2026-11-15)
+- **One base document per batch.** Batch A base = `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_15.html`: rules, status summary, asks per CR, link to each contract, and a reply checklist per CR (Field · Contract · Backend reply · Match · Date).
+- The 8 contract md files stay as the locked source, linked from the base page.
+- Superseded (kept, not updated): `BACKEND_BRIEF_BATCH-A_2026_11_14.md`, `BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md`, `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md`.
+- `BACKEND_BRIEF_TRACKER.html` stays as the cross-batch list and links to the base page.
+- Mockups: M8b + M5c merged into the single page `design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html` (M1–M10, M5b, M5c, M8b). Addendum file superseded.
+- FE drafts the field names; **names are LOCKED**. Backend may only answer OK / ETA / not feasible. A backend reply or handover file that renames or changes any variable is **rejected, not merged** → back to owner. Only the owner changes a contract. They belong to Batch A (same items) and are verified in Batch A QA once backend delivers.

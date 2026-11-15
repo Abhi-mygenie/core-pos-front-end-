@@ -1,0 +1,61 @@
+=== FULL TAB ROW KEYS ===
+  source: orders
+  order_id: 1526551
+  invoice_details: {'invoice_number': 'CA/020979', 'html_url': 'https://crm-mygenie.mygenie.online/api/invoices/0b8cea5dd3e44071941893cfe7a7b1b3', 'pdf_url': 'https://crm-mygenie.mygenie.online/api/invoices/0b8cea5dd3e44071941893cfe7a7b1b3/pdf'}
+  restaurant_order_id: 020979
+  original_restaurant_order_id: 020979
+  f_order_status: 6
+  order_status: delivered
+  payment_status: paid
+  payment_method: TAB
+  razorpay_order_id: None
+  order_in: None
+  order_from: pos
+  table_id: 8246
+  parent_order_id: None
+  order_plateform: None
+  order_type: pos
+  waiter_id: 3089
+  employee_id: 3081
+  waiter: Pankaj
+  collected_by: Counter
+  order_date: 23:11
+  order_new_date: 2026-11-01 23:11:33
+  customer_info: None
+  date_of_birth: None
+  date_of_anniversary: None
+  membership_id: 57b43a3c-8f00-419f-b009-67cf26e3ac1e
+  user_name: Unknown
+  user_phone: ***
+  gst_amount: 723.60
+  gst_amount_only: 723.60
+  vat_amount: 0.00
+  delivery_charge: 0.00
+  packing_charge: 0.00
+  order_discount: 0.00
+  service_tax: 0.00
+  tip_amount: 0.00
+  roundoff: 0.40
+  payment_for: postpaid
+  quantity: 60
+  food_name: Chicken Tikka Pizza (2.000), Farmhouse Pizza (2.000), Dragon Chicken (2.000), Chilli Chicken Dry (2.000), Jalapeños Cheese Poppers (2.000), Dahi ke Sholay (2.000), Shahi Tandoori Platter Non Veg (1.000), Shahi Tandoori Platter Veg (1.000), Mutton Momos (1.000), Chicken Momos (1.000), Brownie With Ice - Cream (6.000), Mutton Momos (1.000), Chicken Momos (1.000), Bone Fire (1.000), Cheese Chilli Toast (1.000), Allfredo Pasta (1.000), Chilli Paneer Dry (2.000), Veg Momos (2.000), Sparkling Water (2.000), Harissa Spice Grilled Chicken (1.000), Chicken Tikka Pizza (1.000), Dragon Chicken (1.000), Chilli Chicken Dry (1.000), Cafe 103 Berry Mix (4.000), Rara Chicken (1.000), Paneer Lababdar (1.000), Tawa Roti (10.000), Plain Rice (1.000), Sparkling Water (2.000), Sparkling Water (2.000), Sparkling Water (2.000)
+  discount_for: None
+  total_order_value: 16,080.00
+  order_amount_raw: 15196.00
+  received_amount: 15196
+  reconcile_amount: No
+  payment_method_raw: tab
+  coupon_code: None
+  coupon_discount: 0.00
+  wallet_used: 0.00
+  loyalty_used: 1,608.00
+  total_discount: 1,608.00
+  transaction_id: None
+  collect_bill: 2026-11-01 23:11:33
+  order_sub_total_without_tax: 14,472.00
+  payment_type: Tab
+  amount: 15,196.00
+  payment: {'cash': '0.00', 'card': '0.00', 'upi': '0.00', 'tab': '15,196.00', 'zomatogold': '0.00', 'partial': '0.00', 'partialpayment': '0.00'}
+
+=== ALL TAB fos values ===
+['6']

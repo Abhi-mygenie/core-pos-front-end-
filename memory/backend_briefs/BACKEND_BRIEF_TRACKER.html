@@ -21,6 +21,7 @@ th{background:#efeadb}
 
 <h2>Batch A — Cancellation · Complimentary · Rights · PIN · Alerts</h2>
 <p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-A_2026_11_14.md</code> (Gyan) · Sent 2026-11-14 · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-A_&lt;date&gt;.md</code></p>
+<p class="meta"><b>2026-11-15 (owner R21): base document for Batch A = <a href="BACKEND_BRIEF_BATCH-A_2026_11_15.html">BACKEND_BRIEF_BATCH-A_2026_11_15.html</a></b> (brief + links to the 8 locked contracts + reply checklist per CR). Rows below are a summary only.</p>
 <table data-testid="tracker-batch-a">
 <tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
 <tr><td>BA-01</td><td>BUG-670</td><td>Store + return item cancel note</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
@@ -65,10 +66,44 @@ th{background:#efeadb}
 </table>
 
 <h2>Batch B — Payments · Credit · GST</h2>
-<p class="meta">Gate 2 not started — brief not written.</p>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-B_2026_11_15.md</code> (Gyan) · <b>DRAFT — NOT SENT</b> (owner to decide how briefs are sent) · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-B_&lt;date&gt;.md</code></p>
+<table data-testid="tracker-batch-b">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>BB-01</td><td>BUG-672</td><td>(Soft) enforce TAB prepaid flag on bill-payment + place-order</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-02</td><td>CR-526</td><td>Settled-day signal per order/date</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-03</td><td>CR-526</td><td>Reject make-order-unpaid / change method after day settled</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-04</td><td>CR-542</td><td>Reason type item_type='Unpaid' + admin list</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-05</td><td>CR-542</td><td>make-order-unpaid accepts + stores reason / reason_id (incl. Remove from Room)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-06</td><td>CR-514</td><td>Per payment type ref_enabled / ref_required / ref_label</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-07</td><td>CR-514</td><td>Confirm transaction_id stored per split part</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-08</td><td>CR-522</td><td>reconcile_tolerance_pct setting (blank or 0 = off)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-09</td><td>CR-527</td><td>Diner name on each credit row (tap-customer-record-list)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-10</td><td>CR-536</td><td>Store + print + return custGSTAddress</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-10b</td><td>CR-536</td><td>(Optional) billing address on customer profile for pre-fill</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-11</td><td>BUG-607</td><td>Category GST mode: all server tax paths use item tax</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-12</td><td>BUG-607</td><td>Share one wrong-GST order id for regression</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-13</td><td>CR-394</td><td>One-time Inclusive → Exclusive, GST-on outlets only</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+</table>
 <h2>Batch C — Order Beta report</h2>
-<p class="meta">Gate 2 not started — brief not written.</p>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-C_2026_11_15.md</code> (Gyan) · <b>DRAFT — NOT SENT</b> (send only after the owner freezes the Batch C IA; Gate 2 paused, not frozen) · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-C_&lt;date&gt;.md</code></p>
+<table data-testid="tracker-batch-c">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>ASK 1</td><td>CR-524</td><td>Return <code>punched_at</code> per cancelled line (original add time), same timezone as <code>cancel_time</code>, item-level lines for order cancels</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>ASK 2</td><td>CR-528</td><td>BLOCKING: persist <code>print_bill_status</code>, log every bill print (incl. reprints) in <code>operations[]</code>, <code>bill_printed_at</code> + count in order-logs-report, fix <code>order_edit</code> amounts, log order-level cancel</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+</table>
 <h2>Batch D — Dashboard · Order entry · Cards</h2>
-<p class="meta">Gate 2 not started — brief not written.</p>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-D_2026_11_15.md</code> (Gyan) · <b>NOT SENT</b> (Gate 2 IA closed 2026-11-15) · BD-01 is the release blocker for CR-525 / CR-521 · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-D_&lt;date&gt;.md</code></p>
+<table data-testid="tracker-batch-d">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>BD-01</td><td>CR-525 / CR-521</td><td>Reset <code>bill_print</code> to No when items are added after print (non-empty cart-update) + publish update-order socket — RELEASE BLOCKER</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-02</td><td>CR-525</td><td>Do NOT reset on a customer-only update</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-03</td><td>CR-525</td><td>Confirm which other edit paths reset (item cancel, qty, transfer, discount)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-04</td><td>CR-525</td><td>Keep <code>bill_print_count</code> as history; only the flag resets</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-05</td><td>CR-523</td><td>Confirm customer-only <code>update-place-order</code> (empty cart) is supported</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-06</td><td>CR-523</td><td>Support removing (unlinking) a customer from a placed order</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-07</td><td>CR-523</td><td>Skip <code>order_edit_count</code> / edit log on customer-only updates</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-08</td><td>CR-523</td><td>(Cosmetic) clearer response message for customer-only update</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-09</td><td>Test data</td><td>Delete probe customers 51320 / 51321 on CAFE 103; test order 1578761 cancelled</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+</table>
 </body>
 </html>

@@ -1,5 +1,7 @@
 # BATCH-B — Impact Analysis Summary (Gate 2) — 2026-11-14
 
+**STATUS: GATE 2 IA CLOSED 2026-11-15 · GATE 2.5 DESIGN APPROVED 2026-11-15.** Backend brief = DRAFT, not sent (owner to decide how briefs are sent).
+
 Role: PLANNING (Gate 2 only). Owner GO: "all P0 items only, one batch at a time, rest as suggested, gate 2 go".
 Scope: 9 P0 items + CR-542 (owner R1: P0). Zero source code changes. Gate 3 NOT started.
 Order: 671/672 → 526/542 → 514 → 522 (after Batch A PIN) → 536/527 → 607/394.
@@ -40,6 +42,20 @@ Probe account: cafe103 (RID 644), credentials session-only via secure card, NOT 
 | OD-536-A | R4 | B2B invoice: add CUSTOMER billing address (with existing GST no. + name) |
 | OD-536-B | R4 | No UPI ID on B2B invoice — dropped from scope |
 | OD-527-A | R3 | Credit can be given to a different person than the diner (Abhishek eats, credited to Saurav) → Saurav's credit portfolio shows multiple diner names |
+| OD-527-B (Q15) | R5 2026-11-15 | Show **diner name on each order in the credit holder's detail** (no grouping of list by phone). Owner wants a **Gate 2.5 design mockup** for this and for ALL design-involving Batch B changes (same as Batch A) |
+| OD-394-A (Q16) | R5 2026-11-15 | Keep today's behaviour: open/custom items default **Exclusive**. Owner: "we don't have inclusive GST" — user must NOT be able to pick Inclusive (consistent with BUG-359 menu: always Exclusive). Interpretation for Gate 3: hide/remove Inclusive option in AddCustomItemModal → custom items always Exclusive; CR-394 (backward GST) NOT implemented |
+| OD-522-A (Q17) | R5 2026-11-15 | Phase 1: tolerance % set by **backend admin per restaurant**; if blank → **tolerance OFF** (received-amount ± check skipped) |
+| OD-514-B (Q18) | R5 2026-11-15 | Reference-box config lives **on each payment method in admin** (same `payment_types` list that carries `prepaid/postpaid`): per-method `show` + `required` flags |
+| OD-PROBE-2 | R5 2026-11-15 | Run the 3 remaining read-only probes now (credit detail fields, product GST in category mode, settlement lock signal) |
+
+| OD-672-C | G2.5 2026-11-15 | M2: Credit HIDDEN on prepaid orders when TAB `prepaid:0` |
+| OD-542-B | G2.5 2026-11-15 | M3: reason also required on Room Orders "Remove from Room" |
+| OD-526-D | G2.5 2026-11-15 | M4: Remove on Open credit rows only; Partial greyed "Part already paid back"; Covered none |
+| OD-527-C | G2.5 2026-11-15 | M4b: diner filter chips for 2–5 diners, searchable dropdown (count + open ₹) for 6+ |
+| OD-522-B | G2.5 2026-11-15 | M6: tolerance 0% = same as blank = no check |
+| OD-536-C | G2.5 2026-11-15 | M7: pre-fill GST no./name/address from customer profile, editable (BB-10b) |
+| OD-394-B | G2.5 2026-11-15 | M8: old Inclusive products → Exclusive, only in GST-ON outlets, one-time backend fix (BB-13) |
+| OD-607-B | G2.5 2026-11-15 | M9: show "GST is set per item" note, restaurant GST % read-only when category |
 
 ## Probe results (R11) — `evidence/BATCH-B-IA/probes_2026_11_14/` (masked)
 | File | Finding |
@@ -72,8 +88,23 @@ Probe account: cafe103 (RID 644), credentials session-only via secure card, NOT 
 | BUG-607 | FE ignores `restaurant_gst=category`; per-item `product.tax` already used | FE+BE (Gyan) | Confirm products carry item GST when mode=category | Product tax probe not done |
 | CR-394 | CR-348 already has GST % + Incl/Excl | FE | — | Q16 |
 
+## R5 probes (2026-11-15, READ-ONLY) — `evidence/BATCH-B-IA/probes_2026_11_15_r5/` (masked)
+Account supplied by owner 2026-11-15 = **RID 541 "The Palm House"** (not cafe103). Script `batch_b_probe_r5.py`, creds from secure env, never printed.
+| File | Finding |
+|---|---|
+| 30_credit_list | 54 credit customers; list has no diner data |
+| 31_credit_detail_0..2 | Top 3 holders (534/238/119 rows). Credit row keys: id, order_id, waiter_id, customer_id, credit/debit amount, transaction_id, current_balance, payment_status, comments (null), created/updated_at, restaurant_order_id, order_created_at → **no diner name** → CR-527 needs BB-09 |
+| 32_products | 286 products, all carry item tax: (5,GST,Excl)×220, (0,GST,Excl)×61, (0,VAT,Excl)×5; 9/32 categories mixed rates; 0 Inclusive → BUG-607 FE already item-level; CR-394 removal of Inclusive breaks no data |
+| 33_settings_list | `restaurant_gst=category`, `gst_tax=0.00`, `reconcile_amount=No`, no tolerance key |
+| 34_settlement_0..6 | 7 days waiter rows: today_settlement / balance_to_settle / pilferage only; **no settled flag/timestamp** → OD-526-B needs BB-02/BB-03 |
+
+## Gate 2 CLOSED 2026-11-15
+- 10 per-item docs: `impact/{BUG-671,BUG-672,CR-526,CR-542,CR-514,CR-522,CR-527,CR-536,BUG-607,CR-394}_IMPACT_ANALYSIS.md`
+- Backend brief: `backend_briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md` (BB-01..BB-12)
+- Gate 2.5 mockups: `design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html` (preview `/batchb-gate25-mockup.html`) — M1–M9 + M4b **ALL APPROVED 2026-11-15** (owner review pasted from page). Gate 2.5 CLOSED.
+- Registry: all 10 → `GATE_2_IA_CLOSED 2026-11-15 … GATE_2.5 DESIGN PENDING`.
+
 ## Pending (next session)
-- Owner R5: Q15 (CR-527 display), Q16 (CR-394 scope), Q17 (CR-522 tolerance source), Q18 (CR-514 config location) — asked, NOT answered.
-- Probes not yet done: credit customer detail (`tap-customer-record-list`) fields for CR-527; product list tax fields for BUG-607 when `restaurant_gst=category`; settlement lock behaviour.
-- Write per-item docs `impact/<ID>_IMPACT_ANALYSIS.md` (10), backend brief, registry → `GATE_2_IA_CLOSED`.
+- Backend (Gyan): reply BB-01..BB-13 (+BB-10b).
+- Gate 3 order: BUG-671/672 (no backend) → CR-526 FE part + CR-394 → rest after backend reply. CPP single owner; rebase on Batch A Gate 3 CPP/orderTransform edits.
 - Owner housekeeping: delete credit customer `TEST_BATCHB_CREDIT` (id 3118, ₹0) on cafe103; enable TAB prepaid for cafe103 (OD-672-B).

@@ -4,7 +4,7 @@
 **From:** POS team
 **Date:** 2026-11-01
 **Re:** CR-124 — International Phone Number Support — contract validation on CRM preview
-**Environment:** `https://project-build-173--7p508o4t.preview.emergentagent.com/api`
+**Environment:** `https://mygenie-crm-app-1--1mjjz4pi.preview.emergentagent.com/api`
 **Test restaurant:** Cafe103 (API key from `crm_token` in login response)
 
 ---

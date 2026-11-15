@@ -68,7 +68,7 @@
 
 | Item | Value |
 |------|-------|
-| App URL (preview) | `https://project-build-173--7p508o4t.preview.emergentagent.com` |
+| App URL (preview) | `https://core-pos-react-6.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

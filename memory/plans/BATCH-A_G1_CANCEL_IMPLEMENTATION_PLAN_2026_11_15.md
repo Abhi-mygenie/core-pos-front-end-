@@ -1,5 +1,7 @@
 # BATCH-A · G1 Cancel (BUG-674, BUG-670, CR-493 + item-cancel right) — Implementation Plan (Gate 3) — 2026-11-15
 
+> **SUPERSEDED 2026-11-15 by per-CR plans** — `BATCH-A_BUG-674_…`, `BATCH-A_CR-493_…`, `BATCH-A_BUG-670_…`, `BATCH-A_CR-515_…` (E9) `_IMPLEMENTATION_PLAN_2026_11_15.md`. Kept for history; do not build from this file.
+
 > Status: **GATE_3_PLAN_PARTIAL** — FE-only edits READY; backend-dependent edits listed as BLOCKED (owner R13: plan only backend-free parts now).
 > Build only after Gate 4 GO **and** QA pass of open items on the same files (see §2).
 > Mockups: M1 `#m1` (order cancel), M2 `#m2` (item cancel), M3 `#m3` (no reasons), M6 `#m6` (reports — BLOCKED).

@@ -119,7 +119,7 @@ EXIT GATE: ALL 5 PASSED ✅
 
 | Item | Value |
 |------|-------|
-| App URL | https://project-build-173--7p508o4t.preview.emergentagent.com |
+| App URL | https://pos-front-5oct.preview.emergentagent.com |
 | Preprod | https://preprod.mygenie.online/ |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Restaurant | RID 69 — The Goan Kitchen |

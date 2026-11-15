@@ -1,0 +1,11 @@
+{
+ "status": 200,
+ "at_utc": "2026-11-15 08:26:00",
+ "body": {
+  "message": "Order placed successfully",
+  "order_id": 1578759,
+  "daily_token": null,
+  "restaurant_order_id": "021542",
+  "payment_status": "unpaid"
+ }
+}

@@ -133,7 +133,7 @@ OD-600-01 **LOCKED**: `"default"` → `new_order`.
 
 ## 7. Environment
 
-- **Preview URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
+- **Preview URL:** https://pos-frontend-app-7.preview.emergentagent.com
 - **API:** https://preprod.mygenie.online
 - **Socket:** https://presocket.mygenie.online
 - **Frontend:** React 19 (CRA + Craco) on port 3000

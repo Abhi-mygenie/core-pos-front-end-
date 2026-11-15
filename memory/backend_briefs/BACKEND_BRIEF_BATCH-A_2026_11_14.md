@@ -1,5 +1,7 @@
 # Backend Brief — Batch A (Cancellation · Complimentary · Rights · PIN · Alerts) — 2026-11-14
 
+> **SUPERSEDED 2026-11-15 (owner R21)** by the base document `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_15.html` (brief + contract links + reply checklist). Kept for history; not updated.
+
 To: Gyan (backend) · FE: Abhishek · Room/meal items: see separate brief `BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md` (Parth)
 Client: ALL · Gate 2 closed on this brief.
 Sources: `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`, `change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md`, evidence `evidence/BATCH-A-IA/probes_2026_11_14/`.

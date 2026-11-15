@@ -1,0 +1,884 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Design Mockup Tracker — Batches A–D — MyGenie POS</title><style>body{margin:0;font-family:Georgia,serif;background:#faf8f3;color:#1d1d1b}header{padding:22px 32px 0}h1{font-size:26px;margin:0 0 4px}.meta{font-size:13px;color:#555;margin:2px 0 10px}a{color:#b4471b}.tabs{display:flex;gap:4px;padding:14px 32px 0;border-bottom:2px solid #1d1d1b}.tab{font:inherit;font-size:15px;padding:8px 18px;border:1px solid #d6d2c4;border-bottom:none;background:#efeadb;cursor:pointer;border-radius:6px 6px 0 0}.tab.on{background:#1d1d1b;color:#fff;border-color:#1d1d1b}.panel{display:none;padding:18px 32px}.panel.on{display:block}h2{font-size:19px;margin:0 0 4px}iframe{width:100%;height:80vh;border:1px solid #d6d2c4;background:#fff}.note{background:#fff;border:1px solid #d6d2c4;padding:8px 14px;margin:0 0 12px;font-size:13px}.empty{background:#fff;border:1px dashed #b9b4a6;padding:40px;text-align:center;color:#555}</style></head><body><header><h1>Design Mockup Tracker</h1><p class="meta">One file, one tab per batch. Gate 2.5 current-vs-proposed mockups. <a href="/backend-tracker.html" data-testid="design-to-backend">Backend tracker &rarr;</a></p></header><nav class="tabs"><button class="tab on" data-tab="a" data-testid="design-tab-a">Batch A</button><button class="tab" data-tab="b" data-testid="design-tab-b">Batch B</button><button class="tab" data-tab="c" data-testid="design-tab-c">Batch C</button><button class="tab" data-tab="d" data-testid="design-tab-d">Batch D</button></nav><section class="panel on" id="tab-a"><h2>Batch A — Cancel · Comp · Rights · PIN · Room comp</h2><p class="meta" data-testid="design-status-a">ALL M1–M10 APPROVED BY OWNER 2026-11-14 · M5b Option B APPROVED 2026-11-15 (R15) · M8b + M5c APPROVED 2026-11-15 (R17/R18) — Gate 2.5 closed. This page is the single Batch A mockup document.</p><p class="meta">Source: <code>memory/design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html</code></p><iframe title="Batch A mockups" data-testid="design-frame-a" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Batch A — Gate 2.5 Design Mockups (Current vs Proposed) — 2026-11-14&lt;/title&gt;
+&lt;style&gt;
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px}nav a{color:var(--o);margin-right:14px;text-decoration:none}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 12px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.frame{background:rgba(0,0,0,.35);padding:22px;border-radius:12px;min-height:120px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;max-width:440px;margin:0 auto}
+.mh{padding:16px 18px;border-bottom:1px solid var(--b)}.mh b{font-size:18px}.mh p{margin:4px 0 0;font-size:13px;color:var(--gt)}
+.mb{padding:16px 18px}.mf{padding:12px 18px;border-top:1px solid var(--b);background:var(--s)}
+.warn{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.lbl{font-size:13px;font-weight:600;color:var(--gt);margin:0 0 6px}
+.sel{border:1px solid var(--b);border-radius:12px;padding:11px 14px;font-size:14px;display:flex;justify-content:space-between;margin-bottom:12px}
+.ta{border:1px solid var(--b);border-radius:12px;padding:10px 14px;font-size:13px;color:#999;height:64px;margin-bottom:6px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;color:#fff;font-weight:700;font-size:15px;background:var(--r)}
+.btn.g{background:var(--g)}.btn.dis{opacity:.5}
+.new .add{outline:3px solid var(--g);outline-offset:3px;border-radius:10px}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.rem{display:inline-block;background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.tbd{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}
+.diff li{margin:3px 0}
+.hint{font-size:11px;color:var(--gt)}
+.err{background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.pin{display:flex;gap:10px;justify-content:center;margin:12px 0}.pin span{width:44px;height:52px;border:2px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pin span.f{border-color:var(--o)}
+.panel{background:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.line{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eee}.line:last-child{border:0}
+.box{width:14px;height:14px;border:1.5px solid #888;border-radius:3px;margin-top:2px;flex:none}.box.on{background:var(--g);border-color:var(--g)}
+.grow{flex:1}.amt{font-weight:600}
+.mini{display:block;width:100%;border:1px solid #ddd;border-radius:4px;padding:3px 6px;font-size:11px;color:#999;margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{background:#FAFAFA;color:#71717a;font-weight:600}
+.pill{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--b);margin-right:4px;background:#fff}
+.banner{color:#fff;padding:9px 14px;font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:4px;border-radius:4px}
+.ci{background:#fff;border-radius:10px;padding:14px;font-size:12px}
+.ci .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.ci .opt{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600}.ci .opt.on{box-shadow:0 0 0 2px #1A1A1A}
+.ci input{border:1px solid var(--b);border-radius:6px;padding:6px 8px;width:80px}
+.login{background:#fff;border-radius:14px;padding:22px;text-align:center;max-width:300px;margin:0 auto;font-size:13px}
+.login .f{border:1px solid var(--b);border-radius:8px;padding:9px;margin:8px 0;text-align:left;color:#999}
+.toggle{display:inline-block;width:34px;height:18px;background:var(--g);border-radius:999px;position:relative;vertical-align:middle}.toggle:after{content:&quot;&quot;;position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%}
+.note{font-size:12px;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;margin-top:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.chip{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600;font-size:12px;background:#fff}.chip.on{box-shadow:0 0 0 2px #1A1A1A}.chip.off{color:#bbb;background:#F4F4F4;border-style:dashed}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header data-testid=&quot;mockup-header&quot;&gt;
+&lt;h1&gt;Batch A — Gate 2.5 Design Approval · Current vs Proposed&lt;/h1&gt;
+&lt;p&gt;P0 items with on-screen changes · 2026-11-14 · &quot;Current&quot; is rebuilt from today&#x27;s source code (same layout, text and colours). &quot;Proposed&quot; marks every change with a green outline and tag. Approve or comment per screen (M1–M10).&lt;/p&gt;
+&lt;p style=&quot;margin-top:8px;font-weight:700;color:#86EFAC&quot;&gt;STATUS: ALL M1–M10 APPROVED BY OWNER 2026-11-14 · M5b Option B APPROVED 2026-11-15 (R15) · M8b + M5c APPROVED 2026-11-15 (R17/R18) — Gate 2.5 closed. This page is the single Batch A mockup document.&lt;/p&gt;
+&lt;/header&gt;
+&lt;nav&gt;
+&lt;a href=&quot;#m1&quot;&gt;M1 Order cancel&lt;/a&gt;&lt;a href=&quot;#m2&quot;&gt;M2 Item cancel&lt;/a&gt;&lt;a href=&quot;#m3&quot;&gt;M3 No reasons&lt;/a&gt;&lt;a href=&quot;#m4&quot;&gt;M4 PIN popup&lt;/a&gt;&lt;a href=&quot;#m5&quot;&gt;M5 Comp in payment&lt;/a&gt;&lt;a href=&quot;#m5b&quot;&gt;M5b Comp reason (Option B approved)&lt;/a&gt;&lt;a href=&quot;#m5c&quot;&gt;M5c Room comp meal pick&lt;/a&gt;&lt;a href=&quot;#m6&quot;&gt;M6 Reports notes&lt;/a&gt;&lt;a href=&quot;#m7&quot;&gt;M7 Rights buttons&lt;/a&gt;&lt;a href=&quot;#m8&quot;&gt;M8 Check-in meal&lt;/a&gt;&lt;a href=&quot;#m8b&quot;&gt;M8b Half-board second meal&lt;/a&gt;&lt;a href=&quot;#m9&quot;&gt;M9 Alerts&lt;/a&gt;&lt;a href=&quot;#m10&quot;&gt;M10 Pages login&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;section id=&quot;m1&quot; data-testid=&quot;mockup-m1&quot;&gt;
+&lt;h2&gt;M1 · Cancel Order dialog&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-674 (notes box) · CR-493 (notes mandatory setting) · CR-494 (PIN above limit) · File: CancelOrderModal.jsx&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Order&lt;/b&gt;&lt;p&gt;T4 · 3 items will be cancelled&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;warn&quot;&gt;This will cancel ALL items in this order. This action cannot be undone.&lt;/div&gt;
+&lt;p class=&quot;lbl&quot;&gt;Cancellation Reason&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Customer left&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;No notes box (only shown in refund mode).&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn&quot;&gt;Cancel Order&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Order&lt;/b&gt;&lt;p&gt;T4 · 3 items will be cancelled&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;warn&quot;&gt;This will cancel ALL items in this order. This action cannot be undone.&lt;/div&gt;
+&lt;p class=&quot;lbl&quot;&gt;Cancellation Reason &lt;span style=&quot;color:#EF4444&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Customer left&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;add&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Notes (Optional) &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;ta&quot;&gt;Type here…&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Label becomes &quot;Notes *&quot; and is required when the restaurant turns on &quot;Cancel notes mandatory&quot;.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn&quot;&gt;Cancel Order&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; Notes box in every cancel mode (not only refund). Saved as the order cancel note; blank = saved empty.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Changed:&lt;/b&gt; Reason marked required (*). Button already stays disabled until a reason is picked.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; If amount is above the &quot;cancel&quot; PIN limit → tapping Cancel Order opens the PIN popup (M4) before cancelling.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m2&quot; data-testid=&quot;mockup-m2&quot;&gt;
+&lt;h2&gt;M2 · Cancel Item dialog&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-670 (notes saved) · CR-493 · CR-494 · CR-515 (who sees the cancel button) · Files: CancelFoodModal.jsx, CartPanel.jsx, OrderEntry.jsx&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Paneer Tikka&lt;/b&gt;&lt;p&gt;Select cancellation details&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Cancellation Reason&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Select the Reason&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;lbl&quot;&gt;Additional Notes (Optional)&lt;/p&gt;&lt;div class=&quot;ta&quot;&gt;Type here…&lt;/div&gt;&lt;p class=&quot;hint&quot; style=&quot;color:#B91C1C&quot;&gt;Typed notes are dropped — never sent or saved.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn dis&quot;&gt;Cancel Item&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Paneer Tikka&lt;/b&gt;&lt;p&gt;Select cancellation details&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Cancellation Reason &lt;span style=&quot;color:#EF4444&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Select the Reason&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;add&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Additional Notes (Optional) &lt;span class=&quot;chg&quot;&gt;NOW SAVED&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;ta&quot;&gt;Type here…&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Required (*) when &quot;Cancel notes mandatory&quot; is on.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn dis&quot;&gt;Cancel Item&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Changed (no visual change):&lt;/b&gt; notes are sent and saved, then shown in reports (M6).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Changed:&lt;/b&gt; the item &quot;cancel&quot; button in the cart shows only for users with the &lt;b&gt;Cancel Orders&lt;/b&gt; right (today: &quot;food / View Menu Items&quot; right).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; PIN popup (M4) for cancel before serve / after serve / after bill when above the limit.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m3&quot; data-testid=&quot;mockup-m3&quot;&gt;
+&lt;h2&gt;M3 · No cancellation reasons set up&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-493 (OD-493-B: block + message) · Both cancel dialogs&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Order&lt;/b&gt;&lt;p&gt;T4 · 3 items will be cancelled&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Cancellation Reason&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span style=&quot;color:#999&quot;&gt;Select reason&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Dropdown opens empty — user is stuck with no explanation.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn dis&quot;&gt;Cancel Order&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Cancel Order&lt;/b&gt;&lt;p&gt;T4 · 3 items will be cancelled&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;err add&quot;&gt;No cancellation reasons are set up for this restaurant. Ask the owner to add them in Settings → Cancellation Reasons. &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn dis&quot;&gt;Cancel Order&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; clear blocking message; cancel stays disabled.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m4&quot; data-testid=&quot;mockup-m4&quot;&gt;
+&lt;h2&gt;M4 · PIN popup (new)&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-494 · 6 actions, separate PIN each: cancel before serve, cancel after serve, cancel after bill, edit after bill, discount, complimentary · New component&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;&lt;div class=&quot;mb&quot;&gt;&lt;p class=&quot;hint&quot;&gt;No PIN today — any user with the right completes the action directly.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal add&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Manager PIN required&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;p&gt;Cancel after bill · ₹1,250 is above the ₹500 limit&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;pin&quot;&gt;&lt;span class=&quot;f&quot;&gt;•&lt;/span&gt;&lt;span class=&quot;f&quot;&gt;•&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot; style=&quot;text-align:center&quot;&gt;Your cancels today: ₹2,100 of ₹3,000 · 4 of 5&lt;/p&gt;
+&lt;div class=&quot;err&quot; style=&quot;margin-top:10px&quot;&gt;Wrong PIN. Try again.&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot; style=&quot;display:flex;gap:8px&quot;&gt;&lt;button class=&quot;btn&quot; style=&quot;background:#9CA3AF&quot;&gt;Back&lt;/button&gt;&lt;button class=&quot;btn g&quot;&gt;Confirm&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;When shown:&lt;/b&gt; amount (incl. tax) above that action&#x27;s limit; limit 0 = always; over the daily ₹ or count limit = always.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Edit after bill:&lt;/b&gt; asked from everyone, including users with order-edit access.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Subtitle&lt;/b&gt; names the action and why the PIN is needed. Daily usage line shown for cancels/discounts.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Whole-order comp (CR-445, P1):&lt;/b&gt; no PIN — right only.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m5&quot; data-testid=&quot;mockup-m5&quot;&gt;
+&lt;h2&gt;M5 · Complimentary in the payment panel&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-492 (hide without right) · CR-494 (comp PIN) · CR-495 (room limit) · File: CollectPaymentPanel.jsx&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current (every user)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;&lt;span class=&quot;mini&quot;&gt;Reason (optional)&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹180&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;
+&lt;div class=&quot;panel&quot; style=&quot;margin-bottom:10px&quot;&gt;&lt;b style=&quot;font-size:11px;color:#666&quot;&gt;USER WITHOUT &quot;complementary_food&quot;&lt;/b&gt; &lt;span class=&quot;rem&quot;&gt;CHECKBOX HIDDEN&lt;/span&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹120&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹180&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;panel add&quot;&gt;&lt;b style=&quot;font-size:11px;color:#666&quot;&gt;USER WITH THE RIGHT&lt;/b&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;&lt;span class=&quot;mini&quot; style=&quot;color:#666&quot;&gt;Reason (required) &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;hint&quot;&gt;Room 101 · comp left today (breakfast): ₹380 of ₹500 &lt;span class=&quot;chg&quot;&gt;NEW · room orders&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹180&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Removed for users without the right:&lt;/b&gt; comp checkbox. Existing comp lines stay visible but read-only (OD-492-A).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Changed:&lt;/b&gt; comp reason required. Above comp limit → PIN popup (M4).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Room orders:&lt;/b&gt; remaining comp for the meal shown; over → PIN. Meal is picked by the cashier on each comp — see &lt;a href=&quot;#m5c&quot;&gt;M5c&lt;/a&gt; (R16).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Release impact:&lt;/b&gt; owners without the right today (cafe103, Palm House) lose this checkbox until roles are updated.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m5b&quot; data-testid=&quot;mockup-m5b&quot;&gt;
+&lt;h2&gt;M5b · Required complimentary reason (full + part comp) &lt;span class=&quot;chg&quot;&gt;OPTION B APPROVED BY OWNER 2026-11-15&lt;/span&gt;&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-492 · Owner R14: reason required for full AND part comp; block Pay only; bill never prints the reason · Files: CollectPaymentPanel.jsx, MarkCompModal.jsx&lt;/p&gt;
+&lt;div class=&quot;panel&quot; style=&quot;margin-bottom:14px&quot;&gt;&lt;b style=&quot;font-size:12px&quot;&gt;Part comp today (to revalidate):&lt;/b&gt; in Collect Bill, ticking the comp box on an item with qty 2+ opens the &lt;b&gt;Mark Complementary&lt;/b&gt; popup with a &lt;b&gt;Comp Qty&lt;/b&gt; stepper (e.g. 1 of 3). Code: MarkCompModal.jsx (BUG-298/299, QA PASS 2026-09-15). Part-comped lines show NO reason box today.&lt;/div&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3 style=&quot;color:#777&quot;&gt;Option A — reason in the popup (NOT chosen)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Mark Complementary&lt;/b&gt;&lt;p&gt;Masala Dosa&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Current Quantity: &lt;b&gt;3&lt;/b&gt;&lt;/span&gt;&lt;span&gt;Comp Qty: &lt;b&gt;1&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot; style=&quot;margin:-6px 0 10px&quot;&gt;1 complimentary (₹0) · 2 remain charged normally&lt;/p&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:4px&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Reason * &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;ta&quot; style=&quot;height:44px&quot;&gt;Type reason…&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot;&gt;&lt;button class=&quot;btn g dis&quot;&gt;Mark 1 Complementary&lt;/button&gt;&lt;p class=&quot;hint&quot; style=&quot;margin:6px 0 0&quot;&gt;Button disabled until a reason is typed&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;Popup opens for EVERY comp (also qty 1) — reason typed at the moment of marking.&lt;/li&gt;&lt;li&gt;An item can never be comped without a reason → bill can never show a comp without a reason.&lt;/li&gt;&lt;li&gt;Existing inline reason box under the line becomes read-only text.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Option B — reason under every comp line (APPROVED)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;&lt;span class=&quot;mini&quot;&gt;Reason (required)&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line add&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(1 of 3 Complimentary)&lt;/b&gt;&lt;span class=&quot;mini&quot; style=&quot;border-color:#EF4444&quot;&gt;Reason (required) &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹360&lt;/span&gt;&lt;/div&gt;
+&lt;div style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn g dis&quot;&gt;Pay ₹360&lt;/button&gt;&lt;p class=&quot;hint&quot; style=&quot;margin:6px 0 0&quot;&gt;Pay disabled while any comp reason is empty (red outline)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;Part-comped lines get the same reason box as full comp.&lt;/li&gt;&lt;li&gt;Pay blocked until filled; Print Bill still works (bill shows item as complimentary, no reason).&lt;/li&gt;&lt;li&gt;Label changes &quot;Reason (optional)&quot; → &quot;Reason (required)&quot;.&lt;/li&gt;&lt;li&gt;R15: if a comp line has no reason and the cashier has no comp right, Pay stays blocked (box read-only).&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m5c&quot; data-testid=&quot;mockup-m5c&quot;&gt;
+&lt;h2&gt;M5c · Room comp: cashier picks the meal &lt;span class=&quot;chg&quot;&gt;APPROVED BY OWNER 2026-11-15 (R17/R18)&lt;/span&gt;&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-495 · R16 · Builds on approved M5 + M5b · File: CollectPaymentPanel.jsx (room-service list) · Contract: &lt;code&gt;comp_meal&lt;/code&gt;, &lt;code&gt;room-comp-usage&lt;/code&gt; (B-495-4/5/6)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current (today&#x27;s code · room order)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;b style=&quot;font-size:11px;color:#666&quot;&gt;ROOM 101 · ROOM SERVICE&lt;/b&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;&lt;span class=&quot;mini&quot;&gt;Reason (optional)&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹180&lt;/span&gt;&lt;/div&gt;
+&lt;div style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn g&quot;&gt;Pay ₹180&lt;/button&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot; style=&quot;margin:6px 0 0&quot;&gt;No meal, no package, no limit shown.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed (M5 + M5b + M5c)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;b style=&quot;font-size:11px;color:#666&quot;&gt;ROOM 101 · HALF BOARD (Breakfast + Lunch) · 2 GUESTS&lt;/b&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Masala Dosa &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:4px;margin:4px 0&quot;&gt;&lt;span class=&quot;hint&quot;&gt;&lt;b&gt;Meal&lt;/b&gt;&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;
+&lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip on&quot;&gt;Breakfast&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;Lunch&lt;/span&gt;&lt;span class=&quot;chip off&quot;&gt;Dinner&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot;&gt;Comp left today (breakfast): ₹380 of ₹500&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;mini&quot; style=&quot;color:#666&quot;&gt;Reason (required) (M5b)&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;box on&quot;&gt;&lt;/span&gt;&lt;span class=&quot;grow&quot;&gt;Cold Coffee &lt;b style=&quot;color:#329937;font-size:10px&quot;&gt;(Complimentary)&lt;/b&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:4px;margin:4px 0&quot;&gt;&lt;span class=&quot;hint&quot;&gt;&lt;b&gt;Meal&lt;/b&gt;&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;
+&lt;div class=&quot;chips&quot;&gt;&lt;span class=&quot;chip&quot;&gt;Breakfast&lt;/span&gt;&lt;span class=&quot;chip&quot;&gt;Lunch&lt;/span&gt;&lt;span class=&quot;chip off&quot;&gt;Dinner&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot; style=&quot;color:#DC2626&quot;&gt;Pick a meal&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;mini&quot; style=&quot;border-color:#EF4444&quot;&gt;Reason (required)&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;amt&quot;&gt;₹0&lt;/span&gt;&lt;/div&gt;
+&lt;div style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn g dis&quot;&gt;Pay ₹0&lt;/button&gt;&lt;p class=&quot;hint&quot; style=&quot;margin:6px 0 0&quot;&gt;Pay disabled while a room comp line has no meal or no reason. Over the meal&#x27;s limit → comp PIN (M4).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;
+&lt;li&gt;&lt;b&gt;Added (room orders only):&lt;/b&gt; meal buttons under each comp line — Breakfast / Lunch / Dinner — shown after the comp box is ticked (user with the comp right).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Default meal:&lt;/b&gt; none, so the cashier must pick (R17).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Meal outside the package&lt;/b&gt; (e.g. Dinner on Half board + Lunch): greyed but pressable → comp allowed with the comp PIN (M4), same as Room only (R18).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Remaining limit&lt;/b&gt; shown for the picked meal.&lt;/li&gt;
+&lt;li&gt;Part comp (MarkCompModal, qty 2+): same buttons on the comp line after the popup closes. Non-room orders: no change. Bill print unchanged (meal not printed).&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m6&quot; data-testid=&quot;mockup-m6&quot;&gt;
+&lt;h2&gt;M6 · Cancel notes in Cancellation report and Order Beta&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-674 · BUG-670 · Files: CancellationsMockup.jsx (notes column), OrderReportBetaPage.jsx&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;Order&lt;/th&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Reason&lt;/th&gt;&lt;th&gt;Notes&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021537&lt;/td&gt;&lt;td&gt;Paneer Tikka&lt;/td&gt;&lt;td&gt;Customer left&lt;/td&gt;&lt;td style=&quot;color:#2563EB&quot;&gt;Less spicy &lt;span class=&quot;hint&quot;&gt;(kitchen note)&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021538&lt;/td&gt;&lt;td&gt;All items&lt;/td&gt;&lt;td&gt;Customer left&lt;/td&gt;&lt;td&gt;—&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;p class=&quot;hint&quot; style=&quot;margin-top:6px&quot;&gt;Order Beta: no reason / note shown on cancelled orders.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;table class=&quot;add&quot;&gt;&lt;tr&gt;&lt;th&gt;Order&lt;/th&gt;&lt;th&gt;Item&lt;/th&gt;&lt;th&gt;Reason&lt;/th&gt;&lt;th&gt;Cancel note &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021537&lt;/td&gt;&lt;td&gt;Paneer Tikka&lt;/td&gt;&lt;td&gt;Customer left&lt;/td&gt;&lt;td style=&quot;color:#2563EB&quot;&gt;Guest waited 40 min&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021538&lt;/td&gt;&lt;td&gt;All items&lt;/td&gt;&lt;td&gt;Customer left&lt;/td&gt;&lt;td style=&quot;color:#2563EB&quot;&gt;Table walked out&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;p class=&quot;hint add&quot; style=&quot;margin-top:6px;padding:6px&quot;&gt;Order Beta cancelled row: &lt;b&gt;Reason:&lt;/b&gt; Customer left · &lt;b&gt;Note:&lt;/b&gt; Table walked out &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Changed:&lt;/b&gt; Notes column shows the cancel note (not the kitchen note). Needs backend BA-01 / BA-02.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; reason + note on cancelled orders in Order Beta.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m7&quot; data-testid=&quot;mockup-m7&quot;&gt;
+&lt;h2&gt;M7 · Buttons controlled by rights&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-515 · Pages: Orders Beta, Order Report, dashboard, order screen · Existing rights: change payment method (update_payment), make unpaid (order_unpaid), collect pay-later (key to confirm, BA-09)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current (every user)&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;Order #021540 · ₹850 · Paid (UPI)&lt;br&gt;&lt;br&gt;
+&lt;span class=&quot;pill&quot;&gt;Change payment method&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Make unpaid&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Collect pay-later&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed (user with only &quot;change payment method&quot;)&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;Order #021540 · ₹850 · Paid (UPI)&lt;br&gt;&lt;br&gt;
+&lt;span class=&quot;pill&quot;&gt;Change payment method&lt;/span&gt;&lt;span class=&quot;rem&quot;&gt;Make unpaid HIDDEN&lt;/span&gt; &lt;span class=&quot;rem&quot;&gt;Collect pay-later HIDDEN&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Removed (per user):&lt;/b&gt; each button hidden when the user lacks its right. No layout change otherwise. Labels stay as in the app today.&lt;/li&gt;
+&lt;li&gt;Reprint right = P1 (not in this release).&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m8&quot; data-testid=&quot;mockup-m8&quot;&gt;
+&lt;h2&gt;M8 · Check-in: meal package + guests&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-495 · PMS and non-PMS outlets · File: CheckInForm.jsx · Backend B-495-1/2&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;ci&quot;&gt;
+&lt;b&gt;Room&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt on&quot;&gt;101 · Deluxe&lt;/span&gt;&lt;/div&gt;
+&lt;b&gt;Primary Guest&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;ID front&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID back&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot;&gt;No meal package. No guest count field (OTA booking shows adults in the header only).&lt;/span&gt;
+&lt;div style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn g&quot; style=&quot;width:auto;padding:8px 14px;font-size:12px&quot;&gt;Confirm check-in&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;ci&quot;&gt;
+&lt;b&gt;Room&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt on&quot;&gt;101 · Deluxe&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:6px&quot;&gt;&lt;b&gt;Meal package&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;Room only&lt;/span&gt;&lt;span class=&quot;opt on&quot;&gt;Breakfast&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;Half board&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;Full board&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot;&gt;OTA booking: pre-selected from the channel meal plan.&lt;/span&gt;&lt;br&gt;&lt;br&gt;
+&lt;b&gt;Guests checked in&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt; &lt;input value=&quot;2&quot; readonly&gt; &lt;span class=&quot;hint&quot;&gt;editable during stay&lt;/span&gt;&lt;/div&gt;
+&lt;b style=&quot;display:block;margin-top:8px&quot;&gt;Primary Guest&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;ID front&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID back&lt;/span&gt;&lt;/div&gt;
+&lt;div&gt;&lt;button class=&quot;btn g&quot; style=&quot;width:auto;padding:8px 14px;font-size:12px&quot;&gt;Confirm check-in&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; meal package choice (required) and guest count. Comp limit = guests × per-meal limit, resets each business day.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Room only:&lt;/b&gt; comp still possible with PIN.&lt;/li&gt;
+&lt;li&gt;Half board: guest chooses the second meal (lunch or dinner) at check-in — see &lt;a href=&quot;#m8b&quot;&gt;M8b&lt;/a&gt; (R16).&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m8b&quot; data-testid=&quot;mockup-m8b&quot;&gt;
+&lt;h2&gt;M8b · Check-in: half board → choose second meal &lt;span class=&quot;chg&quot;&gt;APPROVED BY OWNER 2026-11-15 (R17)&lt;/span&gt;&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-495 · R16 · PMS and non-PMS outlets · File: components/pms/frontdesk/CheckInForm.jsx · Contract: &lt;code&gt;meal_package&lt;/code&gt;, &lt;code&gt;half_board_meal&lt;/code&gt;, &lt;code&gt;guest_count&lt;/code&gt; (B-495-1/2)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current (today&#x27;s code)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;ci&quot;&gt;
+&lt;b&gt;Check in&lt;/b&gt; &lt;span class=&quot;hint&quot;&gt;· Guest name · Booking ID&lt;/span&gt;&lt;br&gt;&lt;br&gt;
+&lt;b&gt;Room&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt on&quot;&gt;101 · Deluxe&lt;/span&gt;&lt;/div&gt;
+&lt;b&gt;Primary Guest&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;ID type&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID front&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID back&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot;&gt;No meal package, no second-meal choice, no guest count.&lt;/span&gt;
+&lt;div style=&quot;margin-top:10px&quot;&gt;&lt;button class=&quot;btn g&quot; style=&quot;width:auto;padding:8px 14px;font-size:12px&quot;&gt;Confirm check-in&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed (M8 + M8b)&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;ci&quot;&gt;
+&lt;b&gt;Check in&lt;/b&gt; &lt;span class=&quot;hint&quot;&gt;· Guest name · Booking ID&lt;/span&gt;&lt;br&gt;&lt;br&gt;
+&lt;b&gt;Room&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt on&quot;&gt;101 · Deluxe&lt;/span&gt;&lt;/div&gt;
+&lt;b&gt;Meal package&lt;/b&gt; &lt;span class=&quot;hint&quot;&gt;(M8)&lt;/span&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;Room only&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;Breakfast&lt;/span&gt;&lt;span class=&quot;opt on&quot;&gt;Half board&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;Full board&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:6px;margin-bottom:10px&quot;&gt;&lt;b&gt;Second meal (with breakfast)&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW · only when Half board&lt;/span&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt on&quot;&gt;Lunch&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;Dinner&lt;/span&gt;&lt;/div&gt;
+&lt;span class=&quot;hint&quot;&gt;Required before Confirm. Hidden for Room only / Breakfast / Full board.&lt;/span&gt;&lt;/div&gt;
+&lt;b&gt;Guests checked in&lt;/b&gt; &lt;span class=&quot;hint&quot;&gt;(M8)&lt;/span&gt; &lt;input value=&quot;2&quot; readonly&gt; &lt;span class=&quot;hint&quot;&gt;editable during stay&lt;/span&gt;
+&lt;b style=&quot;display:block;margin-top:10px&quot;&gt;Primary Guest&lt;/b&gt;&lt;div class=&quot;row&quot;&gt;&lt;span class=&quot;opt&quot;&gt;ID type&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID front&lt;/span&gt;&lt;span class=&quot;opt&quot;&gt;ID back&lt;/span&gt;&lt;/div&gt;
+&lt;div&gt;&lt;button class=&quot;btn g&quot; style=&quot;width:auto;padding:8px 14px;font-size:12px&quot;&gt;Confirm check-in&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;
+&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; &quot;Second meal&quot; choice (Lunch / Dinner), shown only when Half board is picked. Required.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Comp limit effect:&lt;/b&gt; Half board + Lunch → breakfast and lunch limits apply; dinner outside package (comp with PIN, R18).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;OTA booking (PMS):&lt;/b&gt; package pre-selected from the channel meal plan; second meal pre-filled if the channel sends it, else the front desk picks.&lt;/li&gt;
+&lt;li&gt;No other change to the check-in form.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m9&quot; data-testid=&quot;mockup-m9&quot;&gt;
+&lt;h2&gt;M9 · Alerts&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-443 · 7 events · Existing NotificationBanner + Firebase token · New: device switch&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#F26B33&quot;&gt;● &lt;b&gt;New Order&lt;/b&gt; — Swiggy #4411&lt;/div&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#DC2626&quot;&gt;✕ &lt;b&gt;Order cancelled&lt;/b&gt; — Zomato #8812&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Only order/aggregator notifications. No staff-action alerts. No per-device switch.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:6px&quot;&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#DC2626&quot;&gt;✕ &lt;b&gt;Cancelled after serve&lt;/b&gt; — T4 · Paneer Tikka · by Ravi · Customer left&lt;/div&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#D97706&quot;&gt;! &lt;b&gt;Discount ₹600&lt;/b&gt; — T2 · by Asha · above ₹500&lt;/div&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#329937&quot;&gt;✓ &lt;b&gt;Complimentary&lt;/b&gt; — Room 101 · Masala Dosa · by Ravi&lt;/div&gt;
+&lt;div class=&quot;banner&quot; style=&quot;background:#D97706&quot;&gt;! &lt;b&gt;Payment method changed&lt;/b&gt; — #021540 · UPI → Cash · by Asha&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;panel add&quot; style=&quot;margin-top:10px&quot;&gt;Receive staff alerts on this device &lt;span class=&quot;toggle&quot;&gt;&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;hint&quot;&gt;Shown only to users with the &quot;receive alerts&quot; right. Where: new &lt;b&gt;Notifications&lt;/b&gt; link in the sidebar, under Settings (owner 2026-11-14).&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;panel add&quot; style=&quot;margin-top:10px;max-width:220px;font-size:12px&quot;&gt;&lt;b style=&quot;color:#666&quot;&gt;SIDEBAR&lt;/b&gt;&lt;br&gt;Settings ▾&lt;br&gt;&amp;nbsp;&amp;nbsp;· Restaurant settings&lt;br&gt;&amp;nbsp;&amp;nbsp;· Printers&lt;br&gt;&amp;nbsp;&amp;nbsp;· &lt;b&gt;Notifications&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW LINK&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Events:&lt;/b&gt; cancel before serve, cancel after serve, unpaid, payment method changed, discount above ₹X, complimentary, cancel after bill print.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Content:&lt;/b&gt; order/table/room, item, who, reason. Same banner style and colours as today. Phone push via existing Firebase token.&lt;/li&gt;
+&lt;li&gt;Phase 2: read tick + tap to open order.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m10&quot; data-testid=&quot;mockup-m10&quot;&gt;
+&lt;h2&gt;M10 · Pages that need login&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-372-B (P0) · File: App.js&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;&lt;b&gt;/local-printer-setup&lt;/b&gt; → opens printer setup without login&lt;br&gt;&lt;br&gt;&lt;b&gt;/settlement/preview&lt;/b&gt; → opens demo settlement page&lt;br&gt;&lt;br&gt;&lt;b&gt;/restaurant-picker&lt;/b&gt; → opens (no change)&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;&lt;b&gt;/local-printer-setup&lt;/b&gt; → not logged in: MyGenie login page &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;; logged in: same printer setup&lt;br&gt;&lt;br&gt;&lt;b&gt;/settlement/preview&lt;/b&gt; → page removed &lt;span class=&quot;rem&quot;&gt;REMOVED&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;/restaurant-picker&lt;/b&gt; → no change&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;No new screens. Printer setup inside Settings is unchanged.&lt;/li&gt;&lt;/ul&gt;
+&lt;p class=&quot;note&quot;&gt;Not in this mockup set (P1): CR-445 whole-order comp in payment list, CR-071, CR-529 OTP, CR-540.&lt;/p&gt;
+&lt;/section&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe></section><section class="panel" id="tab-b"><h2>Batch B — Payments · Credit · GST</h2><p class="meta" data-testid="design-status-b">ALL M1–M9 (+M4b) APPROVED BY OWNER 2026-11-15 — Gate 2.5 closed. Choices: M2 hidden · M3 room reason yes · M4 Remove on Open rows only (Partial greyed) · M4b chips 2–5 / dropdown 6+ · M6 0% = no check · M7 pre-fill yes · M8 old Inclusive → Exclusive only where GST ON (backend BB-13) · M9 note yes.</p><p class="meta">Source: <code>memory/design/BATCH-B_GATE2_5_MOCKUPS_2026_11_15.html</code></p><iframe title="Batch B mockups" data-testid="design-frame-b" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Batch B — Gate 2.5 Design Mockups (Current vs Proposed) — 2026-11-15&lt;/title&gt;
+&lt;style&gt;
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,&quot;Segoe UI&quot;,sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px}nav a{color:var(--o);margin-right:14px;text-decoration:none}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 12px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.frame{background:rgba(0,0,0,.35);padding:22px;border-radius:12px;min-height:120px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;max-width:440px;margin:0 auto}
+.mh{padding:16px 18px;border-bottom:1px solid var(--b)}.mh b{font-size:18px}.mh p{margin:4px 0 0;font-size:13px;color:var(--gt)}
+.mb{padding:16px 18px}.mf{padding:12px 18px;border-top:1px solid var(--b);background:var(--s)}
+.warn{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.lbl{font-size:13px;font-weight:600;color:var(--gt);margin:0 0 6px}
+.sel{border:1px solid var(--b);border-radius:12px;padding:11px 14px;font-size:14px;display:flex;justify-content:space-between;margin-bottom:12px}
+.ta{border:1px solid var(--b);border-radius:12px;padding:10px 14px;font-size:13px;color:#999;height:64px;margin-bottom:6px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;color:#fff;font-weight:700;font-size:15px;background:var(--r)}
+.btn.g{background:var(--g)}.btn.dis{opacity:.5}
+.new .add{outline:3px solid var(--g);outline-offset:3px;border-radius:10px}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.rem{display:inline-block;background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.tbd{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}
+.diff li{margin:3px 0}
+.hint{font-size:11px;color:var(--gt)}
+.err{background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.pin{display:flex;gap:10px;justify-content:center;margin:12px 0}.pin span{width:44px;height:52px;border:2px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pin span.f{border-color:var(--o)}
+.panel{background:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.line{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eee}.line:last-child{border:0}
+.box{width:14px;height:14px;border:1.5px solid #888;border-radius:3px;margin-top:2px;flex:none}.box.on{background:var(--g);border-color:var(--g)}
+.grow{flex:1}.amt{font-weight:600}
+.mini{display:block;width:100%;border:1px solid #ddd;border-radius:4px;padding:3px 6px;font-size:11px;color:#999;margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{background:#FAFAFA;color:#71717a;font-weight:600}
+.pill{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--b);margin-right:4px;background:#fff}
+.banner{color:#fff;padding:9px 14px;font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:4px;border-radius:4px}
+.ci{background:#fff;border-radius:10px;padding:14px;font-size:12px}
+.ci .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.ci .opt{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600}.ci .opt.on{box-shadow:0 0 0 2px #1A1A1A}
+.ci input{border:1px solid var(--b);border-radius:6px;padding:6px 8px;width:80px}
+.login{background:#fff;border-radius:14px;padding:22px;text-align:center;max-width:300px;margin:0 auto;font-size:13px}
+.login .f{border:1px solid var(--b);border-radius:8px;padding:9px;margin:8px 0;text-align:left;color:#999}
+.toggle{display:inline-block;width:34px;height:18px;background:var(--g);border-radius:999px;position:relative;vertical-align:middle}.toggle:after{content:&quot;&quot;;position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%}
+.note{font-size:12px;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;margin-top:10px}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}}
+.pm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}.pm span{border:1.5px solid var(--b);border-radius:10px;padding:9px 4px;text-align:center;font-size:12px;font-weight:600;background:#fff}
+.pm span.on{border-color:var(--o);background:#FFF4EE;color:var(--o)}.pm span.off{opacity:.35;text-decoration:line-through}
+.inp{border:1px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:#999;margin-bottom:6px;background:#fff}
+.inp.ok{border-color:var(--g);background:#f0fdf4;color:var(--d)}.inp.bad{border-color:#ef4444;background:#fef2f2;color:var(--d)}
+.act{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;border:1px solid var(--b);margin-right:4px;background:#fff}
+.act.u{color:#B45309;border-color:#F59E0B}.act.c{color:#2563EB;border-color:#93C5FD}.act.dis{opacity:.4}
+.col{min-width:0}.col table{display:block;overflow-x:auto;white-space:nowrap}
+.bill{background:#fff;font-family:monospace;font-size:11px;padding:12px;border-radius:6px;max-width:260px;margin:0 auto;line-height:1.5}
+.rv{margin-top:14px;background:#fff;border:2px dashed var(--o);border-radius:10px;padding:12px 16px;font-size:13px}
+.rv h4{margin:0 0 8px;font-size:13px;color:var(--o)}.rv .q{margin:8px 0 4px;font-weight:600}
+.rv label{display:inline-flex;align-items:center;gap:5px;margin:3px 14px 3px 0;cursor:pointer}
+.rv textarea{width:100%;min-height:48px;border:1px solid var(--b);border-radius:8px;padding:8px;font:inherit;margin-top:6px}
+.rv .st{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
+.rv .st.ok{background:#DCFCE7;color:#166534}.rv .st.no{background:#FEE2E2;color:#991B1B}.rv .st.pend{background:#F3F4F6;color:#666}
+#rvbar{position:sticky;top:0;z-index:5;background:#1A1A1A;color:#fff;padding:10px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+#rvbar button{border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+#rvbar .p{background:var(--g);color:#fff}#rvbar .s{background:#fff;color:#1A1A1A}
+#rvout{display:none;margin:0 32px 20px;width:calc(100% - 64px);min-height:160px;font-family:monospace;font-size:12px}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header data-testid=&quot;mockup-header&quot;&gt;
+&lt;h1&gt;Batch B — Gate 2.5 Design Approval · Current vs Proposed&lt;/h1&gt;
+&lt;p&gt;P0 items with on-screen changes · 2026-11-15 · &quot;Current&quot; is rebuilt from today&#x27;s source code (same text and colours). &quot;Proposed&quot; marks every change with a green outline and tag. Approve or comment per screen (M1–M9). &lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; = choice for you.&lt;/p&gt;
+&lt;p style=&quot;margin-top:8px;font-weight:700;color:#86EFAC&quot;&gt;STATUS: ALL M1–M9 (+M4b) APPROVED BY OWNER 2026-11-15 — Gate 2.5 closed. Choices: M2 hidden · M3 room reason yes · M4 Remove on Open rows only (Partial greyed) · M4b chips 2–5 / dropdown 6+ · M6 0% = no check · M7 pre-fill yes · M8 old Inclusive → Exclusive only where GST ON (backend BB-13) · M9 note yes.&lt;/p&gt;
+&lt;/header&gt;
+&lt;div id=&quot;rvbar&quot; data-testid=&quot;review-bar&quot;&gt;&lt;b&gt;Your review:&lt;/b&gt; &lt;span id=&quot;rvcount&quot;&gt;0/9 reviewed&lt;/span&gt;
+&lt;button class=&quot;s&quot; onclick=&quot;approveAll()&quot; data-testid=&quot;review-approve-all&quot;&gt;Approve the rest (recommended choices)&lt;/button&gt;
+&lt;button class=&quot;p&quot; onclick=&quot;copyReview()&quot; data-testid=&quot;review-copy&quot;&gt;Copy my review&lt;/button&gt;
+&lt;button class=&quot;s&quot; onclick=&quot;resetReview()&quot; data-testid=&quot;review-reset&quot;&gt;Reset&lt;/button&gt;
+&lt;span id=&quot;rvmsg&quot; style=&quot;color:#86EFAC&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;textarea id=&quot;rvout&quot; readonly data-testid=&quot;review-output&quot;&gt;&lt;/textarea&gt;
+&lt;nav&gt;
+&lt;a href=&quot;#m1&quot;&gt;M1 Audit split Unpaid&lt;/a&gt;&lt;a href=&quot;#m2&quot;&gt;M2 Credit on prepaid&lt;/a&gt;&lt;a href=&quot;#m3&quot;&gt;M3 Unpaid reason&lt;/a&gt;&lt;a href=&quot;#m4&quot;&gt;M4 Credit detail&lt;/a&gt;&lt;a href=&quot;#m5&quot;&gt;M5 Reference box&lt;/a&gt;&lt;a href=&quot;#m6&quot;&gt;M6 Tolerance&lt;/a&gt;&lt;a href=&quot;#m7&quot;&gt;M7 B2B address&lt;/a&gt;&lt;a href=&quot;#m8&quot;&gt;M8 GST Exclusive only&lt;/a&gt;&lt;a href=&quot;#m9&quot;&gt;M9 GST per item note&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;section id=&quot;m1&quot; data-testid=&quot;mockup-m1&quot;&gt;
+&lt;h2&gt;M1 · Audit Report — Paid tab row actions for a split payment&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-671 · File: OrderTable.jsx (L248-259)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;Order&lt;/th&gt;&lt;th&gt;Method&lt;/th&gt;&lt;th&gt;Amount&lt;/th&gt;&lt;th&gt;Actions&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021540&lt;/td&gt;&lt;td&gt;Cash&lt;/td&gt;&lt;td&gt;₹420&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act c&quot;&gt;Change&lt;/span&gt;&lt;span class=&quot;act u&quot;&gt;Unpaid&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021541&lt;/td&gt;&lt;td&gt;Partial&lt;/td&gt;&lt;td&gt;₹420&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;hint&quot;&gt;— no buttons —&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;Order&lt;/th&gt;&lt;th&gt;Method&lt;/th&gt;&lt;th&gt;Amount&lt;/th&gt;&lt;th&gt;Actions&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;#021540&lt;/td&gt;&lt;td&gt;Cash&lt;/td&gt;&lt;td&gt;₹420&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act c&quot;&gt;Change&lt;/span&gt;&lt;span class=&quot;act u&quot;&gt;Unpaid&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr class=&quot;add&quot;&gt;&lt;td&gt;#021541&lt;/td&gt;&lt;td&gt;Partial&lt;/td&gt;&lt;td&gt;₹420&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act u&quot;&gt;Unpaid&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; Unpaid on split / partly-paid rows. Whole bill becomes unpaid; backend removes both paid parts (tested).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Not added:&lt;/b&gt; Change method on split rows (Phase 2).&lt;/li&gt;
+&lt;li&gt;Same today/yesterday window and &lt;i&gt;order_unpaid&lt;/i&gt; right as single-method rows.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m2&quot; data-testid=&quot;mockup-m2&quot;&gt;
+&lt;h2&gt;M2 · Collect Bill on a prepaid order — Credit button&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-672 · Files: profileTransform.js, paymentMethods.js, CollectPaymentPanel.jsx, orderTransform.js (placeOrderWithPayment)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;div class=&quot;pm&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span&gt;UPI&lt;/span&gt;&lt;span&gt;Card&lt;/span&gt;&lt;span&gt;Split&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;Credit&lt;/span&gt;&lt;span&gt;To Room&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Credit always shown. On Place &amp;amp; Pay the order is saved &quot;paid / credit&quot; but &lt;b&gt;no credit entry&lt;/b&gt; is created for the customer.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;div class=&quot;panel add&quot;&gt;&lt;b style=&quot;font-size:12px&quot;&gt;Restaurant allows credit on prepaid (admin: Credit → prepaid ON)&lt;/b&gt;
+&lt;div class=&quot;pm&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span&gt;UPI&lt;/span&gt;&lt;span&gt;Card&lt;/span&gt;&lt;span&gt;Split&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;Credit&lt;/span&gt;&lt;span&gt;To Room&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Credit works: customer name + phone asked (same as today on normal orders) and the amount lands in Credit Management. &lt;span class=&quot;chg&quot;&gt;FIXED&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;panel add&quot; style=&quot;margin-top:10px&quot;&gt;&lt;b style=&quot;font-size:12px&quot;&gt;Restaurant does NOT allow it (prepaid OFF)&lt;/b&gt;
+&lt;div class=&quot;pm&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span&gt;UPI&lt;/span&gt;&lt;span&gt;Card&lt;/span&gt;&lt;span&gt;Split&lt;/span&gt;&lt;span class=&quot;off&quot;&gt;Credit&lt;/span&gt;&lt;span&gt;To Room&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Credit button hidden on prepaid orders only. &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;Rule comes from backend admin per restaurant (no new user right).&lt;/li&gt;
+&lt;li&gt;Postpaid orders: no change.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Hidden vs greyed-out with hint &quot;Credit not allowed on prepaid orders&quot; — proposal: hidden.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m3&quot; data-testid=&quot;mockup-m3&quot;&gt;
+&lt;h2&gt;M3 · Mark Unpaid dialog — reason required (all places)&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-542 (+ CR-526 settled-day block, BUG-605 Order Beta dialog opens) · File: MarkUnpaidConfirmDialog.jsx · Used by: Audit, Order Beta, Credit Management, Room Orders &quot;Remove from Room&quot;&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Mark order #021541 as Unpaid?&lt;/b&gt;&lt;p&gt;The order will be removed from the Paid tab and will reappear on the dashboard as a running order. This action will be reflected on other terminals.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot; style=&quot;display:flex;gap:8px&quot;&gt;&lt;button class=&quot;btn&quot; style=&quot;background:#fff;color:#333;border:1px solid #ddd&quot;&gt;Cancel&lt;/button&gt;&lt;button class=&quot;btn&quot; style=&quot;background:#D97706&quot;&gt;Mark Unpaid&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot; style=&quot;color:#fff;margin-top:8px&quot;&gt;Order Beta: tapping Unpaid does nothing today (dialog never opens).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;
+&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Mark order #021541 as Unpaid?&lt;/b&gt;&lt;p&gt;The order will be removed from the Paid tab and will reappear on the dashboard as a running order. This action will be reflected on other terminals.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;mb add&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;Reason &lt;span style=&quot;color:#EF4444&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Wrong payment method entered&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;List set in backend admin (like cancellation reasons). Last option: &lt;b&gt;Other&lt;/b&gt; → text box (required).&lt;/p&gt;
+&lt;div class=&quot;ta&quot;&gt;Other — type reason…&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;mf&quot; style=&quot;display:flex;gap:8px&quot;&gt;&lt;button class=&quot;btn&quot; style=&quot;background:#fff;color:#333;border:1px solid #ddd&quot;&gt;Cancel&lt;/button&gt;&lt;button class=&quot;btn dis&quot; style=&quot;background:#D97706&quot;&gt;Mark Unpaid&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;modal add&quot; style=&quot;margin-top:12px&quot;&gt;&lt;div class=&quot;mb&quot;&gt;&lt;div class=&quot;err&quot;&gt;Day already settled — this order can&#x27;t be made unpaid. &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Shown instead (button disabled) when backend says the day&#x27;s settlement is done.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; required reason dropdown + &quot;Other&quot; text. Mark Unpaid stays disabled until chosen.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Fixed:&lt;/b&gt; Order Beta Unpaid now opens this dialog (BUG-605).&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Added (after backend):&lt;/b&gt; &quot;Day already settled&quot; block in Audit, Order Beta and Credit Management.&lt;/li&gt;
+&lt;li&gt;No reasons configured → message &quot;Add Unpaid reasons in admin&quot; and button disabled (same pattern as Batch A cancel reasons).&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Room Orders &quot;Remove from Room&quot; uses the same action — proposal: reason required there too.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m4&quot; data-testid=&quot;mockup-m4&quot;&gt;
+&lt;h2&gt;M4 · Credit Management — customer detail (Saurav)&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-527 (diner name) + CR-526 (Remove from credit) · File: CreditCustomerDetailSheet.jsx&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Order ID&lt;/th&gt;&lt;th style=&quot;text-align:right&quot;&gt;Credit ( Bill )&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Detail&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;12 Nov&lt;/td&gt;&lt;td&gt;021540&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹420.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#FEE2E2;color:#991B1B&quot;&gt;● Open&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;10 Nov&lt;/td&gt;&lt;td&gt;021388&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹1,250.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#FEF3C7;color:#92400E&quot;&gt;● Partial&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;02 Nov&lt;/td&gt;&lt;td&gt;020911&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹600.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#DCFCE7;color:#166534&quot;&gt;● Covered&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;p class=&quot;hint&quot;&gt;No way to see who ate. No way to remove a wrong credit.&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;div class=&quot;add&quot; style=&quot;padding:4px&quot;&gt;&lt;div style=&quot;margin-bottom:6px;font-size:12px&quot;&gt;Diner: &lt;span class=&quot;pill&quot; style=&quot;background:#1A1A1A;color:#fff&quot;&gt;All&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Saurav&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Abhishek&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/div&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Order ID&lt;/th&gt;&lt;th&gt;Diner &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/th&gt;&lt;th style=&quot;text-align:right&quot;&gt;Credit ( Bill )&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Detail&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;12 Nov&lt;/td&gt;&lt;td&gt;021540&lt;/td&gt;&lt;td&gt;&lt;b&gt;Abhishek&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹420.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#FEE2E2;color:#991B1B&quot;&gt;● Open&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;act u&quot;&gt;Remove&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;10 Nov&lt;/td&gt;&lt;td&gt;021388&lt;/td&gt;&lt;td&gt;Saurav&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹1,250.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#FEF3C7;color:#92400E&quot;&gt;● Partial&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;act u dis&quot;&gt;Remove&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;02 Nov&lt;/td&gt;&lt;td&gt;020911&lt;/td&gt;&lt;td&gt;—&lt;/td&gt;&lt;td style=&quot;text-align:right;color:#F26B33&quot;&gt;₹600.00&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;pill&quot; style=&quot;background:#DCFCE7;color:#166534&quot;&gt;● Covered&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;act&quot; style=&quot;color:#F26B33&quot;&gt;View&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; Diner column = name on the order. &quot;—&quot; when backend has no name. Diner filter chips appear only when the holder has 2+ different diners.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; Remove (amber) → M3 dialog with title &quot;Remove order #021540 from credit?&quot; → order becomes unpaid, credit reversed by backend. Right: &lt;i&gt;order_unpaid&lt;/i&gt;. No day limit here.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Remove only on &lt;b&gt;Open&lt;/b&gt; rows (proposal); Partial shown disabled with hint &quot;Part already paid back&quot;; Covered: no button.&lt;/li&gt;
+&lt;li&gt;Needs backend BB-09 (diner name) before the column can fill.&lt;/li&gt;&lt;/ul&gt;
+&lt;h3 style=&quot;font-size:13px;margin:16px 0 8px;color:var(--g)&quot;&gt;M4b · Many diners (e.g. 20 different names) &lt;span class=&quot;chg&quot;&gt;NEW 2026-11-15 — answer to owner comment&lt;/span&gt;&lt;/h3&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;2–5 diners → chips (as above)&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;&lt;div style=&quot;font-size:12px&quot;&gt;Diner: &lt;span class=&quot;pill&quot; style=&quot;background:#1A1A1A;color:#fff&quot;&gt;All (12)&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Saurav (7)&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Abhishek (3)&lt;/span&gt;&lt;span class=&quot;pill&quot;&gt;Rahul (2)&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Count in brackets = number of credit orders.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;6+ diners → one searchable dropdown&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;
+&lt;div class=&quot;sel&quot; style=&quot;max-width:300px&quot;&gt;&lt;span&gt;Diner: &lt;b&gt;All (58 orders · 20 diners)&lt;/b&gt;&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;
+&lt;div style=&quot;border:1px solid var(--b);border-radius:10px;max-width:300px;padding:8px;background:#fff;font-size:12px&quot;&gt;
+&lt;div class=&quot;inp&quot; style=&quot;margin-bottom:6px&quot;&gt;Search diner…&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;&lt;b&gt;All&lt;/b&gt;&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;58&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Saurav&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;14 · ₹6,240&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Abhishek&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;9 · ₹3,150&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Rahul&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;6 · ₹2,010&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow hint&quot;&gt;… scroll, sorted by most orders&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;(no name)&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;3&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Picking a diner filters the table and shows &quot;Abhishek: 9 orders · ₹3,150 open&quot; above it. Table Diner column stays one line (long names cut with … , full name on hover).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m5&quot; data-testid=&quot;mockup-m5&quot;&gt;
+&lt;h2&gt;M5 · Collect Bill — reference box per payment method&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-514 · File: CollectPaymentPanel.jsx · Config per method in backend admin (show / required / label)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;div class=&quot;pm&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;UPI&lt;/span&gt;&lt;span&gt;Card&lt;/span&gt;&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;UPI: no box.&lt;/p&gt;
+&lt;div class=&quot;pm&quot; style=&quot;margin-top:10px&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span&gt;UPI&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;Card&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;Transaction ID (last 4 digits)&lt;/p&gt;&lt;div class=&quot;inp&quot; style=&quot;text-align:center;letter-spacing:4px&quot;&gt;_ _ _ _&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Card only, always required, exactly 4 digits.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;
+&lt;div class=&quot;pm&quot;&gt;&lt;span&gt;Cash&lt;/span&gt;&lt;span class=&quot;on&quot;&gt;UPI&lt;/span&gt;&lt;span&gt;Card&lt;/span&gt;&lt;/div&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;UPI Ref &lt;span style=&quot;color:#EF4444&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;&lt;div class=&quot;inp&quot;&gt;e.g. 4321 8765 1122&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Required → Pay locked until filled. Optional → label &quot;UPI Ref (optional)&quot;.&lt;/p&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px;margin-top:10px&quot;&gt;Split payment &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/p&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;Cash ₹220&lt;/span&gt;&lt;span class=&quot;hint&quot;&gt;no box (Cash off in admin)&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;grow&quot;&gt;UPI ₹200&lt;/span&gt;&lt;span class=&quot;mini&quot; style=&quot;width:140px&quot;&gt;UPI Ref *&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Changed:&lt;/b&gt; box shown for any method the admin turns on, with the admin label; required/optional from admin.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Kept:&lt;/b&gt; Card &quot;last 4 digits&quot; exactly as today until the admin config exists for that restaurant.&lt;/li&gt;
+&lt;li&gt;Saved ref shows in Order Beta / Audit detail as &quot;Ref&quot; (already displayed today for card).&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m6&quot; data-testid=&quot;mockup-m6&quot;&gt;
+&lt;h2&gt;M6 · Received Amount — tolerance from restaurant setting&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-522 · File: CollectPaymentPanel.jsx (L891-895, L3469-3497) · Only when &quot;Reconcile amount&quot; is ON&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;Received Amount&lt;/p&gt;&lt;div class=&quot;inp ok&quot;&gt;₹150&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;±3% allowed (₹143.56 – ₹152.44)&lt;/p&gt;
+&lt;div class=&quot;inp bad&quot; style=&quot;margin-top:8px&quot;&gt;₹160&lt;/div&gt;&lt;p class=&quot;hint&quot; style=&quot;color:#ef4444&quot;&gt;Amount outside ±3% of bill (₹143.56 – ₹152.44)&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;
+&lt;div class=&quot;panel add&quot;&gt;&lt;b style=&quot;font-size:12px&quot;&gt;Admin set 5%&lt;/b&gt;&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;Received Amount&lt;/p&gt;&lt;div class=&quot;inp ok&quot;&gt;₹150&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;±5% allowed (₹140.60 – ₹155.40) &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;panel add&quot; style=&quot;margin-top:10px&quot;&gt;&lt;b style=&quot;font-size:12px&quot;&gt;Admin left it blank&lt;/b&gt;&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;Received Amount&lt;/p&gt;&lt;div class=&quot;inp ok&quot;&gt;₹160&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;No range line, any amount accepted. &lt;span class=&quot;chg&quot;&gt;CHANGED&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;% comes from backend admin per restaurant (phase 1). Same ± both ways; outside = Pay blocked (as today).&lt;/li&gt;
+&lt;li&gt;Blank = tolerance OFF (owner Q17).&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Admin sets &lt;b&gt;0%&lt;/b&gt; → proposal: amount must equal the bill exactly.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m7&quot; data-testid=&quot;mockup-m7&quot;&gt;
+&lt;h2&gt;M7 · B2B Invoice — billing address&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-536 · Files: CollectPaymentPanel.jsx (L3385-3404), orderTransform.js, OrderEntry.jsx print calls · Bill printed by backend&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;B2B Invoice (Optional)&lt;/p&gt;
+&lt;div style=&quot;display:grid;grid-template-columns:1fr 1fr;gap:6px&quot;&gt;&lt;div class=&quot;inp&quot;&gt;GST Number&lt;/div&gt;&lt;div class=&quot;inp&quot;&gt;GST Registered Name&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;
+&lt;p class=&quot;lbl&quot; style=&quot;font-size:12px&quot;&gt;B2B Invoice (Optional)&lt;/p&gt;
+&lt;div style=&quot;display:grid;grid-template-columns:1fr 1fr;gap:6px&quot;&gt;&lt;div class=&quot;inp&quot;&gt;GST Number&lt;/div&gt;&lt;div class=&quot;inp&quot;&gt;GST Registered Name&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;inp&quot; style=&quot;height:46px&quot;&gt;Billing Address &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;bill add&quot; style=&quot;margin-top:10px&quot;&gt;TAX INVOICE&lt;br&gt;Bill #021540 · 12-11-2026&lt;br&gt;--------------------------&lt;br&gt;Bill to: ACME FOODS PVT LTD&lt;br&gt;GSTIN: 30ABCDE1234F1Z5&lt;br&gt;&lt;b&gt;12, MG Road, Panaji, Goa&lt;/b&gt; &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;br&gt;--------------------------&lt;br&gt;…items…&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Added:&lt;/b&gt; Billing Address under GST fields (all payment methods). Printed under GST name; shown in order reports when saved.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Not added:&lt;/b&gt; UPI ID (owner dropped).&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Pre-fill GST no. / name / address from the selected customer&#x27;s profile when it has a GST number — proposal: yes, editable.&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m8&quot; data-testid=&quot;mockup-m8&quot;&gt;
+&lt;h2&gt;M8 · GST Exclusive only — custom item + menu product&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;CR-394 (owner Q16) · Files: AddCustomItemModal.jsx (L254-265), panels/menu/ProductCard.jsx (L220-228)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Add Custom Item&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;mb&quot;&gt;
+&lt;div style=&quot;display:grid;grid-template-columns:1fr 1fr;gap:8px&quot;&gt;&lt;div&gt;&lt;p class=&quot;lbl&quot;&gt;GST %&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;5&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;p class=&quot;lbl&quot;&gt;Tax Calc&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;Exclusive&lt;/span&gt;&lt;span&gt;⌄&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;Options: Exclusive / Inclusive. Menu product edit has the same &quot;Tax Calc&quot; (Inclusive listed first).&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;frame&quot;&gt;&lt;div class=&quot;modal&quot;&gt;&lt;div class=&quot;mh&quot;&gt;&lt;b&gt;Add Custom Item&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;mb add&quot;&gt;
+&lt;div&gt;&lt;p class=&quot;lbl&quot;&gt;GST %&lt;/p&gt;&lt;div class=&quot;sel&quot;&gt;&lt;span&gt;5&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p class=&quot;hint&quot;&gt;GST is added on top of the price (Exclusive). &lt;span class=&quot;rem&quot;&gt;TAX CALC REMOVED&lt;/span&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;&lt;b&gt;Removed:&lt;/b&gt; Inclusive choice in custom items AND in menu product edit. Everything new saves Exclusive.&lt;/li&gt;
+&lt;li&gt;Bulk editor already has no Tax Calc (BUG-359). Billing maths unchanged.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; An old product already saved as Inclusive: proposal = keep its &quot;Tax Incl.&quot; tag and maths until someone edits it, then it saves Exclusive. (Palm House: 0 such products.)&lt;/li&gt;&lt;/ul&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;m9&quot; data-testid=&quot;mockup-m9&quot;&gt;
+&lt;h2&gt;M9 · Restaurant Settings — GST set per item&lt;/h2&gt;
+&lt;p class=&quot;meta&quot;&gt;BUG-607 · File: panels/settings/ViewEditViews.jsx (L102-123) · Billing maths unchanged (POS already uses each item&#x27;s GST)&lt;/p&gt;
+&lt;div class=&quot;cmp&quot;&gt;
+&lt;div class=&quot;col cur&quot;&gt;&lt;h3&gt;Current&lt;/h3&gt;&lt;div class=&quot;panel&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;GST %&lt;/p&gt;&lt;div class=&quot;inp&quot; style=&quot;color:#333&quot;&gt;5 %&lt;/div&gt;&lt;p class=&quot;hint&quot;&gt;Editable, looks like it applies to every item, but POS bills by each item&#x27;s GST.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;col new&quot;&gt;&lt;h3&gt;Proposed&lt;/h3&gt;&lt;div class=&quot;panel add&quot;&gt;&lt;p class=&quot;lbl&quot;&gt;GST %&lt;/p&gt;&lt;div class=&quot;inp&quot; style=&quot;background:#F3F4F6;color:#999&quot;&gt;5 % (not used)&lt;/div&gt;
+&lt;div class=&quot;note&quot;&gt;GST is set per item for this restaurant. Change it in Menu → item → GST %. &lt;span class=&quot;chg&quot;&gt;NEW&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;ul class=&quot;diff&quot;&gt;&lt;li&gt;Only when backend setting &quot;GST mode = category&quot;. Otherwise no change.&lt;/li&gt;
+&lt;li&gt;Real fix is backend (Gyan, BB-11): scan / web / print / reports must use item GST.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; Show this note or leave Settings untouched — proposal: show note.&lt;/li&gt;&lt;/ul&gt;
+&lt;p class=&quot;note&quot;&gt;No screen change: BUG-671 logic beyond M1, BUG-672 payload fix, CR-526 settlement backend.&lt;/p&gt;
+&lt;/section&gt;
+&lt;script&gt;
+const TBD={
+m1:[],
+m2:[[&quot;Credit on prepaid when not allowed&quot;,[&quot;Hidden (recommended)&quot;,&quot;Greyed out with hint&quot;]]],
+m3:[[&quot;Reason also required for Remove from Room&quot;,[&quot;Yes (recommended)&quot;,&quot;No&quot;]]],
+m4:[[&quot;Remove button shows on&quot;,[&quot;Open rows only; Partial greyed (recommended)&quot;,&quot;Open + Partial rows&quot;,&quot;All rows&quot;]]],
+m5:[],
+m6:[[&quot;Admin sets 0%&quot;,[&quot;Bill amount must match exactly (recommended)&quot;,&quot;Same as blank: no check&quot;]]],
+m7:[[&quot;Pre-fill GST no./name/address from customer profile&quot;,[&quot;Yes, editable (recommended)&quot;,&quot;No, always type&quot;]]],
+m8:[[&quot;Old products already saved Inclusive&quot;,[&quot;Keep as is until edited, then Exclusive (recommended)&quot;,&quot;Change all to Exclusive now&quot;]]],
+m9:[[&quot;Show &#x27;GST set per item&#x27; note in Settings&quot;,[&quot;Yes (recommended)&quot;,&quot;No, leave Settings as is&quot;]]]
+};
+const KEY=&#x27;batchb_g25_review_v1&#x27;;
+let R=JSON.parse(localStorage.getItem(KEY)||&#x27;{}&#x27;);
+function save(){localStorage.setItem(KEY,JSON.stringify(R));upd();}
+function upd(){let n=0;Object.keys(TBD).forEach(id=&gt;{const v=(R[id]||{}).d;const el=document.getElementById(&#x27;st-&#x27;+id);
+if(v){n++;el.className=&#x27;st &#x27;+(v===&#x27;Approve&#x27;?&#x27;ok&#x27;:&#x27;no&#x27;);el.textContent=v===&#x27;Approve&#x27;?&#x27;APPROVED&#x27;:&#x27;NEEDS CHANGE&#x27;;}else{el.className=&#x27;st pend&#x27;;el.textContent=&#x27;NOT REVIEWED&#x27;;}});
+document.getElementById(&#x27;rvcount&#x27;).textContent=n+&#x27;/9 reviewed&#x27;;}
+function build(){Object.keys(TBD).forEach(id=&gt;{const sec=document.getElementById(id);if(!sec)return;R[id]=R[id]||{};
+const d=document.createElement(&#x27;div&#x27;);d.className=&#x27;rv&#x27;;d.setAttribute(&#x27;data-testid&#x27;,&#x27;review-&#x27;+id);
+let h=&#x27;&lt;h4&gt;YOUR REVIEW — &#x27;+id.toUpperCase()+&#x27;&lt;span class=&quot;st pend&quot; id=&quot;st-&#x27;+id+&#x27;&quot;&gt;&lt;/span&gt;&lt;/h4&gt;&#x27;;
+h+=&#x27;&lt;div class=&quot;q&quot;&gt;Decision&lt;/div&gt;&#x27;+[&#x27;Approve&#x27;,&#x27;Needs change&#x27;].map(o=&gt;&#x27;&lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;d-&#x27;+id+&#x27;&quot; value=&quot;&#x27;+o+&#x27;&quot; data-testid=&quot;review-&#x27;+id+&#x27;-&#x27;+(o===&#x27;Approve&#x27;?&#x27;approve&#x27;:&#x27;change&#x27;)+&#x27;&quot;&gt; &#x27;+o+&#x27;&lt;/label&gt;&#x27;).join(&#x27;&#x27;);
+TBD[id].forEach((t,i)=&gt;{h+=&#x27;&lt;div class=&quot;q&quot;&gt;&lt;span class=&quot;tbd&quot;&gt;TBD&lt;/span&gt; &#x27;+t[0]+&#x27;&lt;/div&gt;&#x27;+t[1].map((o,j)=&gt;&#x27;&lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;t-&#x27;+id+&#x27;-&#x27;+i+&#x27;&quot; value=&quot;&#x27;+o+&#x27;&quot; data-testid=&quot;review-&#x27;+id+&#x27;-tbd&#x27;+i+&#x27;-&#x27;+j+&#x27;&quot;&gt; &#x27;+o+&#x27;&lt;/label&gt;&#x27;).join(&#x27;&#x27;);});
+h+=&#x27;&lt;textarea placeholder=&quot;Comments (optional)&quot; data-testid=&quot;review-&#x27;+id+&#x27;-comment&quot;&gt;&lt;/textarea&gt;&#x27;;
+d.innerHTML=h;sec.appendChild(d);
+d.querySelectorAll(&#x27;input[name=&quot;d-&#x27;+id+&#x27;&quot;]&#x27;).forEach(x=&gt;{x.checked=R[id].d===x.value;x.onchange=()=&gt;{R[id].d=x.value;save();}});
+TBD[id].forEach((t,i)=&gt;d.querySelectorAll(&#x27;input[name=&quot;t-&#x27;+id+&#x27;-&#x27;+i+&#x27;&quot;]&#x27;).forEach(x=&gt;{x.checked=(R[id].t||{})[i]===x.value;x.onchange=()=&gt;{R[id].t=R[id].t||{};R[id].t[i]=x.value;save();}}));
+const ta=d.querySelector(&#x27;textarea&#x27;);ta.value=R[id].c||&#x27;&#x27;;ta.oninput=()=&gt;{R[id].c=ta.value;save();};});upd();}
+function approveAll(){Object.keys(TBD).forEach(id=&gt;{R[id]=R[id]||{};if(!R[id].d)R[id].d=&#x27;Approve&#x27;;R[id].t=R[id].t||{};TBD[id].forEach((t,i)=&gt;{if(!R[id].t[i])R[id].t[i]=t[1][0];});});save();document.querySelectorAll(&#x27;.rv&#x27;).forEach(e=&gt;e.remove());build();msg(&#x27;Unreviewed screens set to Approve — check, then Copy&#x27;);}
+function resetReview(){if(!confirm(&#x27;Clear your review?&#x27;))return;R={};save();document.querySelectorAll(&#x27;.rv&#x27;).forEach(e=&gt;e.remove());build();}
+function text(){let o=&#x27;BATCH B GATE 2.5 REVIEW\n&#x27;;Object.keys(TBD).forEach(id=&gt;{const r=R[id]||{};o+=&#x27;\n&#x27;+id.toUpperCase()+&#x27;: &#x27;+(r.d||&#x27;NOT REVIEWED&#x27;);
+TBD[id].forEach((t,i)=&gt;{o+=&#x27;\n  - &#x27;+t[0]+&#x27;: &#x27;+((r.t||{})[i]||&#x27;(not chosen)&#x27;);});if(r.c)o+=&#x27;\n  - Comment: &#x27;+r.c;});return o;}
+function msg(m){const e=document.getElementById(&#x27;rvmsg&#x27;);e.textContent=m;setTimeout(()=&gt;e.textContent=&#x27;&#x27;,4000);}
+function copyReview(){const t=text();const out=document.getElementById(&#x27;rvout&#x27;);out.value=t;out.style.display=&#x27;block&#x27;;
+(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=&gt;msg(&#x27;Copied! Paste it in the chat.&#x27;)).catch(()=&gt;{out.select();msg(&#x27;Select the text below and copy it.&#x27;);});}
+build();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe></section><section class="panel" id="tab-c"><h2>Batch C — Order Beta report</h2><p class="meta" data-testid="design-status-c">No design mockups in the Batch C pack yet (Gate 2 paused, not frozen).</p><div class="empty" data-testid="design-empty-c">No mockups yet for this batch.</div></section><section class="panel" id="tab-d"><h2>Batch D — Dashboard · Order entry · Cards</h2><p class="meta" data-testid="design-status-d">CR-521 printed-card colour #FFEDD5 (owner decision R1–R6). Releases with CR-525 after backend BD-01.</p><details class="note"><summary>Design decision note</summary><h1>CR-521: Orange Shade Decision for "Bill Printed" Cards</h1>
+<h2>Executive Summary</h2>
+<p>Per the owner's request, the "Bill Printed" cards on the POS dashboard must transition from a light-green background (<code>#E8F5E9</code>) to an attractive orange background while retaining the strong green border (<code>#329937</code>, 2px).</p>
+<h2>1. Chosen Orange Shade</h2>
+<ul>
+<li><strong>Background Color (<code>billPrintedBg</code>):</strong> <code>#FFEDD5</code> (Tailwind Orange-100 equivalent)</li>
+<li><strong>Hover/Active Variant (if needed):</strong> <code>#FED7AA</code> (Tailwind Orange-200 equivalent)</li>
+</ul>
+<h3>Why <code>#FFEDD5</code>?</h3>
+<ul>
+<li><strong>High Visibility:</strong> It acts as a warm, prominent alert for busy staff to collect payment.</li>
+<li><strong>Distinct from "Ready":</strong> Ready cards utilize a white background with a <code>#F26B33</code> orange border. The new printed state flips this dynamic (solid <code>#FFEDD5</code> background framed by the strict <code>#329937</code> green border), ensuring it reads as an entirely separate, final state from across the room.</li>
+<li><strong>Harmony:</strong> It perfectly complements both the existing primary orange (<code>#F26B33</code>) and the required green border without vibrating visually.</li>
+</ul>
+<h2>2. Contrast Analysis (WCAG 2.1 AA Compliant)</h2>
+<p>Calculated against the new <code>#FFEDD5</code> background:
+- <strong>Dark Text (<code>#1A1A1A</code>):</strong> Contrast ratio ~13.8:1 (Passes WCAG AAA)
+- <strong>Gray Text (<code>#666666</code>):</strong> Contrast ratio ~4.9:1 (Passes WCAG AA)
+- <strong>Primary Green Border &amp; Buttons (<code>#329937</code>):</strong> Contrast ratio ~5.5:1 (Passes WCAG AA)
+- <strong>Primary Orange Badges (<code>#F26B33</code>):</strong> Ratio ~2.7:1 (Used for large components like badges where 3:1 is recommended; it passes for non-text UI components).</p>
+<h2>3. Recommended Companion Adjustments</h2>
+<p>Placing existing gray or light-orange elements onto a solid <code>#FFEDD5</code> background can cause visual mud or loss of contrast. To maintain the crisp, attractive design, please apply these optional but highly recommended adjustments exclusively to cards in the "Printed" state:</p>
+<ol>
+<li><strong>Header Pill Background:</strong> </li>
+<li><em>Current:</em> <code>#F5F5F5</code> (Light gray)</li>
+<li><em>Proposed:</em> <code>#FFFFFF</code> (Pure white) </li>
+<li><em>Reason:</em> Gray on light orange looks muddy. White creates a clean, legible cutout.</li>
+<li><strong>Delivery Buttons (Assign / Dispatch / On The Way):</strong></li>
+<li><em>Current:</em> Background <code>#FFF3E8</code></li>
+<li><em>Proposed:</em> Background <code>#FFFFFF</code> </li>
+<li><em>Reason:</em> <code>#FFF3E8</code> is too similar in lightness to <code>#FFEDD5</code>. Changing these buttons to white ensures they remain crisp and clickable.</li>
+<li><strong>KOT Icon Button:</strong></li>
+<li>Ensure the background is forced to <code>#FFFFFF</code> rather than transparent, so it pops clearly against the new orange card background.</li>
+</ol></details><p class="meta">Source: <code>memory/mockups/CR-521_CURRENT_VS_PROPOSED_2026_11_15.html</code></p><iframe title="Batch D mockups" data-testid="design-frame-d" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;CR-521: Orange Shade Decision&lt;/title&gt;
+&lt;style&gt;
+  body { 
+    font-family: &#x27;Segoe UI&#x27;, Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #F8F9FA; 
+    padding: 2rem; 
+    color: #1A1A1A; 
+  }
+  h1 { 
+    text-align: center; 
+    margin-bottom: 2rem; 
+  }
+  .grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 1.5rem; 
+  }
+  .card { 
+    border-radius: 8px; 
+    padding: 1rem; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+  }
+  .card-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+  }
+  .pill { 
+    padding: 4px 8px; 
+    border-radius: 12px; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+  }
+  .source { 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    font-size: 0.7rem; 
+    color: white; 
+    font-weight: bold;
+  }
+  .swiggy { background-color: #FC8019; }
+  .table-no { 
+    font-size: 1.25rem; 
+    font-weight: bold; 
+    color: #1A1A1A;
+  }
+  .details { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 0.875rem; 
+    color: #666666; 
+    margin-top: 4px;
+  }
+  .amount { 
+    font-weight: bold; 
+    color: #1A1A1A; 
+  }
+  .actions { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 1rem; 
+  }
+  .btn { 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    font-size: 0.875rem; 
+    cursor: pointer; 
+    border: none; 
+  }
+  .btn-green { 
+    background-color: #329937; 
+    color: white; 
+  }
+  .btn-outline { 
+    background-color: white; 
+    border: 1px solid #E5E5E5; 
+    color: #1A1A1A; 
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Status Specifics */
+  .prep { 
+    background-color: #FFFFFF; 
+    border: 2px solid #F59E0B; 
+  }
+  .prep .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .ready { 
+    background-color: #FFFFFF; 
+    border: 2px solid #F26B33; 
+  }
+  .ready .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .printed-old { 
+    background-color: #E8F5E9; 
+    border: 2px solid #329937; 
+  }
+  .printed-old .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .printed-new { 
+    background-color: #FFEDD5; 
+    border: 2px solid #329937; 
+  }
+  /* Companion Adjustments */
+  .printed-new .pill { background-color: #FFFFFF; color: #666666; } 
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;CR-521: Bill Printed Card Comparison&lt;/h1&gt;
+
+&lt;div class=&quot;grid&quot;&gt;
+  &lt;!-- Preparing --&gt;
+  &lt;div class=&quot;card prep&quot;&gt;
+    &lt;div class=&quot;card-header&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;Preparing (12m)&lt;/span&gt;
+      &lt;span class=&quot;source swiggy&quot;&gt;Swiggy&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;table-no&quot;&gt;Table 04&lt;/div&gt;
+      &lt;div class=&quot;details&quot;&gt;
+        &lt;span&gt;4 Items&lt;/span&gt;
+        &lt;span class=&quot;amount&quot;&gt;$ 42.50&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;actions&quot;&gt;
+      &lt;button class=&quot;btn btn-outline&quot;&gt;🖨️ KOT&lt;/button&gt;
+      &lt;button class=&quot;btn btn-outline&quot;&gt;Update&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Ready --&gt;
+  &lt;div class=&quot;card ready&quot;&gt;
+    &lt;div class=&quot;card-header&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;Ready (2m)&lt;/span&gt;
+      &lt;span class=&quot;source swiggy&quot;&gt;Swiggy&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;table-no&quot;&gt;Table 08&lt;/div&gt;
+      &lt;div class=&quot;details&quot;&gt;
+        &lt;span&gt;2 Items&lt;/span&gt;
+        &lt;span class=&quot;amount&quot;&gt;$ 18.00&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;actions&quot;&gt;
+      &lt;button class=&quot;btn btn-outline&quot;&gt;🖨️ KOT&lt;/button&gt;
+      &lt;button class=&quot;btn btn-green&quot; style=&quot;background-color: #F26B33;&quot;&gt;Dispatch&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Current Printed --&gt;
+  &lt;div class=&quot;card printed-old&quot;&gt;
+    &lt;div class=&quot;card-header&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;Printed (Current)&lt;/span&gt;
+      &lt;span class=&quot;source swiggy&quot;&gt;Swiggy&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;table-no&quot;&gt;Table 12&lt;/div&gt;
+      &lt;div class=&quot;details&quot;&gt;
+        &lt;span&gt;5 Items&lt;/span&gt;
+        &lt;span class=&quot;amount&quot;&gt;$ 65.20&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;actions&quot;&gt;
+      &lt;button class=&quot;btn btn-outline&quot;&gt;🖨️ KOT&lt;/button&gt;
+      &lt;button class=&quot;btn btn-green&quot;&gt;Bill&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Proposed Printed --&gt;
+  &lt;div class=&quot;card printed-new&quot;&gt;
+    &lt;div class=&quot;card-header&quot;&gt;
+      &lt;span class=&quot;pill&quot;&gt;Printed (Proposed)&lt;/span&gt;
+      &lt;span class=&quot;source swiggy&quot;&gt;Swiggy&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;table-no&quot;&gt;Table 12&lt;/div&gt;
+      &lt;div class=&quot;details&quot;&gt;
+        &lt;span&gt;5 Items&lt;/span&gt;
+        &lt;span class=&quot;amount&quot;&gt;$ 65.20&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;actions&quot;&gt;
+      &lt;button class=&quot;btn btn-outline&quot; style=&quot;background-color: #FFFFFF;&quot;&gt;🖨️ KOT&lt;/button&gt;
+      &lt;button class=&quot;btn btn-green&quot;&gt;Bill&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;"></iframe></section><script>document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tab,.panel').forEach(function(e){e.classList.remove('on')});b.classList.add('on');document.getElementById('tab-'+b.dataset.tab).classList.add('on');history.replaceState(null,'','#'+b.dataset.tab)}});var h=location.hash.slice(1);var t=document.querySelector('.tab[data-tab="'+h+'"]');if(t){t.click()}</script></body></html>

@@ -48,7 +48,7 @@ Implemented CR-359: rewired `StationMappingTab.jsx` from the wrong CR-160 endpoi
 | owner@ruby.com / Qplazm@10 | Secondary — has 3 print_agent entries, 3 default_users |
 | owner@cafeclub.com / Qplazm@10 | Edge case — 0 default_users (second dropdown will be empty) |
 
-**App URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
+**App URL:** https://core-frontend-live.preview.emergentagent.com
 **Path:** Settings → Printer Settings → Station Mapping tab
 
 ---

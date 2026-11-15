@@ -66,7 +66,7 @@ Self-test: 9/9 PASS · Unit tests (hideSectionRows): 6/6 PASS · webpack 0 new w
 
 ## 4. ENVIRONMENT
 
-Frontend: RUNNING, webpack compiled 1 pre-existing warning, URL: `https://project-build-173--7p508o4t.preview.emergentagent.com`
+Frontend: RUNNING, webpack compiled 1 pre-existing warning, URL: `https://mygenie-pos-ui-6.preview.emergentagent.com`
 
 ---
 

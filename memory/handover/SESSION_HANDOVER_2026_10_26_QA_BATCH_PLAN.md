@@ -39,7 +39,7 @@
 | **Kunafa Mahal** | cashier@kunafamahal.com | Qplazm@10 | Cashier | 689 |
 
 **Login endpoint:** `POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/login`
-**Preview URL:** `https://project-build-173--7p508o4t.preview.emergentagent.com`
+**Preview URL:** `https://pos-frontend-8.preview.emergentagent.com`
 **Credentials file:** `/app/memory/test_credentials.md`
 
 ---

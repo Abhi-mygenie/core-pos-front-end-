@@ -70,7 +70,7 @@ EXIT GATE: 5/5 PASSED
 | owner@palmhouse.com | Qplazm@10 | Status Config page + palmhouse served orders |
 | owner@cafe103.com | Qplazm@10 | Alternative test — dine-in orders |
 
-**URL:** https://project-build-173--7p508o4t.preview.emergentagent.com
+**URL:** https://pos-front-preview-10.preview.emergentagent.com
 **Navigation:** Login → loading → dashboard → sidebar gear (Settings) → Dashboard Display → `/visibility/status-config`
 **Note:** Direct URL navigation to /visibility/status-config redirects to /loading if app context not initialized. Navigate from dashboard only.
 

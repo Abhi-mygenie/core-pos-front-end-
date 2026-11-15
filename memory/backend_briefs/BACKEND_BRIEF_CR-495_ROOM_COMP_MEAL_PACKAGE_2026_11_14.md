@@ -1,5 +1,7 @@
 # Backend Brief — CR-495 Meal Package at Check-In + Room Comp Limit — 2026-11-14
 
+> **SUPERSEDED 2026-11-15 (owner R21)** by the base document `backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_15.html` §CR-495. Kept for history; not updated.
+
 To: Parth (rooms / check-in) · cc Gyan (rights / PIN, CR-494) · FE: Abhishek
 Batch: A · Priority: P0 · Risk: CRITICAL · Client: ALL
 Source: `impact/CR-495_IMPACT_ANALYSIS.md`, `change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md` (R6–R8)
@@ -24,14 +26,14 @@ Probe evidence (The Palm House, RID 541, read-only): `evidence/BATCH-A-IA/probes
 | B-495-3 | Limit settings | Restaurant settings keys: ₹ per guest per meal for each package (breakfast / lunch / dinner). Which meals apply per package: BB = breakfast, HB = breakfast + one main meal, FB = all three. |
 | B-495-4 | Daily used counter | Server-side comp amount used per room, per meal, per business day. Returned to POS before comp and updated on comp save; shared across devices. |
 | B-495-5 | Meal slot | How a comp is assigned to breakfast / lunch / dinner (time window per meal in settings, or chosen by cashier). Backend to propose. |
-| B-495-6 | Enforcement | On comp save for a room order: if over remaining limit and no valid PIN → reject. |
+| B-495-6 | Enforcement | On comp save for a room order: if over remaining limit, or the meal is outside the package (owner R18), and no valid PIN → reject. |
 | B-495-7 | OTA mapping (PMS outlets) | Map channel-manager meal plan / rateplan to the 4 packages. Same release as non-PMS. |
 
 ## Questions for backend
 1. Existing check-in API: can `meal_package` + `guest_count` be added without breaking current check-in? (Owner rule: changes additive.)
 2. Business-day boundary: reuse existing day-closure / restaurant schedule?
-3. Half board: which main meal (lunch or dinner) — OPEN, owner to decide with backend at impact discussion.
-4. B-495-5 meal slot assignment (time window vs cashier pick) — OPEN, owner + backend to discuss.
+3. Half board: which main meal (lunch or dinner) — **Owner R16 (2026-11-15): guest chooses lunch or dinner at check-in** → please store it with the package (e.g. `half_board_meal` = lunch/dinner) and return it with B-495-1.
+4. B-495-5 meal slot assignment — **Owner R16 (2026-11-15): cashier picks the meal for each comp** → comp save carries the meal; counter B-495-4 per that meal.
 
 ## FE scope (after backend keys land)
 Package + guest count on CheckInForm / CheckInPage; remaining-limit display and PIN prompt in comp flow for room orders. Hotspots with open items: CheckInForm.jsx / CheckInPage.jsx, CollectPaymentPanel — Gate 3 must re-verify at HEAD.

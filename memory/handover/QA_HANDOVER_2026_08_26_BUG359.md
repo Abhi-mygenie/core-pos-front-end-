@@ -57,5 +57,5 @@
 
 ## 5. Environment
 
-- App: https://project-build-173--7p508o4t.preview.emergentagent.com
+- App: https://core-frontend-dev.preview.emergentagent.com
 - Routes: /restaurant-settings (Step 4) · /menu (ProductForm/BulkEditor)

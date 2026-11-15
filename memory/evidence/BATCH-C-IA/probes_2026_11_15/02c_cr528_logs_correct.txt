@@ -1,0 +1,4 @@
+success: True
+orders_count: 0
+top keys: ['success', 'restaurant_id', 'filter', 'total_orders', 'payment_summary', 'order']
+raw (400): {'success': True, 'restaurant_id': 644, 'filter': {'sort_by': 'created_at', 'type': 'date_range', 'from_date': '2026-11-14', 'to_date': '2026-11-15', 'fixed_date': None}, 'total_orders': 0, 'payment_summary': {'total_paid_amount': 0, 'partial_payment_total': 0, 'by_payment_method': []}, 'order': []}
