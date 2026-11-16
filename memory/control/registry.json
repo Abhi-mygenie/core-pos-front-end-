@@ -38402,6 +38402,48 @@
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Audit / Fraud Detection",
       "intake_doc": "change_requests/36_CR-544_CANCEL_AFTER_UNPAID_AUDIT_INTAKE.md"
+    },
+    {
+      "id": "BUG-677",
+      "type": "BUG",
+      "title": "Socket Disconnection in PWA — Reconnection Exhaustion + No Auto-Reconnect",
+      "priority": "P0",
+      "risk": "HIGH",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 — Investigation complete (10/10 steps, HIGH confidence). 7 proposed fixes (F1-F7). Multi-factor root cause: reconnection budget exhaustion + server-initiated disconnect + joined_restaurant ACK ignored.",
+      "sprint_key": "nov_cr_batch",
+      "area": "Aggregator / Sockets",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "intake_doc": "change_requests/BUG-677_SOCKET_PWA_DISCONNECT_INTAKE.md",
+      "blocked_on": ""
+    },
+    {
+      "id": "BUG-678",
+      "type": "BUG",
+      "title": "Service Charge in API Payload Despite UI Toggle OFF (Prepaid)",
+      "priority": "P0",
+      "risk": "CRITICAL",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 — Investigation complete (8/10 steps, HIGH confidence). 2-line fix at OrderEntry.jsx L1708-1709 + L2492-2493. BUG-662 regression.",
+      "sprint_key": "nov_cr_batch",
+      "area": "Payments / Coupons / Credit",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "intake_doc": "change_requests/BUG-678_SC_PREPAID_PAYLOAD_INTAKE.md",
+      "blocked_on": ""
+    },
+    {
+      "id": "CR-545",
+      "type": "CR",
+      "title": "APS (₹1) Web Order — APS Tag + Item Cancel in Popup + Price Edit",
+      "priority": "P1",
+      "risk": "HIGH",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 — Investigation complete. Phase 1 FE-only (~40 lines). Phase 2 backend-blocked (update-food-price endpoint). Renamed from CR-543 (ID conflict with Late Cancellation Audit).",
+      "sprint_key": "nov_cr_batch",
+      "area": "Menu / Order Entry",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "intake_doc": "change_requests/CR-545_APS_WEB_ORDER_PRICE_ENTRY_INTAKE.md",
+      "blocked_on": "B1 (cancel-food-item on YTC orders), B3/B4 (update-food-price endpoint) — Gyan"
     }
   ],
   "meta": {

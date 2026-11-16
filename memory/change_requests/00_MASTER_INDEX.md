@@ -53,3 +53,13 @@
 ## Priority changes — 2026-11-16
   CR-529: P1→P2 (owner: all OTP work deferred further)
   CR-444: RECOMMEND CLOSE (duplicate of Sales Audit / CR-474)
+
+## Addendum — 2026-11-16 (Investigation + Intake batch from separate agent)
+37   BUG-677   P0  BUG  Aggregator / Sockets           Socket Disconnection in PWA — Reconnection Exhaustion
+38   BUG-678   P0  BUG  Payments / Credit              Service Charge in API Payload Despite UI Toggle OFF (Prepaid)
+39   CR-545    P1  CR   Menu / Order Entry              APS (₹1) Web Order — APS Tag + Item Cancel + Price Edit (renamed from CR-543 conflict)
+
+## ID Conflict Resolution — 2026-11-16
+  CR-543 (this registry): Late Cancellation Audit: Time-Threshold-Based Flagging (created this session)
+  CR-543 (other agent zip): APS Web Order Price Entry → RENAMED to CR-545
+  CR-544 (this registry): Cancel After Unpaid Audit (created this session)
