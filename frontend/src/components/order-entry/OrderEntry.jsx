@@ -1557,7 +1557,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     navigateAfterOrderAction();
   };
 
-  const handleCancelFood = async ({ item, reason, cancelQuantity }) => {
+  const handleCancelFood = async ({ item, reason, cancelQuantity, note = '' }) => { // BUG-670 B1: +note
     setIsPlacingOrder(true);
     const orderId = effectiveTable?.orderId || placedOrderId;
     const engagePromise = orderId ? waitForOrderEngaged(orderId) : null;
@@ -1566,6 +1566,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       // CR-POS2-003-REOPEN-A (May-2026): printer agents + cart for all-stations rule.
       printerAgents: printerAgents || [],
       allCartItems: cartItems,
+      cancelItemNote: note, // BUG-670 B1: forward note to payload
     });
     api.put(API_ENDPOINTS.CANCEL_ITEM, payload)
       .then(() => {

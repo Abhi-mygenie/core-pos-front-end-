@@ -310,6 +310,7 @@ export const getItemSalesAggregated = async (fromDate, toDate, sortBy = 'collect
         drill.cancels.push({
           reason: reason || orderReason || '',
           notes,
+          cancelNote: line.cancel_item_note || '', // BUG-674 B2: staff free-text cancellation note
           type: line.cancel_type || '—',
           by: line.cancel_by_name || '—',
           scope: isOrderLevelCancel ? 'order' : 'item',

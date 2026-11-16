@@ -2320,3 +2320,10 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 
 | `frontend/src/api/constants.js` | **L84:** `LINK_CUSTOMER_ORDER` endpoint added (`/api/v1/vendoremployee/pos/user-check-create`). | CR-523 E1 IMPL 2026-11-16 |
 | `frontend/src/components/order-entry/OrderEntry.jsx` | **L1103-1126:** `saveCustomerToServer` rewritten — POST to `user-check-create` (10-field payload, 3 deps) replacing `update-place-order` workaround (30-field payload, 10 deps). | CR-523 E2 IMPL 2026-11-16 |
+
+| `frontend/src/components/order-entry/CancelFoodModal.jsx` | **L35:** `note: additionalNotes.trim()` added to onCancel payload. **L218:** `maxLength={255}` on textarea. | BUG-670 B1 IMPL 2026-11-16 |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | **L1560:** `note` param added to `handleCancelFood`; **L1568:** `cancelItemNote: note` forwarded to options. | BUG-670 B1 IMPL 2026-11-16 |
+| `frontend/src/api/transforms/orderTransform.js` | **L1006:** `cancel_item_note: options.cancelItemNote \|\| ''` added to cancelItem payload. | BUG-670 B1 IMPL 2026-11-16 |
+| `frontend/src/api/services/insightsService.js` | **L313:** `cancelNote: line.cancel_item_note \|\| ''` added to cancels drill push. | BUG-674 B2a IMPL 2026-11-16 |
+| `frontend/src/pages/reports-module/CancellationsMockup.jsx` | **L931:** "Cancel Note" column header added. **L953-960:** cancelNote display (amber icon) added. | BUG-674 B2a IMPL 2026-11-16 |
+| `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` | **L743:** Cancel info (reason + note + cancelled-by) shown on cancelled rows. | BUG-674 B2b IMPL 2026-11-16 |

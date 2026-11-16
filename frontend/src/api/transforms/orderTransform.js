@@ -1003,6 +1003,7 @@ export const toAPI = {
       cancel_type:   item.status === 'preparing' ? 'Pre-Serve' : 'Post-Serve',
       // CR-POS2-003-REOPEN-A (May-2026): always emit, never omit. OQ-PA-9.
       printer_agent: printerAgentForCancelItem,
+      cancel_item_note: options.cancelItemNote || '', // BUG-670 B1: free-text note, "" when blank
     };
   },
 

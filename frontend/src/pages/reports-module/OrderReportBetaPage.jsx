@@ -740,6 +740,12 @@ export default function OrderReportBetaPage() {
                               <td className="px-3 py-2 text-right text-zinc-500">{fmtINR(row.service_tax)}</td>
                               <td className="px-3 py-2"><Pill label={pay.label} cls={pay.cls} /></td>
                               <td className="px-3 py-2"><Pill label={status.label} cls={status.cls} /></td>
+                              {/* BUG-674 B2b: cancel info on cancelled rows */}
+                              {row.cancellation_reason && (
+                                <td className="px-3 py-2 text-xs text-red-600" colSpan={1} data-testid={`cancel-reason-${row.order_id}`}>
+                                  {row.cancellation_reason}{row.cancellation_note ? ` — ${row.cancellation_note}` : ''}{row.canceled_by_name ? ` (${row.canceled_by_name})` : ''}
+                                </td>
+                              )}
                               {/* CR-349: action buttons — Change / Unpaid / Reprint / Refund */}
                               <td className="px-3 py-2">
                                 <div className="flex items-center justify-end gap-1 flex-wrap">

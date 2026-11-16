@@ -929,6 +929,7 @@ const CancellationsMockup = () => {
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Scope</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Reason</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Notes</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Cancel Note</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Cancelled By</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Station</th>
                           </tr>
@@ -952,6 +953,14 @@ const CancellationsMockup = () => {
                                   <span className="inline-flex items-center gap-1 text-xs text-blue-600" title={r.notes}>
                                     <MessageSquare className="w-3 h-3" />
                                     <span className="truncate max-w-[100px]">{r.notes}</span>
+                                  </span>
+                                ) : <span className="text-zinc-300">—</span>}
+                              </td>
+                              <td className="px-4 py-3 text-sm max-w-[140px]">{/* BUG-674 B2: staff cancel note */}
+                                {r.cancelNote ? (
+                                  <span className="inline-flex items-center gap-1 text-xs text-amber-600" title={r.cancelNote}>
+                                    <MessageSquare className="w-3 h-3" />
+                                    <span className="truncate max-w-[100px]">{r.cancelNote}</span>
                                   </span>
                                 ) : <span className="text-zinc-300">—</span>}
                               </td>

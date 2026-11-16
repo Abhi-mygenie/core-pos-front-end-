@@ -32,7 +32,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await onCancel({ item, reason: selectedReason, cancelQuantity: cancelQty, remainingQuantity: itemQty - cancelQty });
+      await onCancel({ item, reason: selectedReason, cancelQuantity: cancelQty, remainingQuantity: itemQty - cancelQty, note: additionalNotes.trim() }); // BUG-670 B1: pass note
       onClose();
     } catch (err) {
       const msg = err?.response?.data?.errors?.[0]?.message || err?.message || "Cancellation failed. Please try again.";
@@ -217,6 +217,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
               placeholder="Type here..."
               value={additionalNotes}
               onChange={(e) => setAdditionalNotes(e.target.value)}
+              maxLength={255}
               className="w-full p-4 rounded-xl border resize-none h-28 focus:outline-none focus:ring-2"
               style={{
                 borderColor: COLORS.borderGray,
