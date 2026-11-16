@@ -2327,3 +2327,4 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `frontend/src/api/services/insightsService.js` | **L313:** `cancelNote: line.cancel_item_note \|\| ''` added to cancels drill push. | BUG-674 B2a IMPL 2026-11-16 |
 | `frontend/src/pages/reports-module/CancellationsMockup.jsx` | **L931:** "Cancel Note" column header added. **L953-960:** cancelNote display (amber icon) added. | BUG-674 B2a IMPL 2026-11-16 |
 | `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` | **L743:** Cancel info (reason + note + cancelled-by) shown on cancelled rows. | BUG-674 B2b IMPL 2026-11-16 |
+| `frontend/src/pages/reports-module/CancellationsMockup.jsx` | CR-524: Punch Time + Duration columns (transform L281-288, export cols L413-414, table headers L944-945, table cells L980-981) | CR-524 IMPL 2026-11-16 |

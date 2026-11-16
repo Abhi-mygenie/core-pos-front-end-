@@ -37650,7 +37650,7 @@
       "id": "CR-524",
       "type": "CR",
       "title": "Cancellation Report: Punch Time and Cancellation Duration Columns",
-      "status": "GATE_1_INTAKE_COMPLETE — OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-16 (Punch Time + Duration columns coded. 1 file: CancellationsMockup.jsx. created_at + cancel_time_full mapped, duration computed with null guard.)",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",

@@ -278,6 +278,14 @@ const CancellationsMockup = () => {
       station: i.station || '',
       readyAt: i.ready_at || null,
       serveAt: i.serve_at || null,
+      // CR-524: punch time + cancellation duration
+      punchTime: i.created_at || '',
+      cancelTimeFull: i.cancel_time_full || '',
+      cancellationDuration: (() => { // CR-524
+        const start = Date.parse(i.created_at);
+        const end = Date.parse(i.cancel_time_full);
+        return Number.isFinite(start) && Number.isFinite(end) ? Math.max(0, Math.round((end - start) / 60000)) : null;
+      })(),
     }));
   }, [cancelBackend]);
 
@@ -402,6 +410,8 @@ const CancellationsMockup = () => {
           { key: 'scope', label: 'Scope', format: 'text', align: 'left', width: 60 },
           { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 120 },
           { key: 'cancelledBy', label: 'Cancelled By', format: 'text', align: 'left', width: 100 },
+          { key: 'punchTime', label: 'Punch Time', format: 'text', align: 'left', width: 120 }, // CR-524
+          { key: 'cancellationDuration', label: 'Duration (min)', format: 'integer', align: 'right', width: 80 }, // CR-524
           { key: 'station', label: 'Station', format: 'text', align: 'left', width: 80 },
         ],
         rows: cancelledItems,
@@ -931,6 +941,8 @@ const CancellationsMockup = () => {
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Notes</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Cancel Note</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Cancelled By</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Punch Time</th>
+                            <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase">Duration (min)</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Station</th>
                           </tr>
                         </thead>
@@ -965,11 +977,13 @@ const CancellationsMockup = () => {
                                 ) : <span className="text-zinc-300">—</span>}
                               </td>
                               <td className="px-4 py-3 text-sm text-zinc-700">{r.cancelledBy || '—'}</td>
+                              <td className="px-4 py-3 text-sm text-zinc-600">{r.punchTime ? new Date(r.punchTime).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, day: '2-digit', month: 'short' }) : '—'}</td>
+                              <td className="px-4 py-3 text-sm text-right font-medium text-zinc-700">{r.cancellationDuration != null ? r.cancellationDuration : '—'}</td>
                               <td className="px-4 py-3 text-xs text-zinc-400">{r.station || '—'}</td>
                             </tr>
                           ))}
                           {filteredTable.length === 0 && (
-                            <tr><td colSpan={10} className="px-4 py-8 text-center text-zinc-400 text-sm">No cancellations match the current filter</td></tr>
+                            <tr><td colSpan={12} className="px-4 py-8 text-center text-zinc-400 text-sm">No cancellations match the current filter</td></tr>
                           )}
                         </tbody>
                       </table>
