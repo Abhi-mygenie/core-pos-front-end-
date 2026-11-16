@@ -426,6 +426,7 @@ export const fromAPI = {
       eInvoice: apiSettings.settings?.e_invoice === 'Yes' || apiSettings.settings?.e_invoice === true, // CR-431: accepts both string "Yes" and boolean true; path: restaurants[0].settings.e_invoice
       roleBaseDiscount: toBoolean(apiSettings.settings?.role_base_discount ?? apiSettings.role_base_discount), // BUG-538: gates discount section in CPP — dual-path mirrors all other settings fields
       orderEditAccess: toBoolean(apiSettings.settings?.order_edit_access ?? apiSettings.order_edit_access), // CR-489: lock order edit after bill print
+      cancelNoteMandatory: apiSettings.settings?.cancel_note_mandatory === 'Yes', // CR-493 B5: BA-05
     };
   },
 };

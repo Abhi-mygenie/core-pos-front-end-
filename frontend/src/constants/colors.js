@@ -15,7 +15,7 @@ export const COLORS = {
   // Error/Danger Colors
   errorBg: "#FEE2E2",     // Light red background
   errorText: "#EF4444",   // Red text
-  billPrintedBg: "#E8F5E9", // BUG-583: light green background when bill is printed
+  billPrintedBg: "#FFEDD5", // CR-521: orange background when bill is printed (was green #E8F5E9)
 };
 
 // Logo URLs

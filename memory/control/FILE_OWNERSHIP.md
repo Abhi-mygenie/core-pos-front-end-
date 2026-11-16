@@ -2328,3 +2328,20 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `frontend/src/pages/reports-module/CancellationsMockup.jsx` | **L931:** "Cancel Note" column header added. **L953-960:** cancelNote display (amber icon) added. | BUG-674 B2a IMPL 2026-11-16 |
 | `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` | **L743:** Cancel info (reason + note + cancelled-by) shown on cancelled rows. | BUG-674 B2b IMPL 2026-11-16 |
 | `frontend/src/pages/reports-module/CancellationsMockup.jsx` | CR-524: Punch Time + Duration columns (transform L281-288, export cols L413-414, table headers L944-945, table cells L980-981) | CR-524 IMPL 2026-11-16 |
+
+
+## FILE_OWNERSHIP — Batch 1 IMPL (2026-11-16) — markers `// CR-521`, `// CR-493 B5`, `// CR-526`, `// BUG-647`
+
+| File | Change | Item |
+|---|---|---|
+| `src/constants/colors.js` | L18: `billPrintedBg` #E8F5E9→#FFEDD5 | CR-521 |
+| `src/api/transforms/profileTransform.js` | L429: `cancelNoteMandatory` added to settings | CR-493 B5 |
+| `src/contexts/RestaurantContext.jsx` | L55: `cancelNoteMandatory: false` default | CR-493 B5 |
+| `src/api/transforms/restaurantSettingsTransform.js` | L108: `cancelNoteMandatory: toBool(advanced.cancel_note_mandatory)` | CR-493 B5 |
+| `src/components/order-entry/OrderEntry.jsx` | L3148+L3158: `cancelNoteMandatory` prop; L1148+L1159: BUG-647 tax guards; taxFlags plumbing to 6 orderToAPI calls | CR-493 B5 + BUG-647 |
+| `src/components/order-entry/CancelOrderModal.jsx` | L8+L18+L116+L139: mandatory note toggle | CR-493 B5 |
+| `src/components/order-entry/CancelFoodModal.jsx` | L5+L31+L214+L256: mandatory note toggle | CR-493 B5 |
+| `src/pages/reports-module/OrderReportBetaPage.jsx` | L909-914: open+order+onCancel prop fix | CR-526 Part 1 |
+| `src/components/credit/CreditCustomerDetailSheet.jsx` | E1-E6: imports, CreditRow Remove button, Action column, state+handler, dialog | CR-526 Part 2 |
+| `src/api/transforms/orderTransform.js` | L807: applyTaxFlags wrapper; L843: gstEnabled/vatEnabled extras; L918: gstTax/vat zeroing; L951: SC/Tip/Del GST conditional; E4: taxFlags in placeOrder/updateOrder/placeOrderWithPayment/collectBillExisting; E5: food_detail gstEnabled/vatEnabled guards | BUG-647 |
+| `src/components/order-entry/CartPanel.jsx` | L431-433: BUG-647 taxTotals guard on GST/VAT toggle | BUG-647 |

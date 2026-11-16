@@ -798,6 +798,16 @@ const buildCartItem = (item) => {
   };
 };
 
+// BUG-647: zero tax fields when restaurant toggle is OFF
+const applyTaxFlags = (builtItem, taxFlags = {}) => {
+  const { gstEnabled = true, vatEnabled = true } = taxFlags;
+  const isGst = parseFloat(builtItem.gst_amount) > 0;
+  const isVat = parseFloat(builtItem.vat_amount) > 0;
+  if (isGst && !gstEnabled) return { ...builtItem, gst_amount: '0.00' };
+  if (isVat && !vatEnabled) return { ...builtItem, vat_amount: '0.00' };
+  return builtItem;
+};
+
 /**
  * Calculate order-level financial totals from built cart items
  * @param {Array} cart - Array of items returned by buildCartItem
@@ -829,6 +839,8 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
     // round-off. Defaults to true for backward compatibility (callers that don't
     // pass this field still get ceiling round-off from BUG-051).
     roundOffEnabled = true,
+    gstEnabled = true,    // BUG-647: zero GST when restaurant toggle is OFF
+    vatEnabled = true,    // BUG-647: zero VAT when restaurant toggle is OFF
   } = extras;
   let subtotal = 0;
   let gstTax = 0;
@@ -900,10 +912,14 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
   // BUG-054: VAT proration mirrors GST (frozen TAX-003). Previously only GST
   // was prorated by discount; VAT was left at the pre-discount amount.
   // BUG-305: same split for VAT (mirrors GST fix above)
-  const vatTaxPostDiscount =
+  let vatTaxPostDiscount =
     discountableVat * (1 - discountableRatio) + (vatTax - discountableVat);
 
   gstTax = itemGstPostDiscount + scGstAmt + tipGstAmt + delGstAmt;
+
+  // BUG-647: zero tax when restaurant toggle is OFF
+  if (!gstEnabled) { gstTax = 0; }
+  if (!vatEnabled) { vatTaxPostDiscount = 0; }
 
   const totalTax = Math.round((gstTax + vatTaxPostDiscount) * 100) / 100;
 
@@ -932,12 +948,12 @@ const calcOrderTotals = (cart, serviceChargePercentage = 0, extras = {}) => {
     // Backend echoes these as `total_service_tax_amount` / `tip_tax_amount` on
     // socket responses (orderTransform.js:187,189). Pre-CR-013 these were
     // hardcoded 0 at every payload site (BUG-232 wording). Now real.
-    service_gst_tax_amount:      Math.round(scGstAmt  * 100) / 100,
-    tip_tax_amount:              Math.round(tipGstAmt * 100) / 100,
+    service_gst_tax_amount:      gstEnabled ? Math.round(scGstAmt  * 100) / 100 : 0,  // BUG-647
+    tip_tax_amount:              gstEnabled ? Math.round(tipGstAmt * 100) / 100 : 0,  // BUG-647
     // BUG-083: Separate delivery GST key. Absent for non-delivery (delGstAmt = 0
     // when deliveryCharge = 0) per owner answer Q-083-6. Composite gst_tax
     // retains delivery GST per DEL-001 policy.
-    ...(delGstAmt > 0 ? { delivery_charge_gst_amount: Math.round(delGstAmt * 100) / 100 } : {}),
+    ...(gstEnabled && delGstAmt > 0 ? { delivery_charge_gst_amount: Math.round(delGstAmt * 100) / 100 } : {}), // BUG-647
   };
 };
 
@@ -1055,10 +1071,10 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrder: (table, cartItems, customer, orderType, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, deliveryCharge = 0, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, deliveryCharge = 0, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null, taxFlags = {} } = options;
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
-    const cart = expandCompItems(unplacedItems).map(buildCartItem).map(({ _fullUnitPrice, ...item }) => item); // BUG-298/299
+    const cart = expandCompItems(unplacedItems).map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)).map(({ _fullUnitPrice, ...item }) => item); // BUG-298/299 + BUG-647
     // CR-008 / Bucket D1-Cap follow-up (May-2026, delivery-charge in totals):
     // Pass deliveryCharge into calcOrderTotals so order_amount, tax_amount, and
     // round_up include the delivery component. Backend echoes order_amount back
@@ -1066,11 +1082,12 @@ export const toAPI = {
     // total. Gated to delivery orders only to prevent stray state bleeding into
     // non-delivery payloads (defense-in-depth; OrderEntry already gates on entry).
     // CR-013 (May-2026): plumb component-specific GST rate pcts into calcOrderTotals.
-    const totals = calcOrderTotals(expandCompItems(unplacedItems).map(buildCartItem), serviceChargePercentage, {
+    const totals = calcOrderTotals(expandCompItems(unplacedItems).map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)), serviceChargePercentage, {
       deliveryCharge: orderType === 'delivery' ? (Number(deliveryCharge) || 0) : 0,
       serviceChargeTaxPct,
       deliveryChargeGstPct,
       roundOffEnabled,
+      gstEnabled: taxFlags.gstEnabled, vatEnabled: taxFlags.vatEnabled, // BUG-647
     });
 
     // CR-POS2-003 (May-2026): KOT-station printer agents only when print_kot:'Yes'.
@@ -1186,17 +1203,18 @@ export const toAPI = {
       printerAgents = [],
       // BUG-052: profile-driven round-off gate.
       roundOffEnabled = true,
+      taxFlags = {}, // BUG-647
     } = options;
 
     // cart-update payload: only NEW (unplaced) items
-    const cartUpdateRaw = newItems.map(buildCartItem);
+    const cartUpdateRaw = newItems.map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)); // BUG-647
     const cartUpdate = cartUpdateRaw.map(({ _fullUnitPrice, ...item }) => item);
 
     // COMBINED financial totals: ALL items (placed + unplaced, excluding cancelled)
     // ROOM_CHECKIN_FIX_V2 (Step 3): also exclude the synthetic Check-In marker
     // so the combined totals aggregation does not loop over a zero-priced noise row.
     const allActiveItems = allCartItems.filter(i => i.status !== 'cancelled' && !i.isCheckInMarker);
-    const allBuilt = allActiveItems.map(buildCartItem);
+    const allBuilt = allActiveItems.map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)); // BUG-647
     // CR-008 / Bucket D1-Cap follow-up (May-2026, delivery-charge in totals):
     // Same gate-and-pass as placeOrder so update-place-order echoes order_amount
     // including delivery. Without this, dashboard / audit tiles drop delivery
@@ -1207,6 +1225,7 @@ export const toAPI = {
       serviceChargeTaxPct,
       deliveryChargeGstPct,
       roundOffEnabled,
+      gstEnabled: taxFlags.gstEnabled, vatEnabled: taxFlags.vatEnabled, // BUG-647
     });
 
     // CR-POS2-003-REOPEN-A (May-2026): KOT-station printer agents for update/edit.
@@ -1293,7 +1312,7 @@ export const toAPI = {
   // ==========================================================================
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
-    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, autoBill = false, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null } = options;
+    const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, autoBill = false, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null, taxFlags = {} } = options;
     const { method = 'cash', transactionId = '', splitPayments = [], tip = 0, deliveryCharge = 0, discounts = {}, tabContact } = paymentData; // BUG-672: add tabContact
 
     // BUG-672: Detect TAB payment (mirrors collectBillExisting L1539)
@@ -1301,7 +1320,7 @@ export const toAPI = {
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     // CR-028: Build cart items then inject per-item discount_amount
-    const builtItems = expandCompItems(unplacedItems).map(buildCartItem); // BUG-298/299
+    const builtItems = expandCompItems(unplacedItems).map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)); // BUG-298/299 + BUG-647
     const itemDiscounts = distributeItemDiscounts(builtItems, unplacedItems, parseFloat(discounts.total || 0), {
       couponDiscount: discounts.couponDiscount || 0,
       couponType: discounts.couponType || '',
@@ -1335,13 +1354,14 @@ export const toAPI = {
     });
     // BUG-006 (AD-101): pass discount/tip/delivery so SC and GST compute on post-discount base
     // CR-013 (May-2026): plumb component-specific GST rate pcts into calcOrderTotals.
-    const totals = calcOrderTotals(unplacedItems.map(buildCartItem), serviceChargePercentage, {
+    const totals = calcOrderTotals(unplacedItems.map(buildCartItem).map(i => applyTaxFlags(i, taxFlags)), serviceChargePercentage, {
       discountAmount: parseFloat(discounts.total || 0),
       tipAmount:      parseFloat(tip || 0),
       deliveryCharge: parseFloat(deliveryCharge || 0),
       serviceChargeTaxPct,
       deliveryChargeGstPct,
       roundOffEnabled,
+      gstEnabled: taxFlags.gstEnabled, vatEnabled: taxFlags.vatEnabled, // BUG-647
     });
     const finalTotal = paymentData.finalTotal || totals.order_amount || 0;
 
@@ -1514,7 +1534,7 @@ export const toAPI = {
   // ==========================================================================
 
   collectBillExisting: (table, cartItems, customer, paymentData, options = {}) => {
-    const { autoBill = false, waiterId = '', restaurantName = '', paymentType = '' } = options;
+    const { autoBill = false, waiterId = '', restaurantName = '', paymentType = '', taxFlags = {} } = options; // BUG-647: taxFlags
     const { 
       method = 'cash', transactionId = '',
       splitPayments = [], tip = 0,
@@ -1562,6 +1582,7 @@ export const toAPI = {
     // preserves pre-fix behavior (transform used to strip the marker upstream).
     const placedSourceItems = (cartItems || [])
       .filter(item => item.placed && item.status !== 'cancelled' && !item.isCheckInMarker);
+    const { gstEnabled = true, vatEnabled = true } = taxFlags; // BUG-647
     const food_detail_raw = expandCompItems(placedSourceItems) // BUG-298/299: split partial-comp items into 2 lines
       .map(item => {
         const unitPrice = item.unitPrice || item.price || 0;
@@ -1614,8 +1635,8 @@ export const toAPI = {
           food_amount:        isRuntimeComp ? 0 : (unitPrice * qty),
           variation_amount:   isRuntimeComp ? 0 : variationAmount * qty, // BUG-VQTY fix
           addon_amount:       isRuntimeComp ? 0 : addonAmount * qty, // BUG-166 fix
-          gst_amount:         isRuntimeComp ? '0.00' : String((isGst ? taxAmount : 0).toFixed(2)),
-          vat_amount:         isRuntimeComp ? '0.00' : String((!isGst ? taxAmount : 0).toFixed(2)),
+          gst_amount:         isRuntimeComp ? '0.00' : String((isGst && gstEnabled ? taxAmount : 0).toFixed(2)), // BUG-647
+          vat_amount:         isRuntimeComp ? '0.00' : String((!isGst && vatEnabled ? taxAmount : 0).toFixed(2)), // BUG-647
           discount_amount:    '0.00',
           // BUG-018 Part 1 (Apr-2026) — catalog-complimentary: actual price in
           // complementary_total (order-bill-payment key; distinct from place-order's

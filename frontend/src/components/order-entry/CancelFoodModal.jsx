@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X, ChevronDown, Minus, Plus } from "lucide-react";
 import { COLORS } from "../../constants";
 
-const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
+const CancelFoodModal = ({ item, reasons = [], onClose, onCancel, cancelNoteMandatory = false }) => {
   const [selectedReason, setSelectedReason] = useState(null);
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -29,6 +29,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
 
   const handleCancel = async () => {
     if (!selectedReason || submitting) return;
+    if (cancelNoteMandatory && !additionalNotes.trim()) return; // CR-493 B5
     setSubmitting(true);
     setSubmitError(null);
     try {
@@ -211,7 +212,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
           {/* Additional Notes Textarea */}
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-              Additional Notes (Optional)
+              {cancelNoteMandatory ? <>Additional Notes <span style={{ color: '#EF4444' }}>*</span></> : 'Additional Notes (Optional)'}
             </label>
             <textarea
               placeholder="Type here..."
@@ -253,7 +254,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
 
           <button
             onClick={handleCancel}
-            disabled={!selectedReason || submitting}
+            disabled={!selectedReason || submitting || (cancelNoteMandatory && !additionalNotes.trim())}
             className="w-full py-3.5 font-semibold text-white text-base rounded-xl transition-colors disabled:opacity-50"
             style={{ backgroundColor: "#ef4444" }}
             data-testid="cancel-confirm-btn"

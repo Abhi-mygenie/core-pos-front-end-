@@ -105,6 +105,7 @@ export const fromAPI = {
         deliveryPersonName: advanced.delivery_person_name || '',
         // Settlement & Feedback
         settelmentReport: toBool(advanced.settelment_report),
+        cancelNoteMandatory: toBool(advanced.cancel_note_mandatory), // CR-493 B5
         feedBack:         toBool(advanced.feed_back),
         sendFeedbackLink: advanced.send_feedback_link || 'internal',
         feedbackUrl:      advanced.feedback_url || '',

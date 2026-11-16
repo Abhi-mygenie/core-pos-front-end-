@@ -5,7 +5,7 @@ import { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import { COLORS } from "../../constants";
 
-const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, mode = 'cancel' }) => {
+const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, mode = 'cancel', cancelNoteMandatory = false }) => {
   const [selectedReason, setSelectedReason] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [cancellationNote, setCancellationNote] = useState('');
@@ -16,6 +16,7 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
 
   const handleCancel = async () => {
     if (!selectedReason || submitting) return;
+    if (cancelNoteMandatory && !cancellationNote.trim()) return; // CR-493 B5
     setSubmitting(true);
     setError(null);
     try {
@@ -113,7 +114,7 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
           {/* BUG-674 E2: Note textarea — shown in all modes (cancel + refund) */}
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-              {isRefund ? 'Refund Note' : 'Notes (Optional)'}
+              {isRefund ? 'Refund Note' : (cancelNoteMandatory ? <>Notes <span style={{ color: COLORS.errorText }}>*</span></> : 'Notes (Optional)')}
             </label>
             <textarea
               value={cancellationNote}
@@ -136,7 +137,7 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
           )}
           <button
             onClick={handleCancel}
-            disabled={!selectedReason || submitting}
+            disabled={!selectedReason || submitting || (cancelNoteMandatory && !cancellationNote.trim())}
             data-testid="cancel-order-confirm-btn"
             className="w-full py-3.5 font-semibold text-white text-base rounded-xl transition-colors disabled:opacity-50"
             style={{ backgroundColor: '#EF4444' }}

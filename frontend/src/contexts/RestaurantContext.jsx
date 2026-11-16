@@ -54,6 +54,7 @@ export const RestaurantProvider = ({ children }) => {
       allowPostServeCancel2: false,
       orderCancelWindowMinutes: 0,
       itemCancelWindowMinutes: 0,
+      cancelNoteMandatory: false, // CR-493 B5
     };
   }, [restaurant]);
 

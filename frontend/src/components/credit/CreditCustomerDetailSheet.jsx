@@ -10,7 +10,7 @@
  */
 import { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Loader2, PlusCircle, AlertTriangle, Info, ChevronDown, ChevronRight, Zap, FileText, Calendar, Users } from 'lucide-react';
+import { Loader2, PlusCircle, AlertTriangle, Info, ChevronDown, ChevronRight, Zap, FileText, Calendar, Users, Trash2 } from 'lucide-react'; // CR-526
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '../ui/tooltip';
 import { COLORS } from '../../constants';
@@ -23,6 +23,9 @@ import {
 } from '../../api/transforms/creditTransform';
 import CreditClearanceModal from './CreditClearanceModal';
 import OrderDetailSheet from '../reports/OrderDetailSheet';
+import { useAuth } from '../../contexts'; // CR-526
+import { makeOrderUnpaid } from '../../api/services/paymentMutationService'; // CR-526
+import MarkUnpaidConfirmDialog from '../reports/MarkUnpaidConfirmDialog'; // CR-526
 
 function SummaryTile({ label, value, sub, testId, accent }) {
   return (
@@ -109,7 +112,7 @@ function CoverageBadge({ status }) {
  * Renders the shared columns for a credit row inside any bucket section.
  * `coverage` is the per-row FIFO coverage object.
  */
-function CreditRow({ entry, index, coverage, onViewBill }) {
+function CreditRow({ entry, index, coverage, onViewBill, onRemove, canRemove }) {
   const c = entry;
   return (
     <tr key={c.id} style={{ borderTop: `1px solid ${COLORS.borderGray}` }} data-testid={`credit-txn-row-${c.id}`}>
@@ -148,6 +151,22 @@ function CreditRow({ entry, index, coverage, onViewBill }) {
           </button>
         )}
       </td>
+      {/* CR-526: Remove from credit action column */}
+      <td className="px-3 py-2 text-right">
+        {canRemove && coverage.status === 'open' ? (
+          <button
+            data-testid={`credit-remove-btn-${c.id}`}
+            onClick={() => onRemove(c)}
+            className="text-xs font-medium px-2 py-1 rounded border"
+            style={{ color: '#DC2626', borderColor: '#FCA5A5' }}
+          >
+            <Trash2 className="w-3 h-3 inline-block mr-1" />
+            Remove
+          </button>
+        ) : coverage.status === 'partial' ? (
+          <span className="text-xs text-zinc-400" title="Part already paid back — cannot remove">—</span>
+        ) : null}
+      </td>
     </tr>
   );
 }
@@ -161,6 +180,7 @@ const CREDIT_TABLE_HEAD = (
       <th className="px-3 py-2 text-right text-xs font-semibold uppercase" style={{ color: COLORS.grayText }}>Credit ( Bill )</th>
       <th className="px-3 py-2 text-left text-xs font-semibold uppercase" style={{ color: COLORS.grayText }}>Status</th>
       <th className="px-3 py-2 text-right text-xs font-semibold uppercase" style={{ color: COLORS.grayText }}>Detail</th>
+      <th className="px-3 py-2 text-right text-xs font-semibold uppercase" style={{ color: COLORS.grayText }}>Action</th>
     </tr>
   </thead>
 );
@@ -181,6 +201,10 @@ export default function CreditCustomerDetailSheet({
   const [error, setError] = useState(null);
   const [clearanceOpen, setClearanceOpen] = useState(false);
   const [billOrder, setBillOrder] = useState(null); // { orderId, restaurantOrderId }
+  const { hasPermission } = useAuth(); // CR-526
+  const canRemoveCredit = hasPermission?.('order_unpaid') ?? false;
+  const [removeTarget, setRemoveTarget] = useState(null); // CR-526: order to remove from credit
+  const [removePending, setRemovePending] = useState(false);
 
   // Phase 2A: client-side date range filter (temporary — Q4=C)
   const [dateFrom, setDateFrom] = useState('');
@@ -253,6 +277,22 @@ export default function CreditCustomerDetailSheet({
       setLoading(false);
     }
   }, [customer?.id]);
+
+  // CR-526: Remove order from credit
+  const handleRemoveConfirm = async () => {
+    if (!removeTarget?.orderId) return;
+    setRemovePending(true);
+    try {
+      await makeOrderUnpaid(removeTarget.orderId);
+      setRemoveTarget(null);
+      fetchDetail(); // refetch to update the list
+      if (onPaymentRecorded) onPaymentRecorded(); // refresh parent balance
+    } catch (err) {
+      console.error('[CR-526] Remove from credit failed:', err);
+    } finally {
+      setRemovePending(false);
+    }
+  };
 
   useEffect(() => {
     if (open && customer?.id) fetchDetail();
@@ -575,6 +615,8 @@ export default function CreditCustomerDetailSheet({
                                       index={e.originalIndex}
                                       coverage={e.coverage}
                                       onViewBill={setBillOrder}
+                                      onRemove={() => {}}
+                                      canRemove={false}
                                     />
                                   ))}
                                 </tbody>
@@ -609,6 +651,8 @@ export default function CreditCustomerDetailSheet({
                                   index={e.originalIndex}
                                   coverage={e.coverage}
                                   onViewBill={setBillOrder}
+                                  onRemove={() => {}}
+                                  canRemove={false}
                                 />
                               ))}
                             </tbody>
@@ -641,6 +685,8 @@ export default function CreditCustomerDetailSheet({
                                   index={e.originalIndex}
                                   coverage={e.coverage}
                                   onViewBill={setBillOrder}
+                                  onRemove={(c) => setRemoveTarget({ orderId: c.orderId, restaurantOrderId: c.restaurantOrderId, amount: c.amount })}
+                                  canRemove={canRemoveCredit}
                                 />
                               ))}
                             </tbody>
@@ -698,6 +744,21 @@ export default function CreditCustomerDetailSheet({
           ) : null}
         </SheetContent>
       </Sheet>
+
+      {/* CR-526: Remove from credit confirmation dialog */}
+      {removeTarget && (
+        <MarkUnpaidConfirmDialog
+          open={!!removeTarget}
+          order={{ id: removeTarget.orderId, orderNumber: removeTarget.restaurantOrderId }}
+          isPending={removePending}
+          onConfirm={handleRemoveConfirm}
+          onCancel={() => setRemoveTarget(null)}
+          title={`Remove order #${removeTarget.restaurantOrderId || removeTarget.orderId} from credit?`}
+          description={`This will remove ₹${removeTarget.amount?.toLocaleString('en-IN') || '0'} from this customer's credit. The order will become unpaid.`}
+          actionLabel="Remove from Credit"
+          actionClassName="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+        />
+      )}
 
       {/* SS4 modal — separate from drawer, opened from inside SS2 */}
       <CreditClearanceModal

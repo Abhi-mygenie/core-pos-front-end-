@@ -1146,6 +1146,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     const linePrice = item.totalPrice || (item.price * item.qty);
     const taxPct = parseFloat(item.tax?.percentage) || 0;
     if (taxPct === 0) return sum;
+    // BUG-647: skip tax when restaurant toggle is OFF
+    const taxType = (item.tax?.type || 'GST').toUpperCase();
+    if (taxType === 'GST' && !restaurant?.tax?.gstStatus) return sum;
+    if (taxType === 'VAT' && !restaurant?.settings?.vatEnabled) return sum;
     const isInclusive = item.tax?.calculation === 'Inclusive';
     return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
   }, 0);
@@ -1157,6 +1161,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     const linePrice = item.totalPrice || (item.price * item.qty);
     const taxPct = parseFloat(item.tax?.percentage) || 0;
     if (taxPct === 0) return sum;
+    // BUG-647: skip tax when restaurant toggle is OFF
+    const taxType = (item.tax?.type || 'GST').toUpperCase();
+    if (taxType === 'GST' && !restaurant?.tax?.gstStatus) return sum;
+    if (taxType === 'VAT' && !restaurant?.settings?.vatEnabled) return sum;
     const isInclusive = item.tax?.calculation === 'Inclusive';
     return sum + (isInclusive ? linePrice - (linePrice / (1 + taxPct / 100)) : linePrice * (taxPct / 100));
   }, 0);
@@ -1328,6 +1336,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           printerAgents: printerAgents || [],
           // BUG-052: profile-driven round-off gate.
           roundOffEnabled: restaurant?.totalRound !== false,
+          taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false }, // BUG-647
         });
 
         // Start listening for socket engage BEFORE firing API
@@ -1389,6 +1398,8 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             printerAgents: printerAgents || [],
             // BUG-052: profile-driven round-off gate.
             roundOffEnabled: restaurant?.totalRound !== false,
+            // BUG-647: thread tax flags for GST/VAT zeroing when toggle is OFF
+            taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false },
             // CR-018: Schedule Order
             scheduled: isScheduled,
             scheduleAt }
@@ -1722,6 +1733,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             deliveryChargeGstPct: restaurant?.deliveryChargeGstPct || 0,
             printerAgents: printerAgents || [],
             roundOffEnabled: restaurant?.totalRound !== false,
+            taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false }, // BUG-647
             // CR-018: Schedule Order
             scheduled: isScheduled,
             scheduleAt,
@@ -1871,6 +1883,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           autoBill: qsrAutoBill,
           waiterId: user?.employeeId || '',
           restaurantName: restaurant?.name || '',
+          taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false }, // BUG-647
         });
         console.log('[QSR Pay] collect-bill payload:', JSON.stringify(payload, null, 2));
 
@@ -2499,6 +2512,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                         printerAgents: printerAgents || [],
                         // BUG-052: profile-driven round-off gate.
                         roundOffEnabled: restaurant?.totalRound !== false,
+                        taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false }, // BUG-647
                         // CR-018: Schedule Order
                         scheduled: isScheduled,
                         scheduleAt }
@@ -2602,6 +2616,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       autoBill: printAllBill,
                       waiterId: user?.employeeId || '',
                       restaurantName: restaurant?.name || '',
+                      taxFlags: { gstEnabled: restaurant?.tax?.gstStatus !== false, vatEnabled: restaurant?.settings?.vatEnabled !== false }, // BUG-647
                     });
                     console.log('[CollectBill] payload:', JSON.stringify(payload, null, 2));
 
@@ -3145,7 +3160,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         <ShiftTableModal currentTable={table} onClose={() => setShowShiftModal(false)} onShift={handleShift} />
       )}
       {cancelItem && (
-        <CancelFoodModal item={cancelItem} reasons={getItemCancellationReasons()} onClose={() => setCancelItem(null)} onCancel={handleCancelFood} />
+        <CancelFoodModal item={cancelItem} reasons={getItemCancellationReasons()} onClose={() => setCancelItem(null)} onCancel={handleCancelFood} cancelNoteMandatory={cancellation.cancelNoteMandatory} />
       )}
       {compItem && (
         <MarkCompModal
@@ -3162,6 +3177,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
           onClose={() => setShowCancelOrderModal(false)}
           onCancel={handleCancelOrder}
           mode={orderData?.razorpayOrderId ? 'refund' : 'cancel'}
+          cancelNoteMandatory={cancellation.cancelNoteMandatory}
         />
       )}
       {showCustomItemModal && (

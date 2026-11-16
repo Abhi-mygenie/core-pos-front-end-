@@ -908,10 +908,11 @@ export default function OrderReportBetaPage() {
       {/* CR-349: Mark-as-Unpaid confirmation dialog */}
       {markUnpaidTarget && (
         <MarkUnpaidConfirmDialog
-          order={{ id: markUnpaidTarget.order_id, orderNumber: markUnpaidTarget.restaurant_order_id }}
+          open={!!markUnpaidTarget}
+          order={markUnpaidTarget}
           isPending={markUnpaidPending}
           onConfirm={() => handleUnpaidConfirm(markUnpaidTarget)}
-          onClose={() => setMarkUnpaidTarget(null)}
+          onCancel={() => setMarkUnpaidTarget(null)}
         />
       )}
       {/* CR-503: Collect Bill Drawer for Hold/Credit rows */}
