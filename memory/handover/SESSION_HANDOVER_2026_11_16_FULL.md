@@ -194,3 +194,39 @@ Rationale: start with lowest risk to build momentum and verify environment. CR-4
 ---
 
 *End of handover. Ref: Emergent session 2026-11-16.*
+
+---
+
+## Addendum — Gate 3 Validation (2026-11-16, PLANNING role)
+
+All 5 Batch 1 items validated line-by-line at HEAD. Results:
+
+| # | ID | Gate 3 status | Lines verified? | Ready to code? |
+|---|---|---|---|---|
+| 1 | CR-521 | **FROZEN** | ✅ `constants/colors.js` L18 | ✅ YES |
+| 2 | CR-493 B5 | **FROZEN** | ✅ All 12 lines across 6 files match plan | ✅ YES |
+| 3 | BUG-639 | **VERIFY ONLY** | ✅ `expandCompItems` at L1304 — already present | ✅ Verify + close |
+| 4a | CR-526 Part 1 | **FROZEN** | ⚠️ Line shifted: plan L853 → actual L909-914 | ✅ YES (corrected) |
+| 4b | CR-526 Part 2 | **Gate 2.5** | N/A — no plan exists | ❌ Needs fresh Gate 3 plan |
+| 5 | BUG-647 | **Gate 2** | Lines confirmed but approach needs update | ❌ Needs Gate 3 plan (pure function plumbing) |
+
+### CR-526 Part 1 corrected edit (BUG-605):
+```
+OrderReportBetaPage.jsx L909-914
+Current: {markUnpaidTarget && ( <MarkUnpaidConfirmDialog order={{id:..., orderNumber:...}} isPending={...} onConfirm={...} onClose={...}
+Fix: add open={!!markUnpaidTarget}, change onClose → onCancel, pass order={markUnpaidTarget} directly (match Audit report pattern)
+```
+
+### BUG-647 planning gap identified:
+`buildCartItem` and `calcOrderTotals` are pure functions — they don't have access to `restaurant`. Callers (placeOrder, updateOrder, placeOrderWithPayment, collectBillExisting, OrderEntry localTax) must pass `gstStatus` + `vatEnabled` as options. ~6 call sites need updating.
+
+### Execution order for implementation agent:
+```
+1. CR-521          → 1 line (ready)
+2. CR-493 B5       → 12 lines (ready)
+3. BUG-639         → verify + close (ready)
+4a. CR-526 Part 1  → 3 lines (ready, corrected line numbers)
+--- pause here, then plan: ---
+5. BUG-647         → needs Gate 3 plan first
+4b. CR-526 Part 2  → needs Gate 3 plan first
+```
