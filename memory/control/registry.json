@@ -35899,7 +35899,7 @@
       "sprint_key": "TBD",
       "id": "BUG-647",
       "title": "GST OFF — API Payload Still Sends gst_tax and Inflated order_amount",
-      "status": "GATE_2_ODs_ANSWERED 2026-11-16. Needs Gate 3 plan: buildCartItem + calcOrderTotals are pure functions — gstStatus/vatEnabled must be plumbed via options param through ~6 call sites.",
+      "status": "GATE_3_PLAN_FROZEN 2026-11-16. 3 files ~35 lines. applyTaxFlags wrapper + calcOrderTotals extras + OrderEntry/CartPanel guards. plans/BUG-647_IMPLEMENTATION_PLAN_2026_11_16.md",
       "files": "orderTransform.js, OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx",
       "notes": "P0/CRITICAL. FE_BUG. BUG-336 fixed UI display (CPP L287) but buildCartItem/calcOrderTotals/localTax/taxTotals have NO gstStatus check — payload sends GST even when restaurant has GST disabled. Cashier sees ₹239, backend receives ₹250. ~30-40 lines fix across 5 sites. Planning skip NOT eligible. Related: BUG-336, INV-GST-001. 2 ODs open.",
       "artifact_refs": [
@@ -37744,7 +37744,7 @@
       "id": "CR-526",
       "type": "CR",
       "title": "Credit Management: Remove / Void Unpaid Order",
-      "status": "GATE_2.5_DESIGN_APPROVED. Part 1 (BUG-605): Gate 3 READY — fix at OrderReportBetaPage L909-914 (add open prop, change onClose→onCancel). Part 2 (Credit Remove): Gate 2.5 — needs fresh Gate 3 plan for CreditCustomerDetailSheet.jsx.",
+      "status": "GATE_3_PLAN_FROZEN 2026-11-16. Part 1 (BUG-605): 3 lines L909-914. Part 2 (Credit Remove): 1 file ~40 lines. plans/CR-526_PART2_IMPLEMENTATION_PLAN_2026_11_16.md",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
