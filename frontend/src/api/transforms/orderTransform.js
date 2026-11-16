@@ -1383,13 +1383,14 @@ export const toAPI = {
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
       order_type:                 mapOrderTypeToAPI(orderType),
-      cust_name:                  customer?.name || '',
-      cust_mobile:                customer?.phone || '',
-      cust_country_code:          customer?.countryCode || '+91', // CR-479
+      // BUG-672 Phase 2: fallback to tabContact when customer not linked (prepaid TAB)
+      cust_name:                  customer?.name || (isTab ? tabContact?.name : '') || '',
+      cust_mobile:                customer?.phone || (isTab ? tabContact?.phone : '') || '',
+      cust_country_code:          customer?.countryCode || (isTab ? tabContact?.countryCode : '') || '+91', // CR-479
       cust_email:                 customer?.email || '',
       cust_dob:                   customer?.dob || '',
       cust_anniversary:           customer?.anniversary || '',
-      cust_membership_id:         customer?.id || '',
+      cust_membership_id:         customer?.id || (isTab ? tabContact?.crmId : '') || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             splitPayments?.length > 0 ? 'partial' : (isTab ? 'TAB' : method), // BUG-672: credit→TAB
       // BUG-058 (Wave 7): PayLater in prepaid path must be treated as postpaid.
