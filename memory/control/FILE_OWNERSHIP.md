@@ -2305,3 +2305,6 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/modals/RoomCheckInModal.jsx` | **L20:** +PhoneInputField import. **L301:** +countryCode state. **L946-972:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/pages/pms/CheckInPage.jsx` | **L13-14:** +PhoneInputField+validatePhone imports. **L295:** validation uses validatePhone. **L671-674:** replaced hardcoded +91 with PhoneInputField. | CR-479 IMPL 2026-11-01 |
 | `src/api/services/customerService.js` | **L40:** lookupCustomer +countryCode param, sends country_code for international. | CR-479 IMPL 2026-11-01 |
+
+| `frontend/src/components/order-entry/OrderEntry.jsx` | **L353:** `hasPermission('food')` → `hasPermission('order_cancel')` — item-cancel permission corrected. | CR-515 E9 IMPL 2026-11-16 |
+| `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` | **L10:** `useAuth` import added. **L268:** `hasPermission` destructured. **L746-747:** PaymentMethodPicker gated `update_payment`. **L756-757:** Mark Unpaid gated `order_unpaid`. **L807-808:** Collect gated `clear_payment`. | CR-515 E7+E8+B1 IMPL 2026-11-16 |

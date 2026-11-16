@@ -7,7 +7,7 @@ import { cancelAndRefund } from '../../api/services/razorpayRefundService'; // C
 import CancelOrderModal from '../../components/order-entry/CancelOrderModal'; // CR-165
 import { useToast } from '../../hooks/use-toast'; // CR-165
 import { ArrowLeft, Download, ChevronDown, ChevronRight, Loader2, FileSpreadsheet, FileDown, AlertTriangle } from 'lucide-react'; // CR-423: +FileDown
-import { useRestaurant, useSettings } from '../../contexts'; // CR-165: +useSettings for cancellation reasons
+import { useRestaurant, useSettings, useAuth } from '../../contexts'; // CR-165: +useSettings for cancellation reasons · CR-515: +useAuth for permission gating
 import Sidebar from '../../components/layout/Sidebar';
 import { getOrderReportBetaCombined, exportOrderReportBetaExcel } from '../../api/services/reportService';
 import { exportReportAsPDF, openReportWindow } from '../../utils/reportExporter'; // CR-423
@@ -265,6 +265,7 @@ export default function OrderReportBetaPage() {
   const { currencySymbol, printerAgents, paymentTypes: restaurantPaymentTypes, restaurant } = useRestaurant(); // CR-349: +printerAgents, +paymentTypes · CR-431: +restaurant for eInvoice flag
   const reconcileEnabled = !!restaurant?.settings?.reconcileAmount; // CR-483 Phase 2
   const { getOrderCancellationReasons } = useSettings(); // CR-165
+  const { hasPermission } = useAuth(); // CR-515: permission gating for action buttons
   const { toast } = useToast(); // CR-165
   const [refundOrder, setRefundOrder] = useState(null); // CR-165: order selected for refund
   // CR-349: action state
@@ -742,8 +743,8 @@ export default function OrderReportBetaPage() {
                               {/* CR-349: action buttons — Change / Unpaid / Reprint / Refund */}
                               <td className="px-3 py-2">
                                 <div className="flex items-center justify-end gap-1 flex-wrap">
-                                  {/* Change — settled non-PG, within mutation window */}
-                                  {row.f_order_status === 6 && !row.razorpay_order_id && (
+                                  {/* Change — settled non-PG, within mutation window · CR-515: gated by update_payment */}
+                                  {hasPermission('update_payment') && row.f_order_status === 6 && !row.razorpay_order_id && (
                                     <PaymentMethodPicker
                                       order={{ id: row.order_id }}
                                       currentMethod={(row.payment_method_raw || row.payment_method || '').toLowerCase()}
@@ -752,8 +753,8 @@ export default function OrderReportBetaPage() {
                                       onConfirm={(newMethod) => handleChange(row, newMethod)}
                                     />
                                   )}
-                                  {/* Unpaid — settled non-PG, within mutation window, not optimistically hidden */}
-                                  {row.f_order_status === 6 && !row.razorpay_order_id && !optimisticUnpaidIds.has(row.order_id) && (
+                                  {/* Unpaid — settled non-PG, within mutation window, not optimistically hidden · CR-515: gated by order_unpaid */}
+                                  {hasPermission('order_unpaid') && row.f_order_status === 6 && !row.razorpay_order_id && !optimisticUnpaidIds.has(row.order_id) && (
                                     <button
                                       onClick={() => setMarkUnpaidTarget(row)}
                                       disabled={!isWithinMutation}
@@ -803,8 +804,8 @@ export default function OrderReportBetaPage() {
                                       Pay Link
                                     </button>
                                   )}
-                                  {/* CR-503: Collect — Hold/Credit unpaid rows */}
-                                  {(((row.payment_method || '').toLowerCase() === 'paylater') || ((row.payment_method || '').toUpperCase() === 'TAB')) &&
+                                  {/* CR-503: Collect — Hold/Credit unpaid rows · CR-515: gated by clear_payment */}
+                                  {hasPermission('clear_payment') && (((row.payment_method || '').toLowerCase() === 'paylater') || ((row.payment_method || '').toUpperCase() === 'TAB')) &&
                                    (row.payment_status || '').toLowerCase() !== 'paid' &&
                                    !optimisticCollectedBetaIds.has(row.order_id) && (
                                     <button

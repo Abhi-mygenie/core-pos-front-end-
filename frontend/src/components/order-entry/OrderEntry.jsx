@@ -350,7 +350,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
 
   // ── Permission flags ──
   const canCancelOrder = hasPermission('order_cancel');
-  const canCancelItem = hasPermission('food');
+  const canCancelItem = hasPermission('order_cancel'); // CR-515 R-2
   const canShiftTable = hasPermission('transfer_table');
   const canMergeOrder = hasPermission('merge_table');
   const canFoodTransfer = hasPermission('food_transfer');

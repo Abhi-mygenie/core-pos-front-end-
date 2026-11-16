@@ -21,7 +21,7 @@ Sources: `impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md`, `change_request
 |---|---|---|---|---|
 | **CR-071** | P1 (owner 2026-11-14; Batch A rights only; full wiring HOLD) | GATE_2_IA_CLOSED 2026-11-14 | `impact/CR-071_IMPACT_ANALYSIS.md` | none |
 | **CR-492** | P0 | GATE_3_PLAN_READY_FE 2026-11-15 — item comp gating + comp reason (M5b Option B) ready; BA-07 = QA check (R16) | `plans/BATCH-A_CR-492_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-08 (BA-07 QA) |
-| **CR-515** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — Orders Beta buttons + item-cancel right ready; pay-later BA-09 | `plans/BATCH-A_CR-515_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-09, BA-10 (ph2) |
+| **CR-515** | P0 | GATE_5A_IMPLEMENTED 2026-11-16 — E9+E7+E8+B1 all coded. item cancel food→order_cancel; OrdersBeta gated update_payment+order_unpaid; Collect gated clear_payment | `plans/BATCH-A_CR-515_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-10 (ph2) |
 | **CR-493** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — label + no-reasons block ready; BA-05 blocked | `plans/BATCH-A_CR-493_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-05, BA-06, BA-23 |
 | **BUG-674** | P0 | GATE_3_PLAN_PARTIAL 2026-11-15 — modal note + transform fix ready; reports blocked; BA-03/04 = QA checks (R16) | `plans/BATCH-A_BUG-674_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01, BA-02, BA-24 (BA-03/04 QA) |
 | **BUG-670** | P0 | GATE_3_BLOCKED 2026-11-15 — waits BA-01 | `plans/BATCH-A_BUG-670_IMPLEMENTATION_PLAN_2026_11_15.md` | BA-01 |
