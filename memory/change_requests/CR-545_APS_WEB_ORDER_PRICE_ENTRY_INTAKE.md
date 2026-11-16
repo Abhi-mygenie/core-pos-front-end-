@@ -73,3 +73,16 @@ Edit → Cancel ₹1 item → Re-add from menu (triggers BUG-035 price entry) �
 ## Duplicate Check
 - **BUG-035:** RELATED — BUG-035 is the existing dynamic-price mechanism for menu-added items. CR-545 extends this to web-order items (pre-placed).
 - **Verdict:** DISTINCT — BUG-035 is closed/working for its scope. CR-545 is a new feature gap.
+
+---
+
+## Owner Decisions (locked 2026-11-16)
+
+See `change_requests/BATCH_2_OWNER_DECISIONS_2026_11_16.md`
+
+- **OD-545-01:** Phase 1 full IA + Phase 2 outline.
+- **OD-545-02:** Cancel via props OK for now. UX improvement deferred.
+- **OD-545-03:** Assume cancel-food-item works on scanner orders. Probe before QA.
+- **OD-545-04:** Accept NOT gated by ₹1 items (confirmed).
+- Next: Impact Analysis (Gate 2).
+

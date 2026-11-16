@@ -57,3 +57,14 @@ None — investigation complete, all hypotheses resolved.
 ## Duplicate Check
 - **BUG-068:** "Pending Scan & Order Popup Does Not Appear After Socket Reconnect" — RELATED but DISTINCT. BUG-068 fixed the reconnect rehydration (re-fetch orders on reconnect). This BUG-677 is about the reconnect NEVER HAPPENING (budget exhaustion + server disconnect). BUG-068 fix only works IF the socket reconnects successfully.
 - **Verdict:** DISTINCT — BUG-068 is a subset scenario; BUG-677 is the root cause of permanent socket death.
+
+---
+
+## Owner Decisions (locked 2026-11-16)
+
+See `change_requests/BATCH_2_OWNER_DECISIONS_2026_11_16.md`
+
+- **OD-677-01:** F1 through F6 included. F7 deferred (P2).
+- IA scope: 6 fixes, ~6 files, ~90 lines total.
+- Next: Impact Analysis (Gate 2).
+
