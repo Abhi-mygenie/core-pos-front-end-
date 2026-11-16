@@ -87,5 +87,5 @@
 |---------|-------|---------|
 | Owner (RID 69, The Goan Kitchen) | owner@thegoankitchen.com | Qplazm@10 |
 
-Preview: `https://genie-core-pos.preview.emergentagent.com`
+Preview: `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
 Backend: `https://preprod.mygenie.online`

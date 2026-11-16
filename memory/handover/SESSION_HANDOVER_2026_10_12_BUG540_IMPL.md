@@ -83,4 +83,4 @@
 
 - Owner (RID 69): `owner@thegoankitchen.com` / `Qplazm@10`
 - External backend: `https://preprod.mygenie.online`
-- Preview URL: `https://genie-core-pos.preview.emergentagent.com`
+- Preview URL: `https://build-preview-339--3oltfmkm.preview.emergentagent.com`

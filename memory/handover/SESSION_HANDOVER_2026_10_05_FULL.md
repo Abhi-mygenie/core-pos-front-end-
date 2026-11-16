@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-05
 **Roles used:** DEPLOYMENT → IMPLEMENTATION (BUG-485) → BUG FIX (BUG-488) → IMPLEMENTATION (BUG-487) → IMPLEMENTATION (CR-407) → INTAKE + PLANNING + IMPLEMENTATION (BUG-489) → INTAKE (BUG-490) → INVESTIGATION (4-issue batch) → INTAKE (BUG-491)
-**App URL:** https://core-pos-deploy-32.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Branch deployed:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Registry:** 774 items (was 771 at session start)
 
@@ -193,7 +193,7 @@ Next agent should run QA on these after BUG-490 + BUG-491 are implemented:
 
 | Item | Value |
 |------|-------|
-| App URL (preview) | `https://core-pos-deploy-32.preview.emergentagent.com` |
+| App URL (preview) | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login endpoint | `POST /api/v1/auth/vendoremployee/common-login` |
 | Test login | `owner@thegoankitchen.com` / `Qplazm@10` |

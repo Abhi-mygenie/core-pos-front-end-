@@ -127,7 +127,7 @@ confirm **no `TypeError: * is not a function`** error, confirm chart renders.
 
 - Any valid restaurant login (chart pages require auth)
 - Production build served locally: `cd /app/frontend && npx serve -s build -l 3001`
-- Preview URL (dev build, not production): `https://core-pos-deploy-24.preview.emergentagent.com`
+- Preview URL (dev build, not production): `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
 - **IMPORTANT:** browser tests MUST use the production build (`build/` folder), NOT the dev server.
   The crash only occurs in the minified production bundle.
 

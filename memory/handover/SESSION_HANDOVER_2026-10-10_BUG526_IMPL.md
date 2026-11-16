@@ -110,7 +110,7 @@ All 10 items at Gate 5A await QA:
 | Backend | RUNNING (port 8001) | FastAPI |
 | MongoDB | RUNNING | |
 
-**App URL:** `https://core-pos-frontend-12.preview.emergentagent.com`
+**App URL:** `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
 
 ---
 

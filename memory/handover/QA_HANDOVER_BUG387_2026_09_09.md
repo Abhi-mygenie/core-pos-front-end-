@@ -51,7 +51,7 @@ Code confirmed in 3 files:
 
 ## 5. Credentials + Environment
 
-- App URL: https://pos-front-preview-3.preview.emergentagent.com
+- App URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - Account: owner@thegoankitchen.com (***)
 - Preprod API: https://preprod.mygenie.online/
 - Navigate to /pms/check-in and /pms/new-booking after login

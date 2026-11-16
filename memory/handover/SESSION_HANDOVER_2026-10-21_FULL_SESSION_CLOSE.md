@@ -149,7 +149,7 @@
 
 ## 6. Environment
 
-- **Preview URL:** https://core-pos-web-1.preview.emergentagent.com
+- **Preview URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - **API:** https://preprod.mygenie.online
 - **Frontend:** React (CRA + Craco) on port 3000
 - **Webpack:** Compiled with 1 pre-existing warning (allDays useMemo)

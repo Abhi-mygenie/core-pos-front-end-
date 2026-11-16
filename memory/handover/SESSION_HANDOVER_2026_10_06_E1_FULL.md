@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-06
 **Roles used:** DEPLOYMENT → IMPLEMENTATION (BUG-495) → IMPLEMENTATION (BUG-494) → INVESTIGATION (INV-496, INV-497) → INTAKE (BUG-496..499) → PLANNING (BUG-497 G2+G3) → PLANNING (BUG-496 G2+G3) → PLANNING (BUG-498+499 G2+G3)
-**App URL:** https://react-pos-app-7.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Branch deployed:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Registry:** 782 items (was 776 at session start)
 
@@ -163,7 +163,7 @@ The following are blockers that must be resolved **before** the next agent start
 
 | Item | Value |
 |------|-------|
-| App URL (preview) | `https://react-pos-app-7.preview.emergentagent.com` |
+| App URL (preview) | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login endpoint | `POST /api/v1/auth/vendoremployee/common-login` |
 | Test login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |

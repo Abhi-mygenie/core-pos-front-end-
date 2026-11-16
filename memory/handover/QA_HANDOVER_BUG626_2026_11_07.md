@@ -52,6 +52,6 @@ EXIT GATE: ALL 5 PASSED
 
 ## 5. Credentials + Environment
 
-- Preview URL: https://genie-pos-web-2--312lqkk9.preview.emergentagent.com
+- Preview URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - Test account: see `/app/memory/control/test_credentials.md`
 - File changed: `src/pages/reports-module/OrderReportBetaPage.jsx` (L59-61)

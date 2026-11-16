@@ -64,5 +64,5 @@
 
 ## 5. Environment
 
-- App URL: https://core-frontend-dev.preview.emergentagent.com
+- App URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - Route: navigate to Orders (Beta) from sidebar

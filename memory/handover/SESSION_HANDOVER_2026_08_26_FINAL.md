@@ -2,7 +2,7 @@
 
 **Status:** CLOSED — QA deferred to next session
 **App:** MyGenie POS React Frontend
-**URL:** https://core-frontend-dev.preview.emergentagent.com
+**URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Branch:** `room` (origin/room), deployed from `/app/frontend`
 
 ---
@@ -132,7 +132,7 @@ All 10 items above went through full gate flow. Plans at `/app/memory/plans/` an
 ```
 Frontend: RUNNING (pid 280, webpack compiled with 1 pre-existing warning)
 Backend:  Not used (frontend-only app connecting to preprod.mygenie.online)
-URL:      https://core-frontend-dev.preview.emergentagent.com
+URL:      https://build-preview-339--3oltfmkm.preview.emergentagent.com
 Key:      mygenie_sidebar_expanded (localStorage, all 69 pages)
 ```
 

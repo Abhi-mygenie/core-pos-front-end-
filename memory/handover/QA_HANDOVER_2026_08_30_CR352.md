@@ -84,7 +84,7 @@
 |---|---|---|---|---|
 | Direct Printer | owner@18march.com | Qplazm@10 | "No" | Restaurant 478 — use for T9/T15 |
 | Printer Agent | owner@shimlaqohfoodcourt.com | Qplazm@10 | "Yes" | Food court — use for T10/T16 |
-| App URL | https://ac7e8e21-2fea-4559-a64e-e9d302552f9d.preview.emergentagent.com | — | — | — |
+| App URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com | — | — | — |
 | Settings path | `/restaurant-settings` | — | — | Direct URL |
 
 ---

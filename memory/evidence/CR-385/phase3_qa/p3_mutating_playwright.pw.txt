@@ -1,5 +1,5 @@
 import re, json
-BASE = "https://core-frontend-live-1.preview.emergentagent.com"
+BASE = "https://build-preview-339--3oltfmkm.preview.emergentagent.com"
 await page.set_viewport_size({"width": 1920, "height": 800})
 caps = {}
 def on_req(req):

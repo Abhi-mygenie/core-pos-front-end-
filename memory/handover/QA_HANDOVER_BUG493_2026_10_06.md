@@ -5,7 +5,7 @@
 **File changed:** `src/api/services/pmsService.js` (L68, L114)
 **Sprint:** oct_bug_batch
 **Credentials:** `owner@thegoankitchen.com` / `Qplazm@10` — RID 69 (The Goan Kitchen)
-**URL:** https://mygenie-pos-frontend.preview.emergentagent.com → `/pms/front-desk-v2?tab=inhouse`
+**URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com → `/pms/front-desk-v2?tab=inhouse`
 
 ---
 
@@ -61,7 +61,7 @@ EXIT GATE:         5/5 PASS
 ## 5. Environment
 
 ```
-App URL:  https://mygenie-pos-frontend.preview.emergentagent.com
+App URL:  https://build-preview-339--3oltfmkm.preview.emergentagent.com
 Login:    owner@thegoankitchen.com / Qplazm@10 (alias: RID 69)
 Tab:      /pms/front-desk-v2?tab=inhouse
 Orders:   1232903 (no discount), 1232965 (₹200 disc), 1232972 / #000324 (bp=0)

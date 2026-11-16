@@ -51,7 +51,7 @@ Compile: 0 new warnings.
   - [x] COMPILE CHECK: 0 new warnings
 
 ## 5. Credentials + Environment
-- Preview URL: https://9e69cace-7da7-4783-8a30-80b0fb58d12f.preview.emergentagent.com
+- Preview URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - Test: owner@cafe103.com / Qplazm@10
 - Note: TC-2 (no-reasons block) needs a restaurant with zero configured cancellation reasons
 

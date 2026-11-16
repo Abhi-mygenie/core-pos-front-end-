@@ -74,7 +74,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Item | Value |
 |------|-------|
-| App URL | `https://core-pos-deploy-32.preview.emergentagent.com` |
+| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Test login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Route to test | `/pms/front-desk-v2?tab=arrivals` → click any arrival row |
 

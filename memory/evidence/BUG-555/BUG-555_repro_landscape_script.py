@@ -1,6 +1,6 @@
 async def run_test(page, output_dir, page_url):
     await page.set_viewport_size({"width": 1920, "height": 800})
-    URL = "https://core-pos-app-6.preview.emergentagent.com"
+    URL = "https://build-preview-339--3oltfmkm.preview.emergentagent.com"
     await page.set_content(f'''<html><body style="margin:0;background:#222;display:flex;gap:20px;padding:10px">
     <iframe id="land" src="{URL}/" style="width:853px;height:533px;border:2px solid red"></iframe>
     </body></html>''')

@@ -184,7 +184,7 @@ Open owner decisions (new this session, locked):
 ## 9. Environment reminder for the next agent
 - Frontend-only pod. Local FastAPI backend intentionally stopped.
 - App calls `preprod.mygenie.online` (Laravel) + `presocket.mygenie.online` (Socket.io).
-- Preview URL = `REACT_APP_BACKEND_URL` → `https://genie-pos-web.preview.emergentagent.com`.
+- Preview URL = `REACT_APP_BACKEND_URL` → `https://build-preview-339--3oltfmkm.preview.emergentagent.com`.
 - Credentials: no `/app/memory/test_credentials.md` present → next agent must request from owner before loading authenticated screens.
 
 ---

@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-08
 **Roles used:** PLANNING (Gate 2+3 combined) → IMPLEMENTATION (Gate 5a)
-**App URL:** https://core-pos-front-5.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` (0 new warnings; 1 pre-existing allDays)
 
@@ -126,7 +126,7 @@ CheckInPage.jsx  L256-263: effectiveBalanceDue useMemo
 
 | Item | Value |
 |---|---|
-| App URL | `https://core-pos-front-5.preview.emergentagent.com` |
+| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

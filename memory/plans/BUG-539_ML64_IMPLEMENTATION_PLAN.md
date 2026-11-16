@@ -227,7 +227,7 @@ Edits E4 and E5 are **independent** — either can be applied first. Recommended
 
 ### 3. Credentials
 - Owner: owner@thegoankitchen.com / Qplazm@10 (RID 69)
-- Preview URL: https://genie-core-pos.preview.emergentagent.com
+- Preview URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 
 ### 4. Registry Sync Confirmation
 Registry synced: [ ] YES

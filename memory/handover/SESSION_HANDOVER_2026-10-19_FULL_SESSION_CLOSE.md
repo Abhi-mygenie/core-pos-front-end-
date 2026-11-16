@@ -14,7 +14,7 @@ Cloned `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (main branch) i
 platform. Installed dependencies, configured `.env` with all provided keys, synced `/app/memory`
 from the repo, frontend running on preview.
 
-**Preview:** `https://pos-react-preview-4.preview.emergentagent.com`
+**Preview:** `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
 
 ---
 

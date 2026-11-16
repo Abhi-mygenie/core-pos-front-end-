@@ -32,6 +32,6 @@ Registry: GATE_5A — EXIT GATE 1-5 PASS (registry ✓, BUG_TRACKER ✓, FILE_OW
 
 ## 4. Credentials
 - Ruby ZAP: owner@ruby.com / Qplazm@10
-- POS URL: https://c4220e7e-e76a-4ba7-b323-bd65e8947f74.preview.emergentagent.com
+- POS URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
 - API base: https://preprod.mygenie.online/
 - SC setup: RID 672 has SC=10%, SC-GST=5% confirmed from investigation

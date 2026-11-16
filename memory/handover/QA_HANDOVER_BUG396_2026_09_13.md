@@ -42,7 +42,7 @@ EXIT GATE:        5/5 PASS
 
 **Credentials:**
 ```
-URL:      https://preprod.mygenie.online  (via preview: https://core-pos-deploy-17.preview.emergentagent.com)
+URL:      https://preprod.mygenie.online  (via preview: https://build-preview-339--3oltfmkm.preview.emergentagent.com)
 Login:    owner@thegoankitchen.com / Q***@10
 Path:     Sidebar → PMS → Check-In
 ```

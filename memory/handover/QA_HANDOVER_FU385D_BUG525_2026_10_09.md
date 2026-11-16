@@ -1,7 +1,7 @@
 # QA Handover — FU-385-D + BUG-525
 **Date:** 2026-10-09
 **Gate:** 5B — QA
-**URL:** https://mygenie-pos-ui-6.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse
+**URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse
 
 ---
 

@@ -49,7 +49,7 @@ Full gate cycle completed this session:
 | Service | Status |
 |---|---|
 | Frontend | RUNNING — webpack compiled successfully, 0 warnings |
-| URL | https://core-pos-front-6.preview.emergentagent.com |
+| URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
 
 ---
 

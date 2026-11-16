@@ -122,7 +122,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Item | Value |
 |---|---|
-| App URL | `https://core-pos-front-5.preview.emergentagent.com` |
+| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | In-House tab | `…/pms/front-desk-v2?tab=inhouse` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |

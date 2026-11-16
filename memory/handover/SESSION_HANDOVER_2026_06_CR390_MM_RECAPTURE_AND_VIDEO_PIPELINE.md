@@ -37,7 +37,7 @@ Only after that external gate may storyboard/video work begin under its approved
 - **Credentials:**
   - Palm House (standard flows): `owner@palmhouse.com` / `Qplazm@10`
   - Kunafa Mahal (aggregator flows, screens 33–38): `owner@kunafamahal.com` / `Qplazm@10`
-- **App URL for capture:** see `README.md` in the scripts folder (`--url https://core-pos-deploy-25.preview.emergentagent.com` was used last; confirm it still resolves — if not, ask user).
+- **App URL for capture:** see `README.md` in the scripts folder (`--url https://build-preview-339--3oltfmkm.preview.emergentagent.com` was used last; confirm it still resolves — if not, ask user).
 - **Preprod is slow.** A loading splash ("Please wait while we set up your system") can sit for 10–20 s. This is the root cause of most bad captures.
 
 ### Key paths

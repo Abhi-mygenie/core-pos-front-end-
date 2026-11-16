@@ -55,7 +55,7 @@ Full per-line change breakdown in `FILE_OWNERSHIP.md` (new section "CR-414 + BUG
 ## 6. Environment
 - Frontend on :3000 via supervisor, compiling clean (1 pre-existing warning).
 - Backend (local FastAPI): stopped by design (frontend-only pod).
-- Preview URL: `REACT_APP_BACKEND_URL` → `https://genie-pos-web.preview.emergentagent.com`.
+- Preview URL: `REACT_APP_BACKEND_URL` → `https://build-preview-339--3oltfmkm.preview.emergentagent.com`.
 - All API calls go to `preprod.mygenie.online` (Laravel) + `presocket.mygenie.online` (Socket.io).
 
 ## 7. EXIT GATE (final confirmation)

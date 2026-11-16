@@ -3,7 +3,7 @@
 **Date:** 2026-10-05
 **Role:** IMPLEMENTATION
 **Registry:** 774 items
-**App URL:** https://mygenie-pos-frontend.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 
 ---
 
@@ -106,7 +106,7 @@ All sprint items need QA Gate 5b. Recommended batch for next QA session:
 
 | Item | Value |
 |------|-------|
-| App URL | `https://mygenie-pos-frontend.preview.emergentagent.com` |
+| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login endpoint | `POST /api/v1/auth/vendoremployee/common-login` |
 | Test login | `owner@thegoankitchen.com` / `Qplazm@10` |

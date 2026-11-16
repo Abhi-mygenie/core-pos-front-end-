@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Roles used this session:** DEPLOYMENT → INVESTIGATION (BUG-512 re-investigation) → PLANNING (BUG-511 Gate 2+3) → PLANNING (BUG-512 Gate 2+3) → IMPLEMENTATION (BUG-511 + BUG-512) → INVESTIGATION (BUG-513 discovery) → INTAKE (BUG-513)
-**App URL:** https://react-app-direct-4.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled with 1 warning` (pre-existing `allDays` exhaustive-deps, not from this session)
 
@@ -245,7 +245,7 @@ Both are deliberately no-GST for backend compatibility (BUG-500/OD-500-04).
 
 | Item | Value |
 |------|-------|
-| App URL | `https://react-app-direct-4.preview.emergentagent.com` |
+| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

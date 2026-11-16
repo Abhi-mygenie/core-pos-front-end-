@@ -119,8 +119,8 @@ These items are IMPLEMENTED but not yet QA'd by testing agent:
 | Kunafa Mahal | owner@kunafamahal.com | Qplazm@10 | roleBaseDiscount=Yes |
 | Konaseema | owner@konaseemaruchulu.com | Qplazm@10 | Delivery dispatch test (fOS=5) |
 
-**Preview URL:** https://pos-core-preview-1--6ncvztpa.preview.emergentagent.com
-**CRM Preview:** https://mygenie-crm-preview-3--41iolc1g.preview.emergentagent.com/api
+**Preview URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**CRM Preview:** https://build-preview-339--3oltfmkm.preview.emergentagent.com/api
 **Preprod API:** https://preprod.mygenie.online
 
 ---

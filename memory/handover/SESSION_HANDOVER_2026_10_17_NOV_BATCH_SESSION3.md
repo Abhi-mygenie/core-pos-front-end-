@@ -2,7 +2,7 @@
 **Written by:** E1 (Emergent agent)
 **Session date:** 2026-10-17
 **Branch:** `main` — https://github.com/Abhi-mygenie/core-pos-front-end-.git
-**App URL:** https://mygenie-core-pos.preview.emergentagent.com
+**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
 **Backend:** https://preprod.mygenie.online/
 **Compile:** `webpack compiled with 1 warning` (pre-existing SettlementReportMockup.jsx — 0 new errors)
 
