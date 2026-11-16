@@ -18079,7 +18079,7 @@
       "type": "BUG",
       "severity": "P1",
       "risk": "N/A",
-      "status": "GATE 2 COMPLETE (Impact Analysis + Backend Brief filed) — BACKEND-BLOCKED",
+      "status": "GATE_6_OWNER_SMOKE 2026-11-16 — Core functionality implemented via CR-349/CR-153. Wastage KPI live, service layer + endpoints exist. Top Wasted Items widget commented out. Needs owner preprod verification.",
       "sprint_key": "pos_5_0",
       "source": "OWNER-REPORTED",
       "duplicate_check": "DISTINCT",
@@ -18095,7 +18095,8 @@
       "notes": "Backend wastage report endpoints do not exist. Frontend placeholder ready. BACKEND_BRIEF needed.",
       "area": "Reports / Analytics",
       "assignee": "Parth",
-      "priority": "P0"
+      "priority": "P0",
+      "blocked_on": ""
     },
     {
       "id": "BUG-267",
@@ -35797,7 +35798,7 @@
       "priority": "P0",
       "risk": "MEDIUM",
       "area": "Payments / Coupons / Credit",
-      "status": "GATE_2_PLANNING — Credit Management order details, backend dependency",
+      "status": "CLOSED — NOT A BUG (2026-11-05 owner round 5: items visible after scroll. OD-644-02 LOCKED: behaviour, no change.)",
       "sprint_key": "nov_cr_batch",
       "registered": "2026-11-05",
       "registered_by": "INTAKE agent",
@@ -35864,7 +35865,7 @@
       "sprint_key": "TBD",
       "id": "BUG-646",
       "title": "Inclusive Tax Items Inflate Grand Total (Double-Counted in 4 files)",
-      "status": "INVESTIGATION_COMPLETE — ODs open (OD-646-01, OD-646-02). Next: PLANNING Gate 2-3.",
+      "status": "CLOSED — RESOLVED BY CR-394 + BUG-359 (2026-11-16 investigation: Inclusive tax option removed from UI, 0 Inclusive items on preprod. Double-count code inactive. Dead isInclusive paths = P3 cleanup.)",
       "files": "CollectPaymentPanel.jsx, orderTransform.js, OrderEntry.jsx, CartPanel.jsx",
       "notes": "P0/CRITICAL. FE_BUG. ₹100 inclusive-5%-GST item shows ₹105 grand total. rawFinalTotal adds tax on top of prices that already contain inclusive tax. Same break-point in 4 files. ~50 lines fix. Planning skip NOT eligible (4+ files, R5/R6 hotspot). Related: BUG-431 (PMS double-count, different path), INV-GST-001 (GST audit). 2 ODs open.",
       "artifact_refs": [
@@ -35898,7 +35899,7 @@
       "sprint_key": "TBD",
       "id": "BUG-647",
       "title": "GST OFF — API Payload Still Sends gst_tax and Inflated order_amount",
-      "status": "GATE_2_ODs_ANSWERED 2026-11-16. OD-647-01: zero ALL tax (gst_amount, vat_amount per item + gst_tax, vat_tax, tax_amount, order_amount at order level) when gstStatus=false. OD-647-02: yes — SC GST, Tip GST, Delivery GST also zeroed. Next: Gate 3 plan.",
+      "status": "GATE_2_ODs_ANSWERED 2026-11-16. Two independent toggles: gstStatus gates GST items, vatEnabled gates VAT items. Both must be checked in buildCartItem + calcOrderTotals. Next: Gate 3 plan.",
       "files": "orderTransform.js, OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx",
       "notes": "P0/CRITICAL. FE_BUG. BUG-336 fixed UI display (CPP L287) but buildCartItem/calcOrderTotals/localTax/taxTotals have NO gstStatus check — payload sends GST even when restaurant has GST disabled. Cashier sees ₹239, backend receives ₹250. ~30-40 lines fix across 5 sites. Planning skip NOT eligible. Related: BUG-336, INV-GST-001. 2 ODs open.",
       "artifact_refs": [
@@ -36283,13 +36284,13 @@
       "id": "CR-493",
       "sprint_key": "TBD",
       "title": "Cancellation Reason Mandatory on Every Cancellation (Order + Item Level)",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-16 (E1+E3+E4+E5 coded; B5 plan frozen pending FLAG 1-2; B6/BA-23 contract v2 2026-11-16 — cancel_source + comma reasons + audit event + backfill)",
+      "status": "GATE_3_PLAN_FROZEN 2026-11-16. E1/E3/E4/E5 coded. B5 FULLY UNBLOCKED — cancel_note_mandatory at restaurants[0].settings.cancel_note_mandatory (V1 profile confirmed by owner screenshot). B6/BA-23 still blocked on cancel_source.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Menu / Order Entry",
       "files": "CancelFoodModal.jsx, CancelOrderModal.jsx, OrderEntry.jsx",
       "notes": "[2026-11-14 Gate 2 IA merged] IA: block cancel + message when no reasons configured; notes-mandatory setting key missing in backend. || [2026-11-14 owner decisions] Reason always mandatory; one setting (Gyan key) for notes mandatory/optional, default optional. || Every cancel must require reason from backend reasons list. CANCELLATION_REASONS endpoint exists, used in insights, enforcement inconsistent. Related: BUG-440 (empty reasons dropdown). Dependency: CR-494 extends this. PRIORITY UPGRADED P1→P0 (2026-11-12, batch intake). || [2026-11-16 IMPLEMENTED] E1/E4: mandatory asterisk on reason label; E3/E5: no-reasons block message. || [Backend ask detail: BA-05 (notes-mandatory setting API live), BA-23 v2 (cancel_source + audit event + backfill)]",
-      "blocked_on": "BACKEND",
+      "blocked_on": "BA-23 (cancel_source + audit event + backfill) — Gyan",
       "related": [
         "BUG-440",
         "CR-494"
@@ -37552,7 +37553,7 @@
       "id": "CR-521",
       "type": "CR",
       "title": "Color Effect After Bill Print: Make It More Attractive",
-      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
+      "status": "GATE_2_ODs_ANSWERED 2026-11-16. Color change (green→orange) decoupled from BD-01. FE-only, no backend needed. CR-525 (Collect Bill button + reset on edit) stays parked on BD-01. Next: Gate 3 plan → implement.",
       "priority": "P0",
       "severity": "P3",
       "risk": "LOW",
@@ -37565,7 +37566,7 @@
       "current_gate": 1,
       "registered": "2026-11-12",
       "assignee": "Abhishek",
-      "blocked_on": "CR-525 (shared card files)",
+      "blocked_on": "",
       "client": "ALL",
       "batch": "BATCH-D-2026-11-14",
       "artifact_refs": [
@@ -37715,7 +37716,7 @@
       "id": "CR-525",
       "type": "CR",
       "title": "After Bill Print: Replace KOT and Bill Buttons with Collect Bill Button",
-      "status": "GATE_2_IA_CLOSED 2026-11-15 (Batch D; owner Q&A R1-R6; IA: impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md; backend brief BACKEND_BRIEF_BATCH-D_2026_11_15.md). Next: Gate 3 plan GO.",
+      "status": "GATE_2_IA_CLOSED 2026-11-15. TWO PARTS: (1) Collect Bill button — parked on BD-01. (2) Reset color on edit — parked on BD-01. Owner OD-525-E: wait for server fix before go-live.",
       "priority": "P0",
       "severity": "P2",
       "risk": "HIGH",
@@ -37736,7 +37737,8 @@
           "path": "memory/change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
         }
-      ]
+      ],
+      "blocked_on": "BACKEND"
     },
     {
       "id": "CR-526",

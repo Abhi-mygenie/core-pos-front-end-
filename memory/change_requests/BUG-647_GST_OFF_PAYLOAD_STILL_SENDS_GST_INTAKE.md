@@ -96,3 +96,30 @@ Additionally:
 5. `collectBillExisting` path (L1565-1720) — `food_detail[].gst_amount` at L1599
 6. `OrderEntry.jsx` localTax / unplacedTax (L886-925) — Collect Bill button total
 7. SC GST / Tip GST / Delivery GST in calcOrderTotals (L887-906)
+
+## Correction — 2026-11-16 (owner screenshot)
+
+**Two separate toggles exist in Settings:**
+1. **GST Enabled** (`gstStatus`) — gates GST items
+2. **VAT Enabled** (`vatEnabled`) — gates VAT items
+
+**Revised rule (replaces single-switch assumption):**
+
+| Item tax_type | GST Enabled | VAT Enabled | Tax in payload |
+|---|---|---|---|
+| GST | ON | — | Computed |
+| GST | OFF | — | **Zero** |
+| VAT | — | ON | Computed |
+| VAT | — | OFF | **Zero** |
+
+Per item in `buildCartItem`:
+- `isGst && !gstStatus` → `gst_amount: "0.00"`
+- `!isGst && !vatEnabled` → `vat_amount: "0.00"`
+
+At order level in `calcOrderTotals`:
+- `!gstStatus` → `gst_tax: 0`, `service_gst_tax_amount: 0`, `tip_tax_amount: 0`, `delivery_charge_gst_amount: 0`
+- `!vatEnabled` → `vat_tax: 0`
+- `tax_amount` = sum of whatever is enabled
+- `order_amount` = subtotal + enabled tax only
+
+Both `gstStatus` and `vatEnabled` must be passed to `buildCartItem` and `calcOrderTotals`.

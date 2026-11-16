@@ -390,3 +390,24 @@ B5-E1 (profileTransform) → B5-E2 (RestaurantContext default) → B5-E3 (settin
 - [ ] Code markers: `// CR-493 B5` on every modified line
 - [ ] Compile: webpack 0 new warnings
 - [ ] Tracker: BA-05 → DONE, BA-06 → DONE (already confirmed), BA-23 → DONE or PENDING (depends on delivery)
+
+---
+
+## Addendum — 2026-11-16 (FLAG 1 RESOLVED)
+
+### FLAG 1 RESOLVED — V1 profile path confirmed
+
+Owner screenshot (2026-11-16) shows `cancel_note_mandatory: "No"` at line 418 of the V1 profile response, inside `restaurants[0].settings` — same nested path as `order_edit_access`, `whatsapp_message`, `reconcile_amount`.
+
+**B5-E1 exact edit (confirmed):**
+```js
+// profileTransform.js, inside fromAPI.settings(), after orderEditAccess line (~L428):
+cancelNoteMandatory: apiSettings.settings?.cancel_note_mandatory === 'Yes', // CR-493 B5
+```
+
+No dual-path fallback needed. No extra settings-list call needed. Same pattern as every other setting.
+
+**B5 is FULLY UNBLOCKED. All 6 edits (B5-E1 through B5-E6) ready for Gate 4 GO.**
+
+### Blockers remaining
+- B6 (BA-23): `cancel_source` not delivered — still waiting on Gyan

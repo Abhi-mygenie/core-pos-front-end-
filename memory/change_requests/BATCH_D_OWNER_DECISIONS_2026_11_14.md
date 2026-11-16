@@ -80,3 +80,19 @@ Owner: "approved batch D" — both contracts approved simultaneously 2026-11-15.
 |---|---|---|
 | CR-525 (+ CR-521) | `contracts/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
 | CR-523 | `contracts/BATCH-D_CR-523_API_CONTRACT_2026_11_15.md` | **FINAL v1 — LOCKED 2026-11-15** |
+
+## CR-521 / CR-525 Decoupling — Owner Decision 2026-11-16
+
+**Decision:** CR-521 (color change green → orange) is decoupled from CR-525 (Collect Bill button) and BD-01 (bill_print reset on edit).
+
+| Item | Scope | Backend needed? | Status |
+|---|---|---|---|
+| **CR-521** | Change `COLORS.billPrintedBg` from green to orange on TableCard + OrderCard | No | **UNBLOCKED — ready to code** |
+| **CR-525 Part 1** | Replace KOT/Bill buttons with Collect Bill after print | Yes (BD-01) | **PARKED** |
+| **CR-525 Part 2** | Reset bill_print flag (and color) when order is edited after print | Yes (BD-01) | **PARKED** |
+
+**Rationale:** The color change is a one-line CSS/constant change. It doesn't depend on the bill_print reset logic. Shipping it now gives the owner the visual improvement immediately. CR-525 behaviour (button swap + reset) ships later when BD-01 is delivered.
+
+**Present behaviour (unchanged by CR-521):** Bill printed → card turns colored. Cashier edits → card stays colored. This is the same today (green) and after CR-521 (orange). The "reset on edit" fix comes with CR-525 + BD-01.
+
+**Exact orange shade:** Owner decision from Batch D: `#FFEDD5` (warm orange, already in code as SplitRoomItemsModal background). Border stays green (`COLORS.primaryGreen`).
