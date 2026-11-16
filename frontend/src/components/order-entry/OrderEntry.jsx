@@ -1598,7 +1598,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     setIsPlacingOrder(true);
     const engagePromise = waitForOrderEngaged(orderId);
 
-    const payload = orderToAPI.cancelOrder(orderId, permissions?.[0] || 'Manager', reason, {
+    const payload = orderToAPI.cancelOrder(orderId, permissions?.[0] || 'Manager', { ...reason, reasonNote: note.trim() }, { // BUG-674 E7: wire note into cancel payload
       // CR-POS2-003-REOPEN-A (May-2026): printer agents + cart for all-stations rule.
       printerAgents: printerAgents || [],
       allCartItems: cartItems,

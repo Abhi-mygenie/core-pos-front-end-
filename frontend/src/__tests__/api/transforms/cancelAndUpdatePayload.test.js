@@ -303,4 +303,17 @@ describe('CR-POS2-003-REOPEN-A | toAPI.cancelOrder — printer_agent injection (
     });
     expect(payload.printer_agent.map((a) => a.station)).toEqual(['PASTRY']);
   });
+
+  // BUG-674 T1: blank note → cancellation_note = '' (OD-674-A)
+  test('Reason without reasonNote → cancellation_note is empty string', () => {
+    const reasonNoNote = { reasonId: 7, reasonText: 'Customer changed mind' };
+    const payload = toAPI.cancelOrder(555, 'Manager', reasonNoNote);
+    expect(payload.cancellation_note).toBe('');
+  });
+
+  test('Reason with reasonNote → cancellation_note is the note', () => {
+    const reasonWithNote = { reasonId: 7, reasonText: 'Customer changed mind', reasonNote: 'Guest waited 45 min' };
+    const payload = toAPI.cancelOrder(555, 'Manager', reasonWithNote);
+    expect(payload.cancellation_note).toBe('Guest waited 45 min');
+  });
 });

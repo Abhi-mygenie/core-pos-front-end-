@@ -1025,7 +1025,7 @@ export const toAPI = {
       role_name:           roleName,
       order_status:        'cancelled',
       cancellation_reason: reason.reasonText,
-      cancellation_note:   reason.reasonNote || reason.reasonText,
+      cancellation_note:   reason.reasonNote || '', // BUG-674 E6: blank note = empty (OD-674-A)
       // CR-POS2-003-REOPEN-A (May-2026): always emit, never omit. OQ-PA-9.
       printer_agent: printerAgentForCancelOrder,
     };

@@ -1380,7 +1380,7 @@ const DashboardPage = () => {
 
     // Await API call, then socket handler does removeOrder + updateTableStatus
     try {
-      const payload = orderToAPI.cancelOrder(order.orderId, permissions?.[0] || 'Manager', reason);
+      const payload = orderToAPI.cancelOrder(order.orderId, permissions?.[0] || 'Manager', { ...reason, reasonNote: note.trim() }); // BUG-674 E8: wire note into cancel payload
       await api.put(API_ENDPOINTS.ORDER_STATUS_UPDATE, payload);
       
       // Wait for socket to confirm removal

@@ -100,23 +100,21 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
             </div>
           </div>
 
-          {/* CR-165: Note textarea — shown only in refund mode */}
-          {isRefund && (
-            <div>
-              <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-                Refund Note
-              </label>
-              <textarea
-                value={cancellationNote}
-                onChange={(e) => setCancellationNote(e.target.value)}
-                placeholder="Add a note for the refund (optional)"
-                rows={2}
-                className="w-full px-4 py-3 rounded-xl border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-100"
-                style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
-                data-testid="cancel-order-refund-note"
-              />
-            </div>
-          )}
+          {/* BUG-674 E2: Note textarea — shown in all modes (cancel + refund) */}
+          <div>
+            <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
+              {isRefund ? 'Refund Note' : 'Notes (Optional)'}
+            </label>
+            <textarea
+              value={cancellationNote}
+              onChange={(e) => setCancellationNote(e.target.value)}
+              placeholder={isRefund ? 'Add a note for the refund (optional)' : 'Type here…'}
+              rows={2}
+              className="w-full px-4 py-3 rounded-xl border text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-100"
+              style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
+              data-testid={isRefund ? 'cancel-order-refund-note' : 'cancel-order-note'}
+            />
+          </div>
         </div>
 
         {/* Footer */}

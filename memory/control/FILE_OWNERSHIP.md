@@ -2308,3 +2308,9 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 
 | `frontend/src/components/order-entry/OrderEntry.jsx` | **L353:** `hasPermission('food')` → `hasPermission('order_cancel')` — item-cancel permission corrected. | CR-515 E9 IMPL 2026-11-16 |
 | `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` | **L10:** `useAuth` import added. **L268:** `hasPermission` destructured. **L746-747:** PaymentMethodPicker gated `update_payment`. **L756-757:** Mark Unpaid gated `order_unpaid`. **L807-808:** Collect gated `clear_payment`. | CR-515 E7+E8+B1 IMPL 2026-11-16 |
+
+| `frontend/src/api/transforms/orderTransform.js` | **L1028:** `cancellation_note` fallback changed from `reason.reasonText` to `''` (blank=empty). | BUG-674 E6 IMPL 2026-11-16 |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | **L1601:** `reason` spread with `reasonNote: note.trim()` so typed note reaches cancel payload. | BUG-674 E7 IMPL 2026-11-16 |
+| `frontend/src/pages/DashboardPage.jsx` | **L1383:** same spread as E7 for dashboard cancel path. | BUG-674 E8 IMPL 2026-11-16 |
+| `frontend/src/components/order-entry/CancelOrderModal.jsx` | **L103-117:** Notes textarea shown in all modes (cancel + refund), not just refund. Label/placeholder/testid per mode. | BUG-674 E2 IMPL 2026-11-16 |
+| `frontend/src/__tests__/api/transforms/cancelAndUpdatePayload.test.js` | **+2 tests:** blank note → `''`; note present → note value. | BUG-674 T1 IMPL 2026-11-16 |
