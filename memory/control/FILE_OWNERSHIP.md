@@ -2314,3 +2314,6 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `frontend/src/pages/DashboardPage.jsx` | **L1383:** same spread as E7 for dashboard cancel path. | BUG-674 E8 IMPL 2026-11-16 |
 | `frontend/src/components/order-entry/CancelOrderModal.jsx` | **L103-117:** Notes textarea shown in all modes (cancel + refund), not just refund. Label/placeholder/testid per mode. | BUG-674 E2 IMPL 2026-11-16 |
 | `frontend/src/__tests__/api/transforms/cancelAndUpdatePayload.test.js` | **+2 tests:** blank note → `''`; note present → note value. | BUG-674 T1 IMPL 2026-11-16 |
+
+| `frontend/src/components/order-entry/CancelOrderModal.jsx` | **L63-100:** Reason label gets `*` asterisk; empty-reasons block with red message + `cancel-order-no-reasons` testid. | CR-493 E1+E3 IMPL 2026-11-16 |
+| `frontend/src/components/order-entry/CancelFoodModal.jsx` | **L155-210:** Same: `*` asterisk + empty-reasons block with `cancel-food-no-reasons` testid. | CR-493 E4+E5 IMPL 2026-11-16 |

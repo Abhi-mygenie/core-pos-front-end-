@@ -152,11 +152,20 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
             </div>
           )}
 
-          {/* Reason Dropdown */}
+          {/* Reason Dropdown — CR-493 E4: mandatory asterisk, E5: no-reasons block */}
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-              Cancellation Reason
+              Cancellation Reason <span style={{ color: '#EF4444' }}>*</span>
             </label>
+            {reasons.length === 0 ? (
+              <div
+                className="px-4 py-3 rounded-xl border text-sm"
+                style={{ borderColor: '#FCA5A5', backgroundColor: '#FEF2F2', color: '#DC2626' }}
+                data-testid="cancel-food-no-reasons"
+              >
+                No cancellation reasons configured. Ask admin to add cancellation reasons.
+              </div>
+            ) : (
             <div className="relative">
               <div
                 className="flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-colors hover:bg-gray-50"
@@ -196,6 +205,7 @@ const CancelFoodModal = ({ item, reasons = [], onClose, onCancel }) => {
                 </div>
               )}
             </div>
+            )}
           </div>
 
           {/* Additional Notes Textarea */}

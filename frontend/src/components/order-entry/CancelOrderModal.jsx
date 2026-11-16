@@ -60,11 +60,20 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
               : 'This will cancel ALL items in this order. This action cannot be undone.'}
           </div>
 
-          {/* Reason Dropdown */}
+          {/* Reason Dropdown — CR-493 E1: mandatory asterisk, E3: no-reasons block */}
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: COLORS.grayText }}>
-              Cancellation Reason
+              Cancellation Reason <span style={{ color: COLORS.errorText }}>*</span>
             </label>
+            {reasons.length === 0 ? (
+              <div
+                className="px-4 py-3 rounded-xl border text-sm"
+                style={{ borderColor: '#FCA5A5', backgroundColor: '#FEF2F2', color: '#DC2626' }}
+                data-testid="cancel-order-no-reasons"
+              >
+                No cancellation reasons configured. Ask admin to add cancellation reasons.
+              </div>
+            ) : (
             <div className="relative">
               <div
                 className="flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer hover:bg-gray-50 transition-colors"
@@ -98,6 +107,7 @@ const CancelOrderModal = ({ table, itemCount, reasons = [], onClose, onCancel, m
                 </div>
               )}
             </div>
+            )}
           </div>
 
           {/* BUG-674 E2: Note textarea — shown in all modes (cancel + refund) */}
