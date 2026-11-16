@@ -57,7 +57,7 @@ import ItemSalesLedgerMockup from "./pages/reports-module/ItemSalesLedgerMockup"
 import VariationAddonMockup from "./pages/reports-module/VariationAddonMockup"; // CR-136
 import OrderReportBetaPage from "./pages/reports-module/OrderReportBetaPage"; // CR-117
 import { InsightsCacheProvider } from "./contexts/InsightsCacheContext";
-import SettlementMockup from "./pages/SettlementMockup";
+// CR-372-B E1: SettlementMockup import deleted
 import RestaurantSettingsPage from "./pages/RestaurantSettingsPage";
 import DeliveryManagementPage from "./pages/DeliveryManagementPage"; // CR-147
 import AggregatorSetupPage from "./pages/AggregatorSetupPage"; // CR-135 Aggregator Setup
@@ -241,14 +241,14 @@ function App() {
               {/* Visibility Settings Routes */}
               <Route path="/visibility/status-config" element={<ProtectedRoute><StatusConfigPage /></ProtectedRoute>} />
               {/* CR-015: Settlement Module (panel on dashboard, preview for mockup) */}
-              <Route path="/settlement/preview" element={<SettlementMockup />} />
+              {/* CR-372-B E2: /settlement/preview route deleted */}
               {/* CR-019: Restaurant Settings Self-Onboarding Wizard */}
               <Route path="/restaurant-settings" element={<ProtectedRoute><RestaurantSettingsPage /></ProtectedRoute>} />
               {/* CR-147: Delivery Management */}
               <Route path="/delivery-management" element={<ProtectedRoute><DeliveryManagementPage /></ProtectedRoute>} />
               {/* CR-491: Demo preview routes removed (13 pages deleted) */}
               <Route path="/aggregator/setup" element={<ProtectedRoute><AggregatorSetupPage /></ProtectedRoute>} />
-              <Route path="/local-printer-setup" element={<LocalPrinterSetupView />} />  {/* CR-161/CR-351 */}
+              <Route path="/local-printer-setup" element={<ProtectedRoute><LocalPrinterSetupView /></ProtectedRoute>} />  {/* CR-161/CR-351 // CR-372-B E4: login guard */}
               {/* CR-041: Panel → Route migrations */}
               <Route path="/menu" element={<ProtectedRoute><MenuManagementPage /></ProtectedRoute>} />
               <Route path="/credit" element={<ProtectedRoute><CreditManagementPage /></ProtectedRoute>} />

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing, RefreshCw, MoreHorizontal, Printer, Scissors } from "lucide-react";
 import { COLORS } from "../../constants";
-import { useRestaurant, useTables, useSettings, useMenu } from "../../contexts";
+import { useRestaurant, useTables, useSettings, useMenu, useAuth } from "../../contexts"; // CR-492: +useAuth
 import { PAYMENT_METHODS, filterLayoutByApiTypes, getDynamicPaymentTypes, DEFAULT_PAYMENT_LAYOUT } from "../../config/paymentMethods";
 import * as tableService from "../../api/services/tableService";
 import { applyOrderDiscount } from "../../api/services/orderService"; // BUG-538
@@ -86,6 +86,8 @@ const CollectPaymentPanel = ({
 }) => {
   const customer = passedCustomer;
   const { discountTypes, paymentMethods: restaurantPaymentMethods, paymentTypes: restaurantPaymentTypes, restaurant, settings: restaurantSettings } = useRestaurant();
+  const { hasPermission } = useAuth(); // CR-492
+  const canMarkComp = hasPermission('complementary_food'); // CR-492: rights-based comp gating
   // BUG-538: gate — when roleBaseDiscount=false (default), discountAllowed=true → zero behavior change
   const discountAllowed = !restaurantSettings?.roleBaseDiscount || canDiscount;
   const showApplyButton = !!restaurantSettings?.roleBaseDiscount && canDiscount && !!orderId;
@@ -186,6 +188,13 @@ const CollectPaymentPanel = ({
     const cq = item.compQty || 0;
     return cq > 0 && cq < (item.qty || 1) && !isLineComplimentary(item);
   };
+
+  // CR-492 E5: block Pay when any runtime-comp (full or partial) item has no reason
+  const missingCompReason = (cartItems || []).some(i =>
+    i.isComplementary !== true && i.status !== 'cancelled' &&
+    (isLineComplimentary(i) || isPartialComp(i)) &&
+    !(i.compReason || '').trim()
+  );
 
   // BUG-209: weight-item qty display helper — mirrors CartPanel.jsx L169-173.
   // Weight items show unit label (e.g. "100gm", "500gm", "1.5Kg") instead of "x{qty}".
@@ -2131,6 +2140,8 @@ const CollectPaymentPanel = ({
                         return (
                         <div key={idx} className="flex justify-between items-start gap-2">
                           {/* BUG-018 Part 2 + BUG-298: comp checkbox — opens modal for qty>1 */}
+                          {/* CR-492 E2: only show checkbox when user has complementary_food right OR item is catalog-locked */}
+                          {(canMarkComp || isCatalogLocked) && (
                           <input
                             type="checkbox"
                             className="mt-0.5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
@@ -2147,6 +2158,7 @@ const CollectPaymentPanel = ({
                             data-testid={`complimentary-checkbox-${item.id}`}
                             title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
                           />
+                          )}
                           <div className="flex-1 min-w-0">
                             <div className="flex justify-between">
                               <span
@@ -2161,14 +2173,15 @@ const CollectPaymentPanel = ({
                                     (Complimentary)
                                   </span>
                                 )}
-                                {/* CR-104: inline reason input — only for runtime-comp (cashier-marked), not catalog-locked */}
-                                {isComp && !isCatalogLocked && (
+                                {/* CR-104 + CR-492 E3: reason for runtime-comp (full or partial), required */}
+                                {(isComp || isPartial) && !isCatalogLocked && (
                                   <input
                                     type="text"
-                                    className="block w-full text-xs text-zinc-500 border border-zinc-200 rounded px-2 py-0.5 mt-0.5 outline-none focus:border-zinc-400 bg-transparent"
-                                    placeholder="Reason (optional)"
+                                    className={`block w-full text-xs border rounded px-2 py-0.5 mt-0.5 outline-none bg-transparent ${!(item.compReason || '').trim() ? 'border-red-400 text-red-600' : 'border-zinc-200 text-zinc-500 focus:border-zinc-400'}`}
+                                    placeholder="Reason (required)"
                                     value={item.compReason || ''}
                                     onChange={e => onSetCompReason && onSetCompReason(item.id, e.target.value)}
+                                    readOnly={!canMarkComp}
                                     onClick={e => e.stopPropagation()}
                                     data-testid={`comp-reason-input-${item.id}`}
                                   />
@@ -2521,6 +2534,8 @@ const CollectPaymentPanel = ({
                 return (
                 <div key={idx} className="flex justify-between items-start gap-2">
                   {/* BUG-018 Part 2 + BUG-298: comp checkbox — opens MarkCompModal for qty>1 */}
+                  {/* CR-492 E4: only show checkbox when user has complementary_food right OR item is catalog-locked */}
+                  {(canMarkComp || isCatalogLocked) && (
                   <input
                     type="checkbox"
                     className="mt-1 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
@@ -2539,6 +2554,7 @@ const CollectPaymentPanel = ({
                     data-testid={`complimentary-checkbox-${item.id}`}
                     title={isCatalogLocked ? 'Catalog-complimentary — cannot be unchecked' : 'Mark as complimentary'}
                   />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between">
                       <span
@@ -2553,14 +2569,15 @@ const CollectPaymentPanel = ({
                             (Complimentary)
                           </span>
                         )}
-                        {/* CR-104: inline reason input — only for runtime-comp (cashier-marked), not catalog-locked */}
-                        {isComp && !isCatalogLocked && (
+                        {/* CR-104 + CR-492 E4: reason for runtime-comp (full or partial), required */}
+                        {(isComp || isPartial) && !isCatalogLocked && (
                           <input
                             type="text"
-                            className="block w-full text-xs text-zinc-500 border border-zinc-200 rounded px-2 py-0.5 mt-0.5 outline-none focus:border-zinc-400 bg-transparent"
-                            placeholder="Reason (optional)"
+                            className={`block w-full text-xs border rounded px-2 py-0.5 mt-0.5 outline-none bg-transparent ${!(item.compReason || '').trim() ? 'border-red-400 text-red-600' : 'border-zinc-200 text-zinc-500 focus:border-zinc-400'}`}
+                            placeholder="Reason (required)"
                             value={item.compReason || ''}
                             onChange={e => onSetCompReason && onSetCompReason(item.id, e.target.value)}
+                            readOnly={!canMarkComp}
                             onClick={e => e.stopPropagation()}
                             data-testid={`comp-reason-input-${item.id}`}
                           />
@@ -3533,6 +3550,7 @@ const CollectPaymentPanel = ({
             (showSplit && splitType === 'payment' && splitPayments.some(sp => sp.method === 'card' && parseFloat(sp.amount) > 0 && (!sp.transactionId || sp.transactionId.length !== 4))) ||
             (showSplit && splitType === 'payment' && splitPayments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0) < (isRoom ? effectiveTotal - roomBalance : effectiveTotal)) || // BUG-527: room orders — split covers food+associated; room settled via paid_room=yes
             receivedAmountError || // CR-483: block payment when received amount out of ±3% range
+            missingCompReason || // CR-492 E6: block Pay when comp item has no reason
             isProcessingPayment
           }
           className="w-full py-4 rounded-lg font-bold text-lg text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
