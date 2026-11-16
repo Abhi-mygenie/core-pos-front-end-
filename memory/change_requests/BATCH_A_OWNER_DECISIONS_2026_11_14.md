@@ -137,3 +137,6 @@ Both registries (`control/CR_REGISTRY.md`, `control/registry.json`) updated; Gat
 - `BACKEND_BRIEF_TRACKER.html` stays as the cross-batch list and links to the base page.
 - Mockups: M8b + M5c merged into the single page `design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html` (M1–M10, M5b, M5c, M8b). Addendum file superseded.
 - FE drafts the field names; **names are LOCKED**. Backend may only answer OK / ETA / not feasible. A backend reply or handover file that renames or changes any variable is **rejected, not merged** → back to owner. Only the owner changes a contract. They belong to Batch A (same items) and are verified in Batch A QA once backend delivers.
+
+| OD-515-B1 | 2026-11-16 | Hold tab Collect Bill gate = `clear_payment` permission. No new right needed. BA-09 resolved. |
+| BATCH-E | 2026-11-16 | CR-494, CR-495, CR-443 moved to Batch E (P1, backend-blocked). Not in current sprint scope. |

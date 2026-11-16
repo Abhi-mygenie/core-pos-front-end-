@@ -1,9 +1,9 @@
 # BATCH-A · CR-515 (Staff rights: payment change / unpaid / pay-later / item cancel) — Implementation Plan (Gate 3) — 2026-11-15
 
-> Status: **GATE_3_PLAN_PARTIAL — NOT FROZEN**. READY: G1-E9, G2-E7, G2-E8. BLOCKED: G2-B1 (BA-09).
+> Status: **GATE_3_PLAN_PARTIAL — NOT FROZEN**. READY: G1-E9, G2-E7, G2-E8. ~~BLOCKED: G2-B1 (BA-09)~~ **UNBLOCKED 2026-11-16**: B1 uses `clear_payment` (owner confirmed).
 > Source rows: G1 E9 + G2 E7, E8 + G2-B1 (moved unchanged from the G1 and G2 group plans, now superseded).
 > Risk: CRITICAL (permissions + payments). Mockup: M7 `#m7`.
-> Decisions: OD-515-A (item cancel uses `order_cancel`, phase 1; separate key = BA-10 phase 2) · existing rights `update_payment` / `order_unpaid` · pay-later key waits BA-09 (R13) · reprint right = P1 (out of scope).
+> Decisions: OD-515-A (item cancel uses `order_cancel`, phase 1; separate key = BA-10 phase 2) · existing rights `update_payment` / `order_unpaid` · **OD-515-B1: collect pay-later uses `clear_payment` (owner 2026-11-16)** · reprint right = P1 (out of scope).
 
 ## 1. Code reality — rechecked at HEAD `b5d7a42` 2026-11-15 (Code Reality: PARTIAL — AllOrdersReportPage already gated)
 | File | Line | Current |
@@ -42,7 +42,7 @@
 ## 5. BLOCKED edits
 | # | Needs | What will change |
 |---|---|---|
-| G2-B1 | **BA-09** right key | CollectBillPanelDrawer Hold-tab Collect button gated by the confirmed key (no right → hidden) |
+| G2-B1 | ~~**BA-09** right key~~ **RESOLVED 2026-11-16**: owner confirmed `clear_payment` | CollectBillPanelDrawer Hold-tab Collect button gated by `hasPermission('clear_payment')` (no right → hidden) |
 
 ## 6. Scope lock
 WILL change: OrderEntry.jsx L353; OrderReportBetaPage.jsx imports + L700-L780; (after BA-09) CollectBillPanelDrawer.jsx Collect button.
