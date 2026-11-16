@@ -6,27 +6,29 @@
 
 ---
 
-## ASK 1 — CR-524: Add `punched_at` to insights-cancellations items (UNCHANGED)
+## ASK 1 — CR-524: Add `punched_at` to insights-cancellations items (**DONE**)
 
 - **Endpoint:** `POST /api/v2/vendoremployee/report/insights-cancellations`
 - **Issue:** `created_at` / `punched_at` (item punch timestamp) absent from API. FE needs it for "Punch Time" and "Cancellation Duration" columns.
 - **Required:** Add `punched_at` (full ISO datetime, IST or with offset) per cancelled item. For partial-cancel split lines, use the ORIGINAL parent line's add time. For order-scope cancels, return per-item lines with individual `punched_at`.
 - **Contract:** `contracts/BATCH-C_CR-524_API_CONTRACT_2026_11_15.md`
-- **Status:** BLOCKING — no workaround
+- **Status:** ✅ **DONE** — Delivered as `created_at` + `item_punched_at` (identical) + `cancel_time_full`. Verified RID 672, 44 items (2026-11-16).
 
 ---
 
 ## ASK 2 (REVISED) — CR-528: Post-bill-print audit events in insights-dashboard
 
 > **CORRECTION (2026-11-16):** The Order Edit Audit page uses `insights-dashboard` → `audits`, NOT `order-logs-report`. All asks below target the correct endpoint.
+>
+> **Foundation DONE (2026-11-16):** Backend delivered v1 on `order-logs-report` — `bill_printed_at`, `bill_print_count`, `print_bill_status`, `operations[]` with `bill_print`/`item_cancel`/`order_cancel`/`order_edit` events all working. Validation: `backend_replies/CR-528_BACKEND_REPLY_VALIDATION_2026_11_16.md`. **The database-level data exists. Remaining work: query it and emit computed audit events on `insights-dashboard` → `audits`.**
 
 - **Endpoint:** `POST /api/v2/vendoremployee/report/insights-dashboard`
-- **Issue:** No post-bill-print events exist in the audit section. `bill_printed_at` is not persisted (probe confirmed `print_bill_status` stays 'No' after print).
+- **Issue:** No post-bill-print events exist in the audit section.
 
-### What backend needs to do:
+### What backend needs to do (remaining — foundation already delivered):
 
-1. **Persist `bill_printed_at`** (datetime) on the order when bill is printed
-2. **Fix `print_bill_status`** — must be set to `'Yes'` when bill is printed (currently stays 'No')
+1. ~~**Persist `bill_printed_at`**~~ ✅ DONE (delivered on order-logs-report, 2026-11-16)
+2. ~~**Fix `print_bill_status`**~~ ✅ DONE (delivered on order-logs-report, 2026-11-16)
 3. **Add 3 new audit event types** to `insights-dashboard` → `audits.orders[]`:
    - `item_cancel_after_print` — item cancelled after bill was printed
    - `order_cancel_after_print` — full order cancelled after bill was printed
@@ -38,7 +40,7 @@
 5. **Detection:** for each order where `bill_printed_at IS NOT NULL`, check cancels/edits that occurred after that timestamp
 
 - **Contract:** `contracts/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md` (supersedes v1)
-- **Status:** BLOCKING — no workaround (owner rejected proxy)
+- **Status:** BLOCKING — foundation delivered, audit events pending
 
 ---
 
@@ -130,8 +132,9 @@ For each order in the date range that was made unpaid (`make_unpaid` event exist
 
 | ASK | CR | Endpoint | What | Priority | Status |
 |---|---|---|---|---|---|
-| 1 | CR-524 | `insights-cancellations` | `punched_at` per cancelled item | P0 | BLOCKING |
-| 2 | CR-528 | `insights-dashboard` → `audits` | Post-bill-print audit events (3 types) + `bill_printed_at` | P0 | BLOCKING |
+| 1 | CR-524 | `insights-cancellations` | `punched_at` per cancelled item | P0 | ✅ DONE (2026-11-16) |
+| 2a | CR-528 | `order-logs-report` | Foundation: `bill_printed_at`, `bill_print_count`, `operations[]` | P0 | ✅ DONE (2026-11-16) |
+| 2b | CR-528 | `insights-dashboard` → `audits` | Post-bill-print audit events (3 types) + KPI counts | P0 | BLOCKING — NOT SENT |
 | 3 | CR-543 | `insights-dashboard` → `audits` + settings | `cancel_audit_threshold_minutes` setting + `late_cancel` events | P0 | BLOCKING |
 | 4 | CR-544 | `insights-dashboard` → `audits` | `cancel_after_unpaid` events | P0 | BLOCKING |
 

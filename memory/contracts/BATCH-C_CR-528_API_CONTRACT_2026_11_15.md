@@ -1,8 +1,12 @@
 # API Contract — CR-528 Post-bill-print changes in Audit report — DRAFT v1 — 2026-11-15
 
+> **⚠️ SUPERSEDED by v2 (2026-11-16).** This v1 contract targeted `order-logs-report` — the wrong endpoint. The Audit page (`AuditLogMockup.jsx`) uses `insights-dashboard`, not `order-logs-report`. See `contracts/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md` for the correct contract.
+>
+> **Backend reply on v1 (2026-11-16):** Gyan delivered ALL 6 items on `order-logs-report` — `bill_printed_at`, `bill_print_count`, `print_bill_status`, `operations[]` with `bill_print`/`item_cancel`/`order_cancel` events. Validation: `backend_replies/CR-528_BACKEND_REPLY_VALIDATION_2026_11_16.md`. This confirms the database-level plumbing works; the remaining ask is to surface these fields on `insights-dashboard` → `audits` (v2 contract).
+
 Backend: Gyan · ID: ASK 2 · IA doc: `impact/CR-528_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**
-**Status: DRAFT v1 — waiting backend reply before FINAL. IA frozen 2026-11-15. BLOCKING: FE cannot ship without backend reply.**
+**Status: ~~DRAFT v1~~ SUPERSEDED — see v2. Backend delivered v1 fields on order-logs-report (2026-11-16).**
 
 ## 1. Persist bill_print_status and log every print (ASK 2)
 

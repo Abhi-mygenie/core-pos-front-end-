@@ -4,7 +4,9 @@
 **Code Reality:** NONE — no post-bill-print edit/cancel section exists in any report page
 **Conflict Pre-Check:** AllOrdersReportPage.jsx (open: BUG-671, CR-526, CR-542 Batch B still pending Gate 3). Execution: CR-528 section must not conflict with Batch B Audit tab changes. Coordinate line anchors at Gate 3.
 **Risk:** HIGH (audit/compliance report; operations log; indirect financial data)
-**Backend-blocked:** **YES (revised 2026-11-15)** — write probe proved bill print is not recorded in any report API (`print_bill_status` stays 'No' after print + confirm). Owner: wait for backend.
+**Backend-blocked:** **PARTIALLY UNBLOCKED (2026-11-16)** — Backend delivered v1 foundation on `order-logs-report` (bill_printed_at, bill_print_count, operations[] all working). **Audit page still blocked** — it uses `insights-dashboard`, not `order-logs-report`. v2 contract (`BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md`) targets the correct endpoint but is NOT SENT yet.
+
+> **REVISED 2026-11-16 (backend reply validation):** v1 contract (order-logs-report) FULLY DELIVERED by backend — 6/6 items PASS. See `backend_replies/CR-528_BACKEND_REPLY_VALIDATION_2026_11_16.md`. However, the Audit page (`AuditLogMockup.jsx`) uses `insights-dashboard`, not `order-logs-report`. v2 contract corrects the endpoint. Remaining backend work: emit computed audit events (`item_cancel_after_print`, `order_cancel_after_print`, `order_edit_after_print`) on `insights-dashboard` → `audits`.
 
 > **REVISED 2026-11-15 (write probe + owner round 2) — see bottom section. It overrides the 'PARTIAL', `print_bill_status='Yes'` filter and `collect_bill` proxy above.**
 

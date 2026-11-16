@@ -2,9 +2,11 @@
 
 Backend: Gyan · ID: ASK 2 (revised) · IA doc: `impact/CR-528_IMPACT_ANALYSIS.md`
 Rules: `contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md` — **names LOCKED; renamed/changed fields → backend reply rejected.**
-**Status: DRAFT v2 — REVISED 2026-11-16 to target correct endpoint. Waiting backend reply. BLOCKING.**
+**Status: DRAFT v2 — READY TO SEND. Waiting backend reply on `insights-dashboard` events. BLOCKING.**
 
 > **v2 CHANGE (2026-11-16):** Corrected target endpoint from `order-logs-report` to `insights-dashboard`. The Order Edit Audit page (`AuditLogMockup.jsx`) consumes `insights-dashboard` → `audits`, NOT `order-logs-report`. All asks below target the correct endpoint.
+
+> **Foundation confirmed (2026-11-16):** Backend delivered v1 fields on `order-logs-report` — `bill_printed_at`, `bill_print_count`, `print_bill_status` all persist correctly. `operations[]` logs `bill_print`, `item_cancel`, `order_cancel`, `order_edit` events with timestamps and employee. This proves the database-level data exists. The remaining work is to query this data and emit computed audit events on `insights-dashboard` → `audits`. See: `backend_replies/CR-528_BACKEND_REPLY_VALIDATION_2026_11_16.md`.
 
 ---
 
