@@ -402,7 +402,7 @@ export default function OrderReportBetaPage() {
 
   // CR-503: Collect Bill handlers for Hold/Credit rows
   const openCollectBillDrawer = useCallback((row) => {
-    setCollectBillTarget(row);
+    setCollectBillTarget({ ...row, id: row.order_id, orderNumber: row.restaurant_order_id }); // CR-503 fix: map order_id→id for CollectBillPanelDrawer
   }, []);
 
   const closeCollectBillDrawer = useCallback(() => {

@@ -888,6 +888,11 @@ const Sidebar = ({
                   ? `${restaurant?.name ? `${restaurant.name} · ` : ''}#${restaurant.id}`
                   : (user?.roleName || '')} {/* CR-378: show restaurant name alongside ID */}
               </div>
+              {user?.email && (
+                <div className="text-[10px] truncate" style={{ color: COLORS.grayText, opacity: 0.7 }}>
+                  {user.email}
+                </div>
+              )}
             </div>
           )}
         </button>

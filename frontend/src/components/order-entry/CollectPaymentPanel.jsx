@@ -104,19 +104,43 @@ const CollectPaymentPanel = ({
   );
 
   // Get filtered layout based on API paymentTypes
-  const enabledLayout = useMemo(() => 
-    filterLayoutByApiTypes(
+  const enabledLayout = useMemo(() => {
+    const layout = filterLayoutByApiTypes(
       paymentLayoutConfig || DEFAULT_PAYMENT_LAYOUT,
       restaurantPaymentTypes || [],
       hasRooms
-    ),
-    [paymentLayoutConfig, restaurantPaymentTypes, hasRooms]
+    );
+    // BUG-672: When order is prepaid, hide payment methods where API type has prepaid=0 (e.g., TAB/Credit)
+    if (!isPrepaid) return layout;
+    const prepaidFilter = (methodIds) => methodIds.filter(id => {
+      const apiNames = Object.entries(API_NAME_TO_METHOD_ID)
+        .filter(([_, mid]) => mid === id)
+        .map(([name]) => name.toLowerCase());
+      const apiType = (restaurantPaymentTypes || []).find(
+        pt => apiNames.includes(pt.name?.toLowerCase())
+      );
+      return !apiType || apiType.prepaid !== 0;
+    });
+    return {
+      row1: prepaidFilter(layout.row1),
+      row2: prepaidFilter(layout.row2),
+      dropdown: prepaidFilter(layout.dropdown),
+    };
+  },
+    [paymentLayoutConfig, restaurantPaymentTypes, hasRooms, isPrepaid]
   );
 
   // Get dynamic payment types from API (dineout, zomato_gold, etc.)
-  const dynamicPaymentTypes = useMemo(() => 
-    getDynamicPaymentTypes(restaurantPaymentTypes || []),
-    [restaurantPaymentTypes]
+  const dynamicPaymentTypes = useMemo(() => {
+    const types = getDynamicPaymentTypes(restaurantPaymentTypes || []);
+    // BUG-672: When order is prepaid, hide dynamic types with prepaid=0
+    if (!isPrepaid) return types;
+    return types.filter(dt => {
+      const apiType = (restaurantPaymentTypes || []).find(pt => pt.name?.toLowerCase() === dt.apiValue?.toLowerCase());
+      return !apiType || apiType.prepaid !== 0;
+    });
+  },
+    [restaurantPaymentTypes, isPrepaid]
   );
 
   // BUG-080: Primary methods enabled in BOTH API paymentTypes AND restaurant

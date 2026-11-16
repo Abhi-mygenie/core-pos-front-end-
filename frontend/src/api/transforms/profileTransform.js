@@ -279,6 +279,8 @@ export const fromAPI = {
       id: type.id,
       name: type.name,
       displayName: type.display_name,
+      prepaid: type.prepaid ?? 1,   // BUG-672: keep prepaid flag (1=allowed, 0=hidden for prepaid orders)
+      postpaid: type.postpaid ?? 1, // BUG-672: keep postpaid flag
     }));
   },
 

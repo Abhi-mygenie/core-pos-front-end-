@@ -1293,7 +1293,10 @@ export const toAPI = {
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
     const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, autoBill = false, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null } = options;
-    const { method = 'cash', transactionId = '', splitPayments = [], tip = 0, deliveryCharge = 0, discounts = {} } = paymentData;
+    const { method = 'cash', transactionId = '', splitPayments = [], tip = 0, deliveryCharge = 0, discounts = {}, tabContact } = paymentData; // BUG-672: add tabContact
+
+    // BUG-672: Detect TAB payment (mirrors collectBillExisting L1539)
+    const isTab = method === 'credit' || (typeof method === 'string' && method.toLowerCase() === 'tab');
 
     const unplacedItems = cartItems.filter(i => !i.placed && i.status !== 'cancelled');
     // CR-028: Build cart items then inject per-item discount_amount
@@ -1388,11 +1391,11 @@ export const toAPI = {
       cust_anniversary:           customer?.anniversary || '',
       cust_membership_id:         customer?.id || '',
       order_note:                 orderNotes.map(n => n.label).join(', '),
-      payment_method:             splitPayments?.length > 0 ? 'partial' : method,
+      payment_method:             splitPayments?.length > 0 ? 'partial' : (isTab ? 'TAB' : method), // BUG-672: credit→TAB
       // BUG-058 (Wave 7): PayLater in prepaid path must be treated as postpaid.
       // Backend expects payment_status 'sucess' (literal typo) + payment_type
       // 'postpaid' — matching the postpaid PayLater collect-bill contract.
-      payment_status:             (typeof method === 'string' && method.toLowerCase() === 'paylater') ? 'sucess' : 'paid',
+      payment_status:             (typeof method === 'string' && method.toLowerCase() === 'paylater') ? 'sucess' : (isTab ? 'success' : 'paid'), // BUG-672: TAB = 'success'
       payment_type:               'prepaid',
       transaction_id:             transactionId || '',
       print_kot:                  printAllKOT ? 'Yes' : 'No',
@@ -1481,6 +1484,12 @@ export const toAPI = {
       delivery_address: (orderType === 'delivery' && deliveryAddress)
         ? buildDeliveryAddress(deliveryAddress)
         : null,
+      // BUG-672: TAB customer fields for credit ledger (mirrors collectBillExisting L1754-1757)
+      ...(isTab ? {
+        name:            tabContact?.name  || '',
+        mobile:          tabContact?.phone || '',
+        crm_customer_id: tabContact?.crmId || '',
+      } : {}),
     };
 
     // R-OWNER-6 / R-LOG-1: warn ONLY when agents were configured + print_kot:'Yes'
