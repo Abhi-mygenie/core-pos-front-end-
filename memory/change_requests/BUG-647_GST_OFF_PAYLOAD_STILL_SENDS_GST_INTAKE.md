@@ -72,3 +72,27 @@ Additionally:
 
 - **OD-647-01:** When GST is OFF, should per-item `gst_amount` in the payload be `"0.00"` (zeroed) or should it still carry the computed value for backend accounting (while only `gst_tax` and `order_amount` at order level are zeroed)?
 - **OD-647-02:** When GST is OFF, should SC GST / Tip GST / Delivery GST also be zeroed? (Currently CollectPaymentPanel still computes them from scTaxRate even when item GST is gated off.)
+
+---
+
+## Owner Decisions (2026-11-16, LOCKED)
+
+**Reproduced:** Order #021537 (CAFE 103, RID 644). GST OFF in settings. Payload sent gst_tax=50.45, order_amount=1060 (should be 1009). Each item had non-zero gst_amount. UI display was correct (₹840 for a 3-item order) but payload was wrong.
+
+| OD | Decision |
+|---|---|
+| OD-647-01 | **Zero ALL tax when GST is OFF.** Per-item `gst_amount: "0.00"` AND `vat_amount: "0.00"`. Order-level `gst_tax: 0`, `vat_tax: 0`, `tax_amount: 0`. `order_amount` = subtotal only (no tax added). No tax computed, no tax sent. |
+| OD-647-02 | **YES — SC GST, Tip GST, Delivery GST also zeroed.** `service_gst_tax_amount: 0`, `tip_tax_amount: 0`, `delivery_charge_gst_amount: 0` when GST is OFF. |
+
+**Rule:** If `restaurant.tax.gstStatus === false`, the payload must behave as if every item has 0% tax. No GST, no VAT, no SC/Tip/Delivery tax. The items may still have tax percentages configured at the item level — those are ignored when the restaurant switch is OFF.
+
+**Root cause confirmed:** `buildCartItem` (orderTransform.js L700-780) and `calcOrderTotals` (L818-930) have no `gstStatus` check. `CollectPaymentPanel` gates the display (L321) but the payload builder doesn't. Same gap in `OrderEntry.jsx` localTax computation (L886-925) and the `placeOrderWithPayment` path (L1565-1720).
+
+**Affected paths (all need the gstStatus guard):**
+1. `buildCartItem` — per-item `gst_amount` / `vat_amount`
+2. `calcOrderTotals` — order-level `gst_tax` / `vat_tax` / `tax_amount` / `order_amount`
+3. `placeOrder` path (L1050-1070) — uses buildCartItem + calcOrderTotals
+4. `placeOrderWithPayment` path (L1280-1340) — same
+5. `collectBillExisting` path (L1565-1720) — `food_detail[].gst_amount` at L1599
+6. `OrderEntry.jsx` localTax / unplacedTax (L886-925) — Collect Bill button total
+7. SC GST / Tip GST / Delivery GST in calcOrderTotals (L887-906)

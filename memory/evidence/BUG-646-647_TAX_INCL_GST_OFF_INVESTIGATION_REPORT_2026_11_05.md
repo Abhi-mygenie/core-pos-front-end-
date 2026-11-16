@@ -146,3 +146,21 @@ Recommend: **Full Planning gate cycle (Gate 2-3).**
 
 ## 6. Retroactive Candidates
 NONE
+
+---
+
+## Addendum — 2026-11-16 Owner Session
+
+### BUG-647 Reproduced
+- Order #021537, CAFE 103 (RID 644), GST OFF in settings
+- Payload captured from browser Network tab:
+  - `gst_tax: 50.45` (should be 0)
+  - `order_amount: 1060` (should be 1009)
+  - Item gst_amounts: 10.00, 9.45, 16.00, 15.00 (all should be 0.00)
+- UI display was correct (₹840 Grand Total for a 3-item subset) — CollectPaymentPanel L321 gates display
+- Payload builder has no gstStatus check — confirmed root cause
+
+### Owner Decisions LOCKED
+- OD-647-01: Zero ALL tax (GST + VAT) per item and at order level when gstStatus=false
+- OD-647-02: Zero SC GST, Tip GST, Delivery GST too
+- Rule: gstStatus=false → treat every item as 0% tax regardless of item-level config

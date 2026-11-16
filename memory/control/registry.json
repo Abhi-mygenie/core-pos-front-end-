@@ -35898,7 +35898,7 @@
       "sprint_key": "TBD",
       "id": "BUG-647",
       "title": "GST OFF — API Payload Still Sends gst_tax and Inflated order_amount",
-      "status": "INVESTIGATION_COMPLETE — ODs open (OD-647-01, OD-647-02). Next: PLANNING Gate 2-3.",
+      "status": "GATE_2_ODs_ANSWERED 2026-11-16. OD-647-01: zero ALL tax (gst_amount, vat_amount per item + gst_tax, vat_tax, tax_amount, order_amount at order level) when gstStatus=false. OD-647-02: yes — SC GST, Tip GST, Delivery GST also zeroed. Next: Gate 3 plan.",
       "files": "orderTransform.js, OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx",
       "notes": "P0/CRITICAL. FE_BUG. BUG-336 fixed UI display (CPP L287) but buildCartItem/calcOrderTotals/localTax/taxTotals have NO gstStatus check — payload sends GST even when restaurant has GST disabled. Cashier sees ₹239, backend receives ₹250. ~30-40 lines fix across 5 sites. Planning skip NOT eligible. Related: BUG-336, INV-GST-001. 2 ODs open.",
       "artifact_refs": [
