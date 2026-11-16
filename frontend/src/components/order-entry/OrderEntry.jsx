@@ -1100,33 +1100,30 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
     }));
   }, []);
 
-  // CR-523: Save customer to server immediately on placed orders
+  // CR-523: Save customer to server via dedicated POS endpoint (not update-place-order)
   const saveCustomerToServer = useCallback(async (customerData) => {
     const orderId = effectiveTable?.orderId;
     if (!orderId) return; // not placed yet — save happens with place-order
     if (isEditLocked) return; // BUG-656: locked orders can't change customer
     try {
-      const payload = orderToAPI.updateOrder(effectiveTable, [], customerData, orderType, {
-        restaurantId: restaurant?.id,
-        orderNotes: [],
-        printAllKOT: false,
-        allCartItems: cartItems.filter(i => i.placed), // only placed items for totals
-        serviceChargePercentage: (
-          (orderType === 'dineIn' || orderType === 'walkIn' || table?.isRoom)
-          && !!restaurant?.autoServiceCharge
-        ) ? (restaurant?.serviceChargePercentage || 0) : 0,
-        serviceChargeTaxPct: restaurant?.serviceChargeTaxPct || 0,
-        deliveryChargeGstPct: restaurant?.deliveryChargeGstPct || 0,
-        printerAgents: printerAgents || [],
-        roundOffEnabled: restaurant?.totalRound !== false,
+      await api.post(API_ENDPOINTS.LINK_CUSTOMER_ORDER, {
+        phone: customerData?.phone || '',
+        f_name: customerData?.name || '',
+        l_name: '',
+        email: '',
+        gst_number: customerData?.gstNumber || '',
+        gst_name: customerData?.gstName || '',
+        date_of_birth: customerData?.dob || customerData?.birthday || '',
+        date_of_anniversary: customerData?.anniversary || '',
+        membership_id: customerData?.id || '',
+        order_id: String(orderId),
       });
-      await api.post(API_ENDPOINTS.UPDATE_PLACE_ORDER, payload);
       toast({ title: 'Customer saved', description: customerData?.name || 'Customer linked to order' });
     } catch (err) {
-      console.error('CR-523: customer save failed', err);
-      toast({ title: 'Save failed', description: 'Customer change not saved to server. Try again.', variant: 'destructive' });
+      console.error('[CR-523] customer link failed:', err);
+      toast({ title: 'Save failed', description: 'Customer not linked to order. Try again.', variant: 'destructive' });
     }
-  }, [effectiveTable, isEditLocked, orderType, restaurant, table, cartItems, orderToAPI, printerAgents, toast]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [effectiveTable, isEditLocked, toast]); // CR-523: minimal deps — no cart/restaurant/orderType needed
 
   // Cart total: final payable amount including tax (for Collect Bill button)
   // Before placing: calculate locally (subtotal + tax)

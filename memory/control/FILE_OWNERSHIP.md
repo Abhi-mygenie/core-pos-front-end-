@@ -2317,3 +2317,6 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 
 | `frontend/src/components/order-entry/CancelOrderModal.jsx` | **L63-100:** Reason label gets `*` asterisk; empty-reasons block with red message + `cancel-order-no-reasons` testid. | CR-493 E1+E3 IMPL 2026-11-16 |
 | `frontend/src/components/order-entry/CancelFoodModal.jsx` | **L155-210:** Same: `*` asterisk + empty-reasons block with `cancel-food-no-reasons` testid. | CR-493 E4+E5 IMPL 2026-11-16 |
+
+| `frontend/src/api/constants.js` | **L84:** `LINK_CUSTOMER_ORDER` endpoint added (`/api/v1/vendoremployee/pos/user-check-create`). | CR-523 E1 IMPL 2026-11-16 |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | **L1103-1126:** `saveCustomerToServer` rewritten — POST to `user-check-create` (10-field payload, 3 deps) replacing `update-place-order` workaround (30-field payload, 10 deps). | CR-523 E2 IMPL 2026-11-16 |

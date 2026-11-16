@@ -81,6 +81,7 @@ export const API_ENDPOINTS = {
   PLACE_ORDER:       '/api/v2/vendoremployee/order/place-order',          // CR-POS2-003-REOPEN-B (May-2026): reverted v1 → v2 per owner directive 2026-05-09. v2 confirmed deployed (HTTP 405 for GET, identical Laravel route shape as v1). Multipart shape unchanged. New order (unpaid + prepaid via payment_status=paid)
   PREPAID_ORDER:     '/api/v2/vendoremployee/order/paid-prepaid-order',    // Mark existing order as paid (JSON: {order_id, payment_status})
   UPDATE_ORDER:      '/api/v2/vendoremployee/order/update-place-order',   // Update existing order (add items)
+  LINK_CUSTOMER_ORDER: '/api/v1/vendoremployee/pos/user-check-create',  // CR-523: link/change customer on existing order without full update
   BILL_PAYMENT:      '/api/v2/vendoremployee/order/order-bill-payment',        // Collect bill on existing order
   // CR-017: WhatsApp Payment Link — generates Razorpay link + sends WhatsApp/SMS
   PAYMENT_LINK:      '/api/v1/razor-pay/payment-link',
