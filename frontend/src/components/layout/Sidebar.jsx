@@ -885,8 +885,8 @@ const Sidebar = ({
               </div>
               <div className="text-xs line-clamp-2 break-words" style={{ color: COLORS.grayText }}> {/* BUG-667: wrap long name to 2 lines */}
                 {restaurant?.id
-                  ? `${restaurant?.name ? `${restaurant.name} · ` : ''}#${restaurant.id}`
-                  : (user?.roleName || '')} {/* CR-378: show restaurant name alongside ID */}
+                  ? `#${restaurant.id}${restaurant?.name ? ` · ${restaurant.name}` : ''}`
+                  : (user?.roleName || '')} {/* CR-378: show restaurant name alongside ID — RID first so it's never clipped */}
               </div>
               {user?.email && (
                 <div className="text-[10px] truncate" style={{ color: COLORS.grayText, opacity: 0.7 }}>
