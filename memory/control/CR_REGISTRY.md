@@ -1256,3 +1256,6 @@ All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate
 
 > **2026-11-15 Batch D Gate 2 update:** CR-525, CR-521, CR-523 → **GATE_2_IA_CLOSED**, priority **P0** (owner intake; supersedes the P1 shown above for 521/525). Docs: `impact/CR-525_IMPACT_ANALYSIS.md`, `impact/CR-521_IMPACT_ANALYSIS.md`, `impact/CR-523_IMPACT_ANALYSIS.md`. Backend brief `backend_briefs/BACKEND_BRIEF_BATCH-D_2026_11_15.md` (BD-01 blocks the CR-525/521 release; BD-06 = remove customer for CR-523). CR-376-FU-C confirmed P3, not in Batch D.
 
+
+| **CR-543** | Late Cancellation Audit: Time-Threshold-Based Flagging — configurable minutes threshold at restaurant level; any cancel beyond threshold flagged in Order Edit Audit. Replaces CR-443 cancel-stage alerts. | **P0** | **MEDIUM** | **GATE_1_INTAKE_COMPLETE 2026-11-16** — Owner directed. Backend brief: `backend_briefs/BACKEND_BRIEF_BATCH-C_2026_11_16_v2.md` ASK 3. | `change_requests/35_CR-543_LATE_CANCELLATION_AUDIT_THRESHOLD_INTAKE.md` |
+| **CR-544** | Cancel After Making Unpaid: Audit Event — two-step fraud chain detection (unpaid → cancel). | **P0** | **MEDIUM** | **GATE_1_INTAKE_COMPLETE 2026-11-16** — Owner directed. Backend brief: `backend_briefs/BACKEND_BRIEF_BATCH-C_2026_11_16_v2.md` ASK 4. | `change_requests/36_CR-544_CANCEL_AFTER_UNPAID_AUDIT_INTAKE.md` |

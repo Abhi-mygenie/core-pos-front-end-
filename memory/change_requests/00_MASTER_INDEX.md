@@ -46,3 +46,10 @@
   3. If ID missing: register using the intake doc in this zip.
   4. CR-493 (item 17) is EXISTING — only upgrade priority to P0 if not already P0.
   5. All new items use sprint_key: nov_cr_batch.
+## Addendum — 2026-11-16 (Owner session: Audit page expansion)
+35   CR-543    P0  CR   Reports / Audit / Settings     Late Cancellation Audit: Time-Threshold-Based Flagging
+36   CR-544    P0  CR   Reports / Audit / Fraud         Cancel After Making Unpaid: Audit Event
+
+## Priority changes — 2026-11-16
+  CR-529: P1→P2 (owner: all OTP work deferred further)
+  CR-444: RECOMMEND CLOSE (duplicate of Sales Audit / CR-474)

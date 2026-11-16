@@ -24,7 +24,8 @@ except ImportError:
 # ── Paths ──────────────────────────────────────────────────────────────────
 SCRIPT_DIR    = Path(__file__).parent
 ENV_PATH      = SCRIPT_DIR.parent.parent / 'frontend' / '.env'
-REGISTRY_PATH = SCRIPT_DIR.parent / 'control' / 'registry.json'
+REGISTRY_PATH      = SCRIPT_DIR.parent / 'control' / 'registry.json'
+LAST_PUSHED_PATH   = SCRIPT_DIR / '_last_pushed_assignees.json'  # brief-pos-agent-2026-11-16 §2 sync fix
 
 load_dotenv(ENV_PATH)
 
@@ -152,6 +153,21 @@ def to_contract_status(raw):
     if 'INVESTIGATION COMPLETE' in s and blocked == 'BACKEND':  # CR-420 OD-420-01
         return 'PLANNING', 'BACKEND'
 
+    # brief-pos-agent-2026-11-16 §1 (amended BUG-225 fix): GATE_2/3 tokens are
+    # gate-stage markers → PLANNING, UNLESS they carry a true-closure word
+    # (SUBSUMED, MERGED, etc.). Must run BEFORE the CLOSED block because
+    # GATE_2_IA_CLOSED contains "CLOSED" substring.
+    if any(k in s for k in [
+        'GATE_2', 'GATE 2', 'GATE_3', 'GATE 3',
+        'IMPACT_ANALYSIS', 'PLAN_COMPLETE', 'GATE_2_CLOSED', 'GATE_3_PLAN',
+    ]):
+        _true_close = any(k in s for k in [
+            'SUBSUMED', 'MERGED', 'NOT A BUG', 'RETIRED', 'ABSORBED',
+            'SPLIT \u2192', 'SPLIT_',
+        ])
+        if not _true_close:
+            return 'PLANNING', blocked
+
     if any(k in s for k in [
         'CLOSED', 'OWNER VERIFIED', 'OWNER_VERIFIED', 'SUBSUMED', 'RETIRED',
         'RESOLVED', 'ABSORBED', 'FOLDED', 'FROZEN', 'BACKEND_FIXED',
@@ -160,6 +176,7 @@ def to_contract_status(raw):
         'SHIPPED',              # OD-419-05
         'INVESTIGATION COMPLETE', 'SUPERSEDED', 'SPLIT →', 'SPLIT_',  # CR-420 G3a
         'MAIN VERIFIED',        # CR-420 G3a + OD-420-02
+        'MERGED', 'NOT A BUG',  # brief-pos-agent-2026-11-16: true-closure words must also route to CLOSED
     ]):
         return 'CLOSED', ''
 
@@ -184,12 +201,6 @@ def to_contract_status(raw):
         'IMPLEMENTED', 'GATE_4_GO',
     ]):
         return 'IMPLEMENTED', blocked
-
-    if any(k in s for k in [
-        'GATE_2', 'GATE 2', 'GATE_3', 'GATE 3',
-        'IMPACT_ANALYSIS', 'PLAN_COMPLETE', 'GATE_2_CLOSED', 'GATE_3_PLAN',
-    ]):
-        return 'PLANNING', blocked
 
     if any(k in s for k in [
         'GATE_1', 'GATE 1', 'GATE_1_INTAKE', 'INTAKE', 'NOT STARTED',
@@ -336,6 +347,12 @@ def compute_artefacts(item):
 
 
 def compute_money_path(item):
+    # brief-pos-agent-2026-11-16: explicit override field wins over heuristic
+    override = str(item.get('money_path', '')).strip().lower()
+    if override in ('yes',):
+        return 'YES'
+    if override in ('no',):
+        return 'no'
     area = normalise_area(item.get('area', ''))
     if area in _MONEY_AREAS:
         return 'YES'
@@ -1153,7 +1170,9 @@ def seed_assignees_from_sheet(token, items, dry_run=False):
 
 def sync_assignees_from_sheet(token, items, dry_run=False):
     """On every push: diff sheet col M vs registry.assignee.
-    Dashboard edits → apply to registry. Conflicts → log. Returns (cl_rows, report_lines)."""
+    Uses _last_pushed_assignees.json to distinguish dashboard edits from
+    registry changes (brief-pos-agent-2026-11-16 §2 sync fix).
+    Dashboard edits → apply to registry. Registry changes → push (skip here). Conflicts → PENDING."""
     enc = _range_url('All Items', 'A1:M10000')
     r = sheets_get(token, f'/values/{enc}')
     if r.status_code != 200:
@@ -1163,6 +1182,12 @@ def sync_assignees_from_sheet(token, items, dry_run=False):
     if not rows:
         return [], []
 
+    # Load last-pushed state (empty dict if no history yet)
+    try:
+        last_pushed = json.load(open(LAST_PUSHED_PATH))
+    except (FileNotFoundError, json.JSONDecodeError):
+        last_pushed = {}
+
     header = rows[0]
     id_col = header.index('ID') if 'ID' in header else 1
     assignee_col = header.index('Assignee') if 'Assignee' in header else 12
@@ -1171,6 +1196,8 @@ def sync_assignees_from_sheet(token, items, dry_run=False):
     now_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     cl_rows = []
     applied = []
+    skipped_reg_change = []
+    pending = []
     unknown_names = []
     report = []
 
@@ -1188,28 +1215,53 @@ def sync_assignees_from_sheet(token, items, dry_run=False):
         # Validate name (if non-blank)
         if sheet_val and sheet_val not in _ALLOWED_ASSIGNEES:
             unknown_names.append((item_id, sheet_val))
-            # Keep sheet value per brief, but report it
             items_by_id[item_id]['assignee'] = sheet_val
             cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
                            'APPLIED', now_str, f'SOURCE=DASHBOARD, APPLIED (unknown name: {sheet_val})'])
             applied.append(item_id)
             continue
 
-        if not sheet_val and reg_val:
-            # Owner cleared it
-            items_by_id[item_id]['assignee'] = ''
-            cl_rows.append([now_str, item_id, 'Assignee', reg_val, '',
-                           'APPLIED', now_str, 'SOURCE=DASHBOARD, CLEARED'])
+        last_val = last_pushed.get(item_id)  # None = no push history
+
+        if last_val is None:
+            # No history — original behavior: treat as dashboard edit
+            if not sheet_val and reg_val:
+                items_by_id[item_id]['assignee'] = ''
+                cl_rows.append([now_str, item_id, 'Assignee', reg_val, '',
+                               'APPLIED', now_str, 'SOURCE=DASHBOARD, CLEARED'])
+                applied.append(item_id)
+            elif sheet_val != reg_val:
+                items_by_id[item_id]['assignee'] = sheet_val
+                cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
+                               'APPLIED', now_str, 'SOURCE=DASHBOARD, APPLIED'])
+                applied.append(item_id)
+        elif sheet_val == last_val and reg_val != last_val:
+            # Sheet unchanged from last push; registry changed → push registry to sheet (skip here)
+            skipped_reg_change.append(item_id)
+            continue
+        elif sheet_val != last_val and reg_val == last_val:
+            # Sheet changed (genuine dashboard edit); registry unchanged → apply to registry
+            if not sheet_val:
+                items_by_id[item_id]['assignee'] = ''
+                cl_rows.append([now_str, item_id, 'Assignee', reg_val, '',
+                               'APPLIED', now_str, 'SOURCE=DASHBOARD, CLEARED'])
+            else:
+                items_by_id[item_id]['assignee'] = sheet_val
+                cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
+                               'APPLIED', now_str, 'SOURCE=DASHBOARD, APPLIED'])
             applied.append(item_id)
-        elif sheet_val != reg_val:
-            # Dashboard edit — apply directly (no owner approval needed per brief §3)
-            items_by_id[item_id]['assignee'] = sheet_val
+        else:
+            # Both changed → PENDING
+            pending.append(item_id)
             cl_rows.append([now_str, item_id, 'Assignee', reg_val, sheet_val,
-                           'APPLIED', now_str, 'SOURCE=DASHBOARD, APPLIED'])
-            applied.append(item_id)
+                           'PENDING', '', f'CONFLICT: registry={reg_val!r} sheet={sheet_val!r} last_pushed={last_val!r}'])
 
     if applied:
         report.append(f"Dashboard assignee edits applied: {', '.join(applied)}")
+    if skipped_reg_change:
+        report.append(f"Registry changes (will push to sheet): {', '.join(skipped_reg_change)}")
+    if pending:
+        report.append(f"\u26a0 PENDING conflicts (both changed): {', '.join(pending)}")
     if unknown_names:
         report.append(f"Unknown assignee names (outside allowed list): {unknown_names}")
 
@@ -1311,6 +1363,14 @@ def cmd_push(dry_run=False):
 
     # ── OD-419-04: diff + Change Log append runs as final step of push ──
     # Contract §5 REGISTRAR: push and diff happen in the same step.
+    # brief-pos-agent-2026-11-16 §2: save last-pushed assignees after every successful push
+    if not dry_run:
+        last_pushed_state = {i['id']: str(i.get('assignee', '') or '') for i in items}
+        try:
+            json.dump(last_pushed_state, open(LAST_PUSHED_PATH, 'w'), indent=2)
+        except Exception as e:
+            print(f"  \u26a0  Could not save _last_pushed_assignees.json: {e}")
+
     print("\n── POST-PUSH DIFF (contract §5 REGISTRAR) " + "─" * 28)
     cmd_diff_log(dry_run=dry_run)
 
