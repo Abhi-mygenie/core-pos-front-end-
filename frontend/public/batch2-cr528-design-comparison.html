@@ -207,6 +207,10 @@
           </div>
           <div class="mock-popup-footer">
             <button class="mock-btn mock-btn-green" style="flex:1;">✓ Accept</button>
+            <button class="mock-btn mock-btn-ghost new-marker" style="border-color:#6b7280;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              KOT
+            </button>
             <button class="mock-btn mock-btn-ghost">✎ Edit</button>
             <button class="mock-btn mock-btn-red">✕ Reject</button>
           </div>
@@ -215,7 +219,8 @@
           <strong>Changes:</strong><br>
           ① <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items (orange, mirrors PAID/Comp pattern)<br>
           ② <span style="color:#ef4444; font-weight:700;">✕</span> Per-item cancel button on every row (opens CancelFoodModal via props)<br>
-          ③ Accept works normally — NOT gated by ₹1 items (OD-545-04)
+          ③ <span style="font-weight:700;">🖨 KOT</span> print button in footer (reuses OrderCard KOT logic via props → DashboardPage)<br>
+          ④ Accept works normally — NOT gated by ₹1 items (OD-545-04)
         </div>
       </div>
     </div>
@@ -462,9 +467,9 @@
       <tr>
         <td style="font-weight:600;">CR-545</td>
         <td><span class="badge" style="background:#e0e7ff; color:#4f46e5;">Gate 2</span></td>
-        <td><span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items + <span style="color:#ef4444; font-weight:700;">✕</span> per-item cancel button in ScanOrderPopOut</td>
+        <td><span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items + <span style="color:#ef4444; font-weight:700;">✕</span> per-item cancel + <span style="font-weight:600;">🖨 KOT</span> print button in ScanOrderPopOut</td>
         <td>2</td>
-        <td>~45</td>
+        <td>~80</td>
       </tr>
       <tr>
         <td style="font-weight:600;">CR-528</td>

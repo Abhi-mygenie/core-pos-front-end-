@@ -173,7 +173,76 @@ If it doesn't exist as a named export, extract the cancel logic from OrderEntry 
 
 ---
 
-### 2C. Accept Behavior — No Change Needed
+### 2C. KOT Print Button in Popup (NEW — owner requirement 2026-11-17)
+
+| Field | Value |
+|-------|-------|
+| Files | `ScanOrderPopOut.jsx` + `DashboardPage.jsx` (R5) |
+| Anti-rule impact | PARTIAL — popup calls prop only, DashboardPage handles API |
+| Lines | ~10 (popup) + ~25 (dashboard) |
+| Risk | MEDIUM |
+| Reuses | `printOrder` from `orderService.js`, `getStationsFromOrderItems` from `stationService.js` — exact same code path as OrderCard.jsx L202-239 |
+
+**Current state:** No KOT print from ScanOrderPopOut. Staff must Accept → open OrderEntry → print KOT from there. Extra steps.
+
+**Fix — ScanOrderPopOut:**
+
+New prop: `onPrintKOT` in signature. Printer icon button in the popup footer (between Accept and Edit):
+
+```jsx
+{onPrintKOT ? (
+  <button
+    data-testid={`popout-print-kot-${idStr}`}
+    className="mock-btn mock-btn-ghost"
+    onClick={(e) => { e.stopPropagation(); onPrintKOT(activeOrder); }}
+    title="Print KOT"
+  >
+    <Printer size={16} /> KOT
+  </button>
+) : null}
+```
+
+Import `Printer` from lucide-react (already used in OrderCard).
+
+**Fix — DashboardPage:**
+
+Reuse the exact KOT print pattern from OrderCard.jsx L202-239:
+
+```javascript
+// CR-545: KOT print from ScanOrderPopOut — reuses OrderCard pattern
+import { printOrder } from '../api/services/orderService';           // NEW import
+import { getStationsFromOrderItems } from '../api/services/stationService'; // NEW import
+
+const handleScanPrintKOT = useCallback(async (order) => {
+  const stations = getStationsFromOrderItems(order.items || [], getProductById);
+  if (stations.length === 0) {
+    toast({ title: 'No KOT stations', description: 'No items with stations found', variant: 'destructive' });
+    return;
+  }
+  try {
+    const stationKot = stations.map(s => s.station).join(',');
+    await printOrder(order.orderId, 'kot', stationKot, order, 0, {}, printerAgents || []);
+    toast({ title: 'KOT sent', description: `Order #${order.orderId}` });
+  } catch (err) {
+    toast({ title: 'KOT failed', description: err?.message || 'Print error', variant: 'destructive' });
+  }
+}, [getProductById, printerAgents, toast]);
+```
+
+Wire prop: `<ScanOrderPopOut ... onPrintKOT={handleScanPrintKOT} />`
+
+**Dependencies in DashboardPage:**
+- `printOrder` — new import from `orderService.js`
+- `getStationsFromOrderItems` — new import from `stationService.js`
+- `getProductById` — need to check if available in DashboardPage scope (from MenuContext or RestaurantContext)
+- `printerAgents` — need to check if available (from RestaurantContext)
+- `toast` — already available via `useToast`
+
+**Station picker:** For Phase 1, auto-send to ALL stations (join all). Station picker modal can be a Phase 1.5 follow-up if multi-station selection is needed from the popup.
+
+---
+
+### 2D. Accept Behavior — No Change Needed
 
 Per OD-545-04: Accept works normally. Staff can accept at ₹1, then edit price in OrderEntry afterward. No code change.
 
@@ -217,11 +286,11 @@ Filed at `backend_briefs/BACKEND_BRIEF_APS_PRICE_EDIT_2026-11-16.md` with B1-B4 
 
 | File | Change | Lines | Risk |
 |------|--------|-------|------|
-| `ScanOrderPopOut.jsx` | APS badge (L484) + per-item cancel X button (L461) + new `onCancelItem` prop | ~20 | MEDIUM |
-| `DashboardPage.jsx` | Import CancelFoodModal + state + handler + wire prop + render modal | ~25 | HIGH (R5) |
-| **Total** | | **~45** | **HIGH** |
+| `ScanOrderPopOut.jsx` | APS badge (L484) + per-item cancel X button (L461) + KOT print button (footer) + 3 new props (`onCancelItem`, `onPrintKOT`) | ~30 | MEDIUM |
+| `DashboardPage.jsx` | Import CancelFoodModal + printOrder + getStationsFromOrderItems + state + 2 handlers (cancel + KOT) + wire props + render modal | ~50 | HIGH (R5) |
+| **Total** | | **~80** | **HIGH** |
 
-**Files WILL NOT touch:** OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, orderTransform.js, any service (unless cancelFoodItem needs extraction)
+**Files WILL NOT touch:** OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, orderTransform.js, orderService.js (reused as-is), stationService.js (reused as-is)
 
 ---
 
@@ -267,9 +336,11 @@ Per OD-545-03: Proceed with implementation assuming B1 works. Probe before QA. I
 | V5 | Cancel opens CancelFoodModal | Browser: click X → modal opens with reasons | Modal with reason dropdown |
 | V6 | Cancel removes item from order | Browser: select reason → confirm → item removed | Socket updates popup, item gone |
 | V7 | Accept works normally with ₹1 items | Browser: order with ₹1 items → Accept | Order confirmed at ₹1 |
-| V8 | `data-testid` attributes present | grep | `popout-item-aps-tag-*`, `popout-item-cancel-*` |
-| V9 | `// CR-545` markers in both files | grep | ≥2 hits per file |
-| V10 | Webpack 0 new warnings | dev server | compiled |
+| V8 | KOT button visible in popup footer | Browser: popup shows Printer/KOT button | Button between Accept and Edit |
+| V9 | KOT print sends to printer | Browser: click KOT → toast "KOT sent" | Toast confirmation |
+| V10 | `data-testid` attributes present | grep | `popout-item-aps-tag-*`, `popout-item-cancel-*`, `popout-print-kot-*` |
+| V11 | `// CR-545` markers in both files | grep | ≥3 hits per file |
+| V12 | Webpack 0 new warnings | dev server | compiled |
 
 ---
 
@@ -286,15 +357,15 @@ Per OD-545-03: Proceed with implementation assuming B1 works. Probe before QA. I
 ---
 
 ```
-Planning complete: CR-545
+Planning complete: CR-545 (Rev 2 — +KOT print)
 Stage: Impact Analysis (Gate 2 only)
 Code reality: NONE
 Risk: HIGH
-Phase 1 files WILL change: ScanOrderPopOut.jsx (~20 lines), DashboardPage.jsx (~25 lines)
-Phase 1 files WILL NOT touch: OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, any transform
+Phase 1 files WILL change: ScanOrderPopOut.jsx (~30 lines), DashboardPage.jsx (~50 lines)
+Phase 1 files WILL NOT touch: OrderEntry.jsx, CartPanel.jsx, CollectPaymentPanel.jsx, orderService.js, stationService.js
 Phase 2: OUTLINE ONLY — backend-blocked (B3/B4)
-Owner decisions: OD-545-01 through OD-545-04 all locked
-Pre-impl check: B1 probe (cancel-food-item on YTC) + cancelFoodItem service export check
+Owner decisions: OD-545-01 through OD-545-04 locked + KOT print (owner verbal 2026-11-17)
+Pre-impl check: B1 probe ✅ + cancelFoodItem export check needed + getProductById/printerAgents availability in DashboardPage
 Docs: impact/CR-545_IMPACT_ANALYSIS.md
 Next: Gate 3 (Implementation Plan) or Gate 4 GO
 ```
