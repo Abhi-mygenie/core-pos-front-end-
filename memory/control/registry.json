@@ -37832,7 +37832,7 @@
       "id": "CR-528",
       "type": "CR",
       "title": "Report: Order Edit and Cancel Operations After Bill Print",
-      "status": "GATE_2_IMPACT_ANALYSIS \u2014 Rev 2 (backend unblocked). 1 file ~65 lines. 3 new event types + 3 KPIs + table + export.",
+      "status": "GATE_3_PLAN_COMPLETE \u2014 8 edits, 1 file (~65 lines). 3 new KPI cards, 5 event types, 10-column table, updated export.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37863,6 +37863,11 @@
           "label": "Impact Analysis Rev 2",
           "path": "memory/impact/CR-528_IMPACT_ANALYSIS_REV2.md",
           "type": "impact_analysis"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/CR-528_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan"
         }
       ]
     },
