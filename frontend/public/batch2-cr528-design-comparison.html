@@ -178,14 +178,11 @@
           <div class="mock-popup-body">
             <div style="font-size:12px; color:#6b7280; margin-bottom:12px;">Customer: Rahul · 9876543210</div>
             <div style="border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
-              <div class="item-row" style="padding:10px 12px;">
-                <div class="item-info">
-                  <span style="font-weight:500;">2× Butter Chicken</span>
-                </div>
-                <span class="item-price">₹500.00</span>
-                <button class="cancel-x" title="Cancel this item">✕</button>
-              </div>
+              <!-- APS item SORTED TO TOP -->
               <div class="item-row" style="padding:10px 12px; background:#fff7ed;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
                 <div class="item-info">
                   <span style="font-weight:500;">1× Melo Fish</span>
                   <span class="new-marker">
@@ -193,14 +190,24 @@
                   </span>
                 </div>
                 <span class="item-price">₹1.00</span>
-                <button class="cancel-x" title="Cancel this item">✕</button>
               </div>
               <div class="item-row" style="padding:10px 12px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <div class="item-info">
+                  <span style="font-weight:500;">2× Butter Chicken</span>
+                </div>
+                <span class="item-price">₹500.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
                 <div class="item-info">
                   <span style="font-weight:500;">3× Naan</span>
                 </div>
                 <span class="item-price">₹90.00</span>
-                <button class="cancel-x" title="Cancel this item">✕</button>
               </div>
             </div>
             <div style="text-align:right; margin-top:12px; font-weight:700; font-size:16px;">Total: ₹591.00</div>
@@ -216,12 +223,132 @@
           </div>
         </div>
         <div style="margin-top:16px; padding:12px; background:#ecfdf5; border-radius:8px; font-size:12px; color:#065f46;">
-          <strong>Changes:</strong><br>
-          ① <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items (orange, mirrors PAID/Comp pattern)<br>
-          ② <span style="color:#ef4444; font-weight:700;">✕</span> Per-item cancel button on every row (opens CancelFoodModal via props)<br>
-          ③ <span style="font-weight:700;">🖨 KOT</span> print button in footer (reuses OrderCard KOT logic via props → DashboardPage)<br>
-          ④ Accept works normally — NOT gated by ₹1 items (OD-545-04)
+          <strong>Phase 1 Changes:</strong><br>
+          ① <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items + <strong>sorted to top</strong> of item list<br>
+          ② <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Cancel button per item — <strong>grey XCircle</strong> (matches CartPanel style)<br>
+          ③ <strong>🖨 KOT</strong> print button in footer (reuses OrderCard logic via props)<br>
+          ④ Accept works normally — NOT gated by ₹1 items
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST-ACCEPT FLOW -->
+  <h3 style="font-size:15px; font-weight:600; margin:32px 0 16px; color:#374151;">Post-Accept Price Edit Flow (Phase 1 — existing workaround)</h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#f0f9ff; color:#0369a1; border-bottom:2px solid #bae6fd;">STEP 1–2: Accept → Edit opens OrderEntry</div>
+      <div class="compare-content">
+        <div style="background:#f8fafc; border-radius:8px; padding:16px; font-size:13px;">
+          <div style="margin-bottom:12px;">
+            <strong>1.</strong> Staff taps <span style="background:#329937; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">✓ Accept</span> → order confirmed at ₹1<br>
+            <strong>2.</strong> Staff taps <span style="background:#fff; border:1px solid #e5e7eb; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">✎ Edit</span> or opens from dashboard → OrderEntry opens
+          </div>
+          <div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; background:#fff;">
+            <div style="font-size:11px; color:#666; font-weight:600; margin-bottom:8px;">CART (OrderEntry)</div>
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid #f3f4f6;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <span style="flex:1;">Melo Fish <span class="tag" style="background:#FFF3E0; color:#E65100;">APS ₹1</span></span>
+              <span style="font-family:monospace; color:#666;">₹1.00</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 0;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <span style="flex:1;">Butter Chicken ×2</span>
+              <span style="font-family:monospace; color:#666;">₹500.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#f0f9ff; color:#0369a1; border-bottom:2px solid #bae6fd;">STEP 3–5: Cancel ₹1 → Re-add with price → Update</div>
+      <div class="compare-content">
+        <div style="background:#f8fafc; border-radius:8px; padding:16px; font-size:13px;">
+          <div style="margin-bottom:12px;">
+            <strong>3.</strong> Staff taps <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> on Melo Fish → CancelFoodModal → picks reason → item cancelled<br>
+            <strong>4.</strong> Staff taps <strong>Melo Fish</strong> from menu → <strong>BUG-035 "Enter Price" modal</strong> opens:
+          </div>
+          <div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff; max-width:300px; margin:0 auto;">
+            <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Melo Fish — set the actual price</div>
+            <div style="font-size:12px; color:#666; margin-bottom:12px;">This item requires manual pricing</div>
+            <div style="border:2px solid #F26B33; border-radius:8px; padding:10px; font-size:18px; font-weight:700; text-align:center; margin-bottom:8px;">₹ 350</div>
+            <button style="width:100%; background:#329937; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:700; font-size:14px;">Add to Cart</button>
+          </div>
+          <div style="margin-top:12px;">
+            <strong>5.</strong> Item added at ₹350 → staff taps <strong>Update Order</strong> → done
+          </div>
+          <div style="margin-top:12px; padding:8px; background:#fef3c7; border-radius:6px; font-size:11px; color:#92400e;">
+            ⚠ This is 4 extra steps. <strong>Phase 2</strong> eliminates this with inline price edit in the popup.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 PREVIEW -->
+  <h3 style="font-size:15px; font-weight:600; margin:32px 0 16px; color:#374151;">Phase 2 Preview — Inline Price Edit in Popup <span style="background:#fef3c7; color:#92400e; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;">BACKEND BLOCKED</span></h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#fef3c7; color:#92400e; border-bottom:2px solid #fde68a;">PHASE 2 — Needs update-food-price endpoint (B3/B4)</div>
+      <div class="compare-content">
+        <div class="mock-popup">
+          <div class="mock-popup-header">
+            <div>
+              <div style="font-weight:700; font-size:15px;">Order 1 of 3</div>
+              <div style="font-size:12px; color:#6b7280;">Table 12 · Dine-In · #000845</div>
+            </div>
+            <span class="badge" style="background:#e8f5e9; color:#329937;">PAID</span>
+          </div>
+          <div class="mock-popup-body">
+            <div style="border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+              <div class="item-row" style="padding:10px 12px; background:#fff7ed;">
+                <div class="item-info" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-weight:500;">1× Melo Fish</span>
+                    <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px; width:100%;">
+                    <span style="font-size:12px; color:#666;">Price:</span>
+                    <div style="border:2px solid #F26B33; border-radius:6px; padding:4px 8px; font-size:14px; font-weight:700; width:80px; text-align:center; background:#fff;">350</div>
+                    <span style="font-size:11px; color:#329937; font-weight:600;">✓ Set</span>
+                  </div>
+                </div>
+                <span class="item-price" style="text-decoration:line-through; color:#9ca3af; font-size:11px;">₹1.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div class="item-info"><span style="font-weight:500;">2× Butter Chicken</span></div>
+                <span class="item-price">₹500.00</span>
+              </div>
+            </div>
+            <div style="text-align:right; margin-top:12px; font-weight:700; font-size:16px;">Total: ₹940.00 <span style="font-size:11px; color:#666; font-weight:400;">(was ₹591)</span></div>
+          </div>
+          <div class="mock-popup-footer">
+            <button class="mock-btn mock-btn-green" style="flex:1;">✓ Accept at ₹940</button>
+            <button class="mock-btn mock-btn-ghost">✎ Edit</button>
+            <button class="mock-btn mock-btn-red">✕ Reject</button>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; font-size:12px; color:#92400e;">
+          <strong>Phase 2 flow (single-click):</strong><br>
+          ① Staff types actual price (₹350) in the inline input<br>
+          ② Total updates live (₹591 → ₹940)<br>
+          ③ Staff taps Accept → <code>update-food-price</code> API called → then <code>confirmOrder</code><br>
+          ④ One click, zero workaround steps<br><br>
+          <strong>Blocked on:</strong> Backend B3 (<code>update-food-price</code> endpoint) or B4 (extend confirm with <code>price_overrides</code>)
+        </div>
+      </div>
+    </div>
+    <div class="compare-panel" style="display:flex; align-items:center; justify-content:center;">
+      <div style="text-align:center; padding:40px; color:#9ca3af;">
+        <div style="font-size:48px; margin-bottom:12px;">⏳</div>
+        <div style="font-size:14px; font-weight:600;">Backend endpoint needed</div>
+        <div style="font-size:12px; margin-top:8px;">Brief filed: <code>BACKEND_BRIEF_APS_PRICE_EDIT_2026-11-16.md</code></div>
+        <div style="font-size:12px; margin-top:4px;">B3: <code>PUT update-food-price</code></div>
+        <div style="font-size:12px;">B4: extend <code>confirmOrder</code> with <code>price_overrides</code></div>
       </div>
     </div>
   </div>

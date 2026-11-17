@@ -20,29 +20,31 @@
 
 ## 2. Phase 1 — Full Impact Analysis
 
-### 2A. APS "₹1" Tag (Visual Badge)
+### 2A. APS "₹1" Tag (Visual Badge) + Sort to Top
 
 | Field | Value |
 |-------|-------|
 | File | `components/dashboard/ScanOrderPopOut.jsx` (653 lines) |
-| Location | Item row rendering at **L468-484** (inside `activeOrder.items.map`) |
-| Anti-rule impact | NONE — purely visual, same pattern as PAID badge (L377-389) and Comp tag (L476-484) |
-| Lines | ~5 |
+| Location | Item row rendering at **L454-556** (inside `activeOrder.items.map`) |
+| Anti-rule impact | NONE — purely visual + sort, same pattern as PAID badge (L377-389) and Comp tag (L476-484) |
+| Lines | ~8 |
 | Risk | LOW |
 
-**Current item row structure (L467-493):**
-```jsx
-{/* row 1: qty + name + comp tag + line total */}
-<div className="flex items-start justify-between gap-2">
-  <div className="flex items-center gap-2 min-w-0">
-    <span ...>{qty}× {name}</span>
-    {isComp ? <span ...>Comp</span> : null}     // L476-484
-  </div>
-  <span ...>{currencySymbol}{lineTotal.toFixed(2)}</span>  // L486-492
-</div>
-```
+**2A-i: Sort ₹1 items to top of list (owner feedback 2026-11-17)**
 
-**Fix — insert APS badge after Comp tag (after L484):**
+Before the `.map()` at L454, sort items so `unitPrice === 1` come first:
+```javascript
+// CR-545: APS items float to top so staff sees them immediately
+const sortedItems = [...(activeOrder.items || [])].sort((a, b) => {
+  const aAps = Number(a?.unitPrice ?? a?.price) === 1 ? 0 : 1;
+  const bAps = Number(b?.unitPrice ?? b?.price) === 1 ? 0 : 1;
+  return aAps - bAps;
+});
+```
+Then `sortedItems.map(...)` replaces `activeOrder.items.map(...)`.
+
+**2A-ii: APS badge after Comp tag (L484)**
+
 ```jsx
 {unit === 1 && !isComp ? (
   <span
@@ -55,7 +57,7 @@
 ) : null}
 ```
 
-**Detection logic:** `unit === 1` where `unit = Number(it?.unitPrice ?? it?.price) || 0` (already computed at L456). APS items are stored at exactly ₹1 in the catalog. The `!isComp` guard prevents showing APS tag on complementary items (they're ₹0 effective regardless).
+Detection: `unit === 1` where `unit = Number(it?.unitPrice ?? it?.price) || 0` (L456). `!isComp` guard prevents APS tag on complementary items.
 
 ---
 
@@ -78,24 +80,24 @@ New prop in signature (L159-168):
 onCancelItem,  // CR-545: (order, item) => void — delegates to DashboardPage
 ```
 
-Per-item cancel button in item row — insert an X button at the end of each `<li>` row (L461), next to the line total:
+Per-item cancel button in item row — matches **existing CartPanel PlacedItemRow pattern** (L87-89):
 
 ```jsx
-{/* CR-545: per-item cancel for APS/₹1 items */}
+{/* CR-545: per-item cancel — matches CartPanel PlacedItemRow style */}
 {onCancelItem ? (
   <button
     data-testid={`popout-item-cancel-${idx}`}
-    className="ml-1 p-0.5 rounded hover:bg-red-50 flex-shrink-0"
-    style={{ color: '#EF5350' }}
+    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-gray-100"
+    style={{ backgroundColor: COLORS.sectionBg }}
     onClick={(e) => { e.stopPropagation(); onCancelItem(activeOrder, it); }}
     title="Cancel this item"
   >
-    <X size={14} />
+    <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
   </button>
 ) : null}
 ```
 
-**Note:** The X button renders for ALL items (not just ₹1) — item-level cancel is useful beyond APS. The `onCancelItem` prop presence gates the feature (if DashboardPage doesn't pass it, no buttons render).
+**Icon/color matches existing:** `XCircle` in `COLORS.grayText` (#666666), `rounded-full`, bg `COLORS.sectionBg` (#F7F7F7) — identical to CartPanel PlacedItemRow cancel button. Import `XCircle` from lucide-react (already used in CartPanel).
 
 **2B-ii: DashboardPage changes**
 
@@ -245,6 +247,29 @@ Wire prop: `<ScanOrderPopOut ... onPrintKOT={handleScanPrintKOT} />`
 ### 2D. Accept Behavior — No Change Needed
 
 Per OD-545-04: Accept works normally. Staff can accept at ₹1, then edit price in OrderEntry afterward. No code change.
+
+**Post-accept price edit flow (existing workaround — documented for design):**
+1. Staff taps **Accept** → order confirmed at ₹1
+2. Staff taps **Edit** (or opens order from dashboard) → OrderEntry opens with the placed ₹1 item in cart
+3. Staff cancels the ₹1 item (CartPanel cancel button → CancelFoodModal)
+4. Staff re-adds the same item from menu → **BUG-035 "Enter Price" modal** triggers (because the item is `dynamic_price` / APS in the catalog)
+5. Staff enters actual price → item added at correct price → **Update Order**
+
+This is 4 extra steps. Phase 2 eliminates this by allowing inline price edit.
+
+---
+
+### 2E. Phase 2 Design Preview — Inline Price Edit in Popup (Backend-Blocked)
+
+**NOT for implementation in Phase 1.** Design shown for owner review and backend awareness.
+
+When backend delivers `update-food-price` endpoint (B3/B4), the popup will show:
+- Inline price input on each ₹1 item row (replaces the ₹1.00 amount display)
+- Staff types actual price → stored locally until Accept
+- On Accept click: `update-food-price` called per ₹1 item → then `confirmOrder`
+- Single Accept flow — no cancel-and-re-add workaround
+
+**Files (Phase 2 only):** ScanOrderPopOut.jsx (~30 lines for inline inputs + local state) + DashboardPage.jsx (~20 lines for price update handler) + orderService.js (~10 lines for new API call)
 
 ---
 
