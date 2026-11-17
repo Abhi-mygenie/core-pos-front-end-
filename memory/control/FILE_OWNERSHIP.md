@@ -2355,3 +2355,6 @@ NOT touched: `CollectPaymentPanel.jsx` · `orderTransform.js` · `CartPanel.jsx`
 ## FILE_OWNERSHIP — CR-528 IMPL (2026-11-17) — marker `// CR-528`
 | `frontend/src/pages/reports-module/AuditLogMockup.jsx` | E1 L15: +XCircle,Ban,Pencil imports. E2 L21-29: AUDIT_TYPE_MAP + fmtTime. E3 L81-97: analytics memo +3 event arrays +3 counts. E4 L100-108: export subtitle + 6 KPIs. E5 L109-120: export 11 columns (+5 new). E6 L126: page subtitle. E7 L139-147: 6 KPI cards (grid 3→6). E8 L149-182: 10-col table, AUDIT_TYPE_MAP badges, type-specific cells, overflow-x-auto. | CR-528 E1-E8 |
 NOT touched: `insightsService.js` · `InsightsCacheContext.jsx` · `reportExporter.js` · `App.js` · any transform · any other report page.
+
+| `frontend/src/components/dashboard/ScanOrderPopOut.jsx` | E1-E6: +XCircle/Printer imports, +onCancelItem/onPrintKOT props, APS sort+badge, per-item cancel X button, KOT button in footer, grid 4→5 cols | CR-545 Phase 1 |
+| `frontend/src/pages/DashboardPage.jsx` | E7-E14: +CancelFoodModal/useMenu/printOrder/getStationsFromOrderItems imports, +getItemCancellationReasons/getProductById/printerAgents hooks, +scanCancelItem state, +handleScanCancelItem/executeScanItemCancel/handleScanPrintKOT handlers, wire props to ScanOrderPopOut, render CancelFoodModal | CR-545 Phase 1 |

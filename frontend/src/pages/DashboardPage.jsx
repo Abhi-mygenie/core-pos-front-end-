@@ -32,6 +32,11 @@ import { StationPanel } from "../components/station-view";
 import NotificationBanner from "../components/layout/NotificationBanner";
 import { isWebOrigin, getRunningOrders } from "../utils/orderOrigin";
 import ScanOrderPopOut from "../components/dashboard/ScanOrderPopOut";
+// CR-545: imports for item cancel + KOT print from ScanOrderPopOut
+import CancelFoodModal from "../components/order-entry/CancelFoodModal";
+import { useMenu } from "../contexts";
+import { printOrder } from "../api/services/orderService";
+import { getStationsFromOrderItems } from "../api/services/stationService";
 import AggregatorOrderPopOut from "../components/dashboard/AggregatorOrderPopOut"; // CR-106
 import AggregatorRejectModal from "../components/modals/AggregatorRejectModal";   // CR-106
 import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
@@ -175,7 +180,7 @@ const OrderListSection = ({ title, orders, orderType, matchingIds, snoozedOrders
 const DashboardPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoaded: restaurantLoaded, currencySymbol, cancellation, features, defaultOrderStatus, settings, searchOptions } = useRestaurant(); // CR-056: added settings; BUG-332: searchOptions
+  const { isLoaded: restaurantLoaded, currencySymbol, cancellation, features, defaultOrderStatus, settings, searchOptions, printerAgents } = useRestaurant(); // CR-056: added settings; BUG-332: searchOptions; CR-545: +printerAgents
   const { tables: apiTables, isLoaded: tablesLoaded } = useTables();
   const { user, hasPermission, permissions } = useAuth();
   
@@ -188,7 +193,8 @@ const DashboardPage = () => {
       console.table(permissions.map((p, i) => ({ '#': i + 1, Permission: p })));
     }
   }, [user, permissions]);
-  const { getOrderCancellationReasons } = useSettings();
+  const { getOrderCancellationReasons, getItemCancellationReasons } = useSettings(); // CR-545: +item reasons
+  const { getProductById } = useMenu(); // CR-545: needed for KOT station resolution
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
     orders, addOrder,
@@ -469,6 +475,7 @@ const DashboardPage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [checkInRoom, setCheckInRoom] = useState(null); // Room object for CheckIn modal
   const [cancelOrderEntry, setCancelOrderEntry] = useState(null); // Table entry for CancelOrderModal
+  const [scanCancelItem, setScanCancelItem] = useState(null); // CR-545: {order, item} for popup cancel
   const [oooRoomIds, setOooRoomIds] = useState(new Set()); // BUG-387: OOO room IDs — excluded from room column
   // CR-106: Aggregator modal state
   const [aggregatorRejectOrder, setAggregatorRejectOrder] = useState(null);
@@ -1674,6 +1681,43 @@ const DashboardPage = () => {
     setCancelOrderEntry(tableEntry);
   }, []);
 
+  // CR-545: item-level cancel handler from ScanOrderPopOut
+  const handleScanCancelItem = useCallback((order, item) => {
+    setScanCancelItem({ order, item });
+  }, []);
+
+  // CR-545: execute item cancel from popup — mirrors OrderEntry.handleCancelFood
+  const executeScanItemCancel = useCallback(async ({ item, reason, cancelQuantity, note = '' }) => {
+    if (!scanCancelItem?.order) return;
+    const order = scanCancelItem.order;
+    const tableEntry = { orderId: order.orderId || order.id };
+    const payload = orderToAPI.cancelItem(tableEntry, item, reason, cancelQuantity, {
+      printerAgents: printerAgents || [],
+      allCartItems: order.items || [],
+      cancelItemNote: note,
+    });
+    try {
+      await api.put(API_ENDPOINTS.CANCEL_ITEM, payload);
+    } catch (err) {
+      console.error('[DashboardPage] CR-545: cancel-food-item failed:', err?.message);
+    } finally {
+      setScanCancelItem(null);
+    }
+  }, [scanCancelItem, printerAgents]);
+
+  // CR-545: KOT print from ScanOrderPopOut — reuses OrderCard pattern
+  const handleScanPrintKOT = useCallback(async (order) => {
+    const items = order?.items || [];
+    const stations = getStationsFromOrderItems(items, getProductById);
+    if (stations.length === 0) return;
+    try {
+      const stationKot = stations.map(s => s.station).join(',');
+      await printOrder(order.orderId || order.id, 'kot', stationKot, order, 0, {}, printerAgents || []);
+    } catch (err) {
+      console.error('[DashboardPage] CR-545: KOT print failed:', err?.message);
+    }
+  }, [getProductById, printerAgents]);
+
   const handleUpdateTableStatus = useCallback((tableStringId, newStatus) => {
     // Update through TableContext — useMemo derivation picks up the change
     updateTableStatus(Number(tableStringId), newStatus);
@@ -1833,6 +1877,8 @@ const DashboardPage = () => {
           onAccept={handleConfirmOrder}
           onReject={handleCancelOrderFromCard}
           onEdit={handleTableClick}
+          onCancelItem={handleScanCancelItem}  // CR-545
+          onPrintKOT={handleScanPrintKOT}      // CR-545
           currencySymbol={currencySymbol}
           suppressed={Boolean(orderEntryType) || Boolean(cancelOrderEntry)}
         />
@@ -2276,6 +2322,17 @@ const DashboardPage = () => {
               const order = getOrderDataForEntry(cancelOrderEntry);
               return order?.razorpayOrderId ? 'refund' : 'cancel'; // CR-165
             })()}
+          />
+        )}
+
+        {/* CR-545: item-level cancel from ScanOrderPopOut */}
+        {scanCancelItem && (
+          <CancelFoodModal
+            item={scanCancelItem.item}
+            reasons={getItemCancellationReasons()}
+            onClose={() => setScanCancelItem(null)}
+            onCancel={executeScanItemCancel}
+            cancelNoteMandatory={cancellation?.cancelNoteMandatory || false}
           />
         )}
       </div>

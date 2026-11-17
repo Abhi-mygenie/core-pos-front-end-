@@ -44,7 +44,7 @@
 // ============================================================================
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, X, Check, Eye, BellOff, Bell, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Check, Eye, BellOff, Bell, Loader2, XCircle, Printer } from 'lucide-react'; // CR-545: +XCircle, Printer
 import { COLORS } from '../../constants';
 // CR SNOOZE_SOUND_STOP_AND_DURATION (Jan-2026): Snooze now also stops the
 // in-progress local chime. The original anti-rule above is overridden by
@@ -163,6 +163,8 @@ const ScanOrderPopOut = ({
   onAccept,
   onReject,
   onEdit,
+  onCancelItem,   // CR-545: (order, item) => void — per-item cancel
+  onPrintKOT,     // CR-545: (order) => void — KOT print from popup
   currencySymbol = '₹',
   suppressed = false,
 }) => {
@@ -451,7 +453,12 @@ const ScanOrderPopOut = ({
                 data-testid="scan-order-popout-items"
               >
                 <ul className="divide-y" style={{ borderColor: COLORS.borderGray }}>
-                  {activeOrder.items.map((it, idx) => {
+                  {/* CR-545: APS items (₹1) sort to top so staff sees them first */}
+                  {[...(activeOrder.items || [])].sort((a, b) => {
+                    const aAps = Number(a?.unitPrice ?? a?.price) === 1 ? 0 : 1;
+                    const bAps = Number(b?.unitPrice ?? b?.price) === 1 ? 0 : 1;
+                    return aAps - bAps;
+                  }).map((it, idx) => {
                     const qty = Number(it?.qty ?? it?.quantity) || 1;
                     const unit = Number(it?.unitPrice ?? it?.price) || 0;
                     const lineTotal = unit * qty;
@@ -482,6 +489,16 @@ const ScanOrderPopOut = ({
                                 Comp
                               </span>
                             ) : null}
+                            {/* CR-545: APS badge for ₹1 items (not comp) */}
+                            {unit === 1 && !isComp ? (
+                              <span
+                                data-testid={`popout-item-aps-tag-${idx}`}
+                                className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0"
+                                style={{ backgroundColor: '#FFF3E0', color: '#E65100' }}
+                              >
+                                APS
+                              </span>
+                            ) : null}
                           </div>
                           <span
                             style={{ color: COLORS.grayText }}
@@ -490,6 +507,18 @@ const ScanOrderPopOut = ({
                             {currencySymbol}
                             {lineTotal.toFixed(2)}
                           </span>
+                          {/* CR-545: per-item cancel — matches CartPanel PlacedItemRow style */}
+                          {onCancelItem ? (
+                            <button
+                              data-testid={`popout-item-cancel-${idx}`}
+                              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-gray-100"
+                              style={{ backgroundColor: COLORS.sectionBg }}
+                              onClick={(e) => { e.stopPropagation(); onCancelItem(activeOrder, it); }}
+                              title="Cancel this item"
+                            >
+                              <XCircle className="w-4 h-4" style={{ color: COLORS.grayText }} />
+                            </button>
+                          ) : null}
                         </div>
                         {/* row 2: variations */}
                         {variations.length > 0 ? (
@@ -588,7 +617,7 @@ const ScanOrderPopOut = ({
 
         {/* Action row — REUSES existing handlers verbatim. */}
         <div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-2 px-4 py-3 lg:px-6 lg:py-4 border-t"
+          className="grid grid-cols-2 lg:grid-cols-5 gap-2 px-4 py-3 lg:px-6 lg:py-4 border-t"
           style={{ borderColor: COLORS.borderGray, backgroundColor: COLORS.sectionBg }}
         >
           <button
@@ -619,6 +648,21 @@ const ScanOrderPopOut = ({
             <Eye className="w-4 h-4" />
             <span>Edit</span>
           </button>
+          {/* CR-545: KOT print button */}
+          {onPrintKOT ? (
+            <button
+              type="button"
+              data-testid={`popout-print-kot-${idStr}`}
+              onClick={() => onPrintKOT(activeOrder)}
+              disabled={isAccepting}
+              className="min-h-[44px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-semibold bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ borderColor: COLORS.borderGray, color: COLORS.darkText }}
+              title="Print KOT"
+            >
+              <Printer className="w-4 h-4" />
+              <span>KOT</span>
+            </button>
+          ) : null}
           <button
             type="button"
             data-testid={`popout-reject-btn-${idStr}`}
