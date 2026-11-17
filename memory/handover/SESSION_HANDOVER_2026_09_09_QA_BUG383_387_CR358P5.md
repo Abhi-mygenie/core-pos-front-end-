@@ -3,7 +3,7 @@
 **Date:** 2026-09-09
 **Role:** QA Agent (ALPHA v0.7)
 **Branch:** main
-**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**App URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 **Sprint:** pos_pms_1
 
 ---

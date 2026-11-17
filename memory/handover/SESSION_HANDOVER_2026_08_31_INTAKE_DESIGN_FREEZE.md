@@ -90,7 +90,7 @@
 |---|---|---|---|
 | Direct Printer | owner@18march.com | Qplazm@10 | Restaurant 478 |
 | Printer Agent | owner@shimlaqohfoodcourt.com | Qplazm@10 | Food court |
-| App URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com | — | — |
+| App URL | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com | — | — |
 | Design preview | /cr133-printer-mockup.html | — | Tab 4 + Tab 5 added |
 
 ---

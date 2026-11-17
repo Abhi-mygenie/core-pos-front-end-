@@ -2,7 +2,7 @@
 
 **Agent:** ALPHA v0.7 Role 4 (QA)
 **Branch:** `21implement`
-**Preview URL (THIS pod):** `https://build-preview-339--3oltfmkm.preview.emergentagent.com` (from `/app/frontend/.env` — trust this, ignore older preview URLs in old docs)
+**Preview URL (THIS pod):** `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com` (from `/app/frontend/.env` — trust this, ignore older preview URLs in old docs)
 **Backend/API:** `https://preprod.mygenie.online`
 **Sprint:** `sep_bug_closure`
 

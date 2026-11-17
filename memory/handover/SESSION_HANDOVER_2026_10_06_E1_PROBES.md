@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-06
 **Role:** INVESTIGATION (curl probes only — no code edits)
-**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**App URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 **Branch:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Auth used:** owner@thegoankitchen.com / Qplazm@10 (RID 69)
 
@@ -112,7 +112,7 @@
 
 | Item | Value |
 |------|-------|
-| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
+| App URL | `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

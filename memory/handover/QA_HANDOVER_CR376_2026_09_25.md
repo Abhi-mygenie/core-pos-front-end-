@@ -82,7 +82,7 @@ EXIT GATE: ALL 5 PASSED
 | QA account (Normal+Premium) | QA_OWNER alias — `memory/test_credentials.md` |
 | QA account (multi-menu hotel) | QA_HYATT alias — owner@hyatt.com (see `evidence/CR-376/CR-376_hyatt_probe_2026_09_25.json`) |
 | Normal-only account | cafe103 — `memory/test_credentials.md` |
-| Preview URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
+| Preview URL | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com |
 | API | https://preprod.mygenie.online |
 
 **Special Gate 6 smoke step:** QA_HYATT on first boot (clear `mygenie_active_menu_type` from localStorage) → verify OD-376-06 empty-state shows correctly.

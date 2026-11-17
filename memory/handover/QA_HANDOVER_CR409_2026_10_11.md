@@ -69,5 +69,5 @@ EXIT GATE:            5/5 PASS
 | Account | owner@kunafamahal.com / Qplazm@10 |
 | RID | 689 (Kunafa Mahal) |
 | Preprod | https://preprod.mygenie.online |
-| Preview | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
+| Preview | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com |
 | Live scan order with coupon | Order 1233112 — customer phone 9653078028 — coupon MARRY (−₹197) |

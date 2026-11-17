@@ -60,7 +60,7 @@ Self-test: 6/6 PASS · Webpack: PASS (0 new warnings) · EXIT GATE: 5/5 PASS
 | Service | Status |
 |---|---|
 | Frontend | RUNNING (port 3000, webpack compiled 0 new warnings) |
-| URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
+| URL | `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com` |
 
 ---
 

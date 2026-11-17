@@ -4,7 +4,7 @@
 **Date:** 2026-10-08
 **Agent:** INVESTIGATION
 **Trigger:** Owner reports 4 issues in checkout (FolioCheckoutPanel) + related questions on discount cap formula
-**URL tested:** `https://build-preview-339--3oltfmkm.preview.emergentagent.com/pms/front-desk-v2?tab=departures`
+**URL tested:** `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com/pms/front-desk-v2?tab=departures`
 **Steps used:** 7/10
 
 ---

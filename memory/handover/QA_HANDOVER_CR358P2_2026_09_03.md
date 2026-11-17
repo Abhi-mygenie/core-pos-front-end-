@@ -61,6 +61,6 @@
 
 ## 5. Credentials + Environment
   Account: OWNER_PREPROD (see memory/test_credentials.md)
-  URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+  URL: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
   Login → wait for boot → /pms/new-booking or /pms/check-in
   QA report: test_reports/iteration_1.json

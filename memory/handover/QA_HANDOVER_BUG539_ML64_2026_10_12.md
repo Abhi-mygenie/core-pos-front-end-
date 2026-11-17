@@ -96,7 +96,7 @@ EXIT GATE:        5/5 PASS
 |-------|-------|
 | Owner account | owner@thegoankitchen.com / Qplazm@10 |
 | Restaurant | The Goan Kitchen (RID 69) |
-| Preview URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
+| Preview URL | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com |
 | External backend | https://preprod.mygenie.online |
 
 **Note for QA agent:** TC-1 through TC-4 require login on the preview URL and navigation to the respective report pages. The app connects to external preprod — login with real credentials above.

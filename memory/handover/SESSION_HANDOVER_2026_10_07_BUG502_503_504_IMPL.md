@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Role:** IMPLEMENTATION
-**App:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**App:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 **Branch:** 5oct-1
 **webpack:** compiled successfully · 0 new warnings
 
@@ -100,7 +100,7 @@ QA handover: `handover/QA_HANDOVER_BUG502_503_504_2026_10_07.md`
 
 | Item | Value |
 |------|-------|
-| App URL | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
+| App URL | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com |
 | Preprod API | https://preprod.mygenie.online |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Login (staff) | `boi@bang.com` / `Qplazm@10` |

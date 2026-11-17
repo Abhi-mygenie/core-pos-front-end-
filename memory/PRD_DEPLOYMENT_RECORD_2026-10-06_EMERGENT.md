@@ -26,6 +26,6 @@
 - REACT_APP_SHOW_AUDIT_TAB=true
 
 ## Status
-- App live at: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- App live at: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - Login page rendered correctly (MyGenie branding, email/password form)
 - Memory dir fully synced from remote branch 5oct-1

@@ -63,7 +63,7 @@ EXIT GATE: ALL 5 PASSED
 
 ```
 Account: owner@thegoankitchen.com / Qplazm@10
-URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+URL: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 Route: /pms/check-in
 Restaurant ID: 69 (The Goan Kitchen)
 ```

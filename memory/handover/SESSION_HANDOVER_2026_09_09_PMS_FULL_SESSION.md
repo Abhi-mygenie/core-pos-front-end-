@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-09
 **Branch:** pms8sep (working copy)
-**Preview URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**Preview URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 **Sprint:** pos_pms_1
 
 ---
@@ -65,7 +65,7 @@ Full audit of all open PMS bugs and CRs. See §Open Items table below.
 - OD-383-01 answered: **"show a warning"** for occupied-HK rooms in Mark All Clean
 - BUG-384 backend brief written: `BACKEND_BRIEF_BUG-384_2026_09_09.md`
 - BUG-385 backend brief written: `BACKEND_BRIEF_BUG-385_2026_09_09.md`
-- Master HTML published: https://build-preview-339--3oltfmkm.preview.emergentagent.com/backend-briefs.html (10 briefs, all modules, expandable cards with status badges)
+- Master HTML published: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com/backend-briefs.html (10 briefs, all modules, expandable cards with status badges)
 - ⚠️ `backend-briefs.html` must be REMOVED from `public/` before production
 
 ---

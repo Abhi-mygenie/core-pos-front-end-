@@ -76,6 +76,6 @@ EXIT GATE: ALL 5 PASSED
 
 - Account: owner@palmhouse.com / Qplazm@10
 - Restaurant: The Palm House (RID 541)
-- Preview URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- Preview URL: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - Route: /reports-module/item-consumption
 - API: POST https://preprod.mygenie.online/api/v2/vendoremployee/report/item-consumption-report

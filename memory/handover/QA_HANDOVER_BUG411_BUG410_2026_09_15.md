@@ -76,7 +76,7 @@ Compile: **PASS** (webpack compiled successfully, 0 new warnings)
 ## 5. Credentials + Environment
 
 ```
-URL:      https://build-preview-339--3oltfmkm.preview.emergentagent.com
+URL:      https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 Login:    owner@thegoankitchen.com  /  Qplazm@10
 Note:     Firebase auth — must login manually before testing
 PMS Check-In: /pms/check-in

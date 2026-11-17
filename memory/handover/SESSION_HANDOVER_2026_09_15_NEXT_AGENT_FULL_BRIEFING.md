@@ -7,7 +7,7 @@ Next agent role: Depends on owner responses (see §Jobs below).
                  Start with §0 (boot), read ALL sections before acting.
 Workspace:       /app  (branch 14sep, frontend-only)
 Credentials:     /app/memory/test_credentials.md (goankitchen_owner alias)
-App URL:         https://build-preview-339--3oltfmkm.preview.emergentagent.com
+App URL:         https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 ```
 
 ---
@@ -305,7 +305,7 @@ Account alias:  goankitchen_owner
 Email:          owner@thegoankitchen.com  password: ***
 Login:          POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/common-login
 Token field:    response.token
-App URL:        https://build-preview-339--3oltfmkm.preview.emergentagent.com
+App URL:        https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 Night Audit:    /pms/night-audit
 Revenue:        /pms/revenue
 Folio:          /pms/folio/1232245  (r3 — Test Guest GST, in-house)

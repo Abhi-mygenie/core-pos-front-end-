@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-06
 **Roles used this session:** DEPLOYMENT → INVESTIGATION (probes) → PLANNING (BUG-498/499 Gate 3 revised) → IMPLEMENTATION (BUG-498/499 Gate 4) → INVESTIGATION (INV-500 + INV-501)
-**App URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+**App URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 **Branch deployed:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Frontend:** RUNNING on port 3000 · webpack compiled successfully · 1 pre-existing warning (allDays useMemo)
 
@@ -184,7 +184,7 @@ Owner confirmed calculations → right panel, but said "move slower". Deferred. 
 
 | Item | Value |
 |------|-------|
-| App URL | `https://build-preview-339--3oltfmkm.preview.emergentagent.com` |
+| App URL | `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Login (staff) | `boi@bang.com` / `Qplazm@10` |

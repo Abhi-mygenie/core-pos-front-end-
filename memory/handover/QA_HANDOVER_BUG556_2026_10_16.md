@@ -43,6 +43,6 @@ EXIT GATE: 5/5 PASS
 ```
 
 ## 4. Credentials
-- App URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- App URL: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - Email: owner@cafe103.com · Password: Qplazm@10
 - Note: preprod /products API has been timing out (iterations 2-8) — code checks will pass; TC-1/2/3 need live dashboard

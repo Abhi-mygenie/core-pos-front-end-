@@ -8,7 +8,7 @@ Session status:  CLOSED — full session. 12 bugs implemented, 4 bugs parked/bac
 Next agent role: INVESTIGATION → present findings to owner → decide next steps
 Workspace:       /app (branch 15sep, frontend-only)
 Credentials:     /app/memory/test_credentials.md (goankitchen_owner alias)
-App URL:         https://build-preview-339--3oltfmkm.preview.emergentagent.com
+App URL:         https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 Registry:        673 items
 ```
 

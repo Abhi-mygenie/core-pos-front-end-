@@ -102,7 +102,7 @@
 ## 4. Credentials
 - owner@cafe103.com / Qplazm@10 (cafe103 preprod)
 - owner@ruby.com / Qplazm@10 (Ruby ZAP RID 672 — split payment testing)
-- POS preview: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- POS preview: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - API: https://preprod.mygenie.online/
 
 ## 5. Key Files

@@ -220,7 +220,7 @@ Lines 830–852 (inside `handlePrintBillFromAudit`, inside `try` block)
 | T4 | Orders (Beta) → Reprint on a cancelled order (f_order_status ≠ 6) | Button does not appear | MINOR |
 
 ### Environment
-- URL: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- URL: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - Account: owner@ruby.com / *** (see test_credentials.md)
 - Restaurant: uat Ruby (id 672)
 - Test order: restaurant_order_id 000301, internal order_id 1232186

@@ -63,5 +63,5 @@ EXIT GATE:            5/5 PASS
 | | |
 |---|---|
 | Account | owner@kunafamahal.com / Qplazm@10 |
-| Preview | https://build-preview-339--3oltfmkm.preview.emergentagent.com |
+| Preview | https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com |
 | UAT reference | pos-uat.mygenie.online (original screenshot) |

@@ -122,7 +122,7 @@ QA batches ready to run (any order):
 | Backend | RUNNING (port 8001) |
 | MongoDB | RUNNING |
 
-**App URL:** `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
+**App URL:** `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com`
 
 ---
 

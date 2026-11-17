@@ -3,7 +3,7 @@
 **Role:** QA Agent (Role 4 per AGENT_PROMPT_ALPHA.md v0.7)  
 **Scope:** 7 items — CR-472, CR-473, CR-474, BUG-614, BUG-615, BUG-616, BUG-617  
 **Test iterations:** 3 (iteration_1.json, iteration_2.json, iteration_3.json)  
-**Preview URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com (localhost:3000)  
+**Preview URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com (localhost:3000)  
 **Backend:** https://preprod.mygenie.online  
 
 ---

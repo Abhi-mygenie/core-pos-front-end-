@@ -104,5 +104,5 @@ All 6 active CRs are at Gate 1 (INTAKE). Suggested planning order:
 - **INTAKE role is now COMPLETE for this session.** All 6 active CRs have intake docs + registry entries.
 - **Do NOT start any planning or implementation** without owner picking a specific CR to progress.
 - Memory dir is fully synced from `pms8sep` branch (316 files).
-- App is running at https://build-preview-339--3oltfmkm.preview.emergentagent.com — MyGenie POS login screen confirmed.
+- App is running at https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com — MyGenie POS login screen confirmed.
 - No `frontend/src/` was touched this session.

@@ -63,5 +63,5 @@ EXIT GATE: ALL 5 PASSED
 
 - Any restaurant account works (change is UI navigation only)
 - Test account: `owner@hyatt.com / Qplazm@10`
-- URL: `https://build-preview-339--3oltfmkm.preview.emergentagent.com`
+- URL: `https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com`
 - Inventory pages: `/inventory-dashboard`, `/inventory-current-stock`, `/inventory-audit`

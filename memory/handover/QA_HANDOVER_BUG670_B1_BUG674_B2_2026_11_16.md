@@ -63,7 +63,7 @@ Compile: 0 new warnings.
   - [x] COMPILE CHECK: 0 new warnings
 
 ## 5. Credentials + Environment
-- Preview: https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- Preview: https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - API: https://preprod.mygenie.online
 - Test: owner@cafe103.com / Qplazm@10
 

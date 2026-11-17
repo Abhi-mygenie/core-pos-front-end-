@@ -70,6 +70,6 @@ EXIT GATE: ALL 5 PASSED
 ## 5. Credentials + Environment
 
 - **Account:** owner@thegoankitchen.com / Qplazm@10 (RID 69)
-- **Preview URL:** https://build-preview-339--3oltfmkm.preview.emergentagent.com
+- **Preview URL:** https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 - **Routes to test:** `/reports-module/profit-loss` · `/reports-module/consumption-report`
 - **External backend:** https://preprod.mygenie.online

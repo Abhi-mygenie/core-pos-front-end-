@@ -5,12 +5,12 @@ async def run_test(page, output_dir, page_url):
     net = []
     page.on("response", lambda r: net.append((round(time.time()%1000,1), r.status, r.url.split('/aiosell/')[-1][:40])) if "aiosell" in r.url else None)
     await page.set_viewport_size({"width": 1920, "height": 800})
-    await page.goto("https://build-preview-339--3oltfmkm.preview.emergentagent.com/", wait_until="domcontentloaded")
+    await page.goto("https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com/", wait_until="domcontentloaded")
     await page.wait_for_selector("[data-testid=login-email]", timeout=45000)
     await page.fill("[data-testid=login-email]", email); await page.fill("[data-testid=login-password]", pw)
     await page.get_by_role("button", name=re.compile("log in", re.I)).click()
     await page.wait_for_timeout(20000)
-    await page.goto("https://build-preview-339--3oltfmkm.preview.emergentagent.com/pms/front-desk-v2?tab=rooms", wait_until="domcontentloaded")
+    await page.goto("https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com/pms/front-desk-v2?tab=rooms", wait_until="domcontentloaded")
     await page.wait_for_selector("button[data-testid^=fd-room-tile-]", timeout=90000)
     net.clear()
     async def fail500(route):

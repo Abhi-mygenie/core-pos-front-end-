@@ -8,7 +8,7 @@ Next agent role: Owner must answer ODs → then PLANNING (Gate 2) for CR-382
                   OR continue with BUG-401 / BUG-400 fixes (higher priority)
 Workspace:       /app  (branch 15sep, frontend-only)
 Credentials:     /app/memory/test_credentials.md (goankitchen_owner alias)
-App URL:         https://build-preview-339--3oltfmkm.preview.emergentagent.com
+App URL:         https://genie-pos-web-4--4yxd9m78.preview.emergentagent.com
 ```
 
 ---
