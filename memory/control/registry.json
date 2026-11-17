@@ -38403,7 +38403,7 @@
       "title": "Late Cancellation Audit: Time-Threshold-Based Flagging",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 — Owner directed. Replaces CR-443 cancel-stage alerts with time-threshold approach.",
+      "status": "GATE_2_IA_COMPLETE 2026-11-17 — 4-tier risk (OK/Doubt/Risk/High Risk), no settings needed. Backend-blocked (ASK 3 v2).",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Audit / Settings",
       "intake_doc": "change_requests/35_CR-543_LATE_CANCELLATION_AUDIT_THRESHOLD_INTAKE.md"
