@@ -143,8 +143,8 @@ Add `ShieldX` or reuse existing icon for the KPI card.
 
 | # | Question | Status |
 |---|----------|--------|
-| OD-544-01 | Time window for cancel-after-unpaid? | OPEN — Recommended: no limit (any cancel after unpaid on same order) |
-| OD-544-02 | Include re-paid then cancelled? | OPEN — Recommended: only if still unpaid at cancel time |
+| OD-544-01 | Time window for cancel-after-unpaid? | **LOCKED: No time limit** — any cancel after unpaid on same order, even days later |
+| OD-544-02 | Include re-paid then cancelled? | **LOCKED: YES, flag ALL** — even if re-paid. Show `unpaid_count` (how many times made unpaid) + `order_status_at_cancel` |
 
 ---
 

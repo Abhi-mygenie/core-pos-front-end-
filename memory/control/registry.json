@@ -38414,7 +38414,7 @@
       "title": "Cancel After Making Unpaid: Audit Event",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_2_IA_COMPLETE 2026-11-17 — Backend-blocked (ASK 4). cancel_after_unpaid events. OD-544-01/02 OPEN.",
+      "status": "GATE_2_IA_COMPLETE 2026-11-17 — ODs locked: no time limit + flag re-paid + show unpaid_count. Backend-blocked (ASK 4 v2).",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Audit / Fraud Detection",
       "intake_doc": "change_requests/36_CR-544_CANCEL_AFTER_UNPAID_AUDIT_INTAKE.md"
