@@ -2350,3 +2350,8 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 ## FILE_OWNERSHIP — BUG-678 IMPL (2026-11-16) — marker `// BUG-678`
 | `frontend/src/components/order-entry/OrderEntry.jsx` | E1 L1719-1720: removed `!!restaurant?.autoServiceCharge ||` from QSR prepaid `scApplicable`. E2 L2505-2506: same removal from Scenario 2 prepaid path. Both now trust `paymentData?.serviceCharge > 0` alone. | BUG-678 E1+E2 |
 NOT touched: `CollectPaymentPanel.jsx` · `orderTransform.js` · `CartPanel.jsx` · `DashboardPage.jsx` · any other file.
+
+
+## FILE_OWNERSHIP — CR-528 IMPL (2026-11-17) — marker `// CR-528`
+| `frontend/src/pages/reports-module/AuditLogMockup.jsx` | E1 L15: +XCircle,Ban,Pencil imports. E2 L21-29: AUDIT_TYPE_MAP + fmtTime. E3 L81-97: analytics memo +3 event arrays +3 counts. E4 L100-108: export subtitle + 6 KPIs. E5 L109-120: export 11 columns (+5 new). E6 L126: page subtitle. E7 L139-147: 6 KPI cards (grid 3→6). E8 L149-182: 10-col table, AUDIT_TYPE_MAP badges, type-specific cells, overflow-x-auto. | CR-528 E1-E8 |
+NOT touched: `insightsService.js` · `InsightsCacheContext.jsx` · `reportExporter.js` · `App.js` · any transform · any other report page.
