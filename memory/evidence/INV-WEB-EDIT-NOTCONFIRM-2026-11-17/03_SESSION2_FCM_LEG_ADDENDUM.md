@@ -39,7 +39,8 @@ The push for this edit was delivered by Firebase (~02:06) before any browser was
 ## 3. Outcome
 
 - Socket + REST legs: **CLOSED** (re-verified on fresh live data).
-- FCM leg: **FE handling CLOSED by trace**; the exact backend push payload (`type`/`notification_type`/`sound`/body) is a **backend question** → raised as `backend_briefs/BACKEND_BRIEF_INV-WEB-EDIT-NOTCONFIRM_2026-11-17.md`. Per handover guidance, not retried in-sandbox.
+- FCM leg: **FE handling CLOSED by trace**; the exact backend push payload (`type`/`notification_type`/`sound`/body) is a **backend question** → raised as `backend_briefs/BACKEND_BRIEF_INV-WEB-EDIT-NOTCONFIRM_2026-11-17.md`.
+  - **Live browser capture attempted once (02:14 IST, automated session):** Firebase **App + Messaging initialized** (`[Firebase] App initialized`, `[Firebase] Messaging initialized`) but the automated session **did not complete login** (console shows only pre-auth `[useSocketEvents] Socket not ready`; page remained on the login screen), so the device never authenticated/subscribed and the push had no authenticated client to land on. Socket confirmed the edits arrived (`order_edit_count` → 8, `f_order_status` still 2). **No FCM push captured.** Consistent with the handover's topic-targeting risk + ephemeral-sandbox limitation. Per guidance: attempted once, not retried — payload sourced via BACKEND_BRIEF.
 - Root cause, confidence (**HIGH**), classification (**FE_BUG**), and all 8 break points are **unchanged** and now double-confirmed.
 
 **Next role:** INTAKE (register — still no CR/BUG id) → PLANNING (full gate; planning-skip NOT eligible). Owner decisions OD-A/OD-B/OD-C still to lock.
