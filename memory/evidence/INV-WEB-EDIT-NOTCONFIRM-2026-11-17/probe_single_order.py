@@ -23,7 +23,7 @@ def call(method, path, body=None, token=None):
 
 
 st, login = call("POST", "/api/v1/auth/vendoremployee/common-login",
-                 {"email": os.environ["PROBE_EMAIL"], "password": os.environ["PROBE_PWD"***REDACTED***
+                 {"email": os.environ["PROBE_EMAIL"], "password": os.environ["PROBE_PWD"]})
 if st != 200:
     print("LOGIN FAILED", st); sys.exit(1)
 token = (login.get("data") or login).get("token")

@@ -10,7 +10,7 @@ import urllib.request, urllib.error
 
 BASE = "https://preprod.mygenie.online"
 EMAIL = os.environ["PROBE_EMAIL"]
-PWD = os.environ["PROBE_PWD"***REDACTED***
+PWD = os.environ["PROBE_PWD"]
 OUT = "/app/memory/evidence/INV-WEB-EDIT-NOTCONFIRM-2026-11-17"
 os.makedirs(OUT, exist_ok=True)
 
