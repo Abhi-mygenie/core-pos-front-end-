@@ -38478,7 +38478,7 @@
       "title": "APS (₹1) Web Order — APS Tag + Item Cancel in Popup + Price Edit",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_2_IMPACT_ANALYSIS",
+      "status": "GATE_3_PLAN_COMPLETE 2026-11-17 — 14 edits across 2 files (ScanOrderPopOut ~30 lines, DashboardPage ~50 lines). Awaiting Gate 4 GO.",
       "sprint_key": "nov_cr_batch",
       "area": "Menu / Order Entry",
       "assignee": "Abhishek",
