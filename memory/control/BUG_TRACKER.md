@@ -2142,3 +2142,4 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 
 > **2026-11-15 Batch D Gate 2 update:** BUG-667, BUG-669, BUG-673 → **GATE_2_IA_CLOSED**, priority **P0** (owner intake; supersedes the P1 shown in the rows above for 667/669). Docs: `impact/BUG-667_IMPACT_ANALYSIS.md`, `impact/BUG-669_IMPACT_ANALYSIS.md`, `impact/BUG-673_IMPACT_ANALYSIS.md`, summary `impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md`. BUG-669 variation part: owner repro pending.
 
+| **BUG-678** | Service Charge in API Payload Despite UI Toggle OFF (Prepaid) — `autoServiceCharge` OR short-circuits cashier's toggle-OFF. BUG-662 regression. | **P0** | **CRITICAL** | **GATE_5A_IMPLEMENTED 2026-11-16** — 2 edits, 1 file (OrderEntry.jsx L1719-1720, L2505-2506). Removed `!!restaurant?.autoServiceCharge ||` from both prepaid paths. IA: `impact/BUG-678_IMPACT_ANALYSIS.md`. Plan: `plans/BUG-678_IMPLEMENTATION_PLAN.md`. | `OrderEntry.jsx` |

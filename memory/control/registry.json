@@ -37832,7 +37832,7 @@
       "id": "CR-528",
       "type": "CR",
       "title": "Report: Order Edit and Cancel Operations After Bill Print",
-      "status": "GATE_1_INTAKE_COMPLETE \u2014 OWNER ODs ANSWERED 2026-11-14 (Batch C). Next: IMPACT ANALYSIS BATCH-C.",
+      "status": "GATE_2_IMPACT_ANALYSIS \u2014 Rev 2 (backend unblocked). 1 file ~65 lines. 3 new event types + 3 KPIs + table + export.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -37845,7 +37845,7 @@
       "current_gate": 1,
       "registered": "2026-11-12",
       "assignee": "Abhishek",
-      "blocked_on": "BACKEND",
+      "blocked_on": "",
       "client": "ALL",
       "batch": "BATCH-C-2026-11-14",
       "artifact_refs": [
@@ -37853,6 +37853,16 @@
           "label": "Batch C owner decisions",
           "path": "memory/change_requests/BATCH_C_OWNER_DECISIONS_2026_11_14.md",
           "type": "decisions"
+        },
+        {
+          "label": "v2 Backend Reply Validation",
+          "path": "memory/backend_replies/CR-528_V2_INSIGHTS_DASHBOARD_REPLY_VALIDATION_2026_11_16.md",
+          "type": "backend_reply"
+        },
+        {
+          "label": "Impact Analysis Rev 2",
+          "path": "memory/impact/CR-528_IMPACT_ANALYSIS_REV2.md",
+          "type": "impact_analysis"
         }
       ]
     },
@@ -38409,13 +38419,25 @@
       "title": "Socket Disconnection in PWA \u2014 Reconnection Exhaustion + No Auto-Reconnect",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 \u2014 Investigation complete (10/10 steps, HIGH confidence). 7 proposed fixes (F1-F7). Multi-factor root cause: reconnection budget exhaustion + server-initiated disconnect + joined_restaurant ACK ignored.",
+      "status": "GATE_3_PLAN_COMPLETE",
       "sprint_key": "nov_cr_batch",
       "area": "Aggregator / Sockets",
       "assignee": "Abhishek",
       "client": "ALL",
       "intake_doc": "change_requests/BUG-677_SOCKET_PWA_DISCONNECT_INTAKE.md",
-      "blocked_on": ""
+      "blocked_on": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/BUG-677_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/BUG-677_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan"
+        }
+      ]
     },
     {
       "id": "BUG-678",
@@ -38423,13 +38445,26 @@
       "title": "Service Charge in API Payload Despite UI Toggle OFF (Prepaid)",
       "priority": "P0",
       "risk": "CRITICAL",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 \u2014 Investigation complete (8/10 steps, HIGH confidence). 2-line fix at OrderEntry.jsx L1708-1709 + L2492-2493. BUG-662 regression.",
+      "status": "GATE_5A_IMPLEMENTED",
       "sprint_key": "nov_cr_batch",
       "area": "Payments / Coupons / Credit",
       "assignee": "Abhishek",
       "client": "ALL",
       "intake_doc": "change_requests/BUG-678_SC_PREPAID_PAYLOAD_INTAKE.md",
-      "blocked_on": ""
+      "blocked_on": "",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/BUG-678_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
+        },
+        {
+          "label": "Implementation Plan",
+          "path": "memory/plans/BUG-678_IMPLEMENTATION_PLAN.md",
+          "type": "implementation_plan"
+        }
+      ],
+      "files": "OrderEntry.jsx"
     },
     {
       "id": "CR-545",
@@ -38437,13 +38472,20 @@
       "title": "APS (\u20b91) Web Order \u2014 APS Tag + Item Cancel in Popup + Price Edit",
       "priority": "P1",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 \u2014 Investigation complete. Phase 1 FE-only (~40 lines). Phase 2 backend-blocked (update-food-price endpoint). Renamed from CR-543 (ID conflict with Late Cancellation Audit).",
+      "status": "GATE_2_IMPACT_ANALYSIS",
       "sprint_key": "nov_cr_batch",
       "area": "Menu / Order Entry",
       "assignee": "Abhishek",
       "client": "ALL",
       "intake_doc": "change_requests/CR-545_APS_WEB_ORDER_PRICE_ENTRY_INTAKE.md",
-      "blocked_on": "B1 (cancel-food-item on YTC orders), B3/B4 (update-food-price endpoint) \u2014 Gyan"
+      "blocked_on": "B1 (cancel-food-item on YTC orders), B3/B4 (update-food-price endpoint) \u2014 Gyan",
+      "artifact_refs": [
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/CR-545_IMPACT_ANALYSIS.md",
+          "type": "impact_analysis"
+        }
+      ]
     }
   ],
   "meta": {

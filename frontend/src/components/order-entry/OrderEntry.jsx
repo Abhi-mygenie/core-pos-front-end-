@@ -1714,10 +1714,10 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         const tableId = Number(effectiveTable?.tableId || table?.tableId);
         const engagePromise = tableId ? waitForTableEngaged(tableId, 10000) : null;
 
-        // BUG-662: honour cashier's manual SC toggle on prepaid. paymentData.serviceCharge > 0
-        // means the cashier ticked SC ON in CollectPaymentPanel (even when auto=No).
+        // BUG-678: trust CPP toggle state alone. autoServiceCharge controls the DEFAULT toggle
+        // in CollectPaymentPanel — the resolved amount flows via paymentData.serviceCharge.
         const scApplicable = (orderType === 'dineIn' || orderType === 'walkIn' || effectiveTable?.isRoom)
-          && (!!restaurant?.autoServiceCharge || paymentData?.serviceCharge > 0);
+          && paymentData?.serviceCharge > 0; // BUG-678
 
         const payload = orderToAPI.placeOrderWithPayment(
           effectiveTable, cartItems, customer, orderType, paymentData,
@@ -2503,7 +2503,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                       effectiveTable, cartItems, customer, orderType, paymentData,
                       { restaurantId: restaurant?.id, orderNotes, printAllKOT, addressId: selectedAddress?.id || null, deliveryAddress: selectedAddress || null, serviceChargePercentage: (
                         (orderType === 'dineIn' || orderType === 'walkIn' || table?.isRoom)
-                        && (!!restaurant?.autoServiceCharge || paymentData?.serviceCharge > 0) // BUG-662
+                        && paymentData?.serviceCharge > 0 // BUG-678: trust CPP toggle, not autoServiceCharge
                       ) ? (restaurant?.serviceChargePercentage || 0) : 0, autoBill: printAllBill,
                         // CR-013 (May-2026): thread component-specific GST rate pcts.
                         serviceChargeTaxPct:  restaurant?.serviceChargeTaxPct  || 0,

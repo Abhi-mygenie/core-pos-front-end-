@@ -2345,3 +2345,8 @@ See `plans/CR-385_DESIGN_DECISIONS.md` §E for the pre-feedback v2.9 checkpoint/
 | `src/components/credit/CreditCustomerDetailSheet.jsx` | E1-E6: imports, CreditRow Remove button, Action column, state+handler, dialog | CR-526 Part 2 |
 | `src/api/transforms/orderTransform.js` | L807: applyTaxFlags wrapper; L843: gstEnabled/vatEnabled extras; L918: gstTax/vat zeroing; L951: SC/Tip/Del GST conditional; E4: taxFlags in placeOrder/updateOrder/placeOrderWithPayment/collectBillExisting; E5: food_detail gstEnabled/vatEnabled guards | BUG-647 |
 | `src/components/order-entry/CartPanel.jsx` | L431-433: BUG-647 taxTotals guard on GST/VAT toggle | BUG-647 |
+
+
+## FILE_OWNERSHIP — BUG-678 IMPL (2026-11-16) — marker `// BUG-678`
+| `frontend/src/components/order-entry/OrderEntry.jsx` | E1 L1719-1720: removed `!!restaurant?.autoServiceCharge ||` from QSR prepaid `scApplicable`. E2 L2505-2506: same removal from Scenario 2 prepaid path. Both now trust `paymentData?.serviceCharge > 0` alone. | BUG-678 E1+E2 |
+NOT touched: `CollectPaymentPanel.jsx` · `orderTransform.js` · `CartPanel.jsx` · `DashboardPage.jsx` · any other file.
