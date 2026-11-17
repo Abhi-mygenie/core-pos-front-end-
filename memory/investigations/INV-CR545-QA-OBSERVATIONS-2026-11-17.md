@@ -197,13 +197,13 @@ This decision addresses the **accept flow** but doesn't explicitly say whether �
 
 ---
 
-## 4. Recommended Owner Decisions
+## 4. Owner Decisions — ALL LOCKED (2026-11-17)
 
-| # | Decision | Options |
-|---|----------|---------|
-| OD-OBS2-01 | Cancelled items in popup | **(A)** Filter out entirely **(B)** Show as strikethrough |
-| OD-OBS4-01 | KOT item selection priority | **(A)** P2 — register and defer **(B)** P1 — include in next implementation batch |
-| OD-OBS5-01 | APS ₹1 display | **(A)** Keep showing ₹1 (current) **(B)** Replace with "Price TBD" label (Phase 1 quick fix) **(C)** Wait for Phase 2 inline price edit |
+| # | Decision | Answer | Registered |
+|---|----------|--------|------------|
+| OD-OBS2-01 | Cancelled items in popup | **B — Show as strikethrough** (same pattern as OrderEntry cancel display) | **BUG-679** |
+| OD-OBS4-01 | KOT item selection | **P2 B — Register, include in next implementation batch** | **CR-547** |
+| OD-OBS5-01 | APS ₹1 display | **Hide ₹1 — APS item should not show ₹1 amount** (Phase 1 scope fix) | **CR-545** (scope update) |
 
 ---
 
