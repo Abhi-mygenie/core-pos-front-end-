@@ -38414,7 +38414,7 @@
       "title": "Cancel After Making Unpaid: Audit Event",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-16 — Owner directed. Two-step fraud chain: unpaid then cancel.",
+      "status": "GATE_2_IA_COMPLETE 2026-11-17 — Backend-blocked (ASK 4). cancel_after_unpaid events. OD-544-01/02 OPEN.",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Audit / Fraud Detection",
       "intake_doc": "change_requests/36_CR-544_CANCEL_AFTER_UNPAID_AUDIT_INTAKE.md"
@@ -38499,7 +38499,7 @@
       "title": "Discount After Bill Print: Audit Event — Apply & Remove",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-17 — Owner directed. Two event types: discount_apply_after_print + discount_remove_after_print. Backend brief filed.",
+      "status": "GATE_2_IA_COMPLETE 2026-11-17 — Backend-blocked (ASK 5). discount_apply/remove_after_print. All ODs locked.",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Audit / Fraud Detection",
       "intake_doc": "change_requests/37_CR-546_DISCOUNT_AFTER_BILL_PRINT_AUDIT_INTAKE.md",
