@@ -38687,7 +38687,7 @@
    "type": "CR",
    "severity": "P1",
    "risk": "HIGH",
-   "status": "GATE_2_IMPACT_ANALYSIS",
+   "status": "GATE_3_PLAN_COMPLETE",
    "sprint_key": "nov_cr_batch",
    "area": "Menu / Order Entry",
    "source": "OWNER-PROVIDED",
@@ -38696,12 +38696,12 @@
    "client": "MyGenie (672)",
    "assignee": "Abhishek",
    "qa_date": "",
-   "notes": "Per-item approve/reject + visible marker for items added to an existing order via WEB (item food_status=7 while order f_order_status stays 2). SCOPE GUARD: web orders ONLY — NOT aggregator (Swiggy/Zomato/UrbanPiper), NOT POS/dine-in/takeaway. Gate all UI/actions on isWebOrder===true. Code reality PARTIAL: order-level web YTC exists (OrderCard.isWebYetToConfirm, ScanOrderPopOut, CR-545 per-item cancel); per-item APPROVE on edited order does NOT exist. Root: orderTransform.js:133 maps item food_status via mapOrderStatus -> F_ORDER_STATUS[7]='pending' (collides w/ order-level); CartPanel.getItemStatusIcon has no not-confirmed case; reportTransform.getFoodStatusLabel missing key 7 ('Unknown'). Related: INV-WEB-EDIT-NOTCONFIRM-2026-11-17 (parent investigation + live FCM payload), POS2-007 (confirm tone override found DEAD vs live push), BUG-255 (item UI scoped by order type), CR-545 (per-item cancel in scan popup). Backend dependency LIKELY: single-item approve endpoint (OD-552-01). Reject-as-cancel may reuse CancelFoodModal (CR-545). Owner decisions OD-552-01..05 OPEN. IA: CR-552_IMPACT_ANALYSIS.md. Intake: change_requests/38_CR-552_PER_ITEM_APPROVAL_WEB_ORDERS_INTAKE.md."
+   "notes": "Per-item approve/reject + visible marker for items added to an existing order via WEB (item food_status=7 while order f_order_status stays 2). SCOPE GUARD: web orders ONLY — NOT aggregator (Swiggy/Zomato/UrbanPiper), NOT POS/dine-in/takeaway. Gate all UI/actions on isWebOrder===true. Code reality PARTIAL: order-level web YTC exists (OrderCard.isWebYetToConfirm, ScanOrderPopOut, CR-545 per-item cancel); per-item APPROVE on edited order does NOT exist. Root: orderTransform.js:133 maps item food_status via mapOrderStatus -> F_ORDER_STATUS[7]='pending' (collides w/ order-level); CartPanel.getItemStatusIcon has no not-confirmed case; reportTransform.getFoodStatusLabel missing key 7 ('Unknown'). Related: INV-WEB-EDIT-NOTCONFIRM-2026-11-17 (parent investigation + live FCM payload), POS2-007 (confirm tone override found DEAD vs live push), BUG-255 (item UI scoped by order type), CR-545 (per-item cancel in scan popup). Backend dependency LIKELY: single-item approve endpoint (OD-552-01). Reject-as-cancel may reuse CancelFoodModal (CR-545). Owner decisions OD-552-01..05 OPEN. IA: CR-552_IMPACT_ANALYSIS.md. Intake: change_requests/38_CR-552_PER_ITEM_APPROVAL_WEB_ORDERS_INTAKE.md. [2026-11-18 Gate 3] Plan: CR-552_IMPLEMENTATION_PLAN.md. FE-ONLY (no backend): Accept reuses CONFIRM_ORDER (waiter-dinein-order-status-update, bulk 7->def, no fOS re-stamp); Reject loops CANCEL_ITEM over new items only. Surface: ScanOrderPopOut Mode B (prev items greyed in expandable dropdown, not cancellable). 4 edits/4 files: orderTransform.js (isNotConfirmed flag), ScanOrderPopOut.jsx, DashboardPage.jsx (handleRejectNewItems), reportTransform.js (label 7). Exec AFTER CR-545. OD-552-01..06 resolved. Awaiting Gate 4 GO."
   }
  ],
  "meta": {
   "last_updated": "2026-11-18",
-  "last_action": "CR-552 registered (INTAKE) + Gate 2 Impact Analysis: per-item approval for WEB-ORDER items only. Status GATE_2_IMPACT_ANALYSIS. Owner decisions OD-552-01..05 open; backend dependency likely.",
+  "last_action": "CR-552 Gate 3 Implementation Plan complete (FE-only, 4 edits/4 files). Awaiting Gate 4 GO.",
   "current_gate": "5b",
   "last_qa_batch": "Group C (28 items + BUG-271)",
   "last_qa_date": "2026-07-31",
