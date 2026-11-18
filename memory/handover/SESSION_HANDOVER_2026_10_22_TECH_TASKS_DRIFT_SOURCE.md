@@ -184,7 +184,7 @@ print(r.status_code, r.text[:400])
   by backup-3-files → `git reset --hard origin/main` → restore). Preserved always:
   `frontend/.env`, `backend/.env`, `.emergent/emergent.yml` (pod job_id
   `246a1427-f482-4442-88a3-bdeb67f03dcf`).
-- Preview URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- Preview URL: `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com`
 - Last registry work this session (LOCAL ONLY — not yet on GitHub `main`; use "Save to GitHub"
   to persist, else a future force-push overwrites it):
   - Adopted CTO Sheet triage into registry: `blocked_by:"BACKEND"` on CR-043, BUG-190, BUG-467,

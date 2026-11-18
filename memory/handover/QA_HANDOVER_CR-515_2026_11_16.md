@@ -72,7 +72,7 @@ Compile: webpack compiled with 1 warning (pre-existing SettlementReportMockup.js
   - [x] COMPILE CHECK: 0 new warnings
 
 ## 5. Credentials + Environment
-- Preview URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - API: https://preprod.mygenie.online/
 - Test accounts: see `/app/memory/control/test_credentials.md`
 - Permission testing requires accounts with different role configurations (owner vs staff with limited rights)

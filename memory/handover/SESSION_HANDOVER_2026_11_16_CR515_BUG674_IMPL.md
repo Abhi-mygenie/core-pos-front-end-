@@ -47,7 +47,7 @@
 - **Blocked on backend (Gyan):** BUG-674 B2/B3/B4/B7, CR-515 BA-09/BA-10
 
 ## 6. Environment
-- Preview: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - Git: HEAD matches origin/main + implementation commits
 - Webpack: compiles with 1 pre-existing warning (SettlementReportMockup.jsx)
 - Test credentials: `memory/control/test_credentials.md`

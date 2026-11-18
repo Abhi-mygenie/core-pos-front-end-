@@ -200,7 +200,7 @@ The `- advance` term disappears because advance is now both IN the GST base (tax
 ### §1 Items covered: BUG-388
 ### §2 Test cases: V1 matrix above (8 test cases + 2 regressions)
 ### §3 Test account: owner@thegoankitchen.com / Qplazm@10
-### §4 URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+### §4 URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 ### §5 Route: /pms/check-in
 ### §6 Registry: YES — EXIT GATE 5/5 PASS confirmed
 

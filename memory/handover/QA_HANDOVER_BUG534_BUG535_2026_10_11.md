@@ -34,7 +34,7 @@ EXIT GATE: ALL 5 PASSED
 | Check-in discount | ₹1,000 |
 | Advance paid | ₹2,000 |
 | bp (balancePayment) | ₹10,400 |
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| App URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com |
 | Path | Login → Front Desk (Beta) → InHouse tab → r4 row |
 
 ---

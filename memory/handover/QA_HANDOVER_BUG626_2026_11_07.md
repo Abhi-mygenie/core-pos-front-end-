@@ -52,6 +52,6 @@ EXIT GATE: ALL 5 PASSED
 
 ## 5. Credentials + Environment
 
-- Preview URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - Test account: see `/app/memory/control/test_credentials.md`
 - File changed: `src/pages/reports-module/OrderReportBetaPage.jsx` (L59-61)

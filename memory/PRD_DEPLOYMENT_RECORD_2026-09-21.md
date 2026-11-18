@@ -36,7 +36,7 @@ Deploy the existing React frontend repo (core-pos-front-end) directly into `/app
 ### Phase 5 — Start
 - `sudo supervisorctl restart frontend`
 - Compiled with 1 ESLint warning only (`react-hooks/exhaustive-deps` — non-blocking)
-- App live at: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App live at: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 
 ## Status
 - **LIVE**: Login page rendering, API calls pointing to `preprod.mygenie.online`

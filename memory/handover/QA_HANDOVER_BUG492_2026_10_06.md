@@ -9,7 +9,7 @@
 **Sprint:** oct_bug_batch
 **Credentials:** `owner@thegoankitchen.com` / `Qplazm@10` — RID 69 (The Goan Kitchen)
 **URLs:**
-  - In-House Bill: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` → click Bill on any in-house guest
+  - In-House Bill: `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` → click Bill on any in-house guest
   - Check-In (new): `/pms/front-desk-v2?tab=arrivals` → Confirm Check-In on any arrival
   - Check-In (form): `/pms/check-in` (direct form, CheckInForm component)
 
@@ -108,7 +108,7 @@ EXIT GATE:         5/5 PASS
 ## 6. Environment
 
 ```
-App URL:   https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+App URL:   https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 Login:     owner@thegoankitchen.com / Qplazm@10 (RID 69)
 Inhouse:   /pms/front-desk-v2?tab=inhouse  → click Bill
 Arrivals:  /pms/front-desk-v2?tab=arrivals → confirm check-in

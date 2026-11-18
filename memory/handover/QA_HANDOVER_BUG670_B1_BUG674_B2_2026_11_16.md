@@ -63,7 +63,7 @@ Compile: 0 new warnings.
   - [x] COMPILE CHECK: 0 new warnings
 
 ## 5. Credentials + Environment
-- Preview: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - API: https://preprod.mygenie.online
 - Test: owner@cafe103.com / Qplazm@10
 

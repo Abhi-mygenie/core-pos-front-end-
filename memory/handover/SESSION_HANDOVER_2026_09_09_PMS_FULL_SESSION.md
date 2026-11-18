@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-09
 **Branch:** pms8sep (working copy)
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 **Sprint:** pos_pms_1
 
 ---
@@ -65,7 +65,7 @@ Full audit of all open PMS bugs and CRs. See §Open Items table below.
 - OD-383-01 answered: **"show a warning"** for occupied-HK rooms in Mark All Clean
 - BUG-384 backend brief written: `BACKEND_BRIEF_BUG-384_2026_09_09.md`
 - BUG-385 backend brief written: `BACKEND_BRIEF_BUG-385_2026_09_09.md`
-- Master HTML published: https://repo-build-8--5u3pk2yp.preview.emergentagent.com/backend-briefs.html (10 briefs, all modules, expandable cards with status badges)
+- Master HTML published: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com/backend-briefs.html (10 briefs, all modules, expandable cards with status badges)
 - ⚠️ `backend-briefs.html` must be REMOVED from `public/` before production
 
 ---

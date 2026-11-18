@@ -140,7 +140,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Item | Value |
 |---|---|
-| App URL | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| App URL | `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com` |
 | Front Desk v2 | `…/pms/front-desk-v2?tab=arrivals` |
 | Legacy CheckIn | `…/pms/check-in` |
 | Preprod API | `https://preprod.mygenie.online/` |

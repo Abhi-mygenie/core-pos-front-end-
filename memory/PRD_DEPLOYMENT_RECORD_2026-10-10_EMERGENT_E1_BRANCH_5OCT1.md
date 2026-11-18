@@ -3,7 +3,7 @@
 **Date:** 2026-10-10  
 **Agent:** E1 (Emergent)  
 **Branch deployed:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`  
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com  
+**Preview URL:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com  
 
 ## Deployment Steps Completed
 

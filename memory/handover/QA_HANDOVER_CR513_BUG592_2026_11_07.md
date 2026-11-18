@@ -69,7 +69,7 @@ EXIT GATE: 4/4 PASSED (E5 unit tests deferred to QA)
 ## 5. Credentials + Environment
 
 - Account: Owner@cafe103.com / Qplazm@10
-- Preview URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - Preprod API: https://preprod.mygenie.online
 - Restaurant: cafe103 (ID 644)
 - Running orders available: yes (9 dine-in + 6 room as of 2026-11-07)

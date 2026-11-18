@@ -31,7 +31,7 @@
 ### Phase 6: Start
 - `sudo supervisorctl start frontend` → RUNNING (pid 1040)
 - `webpack compiled successfully` — zero fatal errors
-- App confirmed live at https://repo-build-8--5u3pk2yp.preview.emergentagent.com — MyGenie login page rendered
+- App confirmed live at https://pos-front-app-1--5zv4w75g.preview.emergentagent.com — MyGenie login page rendered
 
 ## Env Variables Set
 - REACT_APP_BACKEND_URL (platform URL)

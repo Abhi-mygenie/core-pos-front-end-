@@ -33,7 +33,7 @@ Registry: GATE_5A — EXIT GATE 5/5 PASS (registry ✓, BUG_TRACKER ✓, FILE_OW
 
 ## 5. Credentials
 - Ruby ZAP: owner@ruby.com / Qplazm@10
-- POS URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- POS URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - API base: https://preprod.mygenie.online/
 
 ## 6. Works together with BUG-665

@@ -4,7 +4,7 @@
 ```
 Session date:     2026-09-13
 Branch:           PMS13 (latest repull — commit a095f2c)
-Preview URL:      https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+Preview URL:      https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 Backend:          https://preprod.mygenie.online (external)
 Memory dir:       596 files synced from PMS13 repo
 Compile status:   webpack compiled successfully (1 pre-existing ESLint warning only)
@@ -171,7 +171,7 @@ Sprint: pos_pms_1
 ```
 POS login:
   URL:           https://preprod.mygenie.online
-  Preview:       https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+  Preview:       https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
   Email:         owner@thegoankitchen.com
   Password:      Qplazm@10
   restaurant_id: 69 (The Goan Kitchen)

@@ -57,5 +57,5 @@
 
 ## 5. Environment
 
-- App: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - Routes: /restaurant-settings (Step 4) · /menu (ProductForm/BulkEditor)

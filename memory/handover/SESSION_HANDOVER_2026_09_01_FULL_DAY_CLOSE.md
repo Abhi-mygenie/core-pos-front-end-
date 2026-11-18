@@ -114,7 +114,7 @@ All items below need owner smoke test before they can be closed.
 |---|---|---|---|
 | Direct Printer | owner@18march.com | Qplazm@10 | Restaurant 478 |
 | Printer Agent | owner@shimlaqohfoodcourt.com | Qplazm@10 | Restaurant 598, food court |
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com | — | — |
+| App URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com | — | — |
 | Activate Agent mode | `localStorage.setItem('mygenie_printer_type','agent')` then reload | — | — |
 | Design preview | /cr133-printer-mockup.html | — | Tab 4 + Tab 5 added |
 

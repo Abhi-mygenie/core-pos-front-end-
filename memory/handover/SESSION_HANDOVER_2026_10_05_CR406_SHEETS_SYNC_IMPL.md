@@ -28,7 +28,7 @@ New CR registered, planned through full gate cycle (G1→G3), and implemented. T
 | Port | 3000 (bound to 0.0.0.0) |
 | Supervisor | `frontend` process RUNNING |
 | Compile status | `webpack compiled with 1 warning` (pre-existing lint warnings, not errors) |
-| Preview URL | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| Preview URL | `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com` |
 | Memory synced | `/app/memory/` — full sync from remote `oct1` branch (30 top-level items) |
 
 **env variables set in `/app/frontend/.env`:**

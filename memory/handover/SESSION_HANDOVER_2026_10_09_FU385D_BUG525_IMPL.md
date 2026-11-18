@@ -66,7 +66,7 @@ Self-test: 9/9 PASS · Unit tests (hideSectionRows): 6/6 PASS · webpack 0 new w
 
 ## 4. ENVIRONMENT
 
-Frontend: RUNNING, webpack compiled 1 pre-existing warning, URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+Frontend: RUNNING, webpack compiled 1 pre-existing warning, URL: `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com`
 
 ---
 

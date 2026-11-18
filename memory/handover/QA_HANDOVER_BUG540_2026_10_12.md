@@ -68,7 +68,7 @@ EXIT GATE: ALL 5 PASSED
 ## 5. Credentials + Environment
 
 - **Account:** owner@thegoankitchen.com / Qplazm@10 (RID 69, The Goan Kitchen)
-- **URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- **URL:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - **Route to test:** `/reports-module/profit-loss`
 - **External backend:** https://preprod.mygenie.online
 - **Note:** Test requires a date range with both expense and purchase data. Use 30D preset for best coverage.

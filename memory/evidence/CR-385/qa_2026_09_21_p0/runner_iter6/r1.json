@@ -4,19 +4,19 @@
       "case": "SMOKE-LOGIN",
       "status": "PASS",
       "severity": "NOTE",
-      "evidence": "https://repo-build-8--5u3pk2yp.preview.emergentagent.com/loading"
+      "evidence": "https://pos-front-app-1--5zv4w75g.preview.emergentagent.com/loading"
     },
     {
       "case": "\u00a71-M0-01-route",
       "status": "PASS",
       "severity": "NOTE",
-      "evidence": "https://repo-build-8--5u3pk2yp.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+      "evidence": "https://pos-front-app-1--5zv4w75g.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
     },
     {
       "case": "\u00a71-M0-01-tabparam",
       "status": "PASS",
       "severity": "MINOR",
-      "evidence": "https://repo-build-8--5u3pk2yp.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
+      "evidence": "https://pos-front-app-1--5zv4w75g.preview.emergentagent.com/pms/front-desk-v2?tab=arrivals"
     },
     {
       "case": "\u00a71-X-15-kpi-200",

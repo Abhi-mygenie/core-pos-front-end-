@@ -70,6 +70,6 @@ EXIT GATE: ALL 5 PASSED
 
 ## 5. Credentials + Environment
 
-- App URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App URL: https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - Email: owner@cafe103.com · Password: Qplazm@10
 - Note: preprod /products has been timing out (iterations 2–6). Code checks should PASS; browser tests may be blocked.

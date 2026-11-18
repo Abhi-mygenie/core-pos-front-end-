@@ -60,7 +60,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Field | Value |
 |---|---|
-| URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com |
 | Account | owner@ruby.com / *** (see test_credentials.md) |
 | Restaurant | uat Ruby (id 672) |
 | Test order | `restaurant_order_id = 000301`, internal `order_id = 1232186`, payment=partial |

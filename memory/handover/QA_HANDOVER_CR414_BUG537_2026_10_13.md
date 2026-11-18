@@ -89,7 +89,7 @@
 
 ## 4. Credentials + Environment
 - Account: see `/app/memory/test_credentials.md` (if present) — otherwise QA agent must request from owner.
-- Preview URL: value of `REACT_APP_BACKEND_URL` in `/app/frontend/.env` → `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- Preview URL: value of `REACT_APP_BACKEND_URL` in `/app/frontend/.env` → `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com`
 - Backend (Laravel): `preprod.mygenie.online`
 - Note: pod's local FastAPI backend is **stopped by design** (this is a frontend-only deployment).
 

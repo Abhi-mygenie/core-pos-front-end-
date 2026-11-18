@@ -55,7 +55,7 @@
 | Field | Value |
 |---|---|
 | Account alias | `cafe103_no_rooms_postpaid_gst` (RID 644) |
-| Preview URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| Preview URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com |
 | Navigate to | Settings → Employee Management → Roles tab |
 | Login API | `POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/login` |
 | Role Add API | `POST https://preprod.mygenie.online/api/v1/vendoremployee/role-add` |

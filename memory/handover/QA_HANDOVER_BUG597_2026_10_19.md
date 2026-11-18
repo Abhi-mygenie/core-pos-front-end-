@@ -74,7 +74,7 @@ EXIT GATE: 5/5 PASS
 
 ## §4 — Credentials + Environment
 
-- Preview: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- Preview: `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com`
 - Login: `cashier@kunafamahal.com` / `Qplazm@10` or `owner@kunafamahal.com` / `Qplazm@10`
 
 ## §5 — Known Limitation

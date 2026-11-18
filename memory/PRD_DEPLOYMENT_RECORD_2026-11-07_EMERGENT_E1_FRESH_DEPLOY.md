@@ -15,7 +15,7 @@
 7. App confirmed running: HTTP 200 on port 3000, Mygenie POS login screen visible
 
 ## Environment Variables Set (/app/frontend/.env)
-- REACT_APP_BACKEND_URL=https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- REACT_APP_BACKEND_URL=https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 - WDS_SOCKET_PORT=443
 - REACT_APP_API_BASE_URL=https://preprod.mygenie.online/
 - REACT_APP_SOCKET_URL=https://presocket.mygenie.online

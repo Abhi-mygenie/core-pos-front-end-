@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-07
 **Role:** IMPLEMENTATION
-**App:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**App:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 **Branch:** 5oct-1
 **webpack:** compiled successfully · 0 new warnings
 
@@ -100,7 +100,7 @@ QA handover: `handover/QA_HANDOVER_BUG502_503_504_2026_10_07.md`
 
 | Item | Value |
 |------|-------|
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| App URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com |
 | Preprod API | https://preprod.mygenie.online |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Login (staff) | `boi@bang.com` / `Qplazm@10` |

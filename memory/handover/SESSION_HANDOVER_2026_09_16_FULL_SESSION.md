@@ -4,7 +4,7 @@
 Written:          2026-09-16
 Session status:   CLOSED — Deployment + Memory sync + Planning + Implementation + Investigation + Intake complete
 Workspace:        /app (branch: 16sep — frontend-only React app connecting to preprod.mygenie.online)
-Preview URL:      https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+Preview URL:      https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 Registry:         685 items
 Webpack:          compiled with 1 warning (pre-existing ESLint exhaustive-deps, unrelated files)
 ```

@@ -106,7 +106,7 @@ EXIT GATE: ALL 5 CHECKS PASSED
 |---|---|---|
 | Regular restaurant | owner@18march.com | Qplazm@10 |
 | Food court | owner@shimlaqohfoodcourt.com | Qplazm@10 |
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com | — |
+| App URL | https://pos-front-app-1--5zv4w75g.preview.emergentagent.com | — |
 | API base | https://preprod.mygenie.online | — |
 
 **Note:** LocalPrinterSetupView is built but not yet routed from the Settings panel (routing gate — `printer_agent = "No"` check — is a separate CR). To test directly: import and render `<LocalPrinterSetupView />` in a test route or temporarily in App.js.

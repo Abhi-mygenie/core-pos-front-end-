@@ -5,7 +5,7 @@
 **File changed:** `src/api/services/pmsService.js` (L68, L114)
 **Sprint:** oct_bug_batch
 **Credentials:** `owner@thegoankitchen.com` / `Qplazm@10` — RID 69 (The Goan Kitchen)
-**URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com → `/pms/front-desk-v2?tab=inhouse`
+**URL:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com → `/pms/front-desk-v2?tab=inhouse`
 
 ---
 
@@ -61,7 +61,7 @@ EXIT GATE:         5/5 PASS
 ## 5. Environment
 
 ```
-App URL:  https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+App URL:  https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 Login:    owner@thegoankitchen.com / Qplazm@10 (alias: RID 69)
 Tab:      /pms/front-desk-v2?tab=inhouse
 Orders:   1232903 (no discount), 1232965 (₹200 disc), 1232972 / #000324 (bp=0)

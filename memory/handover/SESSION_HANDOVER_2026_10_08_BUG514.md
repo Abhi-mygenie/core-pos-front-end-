@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-08
 **Roles:** INVESTIGATION → INTAKE → PLANNING (Gate 2) → PLANNING (Gate 3) → IMPLEMENTATION (Gate 5a)
-**App URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**App URL:** https://pos-front-app-1--5zv4w75g.preview.emergentagent.com
 **Branch:** `5oct-1`
 **Frontend:** RUNNING port 3000 · webpack `compiled successfully` (0 new warnings)
 
@@ -139,7 +139,7 @@ CheckInPage.jsx  L291:   gstOnAdvFloor_ci
 
 | Item | Value |
 |---|---|
-| App URL | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| App URL | `https://pos-front-app-1--5zv4w75g.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online/` |
 | Login (owner) | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Test restaurant | RID 69 (The Goan Kitchen) |

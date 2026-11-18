@@ -94,6 +94,6 @@
 ## 6. Credentials + Environment
 
 - Account: `owner@thegoankitchen.com` / `Qplazm@10`
-- URL: https://preprod.mygenie.online (app at https://repo-build-8--5u3pk2yp.preview.emergentagent.com)
+- URL: https://preprod.mygenie.online (app at https://pos-front-app-1--5zv4w75g.preview.emergentagent.com)
 - Restaurant 69 — hotel account, `features.room = true`
 - 3 in-house guests on preprod: WalkIn Probe Test (r2, walk-in), Test Guest (r5, booking.com), Future Guest (r1, Direct)
