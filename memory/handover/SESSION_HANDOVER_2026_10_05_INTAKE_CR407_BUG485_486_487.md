@@ -82,5 +82,5 @@ Report: `investigations/INV_DASHBOARD_DOWNLOAD_PAYMENT_LABELS_2026_10_05.md`
 
 ## 6. Credentials
 - Test login: `owner@thegoankitchen.com` / `Qplazm@10` (preprod.mygenie.online, RID 69)
-- App URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- App URL: `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 - All env vars in `/app/frontend/.env`

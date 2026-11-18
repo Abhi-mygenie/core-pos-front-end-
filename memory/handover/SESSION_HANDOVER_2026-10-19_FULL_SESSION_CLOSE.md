@@ -14,7 +14,7 @@ Cloned `https://github.com/Abhi-mygenie/core-pos-front-end-.git` (main branch) i
 platform. Installed dependencies, configured `.env` with all provided keys, synced `/app/memory`
 from the repo, frontend running on preview.
 
-**Preview:** `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+**Preview:** `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 
 ---
 

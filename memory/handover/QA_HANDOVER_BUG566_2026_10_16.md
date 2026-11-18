@@ -74,6 +74,6 @@ EXIT GATE: ALL 5 PASSED
 ```
 
 ## 5. Credentials + Environment
-- App URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App URL: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - Test credentials: `/app/memory/control/test_credentials.md`
 - Viewport: 600×960 via browser DevTools device emulation

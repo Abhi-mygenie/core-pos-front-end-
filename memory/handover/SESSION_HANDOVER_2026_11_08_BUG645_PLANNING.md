@@ -3,7 +3,7 @@
 **Session date:** 2026-11-08
 **Agent:** E1
 **Roles used:** INVESTIGATION (review) → INTAKE (extend BUG-645) → PLANNING (Gate 2 IA + Gate 3 Plan)
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 
 ---
 

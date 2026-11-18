@@ -67,7 +67,7 @@ Cashier sees the grand total decrease instantly. Discount section stays hidden (
 
 ## Test Steps (preview)
 
-URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+URL: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 
 **Tab A — Cashier**
 1. Login: cashier@kunafamahal.com / Qplazm@10

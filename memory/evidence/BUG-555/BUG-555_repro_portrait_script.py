@@ -1,6 +1,6 @@
 async def run_test(page, output_dir, page_url):
     await page.set_viewport_size({"width": 1920, "height": 800})
-    URL = "https://repo-build-8--5u3pk2yp.preview.emergentagent.com"
+    URL = "https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com"
     await page.set_content(f'''<html><body style="margin:0;background:#222;display:flex;gap:20px;padding:10px">
     <iframe id="port" src="{URL}/" style="width:533px;height:780px;border:2px solid blue"></iframe>
     </body></html>''')

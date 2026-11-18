@@ -15,7 +15,7 @@
 - Wrote all env vars to `/app/frontend/.env` (Firebase, CRM, Google Maps, etc.)
 - Installed missing packages: `xlsx`, `jspdf`, `jspdf-autotable`, `browser-image-compression`, `@hello-pangea/dnd`, `firebase`
 - App running: `yarn start` (CRACO) on port 3000, supervisor-managed
-- **Pod URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`**
+- **Pod URL: `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`**
 
 ### B. BUG-515 Sub-B — In-House expanded row shows rack data (GATE_5A_IMPLEMENTED)
 - **Investigation:** Confirmed pipeline mismatch — `getInHouseGuests` enriches balance-pipeline rows with discount fields but `joinRowBalances` discarded them; snap rows passed to `RowExpansionStub` never had discount fields.
@@ -105,7 +105,7 @@ All 4 touch `FolioCheckoutPanel.jsx`. Line numbers may shift after each step —
 
 | Service | Status | URL |
 |---|---|---|
-| Frontend | RUNNING (supervisor, port 3000) | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| Frontend | RUNNING (supervisor, port 3000) | `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com` |
 | Webpack | Compiled, 1 pre-existing warning (SettlementReportMockup.jsx) | — |
 | Backend | RUNNING (port 8001) | — |
 | MongoDB | RUNNING | — |
@@ -119,7 +119,7 @@ All 4 touch `FolioCheckoutPanel.jsx`. Line numbers may shift after each step —
 |---|---|---|---|
 | Owner (The Goan Kitchen) | `owner@thegoankitchen.com` | `Qplazm@10` | RID 69 |
 | Test booking (bonk) | MG-69-2C201998-53D8-4980-A6A8-B042088BFC9D | — | RID 69, order 1233012 |
-| URL | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` | — | — |
+| URL | `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com/pms/front-desk-v2?tab=inhouse` | — | — |
 
 ---
 

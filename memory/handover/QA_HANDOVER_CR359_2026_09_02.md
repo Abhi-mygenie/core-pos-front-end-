@@ -73,7 +73,7 @@ EXIT GATE: ALL 5 PASSED (see below)
 | Test account (printer agent, full setup) | owner@hogwarts.com / Qplazm@10 |
 | Test account (printer agent, has mappings) | owner@ruby.com / Qplazm@10 |
 | Test account (local printer, no default_users) | owner@cafeclub.com / Qplazm@10 |
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| App URL | https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com |
 | Printer Settings path | Settings → Printer Settings → Station Mapping tab |
 
 ---

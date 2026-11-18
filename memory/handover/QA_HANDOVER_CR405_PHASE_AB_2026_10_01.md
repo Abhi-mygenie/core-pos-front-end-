@@ -108,7 +108,7 @@ Phase B EXIT GATE: 5/5 PASS
 - Preprod: `https://preprod.mygenie.online`
 - QA_GOANKITCHEN: `owner@thegoankitchen.com` (credentials in `/app/memory/test_credentials.md`)
 - QA_SOULKING: `pal@soulking.com`
-- App preview: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- App preview: `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 - Frontend running on port 3000 (supervisor managed)
 
 ---

@@ -62,6 +62,6 @@ EXIT GATE: ALL 5 PASSED
 
 ## 6. Credentials + Environment
 
-- Preview URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview URL: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - Test account: see `/app/memory/control/test_credentials.md`
 - Files changed: `src/api/transforms/orderTransform.js` · `src/components/order-entry/CollectPaymentPanel.jsx`

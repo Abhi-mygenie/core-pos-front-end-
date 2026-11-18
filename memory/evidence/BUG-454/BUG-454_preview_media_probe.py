@@ -2,7 +2,7 @@
 import asyncio, json, sys
 from playwright.async_api import async_playwright
 
-ORIGIN = 'https://repo-build-8--5u3pk2yp.preview.emergentagent.com'
+ORIGIN = 'https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com'
 KEYS = ['five_sec_buzzer', 'forty_five_sec_buzzer', 'order_accepted', 'new_order', 'confirm_order', 'order_rejected', 'swiggy_new_order', 'silent']
 
 JS = """

@@ -74,7 +74,7 @@ EXIT GATE: ALL 5 PASSED
 
 | Item | Value |
 |------|-------|
-| App URL | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| App URL | `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com` |
 | Test login | `owner@thegoankitchen.com` / `Qplazm@10` |
 | Route to test | `/pms/front-desk-v2?tab=arrivals` → click any arrival row |
 

@@ -234,7 +234,7 @@ The next module in sequence is **EM — Expenses Management** (`/expense-setup`,
 ```bash
 python3 /app/frontend/scripts/screen-reference/runner.py \
   --module MM \
-  --url https://repo-build-8--5u3pk2yp.preview.emergentagent.com \
+  --url https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com \
   --email owner@palmhouse.com \
   --password "****" \
   --real-name "The Palm House" \

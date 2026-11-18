@@ -57,5 +57,5 @@
 
 ## 5. Environment
 
-- App: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - Routes: /restaurant-settings (Step 4) · /menu (ProductForm/BulkEditor)

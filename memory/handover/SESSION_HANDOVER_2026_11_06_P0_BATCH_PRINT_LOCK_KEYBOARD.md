@@ -5,7 +5,7 @@
 **Roles used:** DEPLOYMENT → INTAKE → PLANNING → IMPLEMENTATION → INVESTIGATION → QA coordination
 **Test credentials:** owner@cafe103.com / Qplazm@10 (also manager@cafe103.com / Qplazm@10)
 **Login endpoint:** POST https://preprod.mygenie.online/api/v1/auth/vendoremployee/common-login
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 
 ---
 

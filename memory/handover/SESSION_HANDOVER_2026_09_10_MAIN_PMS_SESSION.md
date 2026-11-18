@@ -3,7 +3,7 @@
 **Date:** 2026-09-10
 **Agent Role:** Alpha Agent (multi-role: Deploy → QA → Investigator → Doc)
 **Branch deployed:** `main` (from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`)
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 **Preprod API:** https://preprod.mygenie.online/
 **Account used:** owner@thegoankitchen.com (credentials masked per Rule R20)
 **Sprint:** pos_pms_1

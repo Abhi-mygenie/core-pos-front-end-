@@ -13,7 +13,7 @@
 - Cloned `pms8sep` branch from `https://github.com/Abhi-mygenie/core-pos-front-end-.git` into `/app/frontend`
 - All env vars configured (Firebase, CRM, Google Maps, Socket, API base URL)
 - `npm install` + supervisor restart → `webpack compiled successfully`
-- Preview URL: **https://repo-build-8--5u3pk2yp.preview.emergentagent.com**
+- Preview URL: **https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com**
 - Login screen confirmed visible (MyGenie branding)
 
 ### 1.2 Memory Dir Synced
@@ -103,7 +103,7 @@ CR-370  →  CR-372-A  →  CR-368  →  CR-372-B*  →  CR-371*  →  CR-369
 | Check | Status |
 |---|---|
 | `yarn start` | RUNNING — `webpack compiled with 1 warning` (pre-existing) |
-| Preview URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com — login screen ✅ |
+| Preview URL | https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com — login screen ✅ |
 | Backend (supervisor) | RUNNING (not used by app — external preprod API) |
 | Memory dir | 326 files — fully synced from pms8sep |
 

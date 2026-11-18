@@ -128,7 +128,7 @@
 ## 5. Guardrails / Environment
 
 - **Credentials:** `QA_INV` = owner@yabyum.com / `Qplazm@10` (preprod RID 835). **Preprod is LIVE — never click Save Adjustments / Update Stock / Delete in automated tests.**
-- **Preview URL:** from `/app/frontend/.env` `REACT_APP_BACKEND_URL` = `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- **Preview URL:** from `/app/frontend/.env` `REACT_APP_BACKEND_URL` = `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 - **Frontend only** (React CRA+CRACO). Yarn only (R10). Code markers mandatory (R18).
 - Do NOT overwrite the ESM webpack fixes (`frontend/craco.config.js`, `frontend/webpack-shims/`).
 - Do NOT touch `/app/memory/final/*` (R2).

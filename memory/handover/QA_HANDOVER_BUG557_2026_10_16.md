@@ -40,7 +40,7 @@ EXIT GATE: 5/5 PASS
 ```
 
 ## 4. Credentials + Environment
-- App URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App URL: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - **Primary test account: `owner@18march.com` / `Qplazm@10`** (uat Ruby — Default Order Status = Bill configured)
 - Secondary: `owner@cafe103.com` / `Qplazm@10` (for normal flow regression)
 - Note: preprod /products has been timing out — code checks will pass; browser tests need live preprod

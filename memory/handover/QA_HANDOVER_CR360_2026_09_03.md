@@ -122,6 +122,6 @@ EXIT GATE: ALL 5 PASSED
 - **Account:** `owner@thegoankitchen.com` (Restaurant 69 — `features.room = true` required for PMS sidebar)
 - **Password:** see `/app/memory/test_credentials.md`
 - **Preprod URL:** https://preprod.mygenie.online
-- **App URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com (local pod)
+- **App URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com (local pod)
 - **Note for TC-3:** 3 in-house guests on preprod — `WalkIn Probe Test` (r2, walk-in), `Test Guest` (r5, booking.com), `Future Guest` (r1, Direct). Walk-in has no booking dates → excluded from avgNights. Other 2 guests should yield non-null avgNights.
 - **Note for TC-2:** `Test Guest` has balance ₹13,922 + `Future Guest` has ₹5,000 → totalBalance ≈ ₹18,922 expected (if backend is live and BUG-BE-02/BE-04 are fixed).

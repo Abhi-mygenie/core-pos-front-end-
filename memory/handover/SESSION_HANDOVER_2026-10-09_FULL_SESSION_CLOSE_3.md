@@ -13,7 +13,7 @@
 - Cloned `5oct-1` from `github.com/Abhi-mygenie/core-pos-front-end-.git`
 - Rsynced `frontend/` → `/app/frontend/`, `memory/` → `/app/memory/`
 - Wrote all env vars to `.env`, `yarn install --ignore-engines`, supervisor restarted
-- App live at `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` (login page confirmed)
+- App live at `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com` (login page confirmed)
 - **Compile:** webpack 1 pre-existing warning (no new warnings)
 
 ---
@@ -159,7 +159,7 @@ All 9 items at Gate 5A await QA:
 | Backend | RUNNING (port 8001) | FastAPI |
 | MongoDB | RUNNING | |
 
-**App URL:** `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+**App URL:** `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 
 ---
 

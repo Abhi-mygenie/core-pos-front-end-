@@ -79,7 +79,7 @@ EXIT GATE: ALL 5 PASSED
 
 ## 5. Credentials + Environment
 
-- **URL:** `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- **URL:** `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 - **Test credentials:** see `/app/memory/test_credentials.md`
 - **Preprod API:** `https://preprod.mygenie.online/`
 - **Note:** Mark No-Show API returns 422 for sandbox bookings (expected — confirmed in investigation). QA can verify dialog renders + error toast on API failure as acceptable PASS.

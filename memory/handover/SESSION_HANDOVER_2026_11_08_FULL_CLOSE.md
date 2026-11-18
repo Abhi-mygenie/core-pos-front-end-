@@ -3,7 +3,7 @@
 **Date:** 2026-11-08
 **Agent:** E1
 **Roles used:** DEPLOYMENT → IMPLEMENTATION (BUG-659) → PLANNING verification → IMPLEMENTATION (BUG-645) → INVESTIGATION (BUG-645 comma fix)
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 
 ---
 

@@ -115,7 +115,7 @@ Files changed:
 | Kunafa Mahal | owner@kunafamahal.com | Qplazm@10 | Owner |
 | Kunafa Mahal | cashier@kunafamahal.com | Qplazm@10 | Cashier (no discount perm) |
 
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com  
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com  
 **Preprod API:** https://preprod.mygenie.online  
 **Socket:** https://presocket.mygenie.online
 

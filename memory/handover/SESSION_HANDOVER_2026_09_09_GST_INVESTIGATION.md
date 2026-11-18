@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-09
 **Branch:** audit8 (deployed to /app/frontend)
-**Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 **Sprint:** pos_pms_1
 **Roles used:** INVESTIGATION
 

@@ -154,7 +154,7 @@ Four layers added to prevent any agent from accidentally upgrading recharts or m
 ## 5. Credentials
 
 - Test account: `owner@cafe103.com` / see `test_credentials.md`
-- Preview URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+- Preview URL: `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 - UAT URL: `https://pos-uat.mygenie.online`
 
 ---

@@ -7,7 +7,7 @@ Status at close:  CR-163 GATE 5A IMPLEMENTED — QA PLAN WRITTEN — Awaiting ow
 Next agent role:  QA agent (present plan to owner → get approval → execute 28 checks)
 Workspace:        /app
 Branch:           PMS13
-Preview URL:      https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+Preview URL:      https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 ```
 
 ---
@@ -178,7 +178,7 @@ Write report to: `test_reports/QA_REPORT_CR163_BUG388_<DATE>.md`
 ```
 POS login:
   URL:           https://preprod.mygenie.online
-  Preview:       https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+  Preview:       https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
   Email:         owner@thegoankitchen.com
   Password:      Qplazm@10
   restaurant_id: 69 (The Goan Kitchen)

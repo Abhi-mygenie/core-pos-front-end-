@@ -122,7 +122,7 @@ EXIT GATE:             5/5 PASS
 |-------|-------|
 | Owner account | owner@thegoankitchen.com / Qplazm@10 |
 | Restaurant | The Goan Kitchen (RID 69) |
-| Preview URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com |
+| Preview URL | https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com |
 | External backend | https://preprod.mygenie.online |
 
 ---

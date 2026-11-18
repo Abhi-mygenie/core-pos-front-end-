@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-06
 **Roles used:** DEPLOYMENT → IMPLEMENTATION (BUG-493) → IMPLEMENTATION (BUG-492) → INVESTIGATION (INV-492B check-in discount + GST rule) → INTAKE (BUG-494 + BUG-495) → PLANNING Gate 2 (BUG-494 + BUG-495) → PLANNING Gate 3 (BUG-494 + BUG-495)
-**App URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+**App URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 **Branch deployed:** `5oct-1` from `https://github.com/Abhi-mygenie/core-pos-front-end-.git`
 **Registry:** 778 items (was 776 at session start)
 
@@ -171,7 +171,7 @@ Read these before anything else:
 
 | Item | Value |
 |------|-------|
-| App URL (preview) | `https://repo-build-8--5u3pk2yp.preview.emergentagent.com` |
+| App URL (preview) | `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com` |
 | Preprod API | `https://preprod.mygenie.online` |
 | Login endpoint | `POST /api/v1/auth/vendoremployee/common-login` |
 | Test login | `owner@thegoankitchen.com` / `Qplazm@10` |

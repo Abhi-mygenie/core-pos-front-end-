@@ -31,7 +31,7 @@ All provided env variables written to `/app/frontend/.env`:
 ### Phase 5 — Startup
 - Frontend started via supervisor: `yarn start` (craco start) bound to `0.0.0.0:3000`
 - Compiled successfully with 1 warning (react-hooks/exhaustive-deps — non-fatal)
-- App responding at https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- App responding at https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 
 ## Verification
 - Login page renders: MyGenie logo, "Streamlined Hospitality. Exceptional Experience.", email/password fields, LOG IN button

@@ -99,7 +99,7 @@ The Sidebar is `flex-shrink-0 relative` (in-flow). `flex-1` already positions co
 | Owner (RID 69, The Goan Kitchen) | owner@thegoankitchen.com | Qplazm@10 |
 
 External backend: `https://preprod.mygenie.online`
-Preview URL: `https://repo-build-8--5u3pk2yp.preview.emergentagent.com`
+Preview URL: `https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com`
 
 ---
 

@@ -241,7 +241,7 @@ API endpoint for test print is unknown — owner has not provided it.
 | Regular restaurant | owner@18march.com | Qplazm@10 | restaurant 478, printer_agent = "No" |
 | Food court | owner@shimlaqohfoodcourt.com | Qplazm@10 | printer_agent = "Yes" |
 | API base | https://preprod.mygenie.online | — | |
-| App URL | https://repo-build-8--5u3pk2yp.preview.emergentagent.com | — | |
+| App URL | https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com | — | |
 | Direct Printer URL | /local-printer-setup | — | accessible by direct URL only |
 | Printer Agent URL | /settings → All Settings → Printers | — | via Settings panel tile |
 

@@ -72,7 +72,7 @@ Compile: 0 new warnings. Call sites (L2945 CartPanel, L3178 CustomerModal) uncha
   - [x] COMPILE CHECK: 0 new warnings
 
 ## 5. Credentials + Environment
-- Preview URL: https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- Preview URL: https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - API: https://preprod.mygenie.online
 - Test: owner@cafe103.com / Qplazm@10
 

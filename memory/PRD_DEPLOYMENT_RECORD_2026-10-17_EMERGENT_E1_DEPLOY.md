@@ -44,7 +44,7 @@ REACT_APP_CRM_API_KEYS={"364":"...","475":"...","478":"...","509":"..."}
 REACT_APP_GOOGLE_MAPS_KEY=AIzaSyCS9rZcttTxbair3abltZ3Fm1vEnmY0mj4
 CORS_ORIGINS=*
 REACT_APP_SHOW_AUDIT_TAB=true
-REACT_APP_BACKEND_URL=https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 ```
 
 ## Verification

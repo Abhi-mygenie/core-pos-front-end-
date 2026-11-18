@@ -72,7 +72,7 @@ EXIT GATE: ALL 5 PASSED
 ## 5. Credentials + Environment
 
 - **Account:** owner@thegoankitchen.com / Qplazm@10 (RID 69, The Goan Kitchen — has SC configured)
-- **Preview URL:** https://repo-build-8--5u3pk2yp.preview.emergentagent.com
+- **Preview URL:** https://genie-pos-preview-5--1ek9a8z2.preview.emergentagent.com
 - **External backend:** https://preprod.mygenie.online
 - **Key route:** Dashboard → any open dineIn order → print icon
 - **Network tab:** POST to `order-temp-store` — inspect `gst_tax` field
