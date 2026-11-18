@@ -1,5 +1,7 @@
 # BACKEND_BRIEF_INV-WEB-EDIT-NOTCONFIRM_2026-11-17
 
+> **STATUS: RESOLVED / ANSWERED (2026-11-17).** Owner captured the live push from the real logged-in POS console — see `evidence/INV-WEB-EDIT-NOTCONFIRM-2026-11-17/fcm_payload_captured.md`. Payload confirmed: `notification.title="Please confirm this order"`, `data={sound:"forty_five_sec_buzzer", orderid, channel_id:"forty_five_sec_buzzer"}`, `fcmOptions.link=".../dashboard"`, and crucially **NO `data.type`/`data.notification_type`**. No backend answer needed; retained as informational. Follow-on is FE-only (see below + addendum).
+
 ## Summary
 - Issue: Need the exact **staff FCM push payload** emitted on a customer **web order edit** (`edit_order_confirm_web`, item-level Not-Confirm) to confirm the POS confirm-tone/handler path.
 - Classification: CONFIG_ISSUE / CONTRACT_MISMATCH (documentation of push contract) — not a backend defect.
