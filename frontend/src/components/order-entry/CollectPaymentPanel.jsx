@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, CreditCard, Smartphone, Banknote, Split, FileText, Check, ArrowRightLeft, ChevronDown, ChevronUp, BellRing, RefreshCw, MoreHorizontal, Printer, Scissors } from "lucide-react";
 import { COLORS } from "../../constants";
 import { useRestaurant, useTables, useSettings, useMenu, useAuth } from "../../contexts"; // CR-492: +useAuth
-import { PAYMENT_METHODS, filterLayoutByApiTypes, getDynamicPaymentTypes, DEFAULT_PAYMENT_LAYOUT } from "../../config/paymentMethods";
+import { PAYMENT_METHODS, filterLayoutByApiTypes, getDynamicPaymentTypes, DEFAULT_PAYMENT_LAYOUT, API_NAME_TO_METHOD_ID } from "../../config/paymentMethods";
 import * as tableService from "../../api/services/tableService";
 import { applyOrderDiscount } from "../../api/services/orderService"; // BUG-538
 // BUG-038 (May-2026): CRM typeahead helper for the Credit/TAB customer
