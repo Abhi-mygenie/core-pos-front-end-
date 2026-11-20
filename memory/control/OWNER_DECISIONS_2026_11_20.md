@@ -61,3 +61,29 @@ into `restaurant.settings` so `DashboardPage.handleConfirmOrder` can read it.
 - **Constraints:** historical rows return `null` (no backfill) → UI shows `—`; **production** requires the migration `2026_11_20_000001_add_diner_snapshot...` deployed to `manage.mygenie.online` before fields appear live.
 - **FE plan (2 files):** `plans/CR-527_IMPLEMENTATION_PLAN.md` — map fields (E1/E2), Diner column (E3/E4), diner filter OD-527-C (E5). Awaiting Gate-4 GO.
 - **SEPARATE OPEN ITEM (not CR-527):** prepaid amount discrepancy observed on preprod — restaurant **672**, order **1578984** (bill 000823): placement ₹127 but order **saved & credited ₹132.71**; postpaid order 1578985 correct at ₹127. Money-correctness issue → needs its own P1 bug intake.
+
+
+---
+
+## CR-559 — R2 REVERSAL (owner, 2026-11-20, supersedes OD-FINAL v3)
+Owner reversed the shipped CR-559 mechanism back toward payload-parity, with a new dual-toggle gate.
+**This is now the authoritative direction for CR-559. OD-FINAL v3 (order-temp-store reuse) is SUPERSEDED.**
+
+**Locked spec (Accept = web/scan YTC confirm path ONLY):**
+- **OD-R2-1 — NO `order-temp-store`:** remove the `printOrder(...) → /api/v1/vendoremployee/order-temp-store`
+  call from `handleConfirmOrder` (current DashboardPage.jsx:1379-1388 CR-559 block).
+- **OD-R2-2 — `printer_agent` ON the confirm payload:** send on
+  `PUT /api/v2/vendoremployee/order/waiter-dinein-order-status-update`:
+  `{ order_id, role_name, order_status, printer_agent:[ KOT…, BILL ] }`. **No `print_kot` field** (backend decides).
+  Block = `[...selectAgentsForKot(printerAgents, <stations of confirmItems>), ...selectAgentsForBill(printerAgents)]`
+  (Place-Order shape). confirmItems: new web order = ALL items; web edit = `food_status===7`/`isNotConfirmed` items only.
+- **OD-R2-3 — then `update-print-status`:** `POST /api/v2/vendoremployee/print/update-print-status`
+  → `{ order_id, kot_print:"Yes", bill_print:"No" }`. Called ONLY when the gate is ON and a non-empty block was sent.
+- **OD-R2-4 — GATE (AND):** `isWebOrder (order_from==='web') && settings.autoKot (backend restaurants[0].print_kot==="Yes")
+  && settings.scanOrderAutoPrint (backend scan_order_auto_print==="Yes")`. All three true → do the above; else plain
+  `{order_id, role_name, order_status}`, nothing auto-prints (manual KOT button CR-545/547 unchanged).
+- **Scope lock:** web order + YTC (`f_order_status`) only; item split by `food_status`. Shared `toAPI.updateOrderStatus`
+  (ready/serve) + cancel + aggregator + non-web status-7 confirms all UNTOUCHED (isWebOrder gate protects them).
+  Everything additive except the isolated order-temp-store→confirm swap inside the gated branch.
+
+**Status:** owner skipped formal gate. Plan: `plans/CR-559_R2_IMPLEMENTATION_PLAN.md`. Awaiting GO to implement.
