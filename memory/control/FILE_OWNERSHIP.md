@@ -2475,3 +2475,14 @@ NOT touched: `DashboardPage.jsx` · `RestaurantSettingsPage.jsx` · `restaurantS
 | `src/contexts/OrderContext.jsx` | `orderItemsByTableId` whitelist (L348): add `isWebOrder: order.isWebOrder || false` (RC-2). marker `// CR-559` | CR-559 IMPL 2026-11-20 |
 
 NOT touched: `orderService.js`/`confirmOrder` · `toAPI.updateOrderStatus` · `printOrder` · `handleScanPrintKOT` · `printerAgentConfigTransform.js` · aggregator accept path · Place/Update builders · `ScanOrderPopOut.jsx`.
+
+
+## CR-559 R2 — Web/Scan Accept printer_agent on CONFIRM (IMPLEMENTED 2026-11-20, Gate-5a) — supersedes CR-559 block above
+| File | Change | Status |
+|---|---|---|
+| `src/pages/DashboardPage.jsx` | `handleConfirmOrder` (L1366): gate AND `isWebOrder && settings.autoKot && settings.scanOrderAutoPrint`; build `[KOT,BILL]` via `selectAgentsForKot(printerAgents, cartStationsToSet(confirmItems))`+`selectAgentsForBill`; pass to `confirmOrder`; **removed** `printOrder`/order-temp-store call; then `updatePrintStatus{kot_print:'Yes',bill_print:'No'}`; +import `printerAgentSelector`; deps −`getProductById`. markers `// CR-559 R2` | CR-559 R2 IMPL 2026-11-20 |
+| `src/api/services/orderService.js` | `confirmOrder` +4th arg `printerAgent` → `printer_agent` added ONLY when non-empty (`toAPI.updateOrderStatus` unchanged); NEW `updatePrintStatus(orderId,{kot_print,bill_print})` reusing CR-512 `CONFIRM_PRINT_STATUS`. markers `// CR-559 R2` | CR-559 R2 IMPL 2026-11-20 |
+| `src/__tests__/api/services/orderService.cr559r2.test.js` | NEW — 3 cases (printer_agent present/absent, no print_kot, updatePrintStatus body) | CR-559 R2 IMPL 2026-11-20 |
+
+SUPERSEDES the original CR-559 "NOT touched: orderService.js/confirmOrder" note — R2 now DOES modify `confirmOrder` and the Accept path no longer calls `order-temp-store`.
+NOT touched: `toAPI.updateOrderStatus` (ready/serve/cancel) · `printOrder` (still used by manual KOT) · `OrderContext.jsx` (isWebOrder already present) · Place/Update builders · aggregator accept · `ScanOrderPopOut.jsx` · `profileTransform.js`.

@@ -67,9 +67,25 @@ export const updateOrderStatus = async (orderId, roleName, status) => {
  * @param {string} roleName - User's role name
  * @returns {Promise<Object>} - API response
  */
-export const confirmOrder = async (orderId, roleName, orderStatus = 'paid') => {
-  const payload = toAPI.updateOrderStatus(orderId, roleName, orderStatus);
+export const confirmOrder = async (orderId, roleName, orderStatus = 'paid', printerAgent = null) => {
+  const payload = {
+    ...toAPI.updateOrderStatus(orderId, roleName, orderStatus),
+    ...(Array.isArray(printerAgent) && printerAgent.length ? { printer_agent: printerAgent } : {}), // CR-559 R2
+  };
   const response = await api.put(API_ENDPOINTS.CONFIRM_ORDER, payload);
+  return response.data;
+};
+
+/**
+ * CR-559 R2: mark print status after a web/scan Accept that sent printer_agent.
+ * Reuses the CR-512 update-print-status endpoint. Non-idempotent — caller gates on a sent block.
+ */
+export const updatePrintStatus = async (orderId, { kot_print = 'No', bill_print = 'No' } = {}) => {
+  const response = await api.post(API_ENDPOINTS.CONFIRM_PRINT_STATUS, {
+    order_id: Number(orderId),
+    bill_print,
+    kot_print,
+  });
   return response.data;
 };
 

@@ -23,7 +23,7 @@ import api from "../api/axios";
 import { API_ENDPOINTS, STATUS_COLUMNS } from "../api/constants";
 import soundManager from "../utils/soundManager"; // BUG-453
 import { toAPI as orderToAPI } from "../api/transforms/orderTransform";
-import { updateOrderStatus, confirmOrder, completePrepaidOrder } from "../api/services/orderService";
+import { updateOrderStatus, confirmOrder, completePrepaidOrder, updatePrintStatus } from "../api/services/orderService";
 import { ChannelColumnsLayout } from "../components/dashboard";
 import TableJumpChip from "../components/dashboard/TableJumpChip"; // CR-482 P19
 import { useKeyboardShortcuts, isTypingTarget, isKbdModalOpen } from "../hooks/useKeyboardShortcuts"; // CR-482 P18
@@ -37,6 +37,7 @@ import CancelFoodModal from "../components/order-entry/CancelFoodModal";
 import { useMenu } from "../contexts";
 import { printOrder } from "../api/services/orderService";
 import { getStationsFromOrderItems } from "../api/services/stationService";
+import { selectAgentsForKot, selectAgentsForBill, cartStationsToSet } from "../api/transforms/printerAgentSelector"; // CR-559 R2
 import AggregatorOrderPopOut from "../components/dashboard/AggregatorOrderPopOut"; // CR-106
 import AggregatorRejectModal from "../components/modals/AggregatorRejectModal";   // CR-106
 import AggregatorDispatchModal from "../components/modals/AggregatorDispatchModal"; // CR-106
@@ -1366,30 +1367,27 @@ const DashboardPage = () => {
     if (!order?.orderId) return;
 
     try {
-      // Single API call to confirm order (YTC → next status)
-      // Uses dedicated waiter-dinein-order-status-update endpoint
-      // order_status comes from profile API def_ord_status (mapped via F_ORDER_STATUS)
-      await confirmOrder(order.orderId, permissions?.[0] || 'Manager', defaultOrderStatus);
-      // Socket handler will process order-engage + update-order-paid
-
-      // CR-559 (OD-2/OD-3/OD-4): web/scan orders only, and only when the restaurant's
-      // Scan-Order Auto-print toggle is ON → auto-print the KOT by reusing the manual-KOT
-      // process (printOrder → order-temp-store + update-print-status kot_print:'Yes').
-      // KOT only (no BILL). Backend auto-print is suppressed, so this is the print trigger.
-      if (order.isWebOrder && settings?.scanOrderAutoPrint) {
+      // CR-559 R2: web/scan Accept — send printer_agent ON the confirm payload (payload parity
+      // with Place/Update Order), gated by BOTH auto-print toggles; then mark KOT printed.
+      // No order-temp-store call. Backend decides print_kot (not sent). order_status comes from
+      // profile def_ord_status (mapped via F_ORDER_STATUS).
+      let printerAgent = [];
+      if (order.isWebOrder && settings?.autoKot && settings?.scanOrderAutoPrint) {
         const items = Array.isArray(order.items) ? order.items : [];
         const isWebEdit = items.some(it => it.isNotConfirmed);               // Mode B = web edit
         const confirmItems = isWebEdit ? items.filter(it => it.isNotConfirmed) : items; // OD-2
-        const stations = getStationsFromOrderItems(confirmItems, getProductById);
-        if (stations.length > 0) {
-          const stationKot = stations.map(s => s.station).join(',');
-          await printOrder(order.orderId, 'kot', stationKot, order, 0, {}, printerAgents || []);
-        }
+        const kotAgents = selectAgentsForKot(printerAgents || [], cartStationsToSet(confirmItems));
+        printerAgent = [...kotAgents, ...selectAgentsForBill(printerAgents || [])]; // OD-R2-2 [KOT,BILL]
+      }
+      await confirmOrder(order.orderId, permissions?.[0] || 'Manager', defaultOrderStatus, printerAgent);
+      // Socket handler will process order-engage + update-order-paid
+      if (printerAgent.length > 0) {
+        await updatePrintStatus(order.orderId, { kot_print: 'Yes', bill_print: 'No' }); // OD-R2-3
       }
     } catch (err) {
       console.error('[DashboardPage] Failed to confirm order:', err);
     }
-  }, [getOrderDataForEntry, permissions, defaultOrderStatus, settings, printerAgents, getProductById]);
+  }, [getOrderDataForEntry, permissions, defaultOrderStatus, settings, printerAgents]); // CR-559 R2
 
   // --- Cancel scan order (red cross) → open modal ---
   const handleCancelOrder = useCallback((tableEntry) => {
