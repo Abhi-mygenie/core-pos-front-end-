@@ -47,9 +47,8 @@ CR-118/108 (aggregator accept — out of scope). Not a new ID — tracked as **C
 - All behind the web + dual-toggle gate; shared ready/serve/cancel + non-web confirms unaffected.
 
 ## 7. Client + Assignee
-- **Client:** ALL (platform-wide web/scan accept printing) — *owner to confirm if client-specific.*
-- **Assignee:** **Piyush** (auto-route: Area = Printer / Printer Agent). Routing reason: "Printer Agent area → Piyush".
-  *Owner to confirm/override.*
+- **Client:** ALL (platform-wide web/scan accept printing) — **confirmed by owner 2026-11-20**.
+- **Assignee:** **Parth** (owner-overridden 2026-11-20; auto-route proposed Piyush for Printer area).
 
 ## 8. Owner Decisions (LOCKED this session)
 - OD-R2-1 no order-temp-store · OD-R2-2 printer_agent [KOT,BILL] on confirm, no print_kot field ·
