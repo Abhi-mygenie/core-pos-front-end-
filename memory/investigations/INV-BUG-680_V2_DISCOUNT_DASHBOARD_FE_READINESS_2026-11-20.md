@@ -6,6 +6,15 @@
 **Related:** BUG-680 (status `GATE_1_INTAKE_COMPLETE — OD LOCKED`, OD-680-01 = **Option B, backend updates order_amount**)
 **Backend handoff:** `memory/handover/V2_ORDER_DISCOUNT_FRONTEND_HANDOFF_2026-11-20.md`
 
+**Test credentials (preprod, for live verification):**
+
+| Account | Email | Password | Use |
+|---|---|---|---|
+| Owner (BUG-680 repro) | `owner@mantri.com` | `Qplazm@10` | Table T2 / Order #001447 — reproduce discount-not-on-dashboard |
+| Staff (aggregator/table mode) | `poki@macha.com` | `Qplazm@10` | Running-orders list + apply-discount readback checks |
+
+> Use these to confirm the running-orders list endpoint returns the recalculated `order_amount` + `restaurant_discount_amount` after a v2 discount.
+
 ---
 
 ## 1. What the owner asked
