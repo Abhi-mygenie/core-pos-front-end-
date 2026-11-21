@@ -40,6 +40,20 @@ cancel   -> status=cancelled, removed from active list (cleanup ✅)
 ```
 Artifacts in `/app/memory/evidence/CR527-BUG680-VERIFY-2026-11-21/` (`probe.py`, `w1..w5`, `get_single_*`, `ctx_*`).
 
+## 4b. Cancel-notes (handover item #3) — backend contract VERIFIED live
+Gyan's backend handover does **not** mention cancel-notes because it is **FE-only** — backend already fulfils the contract. Confirmed live today via `POST /api/v2/vendoremployee/report/insights-cancellations` (macha 69, 2026-11-01..21):
+- 43 rows (28 `scope=item`, 15 `scope=order`). Every row carries **`stage`**, **`reason`**, **`notes`** and **`cancel_item_note`**.
+- `notes` = `""` on **100%** of rows (kitchen note empty) → FE filtering/rendering on `notes` drops everything.
+- The real note lives in **`cancel_item_note`** for BOTH scopes (e.g. order rows = "waiter got slapped"). No `cancellation_note` key exists anywhere.
+- Evidence: `cancel_insights_live.json`, prior `evidence/CANCEL-NOTES/cancellations_2026-11-21.json`.
+
+**FE root cause re-confirmed in current code (FE-only fix):**
+- `CancellationsMockup.jsx:282` maps `notes: i.notes || ''` (never `cancel_item_note`); BUG-708 removed the Note column (`:969/:994`); export cols (`:396-432`) have Stage but no note column.
+- `OrderNotesMockup.jsx:73` filters `i.notes && i.notes.trim()` → all rows excluded; renders `item.notes` (`:130`); export key `notes` (`:83`); no Stage column; subtitle still says "food-level notes".
+- `CancelDetailMockup.jsx:80` spreads `...i` (has `cancel_item_note`+`stage`) but no note column rendered/exported.
+- Fix: read/render `cancel_item_note` across all 3 screens + exports; OrderNotes filter `notes || cancel_item_note` + add Stage column. Backend caveat (non-blocking): `cancel_item_note` doubles as the order note — future rename/split is cleaner.
+- **`testing_agent` MANDATORY after the fix** (owner standing rule): create 1 item-level + 1 order-level cancellation each WITH a note; verify all 3 screens + export show Stage+Reason+Note.
+
 ## 5. Not covered this session (recommended before closing)
 - **Credit-row diner population (A2):** `tap-customer-record-list` schema keys exist, but populating a credit row needs a **credit settlement** (bill-payment with TAB). Not exercised (checked customer 1796 = cafe103 → 0 rows on macha). Verify during FE QA by settling an order-with-diner to credit and reading the credit row.
 - **update-place-order diner semantics** (omit key = keep, `""` = clear) — not exercised.
