@@ -558,6 +558,12 @@ const CollectPaymentPanel = ({
   const [tabPhone, setTabPhone] = useState(customer?.phone || "");
   const [tabCountryCode, setTabCountryCode] = useState(customer?.countryCode || '+91'); // CR-479
 
+  // CR-527: Diner (who ate) — captured separately from the credit holder
+  // (tabName/tabPhone). Plain text, NO CRM typeahead (A4: never links CRM).
+  // Left blank when diner == holder; backend null-collapses → UI shows "—".
+  const [dinerName, setDinerName] = useState("");
+  const [dinerPhone, setDinerPhone] = useState("");
+
   // CR-116: B2B customer GST info
   const [custGST, setCustGST] = useState("");
   const [custGSTName, setCustGSTName] = useState("");
@@ -729,6 +735,15 @@ const CollectPaymentPanel = ({
       if (!newPhone.trim()) setTabName(""); // BUG-038 blank-out preserved
       setTabIsCustomerSelected(false);
     }
+  };
+
+  // CR-527: Diner field handlers (plain text, no CRM search). Kept fully
+  // separate from the holder refs (tabIsCustomerSelected / tabPhoneWasUserTypedRef).
+  const handleDinerNameChange = (e) => setDinerName(e.target.value);
+  const handleDinerPhoneChange = (val) => {
+    const raw = typeof val === 'string' ? val : (val?.target?.value || '');
+    const maxLen = tabCountryCode === '+91' ? 10 : 15;
+    setDinerPhone(raw.replace(/\D/g, '').slice(0, maxLen));
   };
 
   const [stationPayments, setStationPayments] = useState({
@@ -1293,6 +1308,7 @@ const CollectPaymentPanel = ({
       tip,
       splitPayments:   showSplit ? splitPayments.map(p => ({ method: p.method, amount: parseFloat(p.amount) || 0, transactionId: p.method === 'card' ? (p.transactionId || '') : '' })) : null,
       tabContact:      isTabPayment ? { name: tabName, phone: tabPhone, crmId: tabCrmId, countryCode: tabCountryCode } : null, // BUG-183 + BUG-636 E3: +countryCode
+      dinerContact:    isTabPayment ? { name: dinerName.trim(), phone: dinerPhone.trim() } : null, // CR-527: diner distinct from holder
       // discount info — all fields needed by collect bill payload (OLD POS parity)
       discounts: {
         manual:               manualDiscount,
@@ -3409,6 +3425,31 @@ const CollectPaymentPanel = ({
                   )}
                 </div>
               </div>
+              {/* CR-527: Diner (who ate) — renders only once holder name + valid phone entered (OD-527-D.1) */}
+              {tabName.trim() && (tabCountryCode === '+91' ? tabPhone.replace(/\D/g, '').length === 10 : tabPhone.replace(/\D/g, '').length >= 6) && (
+                <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: COLORS.borderGray }} data-testid="tab-diner-section">
+                  <div className="text-xs font-medium" style={{ color: COLORS.grayText }}>
+                    Diner (who ate)<span className="font-normal"> — leave blank if same as credit customer</span>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Diner Name"
+                    value={dinerName}
+                    onChange={handleDinerNameChange}
+                    className="w-full px-4 py-3 rounded-lg border text-sm outline-none"
+                    style={{ borderColor: COLORS.borderGray, backgroundColor: '#fff' }}
+                    data-testid="tab-diner-name-input"
+                  />
+                  <PhoneInputField
+                    compact
+                    phone={dinerPhone} countryCode={tabCountryCode}
+                    onPhoneChange={handleDinerPhoneChange}
+                    onCountryCodeChange={setTabCountryCode}
+                    placeholder="Diner Phone (optional)"
+                    testId="tab-diner-phone-input"
+                  />
+                </div>
+              )}
               {(!tabName.trim() || (tabCountryCode === '+91' ? tabPhone.replace(/\D/g, '').length !== 10 : tabPhone.replace(/\D/g, '').length < 6)) && (
                 <div className="text-xs mt-1.5" style={{ color: '#ef4444' }}>
                   {!tabName.trim() && (tabCountryCode === '+91' ? tabPhone.replace(/\D/g, '').length !== 10 : tabPhone.replace(/\D/g, '').length < 6)

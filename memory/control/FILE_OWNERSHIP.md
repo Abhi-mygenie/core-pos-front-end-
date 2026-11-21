@@ -1,3 +1,14 @@
+<!-- CR-527 (capture phase) IMPL 2026-11-21 — FILE OWNERSHIP -->
+| File | Edits | Item |
+|---|---|---|
+| `src/components/order-entry/CollectPaymentPanel.jsx` | CR-527: diner state (`dinerName`/`dinerPhone` ~L560); `handleDinerNameChange`/`handleDinerPhoneChange` (after `handleTabPhoneChange`); gated **Diner (who ate)** field in Credit Customer Details (renders only when holder name+valid phone); `dinerContact` in paymentData (~L1296). NO change to holder seed L557-558 or BUG-660 refs. | CR-527 IMPL 2026-11-21 |
+| `src/api/transforms/orderTransform.js` | CR-527: `placeOrderWithPayment` destructure `dinerContact` (L1319) + emit `diner_name`/`diner_mobile` inside `isTab` TAB block; `collectBillExisting` destructure `dinerContact` (L1547) + emit diner_* via conditional spread (omit when blank); `fromAPI.order` read `diner`/`dinerMobile` (after `phone`). Line-disjoint from BUG-742/CR-552/CR-409. | CR-527 IMPL 2026-11-21 |
+| `src/api/transforms/reportTransform.js` | CR-527: `singleOrderNew` return adds `diner`/`dinerMobile` from `order.diner_name`/`diner_mobile` (after customerContact). Additive — report-list transforms untouched. | CR-527 IMPL 2026-11-21 |
+| `src/components/reports/OrderDetailSheet.jsx` | CR-527: diner row in Customer section (after phone row), shown only when `displayData.diner !== displayData.customer`. | CR-527 IMPL 2026-11-21 |
+| `src/components/cards/OrderCard.jsx` | CR-527: compact diner chip after header name span, shown only when `order.diner && order.diner !== order.customerName`. | CR-527 IMPL 2026-11-21 |
+| `src/api/transforms/__tests__/orderTransform.cr527.test.js` | CR-527: 6 unit tests (read + write emit/omit). | CR-527 IMPL 2026-11-21 |
+
+
 ## FILE_OWNERSHIP — Cluster C IMPL (2026-11-20) — markers `// BUG-724/725/726/727/737`
 
 | File | Change (shipped) | Owner |

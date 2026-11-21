@@ -490,6 +490,12 @@ const OrderCard = ({
               {getDisplayName()}
             </span>
           )}
+          {/* CR-527: Diner (who ate) chip — only when a distinct diner exists (hidden when same as holder) */}
+          {order.diner && order.diner !== order.customerName && (
+            <span className="text-[11px] font-medium truncate px-1.5 py-0.5 rounded" style={{ color: COLORS.grayText, backgroundColor: COLORS.borderGray }} data-testid="order-card-diner">
+              Diner: {order.diner}
+            </span>
+          )}
           
           {/* CR-007 / A2.1 (May-2026): Order ID chip in row 1, replacing the
               timeline slot. Timeline now lives in the new sibling row below.

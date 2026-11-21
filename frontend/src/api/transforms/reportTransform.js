@@ -553,6 +553,9 @@ export const reportFromAPI = {
         phone: user.phone || '',
         email: user.email || '',
       },
+      // CR-527: diner (who ate), plain text from backend A3. null when same as holder/absent.
+      diner: order.diner_name || null,
+      dinerMobile: order.diner_mobile || null,
       isGuest: !order.user_id,
       
       // Staff info

@@ -38448,7 +38448,7 @@
       "id": "CR-527",
       "type": "CR",
       "title": "Credit Management: Filter Orders by Same Phone Number with Different Names",
-      "status": "RE-INTAKE DONE (capture phase) 2026-11-21 (INTAKE role). Scope expansion registered: diner capture in CollectPaymentPanel (gated behind holder fields) + thread diner_name/diner_mobile through collectBillExisting + placeOrderWithPayment + place/update/bill-payment payloads + render diner on running-order list/detail. Credit-row display already shipped (E1-E3, GATE_5A, QA_PASS 2026-11-20). OWNER RULE OD-527-D: Diner field shown only when holder filled; empty diner -> send holder name+mobile as diner (backend collapses to null when diner==holder -> \"-\" display, expected). Next: PLANNING Gate 2 (HIGH risk, no planning-skip).",
+      "status": "IMPLEMENTED (capture phase) 2026-11-21 (GATE_5A). Option A additive (holder mapping unchanged). Shipped: CollectPaymentPanel gated Diner field + dinerContact thread; orderTransform placeOrderWithPayment TAB block + collectBillExisting (omit-when-blank) emit diner_name/diner_mobile; fromAPI.order + reportTransform.singleOrderNew read diner; OrderCard diner chip + OrderDetailSheet diner row (shown only when distinct from holder). Unit 6/6 PASS, webpack clean. QA PENDING (browser) + live write-probe (holder!=diner, Part A checklist) pending.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38457,8 +38457,8 @@
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/CR-527_DINER_CAPTURE_REINTAKE_INTAKE.md",
       "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-527_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic. | API contract FINAL v1 2026-11-15: contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md",
-      "gate": "GATE_3_PLAN_COMPLETE (capture phase)",
-      "current_gate": 3,
+      "gate": "GATE_5A",
+      "current_gate": 5,
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "client": "ALL",
@@ -38508,17 +38508,28 @@
           "label": "Implementation Plan (capture phase)",
           "path": "memory/plans/CR-527_DINER_CAPTURE_IMPLEMENTATION_PLAN.md",
           "type": "plan"
+        },
+        {
+          "label": "QA Handover (capture phase)",
+          "path": "memory/handover/QA_HANDOVER_CR-527_2026-11-21.md",
+          "type": "qa"
         }
       ],
       "release_date": "2026-11-17",
-      "code_reality": "PARTIAL",
+      "code_reality": "FULL",
       "qa_gate_status": "QA_PASS_2026-11-20 (Diner column + 0-diner filter branch verified live on preprod owner@cafe103; chips/6+ dropdown pending BB-09 migration data; unit 2/2). Report: test_reports/CR-527_QA_REPORT_2026-11-20.md",
       "files": [
+        "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js",
+        "frontend/src/api/transforms/__tests__/orderTransform.cr527.test.js",
         "frontend/src/api/transforms/creditTransform.js",
+        "frontend/src/api/transforms/orderTransform.js",
+        "frontend/src/api/transforms/reportTransform.js",
+        "frontend/src/components/cards/OrderCard.jsx",
         "frontend/src/components/credit/CreditCustomerDetailSheet.jsx",
-        "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js"
+        "frontend/src/components/order-entry/CollectPaymentPanel.jsx",
+        "frontend/src/components/reports/OrderDetailSheet.jsx"
       ],
-      "next_action": "IMPL role: code 9 edits (CollectPaymentPanel x3 diner capture+gate, orderTransform x3 emit diner_name/diner_mobile on placeOrderWithPayment+collectBillExisting + read in fromAPI.order, OrderDetailSheet diner row, OrderCard conditional diner line, tests). Then live write-probe (Part A checklist, holder!=diner) -> testing_agent QA."
+      "next_action": "QA (testing_agent) browser flow + live write-probe Part A (place credit order holder!=diner on preprod rest 69, verify employee-orders-list + tap-customer-record-list + get-single-order-new)."
     },
     {
       "id": "CR-528",

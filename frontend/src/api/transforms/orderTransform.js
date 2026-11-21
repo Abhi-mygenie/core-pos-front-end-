@@ -219,6 +219,9 @@ export const fromAPI = {
       customer: customerLabel,
       customerName: customer,
       phone: user.phone || '',
+      // CR-527: diner (who ate) — distinct from holder (user_name). null when same/absent.
+      diner: api.diner_name || null,
+      dinerMobile: api.diner_mobile || null,
 
       // Financials (Phase 1: Enhanced with new API fields)
       // No fallback — if socket doesn't send subtotal, keep as 0 (GET single order will fill it)
@@ -1316,7 +1319,7 @@ export const toAPI = {
 
   placeOrderWithPayment: (table, cartItems, customer, orderType, paymentData, options = {}) => {
     const { restaurantId, orderNotes = [], printAllKOT = true, userId = '', addressId = null, deliveryAddress = null, serviceChargePercentage = 0, autoBill = false, serviceChargeTaxPct = 0, deliveryChargeGstPct = 0, printerAgents = [], roundOffEnabled = true, scheduled = false, scheduleAt = null, taxFlags = {} } = options;
-    const { method = 'cash', transactionId = '', splitPayments = [], tip = 0, deliveryCharge = 0, discounts = {}, tabContact } = paymentData; // BUG-672: add tabContact
+    const { method = 'cash', transactionId = '', splitPayments = [], tip = 0, deliveryCharge = 0, discounts = {}, tabContact, dinerContact = null } = paymentData; // BUG-672: add tabContact; CR-527: dinerContact
     const { gstEnabled = true, vatEnabled = true } = taxFlags; // BUG-683: for per-item tax zeroing in cart builder
 
     // BUG-672: Detect TAB payment (mirrors collectBillExisting L1539)
@@ -1515,6 +1518,10 @@ export const toAPI = {
         name:            tabContact?.name  || '',
         mobile:          tabContact?.phone || '',
         crm_customer_id: tabContact?.crmId || '',
+        // CR-527: diner (plain text) in place-order `data`. Blank => '' => backend nulls;
+        // diner == holder => backend null-collapses => UI shows "—".
+        diner_name:      dinerContact?.name  || '',
+        diner_mobile:    dinerContact?.phone || '',
       } : {}),
     };
 
@@ -1544,7 +1551,7 @@ export const toAPI = {
       splitPayments = [], tip = 0,
       finalTotal = 0, sgst = 0, cgst = 0, vatAmount = 0,
       itemTotal = 0, subtotal = 0, serviceCharge = 0, deliveryCharge = 0,
-      tabContact = null, discounts = {},
+      tabContact = null, dinerContact = null, discounts = {}, // CR-527: dinerContact
       roomBalance = 0,  // ROOM_CHECKIN_GAP3 (Stage 2): outstanding room booking balance, pass-through ₹ — no SC/GST/discount applied (L2 rule).
       // CR-013 Phase 1.5 D-GST-3 (May-2026): SC GST and Tip GST ₹ amounts —
       // computed in CollectPaymentPanel (`scGst`, `tipGst`). Pre-Phase-1.5
@@ -1791,6 +1798,12 @@ export const toAPI = {
       name:                         tabContact?.name  || '',
       mobile:                       tabContact?.phone || '',
       crm_customer_id:              tabContact?.crmId || '', // BUG-183: links TAB record to CRM profile
+      // CR-527: diner (plain text, bill-payment top-level per backend A2). Omitted when
+      // blank so settling an already-placed order never wipes a diner saved at place-time.
+      ...((dinerContact?.name || dinerContact?.phone) ? {
+        diner_name:                 dinerContact.name  || '',
+        diner_mobile:               dinerContact.phone || '',
+      } : {}),
       // BUG-281: B2B GST — forwarded for backend auto-bill print
       custGST,
       custGSTName,

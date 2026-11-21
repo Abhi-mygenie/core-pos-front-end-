@@ -710,6 +710,16 @@ const OrderDetailSheet = ({ isOpen, onClose, order, tabId }) => {
                       </span>
                     </div>
                   )}
+                  {/* CR-527: Diner (who ate) — shown only when distinct from the holder */}
+                  {displayData.diner && displayData.diner !== displayData.customer && (
+                    <div className="flex items-center gap-2 mt-2" data-testid="order-detail-diner">
+                      <User className="w-4 h-4 text-zinc-400" />
+                      <span className="text-sm text-zinc-600">
+                        Diner: <span className="font-medium text-zinc-900">{displayData.diner}</span>
+                        {displayData.dinerMobile ? ` · ${displayData.dinerMobile}` : ''}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
