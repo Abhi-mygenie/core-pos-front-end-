@@ -1,0 +1,15 @@
+{
+ "status": 403,
+ "body": {
+  "errors": [
+   {
+    "code": "limit",
+    "message": "The limit field is required."
+   },
+   {
+    "code": "offset",
+    "message": "The offset field is required."
+   }
+  ]
+ }
+}
