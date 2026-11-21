@@ -1,0 +1,24 @@
+{
+  "summary": "BUG-746 (Enter Price modal input overflow) fix VERIFIED on the preview build (REACT_APP_BACKEND_URL host) as owner@thegoankitchen.com. Flow: login -> dashboard -> table t1 (table-card-9244) -> search 'melo' -> menu-item-248252 'melo fish' (price 1 -> dynamic) -> Enter Price modal. The served input className is 'flex-1 min-w-0 border rounded-lg px-3 py-2 text-base focus:outline-none'. Measurements (input.right vs card.right): Desktop 1920x800: card 800->1120 (w320), input 841->1096 (w255), overflow -24px (sits exactly at the card's 24px right padding). With a long value '123456.78' it is still -24px. Mobile landscape 844x390: card 262->582, input 303->558, -24px. Mobile portrait 390x844: card 35->355, input 78->331, -24px. With the validation error shown, it is still -24px. Functional checks: Cancel closes the modal (count 0). Confirming an empty field shows 'Please enter a valid price greater than 0'. Typing 275 and clicking Add to Order adds a melo fish line at ₹275, and Collect Bill shows ₹275. On mobile, 99.5 adds a line at ₹99.5. There were no console errors. No order was placed: the cart was kept local and the only write calls were login and the station-order-list read.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "OrderEntry at 390x844 portrait", "issues": ["Order entry is blocked by the 'Rotate your tablet' overlay (data-testid='order-entry-rotate-overlay', intended behaviour from BUG-555), so a user cannot reach the modal in portrait. To measure it I opened the modal in landscape, rotated to 390x844, and hid the overlay only in the test DOM. The modal fits there too."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "The fix is correct and minimal. Without min-w-0, a flex-1 input keeps min-width:auto (the intrinsic width of a number input), which pushes it past the w-80 card. min-w-0 lets it shrink to the remaining 255px.",
+    "Briefing data note: 'open item' is priced ₹100, so it does NOT open the Enter Price modal. Dynamic price triggers only when Number(item.price) === 1 (OrderEntry.jsx ~L850). Only 'melo fish' is an open-price item for this account."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None. The cart lines for t1 (melo fish ₹275 / ₹99.5, open item ₹100) were never placed and live only in the browser session.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login owner@thegoankitchen.com / Qplazm@10. Table t1 = table-card-9244 (available). The open-price item is 'melo fish' = menu-item-248252 (price 1). Search with menu-search-input. At portrait mobile widths OrderEntry shows order-entry-rotate-overlay, so use a landscape size like 844x390. Do not click Place Order.",
+  "rca of the issue": "Cause: the input in the flex row ₹ + input had flex-1 but its default min-width was auto, so it could not shrink below its intrinsic width and overflowed the 320px card by about 40px. Fix: add min-w-0. Verified post-fix: input.right = card.right - 24px at every viewport tested."
+}

@@ -41784,9 +41784,9 @@
       "type": "BUG",
       "severity": "P3",
       "risk": "LOW",
-      "status": "GATE_4_IMPLEMENTED 2026-11-21 (owner GO, confirmed on preview). Fix: OrderEntry.jsx L3088 input className flex-1 -> flex-1 min-w-0 (// BUG-746) so the flex form control shrinks inside the fixed w-80 card instead of bleeding past its right edge. CSS/display only, no logic/payload. Pending: webpack compile + testing_agent browser verification (desktop 1920 + mobile 390).",
-      "gate": "GATE_4_IMPLEMENTED",
-      "current_gate": 4,
+      "status": "GATE_5_QA_PASS 2026-11-21 (testing_agent iteration_15, 100% frontend, retest_needed=false). Fix OrderEntry.jsx L3088 flex-1 -> flex-1 min-w-0 (// BUG-746). Verified input.right = card.right-24px at desktop 1920, mobile landscape 844x390, portrait 390x844 (even with long value / validation error). Functional OK: Cancel closes, empty shows validation, Add to Order adds melo fish @ Rs275 / Rs99.5, no console errors, no order placed. CSS-only. Next: owner smoke -> close.",
+      "gate": "GATE_5_QA_PASS",
+      "current_gate": 5,
       "sprint_key": "nov_cr_batch",
       "client": "ALL",
       "assignee": "",
@@ -41809,7 +41809,7 @@
       "files": [
         "frontend/src/components/order-entry/OrderEntry.jsx"
       ],
-      "next_action": "testing_agent browser: open order -> tap open-price item (e.g. melo fish) -> Enter Price modal -> input stays inside card at 1920 & 390; price entry + Add to Order still work."
+      "next_action": "Owner smoke, then CLOSURE."
     }
   ],
   "meta": {
