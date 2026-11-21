@@ -41696,7 +41696,7 @@
     {
       "id": "BUG-744",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Order-screen (CartPanel) prefilled customer shows CRM suggestions without focus. Sibling of BUG-660 (fixed same class in CollectPaymentPanel credit block); CartPanel never touched. RC: CartPanel.jsx search effects set dropdown visible on CRM match with no focus gate (name L1002-1016, phone L984-998); isCustomerSelected L952 starts false so order-loaded customer re-opens overlay. Fix dir: port BUG-660 pattern to CartPanel. Next PLANNING Gate 2. || UPDATE 2026-11-21 (owner screenshot): BUG still LIVE on order-entry panel for a PREFILLED/order-loaded customer (phone dropdown leaks, nothing focused). RC corrected: sync effect L972-979 sets isCustomerSelected=true only next render, so first-render searchCustomers().then re-opens dropdown with no stale-cancel guard. Planned focus-flag gate (E3) fixes it. Still GATE_3 (NOT implemented) \u2014 awaiting Gate-4 GO.",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Order-screen (CartPanel) prefilled customer shows CRM suggestions without focus. Sibling of BUG-660 (fixed same class in CollectPaymentPanel credit block); CartPanel never touched. RC: CartPanel.jsx search effects set dropdown visible on CRM match with no focus gate (name L1002-1016, phone L984-998); isCustomerSelected L952 starts false so order-loaded customer re-opens overlay. Fix dir: port BUG-660 pattern to CartPanel. Next PLANNING Gate 2. || UPDATE 2026-11-21 (owner screenshot): BUG still LIVE on order-entry panel for a PREFILLED/order-loaded customer (phone dropdown leaks, nothing focused). RC corrected: sync effect L972-979 sets isCustomerSelected=true only next render, so first-render searchCustomers().then re-opens dropdown with no stale-cancel guard. Planned focus-flag gate (E3) fixes it. Still GATE_3 (NOT implemented) \u2014 awaiting Gate-4 GO. || IMPLEMENTED 2026-11-21: CartPanel focus-flag gate (nameFocused/phoneFocused, show lines gated + deps, field onFocus/onBlur, phone onFocusCapture); CollectPaymentPanel E6 name-guard (tabNameWasUserTypedRef). Webpack compiled clean. Pending testing_agent browser QA (order-loaded prefill shows NO dropdown; typing still shows; pick still selects).",
       "priority": "P2",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -41704,13 +41704,14 @@
       "area": "Order Entry",
       "assignee": "Abhishek",
       "client": "ALL",
-      "gate": "GATE_3_PLAN_COMPLETE",
-      "current_gate": 3,
+      "gate": "GATE_4_IMPLEMENTED",
+      "current_gate": 4,
       "files": [
-        "frontend/src/components/order-entry/CartPanel.jsx"
+        "frontend/src/components/order-entry/CartPanel.jsx",
+        "frontend/src/components/order-entry/CollectPaymentPanel.jsx"
       ],
       "intake_doc": "bugs/BUG-744_ORDER_CUSTOMER_SUGGESTION_WITHOUT_FOCUS_INTAKE.md",
-      "next_action": "Gate-4 GO then IMPL: CartPanel focus-flag gate (plan E1-E5) + CollectPaymentPanel name guard (E6), sequential with BUG-745 on CollectPaymentPanel. Verify order-loaded prefill shows no dropdown.",
+      "next_action": "testing_agent browser QA on preprod: (1) order w/ prefilled customer -> order-entry panel shows no name/phone dropdown; (2) typing a name/phone shows suggestions while focused, blur closes, pick selects; (3) credit block holder seeded -> no name dropdown, typing works.",
       "artifact_refs": [
         {
           "label": "Investigation",
@@ -41738,7 +41739,7 @@
     {
       "id": "BUG-745",
       "type": "BUG",
-      "status": "GATE_4_IMPLEMENTED 2026-11-21 (IMPLEMENTATION). Diner seeded from order customer at init (CollectPaymentPanel.jsx L564-565, // BUG-745), seed-only (no sync effect so manual diner edits are respected). Holder seed L557-558 unchanged. When cashier changes holder to a different payer the diner retains the original order customer; holder==diner collapses to backend null -> UI '-'. Webpack compiled clean. OD-745-02=show pre-filled. Pending: testing_agent browser QA + owner smoke.",
+      "status": "GATE_4_IMPLEMENTED 2026-11-21 (IMPLEMENTATION). Diner seeded from order customer at init (CollectPaymentPanel.jsx L564-565, // BUG-745), seed-only (no sync effect so manual diner edits are respected). Holder seed L557-558 unchanged. When cashier changes holder to a different payer the diner retains the original order customer; holder==diner collapses to backend null -> UI '-'. Webpack compiled clean. OD-745-02=show pre-filled. Pending: testing_agent browser QA + owner smoke. || COPY FIX 2026-11-21: diner label L3435 'leave blank'->'don't change if same as credit customer'.",
       "priority": "P2",
       "severity": "P2",
       "risk": "MEDIUM",

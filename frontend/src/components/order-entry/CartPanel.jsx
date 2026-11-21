@@ -950,6 +950,8 @@ const CartPanel = ({
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [filteredByName, setFilteredByName] = useState([]);
   const [isCustomerSelected, setIsCustomerSelected] = useState(false); // Track if customer was selected from suggestions
+  const [nameFocused, setNameFocused] = useState(false);   // BUG-744: only show name suggestions while the field is focused
+  const [phoneFocused, setPhoneFocused] = useState(false); // BUG-744: only show phone suggestions while the field is focused
 
   // Check if required fields are missing (for button disable + visual hints)
   const nameMissing = isNameRequired && !customerName.trim();
@@ -989,13 +991,13 @@ const CartPanel = ({
     if (customerPhone.trim() && customerPhone.length >= 3) {
       searchCustomers(customerPhone).then(filtered => {
         setFilteredCustomers(filtered);
-        setShowPhoneSuggestions(filtered.length > 0);
+        setShowPhoneSuggestions(phoneFocused && filtered.length > 0); // BUG-744: never show unfocused (kills stale-async prefill leak)
       });
     } else {
       setFilteredCustomers([]);
       setShowPhoneSuggestions(false);
     }
-  }, [customerPhone, isCustomerSelected]);
+  }, [customerPhone, isCustomerSelected, phoneFocused]);
 
   // Filter customers based on name search — async API call
   useEffect(() => {
@@ -1007,13 +1009,13 @@ const CartPanel = ({
     if (customerName.trim() && customerName.length >= 2) {
       searchCustomers(customerName).then(filtered => {
         setFilteredByName(filtered);
-        setShowNameSuggestions(filtered.length > 0);
+        setShowNameSuggestions(nameFocused && filtered.length > 0); // BUG-744: never show unfocused
       });
     } else {
       setFilteredByName([]);
       setShowNameSuggestions(false);
     }
-  }, [customerName, isCustomerSelected]);
+  }, [customerName, isCustomerSelected, nameFocused]);
 
   // Close suggestions on outside click (but not when clicking suggestions)
   useEffect(() => {
@@ -1177,8 +1179,8 @@ const CartPanel = ({
             placeholder={isNameRequired ? "Customer name *" : "Customer name"}
             value={customerName}
             onChange={handleNameChange}
-            onBlur={handleFieldBlur}
-            onFocus={() => !isRoom && customerName.length >= 2 && setShowNameSuggestions(filteredByName.length > 0)}
+            onBlur={() => { handleFieldBlur(); setNameFocused(false); setTimeout(() => setShowNameSuggestions(false), 150); }} // BUG-744
+            onFocus={() => { setNameFocused(true); if (!isRoom && customerName.length >= 2) setShowNameSuggestions(filteredByName.length > 0); }} // BUG-744
             readOnly={isRoom || isEditLocked} // BUG-656: disable when locked
             className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border focus:outline-none focus:ring-2"
             style={{ 
@@ -1216,13 +1218,13 @@ const CartPanel = ({
             </div>
           )}
         </div>
-        <div className="relative" ref={phoneInputRef}>
+        <div className="relative" ref={phoneInputRef} onFocusCapture={() => setPhoneFocused(true)}>{/* BUG-744: PhoneInputField has no onFocus prop → capture focus here */}
           <PhoneInputField
             compact // BUG-631: narrow panel needs compact picker
             phone={customerPhone} countryCode={customerCountryCode}
             onPhoneChange={(v) => { handlePhoneChange(v); if (!isRoom && v.length >= 3) setShowPhoneSuggestions(filteredCustomers.length > 0); }}
             onCountryCodeChange={setCustomerCountryCode}
-            onBlur={handleFieldBlur}
+            onBlur={() => { handleFieldBlur(); setPhoneFocused(false); setTimeout(() => setShowPhoneSuggestions(false), 150); }} // BUG-744
             placeholder={isPhoneRequired ? 'Phone *' : 'Phone number'}
             error={phoneMissing}
             testId="quick-customer-phone"

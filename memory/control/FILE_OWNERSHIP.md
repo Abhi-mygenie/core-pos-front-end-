@@ -1,6 +1,9 @@
 <!-- CR-527 (capture phase) IMPL 2026-11-21 — FILE OWNERSHIP -->
 | File | Edits | Item |
 |---|---|---|
+| `src/components/order-entry/CartPanel.jsx` | BUG-744: added `nameFocused`/`phoneFocused` state (after L952); gated name effect show (L1010) + phone effect show (L992) on the focus flag + added flag to dep arrays; name field `onFocus`/`onBlur` (L1180-1181) set flag + 150ms close; phone wrapper `<div ref={phoneInputRef} onFocusCapture>` + PhoneInputField `onBlur` set flag + 150ms close. NO payload/`selectCustomer`/`onCustomerChange` change. | BUG-744 IMPL 2026-11-21 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | BUG-744 §E6: `tabNameWasUserTypedRef` (after L591); credit name effect guard `if(!ref.current) return`; set true in `handleTabNameChange`; reset false in `selectTabCustomer` + phone blank-out. BUG-745 copy: diner label L3435 "leave blank"→"don't change if same as credit customer". | BUG-744 §E6 + BUG-745 copy IMPL 2026-11-21 |
+
 | `src/components/order-entry/CollectPaymentPanel.jsx` | CR-527: diner state (`dinerName`/`dinerPhone` ~L560); `handleDinerNameChange`/`handleDinerPhoneChange` (after `handleTabPhoneChange`); gated **Diner (who ate)** field in Credit Customer Details (renders only when holder name+valid phone); `dinerContact` in paymentData (~L1296). NO change to holder seed L557-558 or BUG-660 refs. | CR-527 IMPL 2026-11-21 |
 | `src/components/order-entry/CollectPaymentPanel.jsx` | BUG-745: diner seed — `dinerName`/`dinerPhone` init changed from `""` to `useState(customer?.name/phone \|\| "")` (L564-565). Seed-only, no sync effect (preserve manual edits). NO change to holder seed L557-558, diner handlers, gating, or `dinerContact` payload. | BUG-745 IMPL 2026-11-21 |
 

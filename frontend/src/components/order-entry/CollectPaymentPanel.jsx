@@ -592,6 +592,7 @@ const CollectPaymentPanel = ({
   const [tabCrmId, setTabCrmId] = useState(tabSeedMatched ? customer.id : null); // BUG-183 + BUG-660
   const tabAutoSelectedPhoneRef = useRef(tabSeedMatched ? customer.phone : null); // BUG-660: auto-select once per phone
   const tabPhoneWasUserTypedRef = useRef(false); // BUG-660 V5-fix: guard phone search from name-edit reset
+  const tabNameWasUserTypedRef = useRef(false); // BUG-744: guard name search; seeded/selected name is not "user typed"
   const tabPhoneInputRef = useRef(null);
   const tabNameInputRef = useRef(null);
 
@@ -672,6 +673,7 @@ const CollectPaymentPanel = ({
       return;
     }
     if (tabName.trim() && tabName.length >= 2) {
+      if (!tabNameWasUserTypedRef.current) return; // BUG-744: skip search for seeded/selected holder name (no unfocused pop)
       let cancelled = false; // BUG-660
       searchCustomers(tabName).then((filtered) => {
         if (cancelled) return; // BUG-660
@@ -711,6 +713,7 @@ const CollectPaymentPanel = ({
     setTabCrmId(c.id || null); // BUG-183
     tabAutoSelectedPhoneRef.current = c.phone; // BUG-660: no re-auto-select after later name edit
     tabPhoneWasUserTypedRef.current = false; // BUG-660 V5-fix: dropdown pick is not "user typed"
+    tabNameWasUserTypedRef.current = false; // BUG-744: dropdown pick is not "user typed"
     setTabShowPhoneSuggestions(false);
     setTabShowNameSuggestions(false);
     setTabIsCustomerSelected(true);
@@ -722,6 +725,7 @@ const CollectPaymentPanel = ({
   const handleTabNameChange = (e) => {
     const newName = e.target.value;
     setTabName(newName);
+    tabNameWasUserTypedRef.current = true; // BUG-744: user is typing the name → allow CRM search
     if (tabIsCustomerSelected) { // BUG-660 OD-660-03: any edit re-enables search
       if (!newName.trim()) { setTabPhone(""); setTabCrmId(null); } // BUG-183 blank-out preserved
       setTabIsCustomerSelected(false);
@@ -735,7 +739,7 @@ const CollectPaymentPanel = ({
     setTabPhone(newPhone);
     if (newPhone !== tabPhone) { setTabCrmId(null); tabPhoneWasUserTypedRef.current = true; } // BUG-660: user typing phone
     if (tabIsCustomerSelected) { // BUG-660 OD-660-03
-      if (!newPhone.trim()) setTabName(""); // BUG-038 blank-out preserved
+      if (!newPhone.trim()) { setTabName(""); tabNameWasUserTypedRef.current = false; } // BUG-038 blank-out + BUG-744 reset
       setTabIsCustomerSelected(false);
     }
   };
@@ -3432,7 +3436,7 @@ const CollectPaymentPanel = ({
               {tabName.trim() && (tabCountryCode === '+91' ? tabPhone.replace(/\D/g, '').length === 10 : tabPhone.replace(/\D/g, '').length >= 6) && (
                 <div className="mt-3 pt-3 border-t space-y-2" style={{ borderColor: COLORS.borderGray }} data-testid="tab-diner-section">
                   <div className="text-xs font-medium" style={{ color: COLORS.grayText }}>
-                    Diner (who ate)<span className="font-normal"> — leave blank if same as credit customer</span>
+                    Diner (who ate)<span className="font-normal"> — don't change if same as credit customer</span>
                   </div>
                   <input
                     type="text"
