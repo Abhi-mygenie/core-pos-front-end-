@@ -1,6 +1,8 @@
 <!-- CR-527 (capture phase) IMPL 2026-11-21 — FILE OWNERSHIP -->
 | File | Edits | Item |
 |---|---|---|
+| `src/components/order-entry/OrderEntry.jsx` | BUG-746: dynamic-price ("Enter Price") modal amount input L3088 className `flex-1` → `flex-1 min-w-0` so the flex form control shrinks inside the fixed `w-80` card (no right-edge bleed). CSS only; no logic/value-binding/`confirmDynamicPriceAndAdd` change. | BUG-746 IMPL 2026-11-21 |
+
 | `src/components/order-entry/CartPanel.jsx` | BUG-744: added `nameFocused`/`phoneFocused` state (after L952); gated name effect show (L1010) + phone effect show (L992) on the focus flag + added flag to dep arrays; name field `onFocus`/`onBlur` (L1180-1181) set flag + 150ms close; phone wrapper `<div ref={phoneInputRef} onFocusCapture>` + PhoneInputField `onBlur` set flag + 150ms close. NO payload/`selectCustomer`/`onCustomerChange` change. | BUG-744 IMPL 2026-11-21 |
 | `src/components/order-entry/CollectPaymentPanel.jsx` | BUG-744 §E6: `tabNameWasUserTypedRef` (after L591); credit name effect guard `if(!ref.current) return`; set true in `handleTabNameChange`; reset false in `selectTabCustomer` + phone blank-out. BUG-745 copy: diner label L3435 "leave blank"→"don't change if same as credit customer". | BUG-744 §E6 + BUG-745 copy IMPL 2026-11-21 |
 

@@ -3080,12 +3080,13 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
             </p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg font-medium" style={{ color: COLORS.darkText }}>₹</span>
+              {/* BUG-746: min-w-0 lets the flex input shrink inside the fixed w-80 card (prevents right-edge bleed) */}
               <input
                 type="number"
                 min="0.01"
                 step="0.01"
                 placeholder="0.00"
-                className="flex-1 border rounded-lg px-3 py-2 text-base focus:outline-none"
+                className="flex-1 min-w-0 border rounded-lg px-3 py-2 text-base focus:outline-none"
                 style={{ borderColor: dynamicPriceError ? '#EF4444' : COLORS.borderGray, color: COLORS.darkText }}
                 value={dynamicPriceInput}
                 onChange={(e) => { setDynamicPriceInput(e.target.value); setDynamicPriceError(''); }}
