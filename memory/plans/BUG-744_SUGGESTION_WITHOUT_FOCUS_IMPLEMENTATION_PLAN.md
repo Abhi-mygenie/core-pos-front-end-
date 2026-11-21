@@ -11,6 +11,8 @@ Original plan fixed only the **order-screen** block (`CartPanel.jsx`). The RCA (
 ## Approach
 **CartPanel (E1-E5):** tie dropdown visibility to an explicit **field-focused flag**. The search effects may still fetch matches, but only *show* the dropdown while the field is focused; blur hides it (with a short timeout so a suggestion click lands first). Fixes both "lingers after blur" and "manual self-match keeps re-opening while unfocused" without touching payloads or `selectCustomer`.
 
+**Owner-confirmed PRIMARY case (2026-11-21 screenshot):** an **order-loaded prefilled customer** leaks the *phone* dropdown with nothing focused, because the first-render phone search fires an async `searchCustomers()` whose **stale `.then` re-opens** the dropdown after the sync effect (L972-979) sets `isCustomerSelected=true` on the next render — there is no cancel guard. The focus-flag gate fixes this too: gating the show line on `phoneFocused` (E3) means the stale `.then` resolves with `phoneFocused=false` → stays closed. *(Optional hardening: add a per-effect `reqId` stale-guard mirroring BUG-660's stale-cancel; NOT required if the focus gate ships.)*
+
 **CollectPaymentPanel (E6):** mirror the existing **BUG-660 `wasUserTyped` ref pattern** (already used for the credit phone effect) onto the credit **name** effect. Using the same ref pattern here — rather than a new focus flag — keeps the credit block internally consistent: a value that was *seeded* (holder from order customer) or *picked from the dropdown* is NOT "user-typed", so the name typeahead stays closed; it only opens once the cashier actually types in the Name field.
 
 ## Edits (all in CartPanel.jsx)
@@ -77,7 +79,8 @@ const handleTabNameChange = (e) => {
 Confirm `PhoneInputField` forwards `onFocus`; if not, the phone-focus flag attaches to the wrapping `div` (`onFocusCapture`). Covered in implementation.
 
 ## Test Plan
-- Unit/interaction (testing_agent, browser): type `saurav` + phone that matches a CRM record → dropdown shows WHILE typing/focused → blur (click elsewhere, no outside-mousedown needed) → dropdown closes. Pick a suggestion → still selects (150ms). Loaded-order customer → no dropdown (unchanged). Required-field validation unchanged.
+- **Owner-reported PRIMARY case:** open an existing order whose customer is prefilled (`saurav / 9990004354`) → order-entry panel shows **no** phone/name suggestion dropdown (currently it leaks after the async search resolves).
+- Unit/interaction (testing_agent, browser): type `saurav` + phone that matches a CRM record → dropdown shows WHILE typing/focused → blur (click elsewhere, no outside-mousedown needed) → dropdown closes. Pick a suggestion → still selects (150ms). Required-field validation unchanged.
 - Regression: `handleFieldBlur` still merges customer (loyalty blob intact); Place Order flow unaffected.
 
 ## Rollback

@@ -8,16 +8,17 @@
 ## 1. Code Reality (verified)
 `CartPanel.jsx`:
 - Customer state `customerName`/`customerPhone` (L943-944); `isCustomerSelected` (L952, starts `false`); `filteredByName`/`filteredCustomers` (L950-951).
-- **Sync effect L972-979:** when the `customer` prop is present, sets `isCustomerSelected = !!(customer.id || (customer.name && customer.phone))`. → **A customer loaded from an existing order IS treated as selected** and suppressed. So the bug is NOT the order-load path.
+- **Sync effect L972-979:** when the `customer` prop is present, sets `isCustomerSelected = !!(customer.id || (customer.name && customer.phone))`. ⚠ **CORRECTION 2026-11-21 (owner screenshot):** this does NOT reliably suppress the order-load path. On first commit the effects run with `isCustomerSelected` still `false` (the sync effect's `true` lands on the *next* render), so the phone effect (L983-998) fires an **async** `searchCustomers()`. By the time its `.then` resolves, `isCustomerSelected` is already `true` and the effect re-ran to `setShowPhoneSuggestions(false)` — but the **stale in-flight `.then` has no cancellation guard** and calls `setShowPhoneSuggestions(filtered.length>0)=true` again, re-opening the dropdown under the *unfocused* prefilled phone. **The order-load path IS a live bug** (owner evidence: prefilled `saurav / 9990004354` dropdown on the order-entry panel).
 - **Name effect L1001-1016 / Phone effect L983-998:** when `!isCustomerSelected`, call `searchCustomers()` and `setShow*Suggestions(filtered.length>0)` — visibility set purely on match, **no focus flag**.
 - **Visibility close paths:** only `selectCustomer` (L1040-1041), blank-out in `handleName/PhoneChange` (L1053-1057/1068-1072), and **outside mousedown** (L1019-1034). `onBlur={handleFieldBlur}` (L1180/1225) does **NOT** close the dropdown. `onFocus` (L1181) / phone `onChange` (L1223) open it.
 
 ## 2. Root Cause
-Two compounding gaps for the **manual-entry** path (cashier types name + phone, not picked from dropdown, no order-loaded customer):
-1. **Manual entry never flips `isCustomerSelected` true** — unlike the credit block (CollectPaymentPanel) there is no auto-select when the phone reaches a valid length. So the self-matching CRM record keeps both effects "eligible" indefinitely.
-2. **Dropdown visibility is not tied to focus** — blurring the field does not close it (`onBlur` only runs `handleFieldBlur`). The overlay stays painted until an outside mousedown. Re-renders with the same value keep it shown.
+Three gaps — the **order-loaded (prefill) path is the owner-confirmed primary**:
+1. **(PRIMARY) Stale async search re-opens the dropdown on order load.** First render has `isCustomerSelected=false`; the sync effect (L972-979) sets it `true` only on the next render. The first-render phone/name `searchCustomers().then` therefore fires, and when it resolves it calls `setShow*Suggestions(filtered.length>0)=true` with **no stale-request cancel guard** — re-opening the dropdown *after* the suppression, with nothing focused. (Matches owner screenshot: prefilled `saurav / 9990004354` on the order-entry panel.)
+2. **Manual entry never flips `isCustomerSelected` true** — unlike the credit block (CollectPaymentPanel) there is no auto-select when the phone reaches a valid length, so a self-matching CRM record keeps both effects "eligible".
+3. **Dropdown visibility is not tied to focus** — blurring the field does not close it (`onBlur` only runs `handleFieldBlur`); the overlay stays painted until an outside mousedown.
 
-Net: after typing a name/phone that matches an existing CRM record, the "saurav / 9990004354" dropdown lingers under both fields with the field no longer focused.
+Net: both the order-loaded prefill (primary) and the manual self-match leave the "saurav / 9990004354" dropdown painted under an unfocused field. The planned focus-flag gate (plan E2/E3 — `setShow*Suggestions(focused && …)`) closes all three because the stale `.then` then resolves with `focused=false`.
 
 ## 3. Data flow
 `type name/phone → handleName/PhoneChange sets state → effect L1001/L983 searchCustomers → setShow*Suggestions(true)` … nothing resets it on blur. (No API payload involved — pure client display.)
@@ -47,7 +48,7 @@ No open item on `CartPanel.jsx` (recent CartPanel work shipped). **BUG-744 now t
 ```
 Gate 2 complete: BUG-744
 Code reality: CONFIRMED · Risk: MEDIUM · 2 files (CartPanel.jsx + CollectPaymentPanel.jsx)
-RC: manual entry never sets isCustomerSelected + dropdown visibility not tied to focus (onBlur doesn't close)
+RC (corrected 2026-11-21 per owner screenshot): PRIMARY = order-loaded prefill — stale async searchCustomers().then re-opens dropdown after sync-effect suppression (no cancel guard); SECONDARY = manual entry never sets isCustomerSelected + visibility not tied to focus. Planned focus-flag gate (E3) neutralizes the stale .then (resolves with focused=false).
 No owner decision required (behaviour obvious). Next: PLANNING Gate 3 (port BUG-660 blur/focus pattern).
 No app code changed.
 ```

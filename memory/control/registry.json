@@ -41696,7 +41696,7 @@
     {
       "id": "BUG-744",
       "type": "BUG",
-      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Order-screen (CartPanel) prefilled customer shows CRM suggestions without focus. Sibling of BUG-660 (fixed same class in CollectPaymentPanel credit block); CartPanel never touched. RC: CartPanel.jsx search effects set dropdown visible on CRM match with no focus gate (name L1002-1016, phone L984-998); isCustomerSelected L952 starts false so order-loaded customer re-opens overlay. Fix dir: port BUG-660 pattern to CartPanel. Next PLANNING Gate 2.",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Order-screen (CartPanel) prefilled customer shows CRM suggestions without focus. Sibling of BUG-660 (fixed same class in CollectPaymentPanel credit block); CartPanel never touched. RC: CartPanel.jsx search effects set dropdown visible on CRM match with no focus gate (name L1002-1016, phone L984-998); isCustomerSelected L952 starts false so order-loaded customer re-opens overlay. Fix dir: port BUG-660 pattern to CartPanel. Next PLANNING Gate 2. || UPDATE 2026-11-21 (owner screenshot): BUG still LIVE on order-entry panel for a PREFILLED/order-loaded customer (phone dropdown leaks, nothing focused). RC corrected: sync effect L972-979 sets isCustomerSelected=true only next render, so first-render searchCustomers().then re-opens dropdown with no stale-cancel guard. Planned focus-flag gate (E3) fixes it. Still GATE_3 (NOT implemented) \u2014 awaiting Gate-4 GO.",
       "priority": "P2",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -41710,7 +41710,7 @@
         "frontend/src/components/order-entry/CartPanel.jsx"
       ],
       "intake_doc": "bugs/BUG-744_ORDER_CUSTOMER_SUGGESTION_WITHOUT_FOCUS_INTAKE.md",
-      "next_action": "IMPL: CartPanel.jsx \u2014 add nameFocused/phoneFocused flags, gate name/phone effect show on focus, blur-close (150ms). Then testing_agent (browser).",
+      "next_action": "Gate-4 GO then IMPL: CartPanel focus-flag gate (plan E1-E5) + CollectPaymentPanel name guard (E6), sequential with BUG-745 on CollectPaymentPanel. Verify order-loaded prefill shows no dropdown.",
       "artifact_refs": [
         {
           "label": "Investigation",
@@ -41752,7 +41752,7 @@
         "frontend/src/components/order-entry/CollectPaymentPanel.jsx"
       ],
       "intake_doc": "bugs/BUG-745_DINER_AUTOFILL_FROM_ORDER_CUSTOMER_INTAKE.md",
-      "next_action": "QA (testing_agent browser): order w/ customer -> Collect Payment -> Credit: diner pre-filled with customer; change holder -> diner retained; manual clear respected; walk-in blank. Then owner smoke.",
+      "next_action": "(a) Copy fix pending owner approval: CollectPaymentPanel L3435 label 'leave blank if same as credit customer' -> \"don't change if same as credit customer\". (b) testing_agent browser QA: diner pre-filled; change holder -> diner retained; manual clear respected; walk-in blank.",
       "artifact_refs": [
         {
           "label": "Investigation",

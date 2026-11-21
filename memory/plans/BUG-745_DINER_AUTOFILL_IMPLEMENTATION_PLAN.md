@@ -1,7 +1,7 @@
 # BUG-745 — Implementation Plan (Gate 3)
 
 **Item:** BUG-745 — Diner auto-fills with the original order customer when holder differs
-**Role:** PLANNING (Gate 3). No app code changed.
+**Role:** PLANNING (Gate 3) → **IMPLEMENTED 2026-11-21** (E1 applied, webpack clean). No app code changed by this plan doc.
 **Date:** 2026-11-21 · **Risk:** MEDIUM · **File:** `frontend/src/components/order-entry/CollectPaymentPanel.jsx` (R5) — 1 file (+test)
 **IA:** `impact/BUG-745_DINER_AUTOFILL_IMPACT_ANALYSIS.md` · **Parent:** CR-527
 **Owner decisions:** OD-745-01 = auto-fill diner from order customer. **OD-745-02 = SHOW pre-filled** (default applied — simplest, matches "just auto-fill the original customer info").
@@ -43,6 +43,13 @@ Revert the two `useState` initial values to `""`. Single file, marker `// BUG-74
 
 ## Conflict — ⚠ updated 2026-11-21
 `CollectPaymentPanel.jsx` is **now shared with BUG-744** (its plan was widened to guard the credit-block name typeahead: effect L664-683, handlers L705-726, new ref ~L591). BUG-745's edit (diner seed, L564-565) is **line-disjoint** from those, so no textual collision — **but same file**, so the two are no longer parallel-safe. **Execution rule:** code BUG-745 first (1-line init seed), then BUG-744 §E6 on top, single compile after both; record BOTH IDs on CollectPaymentPanel.jsx in FILE_OWNERSHIP.md. BUG-744's CartPanel.jsx portion remains independent.
+
+## Follow-up — diner label copy (owner 2026-11-21, pending approval)
+Now that the diner is **pre-filled** (not blank), the existing hint is misleading. Owner requested a copy change — **no code edited yet**:
+- File: `CollectPaymentPanel.jsx` **L3435**
+- FROM: `Diner (who ate)<span class="font-normal"> — leave blank if same as credit customer</span>`
+- TO:   `Diner (who ate)<span class="font-normal"> — don't change if same as credit customer</span>`
+- Rationale: the field is seeded with the holder; if the diner is the same person the cashier should **leave the pre-filled value as-is** (backend null-collapses holder==diner → "—"). 1-line text-only change, zero logic/payload impact. Apply on owner GO.
 
 ```
 Gate 3 complete: BUG-745 — 1 edit (seed), 1 file, Risk MEDIUM
