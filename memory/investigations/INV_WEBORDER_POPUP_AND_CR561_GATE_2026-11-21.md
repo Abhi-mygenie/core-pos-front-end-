@@ -68,4 +68,39 @@ Classification: **FE_BUG** (normalisation divergence).
 
 ---
 
-**No code was modified in this session (investigation + gate review only).**
+---
+
+## PART 1 — LIVE INVESTIGATION RESULT (2026-11-21, with owner; restaurant 69 / The Goan Kitchen)
+
+**Method:** pod-side `socket.io-client@4.8.4` listener (the app's own client) connected to `https://presocket.mygenie.online`, joined room `rest_69` (ACK `{"room":"rest_69"}`), `onAny` capture → `memory/evidence/INV-WEBORDER-POPUP/socket_capture.log`. Owner placed a live web order on table **t2 (order 1579043)**. Simultaneous REST probe of `employee-orders-list`.
+
+### What the socket actually delivered
+- Event on channel `new_order_69` = **`update-order`** (NOT `scan-new-order`/`new-order`), `f_order_status = 1`. Two frames captured (06:39:22, 06:40:20). **No `scan-new-order` fired.**
+- Both `update-order` payloads carry **`order_from: "pos"`** for order 1579043, while the payload's `orderDetails` contain **6 unconfirmed web-edit lines (`food_status: 7`, not cancelled)**.
+- REST `employee-orders-list` for the **same** order 1579043 returns **`order_from: "web"`**.
+
+### Confirmed root cause (classification: BACKEND_BUG / CONTRACT_MISMATCH — confidence HIGH, reproduced live)
+`orderTransform` sets `isWebOrder = normaliseOrderFrom(order_from) === 'web'` (orderTransform.js:266). Therefore:
+- **Live socket `update-order`** → `order_from='pos'` → `isWebOrder = FALSE` → `hasUnconfirmedWebEditItems = FALSE` → **pop-up suppressed.**
+- **Refresh (REST)** → `order_from='web'` → `isWebOrder = TRUE` → `hasUnconfirmedWebEditItems = TRUE` → **pop-up opens.**
+
+Predicate evaluated against the real captured payload: Mode A (`isUnconfirmedScanOrder`, needs fOS==7) = **False**; Mode B (`hasUnconfirmedWebEditItems`) = **False** — purely because `isWebOrder` is false from the socket's `order_from:'pos'`. This matches the symptom exactly.
+
+### Why the existing BUG-701 guard does not save it
+`OrderContext.updateOrder` (lines 154-158) only preserves web-origin when the **already-stored** order was web (`existing.isWebOrder && !updatedOrder.isWebOrder`) and explicitly **"never upgrades non-web → web."** Order 1579043 was stored as a POS order, so when the web-edit `update-order` arrives with `order_from:'pos'`, the guard's condition is `false && true` → does not fire → the order stays `isWebOrder=false` live. The socket gives no `order_from='web'` signal to flip it. Only a full REST refresh (which reports `'web'`) corrects it. **H1 (casing mismatch) from the initial report is DISPROVEN** — `order_from` is lowercase in both places; the divergence is the *value itself* (`pos` on socket vs `web` on REST).
+
+### Recommendations
+1. **Primary (backend) — BACKEND_BRIEF:** the `new_order_*` socket `update-order` (and sibling order-data events) must emit the **same `order_from` as the running-orders REST** — `'web'` for web / web-edited orders. Endpoint/contract owner: backend. This is the clean fix; no FE change needed once corrected.
+2. **FE workaround (optional, unblocks without backend; risk MEDIUM — OrderContext/order pipeline hotspot → full Planning gate):** treat an order as web-edit-eligible when it has any non-cancelled `isNotConfirmed` (`food_status===7`) line **regardless of `order_from`** — e.g. extend the BUG-701 guard in `updateOrder` to set `isWebOrder=true` when the incoming order has unconfirmed web-edit lines, OR relax `hasUnconfirmedWebEditItems` to not require `isWebOrder` when such lines exist. Must not regress the Web/POS pulse counter (orderOrigin.js) or Mode A.
+3. **Still unverified:** the fresh-web-order path (new orderId, `f_order_status=7` via `scan-new-order`) was NOT exercised this session (owner tested a web-edit on an existing table). Capture one brand-new web order to confirm whether Mode A is affected too.
+
+### Evidence artifacts (persistent)
+- `memory/evidence/INV-WEBORDER-POPUP/socket_capture.log` — raw live frames (join ACK + two `update-order` frames).
+- `memory/evidence/INV-WEBORDER-POPUP/socket_listener.js` — the listener used.
+
+### Next
+INTAKE a BUG (classification BACKEND_BUG + FE-workaround available, P1). If owner wants it fixed FE-side now, PLANNING Gate 2-3 for recommendation #2 (financial-adjacent? No — display/trigger only, MEDIUM risk).
+
+---
+
+**No application code was modified in this session (investigation + gate review only).**
