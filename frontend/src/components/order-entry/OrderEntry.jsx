@@ -15,7 +15,7 @@ import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI, fromAPI as orderFromAPI, calculateSelectedVariantsPrice } from "../../api/transforms/orderTransform";
 import { applyGrandTotalRoundOff } from '../../utils/roundOffUtils'; // BUG-684
-import { fetchSingleOrderForSocket, printOrder } from "../../api/services/orderService";
+import { fetchSingleOrderForSocket, printOrder, updateFoodItemPrice } from "../../api/services/orderService"; // CR-561
 // CR-008 #4 Phase A / Bucket D1 (May-2026): post-Collect-Bill stay-vs-redirect
 // preference. Read site for this flag is the success branch of
 // onPaymentComplete (Scenario 1 — collect bill on existing order, see line
@@ -1248,6 +1248,29 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
       onCollectBillStayOnOrder();
     } else {
       onClose();
+    }
+  };
+
+  // CR-561 Gap B: persist the real price of a placed APS/₹1 line opened via web-order Edit.
+  // Standalone per-line save (API is all-or-nothing); POS/KDS reconcile via socket update-order-status.
+  // Returns true on success so the row can clear its draft.
+  const handleEditItemPrice = async (itemId, unitPrice) => {
+    if (isEditLocked) { toast({ title: "Order Locked", description: "Bill printed — editing requires permission.", variant: "destructive" }); return false; }
+    const price = Number(unitPrice);
+    if (!placedOrderId || !itemId || isNaN(price) || price <= 0) return false;
+    try {
+      const res = await updateFoodItemPrice(placedOrderId, [{ item_id: itemId, unit_price: price }]);
+      // Optimistic local update so the row reflects the new price immediately;
+      // the socket update-order-status event reconciles the authoritative total.
+      setCartItems(prev => prev.map(i => (i.id === itemId && i.placed)
+        ? { ...i, price, totalPrice: price * (i.qty || 1) }
+        : i));
+      toast({ title: "Price updated", description: `New total ₹${Number(res?.data?.order_amount ?? (price * 1)).toLocaleString()}` });
+      return true;
+    } catch (err) {
+      console.error('[CR-561] updateFoodItemPrice failed:', err?.response?.status, err?.response?.data);
+      toast({ title: "Price update failed", description: err?.readableMessage || "Could not save the price. Try again.", variant: "destructive" });
+      return false;
     }
   };
 
@@ -2962,6 +2985,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
                 onAddNote={(item, cartIndex) => setItemNotesModal({ item, cartIndex })}
                 onCustomize={(item) => setCustomizationItem(item)}
                 onEdit={(item) => setCustomizationItem({ ...item, _editMode: true })} // CR-551
+                onEditItemPrice={isEditLocked ? undefined : handleEditItemPrice} // CR-561 Gap B
                 customer={customer}
                 onCustomerChange={isEditLocked ? undefined : (customerData) => { setCustomer(customerData); saveCustomerToServer(customerData); }} // BUG-656 + CR-523
                 selectedAddress={selectedAddress}

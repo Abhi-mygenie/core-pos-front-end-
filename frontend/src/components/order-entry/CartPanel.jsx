@@ -62,13 +62,27 @@ const getTimeAgo = (isoString) => {
 };
 
 // Placed item row (sent to kitchen)
-const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed, isEditLocked = false, kbdRowProps = {} }) => {
+const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editingQtyItemId, setEditingQtyItemId, updateQuantity, canCancelItem = true, canFoodTransfer = true, isItemCancelAllowed, isEditLocked = false, kbdRowProps = {}, onEditItemPrice = null }) => {
   const { Icon: StatusIcon, color: statusColor, bg: statusBg } = getItemStatusIcon(item.status);
   const isCancelled = item.status === 'cancelled';
   const showCancelBtn = !isCancelled && canCancelItem && (!isItemCancelAllowed || isItemCancelAllowed(item));
   const showTransferBtn = !isCancelled && canFoodTransfer;
   const originalQty = item._originalQty || item.qty; // BUG-237: min qty for placed items
   const shownQty = displayQty || item.qty; // BUG-237: combined qty (original + delta)
+  // CR-561 Gap B: inline reprice for a placed APS/₹1 line (web-order Edit surface).
+  const isComplementary = Boolean(item.isComplementary || item.isComplementaryRuntime);
+  const isApsPlaced = !isCancelled && !item.isWeightItem && !isComplementary && Number(item.price) === 1;
+  const canRepriceAps = isApsPlaced && !isEditLocked && typeof onEditItemPrice === 'function';
+  const [priceDraft, setPriceDraft] = useState('');
+  const [savingPrice, setSavingPrice] = useState(false);
+  const commitPrice = async () => {
+    const n = parseFloat(priceDraft);
+    if (isNaN(n) || n <= 0 || savingPrice || typeof onEditItemPrice !== 'function') return;
+    setSavingPrice(true);
+    const ok = await onEditItemPrice(item.id, n);
+    setSavingPrice(false);
+    if (ok) setPriceDraft('');
+  };
 
   return (
     <div
@@ -195,10 +209,35 @@ const PlacedItemRow = ({ item, displayQty, setCancelItem, setTransferItem, editi
         </div>
       )}
 
-      {/* Price — strikethrough for cancelled */}
-      <div className="w-20 text-right pl-2 flex-shrink-0" style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
-        {/* CR-010: Weight items show breakdown */}
-        {item.isWeightItem && !isCancelled ? (
+      {/* Price — strikethrough for cancelled. CR-561 Gap B: inline reprice for placed APS ₹1 lines. */}
+      <div className={`${canRepriceAps ? 'w-28' : 'w-20'} text-right pl-2 flex-shrink-0`} style={{ borderLeft: `1px solid ${COLORS.borderGray}` }}>
+        {canRepriceAps ? (
+          <div className="flex items-center gap-1 justify-end">
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              inputMode="decimal"
+              placeholder="Price"
+              value={priceDraft}
+              disabled={savingPrice}
+              data-testid={`oe-item-price-input-${item.id}`}
+              onChange={(e) => setPriceDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') commitPrice(); }}
+              className="w-16 text-[12px] font-mono px-1.5 py-0.5 rounded border text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              style={{ borderColor: '#E65100', color: '#E65100' }}
+            />
+            <button
+              onClick={commitPrice}
+              disabled={savingPrice || !priceDraft}
+              data-testid={`oe-item-price-save-${item.id}`}
+              className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 flex-shrink-0"
+              title="Save price"
+            >
+              <Check className="w-4 h-4" style={{ color: COLORS.primaryGreen }} />
+            </button>
+          </div>
+        ) : item.isWeightItem && !isCancelled ? (
           <span className="font-bold text-sm" style={{ color: COLORS.primaryOrange }}>
             ₹{(item.totalPrice || (item.itemUnitPrice || item.price) * item.qty).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
@@ -810,6 +849,7 @@ const CartPanel = ({
   onAddNote,
   onCustomize,
   onEdit, // BUG-685: passed at render (CR-551, ~L1353) but was never destructured -> ReferenceError
+  onEditItemPrice = null, // CR-561 Gap B: reprice a placed APS/₹1 line
   customer,
   onCustomerChange,
   onClearCart,
@@ -1330,6 +1370,7 @@ const CartPanel = ({
                     canFoodTransfer={canFoodTransfer && orderType !== 'takeAway' && orderType !== 'delivery' && !isPrepaid}
                     isEditLocked={isEditLocked}
                     isItemCancelAllowed={isItemCancelAllowed}
+                    onEditItemPrice={onEditItemPrice}
                     kbdRowProps={kbdEnabled ? kbdRowProps({
                       onPlus: item.status === 'cancelled' || item.isWeightItem ? null : () => {
                         const shown = item.qty + (cartItems.find(d => d._deltaForId === item.id && !d.placed)?.qty || 0);

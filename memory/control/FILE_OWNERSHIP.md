@@ -2540,3 +2540,13 @@ NOT touched: `orderService.js`/`confirmOrder` · `toAPI.updateOrderStatus` · `p
 | `frontend/src/pages/reports-module/DashboardMockup.jsx` | BUG-723: chip init matchPreset (L67); `handlePreset` +`setSharedFrom/setSharedTo`. Marker `// BUG-723` | BUG-723 IMPL 2026-11-20 |
 | `frontend/src/utils/__tests__/datePresets.matchPreset.test.js` | BUG-723 unit test (6/6 PASS) | BUG-723 IMPL 2026-11-20 |
 | `frontend/src/pages/reports-module/DashboardMockup.jsx` | BUG-723 follow-up (QA iteration_11): added missing `case '30D'` (now-29..now) to `handlePreset` — the 30D chip was dead. Marker `// BUG-723` | BUG-723 IMPL 2026-11-20 |
+
+
+---
+
+## CR-561 Gap B — APS ₹1 reprice from OrderEntry Edit (2026-11-21)
+
+| File | Change | Owner | ID | Date |
+|---|---|---|---|---|
+| `frontend/src/components/order-entry/CartPanel.jsx` | PlacedItemRow inline reprice input+save for placed APS ₹1 lines; new `onEditItemPrice` prop threaded through CartPanel | IMPLEMENTATION | CR-561 | 2026-11-21 |
+| `frontend/src/components/order-entry/OrderEntry.jsx` | `handleEditItemPrice` standalone `updateFoodItemPrice` call (optimistic local + toast); passes `onEditItemPrice` to CartPanel; import updateFoodItemPrice | IMPLEMENTATION | CR-561 | 2026-11-21 |
