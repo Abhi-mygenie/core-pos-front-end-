@@ -93,3 +93,12 @@ Both found via investigation of owner screenshots on the credit flow. **Files ar
 ## F. Ops notes
 - App deployed into `/app` from `github.com/Abhi-mygenie/core-pos-front-end-` (branch main). Frontend secrets (Firebase/CRM/Maps) in the platform secret store, injected into `/app/frontend/.env`.
 - Memory dir is in sync with this branch (pushed).
+
+
+---
+
+## G. Git / push log (2026-11-21)
+- All work committed on `main` (local), 10 commits ahead of `origin/main` at HEAD `9b796a08`.
+- Pushed to new branch **`20261121-171645`** on `origin` (verified: remote head == local HEAD).
+- Then fast-forwarded **`origin/main`** to the same HEAD (this addendum commit included).
+- Remote: `github.com/Abhi-mygenie/core-pos-front-end-`. No force needed (main was 0 behind).
