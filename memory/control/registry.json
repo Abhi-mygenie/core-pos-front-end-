@@ -41562,7 +41562,7 @@
       "priority": "P0",
       "risk": "HIGH",
       "duplicate_check": "RELATED CR-545 (isAps); DISTINCT from POS-4 KOT",
-      "notes": "FE_GAP. Files: ScanOrderPopOut.jsx, PopoutItemRow.jsx:116-118, OrderEntry.jsx:850/880-928/3038-3101. | ESCALATED TO P0 2026-11-20 (owner): P1->P0. | BACKEND ENDPOINT DELIVERED 2026-11-20 — validated unblocks CR-561. Spec: contracts/CR-561_UPDATE_FOOD_ITEM_PRICE_API_2026-11-20.md. Moved from backend-blocked to P0 FE build.",
+      "notes": "FE_GAP. Files: ScanOrderPopOut.jsx, PopoutItemRow.jsx:116-118, OrderEntry.jsx:850/880-928/3038-3101. | ESCALATED TO P0 2026-11-20 (owner): P1->P0. | BACKEND ENDPOINT DELIVERED 2026-11-20 — validated unblocks CR-561. Spec: contracts/CR-561_UPDATE_FOOD_ITEM_PRICE_API_2026-11-20.md. Moved from backend-blocked to P0 FE build. | FE REFERENCE IMPL on branch 20261121-051150 (Gap A, Accept pop-up — 4 files). Gate-3 plan REFRESHED 2026-11-21 (adopt branch for Gap A). STILL OPEN: Gap B (Order-Entry edit), OD-561-B reconcile, live retest of batched price save, error-toast on save failure.",
       "severity": "HIGH",
       "rebatch": "",
       "open_decisions": [

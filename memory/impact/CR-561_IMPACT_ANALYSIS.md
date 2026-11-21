@@ -1,6 +1,8 @@
 # CR-561 — Impact Analysis (Gate 2) — APS ₹1 price entry from Accept pop-up / web-order edit (POS-1)
 
-> ⚠️ **GATE-2 RE-VERIFICATION 2026-11-20 — SUPERSEDED / BACKEND-BLOCKED.**
+> ✅ **GATE-2 UNBLOCKED 2026-11-21 — backend endpoint DELIVERED; FE reference implementation exists on branch `20261121-051150` (Accept pop-up / Gap A).** The `update-food-item-price` endpoint now exists (`contracts/CR-561_UPDATE_FOOD_ITEM_PRICE_API_2026-11-20.md`), so price persistence is FE-wireable. Proceed via the refreshed Gate-3 plan `plans/CR-561_IMPLEMENTATION_PLAN.md`. The block-quote below is HISTORICAL.
+>
+> ⚠️ **(HISTORICAL) GATE-2 RE-VERIFICATION 2026-11-20 — SUPERSEDED / BACKEND-BLOCKED.**
 > Probe (`evidence/CR-561/APS_PRICE_PERSIST_PROBE_2026-11-20.md`) proved the "price flows through place/update-order FE-only" premise is FALSE for a web-order APS line:
 > (1) `update-food-price` endpoint → HTTP 404 (does not exist);
 > (2) `update-place-order` `cart-update` items carry no `orderDetails` line id → add-only, cannot reprice an existing line (`orderTransform.js:766-801`);
