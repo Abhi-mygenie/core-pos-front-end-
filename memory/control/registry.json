@@ -41704,13 +41704,13 @@
       "area": "Order Entry",
       "assignee": "Abhishek",
       "client": "ALL",
-      "gate": "GATE_1_INTAKE",
-      "current_gate": 1,
+      "gate": "GATE_2_IA_COMPLETE",
+      "current_gate": 2,
       "files": [
         "frontend/src/components/order-entry/CartPanel.jsx"
       ],
       "intake_doc": "bugs/BUG-744_ORDER_CUSTOMER_SUGGESTION_WITHOUT_FOCUS_INTAKE.md",
-      "next_action": "PLANNING Gate 2 (quick IA; R5 hotspot). Port BUG-660 focus/selected guard to CartPanel.jsx.",
+      "next_action": "PLANNING Gate 3 — CartPanel.jsx: close suggestions on blur (timeout) and/or focus-gate visibility; optional auto-select on valid-phone match. 1 file, no payload change.",
       "artifact_refs": [
         {
           "label": "Investigation",
@@ -41722,6 +41722,11 @@
           "path": "memory/control/BUG_TRACKER.md",
           "type": "related",
           "note": "BUG-660"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/BUG-744_SUGGESTION_WITHOUT_FOCUS_IMPACT_ANALYSIS.md",
+          "type": "impact"
         }
       ]
     },
@@ -41736,13 +41741,13 @@
       "area": "Payments/Credit",
       "assignee": "Abhishek",
       "client": "ALL",
-      "gate": "GATE_1_INTAKE",
-      "current_gate": 1,
+      "gate": "GATE_2_IA_COMPLETE",
+      "current_gate": 2,
       "files": [
         "frontend/src/components/order-entry/CollectPaymentPanel.jsx"
       ],
       "intake_doc": "bugs/BUG-745_DINER_AUTOFILL_FROM_ORDER_CUSTOMER_INTAKE.md",
-      "next_action": "PLANNING Gate 2 (IA). OD-745-01 locked (auto-fill). Re-opens CR-527 OD-527-D seed decision.",
+      "next_action": "PLANNING Gate 3 — CollectPaymentPanel.jsx: seed diner from order customer at init (L564-565), preserve manual edits. OD-745-02 OPEN (show pre-filled vs carry-on-edit; default show).",
       "artifact_refs": [
         {
           "label": "Investigation",
@@ -41754,6 +41759,11 @@
           "path": "memory/plans/CR-527_DINER_CAPTURE_IMPLEMENTATION_PLAN.md",
           "type": "parent",
           "note": "CR-527"
+        },
+        {
+          "label": "Impact Analysis",
+          "path": "memory/impact/BUG-745_DINER_AUTOFILL_IMPACT_ANALYSIS.md",
+          "type": "impact"
         }
       ]
     }
