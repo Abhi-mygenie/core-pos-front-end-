@@ -41800,7 +41800,7 @@
       "impact_doc": "impact/BUG-746_DYNAMIC_PRICE_MODAL_INPUT_OVERFLOW_IMPACT_ANALYSIS.md",
       "open_decisions": [
         "OD-746-01: fix approach (default=min-w-0 on input)",
-        "OD-746-02: confirm stale-client repro via testing_agent on current build"
+        "OD-746-02: RESOLVED 2026-11-21 \u2014 owner confirms bug is on current build"
       ],
       "description": "Enter Price modal amount <input> (flex-1, no min-w-0) overflows the fixed-width w-80 card. Cosmetic, non-blocking. Files: frontend/src/components/order-entry/OrderEntry.jsx L3088.",
       "priority": "P3",

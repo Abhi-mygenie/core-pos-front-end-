@@ -41,7 +41,7 @@ None. The fix is cosmetic; cart-line pricing, totals, payment and print are unaf
 
 ## 8. Owner decisions (surface — do not guess)
 - **OD-746-01:** fix approach — (a) add `min-w-0` to the input **[recommended, minimal]**; (b) use `w-full` instead of `flex-1`; (c) (a)+`overflow-hidden` guard on the card. Default if no response: **(a)**.
-- **OD-746-02 (repro confirmation):** owner screenshot shows a "New version available" banner → confirm whether the owner was on a stale client. Either way the pattern is in current source; `testing_agent` will reproduce on the current build and verify the fix.
+- **OD-746-02 (repro confirmation):** RESOLVED 2026-11-21 — **owner confirms the bug is on the current build** (not a stale client). `testing_agent` will still reproduce + verify the fix post-implementation.
 
 ## 9. Verification note
 Gate 2 only — no code written. At Gate 3 the plan will carry a Verification Matrix; after implementation, **`testing_agent` (browser)** must reproduce the overflow on the current build and confirm the input sits inside the card at desktop (1920) and mobile (390). Self-inspection/curl do NOT count as verification.
