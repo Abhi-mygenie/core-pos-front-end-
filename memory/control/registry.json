@@ -41777,6 +41777,39 @@
           "type": "plan"
         }
       ]
+    },
+    {
+      "id": "BUG-746",
+      "title": "Custom-price (Enter Price) modal \u2014 amount input overflows / bleeds past modal card edge",
+      "type": "BUG",
+      "severity": "P3",
+      "risk": "LOW",
+      "status": "GATE_2_IMPACT_ANALYSIS_COMPLETE 2026-11-21 (PLANNING). RC: dynamic-price modal input (OrderEntry.jsx L3088) is a flex-1 form control with default min-width:auto -> will not shrink below intrinsic width -> bleeds past fixed w-80 card. box-sizing is border-box globally (not a box-model bug). Fix direction: add min-w-0 (or w-full) to input; optional overflow-hidden card guard. CSS/display only, no logic/payload. NOT implemented. Awaiting owner GO -> Gate 3.",
+      "gate": "GATE_2_IMPACT_ANALYSIS_COMPLETE",
+      "current_gate": 2,
+      "sprint_key": "nov_cr_batch",
+      "client": "ALL",
+      "assignee": "",
+      "registered_date": "2026-11-21",
+      "source": "Owner screenshot 2026-11-21 (The Goan Kitchen, open-price item)",
+      "related": [
+        "CR-545",
+        "CR-561"
+      ],
+      "intake_doc": "change_requests/BUG-746_DYNAMIC_PRICE_MODAL_INPUT_OVERFLOW_INTAKE.md",
+      "impact_doc": "impact/BUG-746_DYNAMIC_PRICE_MODAL_INPUT_OVERFLOW_IMPACT_ANALYSIS.md",
+      "open_decisions": [
+        "OD-746-01: fix approach (default=min-w-0 on input)",
+        "OD-746-02: confirm stale-client repro via testing_agent on current build"
+      ],
+      "description": "Enter Price modal amount <input> (flex-1, no min-w-0) overflows the fixed-width w-80 card. Cosmetic, non-blocking. Files: frontend/src/components/order-entry/OrderEntry.jsx L3088.",
+      "priority": "P3",
+      "area": "Order Entry / UI layout",
+      "release_date": "2026-11-21",
+      "files": [
+        "frontend/src/components/order-entry/OrderEntry.jsx"
+      ],
+      "next_action": "Owner GO -> PLANNING Gate 3 (Implementation Plan); then IMPLEMENTATION + testing_agent verification (desktop 1920 + mobile 390)."
     }
   ],
   "meta": {
