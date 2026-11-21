@@ -38457,8 +38457,8 @@
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/CR-527_DINER_CAPTURE_REINTAKE_INTAKE.md",
       "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-527_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic. | API contract FINAL v1 2026-11-15: contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md",
-      "gate": "GATE_1_INTAKE (re-intake capture phase)",
-      "current_gate": 1,
+      "gate": "GATE_2_IA_COMPLETE (capture phase)",
+      "current_gate": 2,
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "client": "ALL",
@@ -38498,6 +38498,11 @@
           "label": "Backend handover (verified)",
           "path": "memory/handover/CR-527_BUG-680_BACKEND_HANDOVER.md",
           "type": "backend_handover"
+        },
+        {
+          "label": "Impact Analysis (capture phase)",
+          "path": "memory/impact/CR-527_DINER_CAPTURE_IMPACT_ANALYSIS.md",
+          "type": "impact"
         }
       ],
       "release_date": "2026-11-17",
@@ -38508,7 +38513,7 @@
         "frontend/src/components/credit/CreditCustomerDetailSheet.jsx",
         "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js"
       ],
-      "next_action": "PLANNING Gate 2 - diner capture UX (OD-527-D) + diner_name/diner_mobile write threading in CollectPaymentPanel + orderTransform (collectBillExisting, placeOrderWithPayment); render on running-order list/detail. Curl-probe live credit write with distinct diner first."
+      "next_action": "Owner resolves OD-527-E (payload strategy A additive vs B re-map, BLOCKS Gate 3) + OD-527-F/G -> PLANNING Gate 3 (Implementation Plan) with live credit write-probe (holder != diner)."
     },
     {
       "id": "CR-528",
