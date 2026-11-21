@@ -90,6 +90,14 @@ Source: `test_reports/iteration_8.json` (testing_agent). Intake doc: `change_req
 | **BUG-716** | Item Cancellation Detail — no empty-state row when filters match nothing; `CancelDetailMockup.jsx` | **P3** | LOW | GATE_1_INTAKE 2026-11-19 (QA-found, CR-556) | Abhishek |
 | **BUG-717** | Item Cancellation Detail polish — stale subtitle / raw Order timestamp / scope option order; `CancelDetailMockup.jsx` | **P3** | LOW | GATE_1_INTAKE 2026-11-19 (QA-found) | Abhishek |
 | **BUG-718** | Item Cancellation Detail export — Punch Time column holds raw ISO string; `CancelDetailMockup.jsx` | **P3** | LOW | GATE_1_INTAKE 2026-11-19 (QA-found, CR-554) | Abhishek |
+
+## INTAKE 2026-11-21 — Cancellation note display (owner-reported)
+Source: Owner screenshot (`/reports-module/cancel-detail`) + live backend verification `investigations/INV-CR527_BUG680_BACKEND_VERIFICATION_2026-11-21.md` §4b. Intake doc: `change_requests/BUG-743_CANCEL_DETAIL_NOTE_COLUMN_INTAKE.md`.
+
+| ID | Title | Sev | Risk | Status | Assignee |
+|---|---|---|---|---|---|
+| **BUG-743** | Item Cancellation Detail — cancellation note (`cancel_item_note`) not shown or exported; `CancelDetailMockup.jsx` renders/export has no Note column though `...i` carries it | **P1** | LOW | GATE_1_INTAKE 2026-11-21 — FE-only; backend contract verified live (`cancel_item_note` populated both scopes). DISTINCT; RELATED BUG-708 (removed note col on now-disproven empty-data assumption) | Abhishek |
+
 | **BUG-719** | Audit Report — full 50-day range times out (insights-dashboard ~78s > 60s axios timeout); BACKEND-BLOCKED, pre-existing, NOT from getRiskTier refactor | **P1** | MEDIUM | GATE_1_INTAKE 2026-11-19 (QA-found, CR-546/528) | Gyan |
 
 ---
