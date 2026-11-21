@@ -2550,3 +2550,6 @@ NOT touched: `orderService.js`/`confirmOrder` · `toAPI.updateOrderStatus` · `p
 |---|---|---|---|---|
 | `frontend/src/components/order-entry/CartPanel.jsx` | PlacedItemRow inline reprice input+save for placed APS ₹1 lines; new `onEditItemPrice` prop threaded through CartPanel | IMPLEMENTATION | CR-561 | 2026-11-21 |
 | `frontend/src/components/order-entry/OrderEntry.jsx` | `handleEditItemPrice` standalone `updateFoodItemPrice` call (optimistic local + toast); passes `onEditItemPrice` to CartPanel; import updateFoodItemPrice | IMPLEMENTATION | CR-561 | 2026-11-21 |
+
+| `frontend/src/pages/reports-module/CancellationsMockup.jsx` | BUG-743: map `cancelItemNote: i.cancel_item_note` (L283); render `cancelItemNote \|\| notes` in Reason/Notes cell (L999-1002); export Note column (L420). Marker `// BUG-743` | BUG-743 IMPL 2026-11-21 |
+| `frontend/src/pages/reports-module/CancelDetailMockup.jsx` | BUG-743: Note column — table `<th>`/`<td>` (L158/L169), export col (L106), empty-row colSpan 7→8 (L175), tfoot filler colSpan 3→4 (L181). Marker `// BUG-743` | BUG-743 IMPL 2026-11-21 |

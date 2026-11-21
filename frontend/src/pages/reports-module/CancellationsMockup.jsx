@@ -280,6 +280,7 @@ const CancellationsMockup = () => {
       scope: i.scope || 'item',
       reason: i.reason || i.cancel_reason || '',
       notes: i.notes || '',
+      cancelItemNote: i.cancel_item_note || '',   // BUG-743
       cancelledBy: i.cancelled_by || '',
       punchedBy: i.punched_by || '',
       station: i.station || '',
@@ -416,6 +417,7 @@ const CancellationsMockup = () => {
           { key: 'stage', label: 'Stage', format: 'text', align: 'left', width: 100 },
           { key: 'scope', label: 'Scope', format: 'text', align: 'left', width: 60 },
           { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 120 },
+          { key: 'cancelItemNote', label: 'Note', format: 'text', align: 'left', width: 160 },  // BUG-743
           { key: 'cancelledBy', label: 'Cancelled By', format: 'text', align: 'left', width: 100 },
           { key: 'punchTime', label: 'Punch Time', format: 'text', align: 'left', width: 120 }, // CR-524
           { key: 'cancellationDuration', label: 'Duration (min)', format: 'integer', align: 'right', width: 80 }, // CR-524
@@ -994,10 +996,10 @@ const CancellationsMockup = () => {
                               {/* Reason / Notes — BUG-713 (BUG-708: dead Cancel Note column removed) */}
                               <td className="px-4 py-3 align-top text-sm max-w-[220px]">
                                 <div className="text-zinc-700 truncate" title={r.reason}>{r.reason || '—'}</div>
-                                {r.notes ? (
-                                  <span className="inline-flex items-center gap-1 text-xs text-blue-600 mt-0.5" title={r.notes}>
+                                {(r.cancelItemNote || r.notes) ? (  /* BUG-743 */
+                                  <span className="inline-flex items-center gap-1 text-xs text-blue-600 mt-0.5" title={r.cancelItemNote || r.notes}>
                                     <MessageSquare className="w-3 h-3 shrink-0" />
-                                    <span className="truncate max-w-[160px]">{r.notes}</span>
+                                    <span className="truncate max-w-[160px]">{r.cancelItemNote || r.notes}</span>
                                   </span>
                                 ) : null}
                               </td>

@@ -103,7 +103,7 @@ const CancelDetailMockup = () => {
       sheets: [{ name: 'Cancellations', subtitle: `${analytics.items.length} lines`, columns: [
         { key: 'name', label: 'Item', format: 'text', align: 'left', width: 150 }, { key: 'qty', label: 'Qty', format: 'integer', align: 'right', width: 60 },
         { key: 'amount', label: 'Loss', format: 'inr', align: 'right', width: 100 }, { key: 'stage', label: 'Stage', format: 'text', align: 'left', width: 120 },
-        { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 150 }, { key: 'cancelled_by', label: 'By', format: 'text', align: 'left', width: 100 },
+        { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 150 }, { key: 'cancel_item_note', label: 'Note', format: 'text', align: 'left', width: 180 }, /* BUG-743 */ { key: 'cancelled_by', label: 'By', format: 'text', align: 'left', width: 100 },
         { key: 'order_id', label: 'Order', format: 'text', align: 'left', width: 80 }, { key: 'cancel_date', label: 'Date', format: 'text', align: 'left', width: 100 },
         { key: 'punchTime', label: 'Punch Time', format: 'text', align: 'left', width: 120 }, { key: 'cancellationDuration', label: 'Duration (min)', format: 'integer', align: 'right', width: 90 }, // CR-554
       ], rows: analytics.items.map(r => ({ ...r, punchTime: r.punchTime ? new Date(r.punchTime).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }) : '' })) /* BUG-718 */, totals: { name: 'TOTAL', qty: analytics.totalQty, amount: analytics.totalLoss } }] };
@@ -155,6 +155,7 @@ const CancelDetailMockup = () => {
                       <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Stage</th>
                       <th className="px-4 py-3 text-right text-xs font-semibold text-zinc-500 uppercase">Loss</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Reason</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Note</th>{/* BUG-743 */}
                       <th className="px-3 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">By</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 uppercase">Timing &amp; Risk</th>
                     </tr></thead><tbody>
@@ -165,18 +166,19 @@ const CancelDetailMockup = () => {
                           <td className="px-4 py-2.5 align-top text-xs text-zinc-500">{item.stage || '—'}</td>
                           <td className="px-4 py-2.5 align-top text-sm text-right text-red-600 font-medium">{fmtINR(item.amount)}</td>
                           <td className="px-4 py-2.5 align-top text-xs text-zinc-500 max-w-[180px] truncate" title={item.reason}>{item.reason || '—'}</td>
+                          <td className="px-4 py-2.5 align-top text-xs text-zinc-500 max-w-[200px] truncate" title={item.cancel_item_note}>{item.cancel_item_note || '—'}</td>{/* BUG-743 */}
                           <td className="px-3 py-2.5 align-top text-xs text-zinc-500">{item.cancelled_by || '—'}</td>
                           <td className="px-4 py-2.5 align-top"><div className="text-xs text-zinc-600">{item.punchTime ? new Date(item.punchTime).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, day: '2-digit', month: 'short', timeZone: 'Asia/Kolkata' }) : '—'}{/* BUG-715 */}</div><div className="flex items-center gap-2 mt-1"><span className="text-xs font-medium text-zinc-700">{item.cancellationDuration != null ? `${item.cancellationDuration} min` : '—'}</span><RiskBadge mins={item.cancellationDuration} /></div></td>
                         </tr>
                       ))}
                       {analytics.items.length === 0 && (
-                        <tr data-testid="s28-empty-row"><td colSpan={7} className="px-4 py-8 text-center text-zinc-400 text-sm">No cancellations match the current filter</td></tr>
+                        <tr data-testid="s28-empty-row"><td colSpan={8} className="px-4 py-8 text-center text-zinc-400 text-sm">No cancellations match the current filter</td></tr>
                       )}{/* BUG-716 */}
                     </tbody>
                     <tfoot className="bg-zinc-50 border-t-2 border-zinc-200"><tr>
                       <td colSpan={3} className="px-4 py-3 text-sm font-bold">TOTAL ({analytics.items.length} lines · {analytics.totalQty} qty)</td>
                       <td className="px-4 py-3 text-sm text-right font-bold text-red-600">{fmtINR(analytics.totalLoss)}</td>
-                      <td colSpan={3} />
+                      <td colSpan={4} />
                     </tr></tfoot></table>
                   </div>
                 </div>
