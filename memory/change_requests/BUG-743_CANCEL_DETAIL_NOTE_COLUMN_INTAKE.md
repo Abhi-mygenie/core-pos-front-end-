@@ -1,4 +1,4 @@
-# BUG-743 — Item Cancellation Detail: cancellation note not shown or exported
+# BUG-743 — Cancellation reports: cancellation note not shown / exported (both pages)
 
 **Type:** BUG
 **Registered:** 2026-11-21
@@ -8,44 +8,51 @@
 **Client:** ALL
 **Assignee:** Abhishek (frontend; not backend-blocked)
 **Sprint:** nov_cr_batch
-**Source:** Owner-reported (screenshot, `/reports-module/cancel-detail`) + `investigations/INV-CR527_BUG680_BACKEND_VERIFICATION_2026-11-21.md` §4b + `handover/SESSION_HANDOVER_2026-11-21_INVESTIGATION_CR527_BUG680_CANCELNOTES.md` item #3.
+**Source:** Owner-reported (screenshots: `/reports-module/cancel-detail` + `/reports-module/cancellations`) + `investigations/INV-CR527_BUG680_BACKEND_VERIFICATION_2026-11-21.md` §4b + `handover/SESSION_HANDOVER_2026-11-21_INVESTIGATION_CR527_BUG680_CANCELNOTES.md` item #3.
 
 ---
 
+## Scope (owner-confirmed 2026-11-21)
+**IN scope — the two cancellation reports:**
+1. **Item Cancellation Detail** — `CancelDetailMockup.jsx` (`/reports-module/cancel-detail`)
+2. **Cancellations** — `CancellationsMockup.jsx` (`/reports-module/cancellations`)
+
+**OUT of scope:** **Order Note Audit** — `OrderNotesMockup.jsx` (`/reports-module/order-notes`). Owner's call: that report is a separate (kitchen/food-level) note audit, not the cancellation-note display. Do not touch it under this ID.
+
 ## Symptom
-On **Item Cancellation Detail** (`/reports-module/cancel-detail`, `CancelDetailMockup.jsx`) the per-item table shows Order · Item · Stage · Loss · Reason · By · Timing&Risk, but **no Note column**. The cancellation note that staff entered at cancel time is therefore invisible here, and the Excel/PDF export also omits it. Owner screenshot (4 lines, macha) confirms no note anywhere on the page.
+Both cancellation reports fail to show the note staff entered at cancel time:
+- **Item Cancellation Detail:** table has Order · Item · Stage · Loss · Reason · By · Timing&Risk — **no Note column at all**, and the Excel/PDF export omits it too.
+- **Cancellations:** has a "REASON / NOTES" column, but it only shows the note for rows where the API `notes` field happens to be set (e.g. #000023). Rows with a real staff note in `cancel_item_note` (e.g. poki's #000021/#000022) show the reason only — **the note is missing**.
 
 ## Evidence
-- Screenshot: owner-provided (Item Cancellation Detail, FROM/TO 21/11/2026, 4 rows).
-- Backend contract VERIFIED LIVE (2026-11-21, preprod macha 69): `POST /api/v2/vendoremployee/report/insights-cancellations` returns `stage`, `reason`, `notes` (kitchen, empty 100%) and **`cancel_item_note`** (the actual note) on **every** row, for BOTH `scope=item` and `scope=order`. No `cancellation_note` key exists. Evidence: `evidence/CR527-BUG680-VERIFY-2026-11-21/cancel_insights_live.json`.
-- Source: AGENT-DISCOVERED + OWNER-REPORTED. Confidence: CONFIRMED.
+- Owner screenshots (both pages, macha, 21/11/2026, 4 rows).
+- Backend contract VERIFIED LIVE (2026-11-21, preprod macha 69): `insights-cancellations` returns `stage`, `reason`, `notes` (kitchen — empty on ~100% of rows) and **`cancel_item_note`** (the actual note) on **every** row, for BOTH `scope=item` and `scope=order`. No `cancellation_note` key exists. Evidence: `evidence/CR527-BUG680-VERIFY-2026-11-21/cancel_insights_live.json`.
+- Source: OWNER-REPORTED + AGENT-DISCOVERED. Confidence: CONFIRMED.
 
-## Root cause (FE-only)
-`CancelDetailMockup.jsx` maps each row with `...i` (L80) so `cancel_item_note` **is present on every row object**, but:
-- the table (headers L152–160, cells L163–169) renders **no note column**, and
-- `buildExportPayload` columns (L103–109) include no note column.
+## Root cause (FE-only, per page)
+- **CancellationsMockup.jsx** — transform L282 maps `notes: i.notes || ''` (subset map, **never** carries `cancel_item_note`); render L997–1000 shows `r.notes`. Because the API `notes` field is empty, real notes never appear. Fix: carry `cancelItemNote: i.cancel_item_note` and render `cancelItemNote || notes`.
+- **CancelDetailMockup.jsx** — row spreads `...i` (L80) so `cancel_item_note` **is present on every row**, but the table (L152–169) and `buildExportPayload` (L103–109) render **no note column**. Fix: add a Note column (table + export) reading `item.cancel_item_note` (fallback `notes`).
 No backend work required — the field is already delivered.
 
 ## Duplicate check — DISTINCT (related cluster)
-- **RELATED / partially reverses BUG-708:** BUG-708 *removed* a dead staff "Cancel Note" column from `CancellationsMockup.jsx` on the assumption `cancel_item_note` was empty (65/65). The 2026-11-21 live probe shows it is now **populated** for both scopes, so the note should be surfaced (read `cancel_item_note`), not dropped. This intake covers the **Item Cancellation Detail** page specifically.
-- **RELATED (capture side):** BUG-670 / BUG-674 added the note *input* to the item/order cancel dialogs; this item is about *displaying/exporting* that captured note in the report.
-- **RELATED (sibling screens, same cluster, not in this ID's scope):** `CancellationsMockup.jsx` (`notes: i.notes` only; Note column removed by BUG-708) and `OrderNotesMockup.jsx` (filters on `notes` → all rows excluded; no Stage column). Owner may widen scope or register siblings separately.
+- **RELATED / partially reverses BUG-708:** BUG-708 *removed* a dead staff "Cancel Note" column from `CancellationsMockup.jsx` on the assumption `cancel_item_note` was empty (65/65). The 2026-11-21 live probe shows it is now **populated** for both scopes, so the note should be surfaced (read `cancel_item_note`), not dropped.
+- **RELATED (capture side):** BUG-670 / BUG-674 added the note *input* to the item/order cancel dialogs; this item is about *displaying/exporting* that captured note.
+- **EXCLUDED (owner):** `OrderNotesMockup.jsx` (Order Note Audit) — separate report, not in scope.
 - Not a duplicate of BUG-579 (₹ values) or CR-554/555/556/BUG-713/715/717/718 (punch time/duration/risk/filters/format on the same screens).
 
 ## Priority rationale
-P1: the detail/audit report exists to surface *why* items were cancelled, including the staff note; the captured note is missing with **no workaround** (not visible anywhere on the page or export). Not P0 (no money error, no crash). Owner may override to P2 if treated as display-polish.
+P1: the cancellation reports exist to surface *why* items were cancelled, including the staff note; the captured note is missing with **no workaround**. Not P0 (no money error, no crash). Owner may override to P2 if treated as display-polish.
 
 ## Blast radius
-- SMALL — **1 file** for this page: `frontend/src/pages/reports-module/CancelDetailMockup.jsx` (table render + `buildExportPayload`).
+- SMALL — **2 files**: `CancelDetailMockup.jsx` (add Note column to table + export) and `CancellationsMockup.jsx` (map `cancel_item_note`, render it in the existing REASON/NOTES column; add to export if missing).
 - Hotspot files touched: NO.
-- Sibling cluster (if widened): `CancellationsMockup.jsx`, `OrderNotesMockup.jsx`.
 
 ## Proposed fix (for PLANNING — not implemented here)
-Add a **Note** column to the table reading `item.cancel_item_note` (fallback `item.notes`), and add the same column to `buildExportPayload`. Handle empty note as "—". Verify for both item-scope and order-scope rows.
+Read the note from **`cancel_item_note`** (fallback `notes`), rendered "—" when empty, on BOTH pages — a new Note column on Item Cancellation Detail (table + export), and corrected field mapping in the existing REASON/NOTES column on Cancellations (+ export). Verify for both item-scope and order-scope rows.
 
 ## Open questions (owner)
-1. Scope this ID to the **Item Cancellation Detail page only**, or widen to the 3-screen cluster (Cancellations + OrderNotes)?
-2. Column label — "Note" (reads `cancel_item_note`)? Backend caveat: `cancel_item_note` doubles as the order-level note; a future backend rename/split is cleaner (non-blocking).
+1. ~~Scope~~ — RESOLVED: the two cancellation pages only; Order Note Audit excluded.
+2. Column label on Item Cancellation Detail — "Note"? (reads `cancel_item_note`). Backend caveat: `cancel_item_note` doubles as the order-level note; a future backend rename/split is cleaner (non-blocking).
 
 ## Next
-Planning Gate 2 (Impact Analysis). `testing_agent` MANDATORY after fix (owner standing rule): create 1 item-level + 1 order-level cancellation each WITH a note; verify the note shows on screen + export.
+Planning Gate 2 (Impact Analysis). `testing_agent` MANDATORY after fix (owner standing rule): create 1 item-level + 1 order-level cancellation each WITH a note; verify the note shows on screen + export on BOTH pages.

@@ -96,7 +96,7 @@ Source: Owner screenshot (`/reports-module/cancel-detail`) + live backend verifi
 
 | ID | Title | Sev | Risk | Status | Assignee |
 |---|---|---|---|---|---|
-| **BUG-743** | Item Cancellation Detail — cancellation note (`cancel_item_note`) not shown or exported; `CancelDetailMockup.jsx` renders/export has no Note column though `...i` carries it | **P1** | LOW | GATE_1_INTAKE 2026-11-21 — FE-only; backend contract verified live (`cancel_item_note` populated both scopes). DISTINCT; RELATED BUG-708 (removed note col on now-disproven empty-data assumption) | Abhishek |
+| **BUG-743** | Cancellation reports — note (`cancel_item_note`) not shown/exported on **both** pages: `CancelDetailMockup.jsx` (no Note column though `...i` carries it) + `CancellationsMockup.jsx` (transform L282 maps `notes:i.notes` only → existing REASON/NOTES col reads wrong field). **Order Note Audit excluded (owner).** | **P1** | LOW | GATE_1_INTAKE 2026-11-21 — FE-only, 2 files; backend verified live (`cancel_item_note` populated both scopes). DISTINCT; RELATED BUG-708 (removed note col on now-disproven empty-data assumption) | Abhishek |
 
 | **BUG-719** | Audit Report — full 50-day range times out (insights-dashboard ~78s > 60s axios timeout); BACKEND-BLOCKED, pre-existing, NOT from getRiskTier refactor | **P1** | MEDIUM | GATE_1_INTAKE 2026-11-19 (QA-found, CR-546/528) | Gyan |
 
