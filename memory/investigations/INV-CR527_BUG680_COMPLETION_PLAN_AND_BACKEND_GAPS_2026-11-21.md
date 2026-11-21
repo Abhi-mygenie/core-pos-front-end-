@@ -30,10 +30,14 @@ The v2 endpoint recalculates `order_amount` + `restaurant_discount_amount` and i
 3. **Parity (same pre-discount bug):** `OrderEntry.jsx:~1223` (Collect-Bill button) and `CartPanel.jsx:~512` read the same `order_amount` → will correct once the list returns recalculated amount; verify both show discounted total.
 4. No new field needed — all required data already parsed onto the `order` object.
 
-## Backend notes (do NOT block dashboard; flag for sign-off)
-- Open finding 1 (per V2 handoff): **fixed** discount not re-allocated across lines after adding an item (affects line GST / transfer). 
+## Manager-list confirmation (2026-11-21, rest 69, order #000020)
+Applied 15% via v2 → **`employee-orders-list?role_name=Manager`** AND `get-single-order-new` both returned `order_amount` 100→**85**, `restaurant_discount_amount`=**15**, `discount_value`=15.00. The running-orders list used by the dashboard reflects the discount for role_name=Manager (same as Owner).
+
+## Backend notes (flag for sign-off)
+- **NEW finding 3 (REMOVE recalc bug — matters for BUG-680 remove path):** `order-discount-manage` with `discount_amount:0` only recalculates `order_amount` + line `discount_on_food` when `discount_type` **matches the currently-applied type**. Repro: apply `percent 15` → remove with `fixed 0` ⇒ header cleared (`restaurant_discount_amount=0`, `order_discount_json=null`) **but `order_amount` stayed 85 and item `discount_on_food` stayed 15** (stale). Removing with `percent 0` ⇒ correctly reverts to 100. **FE guardrail:** when removing/clearing, send the SAME `discount_type` that is currently applied (read it from the order), not a hardcoded type. Also recommend backend fix so a zero of any type fully recalculates.
+- Open finding 1 (per V2 handoff): **fixed** discount not re-allocated across lines after adding an item (affects line GST / transfer).
 - Open finding 2: mixed fixed+% merge policy undecided.
-- Both are pre-existing V2 edge cases, independent of the dashboard display.
+- Findings 1-2 are pre-existing V2 edge cases independent of the dashboard display; finding 3 affects the remove flow and must be handled in the FE plan.
 
 **Risk:** HIGH (financial display), P0 → Planning-skip NOT eligible → PLANNING Gate 2.
 
