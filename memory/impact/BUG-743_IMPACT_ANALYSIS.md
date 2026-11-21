@@ -20,8 +20,8 @@ Backend (verified live 2026-11-21, macha 69): every row carries `stage`, `reason
 | `pages/reports-module/CancelDetailMockup.jsx` | table header L152–159; cells L163–169; export L104–108; empty-row L173; tfoot L176–180 | no note column anywhere |
 
 ## Scope lock
-- **WILL change:** the two files above (note mapping + render + export only).
-- **WILL NOT touch:** `OrderNotesMockup.jsx` (Order Note Audit — owner-excluded), any API/service/transform contract, money/stage/reason/filter logic, backend.
+- **WILL change:** the three cancellation report files (note mapping + render + export only) — `CancellationsMockup.jsx`, `CancelDetailMockup.jsx`, `OrderNotesMockup.jsx` (added 2026-11-21, owner widened scope).
+- **WILL NOT touch:** any API/service/transform contract, money/stage/reason/filter logic, backend.
 
 ## Conflict pre-check
 ~20 items touch these files but are all GATE_5A/5B (awaiting QA), code already in-tree: BUG-708/713/714/715/716/717/718/723/729, CR-524/554/555/556, BUG-674, BUG-707. BUG-743 edits sit in **disjoint regions** (note mapping/render/export) → **parallel-safe**, no execution-order dependency.

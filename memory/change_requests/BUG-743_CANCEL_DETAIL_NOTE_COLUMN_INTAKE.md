@@ -13,11 +13,12 @@
 ---
 
 ## Scope (owner-confirmed 2026-11-21)
-**IN scope — the two cancellation reports:**
+**IN scope (widened 2026-11-21 by owner) — all three cancellation reports:**
 1. **Item Cancellation Detail** — `CancelDetailMockup.jsx` (`/reports-module/cancel-detail`)
 2. **Cancellations** — `CancellationsMockup.jsx` (`/reports-module/cancellations`)
+3. **Order Note Audit** — `OrderNotesMockup.jsx` (`/reports-module/order-notes`) — same root cause: filtered/rendered/exported `notes` only, so NOTES COVERAGE was stuck at 25% (only the one row whose kitchen `notes` was set). Now sources `cancel_item_note` (fallback `notes`).
 
-**OUT of scope:** **Order Note Audit** — `OrderNotesMockup.jsx` (`/reports-module/order-notes`). Owner's call: that report is a separate (kitchen/food-level) note audit, not the cancellation-note display. Do not touch it under this ID.
+**OUT of scope:** none.
 
 ## Symptom
 Both cancellation reports fail to show the note staff entered at cancel time:

@@ -70,7 +70,9 @@ const OrderNotesMockup = () => {
   const analytics = useMemo(() => {
     if (!rawData) return null;
     const allItems = rawData.items || [];
-    const withNotes = allItems.filter(i => i.notes && i.notes.trim());
+    const withNotes = allItems
+      .map(i => ({ ...i, noteText: (i.cancel_item_note || i.notes || '').trim() }))   // BUG-743: real note is cancel_item_note
+      .filter(i => i.noteText);
     return { withNotes, totalItems: allItems.length, notesCount: withNotes.length };
   }, [rawData]);
 
@@ -80,7 +82,7 @@ const OrderNotesMockup = () => {
       kpis: [{ label: 'Items with Notes', value: analytics.notesCount, format: 'text' }, { label: 'Total Cancel Items', value: analytics.totalItems, format: 'text' }],
       sheets: [{ name: 'Order Notes', columns: [
         { key: 'order_id', label: 'Order', format: 'text', align: 'left', width: 80 }, { key: 'name', label: 'Item', format: 'text', align: 'left', width: 150 },
-        { key: 'notes', label: 'Notes', format: 'text', align: 'left', width: 250 }, { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 150 },
+        { key: 'noteText', label: 'Notes', format: 'text', align: 'left', width: 250 }, { key: 'reason', label: 'Reason', format: 'text', align: 'left', width: 150 },
         { key: 'cancel_date', label: 'Date', format: 'text', align: 'left', width: 100 }, { key: 'cancelled_by', label: 'By', format: 'text', align: 'left', width: 100 },
       ], rows: analytics.withNotes }] };
   };
@@ -127,7 +129,7 @@ const OrderNotesMockup = () => {
                         <tr key={i} className="border-t border-zinc-50 hover:bg-zinc-50/50" data-testid={`s35-row-${i}`}>
                           <td className="px-5 py-3 text-sm font-mono text-zinc-700">#{item.order_id}</td>
                           <td className="px-4 py-3 text-sm font-medium text-zinc-800">{item.name}</td>
-                          <td className="px-4 py-3 text-sm text-blue-700 max-w-[300px]">{item.notes}</td>
+                          <td className="px-4 py-3 text-sm text-blue-700 max-w-[300px]">{item.noteText}</td>{/* BUG-743 */}
                           <td className="px-4 py-3 text-xs text-zinc-500">{item.reason || '—'}</td>
                           <td className="px-4 py-3 text-xs text-zinc-500">{item.cancel_date}</td>
                           <td className="px-5 py-3 text-xs text-zinc-500">{item.cancelled_by || '—'}</td>

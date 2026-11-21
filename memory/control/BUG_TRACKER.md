@@ -96,7 +96,7 @@ Source: Owner screenshot (`/reports-module/cancel-detail`) + live backend verifi
 
 | ID | Title | Sev | Risk | Status | Assignee |
 |---|---|---|---|---|---|
-| **BUG-743** | Cancellation reports — note (`cancel_item_note`) not shown/exported on **both** pages: `CancelDetailMockup.jsx` (no Note column though `...i` carries it) + `CancellationsMockup.jsx` (transform L282 maps `notes:i.notes` only → existing REASON/NOTES col reads wrong field). **Order Note Audit excluded (owner).** | **P1** | LOW | GATE_3_PLAN_COMPLETE 2026-11-21 — IA `impact/BUG-743_IMPACT_ANALYSIS.md` + Plan `plans/BUG-743_IMPLEMENTATION_PLAN.md` (2 files, 8 edits, parallel-safe). Awaiting Gate 4 GO. Resolves OG-INV5-002. | Abhishek |
+| **BUG-743** | Cancellation reports — note (`cancel_item_note`) not shown/exported on **all 3** pages: `CancelDetailMockup.jsx` (no Note column) + `CancellationsMockup.jsx` (mapped `notes` only) + `OrderNotesMockup.jsx` (filtered `notes` only → NOTES COVERAGE stuck 25%). | **P1** | LOW | GATE_5A_IMPLEMENTED 2026-11-21 — 11 edits, 3 files; all source `cancel_item_note`(fallback `notes`). Resolves OG-INV5-002. Pending QA (testing_agent). | Abhishek |
 
 | **BUG-719** | Audit Report — full 50-day range times out (insights-dashboard ~78s > 60s axios timeout); BACKEND-BLOCKED, pre-existing, NOT from getRiskTier refactor | **P1** | MEDIUM | GATE_1_INTAKE 2026-11-19 (QA-found, CR-546/528) | Gyan |
 

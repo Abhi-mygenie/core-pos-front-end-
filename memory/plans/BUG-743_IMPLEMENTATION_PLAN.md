@@ -105,6 +105,14 @@ New: `<td colSpan={4} />`
 
 ---
 
+## File 3 — `frontend/src/pages/reports-module/OrderNotesMockup.jsx` (added 2026-11-21, scope widened)
+- **Edit 9** — analytics (L73): source note from `cancel_item_note`.
+  `const withNotes = allItems.map(i => ({ ...i, noteText: (i.cancel_item_note || i.notes || '').trim() })).filter(i => i.noteText);`  // BUG-743
+  (Fixes NOTES COVERAGE stuck at 25% — was filtering `i.notes` only.)
+- **Edit 10** — export col (L83): key `notes` → `noteText` (label stays "Notes").
+- **Edit 11** — render (L130): `{item.notes}` → `{item.noteText}`.
+KPIs (Items with Notes / Notes Coverage) auto-recompute from `withNotes`.
+
 ## Verification Matrix
 | # | File | Change | How to verify | Automated? |
 |---|---|---|---|:--:|
