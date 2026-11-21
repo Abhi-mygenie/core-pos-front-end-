@@ -41637,7 +41637,7 @@
    "title": "Cancellation reports (Item Cancellation Detail + Cancellations) — cancellation note (cancel_item_note) not shown/exported",
    "priority": "P1",
    "risk": "LOW",
-   "status": "GATE_1_INTAKE 2026-11-21 — registered; awaiting Gate 2 IA. FE-only, 2 pages (CancelDetail + Cancellations); OrderNotes excluded. Backend verified live (cancel_item_note populated both scopes).",
+   "status": "GATE_3_PLAN_COMPLETE 2026-11-21 — IA + Impl Plan ready (2 files, 8 edits, LOW risk, parallel-safe). Awaiting Gate 4 GO. Resolves OG-INV5-002.",
    "sprint_key": "nov_cr_batch",
    "area": "Reports / Analytics",
    "assignee": "Abhishek",
@@ -41649,9 +41649,11 @@
    "registered_date": "2026-11-21",
    "release_date": "",
    "notes": "FE-only, 2 files. (1) CancelDetailMockup.jsx: row spreads ...i (L80) so cancel_item_note present, but table (L152-169) + buildExportPayload (L103-109) have no note column -> add one. (2) CancellationsMockup.jsx: transform L282 maps notes:i.notes only (never cancel_item_note); render L997 reads r.notes -> add cancelItemNote:i.cancel_item_note, render cancelItemNote||notes in existing REASON/NOTES col + export. Read cancel_item_note (fallback notes), dash when empty, both scopes. Order Note Audit (OrderNotesMockup) OUT of scope per owner. testing_agent mandatory after fix.",
-   "gate": "GATE_1",
-   "current_gate": 1,
-   "severity": "MAJOR"
+   "gate": "GATE_3",
+   "current_gate": 3,
+   "severity": "MAJOR",
+   "ia_doc": "impact/BUG-743_IMPACT_ANALYSIS.md",
+   "plan_doc": "plans/BUG-743_IMPLEMENTATION_PLAN.md"
   }
  ],
  "meta": {
