@@ -28,12 +28,14 @@ Port the BUG-660 pattern to CartPanel (single file):
 - Optionally treat a manually-entered valid-phone CRM match as selected (mirror credit-block `lookupCustomer` auto-select) so the self-match stops re-opening.
 - Do NOT change payloads or `selectCustomer`/`onCustomerChange` contract.
 
-## 5. Affected files
-- `frontend/src/components/order-entry/CartPanel.jsx` (R5) — effects L983-1016 + name/phone field `onBlur` (L1180, L1225). **1 file.**
-- **Out of scope / NOTE:** CollectPaymentPanel credit block already fixed by BUG-660; its name effect (L664-683) lacks the `wasUserTyped` guard but is gated by `tabIsCustomerSelected` — fold a matching guard there ONLY if the owner reports the credit block too (kept separate from BUG-745 to avoid shared-file coupling).
+## 5. Affected files — ⚠ updated 2026-11-21 (owner approved credit-block fold)
+- `frontend/src/components/order-entry/CartPanel.jsx` (R5) — effects L983-1016 + name/phone field `onBlur` (L1180, L1225).
+- `frontend/src/components/order-entry/CollectPaymentPanel.jsx` (R5) — credit **name** effect L664-683 + `handleTabNameChange` L719-726 + `selectTabCustomer` L705-714 + new `tabNameWasUserTypedRef` ~L591. (Credit **phone** effect already guarded by BUG-660 — untouched.)
+- **2 files.**
+- **Owner decision (2026-11-21):** fold the credit-block name guard into BUG-744 (chosen over filing a sibling bug). Rationale: same defect class, same fix pattern (BUG-660 `wasUserTyped` ref), one QA pass covers both surfaces.
 
 ## 6. Conflict pre-check
-No open item on `CartPanel.jsx` (recent CartPanel work shipped). BUG-744 touches CartPanel only; **BUG-745 touches CollectPaymentPanel only → no shared-file lock between the two.**
+No open item on `CartPanel.jsx` (recent CartPanel work shipped). **BUG-744 now touches CollectPaymentPanel.jsx too → shared-file lock with BUG-745 (diner seed L564-565); edits are line-disjoint but must be coded sequentially in one session, BUG-745 seed first then BUG-744 §E6.**
 
 ## 7. Risk register
 | Risk | L | I | Mitigation |
@@ -44,7 +46,7 @@ No open item on `CartPanel.jsx` (recent CartPanel work shipped). BUG-744 touches
 ## 8. Handover
 ```
 Gate 2 complete: BUG-744
-Code reality: CONFIRMED · Risk: MEDIUM · 1 file (CartPanel.jsx)
+Code reality: CONFIRMED · Risk: MEDIUM · 2 files (CartPanel.jsx + CollectPaymentPanel.jsx)
 RC: manual entry never sets isCustomerSelected + dropdown visibility not tied to focus (onBlur doesn't close)
 No owner decision required (behaviour obvious). Next: PLANNING Gate 3 (port BUG-660 blur/focus pattern).
 No app code changed.

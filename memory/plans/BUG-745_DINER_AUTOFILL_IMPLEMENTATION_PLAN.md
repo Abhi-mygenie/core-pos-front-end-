@@ -41,8 +41,8 @@ Holder seed/logic (L557-558), `dinerContact` wiring (L1311), diner handlers (L74
 ## Rollback
 Revert the two `useState` initial values to `""`. Single file, marker `// BUG-745`.
 
-## Conflict
-No open item on CollectPaymentPanel.jsx (CR-527 + BUG-660 shipped). L564-565 line-disjoint from CR-527/BUG-660 markers. BUG-744 is CartPanel → no shared lock.
+## Conflict — ⚠ updated 2026-11-21
+`CollectPaymentPanel.jsx` is **now shared with BUG-744** (its plan was widened to guard the credit-block name typeahead: effect L664-683, handlers L705-726, new ref ~L591). BUG-745's edit (diner seed, L564-565) is **line-disjoint** from those, so no textual collision — **but same file**, so the two are no longer parallel-safe. **Execution rule:** code BUG-745 first (1-line init seed), then BUG-744 §E6 on top, single compile after both; record BOTH IDs on CollectPaymentPanel.jsx in FILE_OWNERSHIP.md. BUG-744's CartPanel.jsx portion remains independent.
 
 ```
 Gate 3 complete: BUG-745 — 1 edit (seed), 1 file, Risk MEDIUM
