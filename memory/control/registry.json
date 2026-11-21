@@ -41692,6 +41692,70 @@
       "severity": "MAJOR",
       "ia_doc": "impact/BUG-743_IMPACT_ANALYSIS.md",
       "plan_doc": "plans/BUG-743_IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "id": "BUG-744",
+      "type": "BUG",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Order-screen (CartPanel) prefilled customer shows CRM suggestions without focus. Sibling of BUG-660 (fixed same class in CollectPaymentPanel credit block); CartPanel never touched. RC: CartPanel.jsx search effects set dropdown visible on CRM match with no focus gate (name L1002-1016, phone L984-998); isCustomerSelected L952 starts false so order-loaded customer re-opens overlay. Fix dir: port BUG-660 pattern to CartPanel. Next PLANNING Gate 2.",
+      "priority": "P2",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "code_reality": "CONFIRMED",
+      "area": "Order Entry",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "gate": "GATE_1_INTAKE",
+      "current_gate": 1,
+      "files": [
+        "frontend/src/components/order-entry/CartPanel.jsx"
+      ],
+      "intake_doc": "bugs/BUG-744_ORDER_CUSTOMER_SUGGESTION_WITHOUT_FOCUS_INTAKE.md",
+      "next_action": "PLANNING Gate 2 (quick IA; R5 hotspot). Port BUG-660 focus/selected guard to CartPanel.jsx.",
+      "artifact_refs": [
+        {
+          "label": "Investigation",
+          "path": "memory/investigations/INV-CR-527_FOLLOWUPS_SUGGESTION_AND_DINER_AUTOFILL_2026-11-21.md",
+          "type": "investigation"
+        },
+        {
+          "label": "Related fix",
+          "path": "memory/control/BUG_TRACKER.md",
+          "type": "related",
+          "note": "BUG-660"
+        }
+      ]
+    },
+    {
+      "id": "BUG-745",
+      "type": "BUG",
+      "status": "GATE_1_INTAKE_COMPLETE 2026-11-21 (INTAKE). Diner should auto-fill with the original order customer when holder differs. OWNER DECISION OD-745-01: auto-fill diner from order customer (Option Q). RC: holder seeded from customer (CollectPaymentPanel L557-558); diner starts empty L564-565, never seeded, so holder edit drops original customer. Augments CR-527 OD-527-D. Fix dir: seed/sync diner from order customer, plain text (no CRM, A4), respect null-collapse. Next PLANNING Gate 2.",
+      "priority": "P2",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "code_reality": "CONFIRMED",
+      "area": "Payments/Credit",
+      "assignee": "Abhishek",
+      "client": "ALL",
+      "gate": "GATE_1_INTAKE",
+      "current_gate": 1,
+      "files": [
+        "frontend/src/components/order-entry/CollectPaymentPanel.jsx"
+      ],
+      "intake_doc": "bugs/BUG-745_DINER_AUTOFILL_FROM_ORDER_CUSTOMER_INTAKE.md",
+      "next_action": "PLANNING Gate 2 (IA). OD-745-01 locked (auto-fill). Re-opens CR-527 OD-527-D seed decision.",
+      "artifact_refs": [
+        {
+          "label": "Investigation",
+          "path": "memory/investigations/INV-CR-527_FOLLOWUPS_SUGGESTION_AND_DINER_AUTOFILL_2026-11-21.md",
+          "type": "investigation"
+        },
+        {
+          "label": "Parent CR",
+          "path": "memory/plans/CR-527_DINER_CAPTURE_IMPLEMENTATION_PLAN.md",
+          "type": "parent",
+          "note": "CR-527"
+        }
+      ]
     }
   ],
   "meta": {
