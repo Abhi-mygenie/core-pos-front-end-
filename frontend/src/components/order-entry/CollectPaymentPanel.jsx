@@ -560,9 +560,12 @@ const CollectPaymentPanel = ({
 
   // CR-527: Diner (who ate) — captured separately from the credit holder
   // (tabName/tabPhone). Plain text, NO CRM typeahead (A4: never links CRM).
-  // Left blank when diner == holder; backend null-collapses → UI shows "—".
-  const [dinerName, setDinerName] = useState("");
-  const [dinerPhone, setDinerPhone] = useState("");
+  // When diner == holder, backend null-collapses → UI shows "—".
+  // BUG-745 (OD-745-01): seed diner from the order customer (who ate) so that when
+  // the cashier changes the holder to a different payer, the original customer is
+  // retained as the diner. Seed-only (no sync effect) → manual diner edits respected.
+  const [dinerName, setDinerName] = useState(customer?.name || "");
+  const [dinerPhone, setDinerPhone] = useState(customer?.phone || "");
 
   // CR-116: B2B customer GST info
   const [custGST, setCustGST] = useState("");
