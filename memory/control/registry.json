@@ -38448,7 +38448,7 @@
    "id": "CR-527",
    "type": "CR",
    "title": "Credit Management: Filter Orders by Same Phone Number with Different Names",
-   "status": "IMPLEMENTED 2026-11-20 — CR-527/BB-09 diner on credit rows. E1 creditTransform.creditEntryFromAPI maps dinerName/dinerMobile; E2 CreditCustomerDetailSheet local mapper mirror; E3 CreditRow Diner cell (— when null or == holder); E4 CREDIT_TABLE_HEAD +Diner th; E5 diner filter OD-527-C (0-1 none / 2-5 chips / 6+ searchable Command dropdown) + active summary. Unit test creditTransform.cr527.test.js (2/2 PASS). Webpack clean. Prod needs BB-09 migration deployed; historical rows render —.",
+   "status": "RE-INTAKE REQUIRED 2026-11-21 — Backend DONE & VERIFIED (diner persist+read, plain text no CRM; see handover/CR-527_BUG-680_BACKEND_HANDOVER.md + investigations/INV-CR527_BUG680_BACKEND_VERIFICATION_2026-11-21.md). FE credit-row part done (E1-E3, GATE_5A). REMAINING FE: diner capture in CollectPaymentPanel + thread diner_name/diner_mobile through place/update/bill-payment payloads + render on running order list/detail. Next agent: re-intake from INTAKE role.",
    "priority": "P0",
    "severity": "P2",
    "risk": "MEDIUM",
@@ -38492,7 +38492,8 @@
     "frontend/src/api/transforms/creditTransform.js",
     "frontend/src/components/credit/CreditCustomerDetailSheet.jsx",
     "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js"
-   ]
+   ],
+   "next_action": "RE-INTAKE (INTAKE role) — FE-only, backend shipped"
   },
   {
    "id": "CR-528",
@@ -39333,7 +39334,7 @@
    "type": "BUG",
    "severity": "P0",
    "risk": "HIGH",
-   "status": "GATE_1_INTAKE_COMPLETE — OD LOCKED. Backend brief needed.",
+   "status": "RE-INTAKE REQUIRED 2026-11-21 — Backend DONE & VERIFIED (R fully clears any-type; E1 fixed re-spread pro-rata [behaviour change]; E2 target-wins; see handover/CR-527_BUG-680_BACKEND_HANDOVER.md + INV doc). REMAINING FE: switch apply v1->v2 order-discount-manage, render post-discount order_amount + discount line on OrderCard, validate E1 pro-rata. HIGH risk (financial) -> full Planning Gate 2. Next agent: re-intake from INTAKE role.",
    "sprint_key": "nov_cr_batch",
    "client": "ALL",
    "assignee": "Abhishek",
@@ -39353,7 +39354,8 @@
    "description": "order_amount in running-orders never includes discount. Dashboard tile, Order Entry Collect Bill button, and CartPanel all show pre-discount total. Only CollectPaymentPanel shows correct discounted amount.",
    "priority": "P0",
    "area": "Payments / Coupons / Credit",
-   "release_date": "2026-11-17"
+   "release_date": "2026-11-17",
+   "next_action": "RE-INTAKE (INTAKE role) — FE-only, backend shipped; HIGH financial risk"
   },
   {
    "id": "CR-551",
