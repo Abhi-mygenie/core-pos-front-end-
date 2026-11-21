@@ -38457,8 +38457,8 @@
       "fast_lane": "NOT eligible",
       "intake_doc": "change_requests/CR-527_DINER_CAPTURE_REINTAKE_INTAKE.md",
       "notes": "[2026-11-15 Gate 2 IA closed] see impact/CR-527_IMPACT_ANALYSIS.md || [2026-11-14 owner decisions] Details at impact. || Credit list filter: same phone number showing different names. Display/filter only, no payment logic. | API contract FINAL v1 2026-11-15: contracts/BATCH-B_CR-527_API_CONTRACT_2026_11_15.md",
-      "gate": "GATE_2_IA_COMPLETE (capture phase)",
-      "current_gate": 2,
+      "gate": "GATE_3_PLAN_COMPLETE (capture phase)",
+      "current_gate": 3,
       "registered": "2026-11-12",
       "assignee": "Abhishek",
       "client": "ALL",
@@ -38503,6 +38503,11 @@
           "label": "Impact Analysis (capture phase)",
           "path": "memory/impact/CR-527_DINER_CAPTURE_IMPACT_ANALYSIS.md",
           "type": "impact"
+        },
+        {
+          "label": "Implementation Plan (capture phase)",
+          "path": "memory/plans/CR-527_DINER_CAPTURE_IMPLEMENTATION_PLAN.md",
+          "type": "plan"
         }
       ],
       "release_date": "2026-11-17",
@@ -38513,7 +38518,7 @@
         "frontend/src/components/credit/CreditCustomerDetailSheet.jsx",
         "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js"
       ],
-      "next_action": "Owner resolves OD-527-E (payload strategy A additive vs B re-map, BLOCKS Gate 3) + OD-527-F/G -> PLANNING Gate 3 (Implementation Plan) with live credit write-probe (holder != diner)."
+      "next_action": "IMPL role: code 9 edits (CollectPaymentPanel x3 diner capture+gate, orderTransform x3 emit diner_name/diner_mobile on placeOrderWithPayment+collectBillExisting + read in fromAPI.order, OrderDetailSheet diner row, OrderCard conditional diner line, tests). Then live write-probe (Part A checklist, holder!=diner) -> testing_agent QA."
     },
     {
       "id": "CR-528",
