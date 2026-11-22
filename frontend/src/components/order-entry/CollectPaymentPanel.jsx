@@ -446,7 +446,7 @@ const CollectPaymentPanel = ({
     if (discountType === 'flat' && val > discountableTotal) val = discountableTotal;
     try {
       if (isDiscountApplied) {
-        await applyOrderDiscount({ orderId, discountAmount: 0, discountType: discountType || 'percent', discountNote: '' });
+        await applyOrderDiscount({ orderId, discountAmount: 0, discountType: (discountType || initialDiscount?.discountType || 'percent'), discountNote: '' }); // BUG-680: send currently-applied type on unapply
         setIsDiscountApplied(false);
       } else {
         await applyOrderDiscount({ orderId, discountAmount: val, discountType: discountType || 'percent', discountNote: discountFor || '' });
@@ -1600,7 +1600,7 @@ const CollectPaymentPanel = ({
                     // BUG-538: changing amount while applied → auto-unapply (spec §4.5, fire-and-forget)
                     if (isDiscountApplied && showApplyButton) {
                       setIsDiscountApplied(false);
-                      applyOrderDiscount({ orderId, discountAmount: 0, discountType: discountType || 'percent', discountNote: '' }).catch(() => {});
+                      applyOrderDiscount({ orderId, discountAmount: 0, discountType: (discountType || initialDiscount?.discountType || 'percent'), discountNote: '' }).catch(() => {}); // BUG-680: send currently-applied type on unapply
                     }
                     if (e.target.value === '' || e.target.value === '-') { setDiscountValue(''); return; }
                     if (val < 0) { setDiscountValue(''); return; }

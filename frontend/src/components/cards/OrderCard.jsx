@@ -532,6 +532,32 @@ const OrderCard = ({
           ₹{(order.amount || 0).toLocaleString()}
         </span>
 
+        {/* BUG-680: order-level discount badge — shows once v2 order-discount-manage recalculates order_amount */}
+        {(order.discount || 0) > 0 && (
+          <span
+            data-testid={`order-discount-badge-${orderId}`}
+            className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0"
+            style={{ backgroundColor: '#E8F5E9', color: COLORS.primaryGreen }}
+          >
+            {String(order.discountType).toLowerCase() === 'percent' && (order.discountValue || 0) > 0
+              ? `−${order.discountValue}%`
+              : `−₹${(order.discount || 0).toLocaleString()}`}
+          </span>
+        )}
+
+        {/* BUG-680: order-level discount badge — shows once v2 order-discount-manage recalculates order_amount */}
+        {(order.discount || 0) > 0 && (
+          <span
+            data-testid={`order-discount-badge-${orderId}`}
+            className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0"
+            style={{ backgroundColor: '#E8F5E9', color: COLORS.primaryGreen }}
+          >
+            {String(order.discountType).toLowerCase() === 'percent' && (order.discountValue || 0) > 0
+              ? `−${order.discountValue}%`
+              : `−₹${(order.discount || 0).toLocaleString()}`}
+          </span>
+        )}
+
         {/* Prepaid badge — POS2-005: hidden when fOrderStatus === 8 (HOLD takes priority)
             BUG-087: PayLater badge hidden — paymentMethod 'paylater' excluded from PAID badge */}
         {order.paymentType === 'prepaid' && order.fOrderStatus !== 8 && order.paymentMethod?.toLowerCase() !== 'paylater' && (

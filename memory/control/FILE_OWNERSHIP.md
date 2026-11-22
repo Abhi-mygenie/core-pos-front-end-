@@ -1,6 +1,11 @@
 <!-- CR-527 (capture phase) IMPL 2026-11-21 — FILE OWNERSHIP -->
 | File | Edits | Item |
 |---|---|---|
+| `src/api/constants.js` | BUG-680 E1 L259: `ORDER_DISCOUNT_ENDPOINTS.MANAGE` `/api/v1/vendoremployee/order-discount-manage` → `/api/v2/vendoremployee/order/order-discount-manage` (v2 recalculates `order_amount`+`restaurant_discount_amount`). Single switch point; sole consumer `orderService.js:241`; body unchanged. | BUG-680 IMPL 2026-11-22 |
+| `src/components/cards/OrderCard.jsx` | BUG-680 E2: discount badge inserted after amount span (~L534) — `(order.discount>0)` → `−{discountValue}%` (percent) / `−₹{discount}` (amount/fallback), `.toLowerCase()` guard on `order.discountType`, `data-testid=order-discount-badge-<id>`. Amount span unchanged (auto-shows discounted `order.amount` via E1). Line-disjoint from CR-527 diner chip + CR-525 Bill block. | BUG-680 IMPL 2026-11-22 |
+| `src/components/order-entry/CollectPaymentPanel.jsx` | BUG-680 E3 (OD-680-04=b): unapply at L449 (manual) + L1603 (inline auto-unapply) now sends `discountType: (discountType \|\| initialDiscount?.discountType \|\| 'percent')` instead of hardcoded `'percent'` fallback — defensive remove-path type guardrail. Preset unapply L429 left `'percent'` (presets are %). No capture/validation change. | BUG-680 E3 IMPL 2026-11-22 |
+| `src/__tests__/api/orderDiscountEndpoint.bug680.test.js` | BUG-680 E4 (NEW): unit guard — asserts `ORDER_DISCOUNT_ENDPOINTS.MANAGE` is the v2 path and not v1 (regression guard). 2 tests PASS. | BUG-680 IMPL 2026-11-22 |
+
 | `src/components/order-entry/OrderEntry.jsx` | BUG-746: dynamic-price ("Enter Price") modal amount input L3088 className `flex-1` → `flex-1 min-w-0` so the flex form control shrinks inside the fixed `w-80` card (no right-edge bleed). CSS only; no logic/value-binding/`confirmDynamicPriceAndAdd` change. | BUG-746 IMPL 2026-11-21 |
 
 | `src/components/order-entry/CartPanel.jsx` | BUG-744: added `nameFocused`/`phoneFocused` state (after L952); gated name effect show (L1010) + phone effect show (L992) on the focus flag + added flag to dep arrays; name field `onFocus`/`onBlur` (L1180-1181) set flag + 150ms close; phone wrapper `<div ref={phoneInputRef} onFocusCapture>` + PhoneInputField `onBlur` set flag + 150ms close. NO payload/`selectCustomer`/`onCustomerChange` change. | BUG-744 IMPL 2026-11-21 |

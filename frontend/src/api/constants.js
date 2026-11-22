@@ -256,7 +256,7 @@ export const STATION_ENDPOINTS = {
 };
 
 export const ORDER_DISCOUNT_ENDPOINTS = {
-  MANAGE: '/api/v1/vendoremployee/order-discount-manage',
+  MANAGE: '/api/v2/vendoremployee/order/order-discount-manage', // BUG-680: v2 recalculates order_amount + restaurant_discount_amount (v1 stored config only)
 };
 
 export const MENU_ENDPOINTS = {
