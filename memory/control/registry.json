@@ -39370,7 +39370,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "CRITICAL (upgraded from HIGH at Gate 2 — shared endpoint switch changes discount allocation/line GST/print/settlement)",
-      "status": "GATE_2_IA_COMPLETE (2026-11-22) — Gate 2 Impact Analysis done. RC: constants.js:259 MANAGE=v1 (no order_amount recalc); fix=switch v1->v2 + OrderCard discount line. Shared applyOrderDiscount service (5 call sites) -> v1->v2 changes discount allocation (E1 pro-rata)/line GST/bill/settlement. RISK UPGRADED HIGH->CRITICAL -> owner approval + E2E money regression before Gate 4. No Implementation Plan yet.",
+      "status": "GATE_3_PLAN_COMPLETE (2026-11-22) — Implementation Plan done. E1 constants.js:259 MANAGE v1->v2 (required/CRITICAL); E2 OrderCard discount badge after amount span L533; E3 CPP remove-path type guardrail (if OD-680-04=b); E4 unit tests. orderTransform/OrderEntry/CartPanel/orderService NOT touched. Verification Matrix 13 checks (4 auto, 9 manual incl REG-1..3 money gate). CRITICAL -> Gate 4 GO + owner approval + E2E money regression required before code.",
       "sprint_key": "nov_cr_batch",
       "client": "ALL",
       "assignee": "Abhishek",
@@ -39396,12 +39396,13 @@
       "priority": "P0",
       "area": "Payments / Coupons / Credit",
       "release_date": "2026-11-17",
-      "next_action": "Owner answers OD-680-02..05 -> \"Gate 3 GO\" -> PLANNING writes Implementation Plan (+ Verification Matrix). CRITICAL: needs owner approval + E2E money regression.",
+      "next_action": "Owner \"Gate 4 GO\" + approval for CRITICAL item -> IMPLEMENTATION (E1 constants v2 switch, E2 OrderCard badge, E3 remove-path if 04=b, E4 tests). Then QA Gate 5b + mandatory E2E money regression REG-1..3.",
       "backend_handover": "handover/CR-527_BUG-680_BACKEND_HANDOVER.md",
       "completion_plan_doc": "investigations/INV-CR527_BUG680_COMPLETION_PLAN_AND_BACKEND_GAPS_2026-11-21.md",
       "code_reality": "PARTIAL — apply flow exists on v1 endpoint; v2 switch + post-discount display NOT STARTED",
       "reintake_date": "2026-11-22",
-      "impact_doc": "impact/BUG-680_IMPACT_ANALYSIS.md"
+      "impact_doc": "impact/BUG-680_IMPACT_ANALYSIS.md",
+      "plan_doc": "plans/BUG-680_IMPLEMENTATION_PLAN.md"
     },
     {
       "id": "CR-551",
