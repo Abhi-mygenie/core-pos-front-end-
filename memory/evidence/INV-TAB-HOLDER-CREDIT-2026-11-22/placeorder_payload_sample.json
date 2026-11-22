@@ -1,0 +1,27 @@
+{
+  "_note": "Owner-supplied evidence (prepaid TAB place-order). Bearer token MASKED per security rule. Phone digits partially masked. Endpoint: POST /api/v2/vendoremployee/order/place-order (multipart data field).",
+  "_auth_header": "Bearer ***MASKED***",
+  "data": {
+    "restaurant_id": 69,
+    "table_id": "9244",
+    "order_type": "dinein",
+    "cust_name": "mown",
+    "cust_mobile": "77677*****",
+    "cust_membership_id": "87301f52-5a56-4a3b-b96d-f1cc1cd826e6",
+    "payment_method": "TAB",
+    "payment_status": "success",
+    "payment_type": "prepaid",
+    "order_amount": 200,
+    "name": "koji",
+    "mobile": "90090*****",
+    "crm_customer_id": "87301f52-5a56-4a3b-b96d-f1cc1cd826e6",
+    "diner_name": "mown",
+    "diner_mobile": "77677*****"
+  },
+  "_interpretation": {
+    "tab_holder (name/mobile/crm_customer_id)": "koji  <-- who owes / opened the tab",
+    "customer (cust_name/cust_mobile)": "mown  <-- order-entry customer == the diner",
+    "diner (diner_name/diner_mobile)": "mown  <-- who ate (CR-527)",
+    "crm_customer_id": "note: equals cust_membership_id (mown's membership) NOT a koji-specific CRM id"
+  }
+}
