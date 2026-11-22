@@ -39369,8 +39369,8 @@
       "title": "Order Discount Not Reflected on Dashboard / Order Entry — order_amount never includes discount",
       "type": "BUG",
       "severity": "P0",
-      "risk": "HIGH",
-      "status": "GATE_1_INTAKE_COMPLETE (RE-INTAKE 2026-11-22) — FE-only; backend DONE & live-verified. REMAINING FE: switch applyOrderDiscount v1->v2 order-discount-manage (constants.js:259 + orderService.js), render post-discount order_amount + discount line on OrderCard, verify parity OrderEntry/CartPanel, remove-path sends current discount_type. HIGH financial -> full Planning Gate 2 (no planning-skip).",
+      "risk": "CRITICAL (upgraded from HIGH at Gate 2 — shared endpoint switch changes discount allocation/line GST/print/settlement)",
+      "status": "GATE_2_IA_COMPLETE (2026-11-22) — Gate 2 Impact Analysis done. RC: constants.js:259 MANAGE=v1 (no order_amount recalc); fix=switch v1->v2 + OrderCard discount line. Shared applyOrderDiscount service (5 call sites) -> v1->v2 changes discount allocation (E1 pro-rata)/line GST/bill/settlement. RISK UPGRADED HIGH->CRITICAL -> owner approval + E2E money regression before Gate 4. No Implementation Plan yet.",
       "sprint_key": "nov_cr_batch",
       "client": "ALL",
       "assignee": "Abhishek",
@@ -39387,17 +39387,21 @@
       "intake_doc": "change_requests/BUG-680_ORDER_DISCOUNT_NOT_ON_DASHBOARD_INTAKE.md",
       "investigation_doc": "investigations/INV-BUG-DISCOUNT_DASHBOARD_NOT_REFLECTING_2026_11_17.md",
       "open_decisions": [
-        "OD-680-01: LOCKED — FE switch apply call v1->v2 order-discount-manage (original backend Option B now shipped by backend)"
+        "OD-680-02: OrderCard discount display format (rec. a=compact badge -Rs X / -X%)",
+        "OD-680-03: refresh after apply (rec. a=rely on existing socket/polling)",
+        "OD-680-04: remove-path send currently-applied discount_type (rec. b=yes, defensive)",
+        "OD-680-05: confirm CRITICAL E2E money regression scope before Gate 4 GO"
       ],
       "description": "order_amount in running-orders never includes discount. Dashboard tile, Order Entry Collect Bill button, and CartPanel all show pre-discount total. Only CollectPaymentPanel shows correct discounted amount.",
       "priority": "P0",
       "area": "Payments / Coupons / Credit",
       "release_date": "2026-11-17",
-      "next_action": "PLANNING Gate 2 (Impact Analysis) — FE scope: v2 endpoint switch + OrderCard post-discount display + OrderEntry/CartPanel parity + remove-path type guardrail. HIGH financial risk, no planning-skip.",
+      "next_action": "Owner answers OD-680-02..05 -> \"Gate 3 GO\" -> PLANNING writes Implementation Plan (+ Verification Matrix). CRITICAL: needs owner approval + E2E money regression.",
       "backend_handover": "handover/CR-527_BUG-680_BACKEND_HANDOVER.md",
       "completion_plan_doc": "investigations/INV-CR527_BUG680_COMPLETION_PLAN_AND_BACKEND_GAPS_2026-11-21.md",
       "code_reality": "PARTIAL — apply flow exists on v1 endpoint; v2 switch + post-discount display NOT STARTED",
-      "reintake_date": "2026-11-22"
+      "reintake_date": "2026-11-22",
+      "impact_doc": "impact/BUG-680_IMPACT_ANALYSIS.md"
     },
     {
       "id": "CR-551",
