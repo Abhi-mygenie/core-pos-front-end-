@@ -56,6 +56,52 @@ document with no activation**, so FCM messages still arrive and `soundManager.pl
 
 Classification: **FE_BUG** (client-side autoplay lifecycle). Not backend, not data, not config.
 
+## 2b. NEW EVIDENCE (owner, 2026-11-23) — a SECOND, independent failure mode
+
+Owner screenshot (`/settings` → Test Notifications, Event Log + DevTools console, device clock ~12:07 AM):
+
+**Event Log (6, newest first):**
+- `12:04:59` **unlock** ← owner manually unlocked audio (Settings "Enable Audio").
+- `12:03:49` **received** #1579106 · foreground — "Confirm Order — Order has been confirmed."
+- `12:03:42` **sound_ok** sound=forty_five_sec_buzzer
+- `12:03:41` **banner_shown** #1579106 · foreground
+- `12:03:41` **played** #1579106 sound=forty_five_sec_buzzer · foreground
+- `12:03:41` **received** #1579106 · foreground — "Please confirm this order — Order ID: 000049 … dinein Table t1"
+
+**Console at `12:06:55`** (AFTER the unlock) — a fresh test order:
+`[Socket] Event received: new_order_69 … 1579106 … 'web'` → `[useSocketEvents] update-order 1579106` →
+`[SocketHandler] update-order received / Transformed` → `[OrderContext] updateOrder 1579106` →
+`[TableContext] updateTableStatus 9244 → occupied` → `setOrderEngaged … released from ENGAGED`.
+
+**What this proves:** the new order at 12:06:55 arrived **only over the Socket.IO channel** — there is
+**NO `received` (FCM payload) event** in the Event Log for it (last `received` was 12:03:49), and therefore
+**no `played`/`sound_ok`** and **no ring** — even though audio was already unlocked at 12:04:59. The Event Log
+legend confirms the semantics: **`received` = FCM payload reached this device**; **`played`/`sound_ok` = ring
+fired**. Owner's words: "I have unlocked that … but I took a test order and still did not receive the FCM
+payload on console and the ringer did not ring."
+
+**Code-backed root cause of this second mode:** the ring is triggered **exclusively by FCM** —
+`NotificationContext.jsx` `onForegroundMessage` (L238) → `processNotification` → `soundManager.play` (L195),
+plus SW-forwarded background messages (L248). The **Socket.IO path never calls `soundManager.play`** (verified:
+`grep soundManager` across `api/socket/**`, `AppSocketManager`, `hooks/**` → 0 play calls). So when the order
+comes in on the socket but **no FCM push is delivered**, the ringer is never even invoked — unlock is irrelevant.
+
+**Therefore there are TWO independent reload failure modes:**
+
+| Mode | Symptom in logs | Trigger | Fix owner |
+|------|-----------------|---------|-----------|
+| **M1 — autoplay blocked** | `received` present, then RED `*_buzzer.wav` error (`audio.play()` rejected) | FCM arrives but document has no sticky activation after reload | **BUG-747** (this doc) |
+| **M2 — FCM not delivered** | order appears via **socket only**; **no `received`**, no `played` | FCM push never reaches the reloaded device (stale/unregistered device token) | **CR-562** (FCM token refresh via profile) — and/or a socket-driven ring fallback |
+
+The 12:06:55 capture is **Mode M2**. The earlier capture in §1/§2 (red wav error after `received`) is **Mode M1**.
+
+**Impact on this bug's fix:** the autoplay re-unlock in BUG-747 is **necessary but NOT sufficient** to end the
+owner's "silent after reload" complaint. It fixes M1 only. When M2 occurs (no FCM payload after reload), there
+is nothing to unlock-and-play. M2 is **CR-562 territory** (deferred earlier) — this evidence shows the two are
+**coupled**, not merely complementary. A complete fix needs BUG-747 **and** a reliable post-reload ring source
+(CR-562 FCM-token refresh, **or** wiring a ring onto the already-working socket `new_order`/`update-order`
+event as a fallback).
+
 ## 3. Data-Flow Trace
 
 ```
@@ -120,6 +166,13 @@ dedicated `AudioUnlockGate` component.
   foreground)? (Recommended: **yes**, cheap — add `visibilitychange` alongside the first-gesture listener.)
 - **OD-747-03:** Listener home — `NotificationContext.jsx` ungated effect (recommended) vs a dedicated
   `AudioUnlockGate` component in `App.js`.
+- **OD-747-04 (NEW, raised by 2026-11-23 evidence — cross-cuts BUG-747 + CR-562):** Ring-source architecture
+  for the **M2** case (order on socket, no FCM). Options: **(A)** keep FCM as the sole ring source and fix
+  post-reload delivery via **CR-562** (re-register the device token on reload); **(B)** add a **socket-driven
+  ring fallback** — have the existing `new_order`/`update-order` socket handler trigger `soundManager.play`
+  (dedup against FCM to avoid double-ring); **(C)** both. Recommended: pull **CR-562 forward** so BUG-747 +
+  CR-562 ship together; consider (B) later as resilience. **Owner decision required** — this is scope beyond
+  BUG-747 alone.
 
 ## 8. Scope Lock
 
@@ -129,6 +182,10 @@ dedicated `AudioUnlockGate` component.
 - **Files WILL NOT touch:** any order/billing/tax/settlement/print/payment/auth/permission logic;
   `firebase.js`, `firebase-messaging-sw.js`, any profile/transform/service (that is CR-562, deferred);
   `DashboardPage.jsx`, `ScanOrderPopOut.jsx`, socket handlers.
+- **Sufficiency caveat (per §2b evidence):** this scope fixes **Mode M1 only**. If OD-747-04 selects a
+  socket-driven ring fallback (option B/C), `api/socket/socketHandlers.js` (or `AppSocketManager`/`useSocketEvents`)
+  and a dedup guard WOULD then be in scope — that is a scope expansion requiring owner approval and likely a
+  joint BUG-747 + CR-562 plan.
 
 ## 9. Related
 
