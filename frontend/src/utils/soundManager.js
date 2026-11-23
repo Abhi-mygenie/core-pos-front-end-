@@ -1,6 +1,7 @@
 // SoundManager - Manages notification audio playback
 // Plays chimes and ringers from /public/sounds/
 // Silent notification stops any currently playing sound
+import fcmDiagLog from './fcmDiagLog';
 
 const SOUND_FILES = {
   new_order: '/sounds/new_order.wav',
@@ -24,6 +25,8 @@ class SoundManager {
     this.currentAudio = null;
     this.audioCache = {};
     this.isEnabled = true;
+    this.isUnlocked = false;      // diagnostics: has audio playback been unlocked by a user gesture?
+    this.lastResults = {};        // diagnostics: { [soundKey]: { ok, error, ts } }
     this.mutedOrders = new Set(); // BUG-453 Fix B: per-order manual mute (OD-453-03)
   }
 
@@ -78,10 +81,50 @@ class SoundManager {
     });
 
     this.currentAudio = audio;
-    audio.play().catch((err) => {
-      console.warn('[SoundManager] Play blocked:', err.message);
-      if (this.currentAudio === audio) this.currentAudio = null; // BUG-453 Fix A
-    });
+    audio.play()
+      .then(() => { this.isUnlocked = true; this._record(soundKey, true, null); })
+      .catch((err) => {
+        console.warn('[SoundManager] Play blocked:', err.message);
+        this._record(soundKey, false, err.message);
+        if (this.currentAudio === audio) this.currentAudio = null; // BUG-453 Fix A
+      });
+  }
+
+  // ── Diagnostics helpers (additive; do not affect normal playback) ──────────
+  _record(soundKey, ok, error) {
+    this.lastResults[soundKey] = { ok, error: error || null, ts: Date.now() };
+    try { fcmDiagLog.add(ok ? 'sound_ok' : 'sound_blocked', { sound: soundKey, error: error || null }); }
+    catch { /* ignore */ }
+  }
+
+  // Play a sound explicitly for testing — bypasses the silent-mode gate and
+  // resolves with the real browser outcome so the panel can show ✓ / blocked.
+  playTest(soundKey) {
+    const path = SOUND_FILES[soundKey];
+    if (!path) return Promise.resolve({ ok: false, error: 'unknown sound' });
+    this.stop();
+    const audio = this.audioCache[soundKey] ? this.audioCache[soundKey].cloneNode() : new Audio(path);
+    this.currentAudio = audio;
+    return audio.play()
+      .then(() => { this.isUnlocked = true; this._record(soundKey, true, null); return { ok: true, error: null }; })
+      .catch((err) => {
+        this._record(soundKey, false, err.message);
+        if (this.currentAudio === audio) this.currentAudio = null;
+        return { ok: false, error: err.message };
+      });
+  }
+
+  // Unlock autoplay with a user gesture (plays a muted silent clip).
+  unlock() {
+    const audio = this.audioCache.silent ? this.audioCache.silent.cloneNode() : new Audio(SOUND_FILES.silent);
+    audio.muted = true;
+    return audio.play()
+      .then(() => { this.isUnlocked = true; audio.pause(); try { fcmDiagLog.add('unlock', { ok: true }); } catch { /* ignore */ } return true; })
+      .catch((err) => { try { fcmDiagLog.add('unlock', { ok: false, error: err.message }); } catch { /* ignore */ } return false; });
+  }
+
+  getState() {
+    return { isEnabled: this.isEnabled, isUnlocked: this.isUnlocked, lastResults: { ...this.lastResults } };
   }
 
   /**

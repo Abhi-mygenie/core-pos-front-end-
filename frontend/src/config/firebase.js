@@ -17,6 +17,7 @@ const VAPID_KEY = process.env.REACT_APP_FIREBASE_VAPID_KEY;
 // Initialize Firebase
 let app = null;
 let messaging = null;
+let messagingSupported = null; // diagnostics: result of isSupported()
 
 try {
   app = initializeApp(firebaseConfig);
@@ -29,6 +30,7 @@ try {
 // browsers that bypasses sync try/catch. isSupported() checks first, skips safely.
 if (app) {
   isSupported().then((supported) => {
+    messagingSupported = supported;
     if (supported) {
       messaging = getMessaging(app);
       console.log('[Firebase] Messaging initialized');
@@ -103,6 +105,7 @@ export const requestFCMToken = async () => {
 
     if (token) {
       console.log('[Firebase] FCM Token obtained:', token.substring(0, 20) + '...');
+      try { localStorage.setItem('mygenie_fcm_token', token); } catch { /* storage unavailable */ }
       return { error: null, token };
     }
 
@@ -122,6 +125,24 @@ export const requestFCMToken = async () => {
 export const onForegroundMessage = (callback) => {
   if (!messaging) return () => {};
   return onMessage(messaging, callback);
+};
+
+/**
+ * Passive FCM health snapshot for the diagnostics panel.
+ * Does NOT prompt for permission — safe to call on render.
+ */
+export const getFCMDiagnostics = () => {
+  let token = null;
+  try { token = localStorage.getItem('mygenie_fcm_token'); } catch { /* ignore */ }
+  const permission = (typeof Notification !== 'undefined') ? Notification.permission : 'unavailable';
+  return {
+    permission,                              // 'granted' | 'denied' | 'default' | 'unavailable'
+    supported: messagingSupported,           // null until isSupported() resolves
+    messagingReady: !!messaging,
+    hasVapid: !!VAPID_KEY,
+    hasToken: !!token,
+    tokenPreview: token ? `${token.slice(0, 12)}…${token.slice(-6)}` : null,
+  };
 };
 
 export { messaging };

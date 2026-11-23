@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useMemo, u
 import { useAuth } from './AuthContext';
 import { onForegroundMessage } from '../config/firebase';
 import soundManager from '../utils/soundManager';
+import fcmDiagLog from '../utils/fcmDiagLog';
 import { mapConfirmOrderTone, mapAggregatorOrderTone } from '../utils/toneMapper'; // BUG-600
 import { getRestaurantRef } from '../utils/restaurantRef';
 
@@ -102,6 +103,12 @@ export const NotificationProvider = ({ children }) => {
     const title = data.title || notif.title || 'Notification';
     const body = data.body || notif.body || '';
 
+    // Diagnostics: record every inbound notification (source + order) before any
+    // dedup/mute gating, so the panel can prove whether an order's payload arrived.
+    const diagSource = payload.__source || 'simulate';
+    const diagOrderId = String(data.orderid || data.order_id || data.orderId || '');
+    try { fcmDiagLog.add('received', { source: diagSource, order_id: diagOrderId, type: data.type || data.notification_type || '', title, body }); } catch { /* ignore */ }
+
     // BUG-034 (Apr-2026): deduplicate notifications that arrive via both the
     // foreground FCM listener and the service-worker forwarder within the same
     // short window. Use message_id (FCM canonical) → order_id → title+body
@@ -110,6 +117,7 @@ export const NotificationProvider = ({ children }) => {
     const now = Date.now();
     if (notifKey && notifKey === lastNotifKeyRef.current && (now - lastNotifTimeRef.current) < DEDUP_WINDOW_MS) {
       console.log('[Notification] Duplicate suppressed (key:', notifKey, ', elapsed:', now - lastNotifTimeRef.current, 'ms)');
+      try { fcmDiagLog.add('suppressed_dedup', { source: diagSource, order_id: diagOrderId, key: String(notifKey) }); } catch { /* ignore */ }
       return;
     }
     lastNotifKeyRef.current = notifKey;
@@ -173,12 +181,14 @@ export const NotificationProvider = ({ children }) => {
     const notifOrderId = String(data.orderid || data.order_id || data.orderId || '');
     if (notifOrderId && soundManager.isOrderMuted(notifOrderId)) {
       console.log('[Notification] BUG-453 muted order', notifOrderId, '— sound + toast suppressed');
+      try { fcmDiagLog.add('suppressed_muted', { source: diagSource, order_id: notifOrderId }); } catch { /* ignore */ }
       return;
     }
 
     // Play sound (SoundManager handles silent, unknown keys, etc.)
     if (resolvedSound) {
       console.log('[Notification] Playing sound:', resolvedSound);
+      try { fcmDiagLog.add('played', { source: diagSource, order_id: diagOrderId, sound: resolvedSound }); } catch { /* ignore */ }
       soundManager.play(resolvedSound);
     }
 
@@ -220,7 +230,7 @@ export const NotificationProvider = ({ children }) => {
     // Listen for foreground messages — pass full payload
     foregroundUnsubRef.current = onForegroundMessage((payload) => {
       console.log('[Notification] Foreground message:', payload);
-      processNotificationRef.current?.(payload);
+      processNotificationRef.current?.({ ...payload, __source: 'foreground' });
     });
 
     // Listen for background messages forwarded by service worker
@@ -228,7 +238,7 @@ export const NotificationProvider = ({ children }) => {
       if (event.data?.type === 'BACKGROUND_NOTIFICATION') {
         console.log('[Notification] SW forwarded message:', event.data.payload);
         // Wrap SW data into same shape as foreground payload
-        processNotificationRef.current?.({ data: event.data.payload });
+        processNotificationRef.current?.({ data: event.data.payload, __source: 'sw' });
       }
     };
     navigator.serviceWorker?.addEventListener('message', handleSWMessage);
