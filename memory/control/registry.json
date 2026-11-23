@@ -41827,11 +41827,11 @@
       "sprint_key": "nov_cr_batch",
       "id": "BUG-747",
       "title": "Buzzer Silent After Page Reload Until Relogin (audio autoplay not re-unlocked)",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_2_IA_COMPLETE",
       "files": "src/utils/soundManager.js; src/App.js or top-level provider (gesture unlock) [proposed]; src/contexts/NotificationContext.jsx",
       "client": "The Goan Kitchen (rid 69)",
       "assignee": "Abhishek",
-      "notes": "P0 (owner-set 2026-11-23; agent proposed P1). Risk HIGH (notification/audio hotspot). Code reality: NONE. Duplicate: DISTINCT, RELATED to BUG-676/BUG-600/BUG-560/BUG-453/CR-440. Root cause (INV-BUZZER-20261123): audio autoplay unlock obtained only via LOGIN gesture, lost on reload; FCM payload still arrives and soundManager.play() runs but audio.play() blocked (screenshot-confirmed). Fix: re-unlock on first user gesture after load (+ optional 'tap to enable' prompt). Intake: change_requests/BUG-747_BUZZER_SILENT_AFTER_RELOAD_AUTOPLAY_INTAKE.md. Next: Gate 2."
+      "notes": "P0 (owner-set 2026-11-23; agent proposed P1). Risk HIGH (notification/audio hotspot). Code reality: NONE. Scope (owner 2026-11-23): autoplay re-unlock ONLY; profile-returns-FCM-token deferred to CR-562. Duplicate: DISTINCT, RELATED to BUG-676/BUG-600/BUG-560/BUG-453/CR-440. Root cause (INV-BUZZER-20261123): audio autoplay unlock obtained only via LOGIN gesture, lost on reload; FCM payload still arrives and soundManager.play() runs but audio.play() blocked (screenshot-confirmed). Fix direction: one-time document gesture listener calling soundManager.unlock() on first interaction after any load (recommended: ungated effect in NotificationContext.jsx) + optional 'tap to enable' prompt + optional visibilitychange re-assert. Conflict pre-check CLEAN (soundManager/NotificationContext/App.js all additive, no open item). IA: impact/BUG-747_IMPACT_ANALYSIS.md. Open: OD-747-01 (prompt?), -02 (visibilitychange?), -03 (listener home). Next: Gate 3 Implementation Plan (awaiting owner review)."
     },
     {
       "type": "CR",
