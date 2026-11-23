@@ -160,3 +160,22 @@ owner rationale.
 ## 11. Retroactive Candidates
 
 NONE. (`messagingReady:` at firebase.js:141 is a diagnostics boolean, not an implementation of this fix.)
+
+---
+
+## 12. Owner Decisions — RESOLVED (2026-11-23)
+
+- **OD-748-01 → RE-OPEN CR-562.** The race fix is folded into **CR-562 (re-opened)**, not a standalone BUG-748.
+  This IA remains the Gate-2 record; the Gate-3 plan + registry status advance under **CR-562**.
+- **OD-748-03 → YES, rename + no-regression constraint.** Use a distinct promise name (e.g. `whenMessagingReady`)
+  so it never shadows the `getFCMDiagnostics` field. **Hard acceptance criterion:** must NOT change the existing
+  login→ring path (the LOGIN-click gesture + already-resolved messaging case must behave exactly as today).
+- **OD-748-04 → PLAN TOGETHER with BUG-747** (shared `NotificationContext.jsx` effect; same reload failure family).
+- **OD-747-04 → A (pre-decided, handover 2026-11-23):** FCM remains the sole ring source; no socket-ring fallback;
+  no `socketHandlers.js` scope expansion. Consistent with re-opening CR-562.
+
+**Still OPEN before Gate 3 can be written (no guessing — Rule R3 / OD-AUDIT-02):**
+- **OD-748-02** — owner GO to edit `firebase.js` (standing OD-AUDIT-02 lock).
+- **OD-747-01** — silent auto-unlock vs "tap to enable" prompt vs both (rec: both).
+- **OD-747-02** — re-assert unlock on `visibilitychange` (rec: yes).
+- **OD-747-03** — listener home: ungated effect in `NotificationContext.jsx` (rec) vs `AudioUnlockGate` in `App.js`.
