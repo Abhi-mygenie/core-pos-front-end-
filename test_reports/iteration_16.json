@@ -1,0 +1,29 @@
+{
+  "summary": "I tested the new FCM & Sound Diagnostics panel on the preview build at 1920x1080, logged in as pms@macha.com. Every acceptance item passed and there were no page errors. Steps: login -> /dashboard -> /settings -> settings-tile-notification-test -> fcm-sound-diagnostics renders. Health rows in headless: permission=denied, token=missing, VAPID=yes, supported=true, audio unlocked='not yet' and then 'yes' after Enable Audio. Refresh works. Enable Audio wrote an 'unlock' log entry. sound-test-new_order showed the green check (ok). The sound toggle went Sound On -> Muted -> Sound On. Simulating test-notif-0 added 'received #002275 · test' and 'played #002275 sound=new_order · test', followed by 'sound_ok'. Re-simulating at once produced a 'suppressed_dedup' entry. The filter worked for order id 002277 (2 entries), for the event 'played' (3 entries), and showed fcm-log-empty when nothing matched. Copy put valid JSON (2466 chars) on the clipboard. localStorage 'mygenie_fcm_diag_log' held 13 entries, and the same 13 were shown after a reload and reopening the panel. Clear emptied the list (fcm-log-empty shown, 0 entries).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Settings -> Test Notifications", "issues": ["The global 'New version available / Update now' toast sits at the bottom centre and covers part of the Event Log header and filter row at 1080p. This is cosmetic and comes from the existing app toast, not this panel.", "The Copy button gives no feedback when the clipboard is unavailable: the catch is silent. Add a toast or fallback, such as a textarea or download, so staff on HTTP or locked-down devices can still export the log."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Diagnostic accuracy: NotificationContext.processNotification writes 'played' BEFORE calling soundManager.play(). When Sound is Muted, soundManager.play returns early without calling _record, so the log shows 'played' even though nothing played and no sound_ok/sound_blocked follows. Log 'suppressed_sound_off' when !soundEnabled, or move the 'played' log into soundManager.play after the isEnabled gate. This matters because the owner's complaint is about random or missing rings.",
+    "The owner's main complaint is that the pop-out sometimes does not open, but popup and banner outcomes are not logged. Consider logging 'banner_shown' and 'banner_suppressed_kill_switch' (the CR-440 notificationsEnabled=false path returns silently), plus whether the web-order pop-out actually opened. Without this the log cannot tell 'payload arrived but popup did not open' apart from 'payload arrived and popup opened'."
+  ],
+  "critical_code_review_comments": [
+    "The dedup key in processNotification uses data.order_id, but real FCM payloads use data.orderid (the BUG-453 comment says so). So dedup falls back to the title:body fingerprint. This is pre-existing and not changed by this work, but the diagnostic 'key' field will show that fingerprint. Worth checking against the 'rings randomly' report.",
+    "getFCMDiagnostics().hasToken reads the cached localStorage 'mygenie_fcm_token'. If permission is later revoked or the token rotates, the panel can show 'token present' while permission is denied, so the cached token can be stale. Consider showing a token-age timestamp.",
+    "Messages handled only by the service worker while no POS tab is open never reach processNotification, so they are not logged. Note this limitation in the panel text so staff do not read 'no entry' as 'FCM not received'.",
+    "The 'Audio unlocked' HealthRow always passes warn, so the amber style is right for 'not yet'. Fine.",
+    "Files are small (266/56/174 lines), there are data-testids on all controls, and the diagnostics code is fully try/catch-guarded, so it cannot break the order flow."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None. I placed no orders. The only data touched was the diag log in the test browser's own localStorage, which I cleared at the end.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Login pms@macha.com / Qplazm@10 -> wait for /dashboard -> page.goto('/settings'), which goes through /loading, then wait for settings-tile-notification-test -> click -> fcm-sound-diagnostics. In headless Chromium, permission=denied, but audio playTest returns ok after Enable Audio. Simulating the same payload twice within the dedup window produces suppressed_dedup."
+}

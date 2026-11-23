@@ -188,7 +188,10 @@ export const NotificationProvider = ({ children }) => {
     // Play sound (SoundManager handles silent, unknown keys, etc.)
     if (resolvedSound) {
       console.log('[Notification] Playing sound:', resolvedSound);
-      try { fcmDiagLog.add('played', { source: diagSource, order_id: diagOrderId, sound: resolvedSound }); } catch { /* ignore */ }
+      if (resolvedSound !== 'silent') {
+        const soundOn = soundManager.getState().isEnabled;
+        try { fcmDiagLog.add(soundOn ? 'played' : 'suppressed_sound_off', { source: diagSource, order_id: diagOrderId, sound: resolvedSound }); } catch { /* ignore */ }
+      }
       soundManager.play(resolvedSound);
     }
 
@@ -196,7 +199,10 @@ export const NotificationProvider = ({ children }) => {
     if (resolvedSound === 'silent') return;
 
     // CR-440: banner kill switch — sound already played above; skip banner entry when disabled on this device
-    if (!notificationsEnabled) return;
+    if (!notificationsEnabled) {
+      try { fcmDiagLog.add('banner_suppressed_kill_switch', { source: diagSource, order_id: diagOrderId }); } catch { /* ignore */ }
+      return;
+    }
 
     const notification = {
       id: Date.now().toString(),
@@ -212,6 +218,7 @@ export const NotificationProvider = ({ children }) => {
     };
 
     setNotifications((prev) => [notification, ...prev].slice(0, 50));
+    try { fcmDiagLog.add('banner_shown', { source: diagSource, order_id: diagOrderId, type: notification.type }); } catch { /* ignore */ }
   }, [DEDUP_WINDOW_MS, notificationsEnabled]); // CR-440: notificationsEnabled read inside callback
 
   // Keep ref in sync

@@ -32,6 +32,9 @@ const EVENT_STYLE = {
   sound_blocked: 'bg-red-50 text-red-700 border-red-200',
   suppressed_dedup: 'bg-amber-50 text-amber-700 border-amber-200',
   suppressed_muted: 'bg-amber-50 text-amber-700 border-amber-200',
+  suppressed_sound_off: 'bg-amber-50 text-amber-700 border-amber-200',
+  banner_shown: 'bg-sky-50 text-sky-700 border-sky-200',
+  banner_suppressed_kill_switch: 'bg-amber-50 text-amber-700 border-amber-200',
   unlock: 'bg-indigo-50 text-indigo-700 border-indigo-200',
   token: 'bg-gray-100 text-gray-600 border-gray-200',
   test: 'bg-purple-50 text-purple-700 border-purple-200',
@@ -93,11 +96,21 @@ const NotificationTester = () => {
   }, [simulateNotification]);
 
   const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(fcmDiagLog.exportJSON());
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch { /* clipboard unavailable */ }
+    const text = fcmDiagLog.exportJSON();
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; }
+    catch {
+      // Fallback for HTTP / locked-down devices where the async clipboard API is unavailable
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch { ok = false; }
+    }
+    setCopied(ok ? 'ok' : 'fail');
+    setTimeout(() => setCopied(false), 1800);
   }, []);
 
   const handleClear = useCallback(() => { fcmDiagLog.clear(); }, []);
@@ -226,7 +239,7 @@ const NotificationTester = () => {
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setLog(fcmDiagLog.getAll())} data-testid="fcm-log-refresh" className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50" title="Refresh"><RefreshCw className="w-3.5 h-3.5 text-gray-500" /></button>
-            <button onClick={handleCopy} data-testid="fcm-log-copy" className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50" title="Copy JSON">{copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-gray-500" />}</button>
+            <button onClick={handleCopy} data-testid="fcm-log-copy" className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50" title="Copy JSON">{copied === 'ok' ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : copied === 'fail' ? <XCircle className="w-3.5 h-3.5 text-red-500" /> : <Copy className="w-3.5 h-3.5 text-gray-500" />}</button>
             <button onClick={handleClear} data-testid="fcm-log-clear" className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50" title="Clear"><Trash2 className="w-3.5 h-3.5 text-red-500" /></button>
           </div>
         </div>
@@ -258,6 +271,9 @@ const NotificationTester = () => {
             ))
           )}
         </div>
+        <p className="mt-2 text-[10px] text-gray-400" data-testid="fcm-log-note">
+          <b>received</b> = FCM payload reached this device · <b>played</b>/<b>sound_ok</b> = ring fired · <b>sound_blocked</b>/<b>suppressed_sound_off</b> = no ring · <b>banner_shown</b>/<b>banner_suppressed_kill_switch</b> = in-app banner. Messages delivered while no POS tab is open are handled by the service worker and may not appear here.
+        </p>
       </section>
     </div>
   );
