@@ -19,6 +19,12 @@ let app = null;
 let messaging = null;
 let messagingSupported = null; // diagnostics: result of isSupported()
 
+// CR-562: a promise that ALWAYS settles once the async messaging init (BUG-560) is done —
+// resolves to the messaging instance when supported, else null. Consumers await this
+// instead of racing it on reload (fixes "no buzzer after reload").
+let _resolveMessagingReady;
+export const whenMessagingReady = new Promise((resolve) => { _resolveMessagingReady = resolve; });
+
 try {
   app = initializeApp(firebaseConfig);
   console.log('[Firebase] App initialized');
@@ -39,7 +45,11 @@ if (app) {
     }
   }).catch((err) => {
     console.warn('[Firebase] isSupported check failed:', err.message);
+  }).finally(() => {
+    _resolveMessagingReady(messaging); // CR-562: always settle (messaging or null)
   });
+} else {
+  _resolveMessagingReady(null); // CR-562: app init failed → never hang consumers
 }
 
 /**
@@ -47,6 +57,7 @@ if (app) {
  * @returns {Promise<string|null>} FCM token or null
  */
 export const requestFCMToken = async () => {
+  await whenMessagingReady; // CR-562: wait out the reload init race before bailing
   if (!messaging) {
     console.warn('[Firebase] Messaging not initialized');
     return null;
@@ -122,8 +133,9 @@ export const requestFCMToken = async () => {
  * @param {Function} callback - (payload) => void
  * @returns {Function} unsubscribe
  */
-export const onForegroundMessage = (callback) => {
-  if (!messaging) return () => {};
+export const onForegroundMessage = async (callback) => {
+  await whenMessagingReady; // CR-562: attach only once messaging is ready (reload race)
+  if (!messaging) return () => {}; // unsupported browser → no-op unsubscribe
   return onMessage(messaging, callback);
 };
 

@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 import { onForegroundMessage } from '../config/firebase';
 import soundManager from '../utils/soundManager';
 import fcmDiagLog from '../utils/fcmDiagLog';
+import SoundUnlockBanner from '../components/notifications/SoundUnlockBanner'; // BUG-747
 import { mapConfirmOrderTone, mapAggregatorOrderTone } from '../utils/toneMapper'; // BUG-600
 import { getRestaurantRef } from '../utils/restaurantRef';
 
@@ -87,6 +88,10 @@ export const NotificationProvider = ({ children }) => {
   const regRef = useRef(null); // BUG-621: stores SW registration so triggerSwUpdate can postMessage to reg.waiting
   // 2-second window: same key arriving within 2 s is treated as duplicate
   const DEDUP_WINDOW_MS = 2000;
+
+  // BUG-747: autoplay-unlock state powering the "tap to enable" banner (OD-747-01 both)
+  const [audioUnlocked, setAudioUnlocked] = useState(() => soundManager.getState().isUnlocked);
+  const [audioBlockedAt, setAudioBlockedAt] = useState(0);
 
   // =========================================================================
   // PROCESS NOTIFICATION — play sound + show toast + add to list
@@ -234,10 +239,16 @@ export const NotificationProvider = ({ children }) => {
     // Preload sounds
     soundManager.preload();
 
-    // Listen for foreground messages — pass full payload
-    foregroundUnsubRef.current = onForegroundMessage((payload) => {
+    // CR-562: onForegroundMessage now awaits messaging readiness (fixes the reload race
+    // where messaging was still null) — store the unsubscribe when it resolves; if the
+    // effect tore down first, immediately unsubscribe.
+    let cancelled = false;
+    onForegroundMessage((payload) => {
       console.log('[Notification] Foreground message:', payload);
       processNotificationRef.current?.({ ...payload, __source: 'foreground' });
+    }).then((unsub) => {
+      if (cancelled) { unsub?.(); return; }
+      foregroundUnsubRef.current = unsub;
     });
 
     // Listen for background messages forwarded by service worker
@@ -256,7 +267,8 @@ export const NotificationProvider = ({ children }) => {
     // BUG-661: moved to separate ungated effect below — removed from auth gate here.
 
     return () => {
-      if (foregroundUnsubRef.current) foregroundUnsubRef.current();
+      cancelled = true; // CR-562: drop a not-yet-resolved subscription
+      if (foregroundUnsubRef.current) { foregroundUnsubRef.current(); foregroundUnsubRef.current = null; }
       navigator.serviceWorker?.removeEventListener('message', handleSWMessage);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -285,6 +297,31 @@ export const NotificationProvider = ({ children }) => {
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
+
+  // BUG-747: unlock autoplay (plays a muted silent clip) + clear the blocked banner.
+  const unlockAudioNow = useCallback(async () => {
+    const ok = await soundManager.unlock();
+    if (ok) { setAudioUnlocked(true); setAudioBlockedAt(0); }
+    return ok;
+  }, []);
+
+  // BUG-747: ungated (no auth gate) — silent auto-unlock on first user gesture (OD-747-01),
+  // re-assert on tab-visibility regain (OD-747-02), and surface blocked rings for the banner.
+  useEffect(() => {
+    soundManager.setBlockedHandler(() => { setAudioUnlocked(false); setAudioBlockedAt(Date.now()); });
+    const onGesture = () => { unlockAudioNow(); };
+    const gestures = ['pointerdown', 'keydown', 'touchstart'];
+    gestures.forEach((g) => window.addEventListener(g, onGesture, { passive: true }));
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && !soundManager.getState().isUnlocked) unlockAudioNow();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      gestures.forEach((g) => window.removeEventListener(g, onGesture));
+      document.removeEventListener('visibilitychange', onVisible);
+      soundManager.setBlockedHandler(null);
+    };
+  }, [unlockAudioNow]);
 
   // Reset on logout
   useEffect(() => {
@@ -348,6 +385,9 @@ export const NotificationProvider = ({ children }) => {
     simulateNotification: processNotification,
     swUpdatePending,            // BUG-597
     triggerSwUpdate,            // BUG-621
+    audioUnlocked,              // BUG-747
+    audioBlockedAt,             // BUG-747
+    unlockAudioNow,             // BUG-747
   }), [
     notifications,
     unreadCount,
@@ -361,11 +401,15 @@ export const NotificationProvider = ({ children }) => {
     processNotification,
     swUpdatePending,            // BUG-597
     triggerSwUpdate,            // BUG-621
+    audioUnlocked,              // BUG-747
+    audioBlockedAt,             // BUG-747
+    unlockAudioNow,             // BUG-747
   ]);
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
+      <SoundUnlockBanner />{/* BUG-747 */}
     </NotificationContext.Provider>
   );
 };

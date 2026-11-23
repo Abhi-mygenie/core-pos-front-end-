@@ -1,3 +1,16 @@
+<!-- CR-562 (re-open) + BUG-747 IMPL 2026-11-23 — FCM messaging-ready race + autoplay re-unlock — markers `// CR-562` / `// BUG-747` -->
+| File | Edits | Item |
+|---|---|---|
+| `src/config/firebase.js` | +`whenMessagingReady` promise (resolved in `isSupported().then(...).finally`, and on app-init failure) so consumers await async init; `requestFCMToken` + `onForegroundMessage` (now async) `await whenMessagingReady` before using `messaging`. Preserves BUG-560 safety. | CR-562 IMPL 2026-11-23 |
+| `src/contexts/NotificationContext.jsx` | CR-562: auth-gated effect now attaches the (async) `onForegroundMessage` once ready, with `cancelled` teardown guard → fixes reload race. BUG-747: NEW ungated effect (first-gesture + `visibilitychange` unlock via `soundManager.unlock`), `audioUnlocked`/`audioBlockedAt` state + `unlockAudioNow`, renders `<SoundUnlockBanner/>`; context value extended. | CR-562 + BUG-747 IMPL 2026-11-23 |
+| `src/utils/soundManager.js` | +`this.onBlocked` + `setBlockedHandler(fn)`; `play().catch` invokes `onBlocked(soundKey, err)` (additive; playback unchanged). | BUG-747 IMPL 2026-11-23 |
+| `src/components/notifications/SoundUnlockBanner.jsx` | NEW — fixed "tap to enable" banner shown when a ring was blocked and audio still locked; `data-testid=sound-unlock-banner`. | BUG-747 IMPL 2026-11-23 |
+| `src/__tests__/config/firebase.cr562race.test.js` | NEW — 2 tests (whenMessagingReady resolves; onForegroundMessage async returns unsub). PASS. | CR-562 IMPL 2026-11-23 |
+| `src/__tests__/utils/soundManager.bug747.test.js` | NEW — 2 tests (onBlocked fires on blocked play; detach). PASS. | BUG-747 IMPL 2026-11-23 |
+
+NOT touched: `LoadingPage.jsx` · `LoginPage.jsx` · `App.js` · `firebase-messaging-sw.js` · any socket/order/payment/transform/service file.
+
+
 <!-- CR-562 IMPL 2026-11-23 — FCM token refresh via profile GET — marker `// CR-562` -->
 | File | Edits | Item |
 |---|---|---|

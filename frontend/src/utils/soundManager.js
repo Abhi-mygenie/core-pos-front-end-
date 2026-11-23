@@ -28,6 +28,7 @@ class SoundManager {
     this.isUnlocked = false;      // diagnostics: has audio playback been unlocked by a user gesture?
     this.lastResults = {};        // diagnostics: { [soundKey]: { ok, error, ts } }
     this.mutedOrders = new Set(); // BUG-453 Fix B: per-order manual mute (OD-453-03)
+    this.onBlocked = null;        // BUG-747: optional observer invoked when a ring is blocked by autoplay policy
   }
 
   /**
@@ -87,6 +88,7 @@ class SoundManager {
         console.warn('[SoundManager] Play blocked:', err.message);
         this._record(soundKey, false, err.message);
         if (this.currentAudio === audio) this.currentAudio = null; // BUG-453 Fix A
+        try { this.onBlocked?.(soundKey, err.message); } catch { /* ignore */ } // BUG-747
       });
   }
 
@@ -122,6 +124,12 @@ class SoundManager {
       .then(() => { this.isUnlocked = true; audio.pause(); try { fcmDiagLog.add('unlock', { ok: true }); } catch { /* ignore */ } return true; })
       .catch((err) => { try { fcmDiagLog.add('unlock', { ok: false, error: err.message }); } catch { /* ignore */ } return false; });
   }
+
+  // BUG-747: React subscribes here to show the "tap to enable" banner when a ring is blocked.
+  setBlockedHandler(fn) { this.onBlocked = fn; }
+
+  // BUG-747: React subscribes here to show the "tap to enable" banner when a ring is blocked.
+  setBlockedHandler(fn) { this.onBlocked = fn; }
 
   getState() {
     return { isEnabled: this.isEnabled, isUnlocked: this.isUnlocked, lastResults: { ...this.lastResults } };
