@@ -110,6 +110,44 @@ start AND stop are on the same reliable rail should NEW-ORDER ringing move to th
 
 ---
 
+## 0c. EVALUATION (round 5) — owner idea: re-send FCM token via the profile API on reload
+
+**Owner proposal:** since `GET /api/v1/vendoremployee/profile` is called on every reload, attach/refresh
+the FCM token on that call so the device re-registers without a relogin.
+
+**Premise is TRUE (verified):** on a hard reload of `/dashboard`, `ProtectedRoute` finds
+`RestaurantContext.isLoaded === false` (contexts reset on reload) → `Navigate to="/loading"` →
+`LoadingPage.loadProfile()` → `profileService.getProfile()` → `GET /api/v1/vendoremployee/profile`.
+So the profile call genuinely fires on every reload. FCM token is cached in `localStorage.mygenie_fcm_token`;
+`requestFCMToken()` (which runs `getToken`) currently runs ONLY at login; the profile request does NOT
+attach `fcm_token` today (only the login request does, via `authTransform` L52).
+
+**What it FIXES (good, legitimate):** re-registering the token on every reload keeps the backend's stored
+token fresh → addresses the **intermittent "FCM payload not received" case** (scenario 2 / recommendation #3).
+The profile call is a reasonable vehicle for it.
+
+**What it does NOT fix (the honest gap):** the DOMINANT reload symptom — "rings after login, silent after
+reload until relogin" — is the **browser autoplay block**, PROVEN by screenshot 1: the FCM payload DID
+arrive after reload and `[Notification] Playing sound: forty_five_sec_buzzer` was logged, yet `audio.play()`
+was blocked (red wav error) because the reloaded page had no user gesture. Re-sending the token does NOT
+give the page a gesture → `audio.play()` stays blocked → **still no ring after reload**. Relogin "works"
+only because clicking **LOG IN is the gesture** that unlocks autoplay — not because it re-registers a token.
+So this proposal alone will NOT make it "work fluently without relogin" for the main case.
+
+**Implementation caveats:** `PROFILE` is a `GET` with no body → carrying `fcm_token` needs a query param,
+a switch to POST, or a dedicated register endpoint, AND the backend must read+store it → this is a
+**backend change**, not a pure frontend trigger. Also `getToken()` should run on boot before the call so a
+*valid* (not stale) token is sent; it is silent when permission is already granted, but yields nothing if
+permission was never granted/denied.
+
+**Verdict:** adopt it as a COMPLEMENTARY hardening for FCM delivery, but pair it with the **autoplay
+re-unlock** (which is what actually fixes no-ring-after-reload). Importantly, **#1 autoplay re-unlock +
+this token refresh together may make the existing FCM ring+stop pipeline reliable on reload — which could
+avoid the heavier socket migration and its stop/dedup blocker (§0b) altogether.** Recommended cheap path:
+try (autoplay re-unlock) + (profile token refresh) FIRST; treat the socket ring as a later, bigger option.
+
+---
+
 ## 1. Summary (original — round 1)
 
 Root cause is **two independent problems**, not one:
