@@ -69,18 +69,44 @@ Note: this does NOT fix the reload-autoplay bug — a socket ring is blocked by 
 ### Part 2 — Aggregator ringer  → included in Part 1, with care
 Aggregator rings today ONLY via FCM with its own tone (`mapAggregatorOrderTone`: default→`new_order`, buzzer→`five_sec_buzzer`). `handleAggregatorNewOrder` has no ring. If Part 1's shared helper applies the aggregator tone, this is covered — but must ring only on a genuine NEW unconfirmed aggregator order, NOT on `handleAggregatorOrderUpdate` / auto-accept (CR-109) / terminal auto-reject (L953-973).
 
-### Part 3 — Sound OFF on Accept & Reject  → SMALL, LOW-MED risk (confirmed gap)
-Today ONLY **Snooze** silences audio: `ScanOrderPopOut.handleSnoozeClick` → `soundManager.stop()` and `DashboardPage.toggleSnooze` → `soundManager.toggleOrderMute`.
-**Accept and Reject do NOT stop sound** — confirmed:
-- `DashboardPage`: only soundManager calls are the import + `toggleSnooze` (L1312). `handleConfirmOrder` (L1365, accept) and `handleCancelOrderFromCard` (L1696, reject) never stop/mute.
-- `ScanOrderPopOut.handleAcceptClick` (L288) / `handleRejectClick` (L313): no stop.
+### Part 3 — Sound OFF on Accept & Reject  → CORRECTED 2026-11-23 (round 4): it DOES stop, indirectly
+**Earlier claim ("accept/reject never silence") was WRONG.** The sound does stop on accept/reject — but
+**no accept/reject code calls stop**. Verified there is NO explicit stop anywhere on those actions:
+- `DashboardPage`: only soundManager calls are the import + `toggleSnooze` (L1312). `handleConfirmOrder`
+  (L1365, accept) and `handleCancelOrderFromCard` (L1696, reject) never stop/mute.
+- `ScanOrderPopOut.handleAcceptClick` (L288) / `handleRejectClick` (L313): no stop; NO cleanup/unmount effect stops sound.
 - `AggregatorOrderPopOut.handleAccept` (L116) / `handleReject` (L140): no soundManager import at all.
-Consequence: with `forty_five_sec_buzzer.wav` (~1.9 MB / long clip) the buzzer keeps blaring after the staff accepts/rejects. Fix = add `soundManager.stop()` + `soundManager.muteOrder(orderId)` on accept & reject in both popups (mute also blocks a late FCM/socket echo re-ringing the handled order). ~4 edit spots, localized.
+- `OrderContext` / `OrderCard` / `socketHandlers`: zero soundManager.
+- Clips do NOT loop (`soundManager.play` sets no `loop`).
 
-### Recommended sequencing
-1. Autoplay re-unlock (INV primary) — fixes the actual "silent after reload" complaint; independent.
-2. Part 3 (stop on accept/reject) — small, high user value, can ship first.
-3. Part 1+2 (socket ring with shared dedup) — the big one; design the chokepoint so accept/reject mute wins over both FCM and socket.
+**Actual stop mechanism (emergent, FCM-driven):** `soundManager.play()` calls `this.stop()` **before**
+playing the next clip (soundManager.js L65). After accept, the backend emits a follow-up **FCM**
+("confirm/accepted") → `processNotification` → `play('order_confirmed'/'order_accepted')` → that call
+**stops the buzzer** and plays the chime. Reject → "rejected/cancelled" FCM → `play('order_rejected')`.
+So the buzzer going silent on accept/reject is a **side-effect of the follow-up FCM replacing it**, not an
+explicit action. (Short tones like `five_sec_buzzer` also just end after ~5 s; `forty_five_sec_buzzer` is
+~45 s, so for buzzer tones the FCM replacement is what actually silences it.)
+
+### ⛔ THE BLOCKER for moving the ring to socket (owner's instinct is correct)
+Today **START and STOP both ride the SAME FCM pipeline**, so they stay consistent. If we move only the
+NEW-ORDER ring to the socket while STOP still depends on the follow-up confirm/reject FCM:
+- when FCM is the weak link (reload / backgrounded tab / delivery miss — the very reason to move to socket),
+  the socket will reliably START the buzzer, but the confirm/reject FCM may never arrive → **nothing calls
+  `play()` again and nothing calls `stop()` → the buzzer keeps blaring after accept/reject** (up to ~45 s or
+  until the next order). This blocker PERSISTS under a socket migration.
+- plus double-ring: socket new-order + FCM new-order with no shared dedup.
+
+**Therefore: solve the STOP + dedup FIRST, then move the ring.** Make silencing deterministic and LOCAL —
+driven by the accept/reject user action AND by the socket order-status transition (confirmed / cancelled /
+preparing) — via `soundManager.stop()` + `soundManager.muteOrder(orderId)`, independent of FCM. Only once
+start AND stop are on the same reliable rail should NEW-ORDER ringing move to the socket.
+
+### Recommended sequencing (revised)
+1. **Autoplay re-unlock** (INV primary) — fixes the actual "silent after reload" complaint; independent.
+2. **Deterministic local STOP + per-order dedup/mute** (the blocker) — stop/mute on accept, reject, and on
+   socket status transitions; add one ring chokepoint with dedup. Ship BEFORE any socket ring.
+3. **Socket NEW-ORDER ring + aggregator** (Part 1+2) — only after #2, so the socket-started buzzer can be
+   reliably stopped without depending on FCM.
 
 ---
 
