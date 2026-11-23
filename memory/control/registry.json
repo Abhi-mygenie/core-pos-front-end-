@@ -41838,11 +41838,11 @@
       "sprint_key": "nov_cr_batch",
       "id": "CR-562",
       "title": "Refresh FCM Token on Reload via the Profile API",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_2_BACKEND_BLOCKED",
       "files": "src/config/firebase.js; src/pages/LoadingPage.jsx; src/api/services/profileService.js; src/api/transforms/profileTransform.js [proposed]; BACKEND profile endpoint",
       "client": "The Goan Kitchen (rid 69)",
       "assignee": "Gyan",
-      "notes": "P2 (agent-classified; confirm at Gate 2). Risk HIGH (API contract + token). BACKEND-BLOCKED: profile endpoint must accept+store fcm_token (BACKEND_BRIEF needed). Code reality: NONE (profile sends no fcm_token; requestFCMToken only at login). Complements BUG-747; hardens intermittent 'no FCM payload on relogin'. Does NOT fix reload-silence (that is BUG-747). Intake: change_requests/CR-562_FCM_TOKEN_REFRESH_ON_RELOAD_VIA_PROFILE_INTAKE.md. Next: Gate 2 + backend brief."
+      "notes": "P1 (couples with P0 BUG-747 for full reload fix). Risk HIGH (API contract + token). Owner 2026-11-23 chose OD-747-04=A (token-refresh path, no architecture change). BACKEND BRIEF SENT: backend_briefs/BACKEND_BRIEF_CR-562_2026-11-23.md — proposes GET /vendoremployee/profile stays GET, (a) response returns stored fcm_token, (b) optional ?fcm_token= query-param upsert on same GET (empty=no-op); asks D1-D7 (transport, field name, multi-device, scope, empty-safety, same-store, last-seen). BLOCKED on backend reply. Code reality: NONE. Complements BUG-747 (M2 fix = no-FCM-after-reload). Intake: change_requests/CR-562_...INTAKE.md. Next: backend reply -> Gate 3 Implementation Plan (FE)."
     }
   ],
   "meta": {
