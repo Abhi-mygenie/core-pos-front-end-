@@ -1,0 +1,27 @@
+{
+  "summary": "Read-only frontend smoke test of CR-562 (Firebase messaging-init race) and BUG-747 (SoundUnlockBanner), run at 1920x1080 on https://genie-pos-front-4--6k7rgsv6.preview.emergentagent.com against the live preprod backend as pms@macha.com. Two full runs. (1) Login: /loading then /dashboard. The sidebar and Dine-In/Delivery/Room columns rendered, with 0 page errors and no console errors. (2) Reload on /dashboard: /loading then back to /dashboard while still logged in. Same layout, no blank screen, 0 page errors. (3) data-testid='sound-unlock-banner' count was 0 at every check: login page, after login, after reload, and after a click. (4) Console after the reload showed '[Firebase] App initialized' then '[Firebase] Messaging initialized'. '[Firebase] Messaging not initialized' never appeared in either the login or the reload session. Login session lines: '[Firebase] Current notification permission: denied', '[Firebase] Notification permission was previously DENIED' plus the settings hint, '[Login] FCM result: {error: denied, token: null}'. No '[Notification]' lines were logged, which is expected with no inbound push. The NotificationContext <-> SoundUnlockBanner circular import caused no runtime error.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Loading/Dashboard", "issues": ["The 'New version available / Update now' toast appears at the bottom centre on every load. This is existing behaviour, not part of this change."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Needs a live check: the buzzer ringing after a reload when a new order arrives needs a real inbound order and FCM push. Not attempted, as instructed.",
+    "Needs a live check: the requestFCMToken path in LoadingPage.loadProfile only runs when Notification.permission === 'granted'. Headless Chromium had 'denied', so this reload path, including the 3s Promise.race and the token-refresh profile GET, was not exercised. I deliberately did not grant permission, because getProfile(token) would overwrite the merchant's stored FCM token on preprod. Verify on a real device with permission granted."
+  ],
+  "critical_code_review_comments": [
+    "firebase.js: whenMessagingReady always settles, through finally, or immediately when app init fails. Good.",
+    "NotificationContext: the cancelled flag correctly drops a late subscription. Minor: onForegroundMessage(...).then has no .catch, so a rejection from onMessage would be unhandled. Low risk.",
+    "SoundUnlockBanner and NotificationContext import each other. This works at runtime because the import is only used inside render, but moving the hook/context into its own module would be more robust."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (4/4 requested checks)"},
+  "seed_data_creation": "None. Read-only: no orders or data were created or changed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The preview URL comes from the preview_endpoint env var; frontend/.env has no REACT_APP_BACKEND_URL. Login leads to /loading (about 5-10s) then /dashboard; reload follows the same path. Use wait_for_url('**/dashboard**', timeout=45000). Headless notification permission is 'denied'."
+}

@@ -249,7 +249,7 @@ export const NotificationProvider = ({ children }) => {
     }).then((unsub) => {
       if (cancelled) { unsub?.(); return; }
       foregroundUnsubRef.current = unsub;
-    });
+    }).catch((err) => { console.warn('[Notification] foreground subscribe failed:', err?.message); }); // CR-562: never leave a rejection unhandled
 
     // Listen for background messages forwarded by service worker
     const handleSWMessage = (event) => {
