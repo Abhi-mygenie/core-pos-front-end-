@@ -61,3 +61,51 @@ On reload of /dashboard, filter console for `[Firebase]`:
 
 ## 7. Retroactive candidates
 NONE.
+
+---
+
+## 8. BACKEND LOG CORRELATION (2026-11-24) — the real break is TOKEN REGISTRATION, not just listening
+
+Owner supplied production logs for order 1579106 / restaurant 69. Decisive facts:
+- `RECIPIENTS_RESOLVED`: 6 employees; **only employee 5843 "poki owner" has `has_firebase_token:true`**. The other 5
+  (5833 KDS, 5835 Manager, 5837 Owner, 5840 **macha owner**, 5844 printer) all have `has_firebase_token:false`.
+- `FIREBASE_DISPATCH_RESULT` / `NOTIFICATION_SENT` / `Firebase notification sent`: backend dispatches ONLY to
+  5843's token; FCM returns `http_code:200, send_status:fcm_accepted`, but **`delivery_confirmed:false`**.
+
+**=> The backend works. It sends the buzzer, but only to the one employee that has a registered token.** The device
+the owner is watching (logged in as `pms@macha.com`, almost certainly NOT 5843 — likely 5840 "macha owner", which
+shows `has_firebase_token:false`) has **no FCM token on the backend at all**, so it can never be notified.
+`fcm_accepted` ≠ delivered; `delivery_confirmed:false` + a likely stale 5843 token means even that device may not ring.
+
+### Where it breaks (frontend), from code:
+Token reaches the backend through exactly two paths:
+1. **Login payload** — `authService.login({email,password,fcmToken})`; `fcmToken` set only if `requestFCMToken()`
+   returned a token (**permission granted at login**). Denied/default → `fcmToken=null` → backend stores null →
+   `has_firebase_token:false`. (QA earlier saw `[Login] FCM result: {error: denied, token: null}`.)
+2. **Reload profile GET** — `profileService.getProfile(fcmToken)` sends `?fcm_token=` **only if** `fcmToken` is truthy,
+   which needs BOTH `Notification.permission === 'granted'` (LoadingPage.jsx:371) AND `requestFCMToken()` winning a
+   **3-second `Promise.race`** (LoadingPage.jsx:373-376). On a cold reload, SW register + `getToken()` routinely take
+   >3s → race returns `null` → `getProfile(null)` sends nothing (backend no-op) → **backend token never refreshed**.
+   `requestFCMToken` finishes later and writes the token to `localStorage`, but **nothing ever sends that late token
+   to the backend.**
+
+### Precise root cause (two coupled breaks, same origin):
+- **BREAK-1 (registration, PRIMARY):** the watching device/employee has no backend FCM token
+  (`has_firebase_token:false`) — registration only happens on a permission-granted login, or a reload that is both
+  permission-granted and beats the 3s race. Neither held → no push to that device.
+- **BREAK-2 (listening/freshness, SECONDARY = our M2):** 5843's token is likely stale (reload never refreshed it) and
+  foreground `onMessage` needs an in-session `getToken` — so even the targeted device may not ring.
+
+### Fix direction (frontend-only; reuses the EXISTING backend GET upsert — likely NO firebase.js edit):
+1. **Decouple token registration from the 3s boot race.** Keep the boot barrier time-boxed, but when
+   `requestFCMToken()` resolves (even after boot), if the token is present and differs from what was last sent, POST
+   it to the backend (reuse `profileService.getProfile(token)` upsert or a dedicated refresh call). No token may be
+   silently discarded by the race.
+2. **"Process like login" on every authenticated boot** (owner's instinct): run the full bring-up and register the
+   current device token for the current employee; if permission is `default`, drive the BUG-747 "enable alerts"
+   banner (one tap → prompt → register) instead of silently skipping.
+3. This also establishes the in-session `getToken` subscription → fixes foreground `onMessage` (BREAK-2).
+
+Socket-ring fallback is OUT per owner. Keep FCM as the ring source; make registration reliable.
+
+**Confidence: HIGH** — backend logs + frontend code agree. BREAK-1 (registration) is the dominant casualty source.
