@@ -97,5 +97,25 @@ Saved to `/app/memory/evidence/INV-POPOUT-SOUND-2026-11-22/pipeline_trace.md` (f
 
 ---
 
+## 7. LIVE PROBE ADDENDUM (2026-11-22, acct pms@macha.com, rest 69)
+
+Authenticated capture of the owner's first web-EDIT order. Evidence: `evidence/INV-POPOUT-SOUND-2026-11-22/live_baseline_2026-11-22.md` + `live_edit_capture_2026-11-22.md`.
+
+**Edited order 1579085 / bill 000035 (table/counter):**
+- Pre-edit baseline (captured earlier same session): `order_from='pos'`, 25 items, 0 food_status=7.
+- Post-edit: `order_from='web'`, 26 items, **1 item `food_status=7`** (detail 3970172), order-level `f_order_status=1`.
+- **Boot GET (`employee-orders-list`) and socket path (`get-single-order-new`) AGREE** on all three fields; 3 consecutive GETs stable (no flapping).
+- FE evaluation: `hasUnconfirmedWebEditItems` = **TRUE** → with the settled data, the web-edit pop-out SHOULD open and survive reload.
+
+**Refined root cause (edit case):** NOT an order_from omission for table web orders (confirmed present). The intermittent "doesn't open after INSTANT reload" is best explained by a **backend propagation / eventual-consistency window** — the edit's `order_from` flip (pos→web) and the appended `food_status=7` line are not reflected in `employee-orders-list` immediately. Proof: the pre-edit snapshot of this very order still read `order_from='pos'` / no food7. A cold reload inside that window rebuilds OrderContext from the stale GET (and discards the socket in-memory state) → pop-out does not open until the next poll. Compounded by the FE having **no durable YTC flag** that survives a reload-timing race (it relies on transient `fOrderStatus===7` / item `food_status===7`).
+
+**Room orders:** baseline confirmed `order_in='RM'` → `order_from=None` on the GET (the BUG-701 gap) — a room web-edit fails `isWebOrder` after reload regardless of timing.
+
+**New-web-order case:** no web order in the 14-order list dwells at `fOrderStatus===7` (they sit at 1/2); the new-order pop-out predicate hard-requires `fOrderStatus===7`. Needs a freshly-placed, left-unconfirmed web order captured immediately to fully lock, but the pattern supports the same "status already moved by the time the reload GET runs" conclusion.
+
+**Updated classification:** pop-out edit case = **BACKEND (read-after-write consistency on `employee-orders-list` + room `order_from` echo + expose durable `yet_to_confirm` flag)** + **FE resilience (persist socket YTC/web-origin across reload; drive pop-out from a durable flag)**. Confidence: HIGH.
+
+---
+
 ## Handover
 Root cause: (1) Pop-out opens only when `isWebOrder===true`; GET `employee-orders-list` may omit `order_from` on cold reload/login (documented BUG-082), and the web-origin guard only works mid-session, so the pop-out intermittently fails to open — backend echo inconsistency + FE cold-boot resilience gap. (2) Sound is a separate FCM pipeline; `audio.play()` is autoplay-blocked before a user gesture and depends on FCM permission/VAPID, so it rings randomly and desyncs from the pop-out — FE + config + backend. Confidence: HIGH (FE mechanism). Steps: 9/10. FE fix: pop-out = resilience extension (PLANNING); sound = autoplay primer + optional socket-driven chime. Backend ask: YES (both). Planning-skip: NO (hotspots + FE/backend). Retroactive/duplicate: pop-out = new facet of BUG-701/BUG-082; sound = new, related BUG-600/BUG-453. Next: owner live-order capture (offered) to lock backend echo + dominant sound factor. Report at `/app/memory/INV-POPOUT-SOUND-2026-11-22_INVESTIGATION_REPORT.md`.
