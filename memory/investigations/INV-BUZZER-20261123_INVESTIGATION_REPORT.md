@@ -9,7 +9,50 @@
 
 ---
 
-## 1. Summary
+## 0. UPDATE 2026-11-23 (round 2) — new owner evidence refines the primary root cause
+
+Owner clarified the exact trigger + supplied two console screenshots:
+*"log in → rings; **reload the page → never rings again until I relogin**; a few times on relogin it still doesn't ring / no FCM payload."*
+
+**Screenshot 1 overturns the earlier emphasis.** On the reloaded page the FCM foreground payload
+**did arrive** and `soundManager.play('forty_five_sec_buzzer')` **was called**
+(`[Notification] Playing sound: forty_five_sec_buzzer`, NotificationContext.jsx:190), followed by a
+red `forty_five_sec_buzzer.wav` error — the `audio.play()` was **blocked/errored**, not "played".
+
+### Revised PRIMARY root cause (reload scenario) — Browser autoplay activation lifecycle (FE_BUG, HIGH)
+The buzzer only becomes audible after a **user gesture** gives the document *sticky activation*.
+The reliable gesture is the **LOG IN button click** — it activates the SPA document, so every later
+`audio.play()` is allowed for that document's lifetime (survives in-app navigation).
+A **hard reload creates a fresh document with no activation and no gesture**; FCM messages still
+arrive and `soundManager.play()` still runs, but the browser **rejects `audio.play()`** → silence.
+Confirmed in code: **nothing re-establishes the unlock** — `soundManager.unlock()` is wired to the
+*single* "Enable Audio" button in Settings; there is **no auto-unlock on first interaction** and
+**no persistent "audio is muted — tap to enable" prompt**. `isUnlocked` is in-memory and resets to
+`false` on every load. So after a reload the POS stays silent until the user relogs in (new LOG IN
+click) or manually taps Settings → Enable Audio. This exactly matches "never rings until I relogin".
+
+**Status of earlier findings:**
+- Finding A (socket path never rings) — still TRUE and still relevant for any socket-only moment,
+  but it is **not** the cause of the reload scenario (FCM *was* received). Demoted to secondary.
+- "few cases on relogin: no ring / no FCM payload" — genuinely intermittent FCM **delivery** issue
+  (foreground `onMessage` doesn't fire when the tab is backgrounded / the service worker claims the
+  message, or a token-refresh race at login pushes to a stale token). Secondary, separate from autoplay.
+- Finding B (`__cf_bm` cross-site cookie flood) — unchanged; still cosmetic/CONFIG.
+
+### Revised recommendation priority (owner decision → PLANNING; still HIGH-risk, full gate)
+1. **Re-establish audio unlock after load without requiring relogin** — e.g. call `soundManager.unlock()`
+   on the first user gesture after any load (one-time document-level `pointerdown`/`click`), and/or show a
+   persistent "🔇 Sound is off — tap to enable" banner whenever `audio.play()` is blocked. This is the fix
+   that addresses the owner's exact complaint.
+2. Make the socket path ring too (old Finding A) — robustness, so a connected POS buzzes even if FCM is absent.
+3. Harden FCM token lifecycle (re-request/verify on session restore, not only at login) — for the
+   intermittent "no payload on relogin" case.
+
+Evidence: `/app/memory/evidence/INV-BUZZER-20261123/probes_round2.md`.
+
+---
+
+## 1. Summary (original — round 1)
 
 Root cause is **two independent problems**, not one:
 
