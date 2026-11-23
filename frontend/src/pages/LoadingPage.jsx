@@ -7,6 +7,7 @@ import { API_LOADING_ORDER, LOADING_STATES, PAGINATION } from "../api/constants"
 import { useAuth, useRestaurant, useMenu, useTables, useSettings, useOrders, useStations } from "../contexts";
 import * as profileService from "../api/services/profileService";
 import { setCrmRestaurantId } from "../api/crmAxios";
+import { requestFCMToken } from "../config/firebase"; // CR-562
 import * as categoryService from "../api/services/categoryService";
 import * as productService from "../api/services/productService";
 import { getPopularFoods } from '../api/services/menuManagementService'; // BUG-340
@@ -362,8 +363,27 @@ const LoadingPage = () => {
     const t0 = Date.now();
     updateStatus('profile', LOADING_STATES.LOADING, null, 0, 1, { startedAt: t0 });
     try {
-      data.profile = await profileService.getProfile();
+      // CR-562: refresh the backend's stored FCM token on every boot/reload (no
+      // relogin). Only when permission is already granted (no boot-time prompt);
+      // time-boxed (3s) so a slow getToken never delays the Tier-1 boot barrier;
+      // any failure is non-blocking. Backend upserts the token on this GET.
+      let currentFcmToken = null;
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        try {
+          const r = await Promise.race([
+            requestFCMToken(),
+            new Promise((res) => setTimeout(() => res(null), 3000)),
+          ]);
+          currentFcmToken = r?.token || null;
+        } catch { /* non-blocking — proceed without the param */ }
+      }
+      data.profile = await profileService.getProfile(currentFcmToken);
       if (ctrl.aborted) return;
+      // CR-562: drift diagnostics — did the backend hold a stale token?
+      const storedFcmToken = data.profile.fcmToken;
+      if (currentFcmToken && storedFcmToken && currentFcmToken !== storedFcmToken) {
+        console.warn('[CR-562] FCM token drift — backend had a stale token; refreshed on this profile GET');
+      }
       
       // Debug: Log permissions for analysis
       console.log('[LoadingPage] User Profile:', {

@@ -78,6 +78,10 @@ export const fromAPI = {
     // fromAPI.restaurant uses root array (includes 'partial') over restaurants[0].payment_types.
     restaurant: fromAPI.restaurant(api.restaurants?.[0], api.print_agent, api.restaurant_discount_type, api.payment_types, api.vat_info), // BUG-683: pass top-level vat_info
     permissions: api.role || [],
+    // CR-562: backend echoes the stored FCM device token at the TOP LEVEL as
+    // `fcm_token`, with `firebase_token` as a legacy alias. Read either. Used
+    // ONLY for drift/diagnostics on boot — no dashboard consumer. Null when none.
+    fcmToken: api.fcm_token ?? api.firebase_token ?? null,
   }),
 
   /**

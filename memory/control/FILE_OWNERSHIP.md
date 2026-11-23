@@ -1,3 +1,14 @@
+<!-- CR-562 IMPL 2026-11-23 — FCM token refresh via profile GET — marker `// CR-562` -->
+| File | Edits | Item |
+|---|---|---|
+| `src/api/services/profileService.js` | `getProfile(fcmToken=null)` attaches `{ params: { fcm_token } }` only when a token is present; omitted → backend no-op. Other callers (StationMappingTab:77, RestaurantSettingsPage:304) pass nothing → unchanged. | CR-562 IMPL 2026-11-23 |
+| `src/api/transforms/profileTransform.js` | `fromAPI.profileResponse` +`fcmToken: api.fcm_token ?? api.firebase_token ?? null` (L81, after `permissions`). Diagnostics only — no dashboard consumer. | CR-562 IMPL 2026-11-23 |
+| `src/pages/LoadingPage.jsx` | L10 import `requestFCMToken`; `loadProfile` gets token on boot **gated on `Notification.permission==='granted'`** (no prompt) with 3s `Promise.race` cap (non-blocking), passes to `getProfile`, drift `console.warn`. No other loadProfile line changed. | CR-562 IMPL 2026-11-23 |
+| `src/api/transforms/__tests__/profileTransform.cr562.test.js` | NEW — 4 unit tests (fcm_token / firebase_token alias / precedence / null). 4/4 PASS. | CR-562 IMPL 2026-11-23 |
+
+NOT touched: `config/firebase.js` (reuse `requestFCMToken`) · `api/axios.js` · `api/constants.js` (PROFILE path) · BUG-747 files (`soundManager.js`/`NotificationContext.jsx`/`App.js`) · any dashboard/order/socket/auth file.
+
+
 <!-- CR-527 (capture phase) IMPL 2026-11-21 — FILE OWNERSHIP -->
 | File | Edits | Item |
 |---|---|---|
