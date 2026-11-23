@@ -52,6 +52,38 @@ Evidence: `/app/memory/evidence/INV-BUZZER-20261123/probes_round2.md`.
 
 ---
 
+## 0b. SCOPING (round 3) — "ring on socket" + aggregator ringer + sound-off on accept/reject
+
+### Part 1 — Ring on socket order arrival  → MEDIUM, HIGH risk
+Socket order entry points that would need a ring (all in `api/socket/socketHandlers.js`):
+`handleNewOrder` (L156), `handleScanNewOrder` (L545, the green YTC/web popup), `handleAggregatorNewOrder` (L919). None ring today.
+It is **not** a 3-line change because the "what sound + should it ring" logic lives in
+`NotificationContext.processNotification`, not in the handlers:
+- sound resolution = `data.sound` → `inferSoundFromContent` → tone overrides (`mapConfirmOrderTone`/`mapAggregatorOrderTone` read from profile via `getRestaurantRef()`),
+- **FCM↔socket dedupe**: screenshot 1 proves FCM foreground DOES arrive for the same order, so ringing on socket too would **double-ring** unless both paths share one dedup chokepoint (today's BUG-034 dedup lives only in the FCM path),
+- per-order mute (`soundManager.isOrderMuted`) + Sidebar Silent Mode gating.
+Cleanest design: extract a single `ringForOrder({orderId,type,source})` chokepoint (sound resolve + dedup + mute + enabled) and route BOTH NotificationContext and the 3 socket handlers through it.
+Surface: `socketHandlers.js` (3 spots) + 1 shared helper + re-route `NotificationContext` + `soundManager` dedup registry. Touches the 2 hottest files → full Gate 2–3 + regression. NOT planning-skip eligible.
+Note: this does NOT fix the reload-autoplay bug — a socket ring is blocked by autoplay after reload exactly like FCM.
+
+### Part 2 — Aggregator ringer  → included in Part 1, with care
+Aggregator rings today ONLY via FCM with its own tone (`mapAggregatorOrderTone`: default→`new_order`, buzzer→`five_sec_buzzer`). `handleAggregatorNewOrder` has no ring. If Part 1's shared helper applies the aggregator tone, this is covered — but must ring only on a genuine NEW unconfirmed aggregator order, NOT on `handleAggregatorOrderUpdate` / auto-accept (CR-109) / terminal auto-reject (L953-973).
+
+### Part 3 — Sound OFF on Accept & Reject  → SMALL, LOW-MED risk (confirmed gap)
+Today ONLY **Snooze** silences audio: `ScanOrderPopOut.handleSnoozeClick` → `soundManager.stop()` and `DashboardPage.toggleSnooze` → `soundManager.toggleOrderMute`.
+**Accept and Reject do NOT stop sound** — confirmed:
+- `DashboardPage`: only soundManager calls are the import + `toggleSnooze` (L1312). `handleConfirmOrder` (L1365, accept) and `handleCancelOrderFromCard` (L1696, reject) never stop/mute.
+- `ScanOrderPopOut.handleAcceptClick` (L288) / `handleRejectClick` (L313): no stop.
+- `AggregatorOrderPopOut.handleAccept` (L116) / `handleReject` (L140): no soundManager import at all.
+Consequence: with `forty_five_sec_buzzer.wav` (~1.9 MB / long clip) the buzzer keeps blaring after the staff accepts/rejects. Fix = add `soundManager.stop()` + `soundManager.muteOrder(orderId)` on accept & reject in both popups (mute also blocks a late FCM/socket echo re-ringing the handled order). ~4 edit spots, localized.
+
+### Recommended sequencing
+1. Autoplay re-unlock (INV primary) — fixes the actual "silent after reload" complaint; independent.
+2. Part 3 (stop on accept/reject) — small, high user value, can ship first.
+3. Part 1+2 (socket ring with shared dedup) — the big one; design the chokepoint so accept/reject mute wins over both FCM and socket.
+
+---
+
 ## 1. Summary (original — round 1)
 
 Root cause is **two independent problems**, not one:
