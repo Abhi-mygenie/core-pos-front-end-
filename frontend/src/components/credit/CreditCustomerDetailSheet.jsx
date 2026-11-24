@@ -609,7 +609,14 @@ export default function CreditCustomerDetailSheet({
                         ? Math.max(0, (c.amount || 0) - (cov.coveredAmount || 0))
                         : 0;
                     const key = dinerKeyOf(c);
-                    const cur = dinerMap.get(key) || { key, label: dinerLabelOf(c), count: 0, open: 0, noName: !c.dinerName };
+                    const cur = dinerMap.get(key) || {
+                      key,
+                      label: dinerLabelOf(c),
+                      mobile: c.dinerMobile || '',
+                      count: 0,
+                      open: 0,
+                      noName: !c.dinerName,
+                    };
                     cur.count += 1;
                     cur.open += openAmt;
                     dinerMap.set(key, cur);
@@ -652,13 +659,14 @@ export default function CreditCustomerDetailSheet({
                                   style={dinerFilter === d.key
                                     ? { background: '#1A1A1A', color: '#fff', borderColor: '#1A1A1A' }
                                     : { color: COLORS.darkText, borderColor: COLORS.borderGray }}
+                                  title={d.mobile ? `${d.label} · ${d.mobile}` : d.label}
                                 >
-                                  {d.label} ({d.count})
+                                  {d.mobile ? `${d.label} · ${d.mobile}` : d.label} ({d.count})
                                 </button>
                               ))}
                             </div>
                           ) : (
-                            <Popover open={dinerMenuOpen} onOpenChange={setDinerMenuOpen}>
+                            <Popover modal={false} open={dinerMenuOpen} onOpenChange={setDinerMenuOpen}>
                               <PopoverTrigger asChild>
                                 <button
                                   type="button"
@@ -667,14 +675,24 @@ export default function CreditCustomerDetailSheet({
                                   style={{ color: COLORS.darkText, borderColor: COLORS.borderGray }}
                                 >
                                   Diner:{' '}
-                                  <b>{activeDiner ? activeDiner.label : `All (${filteredCredits.length} orders · ${distinctDinerCount} diners)`}</b>
+                                  <b>{activeDiner
+                                    ? (activeDiner.mobile ? `${activeDiner.label} · ${activeDiner.mobile}` : activeDiner.label)
+                                    : `All (${filteredCredits.length} orders · ${distinctDinerCount} diners)`}</b>
                                   <ChevronDown className="w-3 h-3" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="p-0 w-[300px]" align="start">
+                              <PopoverContent
+                                className="p-0 w-[300px]"
+                                align="start"
+                                onWheel={(e) => e.stopPropagation()}
+                                onTouchMove={(e) => e.stopPropagation()}
+                              >
                                 <Command>
                                   <CommandInput placeholder="Search diner…" data-testid="credit-diner-search" />
-                                  <CommandList>
+                                  <CommandList
+                                    onWheel={(e) => e.stopPropagation()}
+                                    onTouchMove={(e) => e.stopPropagation()}
+                                  >
                                     <CommandEmpty>No diner found.</CommandEmpty>
                                     <CommandItem value="__all__" onSelect={() => { setDinerFilter('ALL'); setDinerMenuOpen(false); }}>
                                       <span className="flex-1">All</span>
@@ -683,10 +701,15 @@ export default function CreditCustomerDetailSheet({
                                     {diners.map((d) => (
                                       <CommandItem
                                         key={d.key}
-                                        value={`${d.label} ${d.key}`}
+                                        value={`${d.label} ${d.mobile || ''} ${d.key}`}
                                         onSelect={() => { setDinerFilter(d.key); setDinerMenuOpen(false); }}
                                       >
-                                        <span className="flex-1 truncate" title={d.label}>{d.label}</span>
+                                        <span className="flex-1 min-w-0 pr-2">
+                                          <span className="block truncate" title={d.label}>{d.label}</span>
+                                          {d.mobile ? (
+                                            <span className="block truncate text-xs text-zinc-400" title={d.mobile}>{d.mobile}</span>
+                                          ) : null}
+                                        </span>
                                         <span className="text-xs text-zinc-400 whitespace-nowrap">{d.count} · {formatINR(d.open)}</span>
                                       </CommandItem>
                                     ))}
@@ -697,7 +720,7 @@ export default function CreditCustomerDetailSheet({
                           )}
                           {activeDiner && (
                             <div className="mt-1.5 text-xs" data-testid="credit-diner-active-summary" style={{ color: COLORS.grayText }}>
-                              {activeDiner.label}: {activeDiner.count} orders · {formatINR(activeDiner.open)} open
+                              {activeDiner.label}{activeDiner.mobile ? ` · ${activeDiner.mobile}` : ''}: {activeDiner.count} orders · {formatINR(activeDiner.open)} open
                             </div>
                           )}
                         </div>

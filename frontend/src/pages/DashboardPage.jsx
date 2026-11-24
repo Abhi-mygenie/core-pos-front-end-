@@ -198,7 +198,7 @@ const DashboardPage = () => {
   const { getProductById } = useMenu(); // CR-545: needed for KOT station resolution
   const {
     dineInOrders, takeAwayOrders, deliveryOrders, walkInOrders,
-    orders, addOrder,
+    orders,
     orderItemsByTableId, getOrderByTableId, getOrdersByTableId, removeOrder, waitForOrderRemoval,
     isOrderEngaged, getOrderById,
   } = useOrders();
@@ -213,6 +213,8 @@ const DashboardPage = () => {
   // nothing — the only visible side effect is the existing ScanOrderPopOut
   // picking up newly-discovered Web/Scan YTC orders.
   useOrderPollingReconciliation();
+
+  // YTC FCM hydrate lives in YtcFcmHydrator (AppProviders) so /loading does not drop events.
 
   // BUG-599: Aggregator orders now loaded during boot (LoadingPage).
   // Socket events (aggregator_order_69) handle real-time updates post-boot.
@@ -1309,7 +1311,9 @@ const DashboardPage = () => {
 
   // --- Handlers ---
   const toggleSnooze = (orderId) => {
-    soundManager.toggleOrderMute(String(orderId)); // BUG-453 Fix B: audio mute follows the visual snooze toggle (OD-453-03)
+    // Instance-only mute: stop the current ring only. Do NOT toggleOrderMute —
+    // a later FCM for the same order (e.g. item edit) must be able to ring again.
+    try { soundManager.stop(); } catch { /* ignore */ }
     setSnoozedOrders(prev => {
       const newSet = new Set(prev);
       if (newSet.has(orderId)) {

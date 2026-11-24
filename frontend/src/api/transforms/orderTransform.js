@@ -1411,14 +1411,22 @@ export const toAPI = {
       restaurant_id:              restaurantId,
       table_id:                   String(table?.tableId || 0),
       order_type:                 mapOrderTypeToAPI(orderType),
-      // BUG-672 Phase 2: fallback to tabContact when customer not linked (prepaid TAB)
-      cust_name:                  customer?.name || (isTab ? tabContact?.name : '') || '',
-      cust_mobile:                customer?.phone || (isTab ? tabContact?.phone : '') || '',
-      cust_country_code:          customer?.countryCode || (isTab ? tabContact?.countryCode : '') || '+91', // CR-479
+      // TAB: order/CRM customer is the tab holder (not the outer diner). Diner stays in diner_*.
+      cust_name:                  isTab
+        ? (tabContact?.name || customer?.name || '')
+        : (customer?.name || ''),
+      cust_mobile:                isTab
+        ? (tabContact?.phone || customer?.phone || '')
+        : (customer?.phone || ''),
+      cust_country_code:          isTab
+        ? (tabContact?.countryCode || customer?.countryCode || '+91')
+        : (customer?.countryCode || '+91'), // CR-479
       cust_email:                 customer?.email || '',
       cust_dob:                   customer?.dob || '',
       cust_anniversary:           customer?.anniversary || '',
-      cust_membership_id:         customer?.id || (isTab ? tabContact?.crmId : '') || '',
+      cust_membership_id:         isTab
+        ? (tabContact?.crmId || customer?.id || '')
+        : (customer?.id || ''),
       order_note:                 orderNotes.map(n => n.label).join(', '),
       payment_method:             splitPayments?.length > 0 ? 'partial' : (isTab ? 'TAB' : method), // BUG-672: credit→TAB
       // BUG-058 (Wave 7): PayLater in prepaid path must be treated as postpaid.
@@ -1790,10 +1798,19 @@ export const toAPI = {
       usage_id:                     '',
       // BUG-280: CRM customer identity fields (mirrors placeOrder L1000–1005 + updateOrder L1131–1133)
       // NOTE: cust_email intentionally omitted — legacy '' preserved per owner OD-BUG280-1.
-      cust_name:          customer?.name  || '',
-      cust_mobile:        customer?.phone || '',
-      cust_country_code:  customer?.countryCode || '+91', // CR-479
-      cust_membership_id: customer?.id    || '',
+      // TAB: cust_* = tab holder (CRM/Daily Report customer); diner_* = who ate.
+      cust_name:          isTab
+        ? (tabContact?.name || customer?.name || '')
+        : (customer?.name || ''),
+      cust_mobile:        isTab
+        ? (tabContact?.phone || customer?.phone || '')
+        : (customer?.phone || ''),
+      cust_country_code:  isTab
+        ? (tabContact?.countryCode || customer?.countryCode || '+91')
+        : (customer?.countryCode || '+91'), // CR-479
+      cust_membership_id: isTab
+        ? (tabContact?.crmId || customer?.id || '')
+        : (customer?.id || ''),
       // TAB-specific fields (BUG-252: customer info for credit tracking)
       name:                         tabContact?.name  || '',
       mobile:                       tabContact?.phone || '',

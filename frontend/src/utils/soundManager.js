@@ -27,7 +27,7 @@ class SoundManager {
     this.isEnabled = true;
     this.isUnlocked = false;      // diagnostics: has audio playback been unlocked by a user gesture?
     this.lastResults = {};        // diagnostics: { [soundKey]: { ok, error, ts } }
-    this.mutedOrders = new Set(); // BUG-453 Fix B: per-order manual mute (OD-453-03)
+    this.mutedOrders = new Set(); // BUG-453 helpers retained; notification path no longer suppresses by orderId
     this.onBlocked = null;        // BUG-747: optional observer invoked when a ring is blocked by autoplay policy
   }
 
@@ -146,7 +146,8 @@ class SoundManager {
     }
   }
 
-  // BUG-453 Fix B — per-order mute registry (OD-453-03/04). Keys are String(orderId).
+  // BUG-453 Fix B — per-order mute registry helpers (Set). Notification pipeline no longer
+  // gates on isOrderMuted; Mute/snooze only calls stop() so later FCM (edits) can ring.
   muteOrder(id) { this.mutedOrders.add(String(id)); }
   unmuteOrder(id) { this.mutedOrders.delete(String(id)); }
   toggleOrderMute(id) {

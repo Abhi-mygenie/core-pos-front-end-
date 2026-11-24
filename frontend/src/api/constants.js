@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   
   // Profile
   PROFILE: '/api/v1/vendoremployee/profile',                                   // Owner override 2026-05-08: switched from v2 vendor-profile/profile → v1 profile (different path; new schema places `print_agent` at TOP LEVEL of response, not in restaurants[0])
+  DEVICE_TOKEN: '/api/v1/vendoremployee/device-token', // BUG-749: dedicated FCM register (boot/reload)
   
   // Menu
   CATEGORIES: '/api/v1/vendoremployee/get-categories',

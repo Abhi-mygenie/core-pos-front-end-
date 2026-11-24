@@ -267,27 +267,49 @@ const ScanOrderPopOut = ({
     }
   }, [queue.length, currentIndex]);
 
+  // Stop long confirm buzzers (e.g. forty_five_sec_buzzer) on staff action.
+  const stopBuzzer = useCallback(() => {
+    try {
+      soundManager.stop();
+    } catch (e) {
+      console.warn('[ScanOrderPopOut] soundManager.stop() failed:', e?.message);
+    }
+  }, []);
+
   const handleSnoozeClick = useCallback(
     (orderId) => {
       // Stop the in-progress chime (CR SNOOZE_SOUND_STOP_AND_DURATION, Jan-2026).
       // soundManager.stop() is idempotent and a no-op when nothing is playing.
-      try {
-        soundManager.stop();
-      } catch (e) {
-        console.warn('[Snooze] soundManager.stop() failed:', e?.message);
-      }
+      stopBuzzer();
       // Reuse existing dashboard snooze handler (dims card on dashboard).
       if (typeof onToggleSnooze === 'function') {
         onToggleSnooze(String(orderId));
       }
       // Popup stays open — owner directive Wave 6, 2026-05-17.
     },
-    [onToggleSnooze]
+    [onToggleSnooze, stopBuzzer]
+  );
+
+  const handleCancelItemClick = useCallback(
+    (order, item) => {
+      stopBuzzer();
+      if (typeof onCancelItem === 'function') onCancelItem(order, item);
+    },
+    [onCancelItem, stopBuzzer]
+  );
+
+  const handleRejectNewItemsClick = useCallback(
+    (order) => {
+      stopBuzzer();
+      if (typeof onRejectNewItems === 'function') onRejectNewItems(order);
+    },
+    [onRejectNewItems, stopBuzzer]
   );
 
   const handleAcceptClick = useCallback(
     async (order) => {
       if (!order || isAccepting) return;
+      stopBuzzer();
       setIsAccepting(true);
       try {
         const entry = buildTableEntryFromOrder(order);
@@ -307,17 +329,18 @@ const ScanOrderPopOut = ({
       // If socket is slow, reset after 8s safety cap so buttons don't stay locked.
       setTimeout(() => setIsAccepting(false), 8000);
     },
-    [onAccept, isAccepting, pendingPrices]
+    [onAccept, isAccepting, pendingPrices, stopBuzzer]
   );
 
   const handleRejectClick = useCallback(
     (order) => {
       if (!order) return;
+      stopBuzzer();
       // handleCancelOrderFromCard accepts a raw order object — see
       // DashboardPage.jsx:1427. Pass the order through unchanged.
       if (typeof onReject === 'function') onReject(order);
     },
-    [onReject]
+    [onReject, stopBuzzer]
   );
 
   const handleViewClick = useCallback(
@@ -584,7 +607,7 @@ const ScanOrderPopOut = ({
                           isSelected={selectedItemIds.has(it.id)}
                           onToggleKot={toggleKotItem}
                           showCancel={!!onCancelItem}
-                          onCancel={(item) => onCancelItem(activeOrder, item)}
+                          onCancel={(item) => handleCancelItemClick(activeOrder, item)}
                           onPriceChange={handlePriceChange}
                         />
                       ))}
@@ -667,7 +690,7 @@ const ScanOrderPopOut = ({
                       isSelected={selectedItemIds.has(it.id)}
                       onToggleKot={toggleKotItem}
                       showCancel={!!onCancelItem}
-                      onCancel={(item) => onCancelItem(activeOrder, item)}
+                      onCancel={(item) => handleCancelItemClick(activeOrder, item)}
                       onPriceChange={handlePriceChange}
                     />
                   ))}
@@ -761,7 +784,7 @@ const ScanOrderPopOut = ({
           <button
             type="button"
             data-testid={`popout-reject-btn-${idStr}`}
-            onClick={() => isEditMode ? onRejectNewItems?.(activeOrder) : handleRejectClick(activeOrder)}
+            onClick={() => isEditMode ? handleRejectNewItemsClick(activeOrder) : handleRejectClick(activeOrder)}
             disabled={isAccepting}
             className="min-h-[44px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-semibold bg-white disabled:opacity-40 disabled:cursor-not-allowed"
             style={{ borderColor: COLORS.errorText, color: COLORS.errorText }}

@@ -15,7 +15,8 @@ import { API_ENDPOINTS } from "../../api/constants";
 import { toAPI as tableToAPI } from "../../api/transforms/tableTransform";
 import { toAPI as orderToAPI, customItemFromAPI, fromAPI as orderFromAPI, calculateSelectedVariantsPrice } from "../../api/transforms/orderTransform";
 import { applyGrandTotalRoundOff } from '../../utils/roundOffUtils'; // BUG-684
-import { fetchSingleOrderForSocket, printOrder, updateFoodItemPrice } from "../../api/services/orderService"; // CR-561
+import { fetchSingleOrderForSocket, printOrder, updateFoodItemPrice, confirmOrder, updatePrintStatus } from "../../api/services/orderService"; // CR-561 + CR-552 unstick
+import { selectAgentsForKot, selectAgentsForBill, cartStationsToSet } from "../../api/transforms/printerAgentSelector"; // CR-559
 // CR-008 #4 Phase A / Bucket D1 (May-2026): post-Collect-Bill stay-vs-redirect
 // preference. Read site for this flag is the success branch of
 // onPaymentComplete (Scenario 1 — collect bill on existing order, see line
@@ -64,7 +65,7 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
   const { categories, products, popularProducts, activeMenuProducts, activeMenuType, availableMenuTypes } = useMenu(); // BUG-340: +popularProducts from boot // CR-376: +activeMenuProducts, +activeMenuType // BUG-462: +availableMenuTypes
   const { orders, addOrder, refreshOrders, removeOrder, waitForOrderRemoval, waitForOrderEngaged, waitForOrderReady, getOrderByTableId, getOrderById } = useOrders();
   const { getItemCancellationReasons, getOrderCancellationReasons } = useSettings();
-  const { restaurant, features, cancellation, settings, printerAgents } = useRestaurant();
+  const { restaurant, features, cancellation, settings, printerAgents, defaultOrderStatus } = useRestaurant();
   const { user, hasPermission, permissions } = useAuth();
   const { updateTableStatus, setTableEngaged, waitForTableEngaged, isTableEngaged } = useTables();
   const { toast } = useToast();
@@ -1385,6 +1386,42 @@ const OrderEntry = ({ table, onClose, orderData, orderType = "delivery", onOrder
         await engagePromise;
         if (apiFailed) return; // API failed — stay on screen, toast shown
         console.log('[UpdateOrder] Socket engaged — redirecting to dashboard');
+
+        // CR-552: Edit-from-banner → Update Order does not clear food_status=7.
+        // Accept is what calls confirmOrder; without it ScanOrderPopOut stays stuck.
+        // Mirror DashboardPage.handleConfirmOrder when Not-Confirm lines remain.
+        try {
+          const snap = getOrderById(Number(placedOrderId)) || orderData;
+          const items = Array.isArray(snap?.items) ? snap.items : [];
+          const hasNotConfirm = !!snap?.isWebOrder && items.some(
+            (it) => it?.isNotConfirmed && it?.status !== 'cancelled'
+          );
+          if (hasNotConfirm) {
+            let printerAgent = [];
+            if (settings?.autoKot && settings?.scanOrderAutoPrint) {
+              const confirmItems = items.filter((it) => it?.isNotConfirmed && it?.status !== 'cancelled');
+              const kotAgents = selectAgentsForKot(printerAgents || [], cartStationsToSet(confirmItems));
+              printerAgent = [...kotAgents, ...selectAgentsForBill(printerAgents || [])];
+            }
+            await confirmOrder(
+              Number(placedOrderId),
+              permissions?.[0] || 'Manager',
+              defaultOrderStatus,
+              printerAgent
+            );
+            if (printerAgent.length > 0) {
+              await updatePrintStatus(Number(placedOrderId), { kot_print: 'Yes', bill_print: 'No' });
+            }
+            console.log('[UpdateOrder] Confirmed remaining web Not-Confirm items for order', placedOrderId);
+          }
+        } catch (confirmErr) {
+          console.error('[UpdateOrder] confirm after web edit failed:', confirmErr?.message || confirmErr);
+          toast({
+            title: 'Order updated',
+            description: 'Could not auto-confirm web items — use Accept on the banner if it reappears.',
+            variant: 'destructive',
+          });
+        }
       } else {
         // BUG-210: Pre-flight check — prevent placing on already-occupied/engaged table
         const preCheckTableId = Number(table?.tableId);

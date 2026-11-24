@@ -266,7 +266,7 @@ const Sidebar = ({
   const { clearTables } = useTables();
   const { clearSettings } = useSettings();
   const { clearOrders } = useOrders();
-  const { soundEnabled, setSoundEnabled } = useNotifications();
+  const { soundEnabled, setSoundEnabled, audioUnlocked, unlockAudioNow } = useNotifications();
 
   const [expandedSections, setExpandedSections] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -811,27 +811,46 @@ const Sidebar = ({
         className="p-4 flex-shrink-0"
         style={{ borderTop: `1px solid ${COLORS.borderGray}` }}
       >
-        {/* Silent Mode Toggle */}
+        {/* Ringer / Silent / Tap-to-enable (autoplay unlock) — persistent sidebar control */}
         <button
+          type="button"
           data-testid="sidebar-silent-toggle"
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors ${
-            isExpanded ? "justify-start" : "justify-center"
-          }`}
-          style={{ 
-            backgroundColor: !soundEnabled ? `${COLORS.grayText}15` : `${COLORS.primaryGreen}15`,
-            color: !soundEnabled ? COLORS.grayText : COLORS.primaryGreen,
+          onClick={() => {
+            if (soundEnabled && !audioUnlocked) {
+              unlockAudioNow();
+              return;
+            }
+            setSoundEnabled(!soundEnabled);
           }}
-          title={!isExpanded ? (!soundEnabled ? "Silent Mode" : "Ringer On") : undefined}
+          className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors ${
+            isExpanded ? 'justify-start' : 'justify-center'
+          } ${soundEnabled && !audioUnlocked ? 'animate-pulse' : ''}`}
+          style={{
+            backgroundColor: !soundEnabled
+              ? `${COLORS.grayText}15`
+              : !audioUnlocked
+                ? COLORS.errorBg
+                : `${COLORS.primaryGreen}15`,
+            color: !soundEnabled
+              ? COLORS.grayText
+              : !audioUnlocked
+                ? COLORS.errorText
+                : COLORS.primaryGreen,
+          }}
+          title={
+            !isExpanded
+              ? (!soundEnabled ? 'Silent Mode' : !audioUnlocked ? 'Tap to enable' : 'Ringer On')
+              : undefined
+          }
         >
-          {!soundEnabled ? (
+          {!soundEnabled || !audioUnlocked ? (
             <BellOff className="w-5 h-5 flex-shrink-0" />
           ) : (
             <Bell className="w-5 h-5 flex-shrink-0" />
           )}
           {isExpanded && (
             <span className="text-sm font-medium">
-              {!soundEnabled ? "Silent Mode" : "Ringer On"}
+              {!soundEnabled ? 'Silent Mode' : !audioUnlocked ? 'Tap to enable' : 'Ringer On'}
             </span>
           )}
         </button>
