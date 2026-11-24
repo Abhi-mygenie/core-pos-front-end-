@@ -41852,7 +41852,7 @@
       "status": "GATE_1_INTAKE_COMPLETE",
       "files": "src/pages/LoadingPage.jsx; src/contexts/NotificationContext.jsx; src/api/services/profileService.js; src/components/notifications/SoundUnlockBanner.jsx; config/firebase.js NOT touched",
       "client": "The Goan Kitchen (rid 69)",
-      "assignee": "Abhishek",
+      "assignee": "Abhishek (FE) + Gyan (backend endpoint, OD-749-02)",
       "registered_date": "2026-11-24",
       "source": "Owner-supplied production backend logs (order 1579106/rid69) + code trace",
       "related": [
@@ -41864,14 +41864,14 @@
       "priority": "P0",
       "area": "Notifications / FCM lifecycle (token registration)",
       "open_decisions": [
-        "OD-749-01: severity P0 (rec) vs P1 — owner confirm",
-        "OD-749-02: token-send channel — reuse getProfile(token) upsert (rec) vs new POST /device-token",
-        "OD-749-03: default-permission boot — banner/one-tap register (rec, no auto-prompt) vs auto requestPermission",
-        "OD-749-04: dedupe late-send against localStorage last-sent token (rec yes)",
-        "OD-749-05: also register after login-as-restaurant admin/CS path (rec yes)"
+        "OD-749-01: RESOLVED — P0 (owner-confirmed, cannot defer)",
+        "OD-749-02: RESOLVED — NEW dedicated register-token endpoint (POST /device-token); introduces BACKEND dependency (backend: Gyan), needs BACKEND_BRIEF",
+        "OD-749-03: RESOLVED — one-tap 'Enable alerts' banner on default-permission boot (no auto-prompt)",
+        "OD-749-04: RESOLVED — send token on every reload, NO dedupe (owner override)",
+        "OD-749-05: RESOLVED — YES, also register after login-as-restaurant (admin/CS path)"
       ],
       "description": "After reload, the watched device's FCM token is never registered with the backend: LoadingPage.jsx:371-377 sends getProfile(?fcm_token=) only when permission==='granted' AND requestFCMToken() wins a 3s Promise.race; cold reload exceeds 3s so getProfile(null) is sent and the resolved token (written to localStorage firebase.js:119) is never POSTed; default-permission boots skip registration entirely. Backend logs (order 1579106/rid69) confirm the watched employee 5840 has_firebase_token:false while only 5843 is registered. DISTINCT from CR-562 (which established the drop-on-race mechanism), BUG-747 (autoplay), BUG-748 (messaging-init race). Fix direction: 'process like login' on every authenticated boot + never drop the resolved token (send it, deduped). firebase.js NOT touched.",
-      "next_action": "Gate 2 Impact Analysis (owner to confirm OD-749-01 severity + OD-749-02 token-send channel)."
+      "next_action": "Owner decisions RESOLVED 2026-11-24 (P0; NEW register-token endpoint; banner on default; no dedupe; register on login-as-restaurant). BACKEND-BLOCKED on OD-749-02 (new POST /device-token). Next: BACKEND_BRIEF + Gate 2 Impact Analysis."
     }
   ],
   "meta": {

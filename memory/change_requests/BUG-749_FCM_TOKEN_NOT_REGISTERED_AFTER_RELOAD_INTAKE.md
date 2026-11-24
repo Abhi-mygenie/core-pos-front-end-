@@ -124,6 +124,25 @@ confirmed, backend sends correctly), NOT a permission denial on the registered d
 - **OD-749-05 (admin/CS path):** also run the boot registration after `login-as-restaurant` (employee AUTH_TOKEN
   is set there, not at common-login)? (rec: yes.)
 
+## 7b. Owner Decisions — RESOLVED (2026-11-24)
+
+- **OD-749-01 → P0.** Fix this sprint, cannot defer (owner-confirmed; matches sibling BUG-747).
+- **OD-749-02 → NEW dedicated "register token" endpoint.** Owner chose a dedicated endpoint (e.g.
+  `POST /device-token`) over reusing the profile GET. **Consequence: this introduces a BACKEND dependency** —
+  the token-send channel is now **backend-blocked** until the endpoint ships. Needs a `BACKEND_BRIEF` (backend
+  owner: Gyan); FE wiring: Abhishek. The existing CR-562 profile-GET upsert may serve as an interim path only if
+  owner later allows, but per this decision the FE will target the new endpoint.
+- **OD-749-03 → One-tap "Enable alerts" banner.** On a `default`-permission device, show the banner (reuse
+  BUG-747 `SoundUnlockBanner`); the staff tap drives permission + registration. No auto-prompt on reload.
+- **OD-749-04 → Send the token on every reload (NO dedupe).** Owner override of the recommendation — register
+  the current token on each authenticated boot regardless of whether it changed (simpler; accepts the extra
+  backend call per reload).
+- **OD-749-05 → YES, also register after `login-as-restaurant`.** Head-office / franchise / CS multi-restaurant
+  sessions must also register the device token after the restaurant is picked.
+
+**Routing update:** now split — **FE: Abhishek** (boot bring-up, banner, call the endpoint) · **Backend: Gyan**
+(new register-token endpoint). Item is **partially backend-blocked** (OD-749-02).
+
 ## 8. Handover to Next (→ PLANNING, Gate 2)
 
 Item **BUG-749** registered. Code reality: **PARTIAL**. Duplicate: **DISTINCT**, RELATED to CR-562/BUG-747/BUG-748.
