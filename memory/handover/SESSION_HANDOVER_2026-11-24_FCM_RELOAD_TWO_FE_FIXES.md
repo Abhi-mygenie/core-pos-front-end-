@@ -15,7 +15,7 @@
 5. Floating red `SoundUnlockBanner` only when **Tap-to-enable / autoplay locked** — **not** when staff intentionally chose Silent Mode.
 6. Instance-only Mute: `stop()` only; no orderId suppress of later FCM.
 7. YTC popup after reload: FCM enqueue → optimistic order → fetch enrich (works during `/loading`).
-8. Edit → Update Order on web Not-Confirm: auto `confirmOrder` so ScanOrderPopOut unsticks.
+8. Edit → Update Order on web Not-Confirm: BE `updateOrderCommon` additively promotes `food_status=7` + KOT via existing socket (FE no longer calls `confirmOrder`).
 9. Accept / Reject / item-cancel / Mute: `soundManager.stop()` so long buzzers cut off.
 
 ---
@@ -123,8 +123,12 @@ sequenceDiagram
 ### E. Web-edit banner stuck (food_status 7)
 
 Edit from popup → OrderEntry Update Order used to leave `food_status=7` → popup stuck.  
-**Fix:** after Update Order engage success, if web + Not-Confirm → `confirmOrder` (+ CR-559 print agents when gated).  
-**File:** `components/order-entry/OrderEntry.jsx`
+
+**Fix (additive BE):** `OrderController::updateOrderCommon` — if any `OrderDetail` still has `food_status=7` after cart update, promote to `def_ord_status`, merge those IDs into `newlyAddedItems`, set `print_kot=Yes`, then the existing single `publishOrderToSocket(update-order, Y, …)` prints KOT. No pending 7 → unchanged. Accept (`waiter_dinein_order_status_update`) untouched.  
+
+FE no longer calls `confirmOrder` after Update Order.  
+
+**Files:** `app/Http/Controllers/Api/V2/Vendoremployee/OrderController.php`, `components/order-entry/OrderEntry.jsx`
 
 ---
 
@@ -161,7 +165,7 @@ Edit from popup → OrderEntry Update Order used to leave `food_status=7` → po
 3. Unlock via sidebar or banner → next order rings.  
 4. Sidebar → Silent Mode → order arrives → **no** red banner; stays Silent.  
 5. Mute stops current ring; Accept/cancel stops long buzzer.  
-6. Web-edit Edit → Update Order → ScanOrderPopOut clears (fos 7 confirmed).
+6. Web-edit Edit → Update Order → one PUT; fos=7 promoted on BE; ScanOrderPopOut clears; KOT via same socket when agents present.
 
 ---
 
