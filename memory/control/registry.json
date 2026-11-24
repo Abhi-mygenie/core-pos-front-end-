@@ -41843,18 +41843,47 @@
       "client": "The Goan Kitchen (rid 69)",
       "assignee": "Gyan",
       "notes": "P1 (couples with P0 BUG-747). Risk HIGH (API contract + token). OD-747-04=A. BACKEND DONE (contract confirmed 2026-11-23): GET /profile stays GET; ?fcm_token= upserts vendor_employees.firebase_token (empty=no-op); response returns top-level fcm_token + firebase_token alias; one token/employee last-write-wins. Gate 3 PLAN at plans/CR-562_IMPLEMENTATION_PLAN.md. FE edits: E1 profileService.getProfile(fcmToken) attaches ?fcm_token when present; E2 profileTransform.profileResponse +fcmToken (fcm_token ?? firebase_token ?? null); E3 LoadingPage.loadProfile gets token on boot (gated on Notification.permission==='granted', 3s race, non-blocking) + passes to getProfile + drift warn; E4 NEW profileTransform.cr562.test.js. Verification matrix V1-V6 (V1 automated; V4 E2E needs BUG-747 unlock for audible ring). Conflict CLEAN (file-disjoint from BUG-747). Other getProfile callers (StationMappingTab, RestaurantSettingsPage) backward-compat. Scope lock: firebase.js NOT touched. Next: Gate 4 GO (owner) -> IMPLEMENTATION -> testing_agent. RE-OPENED + IMPLEMENTED 2026-11-23 (OD-748-01=re-open CR-562, Gate 4 GO): added whenMessagingReady promise in config/firebase.js (always settles via .finally, preserves BUG-560) + requestFCMToken/onForegroundMessage await it; NotificationContext async-safe listener re-attach fixes the reload race (ring restored + CR-562 token no longer a no-op). Co-shipped with BUG-747. Plan: plans/CR-562-FU_BUG-747_IMPLEMENTATION_PLAN.md. Unit tests green; browser QA pending authenticated preprod session."
+    },
+    {
+      "type": "BUG",
+      "sprint_key": "nov_cr_batch",
+      "id": "BUG-749",
+      "title": "FCM Device Token Never Registered With Backend After Reload (watched device has_firebase_token:false)",
+      "status": "GATE_1_INTAKE_COMPLETE",
+      "files": "src/pages/LoadingPage.jsx; src/contexts/NotificationContext.jsx; src/api/services/profileService.js; src/components/notifications/SoundUnlockBanner.jsx; config/firebase.js NOT touched",
+      "client": "The Goan Kitchen (rid 69)",
+      "assignee": "Abhishek",
+      "registered_date": "2026-11-24",
+      "source": "Owner-supplied production backend logs (order 1579106/rid69) + code trace",
+      "related": [
+        "CR-562",
+        "BUG-747",
+        "BUG-748"
+      ],
+      "intake_doc": "change_requests/BUG-749_FCM_TOKEN_NOT_REGISTERED_AFTER_RELOAD_INTAKE.md",
+      "priority": "P0",
+      "area": "Notifications / FCM lifecycle (token registration)",
+      "open_decisions": [
+        "OD-749-01: severity P0 (rec) vs P1 — owner confirm",
+        "OD-749-02: token-send channel — reuse getProfile(token) upsert (rec) vs new POST /device-token",
+        "OD-749-03: default-permission boot — banner/one-tap register (rec, no auto-prompt) vs auto requestPermission",
+        "OD-749-04: dedupe late-send against localStorage last-sent token (rec yes)",
+        "OD-749-05: also register after login-as-restaurant admin/CS path (rec yes)"
+      ],
+      "description": "After reload, the watched device's FCM token is never registered with the backend: LoadingPage.jsx:371-377 sends getProfile(?fcm_token=) only when permission==='granted' AND requestFCMToken() wins a 3s Promise.race; cold reload exceeds 3s so getProfile(null) is sent and the resolved token (written to localStorage firebase.js:119) is never POSTed; default-permission boots skip registration entirely. Backend logs (order 1579106/rid69) confirm the watched employee 5840 has_firebase_token:false while only 5843 is registered. DISTINCT from CR-562 (which established the drop-on-race mechanism), BUG-747 (autoplay), BUG-748 (messaging-init race). Fix direction: 'process like login' on every authenticated boot + never drop the resolved token (send it, deduped). firebase.js NOT touched.",
+      "next_action": "Gate 2 Impact Analysis (owner to confirm OD-749-01 severity + OD-749-02 token-send channel)."
     }
   ],
   "meta": {
-    "last_updated": "2026-11-20",
-    "last_action": "PLANNING Gate 3: implementation plans written for BUG-703, BUG-742, BUG-741, CR-561 (two tracks). No app code changed.",
+    "last_updated": "2026-11-24",
+    "last_action": "INTAKE Gate 1: BUG-749 registered (FCM device token never registered with backend after reload; DISTINCT, RELATED to CR-562/BUG-747/BUG-748). No app code changed.",
     "current_gate": "3",
     "last_qa_batch": "CR-528 + CR-546 (Audit Report v3) 2026-11-18",
     "last_qa_date": "2026-11-18",
     "qa_group_c_report": "test_reports/QA_REPORT_GROUP_C_2026_07_31.md",
     "gate_5b_complete": true,
-    "total": 1182,
-    "total_items": 1177,
+    "total": 1183,
+    "total_items": 1178,
     "last_session": "Batch B Gate 2 IA close 2026-11-15 — owner R5 answered, R5 read-only probes (RID 541). Handover at /app/memory/handover/SESSION_HANDOVER_2026_11_15_BATCH_B_GATE2_IA_CLOSED.md",
     "last_note": "Batch B Gate 2 IA + Gate 2.5 CLOSED 2026-11-15. Backend brief DRAFT not sent (owner to decide channel). Next: Gate 3 plans (FE-ready items first; backend-blocked items as PARTIAL/BLOCKED per Batch A pattern).",
     "qa_nov_sprint_report": "memory/test_reports/QA_REPORT_NOV_SPRINT_2026_11_18.md"
