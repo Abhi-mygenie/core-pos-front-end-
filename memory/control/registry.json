@@ -41849,7 +41849,7 @@
       "sprint_key": "nov_cr_batch",
       "id": "BUG-749",
       "title": "FCM Device Token Never Registered With Backend After Reload (watched device has_firebase_token:false)",
-      "status": "GATE_1_INTAKE_COMPLETE",
+      "status": "GATE_2_IA_CLOSED",
       "files": "src/pages/LoadingPage.jsx; src/contexts/NotificationContext.jsx; src/api/services/profileService.js; src/components/notifications/SoundUnlockBanner.jsx; config/firebase.js NOT touched",
       "client": "The Goan Kitchen (rid 69)",
       "assignee": "Abhishek (FE) + Gyan (backend endpoint, OD-749-02)",
@@ -41871,12 +41871,12 @@
         "OD-749-05: RESOLVED — YES, also register after login-as-restaurant (admin/CS path)"
       ],
       "description": "After reload, the watched device's FCM token is never registered with the backend: LoadingPage.jsx:371-377 sends getProfile(?fcm_token=) only when permission==='granted' AND requestFCMToken() wins a 3s Promise.race; cold reload exceeds 3s so getProfile(null) is sent and the resolved token (written to localStorage firebase.js:119) is never POSTed; default-permission boots skip registration entirely. Backend logs (order 1579106/rid69) confirm the watched employee 5840 has_firebase_token:false while only 5843 is registered. DISTINCT from CR-562 (which established the drop-on-race mechanism), BUG-747 (autoplay), BUG-748 (messaging-init race). Fix direction: 'process like login' on every authenticated boot + never drop the resolved token (send it, deduped). firebase.js NOT touched.",
-      "next_action": "Owner decisions RESOLVED 2026-11-24. BACKEND_BRIEF sent: backend_briefs/BACKEND_BRIEF_BUG-749_2026-11-24.md (new POST /device-token, D1-D8). BACKEND-BLOCKED on backend reply. Next (after reply): PLANNING Gate 2 Impact Analysis."
+      "next_action": "GATE_2 Impact Analysis complete 2026-11-24 (impact/BUG-749_IMPACT_ANALYSIS.md). Backend endpoint SHIPPED (POST /device-token). firebase.js NOT touched (OD-AUDIT-02 not triggered). Open: OD-749-06 (POST-only vs keep CR-562 param), OD-749-07 (bring-up home = NotificationContext rec), OD-749-08 (banner), OD-749-09 (BUG-676 coordination). Next: PLANNING Gate 3 Implementation Plan."
     }
   ],
   "meta": {
     "last_updated": "2026-11-24",
-    "last_action": "INTAKE Gate 1: BUG-749 registered (FCM device token never registered with backend after reload; DISTINCT, RELATED to CR-562/BUG-747/BUG-748). No app code changed.",
+    "last_action": "PLANNING Gate 2: BUG-749 Impact Analysis closed (impact/BUG-749_IMPACT_ANALYSIS.md). Backend endpoint shipped; firebase.js NOT touched (OD-AUDIT-02 not triggered). ODs 749-06..09 open for Gate 3. No app code changed.",
     "current_gate": "3",
     "last_qa_batch": "CR-528 + CR-546 (Audit Report v3) 2026-11-18",
     "last_qa_date": "2026-11-18",
