@@ -1,0 +1,18 @@
+{
+  "summary": "Track 1 QA (frontend only, read-only, live preprod account owner@thegoankitchen.com). BUG-703 PASSED: in the dashboard's Table View + Channel layout (both were already active after login: view-toggle title 'Switch to Order View', group-toggle title 'Switch to Status View', channel-columns-layout present), the Delivery column had one accepted Zomato tile (table-card-delivery-72283, source-badge-delivery-72283, 'Test Customer', status 'Ready to Dispatch'). Before the click there was no aggregator-popout in the DOM (count 0). After clicking the tile body, aggregator-popout was present (count 1) with aggregator-view-only-badge ('VIEW ONLY'). It showed Zomato Order #69/000007, OTP 4175, totals ₹110 + ₹5.50 tax = ₹115.50, customer and address, the scheduled time, and 1 item (Mqcha Boi + mappu). It had NO Accept/Reject buttons, only Print KOT / Print Bill / Close. The close button popout-close-view removed the popout. Regression: clicking a normal Available room tile (table-card-9240, a2) still opened the usual Room Check-In screen, unchanged; it was not submitted. Not tested: an aggregator tile with no order (none was on screen). Its no-op behaviour was confirmed by code review only (TableCard L317 passes undefined when table.order is falsy). BUG-742 is deferred to an owner smoke test: it can't be tested in a browser without destructive live actions (creating a custom item, placing an order, printing a KOT). No code was changed. No order was placed, confirmed, cancelled or printed.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "evidence_screenshots": ["/app/memory/test_reports/screenshots/bug703_popout.jpeg", "/app/memory/test_reports/screenshots/bug703_normal.jpeg"],
+  "action_items": ["BUG-742: owner smoke test needed (custom item -> KOT routed to correct station) on the live restaurant."],
+  "critical_code_review_comments": [
+    "Prop threading DashboardPage(L2077) -> ChannelColumnsLayout(L75/L216) -> ChannelColumn(L53/L339) -> TableCard(L59/L317) is correct and additive.",
+    "handleAggregatorView resolves the full order from `orders` by orderId with a fallback to table.order, which is fine. Minor: if the order leaves `orders` (e.g. a socket removal) while the view is open, aggregatorViewOrder keeps the stale object. This is low risk."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (BUG-703 primary + normal-tile regression)"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "After login the dashboard defaults to Table View + Channel layout. The Zomato tile is in the Delivery column (table-card-delivery-72283). Click the customer-name area to avoid the print and 'Ready to Dispatch' buttons. Do NOT click Print KOT/Bill or Update now. BUG-742 is still unverified (owner smoke test)."
+}

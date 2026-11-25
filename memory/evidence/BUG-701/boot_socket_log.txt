@@ -1,0 +1,26 @@
+log: [useSocketEvents] Socket not ready, skipping subscriptions
+log: [useSocketEvents] Socket not ready, skipping subscriptions
+log: [useSocketEvents] Socket not ready, skipping subscriptions
+log: [useSocketEvents] Socket not ready, skipping subscriptions
+log: [Socket][2:32:17 PM][DEBUG] Status changed: disconnected → connecting 
+log: [Socket][2:32:17 PM][INFO] Connecting to https://presocket.mygenie.online 
+log: [Socket][2:32:18 PM][INFO] Connected successfully 
+log: [Socket][2:32:18 PM][DEBUG] Status changed: connecting → connected 
+log: [useSocketEvents] No restaurantId yet, skipping subscriptions
+log: [Socket][2:32:19 PM][INFO] join_restaurant emitted for 69 (attempt 1) 
+log: [useSocketEvents] Subscribing to channels for restaurant 69: new_order_69, update_table_69, order-engage_69, food_update_69, aggregator_order_69
+log: [Socket][2:32:19 PM][DEBUG] Subscribed to: new_order_69 
+log: [Socket][2:32:19 PM][DEBUG] Subscribed to: update_table_69 
+log: [Socket][2:32:19 PM][DEBUG] Subscribed to: order-engage_69 
+log: [Socket][2:32:19 PM][DEBUG] Subscribed to: food_update_69 
+log: [Socket][2:32:19 PM][DEBUG] Subscribed to: aggregator_order_69 
+log: [useSocketEvents] Subscribed to order channel successfully
+log: [useSocketEvents] Subscribed to table channel successfully
+log: [useSocketEvents] Subscribed to order-engage channel successfully
+log: [useSocketEvents] Subscribed to food-update channel successfully
+log: [useSocketEvents] Subscribed to aggregator channel successfully
+log: [Socket][2:32:19 PM][INFO] joined_restaurant ACK received: {"room":"rest_69"} 
+log: [OrderPolling] skip (mount-or-auth): in-flight
+log: [OrderContext] removeOrder: Removing order 1578881
+log: [OrderPolling] ok (mount-or-auth, 569ms): +0/~0/-1 (pending-remove=0, server=0, local=1)
+log: [OrderContext] removeOrder: Removing order 1578881

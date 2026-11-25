@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BATCH-08 — Item Validation: Addons + Variations</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',system-ui,sans-serif; background:#F1F5F9; color:#111827; font-size:13px; }
+.page { padding:24px; max-width:1600px; margin:0 auto; }
+.page-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+.page-sub   { font-size:12px; color:#6B7280; margin-bottom:28px; }
+.section { margin-bottom:44px; }
+.section-label { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#6B7280; margin-bottom:14px; }
+.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.three-grid   { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+.panel { background:#fff; border-radius:12px; border:1px solid #E5E7EB; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.panel-head { padding:10px 16px; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.ph-gray    { background:#F9FAFB; color:#6B7280; border-bottom:1px solid #E5E7EB; }
+.ph-blue    { background:#EFF6FF; color:#1D4ED8; border-bottom:1px solid #BFDBFE; }
+.ph-red     { background:#FEF2F2; color:#B91C1C; border-bottom:1px solid #FECACA; }
+.ph-green   { background:#F0FDF4; color:#15803D; border-bottom:1px solid #BBF7D0; }
+.ph-purple  { background:#FAF5FF; color:#7E22CE; border-bottom:1px solid #E9D5FF; }
+.ph-orange  { background:#FFF7ED; color:#C2410C; border-bottom:1px solid #FED7AA; }
+.badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:600; }
+.badge-orange { background:#FFF7ED; color:#C2410C; border:1px solid #FED7AA; }
+.badge-blue   { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+.badge-red    { background:#FEF2F2; color:#B91C1C; border:1px solid #FECACA; }
+.badge-green  { background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; }
+.badge-purple { background:#FAF5FF; color:#7E22CE; border:1px solid #E9D5FF; }
+.badge-amber  { background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; }
+.badge-gray   { background:#F3F4F6; color:#374151; border:1px solid #D1D5DB; }
+.btn { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:7px; font-size:12px; font-weight:500; cursor:pointer; border:1px solid transparent; }
+.btn-ghost { background:#fff; border-color:#D1D5DB; color:#374151; }
+.btn-red   { background:#EF4444; color:#fff; }
+.ann { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:#F26B33; color:#fff; font-size:9px; font-weight:800; flex-shrink:0; }
+.ann-red { background:#EF4444; }
+.ann-blue { background:#3B82F6; }
+.ann-purple { background:#9333EA; }
+.ann-green { background:#22C55E; }
+/* table */
+.tbl { width:100%; border-collapse:collapse; font-size:12px; }
+.tbl th { background:#F8FAFC; padding:7px 10px; font-weight:600; color:#475569; font-size:11px; border-bottom:2px solid #E5E7EB; text-align:left; white-space:nowrap; }
+.tbl td { padding:7px 10px; border-bottom:1px solid #F1F5F9; vertical-align:middle; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr.sel td { background:#FEF2F2; }
+.chip { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:600; cursor:pointer; }
+.chip-green { background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; }
+.chip-red   { background:#FEF2F2; color:#B91C1C; border:1px solid #FECACA; }
+.chip-blue  { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
+.chip-purple { background:#FAF5FF; color:#7E22CE; border:1px solid #E9D5FF; }
+.chip-amber  { background:#FFFBEB; color:#B45309; border:1px solid #FDE68A; }
+/* expand sub-row */
+.expand-row { background:#F8FAFC; padding:14px 18px; border-bottom:1px solid #E5E7EB; }
+.addon-box { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:7px; font-size:11.5px; border:1px solid; cursor:pointer; user-select:none; }
+.addon-checked { background:#F0FDF4; border-color:#86EFAC; color:#374151; }
+.addon-unchecked { background:#fff; border-color:#E2E8F0; color:#374151; }
+.var-tag { background:#FAF5FF; border:1px solid #E9D5FF; color:#6B21A8; padding:4px 12px; border-radius:12px; font-size:11.5px; }
+/* stock table */
+.stock-tbl th { font-size:10px; }
+.avail-chip { background:#F0FDF4; color:#15803D; border:1px solid #BBF7D0; padding:2px 7px; border-radius:99px; font-size:10px; font-weight:600; }
+.oos-chip   { background:#FEF2F2; color:#B91C1C; border:1px solid #FECACA; padding:2px 7px; border-radius:99px; font-size:10px; font-weight:600; }
+.mini-btn { padding:2px 8px; border-radius:5px; font-size:10px; font-weight:600; border:1px solid; cursor:pointer; }
+.mini-red   { border-color:#FECACA; background:#FEF2F2; color:#B91C1C; }
+.mini-green { border-color:#BBF7D0; background:#F0FDF4; color:#15803D; }
+.mini-gray  { border-color:#D1D5DB; background:#F9FAFB; color:#374151; }
+/* callout */
+.callout { border-radius:8px; padding:10px 14px; font-size:11px; line-height:1.6; }
+.callout-amber  { background:#FFFBEB; border:1px solid #FDE68A; color:#92400E; }
+.callout-green  { background:#F0FDF4; border:1px solid #BBF7D0; color:#15803D; }
+.callout-red    { background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; }
+.callout-blue   { background:#EFF6FF; border:1px solid #BFDBFE; color:#1D4ED8; }
+.callout-purple { background:#FAF5FF; border:1px solid #E9D5FF; color:#7E22CE; }
+/* selection banner */
+.sel-banner { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:#fff; border-top:1px solid #E5E7EB; box-shadow:0 -4px 6px -1px rgba(0,0,0,.08); }
+/* dialog */
+.dialog-wrap { background:#fff; border-radius:12px; padding:20px; border:1px solid #E5E7EB; }
+.dialog-title { font-size:15px; font-weight:700; margin-bottom:8px; }
+.dialog-body  { font-size:12px; color:#4B5563; margin-bottom:14px; line-height:1.6; }
+.dialog-label { font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; }
+.dialog-select { width:100%; padding:6px 10px; border:1px solid #D1D5DB; border-radius:7px; font-size:12px; margin-bottom:14px; }
+/* variation expand */
+.var-group-label { font-size:10px; font-weight:700; color:#7C3AED; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+/* line */
+.rule { border:none; border-top:1px solid #E5E7EB; margin:16px 0; }
+/* food image placeholder */
+.food-img { width:26px; height:26px; border-radius:5px; background:#E5E7EB; display:inline-flex; align-items:center; justify-content:center; font-size:14px; }
+.food-img-lg { width:44px; height:44px; border-radius:8px; background:#F1F5F9; display:inline-flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; border:1px solid #E5E7EB; }
+/* flow arrow */
+.flow { display:flex; align-items:flex-start; gap:12px; }
+.flow-step { background:#fff; border:1px solid #E5E7EB; border-radius:8px; padding:10px 14px; font-size:11px; line-height:1.6; flex:1; }
+.flow-arrow { color:#9CA3AF; font-size:18px; line-height:1; padding-top:12px; flex-shrink:0; }
+@media(max-width:900px){.compare-grid,.three-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-title">BATCH-08 — Addon + Variation Item Validation</div>
+<div class="page-sub">How a food item with <em>both</em> addons and variations is handled across CR-159 (Bulk Delete) and CR-155 (Addon/Variation Stock) · No code edits</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 0 — THE REFERENCE ITEM                        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Reference Item used for validation</div>
+  <div class="panel" style="max-width:680px;">
+    <div class="panel-head ph-gray"><span class="ann">i</span> Item: "Chicken Burger" — has both Addons AND Variations</div>
+    <div style="padding:16px;display:flex;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="food-img-lg">🍔</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;">Chicken Burger</div>
+            <div style="font-size:11px;color:#6B7280;">Non-Veg · Mains · ₹280</div>
+            <div style="font-size:11px;color:#6B7280;">ID: 217622 · Aggregator: Swiggy + Zomato</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;">Variations (embedded in item):</div>
+        <div style="margin-bottom:10px;">
+          <div class="var-group-label">Size</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">
+            <span class="var-tag">Regular · ₹0</span>
+            <span class="var-tag">Large · +₹50</span>
+          </div>
+          <div class="var-group-label">Spice Level</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span class="var-tag">Mild · ₹0</span>
+            <span class="var-tag">Medium · ₹0</span>
+            <span class="var-tag">Hot · ₹0</span>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px;">
+        <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;">Addons linked to this item:</div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+          <div class="addon-box addon-checked"><input type="checkbox" checked readonly style="accent-color:#22c55e;pointer-events:none;" /> Extra Cheese <span style="color:#94a3b8;font-size:11px;">₹30</span></div>
+          <div class="addon-box addon-checked"><input type="checkbox" checked readonly style="accent-color:#22c55e;pointer-events:none;" /> Extra Sauce <span style="color:#94a3b8;font-size:11px;">₹10</span></div>
+          <div class="addon-box addon-unchecked"><input type="checkbox" readonly style="pointer-events:none;" /> Fries Add-on <span style="color:#94a3b8;font-size:11px;">₹60</span></div>
+        </div>
+        <div class="callout callout-amber">
+          <strong>Important distinction:</strong><br/>
+          Addons = separate master entities linked to the food.<br/>
+          Variations = embedded inside the food record itself.<br/>
+          Both travel with the food item in all operations.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — CR-159: BULK DELETE WITH THIS ITEM        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">CR-159 — Bulk Delete: how "Chicken Burger" (with addons + variations) is handled</div>
+
+  <!-- Row with expand panels -->
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="panel-head ph-blue"><span class="ann ann-blue">1</span> BulkEditor row — Chicken Burger with both Add-ons and Variations chips (existing today)</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th style="width:36px;background:#FEF2F2;text-align:center;"><input type="checkbox" checked style="accent-color:#EF4444;" /></th>
+            <th style="width:36px;">Img</th>
+            <th style="min-width:160px;">Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th style="width:100px;background:#F0FDF4;">Add-ons</th>
+            <th style="width:110px;background:#FAF5FF;">Variations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Paneer Tikka - not selected -->
+          <tr>
+            <td style="text-align:center;"><input type="checkbox" style="accent-color:#EF4444;" /></td>
+            <td><div class="food-img">🍕</div></td>
+            <td style="font-weight:600;">Paneer Tikka</td>
+            <td style="color:#6B7280;">Starters</td>
+            <td>₹250</td>
+            <td><span class="chip chip-green">● Active</span></td>
+            <td style="background:#F0FDF4;"><span class="chip chip-blue" title="1 addon linked">Add-ons (1)</span></td>
+            <td style="background:#FAF5FF;">—</td>
+          </tr>
+          <!-- Chicken Burger - SELECTED, has both -->
+          <tr class="sel">
+            <td style="text-align:center;"><input type="checkbox" checked style="accent-color:#EF4444;" /></td>
+            <td><div class="food-img">🍔</div></td>
+            <td style="font-weight:700;">Chicken Burger</td>
+            <td style="color:#6B7280;">Mains</td>
+            <td>₹280</td>
+            <td><span class="chip chip-green">● Active</span></td>
+            <td style="background:#FEF2F2;">
+              <span class="chip chip-blue" title="click to expand">Add-ons (2) ▾</span>
+            </td>
+            <td style="background:#FEF2F2;">
+              <span class="chip chip-purple" title="click to expand">Variations (2) ▾</span>
+            </td>
+          </tr>
+          <!-- Chicken Burger ADDON expand row -->
+          <tr>
+            <td colspan="8" style="padding:0;">
+              <div class="expand-row" style="background:#F0FDF4;border-left:3px solid #22c55e;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                  <div class="food-img-lg" style="width:36px;height:36px;font-size:18px;">🍔</div>
+                  <div>
+                    <div style="font-weight:700;color:#3b82f6;font-size:11px;">Add-ons</div>
+                    <div style="font-weight:700;font-size:13px;">Chicken Burger</div>
+                    <div style="font-size:11px;color:#94a3b8;">Showing current addon links · <strong style="color:#B91C1C;">Row is selected for deletion</strong></div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+                  <div class="addon-box addon-checked"><input type="checkbox" checked readonly style="accent-color:#22c55e;pointer-events:none;" /> Extra Cheese <span style="color:#94a3b8;font-size:11px;">₹30</span></div>
+                  <div class="addon-box addon-checked"><input type="checkbox" checked readonly style="accent-color:#22c55e;pointer-events:none;" /> Extra Sauce <span style="color:#94a3b8;font-size:11px;">₹10</span></div>
+                  <div class="addon-box addon-unchecked"><input type="checkbox" readonly style="pointer-events:none;" /> Fries Add-on <span style="color:#94a3b8;font-size:11px;">₹60</span></div>
+                </div>
+                <div class="callout callout-amber">
+                  ⚠ <strong>Addon master entities (Extra Cheese, Extra Sauce) are NOT deleted.</strong> Only the linkage from this food to those addons is removed. The addon masters remain available for other foods.
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Chicken Burger VARIATION expand row -->
+          <tr>
+            <td colspan="8" style="padding:0;">
+              <div class="expand-row" style="background:#FAF5FF;border-left:3px solid #a855f7;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                  <div class="food-img-lg" style="width:36px;height:36px;font-size:18px;background:#F3E8FF;border-color:#E9D5FF;">🍔</div>
+                  <div>
+                    <div style="font-weight:700;color:#9333ea;font-size:11px;">Variations</div>
+                    <div style="font-weight:700;font-size:13px;">Chicken Burger</div>
+                    <div style="font-size:11px;color:#94a3b8;">Read-only · <strong style="color:#B91C1C;">Row is selected for deletion</strong></div>
+                  </div>
+                </div>
+                <div style="margin-bottom:10px;">
+                  <div class="var-group-label">Size</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">
+                    <span class="var-tag">Regular · ₹0</span>
+                    <span class="var-tag">Large · +₹50</span>
+                  </div>
+                  <div class="var-group-label">Spice Level</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                    <span class="var-tag">Mild · ₹0</span>
+                    <span class="var-tag">Medium · ₹0</span>
+                    <span class="var-tag">Hot · ₹0</span>
+                  </div>
+                </div>
+                <div class="callout callout-red">
+                  ⚠ <strong>Variations ARE deleted with the food item.</strong> They are embedded in the product record — there is no standalone variation entity. Deleting Chicken Burger permanently removes Size and Spice Level variation groups.
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Gulab Jamun - not selected -->
+          <tr>
+            <td style="text-align:center;"><input type="checkbox" style="accent-color:#EF4444;" /></td>
+            <td><div class="food-img">🍰</div></td>
+            <td style="font-weight:600;">Gulab Jamun</td>
+            <td style="color:#6B7280;">Desserts</td>
+            <td>₹80</td>
+            <td><span class="chip chip-amber">● Inactive</span></td>
+            <td style="background:#F0FDF4;">—</td>
+            <td style="background:#FAF5FF;">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Selection banner -->
+    <div class="sel-banner">
+      <span style="font-size:12px;font-weight:600;color:#374151;"><span style="color:#EF4444;font-weight:700;">1</span> item selected</span>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost" style="font-size:11px;">Clear</button>
+        <button class="btn btn-red" style="font-size:11px;">Delete Selected (1)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm dialog — what happens to addons + variations -->
+  <div class="compare-grid">
+    <div class="panel">
+      <div class="panel-head ph-red"><span class="ann ann-red">!</span> Confirm Dialog — item has addons + variations</div>
+      <div style="padding:16px;">
+        <div class="dialog-wrap">
+          <div class="dialog-title">Delete 1 Item</div>
+          <div class="dialog-body">
+            Permanently delete <strong>1 item</strong>. This cannot be undone.
+          </div>
+          <!-- Addon+Variation summary -->
+          <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:7px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#92400E;">
+            <div style="font-weight:700;margin-bottom:5px;">Chicken Burger contains:</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;">
+              <span class="badge badge-blue">Addon: Extra Cheese</span>
+              <span class="badge badge-blue">Addon: Extra Sauce</span>
+            </div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;">
+              <span class="badge badge-purple">Variation: Size (2 options)</span>
+              <span class="badge badge-purple">Variation: Spice Level (3 options)</span>
+            </div>
+            <div style="font-size:10px;line-height:1.5;">
+              Addon masters (Extra Cheese, Extra Sauce) will <strong>not</strong> be deleted — only the link from this food is removed.<br/>
+              Variation data (Size, Spice Level) <strong>will</strong> be deleted — they are part of this food record.
+            </div>
+          </div>
+          <div class="dialog-label">Reason for deletion</div>
+          <select class="dialog-select">
+            <option value="">Select reason…</option>
+            <option selected>Menu cleanup</option>
+            <option>Item discontinued</option>
+          </select>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" style="flex:1;justify-content:center;">Cancel</button>
+            <button class="btn btn-red" style="flex:1;justify-content:center;" data-testid="bulk-delete-confirm-btn">Confirm Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head ph-green"><span class="ann ann-green">✓</span> What actually gets deleted vs. what stays</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div class="callout callout-red">
+          <strong>DELETED permanently:</strong><br/>
+          ✕ Chicken Burger food record (ID: 217622)<br/>
+          ✕ Variation: Size group (Regular, Large) — embedded<br/>
+          ✕ Variation: Spice Level group (Mild, Medium, Hot) — embedded<br/>
+          ✕ Addon linkages: Extra Cheese → Burger, Extra Sauce → Burger<br/>
+          <span style="font-size:10px;margin-top:4px;display:block;">API: <code style="background:#FEE2E2;padding:1px 4px;border-radius:3px;">DELETE /api/v2/vendoremployee/product/delete-bulk</code> — backend handles all cascade</span>
+        </div>
+        <div class="callout callout-green">
+          <strong>NOT deleted (stays in system):</strong><br/>
+          ✓ "Extra Cheese" addon master — still available for other foods<br/>
+          ✓ "Extra Sauce" addon master — still available for other foods<br/>
+          ✓ "Fries Add-on" addon master — was not even linked<br/>
+          ✓ All other food items in the menu
+        </div>
+        <div class="callout callout-blue">
+          <strong>No additional frontend logic needed:</strong><br/>
+          The bulk delete sends <code style="background:#DBEAFE;padding:1px 4px;border-radius:3px;">{ ids: [217622], delete_reason: "...", food_for: "Normal" }</code>.<br/>
+          Backend handles cascade for addon links and embedded variations. Frontend does not need to make separate calls per addon or variation.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — CR-155: ADDON STOCK TAB for this item     -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">CR-155 — Addon Stock Tab: "Chicken Burger" appears here via "Used in" (Aggregator context)</div>
+
+  <div class="compare-grid">
+    <div class="panel">
+      <div class="panel-head ph-orange"><span class="ann">A</span> AddonStockTab — "Extra Cheese" expanded — shows Chicken Burger</div>
+      <div style="padding:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:11px;color:#6B7280;">Brand:</span>
+          <select style="padding:4px 8px;border:1px solid #D1D5DB;border-radius:6px;font-size:11px;"><option>Main Brand</option></select>
+          <span class="badge badge-orange" style="margin-left:auto;">Aggregator menu type only</span>
+        </div>
+        <table class="tbl stock-tbl">
+          <thead>
+            <tr><th>Add-on</th><th>Price</th><th>Catalog (all brands)</th><th>UrbanPiper (this brand)</th></tr>
+          </thead>
+          <tbody>
+            <!-- Extra Cheese - EXPANDED -->
+            <tr>
+              <td>
+                <button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0f172a;">
+                  ▼ Extra Cheese
+                </button>
+              </td>
+              <td>₹30</td>
+              <td><div style="display:flex;align-items:center;gap:6px;"><span class="avail-chip">● Available</span><button class="mini-btn mini-red">OOS</button></div></td>
+              <td><div style="display:flex;gap:5px;"><button class="mini-btn mini-green">Enable</button><button class="mini-btn mini-red">Disable</button></div></td>
+            </tr>
+            <!-- Expand row showing "Used in" -->
+            <tr>
+              <td colspan="4" style="background:#F8FAFC;padding:8px 12px 12px 30px;border-bottom:1px solid #F1F5F9;">
+                <span style="font-size:11px;color:#6B7280;">Used in: </span>
+                <span style="font-size:11px;color:#374151;font-weight:600;background:#EFF6FF;padding:2px 8px;border-radius:99px;border:1px solid #BFDBFE;">🍔 Chicken Burger</span>
+                <span style="font-size:11px;color:#374151;">, </span>
+                <span style="font-size:11px;color:#374151;">Veg Burger</span>
+                <div style="margin-top:6px;" class="callout callout-blue" style="font-size:10px;">
+                  This addon is linked to <strong>Chicken Burger</strong> (and 1 other food). Marking it OOS affects all foods that use this addon on the aggregator platform.
+                </div>
+              </td>
+            </tr>
+            <!-- Extra Sauce -->
+            <tr>
+              <td><button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#0f172a;">▶ Extra Sauce</button></td>
+              <td>₹10</td>
+              <td><div style="display:flex;align-items:center;gap:6px;"><span class="avail-chip">● Available</span><button class="mini-btn mini-red">OOS</button></div></td>
+              <td><div style="display:flex;gap:5px;"><button class="mini-btn mini-green">Enable</button><button class="mini-btn mini-red">Disable</button></div></td>
+            </tr>
+            <!-- Fries Add-on - NOT linked to Chicken Burger -->
+            <tr>
+              <td><button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#0f172a;">▶ Fries Add-on</button></td>
+              <td>₹60</td>
+              <td><div style="display:flex;align-items:center;gap:6px;"><span class="oos-chip">○ Out of Stock</span><button class="mini-btn mini-green">Enable</button></div></td>
+              <td><div style="display:flex;gap:5px;"><button class="mini-btn mini-green">Enable</button><button class="mini-btn mini-red">Disable</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;" class="callout callout-amber">
+          <strong>What this manages:</strong> Stock status of addon MASTERS on the aggregator platform (Swiggy/Zomato via UrbanPiper). Marking "Extra Cheese" as OOS disables it for all foods that have it linked — including Chicken Burger. This is NOT the same as the addon linkage in BulkEditor.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head ph-purple"><span class="ann ann-purple">V</span> VariationStockTab — Chicken Burger variations per-brand toggle</div>
+      <div style="padding:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:11px;color:#6B7280;">Brand:</span>
+          <select style="padding:4px 8px;border:1px solid #D1D5DB;border-radius:6px;font-size:11px;"><option>Main Brand</option></select>
+          <span class="badge badge-purple" style="margin-left:auto;">Aggregator menu type only</span>
+        </div>
+        <table class="tbl stock-tbl">
+          <thead>
+            <tr><th>Food Item</th><th>Variations</th><th>UrbanPiper toggle</th></tr>
+          </thead>
+          <tbody>
+            <!-- Chicken Burger - EXPANDED -->
+            <tr>
+              <td>
+                <button style="background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:#0f172a;display:flex;align-items:center;gap:4px;">
+                  ▼ 🍔 Chicken Burger
+                </button>
+              </td>
+              <td><span class="badge badge-purple">2 groups</span></td>
+              <td>—</td>
+            </tr>
+            <!-- Variation expand — SIZE group -->
+            <tr>
+              <td colspan="3" style="background:#FAF5FF;padding:8px 12px 12px 30px;border-bottom:1px solid #F1F5F9;">
+                <div class="var-group-label" style="margin-bottom:8px;">Size</div>
+                <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                  <thead><tr>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Variation Value</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Price</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Status</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Toggle</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr><td style="padding:4px 8px;">Regular</td><td style="padding:4px 8px;">₹0</td><td style="padding:4px 8px;"><span class="avail-chip">Available</span></td><td style="padding:4px 8px;"><div style="display:flex;gap:4px;"><button class="mini-btn mini-green" style="font-size:9px;">Enable</button><button class="mini-btn mini-red" style="font-size:9px;">Disable</button></div></td></tr>
+                    <tr><td style="padding:4px 8px;">Large</td><td style="padding:4px 8px;">+₹50</td><td style="padding:4px 8px;"><span class="oos-chip">OOS</span></td><td style="padding:4px 8px;"><div style="display:flex;gap:4px;"><button class="mini-btn mini-green" style="font-size:9px;">Enable</button><button class="mini-btn mini-red" style="font-size:9px;">Disable</button></div></td></tr>
+                  </tbody>
+                </table>
+                <hr class="rule" style="margin:10px 0;"/>
+                <div class="var-group-label" style="margin-bottom:8px;">Spice Level</div>
+                <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                  <thead><tr>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Variation Value</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Price</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Status</th>
+                    <th style="text-align:left;padding:4px 8px;background:#F3E8FF;color:#7E22CE;font-size:10px;">Toggle</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr><td style="padding:4px 8px;">Mild</td><td style="padding:4px 8px;">₹0</td><td style="padding:4px 8px;"><span class="avail-chip">Available</span></td><td style="padding:4px 8px;"><div style="display:flex;gap:4px;"><button class="mini-btn mini-green" style="font-size:9px;">Enable</button><button class="mini-btn mini-red" style="font-size:9px;">Disable</button></div></td></tr>
+                    <tr><td style="padding:4px 8px;">Medium</td><td style="padding:4px 8px;">₹0</td><td style="padding:4px 8px;"><span class="avail-chip">Available</span></td><td style="padding:4px 8px;"><div style="display:flex;gap:4px;"><button class="mini-btn mini-green" style="font-size:9px;">Enable</button><button class="mini-btn mini-red" style="font-size:9px;">Disable</button></div></td></tr>
+                    <tr><td style="padding:4px 8px;">Hot</td><td style="padding:4px 8px;">₹0</td><td style="padding:4px 8px;"><span class="oos-chip">OOS</span></td><td style="padding:4px 8px;"><div style="display:flex;gap:4px;"><button class="mini-btn mini-green" style="font-size:9px;">Enable</button><button class="mini-btn mini-red" style="font-size:9px;">Disable</button></div></td></tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <!-- Another food -->
+            <tr>
+              <td><button style="background:none;border:none;font-size:12px;font-weight:500;color:#0f172a;display:flex;align-items:center;gap:4px;cursor:pointer;">▶ 🍕 Paneer Tikka</button></td>
+              <td><span class="badge badge-purple">1 group</span></td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;" class="callout callout-purple">
+          <strong>What this manages:</strong> Per-variation-value OOS on aggregator (per brand). "Large" size is OOS, "Hot" spice is OOS — customer on Swiggy won't see those options. This is a stock STATUS change only — not a structural edit. Variation groups themselves are read-only here.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3 — SUMMARY TABLE                             -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Summary — what each CR does to a food item's addons and variations</div>
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead>
+          <tr style="background:#F8FAFC;">
+            <th>CR</th>
+            <th>What it operates on</th>
+            <th>Addon Master<br/><span style="font-weight:400;font-size:10px;">(e.g. "Extra Cheese" entity)</span></th>
+            <th>Addon Linkage<br/><span style="font-weight:400;font-size:10px;">(food ↔ addon relation)</span></th>
+            <th>Variation Group<br/><span style="font-weight:400;font-size:10px;">(e.g. "Size" group)</span></th>
+            <th>Variation Value<br/><span style="font-weight:400;font-size:10px;">(e.g. "Large" option)</span></th>
+            <th>Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-orange">CR-159</span><br/><span style="font-size:10px;">Bulk Delete</span></td>
+            <td>Food item rows (checkbox select)</td>
+            <td><span class="chip chip-green">✓ Stays</span><br/><span style="font-size:10px;color:#6B7280;">Master untouched</span></td>
+            <td><span class="chip chip-red">✕ Removed</span><br/><span style="font-size:10px;color:#6B7280;">Link severed</span></td>
+            <td><span class="chip chip-red">✕ Deleted</span><br/><span style="font-size:10px;color:#6B7280;">Embedded in food</span></td>
+            <td><span class="chip chip-red">✕ Deleted</span><br/><span style="font-size:10px;color:#6B7280;">Embedded in food</span></td>
+            <td>Normal / Party / Premium only</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-orange">CR-155</span><br/><span style="font-size:10px;">Addon Stock Tab</span></td>
+            <td>Addon master entities</td>
+            <td><span class="chip chip-amber">~ Stock toggle</span><br/><span style="font-size:10px;color:#6B7280;">OOS / Available</span></td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td>Aggregator only (UrbanPiper)</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">CR-155</span><br/><span style="font-size:10px;">Variation Stock Tab</span></td>
+            <td>Per-food variation values</td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td><span class="chip chip-green">✓ Unchanged</span></td>
+            <td><span class="chip chip-amber">~ Stock toggle</span><br/><span style="font-size:10px;color:#6B7280;">OOS per brand</span></td>
+            <td>Aggregator only (UrbanPiper)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:14px 16px;background:#F0FDF4;border-top:1px solid #BBF7D0;font-size:11px;color:#15803D;display:flex;gap:6px;">
+      <span>✓</span>
+      <span><strong>Both addons AND variations are fully considered.</strong> CR-159 deletes the food + embedded variations (addon masters survive). CR-155 Addon Stock manages addon OOS status; CR-155 Variation Stock manages per-variation-value OOS status. Zero overlap, zero conflict between the two CRs.</span>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:16px;font-size:11px;color:#9CA3AF;">BATCH-08 — Addon + Variation Validation · CR-159 + CR-155 · No code edits</div>
+
+</div>
+</body>
+</html>

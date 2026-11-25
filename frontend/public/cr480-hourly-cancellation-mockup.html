@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-480 — Hourly Cancellation Trend Widget Mockup</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; }
+  .bar { transition: height 0.6s ease; }
+</style>
+</head>
+<body class="p-8">
+
+<div class="max-w-[1400px] mx-auto space-y-6">
+
+  <!-- Title -->
+  <div class="mb-2">
+    <h1 class="text-lg font-bold text-zinc-800">CR-480 — Hourly Cancellation Trend Widget</h1>
+    <p class="text-sm text-zinc-500 mt-1">New widget to be added AFTER the "Daily Cancellation Trend + Top Cancellation Reasons" row</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- EXISTING ROW: Daily Trend + By Reason      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="grid grid-cols-2 gap-6">
+    <div class="bg-white border border-zinc-200 rounded-xl p-6 opacity-50">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Daily Cancellation Trend</h2>
+      <div class="flex items-center justify-center h-[240px] text-zinc-300 text-sm italic">[Existing chart — unchanged]</div>
+    </div>
+    <div class="bg-white border border-zinc-200 rounded-xl p-6 opacity-50">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Top Cancellation Reasons</h2>
+      <div class="flex items-center justify-center h-[240px] text-zinc-300 text-sm italic">[Existing chart — unchanged]</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- NEW: CR-480 Hourly Cancellation Trend      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-white border-2 border-orange-300 rounded-xl p-6 relative">
+    <!-- NEW badge -->
+    <div class="absolute -top-3 left-6 bg-orange-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">CR-480 New Widget</div>
+
+    <!-- Header row -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide">Hourly Cancellation Trend</h2>
+        <p class="text-[11px] text-zinc-400 mt-0.5">Cancellations by hour of day</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- Peak hour badge (OD-480-02) -->
+        <div class="flex items-center gap-1.5 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
+          <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span class="text-xs font-semibold text-red-700">Peak: 21:00</span>
+          <span class="text-[10px] text-red-500">34 cancellations</span>
+        </div>
+        <!-- Legend -->
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1.5 text-xs text-zinc-500"><span class="w-2.5 h-2.5 rounded-sm bg-red-500"></span>Orders</span>
+          <span class="flex items-center gap-1.5 text-xs text-zinc-500"><span class="w-2.5 h-2.5 rounded-sm bg-orange-400"></span>Items</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart area (simulated bar chart) -->
+    <div class="relative h-[240px] flex items-end gap-[3px] px-2 border-b border-l border-zinc-200">
+      <!-- Y-axis labels -->
+      <div class="absolute -left-1 top-0 h-full flex flex-col justify-between text-[10px] text-zinc-400 -translate-x-full pr-2">
+        <span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+      </div>
+
+      <!-- Hour bars: 06-23 (showing active hours only for mockup) -->
+      <!-- 06:00 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 12px"></div>
+          <div class="bg-red-500 bar" style="height: 6px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">06</span>
+      </div>
+      <!-- 07:00 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 8px"></div>
+          <div class="bg-red-500 bar" style="height: 4px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">07</span>
+      </div>
+      <!-- 08:00 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 18px"></div>
+          <div class="bg-red-500 bar" style="height: 6px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">08</span>
+      </div>
+      <!-- 09:00 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 24px"></div>
+          <div class="bg-red-500 bar" style="height: 12px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">09</span>
+      </div>
+      <!-- 10 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 15px"></div>
+          <div class="bg-red-500 bar" style="height: 6px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">10</span>
+      </div>
+      <!-- 11 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 30px"></div>
+          <div class="bg-red-500 bar" style="height: 12px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">11</span>
+      </div>
+      <!-- 12 (lunch peak) -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 54px"></div>
+          <div class="bg-red-500 bar" style="height: 24px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5 font-bold text-zinc-600">12</span>
+      </div>
+      <!-- 13 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 48px"></div>
+          <div class="bg-red-500 bar" style="height: 18px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">13</span>
+      </div>
+      <!-- 14 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 30px"></div>
+          <div class="bg-red-500 bar" style="height: 12px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">14</span>
+      </div>
+      <!-- 15 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 18px"></div>
+          <div class="bg-red-500 bar" style="height: 6px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">15</span>
+      </div>
+      <!-- 16 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 12px"></div>
+          <div class="bg-red-500 bar" style="height: 4px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">16</span>
+      </div>
+      <!-- 17 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 18px"></div>
+          <div class="bg-red-500 bar" style="height: 8px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">17</span>
+      </div>
+      <!-- 18 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 36px"></div>
+          <div class="bg-red-500 bar" style="height: 15px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">18</span>
+      </div>
+      <!-- 19 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 54px"></div>
+          <div class="bg-red-500 bar" style="height: 24px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">19</span>
+      </div>
+      <!-- 20 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 78px"></div>
+          <div class="bg-red-500 bar" style="height: 36px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">20</span>
+      </div>
+      <!-- 21 (PEAK) -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch relative">
+          <div class="bg-orange-400 rounded-t bar" style="height: 120px"></div>
+          <div class="bg-red-500 bar" style="height: 48px"></div>
+          <!-- Peak indicator -->
+          <div class="absolute -top-5 left-1/2 -translate-x-1/2">
+            <div class="bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap">PEAK</div>
+          </div>
+        </div>
+        <span class="text-[9px] font-bold text-red-600 mt-1.5">21</span>
+      </div>
+      <!-- 22 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 60px"></div>
+          <div class="bg-red-500 bar" style="height: 24px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">22</span>
+      </div>
+      <!-- 23 -->
+      <div class="flex-1 flex flex-col items-center gap-0">
+        <div class="w-full flex flex-col items-stretch">
+          <div class="bg-orange-400 rounded-t bar" style="height: 24px"></div>
+          <div class="bg-red-500 bar" style="height: 10px"></div>
+        </div>
+        <span class="text-[9px] text-zinc-400 mt-1.5">23</span>
+      </div>
+    </div>
+
+    <!-- Tooltip mockup (positioned over peak bar) -->
+    <div class="absolute right-[220px] top-[60px] bg-zinc-900 text-white text-xs px-3 py-2.5 rounded-lg shadow-xl border border-zinc-700 min-w-[180px] pointer-events-none">
+      <div class="font-semibold mb-1.5 border-b border-zinc-700 pb-1">21:00 – 22:00</div>
+      <div class="flex justify-between py-0.5"><span class="text-red-400">Order Cancels</span><span>8</span></div>
+      <div class="flex justify-between py-0.5"><span class="text-orange-400">Item Cancels</span><span>26</span></div>
+      <div class="border-t border-zinc-700 mt-1 pt-1 flex justify-between">
+        <span class="text-zinc-400">Revenue Loss</span><span>₹8,420</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- EXISTING: By Employee (unchanged)           -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="bg-white border border-zinc-200 rounded-xl p-6 opacity-50">
+    <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Cancellations by Employee</h2>
+    <div class="flex items-center justify-center h-[120px] text-zinc-300 text-sm italic">[Existing widget — unchanged]</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 text-sm text-orange-800">
+    <strong>Layout:</strong> The new "Hourly Cancellation Trend" widget sits as a full-width card between the existing "Daily Trend + By Reason" row and the "By Employee" section. It includes a peak-hour badge (OD-480-02) in the header. The stacked bar chart uses the same red/orange colors and tooltip style as the daily trend for visual consistency.
+  </div>
+
+</div>
+</body>
+</html>

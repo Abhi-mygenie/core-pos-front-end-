@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-376 — Revised Design: Local Setting Approach</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins','Inter',sans-serif; background: #F0F0F0; padding: 24px; color: #1A1A1A; }
+
+  .page-header { background: #1A1A1A; color: white; border-radius: 12px; padding: 20px 28px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .page-header h1 { font-size: 17px; font-weight: 700; }
+  .page-header p { font-size: 12px; color: #94A3B8; margin-top: 3px; }
+  .badge { background: #F26B33; color: white; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  .badge.green { background: #329937; }
+
+  /* Two column */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px; }
+
+  .col-label { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 10px; }
+  .col-label.old { background: #FEE2E2; color: #B91C1C; }
+  .col-label.new-a { background: #DCFCE7; color: #15803D; }
+  .col-label.new-b { background: #FEF3C7; color: #92400E; }
+
+  /* Screen shells */
+  .screen { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.09); border: 1px solid #E5E5E5; }
+
+  /* StatusConfigPage */
+  .sc-shell { padding: 0; }
+  .sc-nav { background: #F7F7F7; border-bottom: 1px solid #E5E5E5; padding: 12px 16px; display: flex; align-items: center; gap: 8px; }
+  .sc-nav-title { font-size: 13px; font-weight: 700; color: #1A1A1A; }
+  .sc-nav svg { width: 14px; height: 14px; color: #F26B33; }
+  .sc-body { padding: 16px; }
+
+  .sc-section { margin-bottom: 16px; }
+  .sc-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #94A3B8; margin-bottom: 10px; border-bottom: 1px solid #F1F5F9; padding-bottom: 6px; }
+  .sc-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F7F7F7; }
+  .sc-row:last-child { border-bottom: none; }
+  .sc-row-left { display: flex; flex-direction: column; gap: 2px; }
+  .sc-row-label { font-size: 12px; font-weight: 600; color: #1A1A1A; }
+  .sc-row-desc { font-size: 10px; color: #94A3B8; }
+
+  /* Toggle */
+  .toggle { width: 38px; height: 20px; background: #E5E5E5; border-radius: 10px; position: relative; cursor: pointer; }
+  .toggle.on { background: #329937; }
+  .toggle::after { content:''; width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on::after { left: 20px; }
+
+  /* Active Menu picker — NEW */
+  .menu-picker { margin-top: 10px; }
+  .menu-picker-title { font-size: 11px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+  .menu-options { display: flex; flex-direction: column; gap: 6px; }
+  .menu-option { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; border: 1.5px solid #E5E5E5; cursor: pointer; background: white; transition: all 0.15s; }
+  .menu-option.selected { border-color: #F26B33; background: #FFF3ED; }
+  .menu-option.selected .mo-radio { border-color: #F26B33; }
+  .menu-option.selected .mo-radio::after { display: block; }
+  .mo-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #E5E5E5; flex-shrink: 0; position: relative; }
+  .mo-radio::after { content:''; width: 8px; height: 8px; background: #F26B33; border-radius: 50%; position: absolute; top: 2px; left: 2px; display: none; }
+  .mo-text { flex: 1; }
+  .mo-name { font-size: 12px; font-weight: 600; color: #1A1A1A; }
+  .mo-desc { font-size: 10px; color: #94A3B8; }
+  .mo-badge { font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 700; }
+  .mo-badge.active { background: #DCFCE7; color: #15803D; }
+  .mo-badge.evening { background: #FEF3C7; color: #92400E; }
+
+  .sc-save { width: 100%; padding: 9px; background: #329937; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 12px; }
+
+  /* OrderEntry mini screens */
+  .oe-shell { height: 320px; display: flex; }
+  .oe-cat { width: 100px; background: #F7F7F7; border-right: 1px solid #E5E5E5; display: flex; flex-direction: column; }
+  .oe-cat-back { padding: 9px 8px; border-bottom: 1px solid #E5E5E5; font-size: 11px; color: #F26B33; font-weight: 600; }
+  .oe-cat-list { padding: 6px 0; }
+  .oe-cat-item { padding: 7px 9px; font-size: 10px; color: #666; }
+  .oe-cat-item.active { background: #F26B33; color: white; border-radius: 4px; margin: 1px 4px; font-weight: 600; }
+  .oe-mid { flex: 1; display: flex; flex-direction: column; }
+  .oe-hdr { padding: 8px 10px; border-bottom: 1px solid #E5E5E5; display: flex; align-items: center; gap: 8px; }
+  .oe-search { flex: 1; background: white; border: 1.5px solid #F26B33; border-radius: 6px; padding: 5px 10px; font-size: 11px; color: #CCC; font-family: inherit; }
+
+  /* Menu active chip — NEW */
+  .active-menu-chip { display: flex; align-items: center; gap: 5px; padding: 4px 10px; background: #FFF3ED; border: 1.5px solid #F26B33; border-radius: 20px; font-size: 10px; font-weight: 700; color: #F26B33; white-space: nowrap; }
+  .active-menu-chip.party { background: #F0FDF4; border-color: #329937; color: #329937; }
+  .active-menu-chip svg { width: 10px; height: 10px; }
+
+  /* Tab strip — for Design B */
+  .tab-strip { padding: 0 10px; border-bottom: 1px solid #E5E5E5; display: flex; align-items: center; gap: 0; background: white; }
+  .tab { padding: 7px 12px; font-size: 10px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+  .tab.active { color: #F26B33; font-weight: 700; border-bottom-color: #F26B33; }
+  .tab .dot { display: inline-block; width: 5px; height: 5px; background: #329937; border-radius: 50%; margin-left: 4px; vertical-align: middle; }
+
+  .oe-items { flex: 1; padding: 8px; display: flex; flex-wrap: wrap; gap: 7px; align-content: flex-start; overflow: hidden; }
+  .oe-item { width: calc(33.33% - 5px); border: 1px solid #E5E5E5; border-radius: 8px; overflow: hidden; }
+  .oe-item-img { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .oe-item-img.normal { background: linear-gradient(135deg, #FFF3ED, #FFE4D1); }
+  .oe-item-img.party { background: linear-gradient(135deg, #F0FDF4, #D1FAE5); }
+  .oe-item-info { padding: 4px 6px 3px; }
+  .oe-item-name { font-size: 9px; font-weight: 600; color: #1A1A1A; }
+  .oe-item-price { font-size: 9px; font-weight: 700; color: #F26B33; }
+  .oe-item-price.green { color: #329937; }
+
+  /* Dashboard selector — Option Y */
+  .dash-selector { background: white; border-radius: 12px; border: 1px solid #E5E5E5; overflow: hidden; }
+  .dash-topbar { background: #1A1A1A; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .dash-topbar-title { font-size: 12px; font-weight: 700; color: white; }
+  .dash-menu-selector { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; cursor: pointer; }
+  .dash-menu-selector span { font-size: 11px; font-weight: 700; color: #F26B33; }
+  .dash-menu-selector svg { width: 12px; height: 12px; color: white; }
+  .dash-body { padding: 14px 16px; }
+  .dash-subtitle { font-size: 11px; color: #94A3B8; margin-bottom: 10px; }
+  .dash-tiles { display: flex; gap: 8px; }
+  .dash-tile { flex: 1; background: #F7F7F7; border-radius: 8px; padding: 10px; border: 1px solid #E5E5E5; }
+  .dash-tile-num { font-size: 18px; font-weight: 800; color: #1A1A1A; }
+  .dash-tile-lbl { font-size: 9px; color: #94A3B8; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+  /* Annotation */
+  .ann { margin-top: 10px; border-radius: 8px; padding: 11px 14px; font-size: 11px; line-height: 1.65; }
+  .ann.green { background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; }
+  .ann.amber { background: #FFFBEB; border: 1px solid #FCD34D; color: #92400E; }
+  .ann.blue { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+  .ann strong { display: block; font-weight: 700; margin-bottom: 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .ann ul { padding-left: 14px; }
+  .ann li { margin-bottom: 2px; }
+
+  /* Decision cards */
+  .od-card { background: white; border-radius: 10px; border: 1px solid #E5E5E5; padding: 14px 16px; }
+  .od-id { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #F26B33; margin-bottom: 6px; }
+  .od-question { font-size: 12px; font-weight: 600; color: #1A1A1A; margin-bottom: 8px; line-height: 1.4; }
+  .od-options { display: flex; flex-direction: column; gap: 5px; }
+  .od-opt { padding: 7px 10px; border-radius: 6px; border: 1px solid #E5E5E5; font-size: 11px; cursor: pointer; }
+  .od-opt.rec { border-color: #329937; background: #F0FDF4; color: #15803D; font-weight: 600; }
+  .od-opt.alt { color: #666; }
+  .od-rec-badge { font-size: 9px; background: #329937; color: white; padding: 1px 5px; border-radius: 4px; margin-left: 5px; font-weight: 700; }
+
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #64748B; margin: 24px 0 10px; display: flex; align-items: center; gap: 8px; }
+  .section-label::after { content:''; flex: 1; height: 1px; background: #E5E5E5; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>CR-376 — Revised Architecture: Local Station Setting</h1>
+    <p>Owner: "at one time only one menu will be operational — choose from local dashboard" · OD-376-02 reopened</p>
+  </div>
+  <span class="badge">ARCH REVISION</span>
+</div>
+
+<!-- Two approaches -->
+<div class="section-label">Two Design Options</div>
+
+<div class="grid-2">
+
+  <!-- Design A -->
+  <div>
+    <div class="col-label new-a">✓ Design A — Pure Local Setting (Recommended)</div>
+
+    <!-- StatusConfigPage -->
+    <div class="screen sc-shell" style="margin-bottom:10px;">
+      <div class="sc-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        <span class="sc-nav-title">Local Settings</span>
+      </div>
+      <div class="sc-body">
+        <div class="sc-section">
+          <div class="sc-section-title">Order Taking</div>
+          <div class="sc-row">
+            <div class="sc-row-left">
+              <span class="sc-row-label">Accept Orders</span>
+              <span class="sc-row-desc">Enable order taking on this device</span>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="sc-row">
+            <div class="sc-row-left">
+              <span class="sc-row-label">QSR Mode</span>
+              <span class="sc-row-desc">Single-step quick billing</span>
+            </div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+
+        <!-- ★ NEW SECTION -->
+        <div class="sc-section" style="border:1.5px solid #F26B33;border-radius:8px;padding:10px;margin-top:4px;">
+          <div class="sc-section-title" style="color:#F26B33;">★ Active Menu (New)</div>
+          <div class="menu-picker">
+            <div class="menu-picker-title">Which menu is operational this service?</div>
+            <div class="menu-options">
+              <div class="menu-option">
+                <div class="mo-radio"></div>
+                <div class="mo-text">
+                  <div class="mo-name">Normal</div>
+                  <div class="mo-desc">Standard everyday menu</div>
+                </div>
+                <span class="mo-badge active">Default</span>
+              </div>
+              <div class="menu-option selected">
+                <div class="mo-radio"></div>
+                <div class="mo-text">
+                  <div class="mo-name">Party</div>
+                  <div class="mo-desc">Event packages &amp; platters</div>
+                </div>
+                <span class="mo-badge evening">Tonight</span>
+              </div>
+              <div class="menu-option">
+                <div class="mo-radio"></div>
+                <div class="mo-text">
+                  <div class="mo-name">Premium</div>
+                  <div class="mo-desc">High-end curated items</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="sc-save">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result in OrderEntry -->
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94A3B8;margin:8px 2px 5px;">→ Result in Order Entry (waiter's screen)</div>
+    <div class="screen oe-shell">
+      <div class="oe-cat">
+        <div class="oe-cat-back">← Back</div>
+        <div class="oe-cat-list">
+          <div class="oe-cat-item active">All</div>
+          <div class="oe-cat-item">Starters</div>
+          <div class="oe-cat-item">Mains</div>
+          <div class="oe-cat-item">Drinks</div>
+        </div>
+      </div>
+      <div class="oe-mid">
+        <div class="oe-hdr">
+          <input class="oe-search" placeholder="Search items..." readonly/>
+          <!-- Small passive chip — Party menu active -->
+          <div class="active-menu-chip party">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Party Menu
+          </div>
+        </div>
+        <!-- NO TAB STRIP — items already filtered to Party -->
+        <div class="oe-items">
+          <div class="oe-item"><div class="oe-item-img party">🎉</div><div class="oe-item-info"><div class="oe-item-name">Party Platter</div><div class="oe-item-price green">₹1,200</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🍖</div><div class="oe-item-info"><div class="oe-item-name">BBQ Set</div><div class="oe-item-price green">₹2,800</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🥂</div><div class="oe-item-info"><div class="oe-item-name">Welcome Set</div><div class="oe-item-price green">₹600</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🎂</div><div class="oe-item-info"><div class="oe-item-name">Cake</div><div class="oe-item-price green">₹950</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🍱</div><div class="oe-item-info"><div class="oe-item-name">Family Thali</div><div class="oe-item-price green">₹1,600</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🥗</div><div class="oe-item-info"><div class="oe-item-name">Live Salad</div><div class="oe-item-price green">₹450</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ann green">
+      <strong>✅ Design A — How it works</strong>
+      <ul>
+        <li>Manager opens Local Settings → selects "Party" → saves</li>
+        <li>Every order on this device now opens Party items automatically</li>
+        <li>Waiter sees a small <strong>"Party Menu"</strong> chip — no decisions needed</li>
+        <li>No tab strip. Zero cognitive load on staff.</li>
+        <li>Manager switches back to "Normal" after the event ends</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Design B -->
+  <div>
+    <div class="col-label new-b">⚡ Design B — Local Default + Per-Order Override</div>
+
+    <!-- StatusConfigPage for B -->
+    <div class="screen sc-shell" style="margin-bottom:10px;">
+      <div class="sc-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        <span class="sc-nav-title">Local Settings</span>
+      </div>
+      <div class="sc-body">
+        <div class="sc-section">
+          <div class="sc-section-title">Order Taking</div>
+          <div class="sc-row">
+            <div class="sc-row-left"><span class="sc-row-label">Accept Orders</span><span class="sc-row-desc">Enable order taking on this device</span></div>
+            <div class="toggle on"></div>
+          </div>
+          <div class="sc-row">
+            <div class="sc-row-left"><span class="sc-row-label">QSR Mode</span><span class="sc-row-desc">Single-step quick billing</span></div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+        <div class="sc-section" style="border:1.5px solid #F4A11A;border-radius:8px;padding:10px;margin-top:4px;">
+          <div class="sc-section-title" style="color:#F4A11A;">Default Menu (New)</div>
+          <div class="menu-options">
+            <div class="menu-option">
+              <div class="mo-radio"></div>
+              <div class="mo-text"><div class="mo-name">Normal</div><div class="mo-desc">Standard everyday menu — default for all orders</div></div>
+            </div>
+            <div class="menu-option selected" style="border-color:#F4A11A;background:#FFFBEB;">
+              <div class="mo-radio" style="border-color:#F4A11A;"></div>
+              <div class="mo-text"><div class="mo-name">Party</div><div class="mo-desc">Used as default, waiter can still switch per-order</div></div>
+            </div>
+            <div class="menu-option"><div class="mo-radio"></div><div class="mo-text"><div class="mo-name">Premium</div></div></div>
+          </div>
+          <button class="sc-save" style="background:#F4A11A;">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94A3B8;margin:8px 2px 5px;">→ Result in Order Entry (tab strip still present)</div>
+    <div class="screen oe-shell">
+      <div class="oe-cat">
+        <div class="oe-cat-back">← Back</div>
+        <div class="oe-cat-list">
+          <div class="oe-cat-item active">All</div>
+          <div class="oe-cat-item">Starters</div>
+          <div class="oe-cat-item">Mains</div>
+          <div class="oe-cat-item">Drinks</div>
+        </div>
+      </div>
+      <div class="oe-mid">
+        <div class="oe-hdr">
+          <input class="oe-search" placeholder="Search items..." readonly/>
+        </div>
+        <!-- Tab strip — defaults to Party, waiter can still switch -->
+        <div class="tab-strip">
+          <div class="tab active">Party <span class="dot"></span></div>
+          <div class="tab">Normal</div>
+          <div class="tab">Premium</div>
+        </div>
+        <div class="oe-items">
+          <div class="oe-item"><div class="oe-item-img party">🎉</div><div class="oe-item-info"><div class="oe-item-name">Party Platter</div><div class="oe-item-price green">₹1,200</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🍖</div><div class="oe-item-info"><div class="oe-item-name">BBQ Set</div><div class="oe-item-price green">₹2,800</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🥂</div><div class="oe-item-info"><div class="oe-item-name">Welcome Set</div><div class="oe-item-price green">₹600</div></div></div>
+          <div class="oe-item"><div class="oe-item-img normal">🍗</div><div class="oe-item-info"><div class="oe-item-name">Chicken Tikka</div><div class="oe-item-price">₹320</div></div></div>
+          <div class="oe-item"><div class="oe-item-img normal">🍛</div><div class="oe-item-info"><div class="oe-item-name">Dal Makhani</div><div class="oe-item-price">₹260</div></div></div>
+          <div class="oe-item"><div class="oe-item-img party">🎂</div><div class="oe-item-info"><div class="oe-item-name">Cake</div><div class="oe-item-price green">₹950</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ann amber">
+      <strong>⚡ Design B — How it works</strong>
+      <ul>
+        <li>Manager sets "Party" as default in Local Settings</li>
+        <li>All orders open on Party tab by default</li>
+        <li>Waiter CAN tap "Normal" tab to switch for one order (e.g., a walk-in who wants normal food during a party night)</li>
+        <li>More flexible but more complex — waiter still sees tabs</li>
+        <li>OD-376-01 (lock after first item) still applies</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Option Y — Dashboard header selector -->
+<div class="section-label">OD-376-05: Where does the setting live?</div>
+
+<div class="grid-2">
+  <div>
+    <div style="font-size:11px;font-weight:700;color:#1A1A1A;margin-bottom:8px;">Option X — StatusConfigPage (existing pattern) <span style="font-size:10px;background:#DCFCE7;color:#15803D;padding:2px 7px;border-radius:4px;font-weight:700;margin-left:4px;">recommended</span></div>
+    <div class="ann blue">
+      <strong>Pros</strong>
+      <ul>
+        <li>Follows exact QSR mode pattern — zero new architecture</li>
+        <li>Part of the existing "Local Settings" page manager already knows</li>
+        <li>Can't be accidentally triggered by waiter during service</li>
+        <li>Groups with other operational toggles logically</li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:11px;font-weight:700;color:#1A1A1A;margin-bottom:8px;">Option Y — Dashboard Header Quick Selector</div>
+    <div class="screen dash-selector">
+      <div class="dash-topbar">
+        <span class="dash-topbar-title">MyGenie POS</span>
+        <div class="dash-menu-selector">
+          <span>🎉 Party Menu</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-subtitle">Tuesday, 10 Sep · The Goan Kitchen</div>
+        <div class="dash-tiles">
+          <div class="dash-tile"><div class="dash-tile-num">12</div><div class="dash-tile-lbl">Tables</div></div>
+          <div class="dash-tile"><div class="dash-tile-num">48</div><div class="dash-tile-lbl">Orders</div></div>
+          <div class="dash-tile"><div class="dash-tile-num">₹42k</div><div class="dash-tile-lbl">Revenue</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ann amber" style="margin-top:8px;">
+      <strong>Pros</strong>
+      <ul>
+        <li>Always visible — manager can change mid-service without going into settings</li>
+        <li>Very quick — one tap to switch menu for entire restaurant</li>
+        <li>Shows current active menu at all times</li>
+        <li>Requires small new component in Dashboard header</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Owner decisions needed -->
+<div class="section-label">3 Owner Decisions Needed</div>
+<div class="grid-3">
+  <div class="od-card">
+    <div class="od-id">OD-376-02 (Reopened)</div>
+    <div class="od-question">Design A (pure local setting, no tab strip) or Design B (local default + optional per-order tab)?</div>
+    <div class="od-options">
+      <div class="od-opt rec">A — Pure local setting, no tab strip <span class="od-rec-badge">Recommended</span></div>
+      <div class="od-opt alt">B — Local default + per-order tab override</div>
+    </div>
+  </div>
+  <div class="od-card">
+    <div class="od-id">OD-376-05 (New)</div>
+    <div class="od-question">Where does the setting live?</div>
+    <div class="od-options">
+      <div class="od-opt rec">X — StatusConfigPage (Local Settings) <span class="od-rec-badge">Recommended</span></div>
+      <div class="od-opt alt">Y — Dashboard header quick selector (always visible)</div>
+    </div>
+  </div>
+  <div class="od-card">
+    <div class="od-id">OD-376-06 (New)</div>
+    <div class="od-question">If active menu has 0 items configured — fallback behaviour?</div>
+    <div class="od-options">
+      <div class="od-opt rec">Auto-fallback to Normal + show warning toast <span class="od-rec-badge">Recommended</span></div>
+      <div class="od-opt alt">Show empty state in Order Entry</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:20px;font-size:11px;color:#94A3B8;padding:12px;">
+  CR-376 · Architecture Revision · OD-376-02 Reopened · 3 decisions needed before Gate 2
+</div>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "recipes": [
+    {
+      "recipe_id": 11030,
+      "addon_id": 11580,
+      "name": "Rabdi",
+      "addon_name": "Rabdi",
+      "food_name": "Rabdi",
+      "addon_price": "40.00",
+      "preparation_time": "0",
+      "serve_time": "0",
+      "unit": "pieces",
+      "serve_people": 1,
+      "qty": "1",
+      "type": "addon_recipe",
+      "ingredients": [
+        {
+          "ingredient_id": 13586,
+          "ingredient_name": "Rabdi",
+          "ingredient_unit": "gm",
+          "ingredient_qty": 100
+        }
+      ],
+      "is_pushed_managed": false
+    }
+  ]
+}

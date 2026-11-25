@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>Backend Brief — CR-495 Meal Package at Check-In + Room Comp Limit — 2026-11-14</h1>
+<blockquote>
+<p><strong>SUPERSEDED 2026-11-15 (owner R21)</strong> by the base document <code>backend_briefs/BACKEND_BRIEF_BATCH-A_2026_11_15.html</code> §CR-495. Kept for history; not updated.</p>
+</blockquote>
+<p>To: Parth (rooms / check-in) · cc Gyan (rights / PIN, CR-494) · FE: Abhishek
+Batch: A · Priority: P0 · Risk: CRITICAL · Client: ALL
+Source: <code>impact/CR-495_IMPACT_ANALYSIS.md</code>, <code>change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md</code> (R6–R8)</p>
+<h2>Why</h2>
+<p>Owner: "we don't have this currently for non-PMS outlets." Outlets that check guests in through the POS (no PMS / channel manager) have no meal package and no guest count anywhere, so the room comp limit cannot be computed.
+Probe evidence (The Palm House, RID 541, read-only): <code>evidence/BATCH-A-IA/probes_2026_11_14/cr495_palmhouse/</code> — room order <code>room_info</code> = advance / balance / discount / price only; settings-list has no meal / package / comp keys.</p>
+<h2>Owner rules (locked)</h2>
+<ul>
+<li>Package chosen at check-in, walk-in included: Room only / Breakfast / Half board / Full board.</li>
+<li>OTA bookings: use the channel-manager meal plan automatically (PMS outlets).</li>
+<li>Scope (owner R10): NON-PMS AND PMS outlets in the SAME release.</li>
+<li>Room may comp any food item up to ₹ limit <strong>per guest × guests checked in</strong>, <strong>separate limit per meal</strong> (breakfast / lunch / dinner), reset per <strong>business day</strong> (restaurant schedule, not midnight).</li>
+<li>Above limit → PIN (CR-494 comp PIN). Room only → comp allowed with PIN.</li>
+<li>Comp needs <code>complementary_food</code> right; backend must enforce (see Batch A brief, CR-492).</li>
+</ul>
+<h2>Backend asks</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Ask</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="B-495-1">B-495-1</td>
+<td>Meal package on check-in</td>
+<td>Field on POS check-in (walk-in) for non-PMS outlets: <code>meal_package</code> = <code>room_only</code> / <code>breakfast</code> / <code>half_board</code> / <code>full_board</code>. Stored on booking/room; returned on room list, room order <code>room_info</code>, folio.</td>
+</tr>
+<tr>
+<td id="B-495-2">B-495-2</td>
+<td>Guest count</td>
+<td><code>guest_count</code> captured at check-in, editable during stay; returned with B-495-1.</td>
+</tr>
+<tr>
+<td id="B-495-3">B-495-3</td>
+<td>Limit settings</td>
+<td>Restaurant settings keys: ₹ per guest per meal for each package (breakfast / lunch / dinner). Which meals apply per package: BB = breakfast, HB = breakfast + one main meal, FB = all three.</td>
+</tr>
+<tr>
+<td id="B-495-4">B-495-4</td>
+<td>Daily used counter</td>
+<td>Server-side comp amount used per room, per meal, per business day. Returned to POS before comp and updated on comp save; shared across devices.</td>
+</tr>
+<tr>
+<td id="B-495-5">B-495-5</td>
+<td>Meal slot</td>
+<td>How a comp is assigned to breakfast / lunch / dinner (time window per meal in settings, or chosen by cashier). Backend to propose.</td>
+</tr>
+<tr>
+<td id="B-495-6">B-495-6</td>
+<td>Enforcement</td>
+<td>On comp save for a room order: if over remaining limit, or the meal is outside the package (owner R18), and no valid PIN → reject.</td>
+</tr>
+<tr>
+<td id="B-495-7">B-495-7</td>
+<td>OTA mapping (PMS outlets)</td>
+<td>Map channel-manager meal plan / rateplan to the 4 packages. Same release as non-PMS.</td>
+</tr>
+</tbody>
+</table>
+<h2>Questions for backend</h2>
+<ol>
+<li>Existing check-in API: can <code>meal_package</code> + <code>guest_count</code> be added without breaking current check-in? (Owner rule: changes additive.)</li>
+<li>Business-day boundary: reuse existing day-closure / restaurant schedule?</li>
+<li>Half board: which main meal (lunch or dinner) — <strong>Owner R16 (2026-11-15): guest chooses lunch or dinner at check-in</strong> → please store it with the package (e.g. <code>half_board_meal</code> = lunch/dinner) and return it with B-495-1.</li>
+<li>B-495-5 meal slot assignment — <strong>Owner R16 (2026-11-15): cashier picks the meal for each comp</strong> → comp save carries the meal; counter B-495-4 per that meal.</li>
+</ol>
+<h2>FE scope (after backend keys land)</h2>
+<p>Package + guest count on CheckInForm / CheckInPage; remaining-limit display and PIN prompt in comp flow for room orders. Hotspots with open items: CheckInForm.jsx / CheckInPage.jsx, CollectPaymentPanel — Gate 3 must re-verify at HEAD.</p><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

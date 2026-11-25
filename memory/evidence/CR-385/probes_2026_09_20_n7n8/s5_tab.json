@@ -1,0 +1,6 @@
+{
+ "http": 200,
+ "body": {
+  "message": "Room payment received via TAB"
+ }
+}

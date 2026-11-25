@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_BUG-607_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-B_BUG-607_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_BUG-607_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — BUG-607 GST mode "category" — always item tax — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BB-11, BB-12 · IA doc: <code>impact/BUG-607_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong></p>
+<h2>1. Category GST: always use item tax — no restaurant fallback (BB-11) — BEHAVIOUR</h2>
+<p>All server-side tax computation paths: scan orders · web orders · aggregator orders · bill print · reports · e-invoice.</p>
+<p><strong>No new field. Behaviour change only.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All server tax paths</td>
+<td><code>tax</code> (per item)</td>
+<td>When <code>restaurant_gst = "category"</code>: use each item’s <code>tax</code> value — NEVER fall back to restaurant <code>gst_tax</code></td>
+<td>BEHAVIOUR — <strong>LOCKED OD-B-BB11</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Probe evidence:</strong>
+- RID 644 (cafe103): <code>restaurant_gst = "category"</code>, <code>gst_tax = "5.00"</code> — backend currently uses restaurant fallback (BUG-607 symptom).
+- RID 541 (The Palm House): <code>restaurant_gst = "category"</code>, <code>gst_tax = "0.00"</code>. Probe 32: 286 products all carry item tax (5% GST ×220, 0% GST ×61, 0% VAT ×5). POS already bills per item.</p>
+<p>OD-607-A: <code>restaurant_gst = "category"</code> means item-level GST always; no restaurant-level fallback.</p>
+<h2>2. Regression order ID (BB-12) — data request, no API field</h2>
+<p><strong>OD-B-BB12 (R2b):</strong> Confirmed — data request only. Gyan shares one order ID where restaurant-level GST was wrongly applied, by message. No new API field. No contract entry.</p>
+<h2>3. CR-394 data fix note (BB-13) — not an API contract</h2>
+<p><strong>OD-B-BB13 (R2b):</strong> Confirmed — one-time backend data fix only. Gyan runs a script: all products with <code>tax_calc = Inclusive</code> in GST-ON outlets (​<code>gst_status = 1</code>) → changed to <code>Exclusive</code>. Share count of changes per outlet.</p>
+<p><strong>FE QA note:</strong> after data fix, FE team validates reports for any GST inconsistencies (owner: “we always had exclusive so reports need to be validated”).</p>
+<h2>4. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-11">BB-11</td>
+<td></td>
+<td>Confirm all server tax paths use item <code>tax</code> when <code>restaurant_gst = "category"</code></td>
+<td></td>
+</tr>
+<tr>
+<td id="BB-12">BB-12</td>
+<td></td>
+<td>Share one order ID with wrong GST applied</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

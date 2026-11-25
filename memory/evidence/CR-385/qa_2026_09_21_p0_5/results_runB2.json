@@ -1,0 +1,37 @@
+{
+  "LOGIN_NAV": "PASS",
+  "R2_tiles": "FAIL: arr_chip_count=2 !=4; arr_chip_sum=10 !=pending 14 | {\"arr\": [0, 0], \"dep\": [2, 2], \"inh\": [2, 2], \"rooms_free\": [0, 0], \"arr_chips_sum_vs_pending\": [{\"count\": 2, \"sum\": 10}, 14], \"dep_chips_sum_vs_inhouse\": [{\"count\": 2, \"sum\": 2}, 2]}",
+  "R3_tabs": "PASS",
+  "R7_roomdetail": "open1=2 open2=2(['fd-room-detail-8527', 'fd-room-detail-close-8527']) open3=2(['fd-room-detail-8525', 'fd-room-detail-close-8525']) mc_disabled=True mc_avail=True rh_restored=False",
+  "R8_rooms_retry": "err=True retry_btn=True tile_dash=True(\u2014) inflight=True retext=retrying\u2026 recovery=True",
+  "R9_alerts": "{'bar': True, 'visible_items': 3, 'more_btn': True, 'more_txt': '+9 more', 'popover': True, 'popover_items': 12, 'active_change': 'fd-tab-rooms -> fd-tab-rooms', 'popover_closed': True}",
+  "R10_header": "greet_ok=True(Good evening, Owner) date_ok=True(Monday, 21 September 2026) sync_ok=True(synced just now) nb_dis_ok=True(dis=,aria=None)",
+  "R11_money": "{\"total\": 0, \"bad\": [], \"arrivals\": {\"total\": 11, \"bad\": [{\"tid\": \"fd-th-amount\", \"txt\": \"BOOKING \\u20b9\"}]}, \"departures\": {\"total\": 3, \"bad\": [{\"tid\": \"fd-th-amount\", \"txt\": \"BALANCE\"}]}, \"inhouse\": {\"total\": 3, \"bad\": [{\"tid\": \"fd-th-amount\", \"txt\": \"BALANCE\"}]}}",
+  "R12_dupes": "PASS",
+  "R13_overflow": "PASS",
+  "R14_legacy": {
+    "/pms/front-desk": {
+      "chars": 310,
+      "new_errs": 0
+    },
+    "/pms/arrivals": {
+      "chars": 194,
+      "new_errs": 0
+    },
+    "/pms/in-house": {
+      "chars": 337,
+      "new_errs": 0
+    },
+    "/pms/room-status": {
+      "chars": 997,
+      "new_errs": 0
+    }
+  },
+  "R7_final_restore": "UNSAFE: available\nr4\nsuite \u00b7 2nd floor\nready",
+  "R15_screens": "PASS",
+  "console_errors_count": 2,
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ]
+}

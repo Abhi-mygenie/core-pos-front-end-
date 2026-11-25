@@ -1,0 +1,13 @@
+{
+ "step": "legacy /pms/arrivals \u22ee Modify +1 night (24\u219225 Sep) Confirm",
+ "capture": [
+  {
+   "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/234",
+   "body": "{\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-25\",\"amount_after_tax\":0}"
+  },
+  {
+   "status": 200,
+   "resp": "{\"status\":true,\"message\":\"Reservation modified successfully\",\"data\":{\"reservation\":{\"id\":234,\"booking_id\":\"MG-69-76B8ED74-4DCF-4AF0-B50A-B6FB2A83E1DE\",\"cm_booking_id\":null,\"channel\":\"Direct\",\"hotel_code\":\"sandbox-pms\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-25\",\"status\":\"confirmed\",\"cancelled_at\":null,\"cancel_reason\":null,\"cancelled_by\":null,\"pah\":true,\"operational_status\":\"pending\",\"booked_on\":\"2026-09-22 08:26:57\",\"amount_before_tax\":\"94500.00\",\"amount_after_tax\":\"111510.00\",\"advance_payment\":0,\"balance_payment\":94500,\"charge\":{\"rate_per_night\":31500,\"nights\":3,\"rateplan_code\":\"suite-s-ep\",\"rateplan_name\":\"suite-s-ep\",\"upgrade_amount\":0,\"booking_charge\":94500,\"sgst\":8505,\"cgst\":8505,\"total_with_gst\":111510,\"prepaid_amount\":0,\"advance_payment\":0,\"balance_due\":111510},\"currency\":\"INR\",\"special_requests\":null,\"user_id_document_id\":17256,\"guest\":{\"first_name\":\"QA-P15b-Probe\",\"last_name\":\"\",\"email\":null,\"phone\":\"9999900031\",\"address_city\":null,\"address_state\":null,\"address_country\":null},\"rooms\":[{\"id\":245,\"room_code\":\"suite\",\"rateplan_code\":\"suite-s-ep\",\"guest_name\":null,\"adults\":1,\"children\":0,\"line_status\":\"pending\",\"restaurant_table_id\":null,\"table_no\":null,\"table_title\":null,\"order_id\":null,\"user_id_document_id\":null,\"order_f_order_status\":null,\"order_payment_status\":null,\"checked_in_at\":null,\"checked_out_at\":null}]},\"inventory_push\":{\"success\":true,\"message\":\"Inventory pushed successfully\",\"data\":{\"success\":true,\"message\":\"Request Received Successfully\"},\"payload\":{\"hotelCode\":\"sandbox-pms\",\"updates\":[{\"startDate\":\"2026-09-22\",\"endDate\":\"2026-09-25\",\"rooms\":[{\"roomCode\":\"suite\",\"available\":3},{\"roomCode\":\"executive\",\"available\":0}]}]}}}}"
+  }
+ ]
+}

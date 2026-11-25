@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_BUG-630_API_CONTRACT_2026_11_18 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto;font-size:12px}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}.warn{background:#ffe2c2;border:1px solid #f4a460;padding:8px 12px;border-radius:4px;font-size:13px;margin:10px 0}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> &middot; <a href="/design-tracker.html">Design tracker</a> &middot; <a href="/briefs/BATCH-B_BUG-630_API_CONTRACT_2026_11_18.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_BUG-630_API_CONTRACT_2026_11_18.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p>
+<h1>API Contract &mdash; BUG-630 Item Sales Ledger &mdash; add <code>net_sales</code> field &mdash; FINAL v1 &mdash; 2026-11-18</h1>
+<p>Backend: Gyan &middot; ID: BB-14 &middot; IA doc: <code>evidence/BUG-629_630_SETTLEMENT_NETSALES_INVESTIGATION_2026_10_31.md</code><br>
+<strong>Names LOCKED &mdash; renamed or changed fields &rarr; backend reply rejected.</strong></p>
+
+<h2>1. The problem</h2>
+<p>Endpoint <code>POST /api/v1/vendoremployee/top-food%20sales-report</code> currently returns <code>total_sales</code> per row which equals:</p>
+<pre>total_sales = item_price + variation_price + addon_price &minus; discount + gst + vat + service_charge
+            = Net Sales (pre-tax) + Tax
+            = Total Billed</pre>
+<div class="warn">POS displays this as &ldquo;Net Sales&rdquo; &mdash; resulting in Net Sales being <strong>larger than Gross Revenue</strong>, which is impossible and confusing for restaurant owners.</div>
+<p><strong>Probe evidence (live data, Oct 2026):</strong></p>
+<pre>Gross Revenue (item_price + variation_price + addon_price) = &#8377;13,33,222.00
+Discount                                                   =    &#8377;36,636.29
+Expected Net Sales (Gross &minus; Discount)                = &#8377;12,96,585.71
+total_sales (what backend sends today)                     = &#8377;13,61,162.42  &larr; &#8377;64,576.71 over
+Implied tax (gst + vat + sc)                               =    &#8377;64,576.71  &#10003; confirmed</pre>
+<p>Relationship confirmed: <code>net_sales + (gst + vat + service_charge) = total_sales</code></p>
+
+<h2>2. Contract &mdash; new field (BB-14)</h2>
+<h3>Endpoint</h3>
+<ul>
+<li>Method: <code>POST</code></li>
+<li>URL: <code>/api/v1/vendoremployee/top-food%20sales-report</code></li>
+<li>Payload unchanged: <code>{ "from": "YYYY-MM-DD", "to": "YYYY-MM-DD" }</code></li>
+</ul>
+
+<h3>New field &mdash; per row in <code>food_sales_report[]</code></h3>
+<table><thead><tr><th>Field</th><th>Type</th><th>Rule</th><th>Locked name</th></tr></thead><tbody>
+<tr id="BB-14"><td><code>net_sales</code></td><td>string (numeric, 2dp)</td><td><code>item_price + variation_price + addon_price &minus; discount</code> &mdash; pre-tax, before GST/VAT/SC</td><td><strong>LOCKED</strong></td></tr>
+</tbody></table>
+
+<h3>Existing fields &mdash; unchanged</h3>
+<table><thead><tr><th>Field</th><th>Current value</th><th>FE action after this fix</th></tr></thead><tbody>
+<tr><td><code>total_sales</code></td><td><code>net_sales + gst + vat + service_charge</code> (Total Billed)</td><td>Relabelled &ldquo;Total Sales&rdquo; in POS KPI strip &mdash; value unchanged</td></tr>
+<tr><td><code>gst</code>, <code>vat</code>, <code>service_charge</code></td><td>Tax components per row</td><td>FE sums them for new &ldquo;Tax&rdquo; KPI &mdash; no change to fields</td></tr>
+<tr><td><code>item_price</code>, <code>variation_price</code>, <code>addon_price</code>, <code>discount</code></td><td>Unchanged</td><td>Unchanged</td></tr>
+</tbody></table>
+
+<h3>Validation rule</h3>
+<pre>parseFloat(net_sales) + parseFloat(gst) + parseFloat(vat) + parseFloat(service_charge)
+  === parseFloat(total_sales)   // within &plusmn;0.01 rounding tolerance</pre>
+
+<h3>Example response after fix</h3>
+<pre>{
+  "food_item": "Build Your Own Bowl",
+  "item_price": "46517",
+  "variation_price": "0",
+  "addon_price": "59430",
+  "discount": "0",
+  "gst": "5293.5",
+  "vat": "0",
+  "service_charge": "0",
+  "net_sales": "105947.00",
+  "total_sales": "111240.50"
+}</pre>
+
+<h2>3. FE plan (no backend dependency except this field)</h2>
+<table><thead><tr><th>KPI card</th><th>Field read</th><th>Label after fix</th></tr></thead><tbody>
+<tr><td>Gross Revenue</td><td>FE computed: <code>item_price + variation_price + addon_price</code></td><td>Gross Revenue</td></tr>
+<tr><td>Discount</td><td><code>discount</code></td><td>Discount</td></tr>
+<tr><td><strong>Net Sales</strong> (new)</td><td><code>r.net_sales</code> &larr; <strong>this field</strong></td><td>Net Sales &mdash; always &le; Gross Revenue &#10003;</td></tr>
+<tr><td>Tax (new)</td><td><code>r.gst + r.vat + r.service_charge</code> &mdash; FE sum of existing fields</td><td>Tax</td></tr>
+<tr><td><strong>Total Sales</strong> (renamed from &ldquo;Net Sales&rdquo;)</td><td><code>r.total_sales</code> &mdash; unchanged</td><td>Total Sales</td></tr>
+</tbody></table>
+<p><strong>FE is blocked on BB-14</strong> until <code>net_sales</code> is in the response.</p>
+
+<h2>4. Backend sign-off</h2>
+<table><thead><tr><th>ID</th><th>OK / ETA / Not feasible</th><th>Notes</th><th>Date</th></tr></thead><tbody>
+<tr><td id="signoff-BB-14">BB-14</td><td></td><td>Add <code>net_sales</code> per row = <code>item_price + variation_price + addon_price &minus; discount</code>. Confirm validation rule <code>net_sales + gst + vat + sc = total_sales</code> holds.</td><td></td></tr>
+</tbody></table>
+
+<script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy\u00a0.md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy\u00a0.md'},2000);}}).catch(function(){b.textContent='Error'});}});</script>
+</div></body></html>

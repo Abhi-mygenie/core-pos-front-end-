@@ -1,0 +1,12 @@
+{
+ "request": {
+  "method": "DELETE",
+  "path": "/api/v2/vendoremployee/product/delete-addon/13732",
+  "json": null,
+  "data": null
+ },
+ "status": 200,
+ "response": {
+  "message": "Addon deleted successfully!"
+ }
+}

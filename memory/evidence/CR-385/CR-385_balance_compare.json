@@ -1,0 +1,41 @@
+[
+ {
+  "booking_id": "MG-69-6CF6F16A-0B9A-4971-B88D-052BC8C96A90",
+  "order_id": 1232408,
+  "LR.amount_after_tax": "1000.00",
+  "LR.advance_payment": 100,
+  "LR.balance_payment": 950,
+  "folio.room_price": "1000.00",
+  "folio.gst_tax": "50.00",
+  "folio.advance": "100.00",
+  "folio.receive_balance": "0.00",
+  "folio.calc_balance": 950.0,
+  "assoc_orders": 3
+ },
+ {
+  "booking_id": "MG-69-2D47EC1C-E0EB-48D1-8B1C-7DDD70A44116",
+  "order_id": 1232470,
+  "LR.amount_after_tax": "1000.00",
+  "LR.advance_payment": 100,
+  "LR.balance_payment": 900,
+  "folio.room_price": "1000.00",
+  "folio.gst_tax": "50.00",
+  "folio.advance": "100.00",
+  "folio.receive_balance": "0.00",
+  "folio.calc_balance": 950.0,
+  "assoc_orders": 1
+ },
+ {
+  "booking_id": "MG-69-8E34DBFA-B2CA-4FD8-8FF7-980A22075802",
+  "order_id": 1232479,
+  "LR.amount_after_tax": "1000.00",
+  "LR.advance_payment": 100,
+  "LR.balance_payment": 950,
+  "folio.room_price": "1000.00",
+  "folio.gst_tax": "50.00",
+  "folio.advance": "100.00",
+  "folio.receive_balance": "0.00",
+  "folio.calc_balance": 950.0,
+  "assoc_orders": 1
+ }
+]

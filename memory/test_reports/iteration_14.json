@@ -1,0 +1,15 @@
+{
+  "summary": "BUG-741 wording verification (read-only, frontend). Logged in as Owner, opened dine-in table t1 (order #000016, placed item 'moo duudh'), clicked cancel-item-btn to open CancelFoodModal. Title data-testid cancel-modal-title = 'Cancel item: moo duudh' (PASS). Confirm button cancel-confirm-btn = 'Cancel Item' (disabled until reason chosen) - NOT clicked. Modal closed via Escape; nothing cancelled. Popout distinctness: no scan/web orders available (header Web 0), so verified by code review only: PopoutItemRow L130 title='Cancel this item'; ScanOrderPopOut order-level button label 'Reject', title 'Reject / Cancel order — opens cancel modal' - distinct.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "evidence_screenshot": "/app/memory/test_reports/screenshots/bug741_cancel_modal.jpg",
+  "action_items": [],
+  "critical_code_review_comments": ["None - pure copy change; confirm button logic unchanged ('Cancel Item' / 'Cancel N Items')."],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% (modal title live-verified; popout check code-only)"},
+  "seed_data_creation": "None. No orders placed/cancelled/rejected/printed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Order entry reached by clicking table name text on table-card-<id> on /dashboard. Placed items expose cancel-item-btn-<id>. Popout per-item cancel not live-tested as no scan/web orders existed at test time."
+}

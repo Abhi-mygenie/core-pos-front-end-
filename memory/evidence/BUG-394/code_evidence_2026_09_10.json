@@ -1,0 +1,55 @@
+{
+  "bug_id": "BUG-394",
+  "captured": "2026-09-10",
+  "source": "OWNER-REPORTED + AGENT-CONFIRMED-IN-CODE",
+  "trigger": "Owner observed: '-' in Price field converts to 0 instead of showing an error",
+  "confidence": "CONFIRMED",
+  "patterns": [
+    {
+      "id": "P1",
+      "file": "src/components/panels/menu/ProductForm.jsx",
+      "line": 18,
+      "code": "onChange={(e) => onChange(type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value)}",
+      "behavior_on_dash": "parseFloat('-') = NaN; NaN || 0 = 0; silently saves 0",
+      "severity": "MAJOR"
+    },
+    {
+      "id": "P2",
+      "file": "src/components/panels/menu/BulkEditor.jsx",
+      "line": 1403,
+      "code": "onChange={e => updateCell(row._id, col.key, Number(e.target.value))}",
+      "behavior_on_dash": "Number('-') = NaN; NaN stored in grid cell state",
+      "severity": "MAJOR"
+    },
+    {
+      "id": "P3",
+      "file": "src/components/panels/menu/AddonManagementPanel.jsx",
+      "line": "156 (add), 237 (edit)",
+      "code": "onChange={e => setAddForm(p => ({ ...p, price: e.target.value }))}",
+      "behavior_on_dash": "raw string '-' stored directly in state and sent to API as price field",
+      "severity": "BLOCKER"
+    },
+    {
+      "id": "P4",
+      "file": "src/components/panels/menu/AddonManagementPanel.jsx",
+      "line": "158 (add), 239 (edit)",
+      "code": "onChange={e => setAddForm(p => ({ ...p, weight: Number(e.target.value) }))}",
+      "behavior_on_dash": "Number('-') = NaN stored in weight field",
+      "severity": "MAJOR"
+    },
+    {
+      "id": "P5",
+      "file": "src/components/panels/menu/VariationExpandPanel.jsx",
+      "line": 54,
+      "code": "onChange={e => onPriceChange(gIdx, vIdx, parseFloat(e.target.value) || 0)}",
+      "behavior_on_dash": "parseFloat('-') = NaN; NaN || 0 = 0; silently saves 0 price to variation",
+      "severity": "MAJOR"
+    }
+  ],
+  "sanitisation_guards_present": false,
+  "blast_radius": "MEDIUM \u2014 4 files, 5 onChange handlers, all in Menu Management module",
+  "hotspot_files_touched": [
+    "BulkEditor.jsx"
+  ],
+  "related_bug": "BUG-392 (scroll wheel, same files, already fixed \u2014 BUG-392 added onWheel guards but did not fix invalid char handling)"
+}

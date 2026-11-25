@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Served Items — Space Reduction Design</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f0; padding: 24px; }
+    :root {
+      --green:  #329937;
+      --orange: #F26B33;
+      --dark:   #1A1A1A;
+      --gray:   #666666;
+      --border: #E5E5E5;
+      --bg:     #FFFFFF;
+    }
+
+    h1 { font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .meta { font-size: 12px; color: var(--gray); margin-bottom: 24px; }
+
+    /* Layout */
+    .compare { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; max-width: 1100px; margin: 0 auto; }
+
+    .card-wrap { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.09); overflow: hidden; }
+    .card-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+      padding: 8px 14px; border-bottom: 1px solid var(--border);
+    }
+    .card-label.before { color: #999; background: #fafafa; }
+    .card-label.after  { color: var(--green); background: rgba(50,153,55,.05); }
+    .card-label.opt    { color: var(--orange); background: rgba(242,107,51,.05); }
+
+    /* Mock order card */
+    .order-card { border-radius: 0; }
+
+    /* Served toggle header */
+    .served-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px; font-size: 12px; color: var(--gray);
+      border-bottom: 1px solid var(--border); border-top: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    /* ── BEFORE: current state ── */
+    .served-list-before .row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 12px; /* py-1.5 = 6px */
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .served-list-before .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .served-list-before .name { flex: 1; font-size: 12px; color: var(--dark); }
+    .served-list-before .time { font-size: 9px; color: var(--gray); display: block; margin-top: 1px; }
+    .served-list-before .label { font-size: 10px; color: var(--gray); flex-shrink: 0; }
+    .served-list-before .check { width: 20px; height: 20px; flex-shrink: 0; color: var(--gray); margin-right: -8px; }
+
+    /* ── OPTION A: Remove "Served" label + shrink checkmark ── */
+    .served-list-a .row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 3px 12px; /* py-0.5 = 2px → use 3px for visual */
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .served-list-a .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .served-list-a .name { flex: 1; font-size: 11px; color: var(--dark); }
+    .served-list-a .time { font-size: 9px; color: var(--gray); display: block; }
+    .served-list-a .check { width: 12px; height: 12px; flex-shrink: 0; color: var(--gray); margin-right: -4px; }
+
+    /* ── OPTION B: Remove both "Served" + checkmark entirely ── */
+    .served-list-b .row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 3px 12px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .served-list-b .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .served-list-b .name { flex: 1; font-size: 11px; color: var(--dark); }
+    .served-list-b .time { font-size: 9px; color: var(--gray); display: block; }
+
+    /* SVG check icon inline */
+    .check-icon-lg  { display:inline-block; width:20px; height:20px; vertical-align:middle; stroke:#666; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .check-icon-sm  { display:inline-block; width:12px; height:12px; vertical-align:middle; stroke:#666; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .chevron-icon   { display:inline-block; width:14px; height:14px; vertical-align:middle; stroke:#666; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+    /* Measurement annotation */
+    .measure {
+      background: var(--orange); color: #fff; font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 4px; display: inline-block; margin-left: 6px;
+    }
+    .measure.green { background: var(--green); }
+
+    /* Summary table */
+    .summary {
+      max-width: 1100px; margin: 24px auto 0;
+      background: #fff; border-radius: 12px; padding: 20px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.09);
+    }
+    .summary h2 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--dark); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { padding: 8px 10px; background: #f5f5f5; text-align: left; color: var(--gray); font-weight: 600; }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .tag-orange { background: rgba(242,107,51,.1); color: var(--orange); }
+    .tag-green  { background: rgba(50,153,55,.1); color: var(--green); }
+
+    /* Bill button mock */
+    .bill-btn {
+      display: flex; align-items: center; justify-content: center;
+      background: var(--green); color: #fff; font-size: 13px; font-weight: 600;
+      border-radius: 8px; height: 44px; margin: 0; padding: 0 16px; flex: 1;
+    }
+    .footer-mock { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+    .icon-btn { width: 44px; height: 44px; border-radius: 8px; background: #f5f5f5; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+    .saved-badge {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;
+      background: rgba(50,153,55,.12); color: var(--green); margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Served Items — Space Reduction Proposal</h1>
+  <p class="meta">CR-430 gap analysis · 2026-10-17 · OrderCard.jsx served items section</p>
+
+  <div class="compare">
+
+    <!-- BEFORE -->
+    <div class="card-wrap">
+      <div class="card-label before">
+        Current state (after CR-430)
+        <span class="measure">~44px / row</span>
+      </div>
+      <div class="order-card">
+        <div class="served-header" style="min-height:36px;">
+          <span>▼ Served (9)
+            <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </span>
+        </div>
+        <div class="served-list-before" style="padding-bottom:6px;">
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Check In (1)<span class="time">Total: 1656h 13m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1652h 58m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Espresso Martini (1)<span class="time">Total: 1628h</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Pancakes and Cream (1)<span class="time">Total: 1607h 45m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Basil &amp; Cashew Fettuccine (V) (1)<span class="time">Total: 1559h 10m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Ocean Blue (V) (1)<span class="time">Total: 1511h 58m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1464h 14m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Cacao Crush (V) (1)<span class="time">Total: 1438h 25m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Potato Wedges (V) (1)<span class="time">Total: 1432h 28m</span></div>
+            <span class="label">Served</span>
+            <svg class="check-icon-lg" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="footer-mock">
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="bill-btn">Bill</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION A: remove "Served" label + tiny checkmark + tight padding -->
+    <div class="card-wrap">
+      <div class="card-label after">
+        Option A — Recommended
+        <span class="measure green">~28px / row · ~35% smaller</span>
+      </div>
+      <div class="order-card">
+        <div class="served-header" style="min-height:32px; font-size:11px;">
+          <span>▼ Served (9)
+            <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </span>
+        </div>
+        <div class="served-list-a" style="padding-bottom:4px;">
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Check In (1)<span class="time">Total: 1656h 13m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1652h 58m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Espresso Martini (1)<span class="time">Total: 1628h</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Pancakes and Cream (1)<span class="time">Total: 1607h 45m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Basil &amp; Cashew Fettuccine (V) (1)<span class="time">Total: 1559h 10m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Ocean Blue (V) (1)<span class="time">Total: 1511h 58m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1464h 14m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Cacao Crush (V) (1)<span class="time">Total: 1438h 25m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Potato Wedges (V) (1)<span class="time">Total: 1432h 28m</span></div>
+            <svg class="check-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="footer-mock">
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="18" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="bill-btn">Bill</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION B: remove label + remove checkmark entirely -->
+    <div class="card-wrap">
+      <div class="card-label opt">
+        Option B — Most compact
+        <span class="measure">~22px / row · ~50% smaller</span>
+      </div>
+      <div class="order-card">
+        <div class="served-header" style="min-height:32px; font-size:11px;">
+          <span>▼ Served (9)
+            <svg class="chevron-icon" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          </span>
+        </div>
+        <div class="served-list-b" style="padding-bottom:4px;">
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Check In (1)<span class="time">Total: 1656h 13m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1652h 58m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Espresso Martini (1)<span class="time">Total: 1628h</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Pancakes and Cream (1)<span class="time">Total: 1607h 45m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Basil &amp; Cashew Fettuccine (V) (1)<span class="time">Total: 1559h 10m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Ocean Blue (V) (1)<span class="time">Total: 1511h 58m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Sourdough Cinnamon Roll (1)<span class="time">Total: 1464h 14m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Cacao Crush (V) (1)<span class="time">Total: 1438h 25m</span></div>
+          </div>
+          <div class="row">
+            <div class="dot"></div>
+            <div class="name">Potato Wedges (V) (1)<span class="time">Total: 1432h 28m</span></div>
+          </div>
+        </div>
+        <div class="footer-mock">
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></div>
+          <div class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><line x1="18" y1="6" x2="18" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          <div class="bill-btn">Bill</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end compare -->
+
+  <!-- Summary -->
+  <div class="summary">
+    <h2>What changes and why</h2>
+    <table>
+      <tr>
+        <th>Element</th>
+        <th>Current</th>
+        <th>Option A (Recommended)</th>
+        <th>Option B (Most compact)</th>
+      </tr>
+      <tr>
+        <td><strong>Row padding</strong></td>
+        <td><code>py-1.5</code> (6px each side = 12px)</td>
+        <td><code>py-0.5</code> (2px each side = 4px) <span class="tag tag-green">−8px / row</span></td>
+        <td><code>py-0.5</code> same</td>
+      </tr>
+      <tr>
+        <td><strong>"Served" text label</strong></td>
+        <td>Present on every row</td>
+        <td>Removed — redundant, section header already says "Served" <span class="tag tag-green">saves width → fewer wraps</span></td>
+        <td>Removed</td>
+      </tr>
+      <tr>
+        <td><strong>Checkmark icon</strong></td>
+        <td><code>w-5 h-5</code> (20px) Check</td>
+        <td><code>w-3 h-3</code> (12px) — kept but minimal <span class="tag tag-orange">owner says optional</span></td>
+        <td>Removed entirely</td>
+      </tr>
+      <tr>
+        <td><strong>Row height result</strong></td>
+        <td>~44px (wrapping names)</td>
+        <td>~28px single-line, ~36px wrapping <span class="tag tag-green">~35% reduction</span></td>
+        <td>~22px single-line <span class="tag tag-green">~50% reduction</span></td>
+      </tr>
+      <tr>
+        <td><strong>File</strong></td>
+        <td>—</td>
+        <td colspan="2"><code>OrderCard.jsx</code> lines ~838-865 (served items map) · R5 hotspot</td>
+      </tr>
+      <tr>
+        <td><strong>Is it part of CR-430?</strong></td>
+        <td>—</td>
+        <td colspan="2">CR-430 removed the 44px min-height from the checkmark div. This is an <strong>extension of CR-430</strong> — same area, next level of compactness. Can be registered as CR-430 follow-up or a new CR.</td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>

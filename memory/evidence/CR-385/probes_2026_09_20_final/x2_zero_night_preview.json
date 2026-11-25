@@ -1,0 +1,7 @@
+{
+ "http": 422,
+ "body": {
+  "status": false,
+  "message": "checkout must be after checkin."
+ }
+}

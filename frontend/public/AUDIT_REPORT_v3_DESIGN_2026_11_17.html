@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Audit Report — v3 Design — Revised Cards + Approach C Overlap — 2026-11-17</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#71717A;--b:#E4E4E7;--bg:#FAFAFA}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px;position:sticky;top:0;z-index:10}
+nav a{color:var(--o);margin-right:16px;text-decoration:none;font-weight:600}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 16px}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-left:6px}
+.tag-v3{background:#FEF3C7;color:#92400E}.tag-new{background:#DBEAFE;color:#1E40AF}.tag-redesign{background:#DCFCE7;color:#166534}
+.diff{margin:16px 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:14px 18px}
+.diff li{margin:4px 0}
+
+/* Page shell */
+.page{background:var(--bg);border-radius:12px;border:1px solid #ddd;overflow:hidden;font-size:13px}
+.page-head{background:#fff;padding:14px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.page-head h4{margin:0;font-size:17px;font-weight:700;color:#09090B}
+.page-head small{color:var(--gt);font-size:11px}
+.page-body{padding:20px}
+
+/* ===== KPI BAR ===== */
+.quiet-bar{display:flex;gap:20px;padding:14px 20px;background:#fff;border:1px solid var(--b);border-radius:12px;margin-bottom:20px;flex-wrap:wrap}
+.quiet-bar .qs{display:flex;align-items:center;gap:6px}
+.quiet-bar .qs-val{font-size:16px;font-weight:800;font-family:ui-monospace,monospace}
+.quiet-bar .qs-label{font-size:11px;color:var(--gt)}
+.quiet-bar .qs-sep{width:1px;background:var(--b);align-self:stretch}
+.qs-new{background:#FFFBEB;border-radius:4px;padding:2px 6px}
+
+/* ===== ALERT CARDS ===== */
+.alert-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.alert-card{border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.alert-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.alert-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.alert-number{font-size:36px;font-weight:900;font-family:ui-monospace,monospace;line-height:1;margin-bottom:4px}
+.alert-label{font-size:14px;font-weight:700;margin-bottom:4px}
+.alert-money{font-size:13px;font-weight:700;margin-bottom:8px;font-family:ui-monospace,monospace}
+.alert-desc{font-size:12px;line-height:1.4;opacity:.8}
+.alert-cta{font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
+.alert-overlap{font-size:10px;margin-top:6px;opacity:.6;font-style:italic}
+
+/* Card colors */
+.alert-red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border:1px solid #FECACA;color:#7F1D1D}
+.alert-red .alert-icon{background:#FEE2E2;color:#DC2626}
+.alert-red .alert-number{color:#B91C1C}
+.alert-red .alert-money{color:#DC2626}
+
+.alert-amber{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A;color:#78350F}
+.alert-amber .alert-icon{background:#FEF3C7;color:#D97706}
+.alert-amber .alert-number{color:#92400E}
+.alert-amber .alert-money{color:#B45309}
+
+.alert-purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:1px solid #DDD6FE;color:#3B0764}
+.alert-purple .alert-icon{background:#EDE9FE;color:#7C3AED}
+.alert-purple .alert-number{color:#6D28D9}
+.alert-purple .alert-money{color:#7C3AED}
+
+/* ===== RISK BAR (inside Card 1) ===== */
+.card-risk-bar{margin:10px 0 6px;display:flex;height:24px;border-radius:6px;overflow:hidden;background:#F4F4F5}
+.card-risk-bar .seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;min-width:20px}
+.seg-doubt{background:#F59E0B}.seg-risk{background:#F97316}.seg-high{background:#EF4444}
+.card-risk-legend{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+.card-risk-legend .leg{display:flex;align-items:center;gap:4px;font-size:10px}
+.card-risk-legend .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ===== BREAKDOWN CARDS ===== */
+.sub-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0 4px}
+.sub-card{background:rgba(255,255,255,.5);border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:8px 10px}
+.sub-card .sc-val{font-size:16px;font-weight:800;font-family:ui-monospace,monospace}
+.sub-card .sc-label{font-size:10px;opacity:.7}
+
+/* ===== DRILL-DOWN TABLES ===== */
+.drill-section{background:#fff;border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-top:16px}
+.drill-head{padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:#FAFAFA}
+.drill-head h5{margin:0;font-size:13px;font-weight:700;color:#3F3F46}
+.drill-head .pill{font-size:11px;background:#F4F4F5;padding:3px 10px;border-radius:6px;color:var(--gt);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#FAFAFA;padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gt);border-bottom:1px solid var(--b);white-space:nowrap}
+.tbl th.r{text-align:right}
+.tbl td{padding:8px 12px;border-bottom:1px solid #F4F4F5;color:#3F3F46}
+.tbl td.r{text-align:right;font-family:ui-monospace,monospace;font-weight:600}
+.tbl td.mono{font-family:ui-monospace,monospace}
+.tbl tr:hover{background:#FAFAFA}
+.tbl tr.danger{background:#FEF2F2}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap}
+.b-high{background:#FEE2E2;color:#991B1B}.b-doubt{background:#FEF3C7;color:#92400E}
+.b-risk{background:#FFEDD5;color:#9A3412}.b-unpaid{background:#FEE2E2;color:#991B1B}
+.b-paid{background:#DBEAFE;color:#1E40AF}
+.b-apply{background:#DCFCE7;color:#166534}.b-remove{background:#FEE2E2;color:#991B1B}.b-replace{background:#EDE9FE;color:#6D28D9}
+
+/* Multi-category overlap tags */
+.overlap-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+.otag{display:inline-flex;align-items:center;gap:3px;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;white-space:nowrap}
+.otag-time{background:#FEE2E2;color:#B91C1C}
+.otag-unpaid{background:#FEF3C7;color:#92400E}
+.otag-print{background:#EDE9FE;color:#6D28D9}
+
+/* Comparison table */
+.cmp{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0}
+.cmp th{background:#F4F4F5;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;border:1px solid var(--b)}
+.cmp td{padding:8px 12px;border:1px solid #eee;vertical-align:top}
+.cmp .old{background:#FEF2F2;text-decoration:line-through;color:#999}
+.cmp .new{background:#F0FDF4;font-weight:600}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Audit Report — v3 Design — Owner-Approved Revisions</h1>
+  <p>CR-543 + CR-544 + CR-546 &middot; Approach C (Hybrid Overlap) &middot; &#8377; Leakage on all 3 cards &middot; 2026-11-17</p>
+</header>
+
+<nav>
+  <a href="#changes">v2 → v3 Changes</a>
+  <a href="#level1">Level 1: Alert Cards</a>
+  <a href="#drilldown">Drill-Down + Overlap Tags</a>
+  <a href="#backend">Backend Changes</a>
+</nav>
+
+<!-- ==================== CHANGES FROM v2 ==================== -->
+<section id="changes">
+  <h2>What Changed: v2 → v3 <span class="tag tag-v3">OWNER REVIEW</span></h2>
+
+  <table class="cmp">
+    <thead><tr><th style="width:30%">Element</th><th style="width:35%">v2 (Previous)</th><th style="width:35%">v3 (Approved)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Card 1 name</b></td>
+        <td class="old">High Risk Cancellations (30+ min only)</td>
+        <td class="new">High Risk Cancellations (full bar, 5+ min)</td>
+      </tr>
+      <tr>
+        <td><b>Card 1 content</b></td>
+        <td class="old">Just count of 30+ min cancels</td>
+        <td class="new">Full risk bar (Doubt + Risk + High Risk) + &#8377; leakage</td>
+      </tr>
+      <tr>
+        <td><b>Card 2 name</b></td>
+        <td class="old">Cancelled After Unpaid</td>
+        <td class="new">Leakage After Unpaid</td>
+      </tr>
+      <tr>
+        <td><b>Card 2 scope</b></td>
+        <td class="old">Cancels after unpaid only</td>
+        <td class="new">Cancels + Discounts after unpaid + Money gap on re-pay</td>
+      </tr>
+      <tr>
+        <td><b>Card 3 name</b></td>
+        <td class="old">Discount Changes After Print</td>
+        <td class="new">Leakage After Print</td>
+      </tr>
+      <tr>
+        <td><b>Card 3 scope</b></td>
+        <td class="old">Discounts after print only</td>
+        <td class="new">Cancels + Discounts after print (all post-print events)</td>
+      </tr>
+      <tr>
+        <td><b>KPI bar</b></td>
+        <td class="old">Total | Made Unpaid | Pay Changed | Post-Print Edits</td>
+        <td class="new">Total | Made Unpaid | Pay Changed | Post-Print Edits | <b>Post-Unpaid Edits</b></td>
+      </tr>
+      <tr>
+        <td><b>&#8377; Leakage</b></td>
+        <td class="old">Not shown on cards</td>
+        <td class="new">Every card shows &#8377; money leakage</td>
+      </tr>
+      <tr>
+        <td><b>Overlap handling</b></td>
+        <td class="old">Not addressed</td>
+        <td class="new">Approach C — count everywhere, overlap tags in drill-down</td>
+      </tr>
+      <tr>
+        <td><b>Level 2 risk bar</b></td>
+        <td class="old">Separate section below cards</td>
+        <td class="new">Embedded inside Card 1 (compact)</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================== LEVEL 1: ALERT CARDS (v3) ==================== -->
+<section id="level1">
+  <h2>Level 1 — Alert Cards <span class="tag tag-v3">v3 REVISED</span></h2>
+  <p class="meta">Each card = one risk lens. &#8377; leakage on every card. Overlap between cards is intentional (Approach C).</p>
+
+  <div class="page">
+    <div class="page-head">
+      <h4>Audit Report</h4>
+      <small>7 Nov — 17 Nov 2026 &middot; Ruby ZAP</small>
+    </div>
+    <div class="page-body">
+
+      <!-- KPI BAR (v3: added Post-Unpaid Edits) -->
+      <div class="quiet-bar">
+        <div class="qs"><span class="qs-val">121</span><span class="qs-label">Total Events</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">5</span><span class="qs-label">Made Unpaid</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">1</span><span class="qs-label">Pay Method Changed</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">14</span><span class="qs-label">Post-Print Edits</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs qs-new"><span class="qs-val">6</span><span class="qs-label">Post-Unpaid Edits</span></div>
+      </div>
+
+      <!-- THE 3 ALERT CARDS (v3) -->
+      <div class="alert-row">
+
+        <!-- CARD 1: High Risk Cancellations (full bar, 5+ min) -->
+        <div class="alert-card alert-red">
+          <div class="alert-icon">&#9888;</div>
+          <div class="alert-number">52</div>
+          <div class="alert-label">High Risk Cancellations</div>
+          <div class="alert-money">&#8377;18,450 at risk</div>
+
+          <!-- RISK BAR inside card (v3 change) -->
+          <div class="card-risk-bar">
+            <div class="seg seg-doubt" style="width:13.5%">7</div>
+            <div class="seg seg-risk" style="width:1.9%">1</div>
+            <div class="seg seg-high" style="width:84.6%">44</div>
+          </div>
+          <div class="card-risk-legend">
+            <div class="leg"><span class="dot" style="background:#F59E0B"></span> Doubt: <b>7</b></div>
+            <div class="leg"><span class="dot" style="background:#F97316"></span> Risk: <b>1</b></div>
+            <div class="leg"><span class="dot" style="background:#EF4444"></span> High Risk: <b>44</b></div>
+          </div>
+
+          <div class="alert-desc" style="margin-top:8px">Items cancelled 5+ minutes after ordering. Out of 101 total cancellations, 52 are suspicious.</div>
+          <div class="alert-overlap">3 also in Unpaid &middot; 5 also in Post-Print</div>
+          <div class="alert-cta">View in Cancellation Report &#8599;</div>
+        </div>
+
+        <!-- CARD 2: Leakage After Unpaid (expanded scope) -->
+        <div class="alert-card alert-amber">
+          <div class="alert-icon">&#128274;</div>
+          <div class="alert-number">6</div>
+          <div class="alert-label">Leakage After Unpaid</div>
+          <div class="alert-money">&#8377;1,230 leaked</div>
+
+          <!-- Sub-breakdown inside card -->
+          <div class="sub-row">
+            <div class="sub-card">
+              <div class="sc-val">2</div>
+              <div class="sc-label">Cancels</div>
+            </div>
+            <div class="sub-card">
+              <div class="sc-val">3</div>
+              <div class="sc-label">Discounts</div>
+            </div>
+            <div class="sub-card">
+              <div class="sc-val">&#8377;180</div>
+              <div class="sc-label">Re-pay Gap</div>
+            </div>
+          </div>
+
+          <div class="alert-desc">All edits on orders after they were marked unpaid. Includes cancels, discounts, and money difference when re-collected.</div>
+          <div class="alert-overlap">2 also in High Risk &middot; 1 also in Post-Print</div>
+          <div class="alert-cta">View details &#8595;</div>
+        </div>
+
+        <!-- CARD 3: Leakage After Print (cancels + discounts) -->
+        <div class="alert-card alert-purple">
+          <div class="alert-icon">&#128424;</div>
+          <div class="alert-number">14</div>
+          <div class="alert-label">Leakage After Print</div>
+          <div class="alert-money">&#8377;2,850 affected</div>
+
+          <!-- Sub-breakdown inside card -->
+          <div class="sub-row">
+            <div class="sub-card">
+              <div class="sc-val">4</div>
+              <div class="sc-label">Cancels</div>
+            </div>
+            <div class="sub-card">
+              <div class="sc-val">8</div>
+              <div class="sc-label">Discounts</div>
+            </div>
+            <div class="sub-card">
+              <div class="sc-val">2</div>
+              <div class="sc-label">Replaces</div>
+            </div>
+          </div>
+
+          <div class="alert-desc">All edits after the bill was printed — item/order cancels and discount changes.</div>
+          <div class="alert-overlap">5 also in High Risk &middot; 1 also in Unpaid</div>
+          <div class="alert-cta">View details &#8595;</div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:var(--gt);padding:4px 0 0;font-style:italic">
+        Items may appear in multiple cards (Approach C). Top-level Total Events is deduplicated.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DRILL-DOWN WITH OVERLAP TAGS ==================== -->
+<section id="drilldown">
+  <h2>Drill-Down Tables — Overlap Tags <span class="tag tag-new">NEW IN v3</span></h2>
+  <p class="meta">Each row shows which categories it belongs to. Items in multiple cards = highest investigation priority.</p>
+
+  <div class="page">
+    <div class="page-body" style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- DRILL-DOWN: Leakage After Unpaid -->
+      <div class="drill-section">
+        <div class="drill-head" style="background:#FFFBEB">
+          <h5>&#128274; Leakage After Unpaid</h5>
+          <span class="pill" style="background:#FEF3C7;color:#92400E">6 events &middot; &#8377;1,230</span>
+        </div>
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Event</th>
+            <th>Item / Detail</th>
+            <th class="r">&#8377; Amount</th>
+            <th>By</th>
+            <th>Made Unpaid</th>
+            <th>Event Time</th>
+            <th>Gap</th>
+            <th>Also In</th>
+          </tr></thead>
+          <tbody>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td><span class="badge b-unpaid">Cancel</span></td>
+              <td>test cccc</td>
+              <td class="r">&#8377;34</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2d 15m</td>
+              <td>
+                <div class="overlap-tags">
+                  <span class="otag otag-time">&#9202; High Risk</span>
+                </div>
+              </td>
+            </tr>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td><span class="badge b-unpaid">Cancel</span></td>
+              <td>Gulab Jamun (2 Pcs)</td>
+              <td class="r">&#8377;149</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2d 15m</td>
+              <td>
+                <div class="overlap-tags">
+                  <span class="otag otag-time">&#9202; High Risk</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="mono">#000680</td>
+              <td><span class="badge b-apply">Discount</span></td>
+              <td>10% applied (&#8377;68)</td>
+              <td class="r">&#8377;680</td>
+              <td>Manager</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">11 Nov 09:15</td>
+              <td class="mono">12h 7m</td>
+              <td>
+                <div class="overlap-tags">
+                  <span class="otag otag-print">&#128424; After Print</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="mono">#000715</td>
+              <td><span class="badge b-apply">Discount</span></td>
+              <td>Fixed &#8377;100 applied</td>
+              <td class="r">&#8377;500</td>
+              <td>Counter</td>
+              <td class="mono">12 Nov 14:00</td>
+              <td class="mono">12 Nov 14:30</td>
+              <td class="mono">30m</td>
+              <td>—</td>
+            </tr>
+            <tr style="background:#FFFBEB">
+              <td class="mono">#000680</td>
+              <td><span class="badge" style="background:#FDE68A;color:#78350F">Re-pay Gap</span></td>
+              <td>Paid &#8377;680 → Collected &#8377;500</td>
+              <td class="r" style="color:#B91C1C">&#8377;180 gap</td>
+              <td>—</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">13 Nov 10:00</td>
+              <td class="mono">2d 13h</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DRILL-DOWN: Leakage After Print -->
+      <div class="drill-section">
+        <div class="drill-head" style="background:#F5F3FF">
+          <h5>&#128424; Leakage After Print</h5>
+          <span class="pill" style="background:#EDE9FE;color:#6D28D9">14 events &middot; &#8377;2,850</span>
+        </div>
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Event</th>
+            <th>Detail</th>
+            <th class="r">&#8377; Amount</th>
+            <th>By</th>
+            <th>Bill Printed</th>
+            <th>Event Time</th>
+            <th>Also In</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="badge b-remove">Cancel</span></td>
+              <td>Paneer Tikka cancelled</td>
+              <td class="r">&#8377;350</td>
+              <td>Counter</td>
+              <td class="mono">14:10</td>
+              <td class="mono">14:45</td>
+              <td>
+                <div class="overlap-tags">
+                  <span class="otag otag-time">&#9202; High Risk</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="badge b-apply">Discount Applied</span></td>
+              <td>10% discount (&#8377;2.00)</td>
+              <td class="r">&#8377;20</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+              <td>—</td>
+            </tr>
+            <tr style="background:#F5F3FF">
+              <td class="mono">#000766</td>
+              <td><span class="badge b-replace">Replaced</span></td>
+              <td>10% (&#8377;2) &#8594; Fixed &#8377;3</td>
+              <td class="r">&#8377;20</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="mono">#000680</td>
+              <td><span class="badge b-apply">Discount Applied</span></td>
+              <td>10% applied (&#8377;68)</td>
+              <td class="r">&#8377;680</td>
+              <td>Manager</td>
+              <td class="mono">21:00</td>
+              <td class="mono">09:15 (+1d)</td>
+              <td>
+                <div class="overlap-tags">
+                  <span class="otag otag-unpaid">&#128274; After Unpaid</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="8" style="text-align:center;color:var(--gt);padding:10px">... 10 more post-print events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Note about Card 1 drill-down -->
+      <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px 18px;font-size:12px;color:#7F1D1D">
+        <b>&#9888; High Risk Cancellations</b> drill-down links to <b>Cancellation Report</b> (<code>/reports-module/cancellations?filter=high_risk</code>) — timing tier details, punch times, and durations live there. Not duplicated on this page.
+      </div>
+
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Approach C Overlap Tags — how they work:</strong>
+    <ul>
+      <li><b>"Also In" column</b> shows colored pills for every other card this event qualifies for</li>
+      <li><span class="otag otag-time" style="font-size:11px">&#9202; High Risk</span> = also in Card 1 (cancel duration ≥ 5 min)</li>
+      <li><span class="otag otag-unpaid" style="font-size:11px">&#128274; After Unpaid</span> = also in Card 2 (order was marked unpaid)</li>
+      <li><span class="otag otag-print" style="font-size:11px">&#128424; After Print</span> = also in Card 3 (bill was already printed)</li>
+      <li>Events with <b>2 or 3 tags</b> = highest priority for investigation</li>
+      <li>Each card's &#8377; leakage counts ALL its events (including overlapping ones)</li>
+      <li>Top-level <b>Total Events (121)</b> is deduplicated — each event counted once</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== BACKEND CHANGES ==================== -->
+<section id="backend">
+  <h2>Backend Changes Summary <span class="tag tag-v3">FOR APPROVAL</span></h2>
+  <p class="meta">What's already asked (v2 briefs) vs what's NEW from the owner review session.</p>
+
+  <div class="page">
+    <div class="page-body">
+      <table class="cmp">
+        <thead><tr><th>Ask</th><th>Endpoint</th><th>Status</th><th>What</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>CR-543</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#166534">&#10004; DELIVERED</td>
+            <td><code>late_cancel</code> events + 6 KPI counts + risk tiers</td>
+          </tr>
+          <tr>
+            <td><b>CR-544</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#166534">&#10004; DELIVERED</td>
+            <td><code>cancel_after_unpaid</code> events + 1 KPI count</td>
+          </tr>
+          <tr>
+            <td><b>CR-546</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#166534">&#10004; DELIVERED</td>
+            <td><code>discount_apply/remove_after_print</code> + 2 KPI counts</td>
+          </tr>
+          <tr style="background:#FFFBEB">
+            <td><b>NEW-1</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#B45309"><b>&#9733; NEW ASK</b></td>
+            <td><code>discount_apply_after_unpaid</code> + <code>discount_remove_after_unpaid</code> events</td>
+          </tr>
+          <tr style="background:#FFFBEB">
+            <td><b>NEW-2</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#B45309"><b>&#9733; NEW ASK</b></td>
+            <td>Re-pay gap fields: <code>original_amount</code>, <code>repaid_amount</code>, <code>gap_amount</code> on unpaid orders</td>
+          </tr>
+          <tr style="background:#FFFBEB">
+            <td><b>NEW-3</b></td>
+            <td><code>insights-dashboard</code></td>
+            <td style="color:#B45309"><b>&#9733; NEW ASK</b></td>
+            <td><code>post_unpaid_edits_count</code> KPI (cancels + discounts after unpaid)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer style="padding:20px 32px;text-align:center;font-size:11px;color:#999">
+  Audit Report v3 Design &middot; Owner-Approved &middot; Approach C Overlap &middot; 2026-11-17
+</footer>
+
+</body>
+</html>
