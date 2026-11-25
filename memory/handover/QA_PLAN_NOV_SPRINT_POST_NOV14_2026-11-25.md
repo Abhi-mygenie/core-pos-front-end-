@@ -129,7 +129,8 @@
 | CR-492 | Runtime Complementary — rights-based | ❌ No handover | Waiter account on preprod |
 | CR-515 | Order Beta: Staff Rights for Reprint + Pay-Later | ✅ QA_HANDOVER_CR-515_2026_11_16.md | Waiter account on preprod |
 
-**Next step:** Provision waiter test account on preprod for CR-492/515. Trigger a live web order on thegoankitchen.com for CR-545/BUG-679/CR-557.
+**testwait@thepalmhouse.com CONFIRMED 2026-11-25** — unlocks CR-515, CR-492, BUG-711 (all moved to Track 1).
+Trigger a live web order on thegoankitchen.com for CR-545/BUG-679/CR-557.
 
 ---
 
@@ -155,7 +156,7 @@
 | CAPTAIN_THEMEALBREAK | captain@themealbreak.com | Qplazm@10 | — | Staff rights testing, limited permissions |
 | OWNER_RUBY | owner@ruby.com | Qplazm@10 | 672 | Socket probes, APS web order testing |
 | PMS_MACHA | pms@macha (RID 69) | Qplazm@10 | 69 | FCM/Firebase notification testing (granted permission device) |
-| WAITER_ACCT | ❌ NOT AVAILABLE | — | — | CR-492, CR-515 — owner to provision |
+| TESTWAIT_PALMHOUSE | testwait@thepalmhouse.com | Qplazm@10 | 541 | Staff on Palmhouse — NO print_icon, order_cancel, update_payment, order_unpaid — HAS clear_payment, complementary_food — UNLOCKS CR-515, CR-492, BUG-711 |
 
 ---
 
