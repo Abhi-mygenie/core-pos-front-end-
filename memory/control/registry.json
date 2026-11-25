@@ -33743,7 +33743,7 @@
       "last_updated": "2026-11-19",
       "assignee": "Gyan",
       "release_date": "",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG579_2026-11-25.md"
+      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS; no cancellation data in test window. Run with MTD range on palmhouse."
     },
     {
       "id": "BUG-580",
@@ -37220,7 +37220,7 @@
       "batch": "BATCH-C-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_CR503_2026-11-25.md",
+      "qa_gate_status": "QA_PARTIAL \u2014 code PASS; Hold tab renders correctly; Collect button T2 pending (need a Hold/paylater order on palmhouse).",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39553,7 +39553,7 @@
       "notes": "CR-526 implementation bug: coverage.status should be coverage.type in CreditCustomerDetailSheet. The Remove button never renders because the wrong field is checked for \"unpaid\" status. Fast Lane approved by owner \u2014 single-line fix in 1 file. Gate 4 GO given 2026-11-17 but not yet implemented.",
       "gate": "GATE_5A",
       "current_gate": 5,
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG681_2026-11-25.md"
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Remove button visible on all Open credit rows (238 rows, Louise madam). coverage.type fix confirmed. Report: test_reports/QA_REPORT_TRACK2_2026-11-25.md"
     },
     {
       "id": "BUG-682",
@@ -39583,7 +39583,7 @@
       "notes": "CR-493 B5 implementation bug: cancelNoteMandatory mapped to wrong transform object \u2014 cancel reason always appears optional even when restaurant requires it. The mandatory flag reads from orderTransform instead of restaurantProfile. Fast Lane approved by owner \u2014 single-line fix. Gate 4 GO given 2026-11-17 but not yet implemented.",
       "gate": "GATE_5A",
       "current_gate": 5,
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG682_2026-11-25.md"
+      "qa_gate_status": "QA_PENDING \u2014 code PASS; cafe103 browser test blocked by slow Playwright load. Manual verification recommended."
     },
     {
       "id": "BUG-683",
@@ -40640,7 +40640,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG704_2026-11-25.md"
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 LM dates persist via client-side navigation (browser back). Code+browser verified. Report: test_reports/QA_REPORT_TRACK2_2026-11-25.md"
     },
     {
       "id": "BUG-705",
@@ -40683,7 +40683,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG706_2026-11-25.md"
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 VAT label shows correctly on beanmeup Order Beta. Code+screenshot verified. Report: test_reports/QA_REPORT_TRACK2_2026-11-25.md"
     },
     {
       "id": "BUG-707",
@@ -40705,7 +40705,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG707_2026-11-25.md"
+      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS; no cancellation data in test window."
     },
     {
       "id": "BUG-708",
