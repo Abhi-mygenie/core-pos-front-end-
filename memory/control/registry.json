@@ -33743,7 +33743,7 @@
       "last_updated": "2026-11-19",
       "assignee": "Gyan",
       "release_date": "",
-      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS; no cancellation data in test window. Run with MTD range on palmhouse."
+      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS (L326/327/333 BUG-579 markers). Browser: no cancellation data on palmhouse in test window."
     },
     {
       "id": "BUG-580",
@@ -36854,7 +36854,7 @@
       "batch": "BATCH-A-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "QA BLOCKED (prereq: no waiter login) \u2014 FE IMPLEMENTED; backend enforcement pending (backend-gap note)",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 canMarkComp = hasPermission(complementary_food) CPP L90, gates checkboxes L2192+L2586. Browser pending: testwait loading slow.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -37220,7 +37220,7 @@
       "batch": "BATCH-C-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "QA_PARTIAL \u2014 code PASS; Hold tab renders correctly; Collect button T2 pending (need a Hold/paylater order on palmhouse).",
+      "qa_gate_status": "QA_PARTIAL 2026-11-25 \u2014 Hold tab renders \u2705 (screenshot). Collect button T2 pending: 0 Hold/paylater orders on palmhouse today. Code markers L23/285/414-416/825-826 confirmed.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -37290,7 +37290,8 @@
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
       "gate": "GATE_5A",
-      "current_gate": 5
+      "current_gate": 5,
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Closure Phase B: BUG-645 getDisplayAmount covers partial split display. Code verified."
     },
     {
       "type": "CR",
@@ -37453,7 +37454,8 @@
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
       "gate": "GATE_5A",
-      "current_gate": 5
+      "current_gate": 5,
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Closure Phase B: OrderDetailSheet L337-394 renders variations+addOns. Code verified."
     },
     {
       "type": "CR",
@@ -37942,7 +37944,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA BLOCKED (prereq: no waiter login) \u2014 code OK / IMPLEMENTED",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 hasPermission gates: update_payment L765, order_unpaid L775, print_icon L791, clear_payment L826. Browser BLOCKED: testwait lacks `report` perm to access Order Beta. Need palmhouse staff with report+no-print_icon.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38298,7 +38300,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA NOT RUN (code present OrderEntry.jsx:1108)",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 api.post(LINK_CUSTOMER_ORDER) at OrderEntry L1115 with CR-523 markers. Browser pending: needs placed order + customer link.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39213,7 +39215,8 @@
       "assignee": "Abhishek",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-17",
-      "notes": "Late Cancellation Audit \u2014 flag cancellations that occur after a configurable time threshold (e.g., 15 min post-KOT) as \"high risk\" in Audit Report v3 Card 1. Rewritten AuditLogMockup.jsx with risk-badge, drill-down, and threshold-based severity colouring. Frontend-only: reads cancel timestamps already in order-logs-report API response."
+      "notes": "Late Cancellation Audit \u2014 flag cancellations that occur after a configurable time threshold (e.g., 15 min post-KOT) as \"high risk\" in Audit Report v3 Card 1. Rewritten AuditLogMockup.jsx with risk-badge, drill-down, and threshold-based severity colouring. Frontend-only: reads cancel timestamps already in order-logs-report API response.",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Time-threshold risk flagging at 5/15/30 min. riskTier.js + AuditLogMockup markers confirmed."
     },
     {
       "id": "CR-544",
@@ -39228,7 +39231,8 @@
       "assignee": "Abhishek",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-17",
-      "notes": "Cancel After Making Unpaid audit event \u2014 surfaces orders that were first made unpaid (payment removed) and then cancelled, a potential fraud/leakage pattern. Implemented in Audit Report v3 Card 2 (Option B). Reads cancel_after_unpaid events from existing insights-dashboard API; discount/gap placeholder included for future phases."
+      "notes": "Cancel After Making Unpaid audit event \u2014 surfaces orders that were first made unpaid (payment removed) and then cancelled, a potential fraud/leakage pattern. Implemented in Audit Report v3 Card 2 (Option B). Reads cancel_after_unpaid events from existing insights-dashboard API; discount/gap placeholder included for future phases.",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 cancel_after_unpaid audit event card at L243/L401. Code markers confirmed."
     },
     {
       "id": "BUG-677",
@@ -39583,7 +39587,7 @@
       "notes": "CR-493 B5 implementation bug: cancelNoteMandatory mapped to wrong transform object \u2014 cancel reason always appears optional even when restaurant requires it. The mandatory flag reads from orderTransform instead of restaurantProfile. Fast Lane approved by owner \u2014 single-line fix. Gate 4 GO given 2026-11-17 but not yet implemented.",
       "gate": "GATE_5A",
       "current_gate": 5,
-      "qa_gate_status": "QA_PENDING \u2014 code PASS; cafe103 browser test blocked by slow Playwright load. Manual verification recommended."
+      "qa_gate_status": "QA_PENDING \u2014 code PASS (profileTransform L231 BUG-682). Browser: cafe103 slow in Playwright; manual verification on preprod recommended."
     },
     {
       "id": "BUG-683",
@@ -40595,7 +40599,8 @@
       "rebatch": "B5-SCAN-POPOUT",
       "gate": "GATE_5A",
       "current_gate": 5,
-      "closed_at": "2026-11-25"
+      "closed_at": "2026-11-25",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 BUG-702 markers in ScanOrderPopOut L70/88 + PopoutItemRow L9/159. Browser BLOCKED: needs live web order on TGK."
     },
     {
       "id": "BUG-703",
@@ -40705,7 +40710,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS; no cancellation data in test window."
+      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS (CancellationsMockup L760/987 BUG-707 toLocaleString format). Browser: no cancellation data in test window."
     },
     {
       "id": "BUG-708",
@@ -40726,7 +40731,8 @@
       "registered_date": "2026-11-19",
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
-      "plan_doc": "memory/plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "memory/plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Dead cancel-note column removed (L971 marker), Notes column live (L996-1002). Browser pending: needs cancellation data."
     },
     {
       "id": "BUG-709",
@@ -40791,7 +40797,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG711_2026-11-25.md"
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 hasPermission(print_icon) gate at L790-791. Browser BLOCKED: same account gap as CR-515."
     },
     {
       "id": "BUG-712",
@@ -40862,7 +40868,8 @@
       "release_date": "2026-11-25",
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
-      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md"
+      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Punch Time + Duration on CancelDetail (L108, L171). Browser pending: needs cancellation data."
     },
     {
       "id": "CR-555",
@@ -40891,7 +40898,8 @@
       "release_date": "2026-11-25",
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
-      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md"
+      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 RiskBadge at 5/15/30 min thresholds (L1020). riskTier.js confirmed. Browser pending: needs cancellation data."
     },
     {
       "id": "CR-556",
@@ -40920,7 +40928,8 @@
       "release_date": "2026-11-25",
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "PARTIAL",
-      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md"
+      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 5 inline filters with testids cx-filter-* (L955-962). Browser pending: needs cancellation data."
     },
     {
       "id": "BUG-713",
@@ -40948,7 +40957,8 @@
       "current_gate": 3,
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "FULL",
-      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md"
+      "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Punch Time + Duration in 7 consolidated groups (L422-423, L971 marker). Browser pending: needs cancellation data."
     },
     {
       "id": "BUG-714",
@@ -41238,7 +41248,8 @@
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MAJOR] OrderReportBetaPage.fetchData has no request-id/AbortController guard and fires the initial load twice; applying a range within ~3s shows 0 orders / Rs0 while the API returns the real rows (seen 374 orders hidden). QA Group 1.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 No \"0 orders\" flash; fetchSeqRef sequence guard confirmed. Screenshot+code."
     },
     {
       "type": "BUG",
@@ -41261,7 +41272,8 @@
       "duplicate_check": "RELATED BUG-626",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Payment column shows raw lowercase card/upi/room/merge; getPaymentBadge (L36-47) lacks these keys and backend Tab falls through (map has TAB). Status column itself is OK (BUG-626). QA Group 1.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Payment badges show \"Cash\"/\"UPI\" (not raw lowercase). Screenshot: orders #023893/#023894."
     },
     {
       "type": "BUG",
@@ -41284,7 +41296,8 @@
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Cancelled rows misalign: cancel-reason <td> (L745-749) added before Actions with no header -> 13 cells vs 12 headers, reason text under ACTIONS. QA Group 1.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Cancel reason folded into Status cell (L752 BUG-726 marker). Browser pending: needs cancelled orders in date range."
     },
     {
       "type": "BUG",
@@ -41307,7 +41320,8 @@
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] React console error whitespace text node child of <tr> from \"</th> {/* CR-349 */}\" at L704. QA Group 1.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 No <tr> whitespace text node. L713 </th>{/* CR-349 */} no space. Code verified."
     },
     {
       "type": "BUG",
@@ -41444,7 +41458,8 @@
       "risk": "LOW",
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Native browser date input on Credit sheet and Order Report Beta instead of shadcn calendar. QA Groups 2 & 4. [PLANNING 2026-11-20: Gate2 impact/BUG-733_IMPACT_ANALYSIS.md + Gate3 plans/BUG-733_IMPLEMENTATION_PLAN.md. Reuse components/reports/DatePicker.jsx; swap native date inputs on OrderReportBetaPage L553/556 + CreditCustomerDetailSheet L448/457. OD-733-01 RESOLVED 2026-11-20 = (a): keep Credit Clear button + guard DatePicker prev/next-day chevrons on empty value.]",
-      "severity": "P0"
+      "severity": "P0",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 shadcn DatePicker renders (calendar icon) on Order Beta From/To. Screenshot confirmed."
     },
     {
       "type": "BUG",
@@ -41489,7 +41504,8 @@
       "risk": "MEDIUM",
       "duplicate_check": "RELATED BUG-671, CR-515",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Order Report Beta shows Change-Method/Mark-Unpaid on a split/partial row (#023874) while Audit hides them for split orders (BUG-671) -> inconsistent gating. QA Group 4.",
-      "severity": "P0"
+      "severity": "P0",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Change/Unpaid hidden on split rows (L764 BUG-735 marker, payment_method_raw guard). Browser pending: needs split/partial order."
     },
     {
       "type": "BUG",
@@ -41535,7 +41551,8 @@
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Leftover CR-003 diagnostic console.log of user permissions at AllOrdersReportPage.jsx L147. QA Group 4.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 CR-003 console.log removed. AllOrdersReportPage L141 marker confirmed."
     },
     {
       "type": "BUG",
@@ -41581,7 +41598,8 @@
       "duplicate_check": "DISTINCT",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Audit Total Events KPI counts unique orders (38) not events (misleading label); Excel Summary leaves Restaurant ID and Generated By empty and exports Risk as raw high_risk. QA Group 1.",
       "severity": "P0",
-      "rebatch": "B2-AUDIT-UI"
+      "rebatch": "B2-AUDIT-UI",
+      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 totalEvents = allEvents.length (true count). AuditLogMockup L268. Code+logic verified."
     },
     {
       "type": "CR",
@@ -41603,7 +41621,8 @@
       "risk": "MEDIUM",
       "duplicate_check": "RELATED BUG-679, BUG-702, CR-545, CR-552",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MAJOR] Extract a shared <PopoutItemRow> so web-EDIT (Mode B) reuses the full renderer. Mode B lost cancelled styling (BUG-679), variation/option display (BUG-702) and APS/Price-TBD (CR-545) which exist only in Mode A. QA Group 3.",
-      "severity": "P0"
+      "severity": "P0",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 PopoutItemRow.jsx created, ScanOrderPopOut 3 list-body swaps (CR-557 markers). Browser BLOCKED: needs live web-edit order."
     },
     {
       "type": "CR",
@@ -41743,7 +41762,8 @@
         "OD-561-B: LOCKED \u2014 allow accepting unpriced (\u20b91 placeholder) BUT real price required before final bill prints (pre-bill guard; billing path in scope, financial/R5)"
       ],
       "impact_doc": "impact/CR-561_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/CR-561_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/CR-561_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 CartPanel PlacedItemRow inline reprice + OrderEntry handleEditItemPrice (CR-561 markers). Browser BLOCKED: needs APS \u20b91 web order."
     },
     {
       "type": "BUG",
