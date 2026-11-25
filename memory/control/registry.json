@@ -38457,7 +38457,7 @@
         "BUG-605"
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA BLOCKED (prereq: needs self-created order + write permission) [blocker registered BUG-685]",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 3 (6-batch). Needs write-access order on palmhouse (open credit row \u2192 Remove \u2192 confirm dialog).",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38726,7 +38726,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA BLOCKED (prereq: needs self-created order) [blocker registered BUG-685]",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover in QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 3. Needs write-access order on palmhouse (place + mark partial-payment).",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38773,7 +38773,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA BLOCKED (prereq: needs self-created order) [blocker registered BUG-685]",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 3 (6-batch). Needs prepaid order on TGK (scan/online), then Collect Bill \u2192 Credit.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39303,7 +39303,7 @@
       "files": "OrderEntry.jsx",
       "notes": "SMOKE FAIL 2026-11-18: OrderEntry fix IS applied. But CPP L470-474 initializes serviceChargeEnabled=true for prepaid dine-in (no isPrepaid check). Fix: add && !isPrepaid to CPP init.",
       "registered_date": "2026-11-16",
-      "qa_gate_status": "QA BLOCKED (blocked by BLOCKER-1) \u2014 code present [blocker registered BUG-685]",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 4 (6-batch). Needs palmhouse prepaid order with SC toggle OFF.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": ""
@@ -39330,7 +39330,7 @@
       ],
       "notes": "APS (At Price Sale, Rs 1) web order flow \u2014 adds APS tag display on order items, enables item-level cancel inside ScanOrderPopOut popup, and allows price edit on APS items from the Accept/web-edit popup. Related to CR-561 (APS price entry from Accept popup). Touches ScanOrderPopOut.jsx and OrderEntry.jsx.",
       "registered_date": "2026-11-17",
-      "qa_gate_status": "QA BLOCKED (prereq: no live web/APS order) \u2014 code OK / IMPLEMENTED",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 APS order confirmed on TGK by owner. Handover: QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 5.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": "2026-11-25"
@@ -39367,7 +39367,7 @@
       "blocked_on": null,
       "notes": "[REOPEN QA Nov Sprint] web-EDIT mode: cancelled prev items show no strikethrough, price still shown. Cancelled items (e.g. melo fish) render as active in ScanOrderPopOut. No foodStatus filter. OrderEntry correctly shows strikethrough. OD-OBS2: B (strikethrough, same pattern as OrderEntry). Found during CR-545 QA smoke.",
       "registered_date": "2026-11-17",
-      "qa_gate_status": "QA BLOCKED (prereq: no live web order) \u2014 code OK / IMPLEMENTED",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 Web order exists on TGK (owner confirmed). Handover: Batch 5 (6-batch).",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "rebatch": "B5-SCAN-POPOUT",
@@ -39634,7 +39634,7 @@
       "category": "IN_PROGRESS",
       "code_reality": "NONE",
       "registered_date": "2026-11-18",
-      "qa_gate_status": "QA BLOCKED (blocked by BLOCKER-1) \u2014 code present [blocker registered BUG-685]",
+      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 4 (6-batch). Test on beanmeup (VAT restaurant) with VAT switch OFF.",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": ""
@@ -39743,7 +39743,7 @@
       "files": "frontend/src/components/order-entry/CartPanel.jsx (~L811 props, ~L1353 render); OrderEntry.jsx:2964",
       "completeness": "1/7",
       "qa_finding_severity": "BLOCKER",
-      "qa_gate_status": "GATE_1_INTAKE (new defect from QA Nov Sprint)",
+      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 onEdit destructured at CartPanel L851 (BUG-685 marker). Fix confirmed in code. Prior qa_gate_status reflected QA-found defect, but fix IS present. Handover: QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md T1.",
       "notes": "QA Nov Sprint FAIL \u2014 BLOCKER-1 (crash on add-to-cart). Fix: add onEdit to CartPanel props. | Gate 2 IA 2026-11-18: root cause CONFIRMED (CartPanel missing onEdit destructure, incomplete CR-551). HIGH/R5. No owner decision. See impact/BUG-685_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-685_ORDER_ENTRY_ADD_TO_CART_ONEDIT_CRASH_INTAKE.md",
       "artifact_refs": [
