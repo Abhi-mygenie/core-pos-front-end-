@@ -1,20 +1,23 @@
-# Session Handover — 2026-11-25 (QA Continuation — Tracks A/B/C/D Approved)
+# Session Handover — 2026-11-25 (QA Continuation — Full Data + Parallel Execution Plan)
 
 **Role for next agent:** QA Agent (Role 4) — record PASS/FAIL only, NO code fixes
 **Primary handover:** `memory/handover/QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md`
-**Owner approved:** Tracks A, B, C (with data creation), D
+**Owner approved:** Tracks A, B, C, D — all running
 
 ---
 
-## KEY FACTS (read first)
+## CRITICAL FACTS (read before anything)
 
 | Fact | Detail |
 |---|---|
-| BUG-685 | CONFIRMED FIXED — `onEdit` destructured at CartPanel.jsx L851. Prior `qa_gate_status` said "GATE_1_INTAKE" (QA-found label) but fix is in code. 5 items now unblocked. |
-| APS ₹1 order | LIVE on thegoankitchen preprod. Batch 5 handover ref: order #1578881 ("melo fish" ₹1). |
-| Web order | LIVE on thegoankitchen (owner confirmed). Same order popup. |
-| Credit Management | 55 customers on palmhouse. "Louise madam" has 238 Open rows. Remove button already confirmed VISIBLE (BUG-681 PASS). |
-| BUG-681 | ALREADY PASSED — Remove button works. Use Louise madam for CR-526 test. |
+| BUG-685 | CONFIRMED FIXED — `onEdit` at CartPanel.jsx L851. All 5 previously-blocked items (BUG-671/672/678/683, CR-526) are now unblocked |
+| APS ₹1 order | LIVE on thegoankitchen preprod (owner confirmed). Batch 5 test data ready |
+| Web order | LIVE on thegoankitchen (owner confirmed). Same popup as APS order |
+| C-1 Credit order | CREATED on palmhouse — order #023895, Credit payment, customer "QA Test Customer" / 9999999999. "Credit saved" toast confirmed. USE FOR: CR-526 Remove button test |
+| C-02 Cancelled | CREATED on palmhouse — order #023896, 2 items (Blueberry Muffins ₹180 + Mango Sticky Rice ₹350). Cancel Order modal opened, note = "QA test cancellation". USE FOR: Cancellations report (BUG-579/707/708/713/CR-554/555/556) + Order Beta Cancelled tab (BUG-726) |
+| C-03 Settled | CREATED on palmhouse — order #023897, settled with Cash ₹857 (₹300 tip added). USE FOR: Order Beta settled rows (BUG-724/725) |
+| C-04 Placed | order #023898 placed (₹557), Collect Bill NOT completed. Table C-04 still shows Bill button. USE FOR: completing as Hold/Pay Later (CR-503) |
+| Louise madam | 238 Open credit rows on palmhouse. Remove button confirmed VISIBLE (BUG-681 PASSED) |
 
 ---
 
@@ -22,223 +25,222 @@
 
 | Account | Password | Restaurant | RID | Use For |
 |---|---|---|---|---|
-| owner@palmhouse.com | Qplazm@10 | The Palm House | 541 | Order Beta, Credit, Cancellations — primary |
-| owner@thegoankitchen.com | Qplazm@10 | The Goan Kitchen | — | APS + web orders |
-| owner@beanmeup.com | Qplazm@10 | Bean Me Up | 742 | VAT testing (BUG-683) |
+| owner@palmhouse.com | Qplazm@10 | The Palm House | 541 | Reports, Order Beta, Credit Mgmt, Cancellations |
+| owner@thegoankitchen.com | Qplazm@10 | The Goan Kitchen | — | APS+web orders |
+| owner@beanmeup.com | Qplazm@10 | Bean Me Up | 742 | VAT testing (BUG-683, BUG-706) |
 | owner@cafe103.com | Qplazm@10 | Cafe 103 | 644 | cancel_note_mandatory (BUG-682) |
 | testwait@thepalmhouse.com | Qplazm@10 | The Palm House | 541 | Staff — HAS clear_payment, complementary_food — NO print_icon/order_cancel/update_payment/order_unpaid |
 
 Login: owner → `POST /api/v1/auth/vendoremployee/login`
-Login: staff → `POST /api/v1/auth/vendoremployee/common-login` + `X-localization: en`
+Login: staff → `POST /api/v1/auth/vendoremployee/common-login` + header `X-localization: en`
 
 ---
 
-## PARALLEL EXECUTION MAP
-
-Three independent sessions can run simultaneously:
+## PARALLEL EXECUTION MAP — START ALL SIMULTANEOUSLY
 
 ```
-SESSION 1 (TGK)                    SESSION 2 (Palmhouse)             SESSION 3 (Beanmeup + TGK)
-─────────────────────              ─────────────────────             ──────────────────────────
-owner@thegoankitchen.com           owner@palmhouse.com               owner@beanmeup.com + TGK
-Track A1: Batch 5 (5 items)        Track A2: CR-526 (Credit)         Track A3: BUG-683 (VAT)
-Track D:  BUG-672 (prepaid)        Track B:  Cancellations MTD       Track D:  BUG-672 (if
-CR-545, BUG-679, BUG-702,          BUG-579, BUG-707, BUG-708,        not done in Session 1)
-CR-557, CR-561                     BUG-713, CR-554, CR-555, CR-556
-                                   Track C data creation →
-                                   BUG-726, BUG-735, CR-503,
-                                   BUG-671, BUG-678
+SESSION 1 (TGK)                       SESSION 2 (Palmhouse — no extra data needed)
+owner@thegoankitchen.com               owner@palmhouse.com
+─────────────────────                  ───────────────────
+Batch 5 (APS+web):                     Batch 1 (Cancellations MTD):
+CR-545, BUG-679, BUG-702,              BUG-579, BUG-707, BUG-708, BUG-713
+CR-557, CR-561                         CR-554, CR-555, CR-556
+                                        → use MTD or last-30D range
+Track D: BUG-672 (prepaid→credit)     Batch 3 (Order Beta + Credit):
+                                        BUG-724, BUG-725, BUG-726, BUG-737
+                                        CR-526 (remove from credit #023895)
+SESSION 3 (Palmhouse — complete C-04) SESSION 4 (Beanmeup VAT)
+owner@palmhouse.com                    owner@beanmeup.com
+─────────────────────                  ───────────────────
+Complete C-04 as Hold order:           BUG-683 (VAT OFF → no VAT in cart)
+  → C-04 Bill → Cash → ₹0 →           BUG-706 regression (GST label check)
+  Look for Hold/Tab/PayLater option
+Then test CR-503 Hold tab
+Create split payment on C-05:
+  → place order → Collect Bill →
+  Cash ₹300 (Cash Received input) →
+  Then UPI ₹257 → Pay
+  → tests BUG-735
 ```
-
-**After Sessions 1+2+3 complete:**
-- Session 4: BUG-682 (manual cafe103, can't be Playwright)
-- Session 5: CR-492, BUG-749 (physical device / manual)
-- Parked: CR-515, BUG-711 (need new palmhouse staff account with report perm)
 
 ---
 
-## TRACK A — 8 items, run immediately
+## WHAT TO TEST — ITEM BY ITEM
 
-### A1 — TGK: ScanOrderPopOut / APS / Web order
+### SESSION 1: TGK — Batch 5 + BUG-672
+
 **Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 5
-**Account:** owner@thegoankitchen.com
-**Live data:** Order #1578881 — web-edit order with APS ₹1 item ("melo fish")
+**Existing order:** #1578881 — web-edit order with "melo fish" ₹1 APS item
 
-| ID | Assert | Severity if FAIL |
+| ID | Assert | PASS condition |
 |---|---|---|
-| CR-545 | APS ₹1 tag visible in Accept popup; "Price TBD" pill shown; ₹1 price hidden; per-item cancel works | MAJOR |
-| BUG-679 | Cancelled previous items show strikethrough + grey; no active price shown | MAJOR |
-| BUG-702 | Variation shows selected option label + price (not just group name) | MAJOR |
-| CR-557 | Mode-B (web-EDIT) renders full rich rows — APS badge, strikethrough, variation/addon prices, notes | MAJOR |
-| CR-561 | APS ₹1 price input appears in Accept popup; typing a price → PUT update-food-item-price fires | MAJOR |
+| CR-545 | APS ₹1 tag + "Price TBD" pill in Accept popup; per-item cancel works | Tag visible, ₹1 price hidden in popup |
+| BUG-679 | Cancelled prev items → strikethrough + grey + no active price | In ScanOrderPopOut cancelled prev items have strikethrough |
+| BUG-702 | Variation shows selected option label + price (not just group name) | Full variation detail in popup |
+| CR-557 | Mode-B web-EDIT rows render APS badge, strikethrough, variation prices via shared PopoutItemRow | Mode B rows match Mode A richness |
+| CR-561 | APS ₹1 → price input in Accept popup → PUT update-food-item-price fires | Input visible, API fires on save |
+| BUG-672 | Prepaid TGK order → Collect Bill → Credit → appears in Credit Management | Credit entry in Credit Mgmt, NOT stuck in Order Beta |
 
-**Also check in same session (already in Batch 5):**
-- CR-552: per-item approval (Yet-to-Confirm items in web-edit)
+**Also in Batch 5 (same session):**
+- CR-552: per-item approval (Yet-to-Confirm items)
 - CR-559: KOT auto-prints on Accept if Scan-Order Auto-print = Yes
-- BUG-741: cancel wording = "Cancel item: {name}" (item-level), "Reject" (order-level)
+- BUG-741: cancel wording = "Cancel item: {name}" item-level
 
 ---
 
-### A2 — Palmhouse: Credit Remove (CR-526)
+### SESSION 2A: Palmhouse — Cancellations MTD
+
+**Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 1
+**Data available:** C-02 order #023896 cancelled today (Blueberry Muffins + Mango Sticky Rice)
+
+> IMPORTANT: Use **MTD** or **30D** date range on Cancellations screen to see today's cancellation
+
+| ID | Assert |
+|---|---|
+| BUG-579 | Daily trend chart bars non-zero; Stage ₹ values (order_loss + item_loss) visible |
+| BUG-707 | Order Date column = "25 Nov, hh:mm pm" NOT "2026-11-25 HH:MM" |
+| BUG-708 | NO "Cancel Note" column; working "Notes" column present |
+| BUG-713 | Punch Time + Duration visible WITHOUT horizontal scroll |
+| CR-554 | Same columns on CancelDetail screen too |
+| CR-555 | Risk badges render (Doubt ≥5min, Risk ≥15min, High Risk ≥30min) |
+| CR-556 | 5 inline filters: Stage/Scope/Reason/Cancelled By/Risk all work |
+
+**Also in Batch 1 (run together):**
+- BUG-714, BUG-715, BUG-716, BUG-717, BUG-718, BUG-729
+
+---
+
+### SESSION 2B: Palmhouse — Order Beta + Credit
+
 **Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 3
-**Account:** owner@palmhouse.com
-**Live data:** Credit Management → Louise madam (238 Open rows, Remove button already confirmed VISIBLE)
+**Data available:** C-03 order #023897 settled (Cash), C-02 cancelled, C-1 credit order #023895
 
-| ID | Assert | Note |
+| ID | Assert | Data |
 |---|---|---|
-| CR-526 | Click Remove on an Open row → confirmation dialog with order # and ₹ amount | BUG-681 (Remove button) already PASSED — just test the full Remove flow now |
+| BUG-724 | No "0 orders" flash; KPIs show "—" until data loads | Use C-03 settled order |
+| BUG-725 | Payment column = "Cash" (not raw 'cash') | C-03 Cash payment |
+| BUG-726 | Cancelled tab: row cell-count matches headers (cancel reason in Status cell) | C-02 cancelled order |
+| BUG-737 | No CR-003 console.log on /reports/audit | Open AllOrders report |
+| CR-526 | Credit Mgmt → find C-1 credit entry (#023895, QA Test Customer) → Remove button → dialog shows order + ₹557 | C-1 credit order |
+| BUG-671 | Find credit/unpaid order in Order Beta → Mark Unpaid button visible | C-1 may show as unpaid |
+| CR-523 | Link customer to placed order after placing (POST to user-check-create) | C-04 or any running order |
 
-Steps:
-1. `/credit` → View/Manage on Louise madam
-2. Open bucket → click Remove on row 1
-3. Confirm dialog shows order ID + ₹ amount → click Confirm
-4. Row disappears from Open bucket
+**BUG-735 (split rows — NEEDS SPLIT PAYMENT ORDER):**
+Steps to create split payment on new table (C-05):
+1. Order Entry → C-05 → add items → Place Order
+2. Collect Bill → click **Cash** button → "Cash Received" input appears at bottom → type **₹300**
+3. The remaining ₹257 should show → click **UPI** → type ₹257
+4. Click "Pay ₹557"
+5. Order is now settled with `payment_method = 'partial'`
+6. In Order Beta → find this order → Change/Mark Unpaid buttons must be HIDDEN on split rows
 
 ---
 
-### A3 — Beanmeup: VAT OFF
+### SESSION 3: Palmhouse — Complete C-04 as Hold + Split Payment
+
+**Goal:** Create a Hold/paylater order for CR-503 + a split-payment order for BUG-735
+
+#### C-04 → Hold Order (CR-503):
+- Navigate to C-04 (has ₹557 placed order, Bill button visible)
+- Collect Bill → note the payment options
+- Try: Select no payment method → click "Hold" or "Pay Later" if visible
+- OR: Select Cash → enter ₹0 → see if Hold option appears
+- OR: Try "Credit" with no customer → see if it creates paylater
+- Result should appear in Order Beta → Hold tab with Collect button
+
+#### C-05 → Split Payment Order (BUG-735):
+- Order Entry → C-05 → Blueberry Muffins + Mango Sticky Rice → Place Order
+- Collect Bill → **click Cash** → "Cash Received" input at bottom → type **300**
+- **Then click UPI** (the UPI button in payment row) → UPI input appears → type **257**
+- Click "Pay ₹557"
+- Verify: Order Beta → Cancelled/All tab → find this order → Change + Mark Unpaid **hidden** (BUG-735)
+
+---
+
+### SESSION 4: Beanmeup — VAT Testing
+
 **Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 4
 **Account:** owner@beanmeup.com (RID 742)
 
-| ID | Assert |
-|---|---|
-| BUG-683 | Settings → VAT toggle OFF → place an order → cart shows ₹0 VAT → Network payload has `vat_amount: 0` |
-
-Steps:
-1. Login beanmeup → Settings → find VAT toggle → switch OFF
-2. Order Entry → place any order
-3. Collect Bill → verify VAT = ₹0 in cart
-4. Network tab → verify payload has no VAT charge
-5. Toggle VAT back ON after test (cleanup)
-
----
-
-## TRACK B — 7 items, MTD date range
-
-**Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 1
-**Account:** owner@palmhouse.com
-**Key:** Use **MTD** (Month-to-Date) or **30D** range — today (11/25) has zero cancellations but the month likely does
-
-| ID | Assert |
-|---|---|
-| BUG-579 | Daily trend chart bars non-zero; Stage breakdown shows ₹ order_loss + item_loss values |
-| BUG-707 | Order Date column = "DD MMM, hh:mm pm" format (e.g. "15 Nov, 02:30 pm") — NOT "2026-11-15 14:30" |
-| BUG-708 | NO dead "Cancel Note" column; working "Notes" column present (shows cancelItemNote or notes) |
-| BUG-713 | Punch Time + Duration columns visible WITHOUT horizontal scroll (7 consolidated groups) |
-| CR-554 | Punch Time + Duration on BOTH Cancellations screen AND Detail screen |
-| CR-555 | Risk badges render at 5/15/30 min thresholds (Doubt/Risk/High Risk) |
-| CR-556 | 5 inline column filters on both screens: Stage/Scope/Reason/Cancelled By/Risk |
-
-**Additional items in Batch 1 (run at same time):**
-- CR-524: Punch Time + Duration on both screens (same as CR-554)
-- BUG-714: scope tab switch does NOT zero rows
-- BUG-715: Punch Time shows IST time (not UTC)
-- BUG-717: Detail subtitle + Order date formatted + scope dropdown order correct
-
-**If palmhouse MTD has no cancellations:** Try `30D` range, or note date range used in report.
-
----
-
-## TRACK C — Create test data first, then test
-
-### STEP 1: Create all data on palmhouse (do in one Order Entry session)
-
-| Order to Create | How | Tests It |
+| ID | Steps | Assert |
 |---|---|---|
-| **Cancelled order** | Place order (any table) → add 2 items → cancel one item → verify it appears in Order Beta Cancelled tab | BUG-726 (row alignment) |
-| **Split payment order** | Place order → Collect Bill → Cash ₹300 + UPI ₹200 → settle | BUG-735 (Change/Unpaid hidden on split rows) |
-| **Hold/Pay Later order** | Place order → Collect Bill → "Pay Later" / "Hold" option | CR-503 (Collect button on Hold tab) |
-| **Partial-payment order** | Place order → Collect Bill → pay PART of amount → save as partial | BUG-671 (Mark Unpaid on partial-pay) |
-| **SC off + prepaid** | Settings → Service Charge toggle OFF → place order via Quick/Prepaid flow | BUG-678 (SC absent in payload) |
+| BUG-683 | Settings → VAT toggle OFF → place any order → Collect Bill | Cart shows ₹0 VAT; Network payload has `vat_amount: 0` |
+| BUG-706 regression | Order Beta on beanmeup | Tax column header shows "VAT" (already PASSED on 25-Nov — just verify still correct) |
 
-> **Note on BUG-678 (SC off prepaid):** The order needs to go through the prepaid flow. If palmhouse doesn't have a prepaid payment method easily accessible, check if `payment_type=prepaid` orders can be created from Order Entry by selecting a prepaid payment option at Collect Bill.
+**Also in Batch 4 (same session, palmhouse account):**
+- CR-493: cancel reason mandatory — verify BUG-682 fix (cancel_note_mandatory=Yes on cafe103)
+- BUG-670/674: Notes field on cancel dialogs
+- BUG-684: cart Collect-Bill amount == billed amount
 
 ---
 
-### STEP 2: Test after data creation
+## DATA STATUS SUMMARY
 
-| ID | Test | Handover |
+| Order | Table | Type | Status | Tests It |
+|---|---|---|---|---|
+| #023895 | C-1 | Credit (QA Test Customer) | ✅ CREATED | CR-526, BUG-671 |
+| #023896 | C-02 | Cancelled (2 items) | ✅ CREATED | BUG-579/707/708/713, CR-554/555/556, BUG-726 |
+| #023897 | C-03 | Settled Cash (₹857 w/ tip) | ✅ CREATED | BUG-724/725, Order Beta settled rows |
+| #023898 | C-04 | Placed/Running | ⬜ INCOMPLETE — needs Hold completion | CR-503 |
+| C-05 | (new) | Split payment needed | ⬜ NOT CREATED | BUG-735 |
+| TGK APS | — | APS ₹1 web order | ✅ LIVE | CR-545, CR-561, BUG-702, CR-557 |
+| TGK web | — | Web order | ✅ LIVE | BUG-679, CR-557 |
+| Louise madam | — | 238 Open credit rows | ✅ EXISTS | CR-526 (Remove already works) |
+
+---
+
+## WHAT STILL NEEDS DATA (create during Session 3)
+
+| Need | How | Tests |
 |---|---|---|
-| BUG-726 | Order Beta → Cancelled tab → check cancelled rows cell alignment (cells match headers) | Batch 3 (6-batch) |
-| BUG-735 | Order Beta → find the split-payment order → Change/Unpaid buttons must be HIDDEN | Batch 3 (6-batch) |
-| CR-503 | Order Beta → Hold tab → Collect button visible on the Hold order → click → CollectBillPanelDrawer opens | QA_HANDOVER_CR503_2026-11-25.md |
-| BUG-671 | Order Beta → find partial-pay order → Mark Unpaid button visible → click → order moves to Unpaid | Batch 3 (6-batch) |
-| BUG-678 | Place prepaid order with SC OFF → Network tab → `service_charge: 0` or absent in payload | Batch 4 (6-batch) |
+| **Hold/paylater order** | C-04 → Collect Bill → find Hold option OR credit → creates fos=8/9 | CR-503 |
+| **Split payment order** | C-05 → place order → Collect Bill → Cash ₹300 + UPI ₹257 | BUG-735, BUG-671 |
+| **SC OFF + prepaid order** | beanmeup Settings → SC OFF → place order | BUG-678 |
 
 ---
 
-## TRACK D — Prepaid → Credit (BUG-672)
+## ITEMS ALREADY PASSED — DO NOT RETEST
 
-**Handover:** `QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md` Batch 3 (BUG-672 section)
-**Account:** owner@thegoankitchen.com (prepaid order confirmed by owner)
+BUG-724 ✅ BUG-725 ✅ BUG-727 ✅ BUG-733 ✅ BUG-737 ✅ BUG-739 ✅
+CR-543 ✅ CR-544 ✅ BUG-681 ✅ BUG-704 ✅ BUG-706 ✅ CR-505 ✅ CR-510 ✅
 
-| ID | Test |
+---
+
+## PARKED (needs owner action — do NOT attempt)
+
+| ID | Reason |
 |---|---|
-| BUG-672 | Find a scan/online prepaid order on TGK → Collect Bill → choose Credit → order now appears in Credit Management and NOT stuck in Order Beta |
-
-Steps:
-1. Order Beta → look for prepaid/scan order (order_from = web or scan, payment_method = prepaid)
-2. Click Collect on that order → CollectBillPanelDrawer
-3. Select "Credit" as payment method → confirm
-4. Navigate to Credit Management → customer's Open tab → new credit entry appears
-5. Navigate back to Order Beta → order is no longer in Hold/Running
-
-**If no prepaid order on TGK today:** Check "Running" tab on Order Beta for any scan orders; note the order_id used.
+| CR-515, BUG-711 | testwait lacks `report` perm → cannot open Order Beta. Need palmhouse staff with `report`+no-`print_icon` |
+| BUG-749 | Needs real browser with granted FCM notification permission (pms@macha RID 69) |
+| BUG-682 | Cafe103 too slow in Playwright; run manually on a real browser |
+| CR-492 | testwait loads slowly; run manually |
 
 ---
 
-## WHAT IS ALREADY PASSED (DO NOT RETEST)
+## MINOR ISSUES CARRIED FORWARD
 
-| Passed | Evidence |
-|---|---|
-| BUG-724, BUG-725, BUG-727, BUG-733, BUG-737, BUG-739 | Browser + code verified |
-| CR-543, CR-544 | Browser + code verified |
-| BUG-681, BUG-704, BUG-706 | Browser verified (Track 2) |
-| CR-505, CR-510 | Closure Phase B |
-
----
-
-## WHAT IS PARKED (do not attempt this session)
-
-| ID | Reason | What's needed |
+| # | ID(s) | Issue |
 |---|---|---|
-| CR-515, BUG-711 | testwait lacks `report` permission → cannot access Order Beta | Owner to create palmhouse staff account with `report` but NO `print_icon`/`update_payment`/`order_unpaid` |
-| BUG-682 | cafe103 loads too slowly in Playwright headless | Manual browser test: login cafe103 → cancel item → check "Additional Notes *" label appears |
-| BUG-749 | Requires real browser with granted FCM notification permission | Use pms@macha.com (RID 69) on a physical device/non-headless browser |
-| CR-492 | testwait loads slowly; needs live order | Manual: login testwait → open an order → Collect Bill → verify complementary checkbox visible |
+| M-1 | CR-515, BUG-711 | testwait lacks `report` → buttons not browser-verified |
+| M-2 | BUG-726, BUG-735 | BUG-726: data now created (C-02 cancelled) ✅. BUG-735: split payment still needed |
+| M-3 | BUG-579, BUG-707 | C-02 cancellation data now created ✅ — use MTD range |
+| M-4 | BUG-682 | cafe103 manual test needed |
+| M-5 | CR-503 | C-04 placed but Hold not completed — finish in Session 3 |
 
 ---
 
 ## QA REPORT FORMAT
 
-For each track, write to:
-`/app/memory/test_reports/QA_REPORT_CONTINUATION_<DATE>.md`
+Write to: `/app/memory/test_reports/QA_REPORT_CONTINUATION_2026-11-25.md`
 
-Per item:
-```
-| ID | Test Case | Result | Severity (if FAIL) | Evidence |
-```
+Per item: `| ID | Test | PASS/FAIL | Severity if FAIL | Evidence (order ID / screenshot) |`
 
-If FAIL found:
-- BLOCKER: core flow broken → stop, file immediately
-- MAJOR: feature doesn't work per spec → list, continue other items
-- MINOR: cosmetic/edge case → list, continue
-- Do NOT fix code — route BLOCKER/MAJOR to bug fix agent after all tracks done
+Route BLOCKER/MAJOR findings → bug fix agent (do NOT fix code yourself)
 
 ---
 
-## MINOR ISSUES FOUND (from previous session — carry forward)
+## REGISTRY
 
-| # | ID(s) | Issue | Fix Needed |
-|---|---|---|---|
-| M-1 | CR-515, BUG-711 | testwait lacks `report` → buttons not browser-verified | Provision palmhouse staff with `report`+no-`print_icon` |
-| M-2 | BUG-726, BUG-735 | No test data yet — deferred | Create cancelled + split orders (Track C) |
-| M-3 | BUG-579, BUG-707 | No cancellation data in test window | Use MTD range (Track B) |
-| M-4 | BUG-682 | Playwright too slow on cafe103 | Manual browser test |
-| M-5 | CR-503 | No Hold order existed | Create Hold order (Track C) |
-
----
-
-## REGISTRY STATE
-All 40 items have `qa_gate_status` set. Items fully PASS: 13.
-Registry file: `/app/memory/control/registry.json`
+All 40 items have `qa_gate_status` set. 
+Registry: `/app/memory/control/registry.json`
+Test credentials: `/app/memory/test_credentials.md`

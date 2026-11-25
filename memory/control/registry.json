@@ -33743,7 +33743,7 @@
       "last_updated": "2026-11-19",
       "assignee": "Gyan",
       "release_date": "",
-      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS (L326/327/333 BUG-579 markers). Browser: no cancellation data on palmhouse in test window."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled on palmhouse (Blueberry Muffins + Mango Sticky Rice). Use MTD range on Cancellations report to verify \u20b9 values. Handover: QA_HANDOVER_BUG579_2026-11-25.md"
     },
     {
       "id": "BUG-580",
@@ -37220,7 +37220,7 @@
       "batch": "BATCH-C-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "QA_PARTIAL 2026-11-25 \u2014 Hold tab renders \u2705 (screenshot). Collect button T2 pending: 0 Hold/paylater orders on palmhouse today. Code markers L23/285/414-416/825-826 confirmed.",
+      "qa_gate_status": "DATA_NEEDED \u2014 C-04 order #023898 placed but Collect Bill not completed (input not found). Need to complete as Pay Later. See handover: click C-04 \u2192 Collect Bill \u2192 Cash \u2192 enter \u20b90 or leave blank \u2192 check for Hold/Tab option. Batch / QA_HANDOVER_CR503_2026-11-25.md",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38457,7 +38457,7 @@
         "BUG-605"
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 3 (6-batch). Needs write-access order on palmhouse (open credit row \u2192 Remove \u2192 confirm dialog).",
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-1 order #023895 saved as Credit (customer: QA Test Customer, 9999999999). \"Credit saved\" confirmation shown. Check Credit Management \u2192 new credit entry \u2192 Remove button. Batch 3 / QA_HANDOVER_6_BATCHES_PARALLEL Batch 3",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38726,7 +38726,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover in QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 3. Needs write-access order on palmhouse (place + mark partial-payment).",
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-1 order #023895 is a credit/unpaid order. Try Mark Unpaid on it in Order Beta. If not visible, create partial payment order on palmhouse. Batch 3",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39303,7 +39303,7 @@
       "files": "OrderEntry.jsx",
       "notes": "SMOKE FAIL 2026-11-18: OrderEntry fix IS applied. But CPP L470-474 initializes serviceChargeEnabled=true for prepaid dine-in (no isPrepaid check). Fix: add && !isPrepaid to CPP init.",
       "registered_date": "2026-11-16",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 4 (6-batch). Needs palmhouse prepaid order with SC toggle OFF.",
+      "qa_gate_status": "DATA_NEEDED \u2014 Need prepaid order with SC toggle OFF on palmhouse. Steps: Settings \u2192 Service Charge OFF \u2192 place order via quick pay (cash upfront). Batch 4",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": ""
@@ -40710,7 +40710,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_PENDING_DATA \u2014 code PASS (CancellationsMockup L760/987 BUG-707 toLocaleString format). Browser: no cancellation data in test window."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled. Use MTD on Cancellations to verify \"DD MMM, hh:mm pm\" date format. Handover: QA_HANDOVER_BUG707_2026-11-25.md"
     },
     {
       "id": "BUG-708",
@@ -40732,7 +40732,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Dead cancel-note column removed (L971 marker), Notes column live (L996-1002). Browser pending: needs cancellation data."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order cancelled. Use MTD on Cancellations to verify dead Cancel Note column absent. Handover: QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 1"
     },
     {
       "id": "BUG-709",
@@ -40869,7 +40869,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Punch Time + Duration on CancelDetail (L108, L171). Browser pending: needs cancellation data."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify Punch Time + Duration on CancelDetail. Batch 1"
     },
     {
       "id": "CR-555",
@@ -40899,7 +40899,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 RiskBadge at 5/15/30 min thresholds (L1020). riskTier.js confirmed. Browser pending: needs cancellation data."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify risk badges at 5/15/30 min. Batch 1"
     },
     {
       "id": "CR-556",
@@ -40929,7 +40929,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "PARTIAL",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 5 inline filters with testids cx-filter-* (L955-962). Browser pending: needs cancellation data."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify 5 inline filters. Batch 1"
     },
     {
       "id": "BUG-713",
@@ -40958,7 +40958,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "FULL",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Punch Time + Duration in 7 consolidated groups (L422-423, L971 marker). Browser pending: needs cancellation data."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify Punch Time + Duration visible without h-scroll. Batch 1"
     },
     {
       "id": "BUG-714",
@@ -41249,7 +41249,7 @@
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MAJOR] OrderReportBetaPage.fetchData has no request-id/AbortController guard and fires the initial load twice; applying a range within ~3s shows 0 orders / Rs0 while the API returns the real rows (seen 374 orders hidden). QA Group 1.",
       "severity": "P0",
       "closed_at": "2026-11-20",
-      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 No \"0 orders\" flash; fetchSeqRef sequence guard confirmed. Screenshot+code."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-03 order #023897 settled (Cash \u20b9857 incl \u20b9300 tip). Settled row now in Order Beta. Test no \"0 orders\" flash. Batch 3"
     },
     {
       "type": "BUG",
@@ -41273,7 +41273,7 @@
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Payment column shows raw lowercase card/upi/room/merge; getPaymentBadge (L36-47) lacks these keys and backend Tab falls through (map has TAB). Status column itself is OK (BUG-626). QA Group 1.",
       "severity": "P0",
       "closed_at": "2026-11-20",
-      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 Payment badges show \"Cash\"/\"UPI\" (not raw lowercase). Screenshot: orders #023893/#023894."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-03 settled. Check Payment column shows \"Cash\" (not raw lowercase). Batch 3"
     },
     {
       "type": "BUG",
@@ -41297,7 +41297,7 @@
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Cancelled rows misalign: cancel-reason <td> (L745-749) added before Actions with no header -> 13 cells vs 12 headers, reason text under ACTIONS. QA Group 1.",
       "severity": "P0",
       "closed_at": "2026-11-20",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Cancel reason folded into Status cell (L752 BUG-726 marker). Browser pending: needs cancelled orders in date range."
+      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled. Check Order Beta Cancelled tab for row cell alignment. Also C-03 order #023897 settled (cash). Batch 3"
     },
     {
       "type": "BUG",
@@ -41505,7 +41505,7 @@
       "duplicate_check": "RELATED BUG-671, CR-515",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Order Report Beta shows Change-Method/Mark-Unpaid on a split/partial row (#023874) while Audit hides them for split orders (BUG-671) -> inconsistent gating. QA Group 4.",
       "severity": "P0",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 Change/Unpaid hidden on split rows (L764 BUG-735 marker, payment_method_raw guard). Browser pending: needs split/partial order."
+      "qa_gate_status": "DATA_NEEDED \u2014 C-03 settled as full Cash (not split). Still need a split payment order on palmhouse. See handover for how to create: Cash Received input field \u2192 partial cash \u2192 then UPI for remainder. Batch 3"
     },
     {
       "type": "BUG",
