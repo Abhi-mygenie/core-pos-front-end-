@@ -36813,7 +36813,7 @@
       "id": "CR-492",
       "sprint_key": "TBD",
       "title": "Runtime Complementary Should Be Rights-Based (complementary_food role)",
-      "status": "GATE_5A_IMPLEMENTED (retroactive 2026-11-16 \u2014 code exists: complementary_food rights gating in CollectPaymentPanel)",
+      "status": "GATE_5A_QA_BLOCKED \u2014 testwait@thepalmhouse.com loads too slowly in Playwright; manual test on real browser required",
       "priority": "P0",
       "risk": "CRITICAL",
       "area": "Permissions / Security",
@@ -36854,7 +36854,7 @@
       "batch": "BATCH-A-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 canMarkComp = hasPermission(complementary_food) CPP L90, gates checkboxes L2192+L2586. Browser pending: testwait loading slow.",
+      "qa_gate_status": "GATE_5A_QA_BLOCKED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -37910,7 +37910,7 @@
       "id": "CR-515",
       "type": "CR",
       "title": "Order Beta: Staff Rights for Reprint and Collect Pay-Later",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-16 (Batch A: E9+E7+E8+B1 all coded)",
+      "status": "GATE_5A_QA_BLOCKED \u2014 needs palmhouse staff account WITH report permission but WITHOUT print_icon (testwait@thepalmhouse.com lacks report perm)",
       "priority": "P0",
       "severity": "P0",
       "risk": "CRITICAL",
@@ -37944,7 +37944,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 hasPermission gates: update_payment L765, order_unpaid L775, print_icon L791, clear_payment L826. Browser BLOCKED: testwait lacks `report` perm to access Order Beta. Need palmhouse staff with report+no-print_icon.",
+      "qa_gate_status": "GATE_5A_QA_BLOCKED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39566,7 +39566,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "LOW",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-25 (code investigation: BUG-682 markers in profileTransform.js, OrderReportBetaPage.jsx, DashboardPage.jsx, AllOrdersReportPage.jsx, CancelFoodModal.jsx \u2014 cancelNoteMandatory from cancellation context)",
+      "status": "GATE_5A_QA_BLOCKED \u2014 Cafe103 too slow in Playwright (consistent timeout); manual test on real browser required",
       "sprint_key": "nov_cr_batch",
       "client": "ALL",
       "assignee": "Abhishek",
@@ -39588,7 +39588,7 @@
       "notes": "CR-493 B5 implementation bug: cancelNoteMandatory mapped to wrong transform object \u2014 cancel reason always appears optional even when restaurant requires it. The mandatory flag reads from orderTransform instead of restaurantProfile. Fast Lane approved by owner \u2014 single-line fix. Gate 4 GO given 2026-11-17 but not yet implemented.",
       "gate": "GATE_5A",
       "current_gate": 5,
-      "qa_gate_status": "QA_PENDING \u2014 code PASS (profileTransform L231 BUG-682). Browser: cafe103 slow in Playwright; manual verification on preprod recommended."
+      "qa_gate_status": "GATE_5A_QA_BLOCKED"
     },
     {
       "id": "BUG-683",
@@ -40785,7 +40785,7 @@
       "title": "Order Report Beta \u2014 Reprint prints bill WITHOUT 'print_icon' permission",
       "priority": "P0",
       "risk": "CRITICAL",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5A_QA_BLOCKED \u2014 same account dependency as CR-515 (staff with report + no print_icon)",
       "sprint_key": "nov_cr_batch",
       "area": "Permissions / Security",
       "assignee": "Abhishek",
@@ -40799,7 +40799,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 hasPermission(print_icon) gate at L790-791. Browser BLOCKED: same account gap as CR-515."
+      "qa_gate_status": "GATE_5A_QA_BLOCKED"
     },
     {
       "id": "BUG-712",
@@ -42063,7 +42063,7 @@
       "type": "BUG",
       "severity": "P0",
       "risk": "HIGH",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-24 \u2014 Phase 2 (granted-path boot register) SHIPPED on main. NEW api/services/deviceTokenService.js registerDeviceToken() -> POST DEVICE_TOKEN {fcm_token}; constants.js +DEVICE_TOKEN; NotificationContext.jsx NEW separate auth-gated boot effect (granted-only guard, no reload prompt) requestFCMToken()->registerDeviceToken(), CR-562 attach effect untouched. Unit __tests__/api/deviceTokenService.test.js 3/3 PASS; webpack clean. Gate-4 GO given (OD-REG-01/02 = POST from NotificationContext; granted-only default). PENDING browser+backend E2E (reload granted device -> has_firebase_token:true) on rid69. Phase 4 (default/denied one-tap) still open. Plan: plans/BUG-749_PHASE2_IMPLEMENTATION_PLAN.md.",
+      "status": "GATE_5A_QA_BLOCKED \u2014 needs real browser session on pms@macha (RID 69) with FCM notification permission already granted; Playwright cannot grant native browser permissions",
       "gate": "GATE_5A_IMPLEMENTED",
       "current_gate": 4,
       "sprint_key": "nov_cr_batch",
@@ -42092,7 +42092,7 @@
       "release_date": "2026-11-25",
       "notes": "FCM device token never registered with backend after reload \u2014 user device shows has_firebase_token:false in backend, meaning push notifications never reach the device after any page reload. Root cause: token registration only ran on first login, not on subsequent page loads. Fix: new deviceTokenService.js calls register-device endpoint on every authenticated boot with granted-path check. High risk \u2014 no token = no push notifications.",
       "closed_at": "2026-11-24",
-      "qa_gate_status": "QA_HANDOVER_WRITTEN 2026-11-25 \u2014 handover/QA_HANDOVER_BUG749_2026-11-25.md"
+      "qa_gate_status": "GATE_5A_QA_BLOCKED"
     },
     {
       "id": "BUG-750",
