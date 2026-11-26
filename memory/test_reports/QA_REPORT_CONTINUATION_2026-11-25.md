@@ -121,3 +121,57 @@ CR-515, BUG-711 (testwait lacks report perm), BUG-749 (FCM browser), BUG-682 (Ca
 
 ## Next Step
 Owner to resolve BLOCKER-1 and BLOCKER-2, then re-run QA sessions 1 and 2A. Sessions 2B, 3, and 4 can run independently in a fresh testing agent call.
+
+---
+
+## SESSION 2B — Palmhouse Order Beta + Credit (Run 2026-11-26)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| BUG-726 | Cancelled tab cell alignment — reason folded into Status cell | **PASS** (code-verified) | — | OrderReportBetaPage.jsx L752-757: cancel reason inside Status `<td>`, no phantom cell. NOTE: order #023896 appears as "Unpaid" not "Cancelled" in Order Beta — see BLOCKER-2 update |
+| BUG-737 | No CR-003 console.log in AllOrders | **PASS** (prior run confirmed) | — | In prior-pass list |
+| CR-526 | Credit Mgmt Remove button → dialog with order + ₹557 | **PASS** | — | Found #023895 (QA Test Customer/9999999999) → Remove → dialog: "Remove order #023895 from credit? ₹557." Cancel clicked to preserve data |
+| BUG-671 | Mark Unpaid button visible on credit order #023895 | **PASS** | — | TAB/Credit order row shows "Unpaid" button visible |
+| CR-527 | Diner column present in Credit Management | **PASS** | — | Customer detail credits table: #, DATE, ORDER ID, DINER, CREDIT (BILL), STATUS, DETAIL, ACTION |
+| CR-523 | Customer link button on running order | **FAIL — wrong test location** | MINOR | No customer assign button in Order Beta rows. CR-523 is in OrderEntry.jsx (customer input while order running). Needs re-test in Order Entry on a running order |
+| BUG-481 | Re-settled prepaid keeps payment method not COD | **SKIP-NEEDS-DATA** | — | No such order visible |
+
+---
+
+## SESSION 3 — Palmhouse Hold + Split (Run 2026-11-26)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| CR-503 | Hold / PayLater button in CollectPaymentPanel | **FAIL** | MAJOR | C-04 panel shows: Cash, UPI, Card, Split, Credit, To Room — NO Hold/PayLater button. Credit requires name+phone. Hold tab exists in Order Beta (0 orders). No path found to create a Hold order. |
+| BUG-735 | Change-Method / Mark-Unpaid hidden on split rows | **INCOMPLETE** | — | C-05 order created (₹557), CollectPaymentPanel open. Split payment (Cash ₹300 + UPI ₹257) not completed before time limit. C-05 now in Running/Unpaid state on palmhouse. |
+
+---
+
+## SESSION 4 — Beanmeup VAT
+**NOT REACHED** (time limit in both runs)
+Items still pending: BUG-683 (VAT OFF → ₹0 VAT), BUG-706 (re-verify — already PASSED)
+
+---
+
+## Critical Finding — BLOCKER-2 Root Cause Identified
+Order #023896 (C-02) is NOT cancelled on the backend — it appears in Order Beta as "Unpaid" (pending payment), NOT in the Cancelled tab. The previous session handover's claim that it was cancelled was incorrect. The Cancellations report shows 0 results because there are genuinely 0 cancelled orders, not a report bug. Owner must cancel an actual order on palmhouse to test the Cancellations report items.
+
+---
+
+## Final Coverage Summary (Both Runs Combined)
+| ID | Result |
+|---|---|
+| BUG-703 | ✅ PASS (runtime) |
+| BUG-708 | ✅ PASS (code-verified) |
+| BUG-713 | ✅ PASS (code-verified) |
+| BUG-715 | ✅ PASS (code-verified) |
+| BUG-726 | ✅ PASS (code-verified) |
+| CR-526 | ✅ PASS (runtime) |
+| BUG-671 | ✅ PASS (runtime) |
+| CR-527 | ✅ PASS (runtime) |
+| CR-523 | ❌ FAIL — re-test needed in OrderEntry view on running order |
+| CR-503 | ❌ FAIL — no Hold/PayLater button found in CollectPaymentPanel |
+| BUG-735 | ⬜ INCOMPLETE — C-05 order created, split payment not finished |
+| BUG-683 | ⬜ NOT REACHED |
+| Session 1 TGK items (10) | ⬜ BLOCKED — no pending web order |
+| Session 2A Cancellations (10) | ⬜ BLOCKED — no actual cancellations on backend (C-02 is Unpaid, not Cancelled) |
