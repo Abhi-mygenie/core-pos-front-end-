@@ -38734,7 +38734,7 @@
       "id": "BUG-672",
       "type": "BUG",
       "title": "Prepaid Order Unable to Move to Credit",
-      "status": "GATE_5A_IMPLEMENTED (retroactive 2026-11-16 \u2014 code exists: TAB/prepaid payment handling in orderTransform+CPP)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 (PASS \u2014 Walk-In order #1579129, Collect Bill\u2192Credit(TAB), API payment_mode=TAB+payment_status=success, appeared in Credit Management. QA session 2026-11-26)",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38773,9 +38773,10 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 3 (6-batch). Needs prepaid order on TGK (scan/online), then Collect Bill \u2192 Credit.",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
-      "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
+      "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
+      "qa_notes": "PASS 2026-11-26: Walk-In order #000072 Collect Bill \u2192 Credit \u2192 TAB payment processed. payment_mode=TAB in API payload. Response: Bill cleared via TAB. Order visible in Credit Management as BUG672 Test / 9123456789 / Rs87."
     },
     {
       "id": "BUG-673",

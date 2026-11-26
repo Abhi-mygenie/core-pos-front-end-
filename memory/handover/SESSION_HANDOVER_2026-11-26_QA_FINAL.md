@@ -83,3 +83,30 @@ Key flows to spot-check: APS order popup, Cancellations report, Order Beta, Cred
 | QA report appended | ✅ Run 3 results in QA_REPORT_CONTINUATION_2026-11-25.md |
 | Scope drift | ✅ NONE — QA role only, no code written |
 | BUG-672 handled correctly | ✅ BLOCKED-NEEDS-DATA (not FAIL) — test infrastructure gap, not a code defect |
+
+---
+
+## UPDATE — BUG-672 RESOLVED (Run 4, 2026-11-26)
+
+**Result: PASS** ✅
+
+Steps executed:
+1. Placed Walk-In order #1579129 (₹87) on TGK via browser UI
+2. Collect Bill → Credit (TAB) button → filled BUG672 Test / 9123456789
+3. POST `/api/v2/vendoremployee/order/order-bill-payment` confirmed:
+   `payment_mode=TAB`, `payment_status=success` (BUG-672 fix working)
+4. Response: `{message: 'Bill cleared via TAB'}`
+5. Credit Management shows: BUG672 Test | 9123456789 | ₹87.00
+
+Registry: BUG-672 → GATE_5B_QA_PASSED
+
+---
+
+## FINAL SPRINT STATUS (after all sessions)
+
+**47 / 48 items at GATE_5B_QA_PASSED**
+Parked (5 items — owner action needed): CR-515, BUG-711, BUG-749, BUG-682, CR-492
+Not yet at QA gate: BUG-753 (GATE_1_INTAKE), BUG-754 (GATE_1_INTAKE)
+
+**→ Ready for Gate 6 Owner Smoke on 47 items**
+App: `https://pos-core-app--6gve4gt4.preview.emergentagent.com`

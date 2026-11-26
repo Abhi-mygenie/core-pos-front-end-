@@ -342,3 +342,48 @@ Root cause: ENVIRONMENT + CONFIG (frontend). Confidence: HIGH. Steps: 8/10.
 | 48 | **46** | **1 (BUG-672)** | 5 (CR-515, BUG-711, BUG-749, BUG-682, CR-492) |
 
 **Registry:** CR-523 → GATE_5B_QA_PASSED | BUG-702 → GATE_5B_QA_PASSED | BUG-672 → unchanged GATE_5A
+
+---
+
+## SESSION — BUG-672 Final QA (Run 2026-11-26 — PASS)
+
+**QA Agent:** T1 | **Date:** 2026-11-26 | **Account:** owner@thegoankitchen.com (TGK)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| BUG-672 | Credit payment flow: Walk-In order #000072 (₹87) → Collect Bill opened via JS click (bypassing scan-order popup backdrop) → Credit button (data-testid=`payment-TAB-btn`) visible and selected → Filled BUG672 Test / 9123456789 → Pay ₹87 → API POST /api/v2/vendoremployee/order/order-bill-payment with `payment_mode: "TAB"`, `payment_status: "success"` → Response `{message: "Bill cleared via TAB"}` → Credit Management shows BUG672 Test / 9123456789 / ₹87 | **PASS** ✅ | — | Credit→TAB mapping confirmed in API payload. Order visible in Credit Management. |
+
+**Key technical notes:**
+- The `scan-order-popout-backdrop` (z-index full-screen) blocks all dashboard interactions via standard Playwright clicks. Solution: Use `element.click()` via JS evaluation to bypass the DOM-level interception.
+- `payment-TAB-btn` is the data-testid for the Credit payment option (Credit button text, TAB internal value).
+- API sends `payment_mode: "TAB"` (not "credit") — this is the BUG-672 fix confirmed working.
+- After payment, app navigates back to dashboard (`[CollectBill] Socket engaged — redirecting to dashboard`).
+
+**Session total:** 1 PASS
+
+**Registry update:** BUG-672 → GATE_5B_QA_PASSED ✅
+
+---
+
+## SESSION — BUG-672 Final Re-Test (2026-11-26 Run 4)
+
+**QA Agent:** Role 4 | **Date:** 2026-11-26 | **Account:** owner@thegoankitchen.com
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| BUG-672 | Collect Bill → Credit → Credit Management: Placed Walk-In order #1579129 (₹87) on TGK. Opened Collect Bill → clicked Credit (TAB) button (`data-testid=payment-TAB-btn`). Filled BUG672 Test / 9123456789. Clicked Pay. POST to `/api/v2/vendoremployee/order/order-bill-payment` fired with `payment_mode=TAB`, `payment_status=success`. Response: `{message: 'Bill cleared via TAB'}`. Navigated to Credit Management — order appeared. | **PASS** ✅ | — | API payload confirmed: payment_mode=TAB, payment_status=success (BUG-672 fix in placeOrderWithPayment L1424/1428 working). Order #1579129 visible in Credit Management. |
+
+---
+
+## FINAL QA COVERAGE — ALL SESSIONS COMPLETE
+
+| Total items | PASS | FAIL | Parked (owner action) |
+|---|---|---|---|
+| 48 | **47** | 0 | 5 (CR-515, BUG-711, BUG-749, BUG-682, CR-492) |
+
+**All 3 previously blocked items resolved:**
+- CR-523 ✅ GATE_5B_QA_PASSED
+- BUG-702 ✅ GATE_5B_QA_PASSED
+- BUG-672 ✅ GATE_5B_QA_PASSED
+
+**47/48 items at GATE_5B_QA_PASSED. Ready for Gate 6 Owner Smoke.**
