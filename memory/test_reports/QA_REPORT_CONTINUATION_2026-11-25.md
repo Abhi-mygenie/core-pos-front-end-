@@ -318,3 +318,27 @@ Root cause: ENVIRONMENT + CONFIG (frontend). Confidence: HIGH. Steps: 8/10.
 | BUG-672 | BLOCKED | Needs confirmed prepaid delivery order on TGK (not in web-edit state) |
 | CR-523 | FAIL (re-test needed) | Re-test in OrderEntry view on running order (not Order Beta) |
 | CR-559 | Code-verified | Physical KOT print needs live acceptance (owner to verify on device) |
+
+---
+
+## SESSION — CR-523 / BUG-702 / BUG-672 Final Re-Test (2026-11-26 Run 3)
+
+**QA Agent:** Role 4 | **Date:** 2026-11-26 | **Accounts:** owner@palmhouse.com, owner@thegoankitchen.com
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| CR-523 | Link Customer in Order Entry: placed fresh order #023900 (C-1, Palmhouse), clicked `customer-info-btn`, modal opened, entered QA Test / 9876543210, POST to /api/v1/vendoremployee/pos/user-check-create fired, customer linked without re-place | **PASS** ✅ | — | Network intercept: 1× POST user-check-create. Customer name visible in cart header post-save. |
+| BUG-702 | Variation display in ScanOrderPopOut: TGK live web order (table a1, 86 items) opened in popup. Item 'melo fish' shows variation `boli(+₹10.00)` — option label + price. DOM: `data-testid="popout-new-item-variation-0-0"` = `boli(+₹10.00)` | **PASS** ✅ | — | DOM element confirmed via browser automation. PopoutItemRow L160-169 flattenVariationOptions working. |
+| BUG-672 | Prepaid delivery → Credit flow: No accessible prepaid delivery order in running state found. All Swiggy/Zomato orders already in terminal states (Ready/Ready-to-Dispatch). t2 dine-in blocked by unconfirmed APS item. No 'Mark as Prepaid' option via UI. | **BLOCKED-NEEDS-DATA** ⬜ | NOTE | Test infrastructure gap — not a code defect. Needs fresh prepaid delivery order in running status on TGK. |
+
+**Session total:** 2 PASS, 1 BLOCKED-NEEDS-DATA
+
+---
+
+## REVISED OVERALL COVERAGE SUMMARY (after Run 3)
+
+| Total items | PASS | BLOCKED-NEEDS-DATA | Parked (owner action) |
+|---|---|---|---|
+| 48 | **46** | **1 (BUG-672)** | 5 (CR-515, BUG-711, BUG-749, BUG-682, CR-492) |
+
+**Registry:** CR-523 → GATE_5B_QA_PASSED | BUG-702 → GATE_5B_QA_PASSED | BUG-672 → unchanged GATE_5A

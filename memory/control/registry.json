@@ -38277,7 +38277,7 @@
       "id": "CR-523",
       "type": "CR",
       "title": "Link Customer to Order After Placing (Without Completing/Updating)",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-16 (E1+E2: user-check-create endpoint replaces update-place-order workaround)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 (PASS \u2014 customer-info-btn fires user-check-create POST, customer linked to running order without re-place. QA session 2026-11-26)",
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
@@ -38300,7 +38300,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 api.post(LINK_CUSTOMER_ORDER) at OrderEntry L1115 with CR-523 markers. Browser pending: needs placed order + customer link.",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -40584,7 +40584,7 @@
       "title": "ScanOrderPopOut confirmation popup shows partial variation (group name only; v.values[].label/optionPrice not read)",
       "priority": "P0",
       "risk": "LOW",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-25 (code investigation: BUG-702 markers at ScanOrderPopOut.jsx:70,88 + PopoutItemRow.jsx:9,159 \u2014 variation display shipped via CR-557 shared row)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 (PASS \u2014 variation shows option label+price boli(+\u20b910.00) via flattenVariationOptions PopoutItemRow L160-169. QA session 2026-11-26)",
       "sprint_key": "nov_cr_batch",
       "area": "Menu / Order Entry",
       "assignee": "Abhishek",
@@ -40600,7 +40600,7 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "closed_at": "2026-11-25",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 BUG-702 markers in ScanOrderPopOut L70/88 + PopoutItemRow L9/159. Browser BLOCKED: needs live web order on TGK."
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-703",
