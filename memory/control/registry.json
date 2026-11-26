@@ -39744,7 +39744,7 @@
       "files": "frontend/src/components/order-entry/CartPanel.jsx (~L811 props, ~L1353 render); OrderEntry.jsx:2964",
       "completeness": "1/7",
       "qa_finding_severity": "BLOCKER",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 onEdit destructured at CartPanel L851 (BUG-685 marker). Fix confirmed in code. Prior qa_gate_status reflected QA-found defect, but fix IS present. Handover: QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md T1.",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA Nov Sprint FAIL \u2014 BLOCKER-1 (crash on add-to-cart). Fix: add onEdit to CartPanel props. | Gate 2 IA 2026-11-18: root cause CONFIRMED (CartPanel missing onEdit destructure, incomplete CR-551). HIGH/R5. No owner decision. See impact/BUG-685_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-685_ORDER_ENTRY_ADD_TO_CART_ONEDIT_CRASH_INTAKE.md",
       "artifact_refs": [
@@ -39803,7 +39803,7 @@
       "files": "frontend/src/hooks/useOrderPollingReconciliation.js:275-281",
       "completeness": "1/7",
       "qa_finding_severity": "MAJOR",
-      "qa_gate_status": "GATE_1_INTAKE (new defect from QA Nov Sprint)",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA Nov Sprint FAIL \u2014 MAJOR-2. Fix: skip reconcile when posResult.status===rejected. | Gate 2 IA 2026-11-18: root cause CONFIRMED (rejected POS fetch -> reconcile([]) wipes orders; BUG-677 F4 regression). HIGH. See impact/BUG-686_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-686_DASHBOARD_DROPS_RUNNING_ORDERS_ON_LOGIN_INTAKE.md",
       "artifact_refs": [
@@ -39908,7 +39908,7 @@
       "files": "socket reconnect layer (to trace)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_1_INTAKE (new defect from QA Nov Sprint)",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA Nov Sprint MINOR-1 (noted during BUG-677 PASS). | Gate 2 IA 2026-11-18: reconnect double join_restaurant emit; exact 2nd emitter to confirm at Gate 3. LOW. See impact/BUG-688_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-688_JOIN_RESTAURANT_DOUBLE_EMIT_RECONNECT_INTAKE.md",
       "artifact_refs": [
@@ -40018,7 +40018,7 @@
       "files": "add-on management screen (to trace)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_1_INTAKE (new defect from QA Nov Sprint)",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA Nov Sprint MINOR-3 (noted during BUG-669 PASS). | Gate 2 IA 2026-11-18: create handler lacks list re-fetch/optimistic insert. LOW (Fast-Lane candidate). See impact/BUG-690_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-690_ADDON_LIST_NO_AUTO_REFRESH_INTAKE.md",
       "artifact_refs": [
@@ -40076,7 +40076,7 @@
       "files": "AuditLogMockup.jsx (TIME column)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_1_INTAKE (new defect from QA Nov Sprint)",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA Nov Sprint MINOR-4 (noted during CR-528 check). | Gate 2 IA 2026-11-18: fmtTime slices date-only values to \"2026-\". LOW. Batch same-file with BUG-687/695-700. See impact/BUG-687_BUG-691_AUDIT_LOG_IMPACT_ANALYSIS.md. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-691_AUDIT_LOG_TIME_CELLS_CLIPPED_INTAKE.md",
       "artifact_refs": [
@@ -40277,7 +40277,7 @@
       "files": "frontend/src/pages/reports-module/AuditLogMockup.jsx (~L347 toggle, ~L362 link)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_2_IA_COMPLETE \u2014 Card 1 nested button; fix = div role=button or move link out. Risk LOW. No owner decision.",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA CR-528/CR-546: React \"<button> cannot be a descendant of <button>\" on every Audit Report load. Fix: div role=button or move link out of toggle. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-695_AUDIT_REPORT_CARD1_NESTED_BUTTON_INTAKE.md",
       "artifact_refs": [
@@ -40376,7 +40376,7 @@
       "files": "frontend/src/pages/reports-module/AuditLogMockup.jsx (~L171 activePreset useState)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_2_IA_COMPLETE \u2014 init activePreset from applied range. Risk LOW.",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA CR-528/CR-546 MINOR: activePreset hard-coded 7D; does not reflect real applied range. | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-697_AUDIT_REPORT_ACTIVE_PRESET_MISMATCH_INTAKE.md",
       "artifact_refs": [
@@ -40430,7 +40430,7 @@
       "files": "frontend/src/pages/reports-module/AuditLogMockup.jsx (~L192 handlePreset FY branch); datePresets.computePresetRange",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_2_IA_COMPLETE \u2014 FY branch add setSharedFrom/To; FY window gated on OD-698-01 (current vs previous FY). Risk LOW.",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA CR-528/CR-546 MINOR: FY omits shared setters; FY window = previous completed FY (confirm intent, OD-698-01). | OWNER DECISION OD-698-01 = PREVIOUS COMPLETED FY (current behaviour is correct). Gate 3: ONLY add setSharedFrom/setSharedTo to the FY branch for shared-range parity; do NOT change computePresetRange('FY'). | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-698_AUDIT_REPORT_FY_PRESET_NO_SHARE_INTAKE.md",
       "artifact_refs": [
@@ -40528,7 +40528,7 @@
       "files": "frontend/src/pages/reports-module/AuditLogMockup.jsx (~L93 RiskBar empty return, ~L123 DrillDownTable empty return)",
       "completeness": "1/7",
       "qa_finding_severity": "MINOR",
-      "qa_gate_status": "GATE_2_IA_COMPLETE \u2014 add testids to empty-state RiskBar + DrillDownTable. Risk LOW.",
+      "qa_gate_status": "GATE_5A_PENDING_QA",
       "notes": "QA CR-528/CR-546 MINOR: empty-state loses audit-card1-risk-bar / audit-card3-table testids (testability). | Gate 3 plan 2026-11-18: batch plan (see plans/NOV_SPRINT_BATCH_GATE3_IMPLEMENTATION_PLAN_2026-11-18.md). | Implemented 2026-11-18 (Gate 4): see QA handover memory/handover/QA_HANDOVER_NOV_SPRINT_BATCH_2026-11-18.md.",
       "intake_doc": "change_requests/BUG-700_AUDIT_REPORT_EMPTY_STATE_MISSING_TESTIDS_INTAKE.md",
       "artifact_refs": [

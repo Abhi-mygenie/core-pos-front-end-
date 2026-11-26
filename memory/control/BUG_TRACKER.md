@@ -199,10 +199,10 @@ Source: investigations `INV-ROOM-CANCEL-POPUP_INVESTIGATION_REPORT_2026-11-18.md
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
-| **BUG-697** | Audit Report — active preset highlight ("7D") does not match applied/shared range on first load | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR | `change_requests/BUG-697_AUDIT_REPORT_ACTIVE_PRESET_MISMATCH_INTAKE.md` |
-| **BUG-698** | Audit Report — FY preset does not share range and returns previous completed FY | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR (OD-698-01: FY current vs previous?) | `change_requests/BUG-698_AUDIT_REPORT_FY_PRESET_NO_SHARE_INTAKE.md` |
+| **BUG-697** | Audit Report — active preset highlight ("7D") does not match applied/shared range on first load | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `change_requests/BUG-697_AUDIT_REPORT_ACTIVE_PRESET_MISMATCH_INTAKE.md` |
+| **BUG-698** | Audit Report — FY preset does not share range and returns previous completed FY | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `change_requests/BUG-698_AUDIT_REPORT_FY_PRESET_NO_SHARE_INTAKE.md` |
 | **BUG-699** | Audit Report — stale data remains under the error shield after a timeout | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR (related BUG-696) | `change_requests/BUG-699_AUDIT_REPORT_STALE_DATA_UNDER_ERROR_INTAKE.md` |
-| **BUG-700** | Audit Report — empty-state RiskBar and DrillDownTable lack their data-testids | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR (testability) | `change_requests/BUG-700_AUDIT_REPORT_EMPTY_STATE_MISSING_TESTIDS_INTAKE.md` |
+| **BUG-700** | Audit Report — empty-state RiskBar and DrillDownTable lack their data-testids | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `change_requests/BUG-700_AUDIT_REPORT_EMPTY_STATE_MISSING_TESTIDS_INTAKE.md` |
 
 ---
 
@@ -211,7 +211,7 @@ Source: investigations `INV-ROOM-CANCEL-POPUP_INVESTIGATION_REPORT_2026-11-18.md
 
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
-| **BUG-695** | Audit Report Card 1 — nested `<button>` (link inside toggle) → invalid HTML + console error every load | **P3** | **LOW** | GATE_1_INTAKE_COMPLETE — QA MINOR; fix = `div role=button` or move link out of toggle (AuditLogMockup.jsx ~L347/L362) | `change_requests/BUG-695_AUDIT_REPORT_CARD1_NESTED_BUTTON_INTAKE.md` |
+| **BUG-695** | Audit Report Card 1 — nested `<button>` (link inside toggle) → invalid HTML + console error every load | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `change_requests/BUG-695_AUDIT_REPORT_CARD1_NESTED_BUTTON_INTAKE.md` |
 | **BUG-696** | Audit Report cannot load 30D/FY ranges — `insights-dashboard` ~43s exceeds 60s axios timeout | **P1** | **MEDIUM** | GATE_1_INTAKE_COMPLETE — QA MAJOR; backend latency root cause (brief needed) + FE timeout option | `change_requests/BUG-696_AUDIT_REPORT_INSIGHTS_DASHBOARD_TIMEOUT_INTAKE.md` |
 
 ---
@@ -222,12 +222,12 @@ Source: investigations `INV-ROOM-CANCEL-POPUP_INVESTIGATION_REPORT_2026-11-18.md
 | ID | Title | Sev | Risk | Status | Doc |
 |---|---|---|---|---|---|
 | **BUG-685** | Add-to-cart crashes Order Entry — `ReferenceError: onEdit is not defined` (incomplete CR-551) | **P0** | **HIGH** | GATE_2_IA_COMPLETE — QA BLOCKER-1; root cause CONFIRMED = add `onEdit` to CartPanel props (CartPanel.jsx ~L811/L1353) | `impact/BUG-685_IMPACT_ANALYSIS.md` |
-| **BUG-686** | Dashboard drops ALL running orders after login (~60-70%) — rejected fetch treated as server=0 | **P1** | **HIGH** | GATE_2_IA_COMPLETE — QA MAJOR-2; root cause CONFIRMED = skip reconcile on `posResult.status==='rejected'` (useOrderPollingReconciliation.js:275-281) | `impact/BUG-686_IMPACT_ANALYSIS.md` |
+| **BUG-686** | Dashboard drops ALL running orders after login (~60-70%) — rejected fetch treated as server=0 | **P1** | **HIGH** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `impact/BUG-686_IMPACT_ANALYSIS.md` |
 | **BUG-687** | Audit Log report does not match CR-528 spec (renders CR-546 design) | **P2** | **MEDIUM** | GATE_2_IA_COMPLETE — SPEC-CR528; likely working-as-designed (CR-546 v3 LOCKED) — OD-687-01 before code; batch same-file w/ BUG-691/695-700 | `impact/BUG-687_BUG-691_AUDIT_LOG_IMPACT_ANALYSIS.md` |
-| **BUG-688** | `join_restaurant` emitted twice after socket reconnect (double ack) | **P3** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-1; reconnect double-emit, 2nd emitter confirmed at Gate 3 | `impact/BUG-688_IMPACT_ANALYSIS.md` |
+| **BUG-688** | `join_restaurant` emitted twice after socket reconnect (double ack) | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `impact/BUG-688_IMPACT_ANALYSIS.md` |
 | **BUG-689** | Auto-generated employee email gets an extra `.com` appended | **P2** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-2; generateEmail hard-appends `.com` — OD-689-01 (intended domain) | `impact/BUG-689_IMPACT_ANALYSIS.md` |
-| **BUG-690** | Add-on list does not auto-refresh after creating an add-on | **P3** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-3; missing list re-fetch after create (Fast-Lane candidate) | `impact/BUG-690_IMPACT_ANALYSIS.md` |
-| **BUG-691** | Audit Log TIME cells clipped at `"2026-"` | **P3** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-4; `fmtTime` slices date-only to `"2026-"`; batch same-file w/ BUG-687/695-700 | `impact/BUG-687_BUG-691_AUDIT_LOG_IMPACT_ANALYSIS.md` |
+| **BUG-690** | Add-on list does not auto-refresh after creating an add-on | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `impact/BUG-690_IMPACT_ANALYSIS.md` |
+| **BUG-691** | Audit Log TIME cells clipped at `"2026-"` | **P3** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-18 — code shipped (batch); awaiting QA | `impact/BUG-687_BUG-691_AUDIT_LOG_IMPACT_ANALYSIS.md` |
 | **BUG-692** | "New version available" banner shows on every page | **P3** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-5; likely env (BUILD_ID vs version.json), banner persistent by design — OD-692-01 | `impact/BUG-692_IMPACT_ANALYSIS.md` |
 | **BUG-693** | Login-page logo renders blank | **P3** | **LOW** | GATE_2_IA_COMPLETE — QA MINOR-6; `GENIE_LOGO_URL` remote asset fails (intermittent/env) — OD-693-01 | `impact/BUG-693_IMPACT_ANALYSIS.md` |
 | **BUG-694** | Direct URL after fresh login routes through `/loading` for >10s | **P2** | **MEDIUM** | GATE_2_IA_COMPLETE — QA MINOR-7; boot loader chain has sequential awaits >10s cold — OD-694-01 | `impact/BUG-694_IMPACT_ANALYSIS.md` |
