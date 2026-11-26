@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint Closure Tracker — Nov 2026</title>
+<style>
+  :root {
+    --red:    #ef4444; --red-bg:    #fef2f2; --red-border:    #fecaca;
+    --orange: #f97316; --orange-bg: #fff7ed; --orange-border: #fed7aa;
+    --yellow: #eab308; --yellow-bg: #fefce8; --yellow-border: #fef08a;
+    --blue:   #3b82f6; --blue-bg:   #eff6ff; --blue-border:   #bfdbfe;
+    --purple: #8b5cf6; --purple-bg: #f5f3ff; --purple-border: #ddd6fe;
+    --green:  #22c55e; --green-bg:  #f0fdf4; --green-border:  #bbf7d0;
+    --gray:   #6b7280; --gray-bg:   #f9fafb; --gray-border:   #e5e7eb;
+    --text:   #111827; --muted:     #6b7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: var(--text); font-size: 13px; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; padding: 24px 32px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { color: #94a3b8; margin-top: 4px; font-size: 12px; }
+  .stats { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+  .stat { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 12px 20px; text-align: center; min-width: 100px; }
+  .stat-num { font-size: 26px; font-weight: 800; line-height: 1; }
+  .stat-label { font-size: 10px; color: #94a3b8; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-num.green { color: #4ade80; }
+  .stat-num.red { color: #f87171; }
+  .stat-num.yellow { color: #fbbf24; }
+  .stat-num.orange { color: #fb923c; }
+  .stat-num.blue { color: #60a5fa; }
+
+  /* Tabs */
+  .tabs { background: white; border-bottom: 1px solid #e2e8f0; padding: 0 32px; display: flex; gap: 0; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .tab { padding: 14px 18px; font-size: 12px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted); white-space: nowrap; transition: all 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+  .tab .count { background: #e2e8f0; color: #374151; padding: 1px 7px; border-radius: 10px; font-size: 10px; margin-left: 6px; }
+  .tab.active .count { background: #dbeafe; color: #1d4ed8; }
+
+  /* Sections */
+  .content { padding: 24px 32px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Section header */
+  .section-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .section-desc { font-size: 12px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+  /* Cards */
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+  .card-header { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+  .card-header:hover { background: #f8fafc; }
+  .card-body { padding: 14px 16px; background: #fafafa; border-top: 1px solid #f1f5f9; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; }
+  .p0 { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .p1 { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .p2 { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+  .p3 { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .badge-blue   { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .badge-purple { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+  .badge-orange { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .badge-gray   { background: #f9fafb; color: #374151; border: 1px solid #e5e7eb; }
+  .badge-red    { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .badge-green  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+  /* Item ID */
+  .item-id { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; font-weight: 700; color: #1e40af; background: #eff6ff; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .item-title { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
+  .item-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+
+  /* Action box */
+  .action-box { background: #fff; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-top: 10px; }
+  .action-box-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #3b82f6; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .action-box p { font-size: 12px; color: #374151; line-height: 1.6; }
+  .action-box code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 11px; color: #0f172a; }
+
+  .blocker-box { background: #fff; border: 1.5px solid #ef4444; border-radius: 8px; padding: 10px 14px; margin-top: 10px; }
+  .blocker-box-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #ef4444; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .blocker-box p { font-size: 12px; color: #374151; line-height: 1.6; }
+
+  /* Detail rows */
+  .detail-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+  .detail-label { color: var(--muted); min-width: 90px; flex-shrink: 0; font-weight: 500; }
+  .detail-value { color: var(--text); }
+
+  /* Gate pill */
+  .gate { font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 600; }
+  .gate-5a   { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+  .gate-5b   { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .gate-3    { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  .gate-2    { background: #f3e8ff; color: #6b21a8; border: 1px solid #c084fc; }
+  .gate-1    { background: #f9fafb; color: #374151; border: 1px solid #d1d5db; }
+  .gate-blocked { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .gate-backend { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+
+  /* Updated indicator */
+  .updated-at { font-size: 10px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Sprint Closure Tracker — Nov 2026</h1>
+  <p>Last updated: 2026-11-26 &nbsp;·&nbsp; Tracking open items to close the Nov sprint</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num green">47</div><div class="stat-label">QA Passed</div></div>
+    <div class="stat"><div class="stat-num red">5</div><div class="stat-label">QA Blocked</div></div>
+    <div class="stat"><div class="stat-num yellow">9</div><div class="stat-label">Impl, Not QA'd</div></div>
+    <div class="stat"><div class="stat-num orange">5</div><div class="stat-label">Not Coded</div></div>
+    <div class="stat"><div class="stat-num blue">5</div><div class="stat-label">Backend Blocked</div></div>
+    <div class="stat"><div class="stat-num orange">11</div><div class="stat-label">P0 In Intake</div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('qa-blocked')">QA Blocked <span class="count">5</span></div>
+  <div class="tab" onclick="show('impl-not-qa')">Impl — Not QA'd <span class="count">9</span></div>
+  <div class="tab" onclick="show('not-impl')">Not Implemented <span class="count">5</span></div>
+  <div class="tab" onclick="show('backend')">Backend Blocked <span class="count">5</span></div>
+  <div class="tab" onclick="show('intake-p0')">P0 in Intake <span class="count">11</span></div>
+  <div class="tab" onclick="show('owner-od')">Owner Decisions <span class="count">4</span></div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════
+     SECTION A: QA BLOCKED
+═══════════════════════════════════════════ -->
+<div class="section active" id="qa-blocked">
+  <div class="section-title">QA Blocked — Needs Owner Action to Unblock</div>
+  <div class="section-desc">These items are <strong>coded and compiled</strong> but cannot be tested without specific accounts or environments. Each has a precise unblock action.</div>
+
+  <!-- CR-515 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">CR-515</span>
+          <span class="badge p0">P0</span>
+          <span class="gate gate-blocked">QA BLOCKED</span>
+          <span class="badge badge-orange">Account Missing</span>
+        </div>
+        <div class="item-title">Order Beta: Staff Rights for Reprint and Collect Pay-Later</div>
+        <div class="item-meta"><span class="badge badge-gray">nov_cr_batch</span><span class="badge badge-gray">palmhouse</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">What it tests</span><span class="detail-value">Staff without <code>print_icon</code> permission should NOT see the Reprint button in Order Beta. Staff without <code>print_icon</code> + <code>update_payment</code> should NOT see Pay-Later Collect.</span></div>
+      <div class="detail-row"><span class="detail-label">Blocked because</span><span class="detail-value"><code>testwait@thepalmhouse.com</code> exists but lacks the <code>report</code> permission — cannot open Order Beta at all.</span></div>
+      <div class="blocker-box">
+        <div class="blocker-box-label">Also blocks BUG-711</div>
+        <p>CR-515 and BUG-711 share the same test account requirement. Fix once, unblocks both.</p>
+      </div>
+      <div class="action-box">
+        <div class="action-box-label">Exact Action to Unblock</div>
+        <p>In Palmhouse employee settings, give <code>testwait@thepalmhouse.com</code> the <code>report</code> permission <strong>but do NOT give</strong> <code>print_icon</code> or <code>update_payment</code>. That single change unblocks both CR-515 and BUG-711 immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-711 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-711</span>
+          <span class="badge p0">P0</span>
+          <span class="gate gate-blocked">QA BLOCKED</span>
+          <span class="badge badge-orange">Account Missing</span>
+        </div>
+        <div class="item-title">Order Report Beta — Reprint prints bill WITHOUT print_icon permission</div>
+        <div class="item-meta"><span class="badge badge-gray">nov_cr_batch</span><span class="badge badge-gray">palmhouse</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">What it tests</span><span class="detail-value">Staff without <code>print_icon</code> should NOT see/use Reprint in Order Beta. Fix gating the Reprint behind this permission.</span></div>
+      <div class="action-box">
+        <div class="action-box-label">Unblocked by same fix as CR-515</div>
+        <p>Give <code>testwait@thepalmhouse.com</code> the <code>report</code> permission only — same fix as CR-515 unblocks this too.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-749 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-749</span>
+          <span class="badge p0">P0</span>
+          <span class="gate gate-blocked">QA BLOCKED</span>
+          <span class="badge badge-purple">Real Browser Required</span>
+        </div>
+        <div class="item-title">FCM device token never re-registered after browser reload</div>
+        <div class="item-meta"><span class="badge badge-gray">nov_cr_batch</span><span class="badge badge-gray">pms@macha RID 69</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">What it tests</span><span class="detail-value">After a browser reload, the app should auto-register the FCM token with the backend (<code>POST /api/v1/vendoremployee/device-token</code>). Previously the token was only sent on login; reload = silent = no push notifications.</span></div>
+      <div class="detail-row"><span class="detail-label">Account</span><span class="detail-value"><code>pms@macha</code> (RID 69) — must already have browser notification permission granted</span></div>
+      <div class="blocker-box">
+        <div class="blocker-box-label">Why Playwright cannot test this</div>
+        <p>Playwright (headless Chrome) cannot grant native browser notification permissions that survive a reload. The browser must have already accepted the notification prompt in a real session.</p>
+      </div>
+      <div class="action-box">
+        <div class="action-box-label">How to Test</div>
+        <p>1. Open Chrome on a real device / non-headless browser<br>2. Login as <code>pms@macha / Qplazm@10</code> on <code>https://pos-core-app--6gve4gt4.preview.emergentagent.com</code><br>3. Grant notification permission when prompted<br>4. Hard-reload the page (Ctrl+Shift+R)<br>5. Open DevTools → Network → look for <code>POST /api/v1/vendoremployee/device-token</code> within 5 seconds<br><strong>PASS:</strong> token request fires on reload. <strong>FAIL:</strong> no request fired.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-682 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-682</span>
+          <span class="badge p0">P0</span>
+          <span class="gate gate-blocked">QA BLOCKED</span>
+          <span class="badge badge-orange">Slow on Playwright</span>
+        </div>
+        <div class="item-title">cancelNoteMandatory mapped to wrong transform key (Cafe103)</div>
+        <div class="item-meta"><span class="badge badge-gray">nov_cr_batch</span><span class="badge badge-gray">cafe103</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">What it tests</span><span class="detail-value">When <code>cancel_note_mandatory=Yes</code> in settings (Cafe103), cancelling an order should require a note. Bug was the transform reading wrong key.</span></div>
+      <div class="detail-row"><span class="detail-label">Account</span><span class="detail-value"><code>owner@cafe103.com / Qplazm@10</code></span></div>
+      <div class="blocker-box">
+        <div class="blocker-box-label">Playwright Issue</div>
+        <p>Cafe103 preprod menu API consistently times out in Playwright (15–20s vs 8s limit). Menu never loads → cannot place an order to cancel.</p>
+      </div>
+      <div class="action-box">
+        <div class="action-box-label">Manual Test (5 min)</div>
+        <p>1. Login as <code>owner@cafe103.com</code> on the preview URL<br>2. Place any order on any table<br>3. Try to cancel without entering a note<br><strong>PASS:</strong> Cancel is blocked / note field is required.<br><strong>FAIL:</strong> Cancel goes through without note.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR-492 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">CR-492</span>
+          <span class="badge p1">P1</span>
+          <span class="gate gate-blocked">QA BLOCKED</span>
+          <span class="badge badge-orange">Slow on Playwright</span>
+        </div>
+        <div class="item-title">Runtime Complementary Should Be Rights-Based</div>
+        <div class="item-meta"><span class="badge badge-gray">TBD sprint</span><span class="badge badge-gray">palmhouse staff</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">What it tests</span><span class="detail-value">Only staff with <code>complementary_food</code> permission can mark items as complimentary. <code>testwait</code> has this permission — test should show the comp button.</span></div>
+      <div class="detail-row"><span class="detail-label">Account</span><span class="detail-value"><code>testwait@thepalmhouse.com / Qplazm@10</code></span></div>
+      <div class="blocker-box">
+        <div class="blocker-box-label">Playwright Issue</div>
+        <p>testwait account loads very slowly in automated browser (menu + permissions take 20–25s). Causes consistent timeout before Order Entry is usable.</p>
+      </div>
+      <div class="action-box">
+        <div class="action-box-label">Manual Test (5 min)</div>
+        <p>Login as <code>testwait@thepalmhouse.com</code>, open any table in Order Entry, add an item — the complementary (gift) icon should be visible on the item. As <code>owner</code> (no <code>complementary_food</code>... wait, owner has all), test with a staff account that lacks it.<br><strong>PASS:</strong> comp icon only shown when permission granted.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /qa-blocked -->
+
+<!-- ═══════════════════════════════════════════
+     SECTION B: IMPLEMENTED — NOT YET QA'd
+═══════════════════════════════════════════ -->
+<div class="section" id="impl-not-qa">
+  <div class="section-title">Implemented — Not Yet QA'd (Pre-Nov Batch)</div>
+  <div class="section-desc">These 9 bugs were coded as a batch on 2026-11-18 and are at <code>GATE_5A_IMPLEMENTED</code>. They were NOT included in the Nov sprint QA plan. Code is compiled and clean — just needs browser verification. All use <strong>palmhouse or preprod</strong>. Can be batched into one QA session.</div>
+
+  <!-- BUG-685 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-685</span><span class="badge p0">P0</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Add-to-cart crashes Order Entry — ReferenceError: onEdit is not defined</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value"><code>onEdit</code> prop added to <code>CartPanel.jsx</code></span></div>
+      <div class="detail-row"><span class="detail-label">QA steps</span><span class="detail-value">Login palmhouse → open any table → add any item from menu → <strong>PASS:</strong> no crash, item appears in cart</span></div>
+      <div class="detail-row"><span class="detail-label">Risk</span><span class="detail-value">P0 — this was a hard crash on add-to-cart for certain flows</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-686 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-686</span><span class="badge p1">P1</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Dashboard drops ALL running orders right after login (~60-70%)</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value"><code>useOrderPollingReconciliation.js:275–281</code> — skip reconcile when <code>posResult.status==='rejected'</code></span></div>
+      <div class="detail-row"><span class="detail-label">QA steps</span><span class="detail-value">Login palmhouse → wait 10s → check dashboard: running orders should remain visible. Reload 3× — orders should NOT disappear. <strong>PASS:</strong> all running orders stay on dashboard after login and reload.</span></div>
+      <div class="detail-row"><span class="detail-label">Risk</span><span class="detail-value">P1 HIGH — was causing 60-70% of logins to show empty dashboard</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-688 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-688</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">join_restaurant socket event emitted twice after reconnect</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value">Removed duplicate socket emitter on reconnect event</span></div>
+      <div class="detail-row"><span class="detail-label">QA steps</span><span class="detail-value">Login → DevTools → Network → WS → disconnect wifi briefly → reconnect → check WS frames for <code>join_restaurant</code>. <strong>PASS:</strong> emitted exactly once, not twice.</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-690 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-690</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Add-on list does not auto-refresh after creating a new add-on</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value">List re-fetch triggered after successful add-on creation</span></div>
+      <div class="detail-row"><span class="detail-value">Settings → Menu → Add-ons → Create a new add-on → <strong>PASS:</strong> new add-on appears in the list immediately without manual refresh</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-691 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-691</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Audit Log TIME cells clipped to "2026-"</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value"><code>fmtTime</code> in <code>AuditLogMockup.jsx</code> — was slicing datetime string incorrectly</span></div>
+      <div class="detail-row"><span class="detail-value">Reports → Audit Log → any event row → TIME column should show full time like "26 Nov, 10:21 am" not just "2026-"</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-695 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-695</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Audit Report Card 1 — nested &lt;button&gt; causes HTML error on every load</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Fix</span><span class="detail-value">Card 1 link extracted out of button toggle (<code>AuditLogMockup.jsx ~L347/362</code>)</span></div>
+      <div class="detail-row"><span class="detail-value">Reports → Audit Log → open DevTools Console → load page → <strong>PASS:</strong> zero "button descendant of button" or "nested interactive" console errors</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-697 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-697</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Audit Report — active preset "7D" highlight doesn't match applied range on first load</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Reports → Audit Log → page loads → the "7D" preset pill should be highlighted/active on first render (not unhighlighted until clicked). <strong>PASS:</strong> correct pill highlighted on load.</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-698 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-698</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Audit Report — FY preset returns previous completed FY, not current</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Reports → Audit Log → click "FY" preset → <strong>PASS:</strong> date range reflects the current financial year (Apr 2026–Mar 2027), not the previous one. Also verify shared date range is set (From/To fields update).</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-700 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-700</span><span class="badge p3">P3</span>
+          <span class="gate gate-5a">GATE_5A — Needs QA</span>
+        </div>
+        <div class="item-title">Audit Report — empty-state elements missing data-testids</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Reports → Audit Log → set a date range with no events → <strong>PASS:</strong> empty-state message appears and <code>data-testid</code> attributes are present on the RiskBar and DrillDownTable empty states (verify in DevTools Elements).</span></div>
+    </div>
+  </div>
+
+</div><!-- /impl-not-qa -->
+
+<!-- ═══════════════════════════════════════════
+     SECTION C: NOT IMPLEMENTED
+═══════════════════════════════════════════ -->
+<div class="section" id="not-impl">
+  <div class="section-title">Not Implemented — Code Not Written Yet</div>
+  <div class="section-desc">These items have plans or IA but no code. Each entry shows the exact blocker preventing implementation from starting.</div>
+
+  <!-- BUG-705 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-705</span><span class="badge p0">P0</span>
+          <span class="gate gate-3">GATE_3 — Plan Ready</span>
+          <span class="badge badge-red">Needs Gate 4 GO</span>
+        </div>
+        <div class="item-title">Order Beta PayLater Collect shows only Cash/UPI/Card — Split, Credit and Room missing</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Impact</span><span class="detail-value">When settling a Hold/PayLater order from Order Beta, the Collect panel doesn't show Split, Credit or To-Room payment options. Staff can only use Cash/UPI/Card.</span></div>
+      <div class="detail-row"><span class="detail-label">Plan</span><span class="detail-value"><code>plans/</code> — Implementation Plan complete. Files: <code>CollectBillPanelDrawer.jsx</code> (~2 edits). Risk: MEDIUM.</span></div>
+      <div class="detail-row"><span class="detail-label">Not started because</span><span class="detail-value">Investigation on 2026-11-25 found the fix needs to touch <code>CollectBillPanelDrawer</code> (a hotspot) — owner Gate 4 GO required.</span></div>
+      <div class="action-box">
+        <div class="action-box-label">Owner Action — Gate 4 GO</div>
+        <p>Reply "BUG-705 Gate 4 GO" and the agent will implement from the existing plan immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-689 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-689</span><span class="badge p2">P2</span>
+          <span class="gate gate-3">GATE_3 — Plan Ready</span>
+          <span class="badge badge-red">Needs Gate 4 GO</span>
+        </div>
+        <div class="item-title">Auto-generated employee email gets an extra ".com" appended</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Impact</span><span class="detail-value">When creating an employee, the auto-generated email from name + restaurant domain gets ".com.com" or similar double-append. Breaks the email format.</span></div>
+      <div class="detail-row"><span class="detail-label">Open decision</span><span class="detail-value">OD-689-01 — What is the intended domain suffix for auto-emails? (e.g. <code>@mygenie.online</code> vs restaurant domain). Answer needed before implementation.</span></div>
+      <div class="action-box">
+        <div class="action-box-label">Owner Decision Required</div>
+        <p>What domain should auto-generated employee emails use? e.g. <code>john@palmhouse.mygenie.online</code> or <code>john@thepalmhouse.com</code>?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-699 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-699</span><span class="badge p3">P3</span>
+          <span class="gate gate-2">GATE_2 — IA Done</span>
+        </div>
+        <div class="item-title">Audit Report — stale data stays visible under error shield after timeout</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Impact</span><span class="detail-value">When the Audit Report times out (wide date range), the previous range's KPIs stay on screen under the error message. Download button also stays enabled, letting staff export stale data.</span></div>
+      <div class="detail-row"><span class="detail-label">Fix scope</span><span class="detail-value"><code>AuditLogMockup.jsx</code> — clear <code>rawData</code> on error. 1 file, ~2 lines. IA done.</span></div>
+      <div class="detail-row"><span class="detail-label">Note</span><span class="detail-value">The FE-slice of this was partly fixed in BUG-722. OD-699-01 (blank state vs "Previous range data" label) still open.</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-692 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-692</span><span class="badge p3">P3</span>
+          <span class="gate gate-2">GATE_2 — IA Done</span>
+          <span class="badge badge-orange">Owner Decision Open</span>
+        </div>
+        <div class="item-title">"New version available" banner pinned bottom-centre on every page</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Impact</span><span class="detail-value">The PWA update banner appears on every page navigation even after dismissal. Annoying UX, blocks order entry on small screens.</span></div>
+      <div class="detail-row"><span class="detail-label">Open decision</span><span class="detail-value">OD-692-01 — Is this intentional? (the banner is designed to persist until the user updates). If yes → close as working-as-designed. If no → dismiss-and-remember fix.</span></div>
+      <div class="action-box">
+        <div class="action-box-label">Owner Decision</div>
+        <p>Should the banner dismiss permanently when the user clicks "Later"? Or should it keep showing on every page?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-694 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-694</span><span class="badge p2">P2</span>
+          <span class="gate gate-2">GATE_2 — Routed to Investigation</span>
+        </div>
+        <div class="item-title">Direct URL after fresh login routes through /loading for &gt;10s</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Impact</span><span class="detail-value">Opening a deep link (e.g. <code>/reports/audit</code>) right after login makes the user wait 10+ seconds on the loading screen before the page renders.</span></div>
+      <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value">IA identified the boot chain has sequential awaits (menu + profile + categories all serial). Root cause confirmed but fix requires investigation into safe parallelisation. Routed to Investigation agent.</span></div>
+      <div class="detail-row"><span class="detail-label">OD-694-01</span><span class="detail-value">What is the acceptable max boot time? (Current: 10–15s. Target?) Owner to decide before investigation scopes the fix.</span></div>
+    </div>
+  </div>
+
+</div><!-- /not-impl -->
+
+<!-- ═══════════════════════════════════════════
+     SECTION D: BACKEND BLOCKED
+═══════════════════════════════════════════ -->
+<div class="section" id="backend">
+  <div class="section-title">Backend Blocked — Waiting on Backend Team (Gyan / Parth)</div>
+  <div class="section-desc">FE code is correct or complete. Backend must fix their side first. Backend briefs have been filed.</div>
+
+  <!-- BUG-696 / BUG-719 / BUG-722 cluster -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-719</span><span class="item-id">BUG-696</span><span class="item-id">BUG-722</span>
+          <span class="badge p0">P0</span>
+          <span class="gate gate-backend">BACKEND BLOCKED</span>
+        </div>
+        <div class="item-title">Audit Report — insights-dashboard timeouts (43s–78s &gt; 60s axios limit)</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Same root cause</span><span class="detail-value">All three IDs map to the same <code>insights-dashboard</code> backend endpoint being too slow for wide date ranges.</span></div>
+      <div class="detail-row"><span class="detail-label">BUG-719</span><span class="detail-value">50-day range → ~78s (worst case)</span></div>
+      <div class="detail-row"><span class="detail-label">BUG-696</span><span class="detail-value">30D/FY ranges → ~43s</span></div>
+      <div class="detail-row"><span class="detail-label">BUG-722</span><span class="detail-value">30D/LM/FY → 65–77s + stale KPIs on timeout (FE part already fixed)</span></div>
+      <div class="detail-row"><span class="detail-label">Backend brief</span><span class="detail-value"><code>memory/backend_briefs/BACKEND_BRIEF_2026_11_19_INSIGHTS_DASHBOARD_TIMEOUT.md</code></span></div>
+      <div class="detail-row"><span class="detail-label">Owner decision</span><span class="detail-value">Fix = server-side query optimisation (index, pre-aggregation) — NOT FE timeout bump. Target: &lt;15s for 50-day range.</span></div>
+      <div class="blocker-box">
+        <div class="blocker-box-label">Assigned to: Gyan (backend)</div>
+        <p>Brief filed 2026-11-19. No backend fix landed yet. All Audit Report wide-range tests time out until this is resolved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG-709 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-709</span><span class="badge p0">P0</span>
+          <span class="gate gate-backend">BACKEND BLOCKED</span>
+        </div>
+        <div class="item-title">Audit Log — "Make Unpaid" event missing after order is later cancelled</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">FE status</span><span class="detail-value">FE is correct — it already logs the event. Backend is not persisting/returning the Make Unpaid event in the audit trail when the same order is later cancelled.</span></div>
+      <div class="detail-row"><span class="detail-label">Backend brief</span><span class="detail-value">Filed 2026-11-25. Gyan assigned.</span></div>
+    </div>
+  </div>
+
+  <!-- BUG-712 -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-712</span><span class="badge p0">P0</span>
+          <span class="gate gate-backend">BACKEND BLOCKED</span>
+        </div>
+        <div class="item-title">Order Entry — customer name not returned on order after quick link</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">FE status</span><span class="detail-value">FE sends the customer correctly via <code>user-check-create</code>. Backend is not echoing the customer name back on the next <code>get-single-order</code> response, so the UI blanks it after save.</span></div>
+      <div class="detail-row"><span class="detail-label">Backend brief</span><span class="detail-value">Filed 2026-11-25. <code>constants.js:86</code> endpoint already correct on FE.</span></div>
+    </div>
+  </div>
+
+</div><!-- /backend -->
+
+<!-- ═══════════════════════════════════════════
+     SECTION E: P0 ITEMS IN INTAKE
+═══════════════════════════════════════════ -->
+<div class="section" id="intake-p0">
+  <div class="section-title">P0 Items in GATE_1_INTAKE — Need Planning to Start</div>
+  <div class="section-desc">These are registered P0 issues that have NOT been planned or coded yet. All need owner priority confirmation and Gate 2 IA before any code can be written.</div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-720</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Low-rights user can deep-link to /settings, /menu, /employees, /inventory</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Staff without the relevant permission can bypass role gating by directly entering the URL. E.g. a waiter who can't see Settings can still navigate to <code>/settings</code>.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-721</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Dashboard TableCard — Print KOT and YTC Cancel visible to staff without rights</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Print KOT button (<code>print-btn-*</code>) and YTC Cancel (<code>cancel-btn-*</code>) on the TableCard show regardless of whether the staff member has <code>print_icon</code> / <code>order_cancel</code> rights.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-730</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Audit Card-1 drill-down shows High Risk badge on every row</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">When drilling into Audit Report Card-1, every row shows a High Risk badge regardless of actual risk level. Risk badge logic is applying incorrectly to this view.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-732</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">After in-place cart edit, the edited row jumps to the bottom of the cart</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">When a staff member edits a quantity or note on an existing cart item inline, the item jumps to the last position in the cart. Causes confusion and ordering errors.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-734</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Credit Management remove flow shows [null] item names; Remove failure is silent</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">In Credit Management, the Remove/Void dialog shows <code>[null]</code> as the item/order name. If the Remove API call fails, there is no error toast — the row just stays.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-736</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">"Update now" toast pinned bottom-centre, overlaps Order Entry on mobile</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">The PWA update-available toast is permanently pinned at the bottom-centre of the screen, overlapping the Place Order / Collect Bill buttons on tablet and phone screens.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-738</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Channel/amount mismatch: order shows order_in=RM (table) but arrived as scan</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Order #1578881 has <code>order_in=RM</code> (table 9239) but it arrived as a web/scan order. Channel attribution is wrong — affects revenue reporting by channel.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">CR-548</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Store all bill print timestamps for audit trail (Reprint History Log)</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">New backend table needed to log every bill print/reprint with timestamp, employee, and device. Backend-only feature. Brief filed; awaiting backend implementation before FE can wire it.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">CR-549</span><span class="badge p0">P0</span><span class="gate gate-1">GATE_1_INTAKE</span>
+        </div>
+        <div class="item-title">Dashboard Widget Redesign — 12 Tiles (4×3) with Revenue Impact</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Major dashboard visual overhaul: 12 widget tiles (4×3 grid) each showing a KPI with revenue impact. Intake complete. Waiting on Gate 2 IA.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-719</span><span class="badge p0">P0</span><span class="gate gate-backend">BACKEND BLOCKED</span>
+        </div>
+        <div class="item-title">Audit Report 50-day range times out (~78s, backend)</div>
+        <div class="item-meta"><span class="badge badge-gray">See Backend Blocked tab for details</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Also listed in Backend Blocked tab. P0 upgrade confirmed 2026-11-25.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-722</span><span class="badge p0">P0</span><span class="gate gate-backend">BACKEND BLOCKED</span>
+        </div>
+        <div class="item-title">Audit Report 30D/LM/FY timeouts (65–77s, backend)</div>
+        <div class="item-meta"><span class="badge badge-gray">See Backend Blocked tab for details</span></div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-value">Also listed in Backend Blocked tab.</span></div>
+    </div>
+  </div>
+
+</div><!-- /intake-p0 -->
+
+<!-- ═══════════════════════════════════════════
+     SECTION F: OWNER DECISIONS
+═══════════════════════════════════════════ -->
+<div class="section" id="owner-od">
+  <div class="section-title">Open Owner Decisions — Nothing Can Move Until Answered</div>
+  <div class="section-desc">These are specific yes/no or multiple-choice decisions only the owner can make. No code can be written until each is answered.</div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-753</span><span class="badge p2">P2</span>
+          <span class="badge badge-red">OD-753-01 OPEN</span>
+        </div>
+        <div class="item-title">Collect Bill silently does nothing when unconfirmed APS items are present</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Issue</span><span class="detail-value">When a web-edit order has an APS item that hasn't been price-confirmed yet, clicking Collect Bill appears to do nothing — no modal, no disabled state, no toast. Operator gets zero feedback.</span></div>
+      <div class="detail-row"><span class="detail-label">File</span><span class="detail-value"><code>OrderEntry.jsx</code> (R5 hotspot — full Gate 2/3 required after decision)</span></div>
+      <div class="action-box">
+        <div class="action-box-label">OD-753-01 — Choose One</div>
+        <p><strong>Option A:</strong> Disable the Collect Bill button with a tooltip: "Confirm all item prices before billing"<br><strong>Option B:</strong> Keep button enabled, show a toast on click: "Please confirm the price of [item name] before collecting"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-754</span><span class="badge p3">P3</span>
+          <span class="badge badge-orange">OD-754-01 OPEN</span>
+          <span class="badge badge-green">Fast Lane eligible</span>
+        </div>
+        <div class="item-title">Order Beta tax label shows "GST" when VAT restaurant has VAT turned OFF</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="detail-row"><span class="detail-label">Issue</span><span class="detail-value">When a VAT restaurant turns VAT off, the Tax column in Order Beta shows "GST" (the fallback label) instead of "VAT". File: <code>OrderReportBetaPage.jsx L273</code>. 1 file, 1 line — Fast Lane eligible.</span></div>
+      <div class="action-box">
+        <div class="action-box-label">OD-754-01 — What should the label show when VAT is OFF?</div>
+        <p><strong>Option A:</strong> Show "VAT" (keep the restaurant type, ignore the toggle)<br><strong>Option B:</strong> Show empty / "—" (no tax applies when both off)<br><strong>Option C:</strong> Keep "GST" (current fallback, working-as-designed)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-692</span><span class="badge p3">P3</span>
+          <span class="badge badge-orange">OD-692-01 OPEN</span>
+        </div>
+        <div class="item-title">"New version available" banner shows on every page</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="action-box">
+        <div class="action-box-label">OD-692-01 — Intended behaviour?</div>
+        <p><strong>Option A:</strong> Banner dismisses permanently when user clicks "Later" (until next deploy)<br><strong>Option B:</strong> Banner persists until user updates — this is intentional, close as working-as-designed</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="item-id">BUG-689</span><span class="badge p2">P2</span>
+          <span class="badge badge-orange">OD-689-01 OPEN</span>
+        </div>
+        <div class="item-title">Auto-generated employee email gets extra ".com"</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:none">
+      <div class="action-box">
+        <div class="action-box-label">OD-689-01 — What domain for auto-emails?</div>
+        <p>When creating an employee, the system auto-suggests an email. What suffix should it use?<br><strong>Option A:</strong> <code>name@restaurantslug.mygenie.online</code><br><strong>Option B:</strong> <code>name@restaurantdomain.com</code> (if restaurant has a custom domain)<br><strong>Option C:</strong> No auto-suggestion — leave blank for the manager to fill in</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /owner-od -->
+
+</div><!-- /content -->
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function toggle(header) {
+  const body = header.nextElementSibling;
+  if (body) body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+// Open all cards on load for first section
+document.querySelectorAll('#qa-blocked .card-body').forEach(b => b.style.display = 'block');
+</script>
+</body>
+</html>
