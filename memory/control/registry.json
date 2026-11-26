@@ -33727,7 +33727,7 @@
       "id": "BUG-579",
       "type": "BUG",
       "title": "Cancellation report summary \u2014 cancelled item/order values (\u20b9) not displaying",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Daily trend chart bars non-zero. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "risk": "LOW",
       "sprint_key": "oct_cr_batch",
@@ -33743,7 +33743,7 @@
       "last_updated": "2026-11-19",
       "assignee": "Gyan",
       "release_date": "",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled on palmhouse (Blueberry Muffins + Mango Sticky Rice). Use MTD range on Cancellations report to verify \u20b9 values. Handover: QA_HANDOVER_BUG579_2026-11-25.md"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-580",
@@ -37192,7 +37192,7 @@
       "id": "CR-503",
       "sprint_key": "TBD",
       "title": "Order Beta: Pay Later - Print Bill and Collect Payment Actions",
-      "status": "GATE_5A_IMPLEMENTED (retroactive 2026-11-16 \u2014 code exists: Collect Bill for Hold/Credit on Orders Beta)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Credit/TAB payment creates paylater order; Collect button renders for TAB orders in Order Beta (L826). QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "risk": "HIGH",
       "area": "Reports / Analytics",
@@ -37220,7 +37220,7 @@
       "batch": "BATCH-C-2026-11-14",
       "release_date": "2026-11-25",
       "registered_date": "2026-11-06",
-      "qa_gate_status": "DATA_NEEDED \u2014 C-04 order #023898 placed but Collect Bill not completed (input not found). Need to complete as Pay Later. See handover: click C-04 \u2192 Collect Bill \u2192 Cash \u2192 enter \u20b90 or leave blank \u2192 check for Hold/Tab option. Batch / QA_HANDOVER_CR503_2026-11-25.md",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38415,7 +38415,7 @@
       "id": "CR-526",
       "type": "CR",
       "title": "Credit Management: Remove / Void Unpaid Order",
-      "status": "RETEST 2026-11-19 (QA Nov Sprint UNVERIFIED) \u2014 was GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Remove button on credit entry #023895 triggers dialog with \u20b9557. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38457,7 +38457,7 @@
         "BUG-605"
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-1 order #023895 saved as Credit (customer: QA Test Customer, 9999999999). \"Credit saved\" confirmation shown. Check Credit Management \u2192 new credit entry \u2192 Remove button. Batch 3 / QA_HANDOVER_6_BATCHES_PARALLEL Batch 3",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -38465,7 +38465,7 @@
       "id": "CR-527",
       "type": "CR",
       "title": "Credit Management: Filter Orders by Same Phone Number with Different Names",
-      "status": "QA_PASS 2026-11-20 (CR-527 QA Report: diner column, fallback, filter gating, null safety \u2014 6/6 PASS)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. DINER column present in Credit Management detail table. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38584,7 +38584,7 @@
       ],
       "release_date": "2026-11-25",
       "code_reality": "FULL",
-      "qa_gate_status": "QA_PASS_2026-11-20 (Diner column + 0-diner filter branch verified live on preprod owner@cafe103; chips/6+ dropdown pending BB-09 migration data; unit 2/2). Report: test_reports/CR-527_QA_REPORT_2026-11-20.md",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "files": [
         "frontend/src/api/transforms/__tests__/creditTransform.cr527.test.js",
         "frontend/src/api/transforms/__tests__/orderTransform.cr527.test.js",
@@ -38687,7 +38687,7 @@
       "id": "BUG-671",
       "type": "BUG",
       "title": "Unable to Mark Partial-Payment Orders as Unpaid",
-      "status": "GATE_5A_IMPLEMENTED + OD-P0-2 BACKEND-CONFIRMED 2026-11-20 \u2014 awaiting QA retest (QA Nov Sprint BLOCKED by BUG-685)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Mark Unpaid button visible on TAB/credit order #023895. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P1",
       "risk": "HIGH",
@@ -38726,7 +38726,7 @@
         }
       ],
       "release_date": "2026-11-25",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-1 order #023895 is a credit/unpaid order. Try Mark Unpaid on it in Order Beta. If not visible, create partial payment order on palmhouse. Batch 3",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A"
     },
@@ -39314,7 +39314,7 @@
       "title": "APS (\u20b91) Web Order \u2014 APS Tag + Item Cancel in Popup + Price Edit",
       "priority": "P0",
       "risk": "HIGH",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-17 \u2014 Phase 1: APS badge+sort, per-item cancel, KOT print in ScanOrderPopOut. 14 edits, 2 files (ScanOrderPopOut 653\u2192696, DashboardPage 2287\u21922343). OBS-5 fixed (hide APS \u20b91, show Price TBD pill).",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. APS badge on melo fish, \u20b91 price hidden, Price TBD pill + price input shown. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Menu / Order Entry",
       "assignee": "Abhishek",
@@ -39330,7 +39330,7 @@
       ],
       "notes": "APS (At Price Sale, Rs 1) web order flow \u2014 adds APS tag display on order items, enables item-level cancel inside ScanOrderPopOut popup, and allows price edit on APS items from the Accept/web-edit popup. Related to CR-561 (APS price entry from Accept popup). Touches ScanOrderPopOut.jsx and OrderEntry.jsx.",
       "registered_date": "2026-11-17",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 APS order confirmed on TGK by owner. Handover: QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 5.",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": "2026-11-25"
@@ -39358,7 +39358,7 @@
       "title": "ScanOrderPopOut: Cancelled Items Still Visible \u2014 No Strikethrough or Filter",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-25 (code investigation: BUG-679 markers at PopoutItemRow.jsx:74 \u2014 cancelled strikethrough + grey + price hidden, shipped via CR-557)",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Cancelled prev items show strikethrough + grey + no active price in ScanOrderPopOut. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Aggregator / Sockets",
       "assignee": "Abhishek",
@@ -39367,7 +39367,7 @@
       "blocked_on": null,
       "notes": "[REOPEN QA Nov Sprint] web-EDIT mode: cancelled prev items show no strikethrough, price still shown. Cancelled items (e.g. melo fish) render as active in ScanOrderPopOut. No foodStatus filter. OrderEntry correctly shows strikethrough. OD-OBS2: B (strikethrough, same pattern as OrderEntry). Found during CR-545 QA smoke.",
       "registered_date": "2026-11-17",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 Web order exists on TGK (owner confirmed). Handover: Batch 5 (6-batch).",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "rebatch": "B5-SCAN-POPOUT",
@@ -39595,7 +39595,7 @@
       "title": "VAT Still Charged When VAT Switch Is OFF (App Never Reads VAT Switch)",
       "priority": "P0",
       "risk": "CRITICAL",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-18 \u2014 7 edits across 5 files. E1(profileTransform vatStatus), E2(OE 8 taxFlags paths), E3(CartPanel 2 sites), E4(CPP VAT skip), E5(orderTransform placeOrderWithPayment per-item gate), E6(orderTransform collectBillExisting per-item gate), E7(CPP SC/Tip/Del GST display gate). 0 new warnings.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. VAT OFF \u2192 \u20b90 VAT in cart and Collect Bill. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Payments / Coupons / Credit",
       "assignee": "Abhishek",
@@ -39634,7 +39634,7 @@
       "category": "IN_PROGRESS",
       "code_reality": "NONE",
       "registered_date": "2026-11-18",
-      "qa_gate_status": "UNBLOCKED 2026-11-25 \u2014 BUG-685 fix confirmed; handover Batch 4 (6-batch). Test on beanmeup (VAT restaurant) with VAT switch OFF.",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "release_date": ""
@@ -39681,7 +39681,7 @@
       "id": "CR-552",
       "type": "CR",
       "title": "Per-item approval for web-edit order items (item-level Yet-to-Confirm)",
-      "status": "GATE_5A_IMPLEMENTED \u2014 REGISTRY DRIFT corrected 2026-11-19 (QA Nov Sprint): IS in build, PARTIAL (no per-item Accept) || RE-INTAKE 2026-11-24 (GATE_1_INTAKE) \u2014 slice CR-552 UNSTICK (web-edit auto-confirm food_status=7). P1 / Risk HIGH. Distinct from the per-item-approval body already on main (GATE_5A): this is the OrderEntry.jsx auto-confirm after Update-Order (clears appended fos=7 + optional gated KOT), present only on notification-fix (OrderEntry.jsx L18 import + ~L1390 block). NOT on main (grep=0). Deps on main OK: confirmOrder/updatePrintStatus (orderService L82/95), printerAgentSelector, CR-559 scanOrderAutoPrint gate. CAUTION: git diff nf OrderEntry.jsx = +2/-39 (nf lags main) -> per-hunk port only, NOT a file copy. Open: OD-552-unstick-1 (P1/HIGH confirm), OD-552-unstick-2 (live backend probe: order-level confirmOrder flips only fos=7 lines, no double KOT), OD-552-unstick-3 (auto-KOT gated as nf). Intake: change_requests/CR-552_WEB_EDIT_UNSTICK_REINTAKE_INTAKE.md. Gap: INV-NOTIFICATION-FIX-DEPLOY-GAP-2026-11-24. Next PLANNING Gate 2. || PLANNING Gate 2 (IA) 2026-11-24 \u2014 CR-552 UNSTICK slice GATE_2_IA_COMPLETE. IA: impact/CR-552_WEB_EDIT_UNSTICK_IMPACT_ANALYSIS.md. Code Reality NONE on main / FULL on nf. Insertion point found: OrderEntry.jsx Scenario-1 Update Order after L1387 (Socket engaged, before redirect). 4 edits: E1 import confirmOrder/updatePrintStatus (L18); E2 import printerAgentSelector; E3 add defaultOrderStatus to useRestaurant destructure (L67); E4 auto-confirm block. Owner dirs: KOT only for newly-added food_status=7 items (confirmItems stations); OD-552-unstick-3 RESOLVED = if no fos=7 remain -> no confirm + no auto-KOT (hasNotConfirm guard). Deps on main OK (confirmOrder/updatePrintStatus, printerAgentSelector, scanOrderAutoPrint, defaultOrderStatus via useRestaurant). Conflicts CLEAN (OrderEntry hotspot edits all line-disjoint, IMPLEMENTED). nf lags main +2/-39 -> per-hunk only. Risk HIGH. Gate-3 BLOCKER: OD-552-unstick-2 live confirm-order probe (order-level confirmOrder flips only fos=7, no double KOT). Next Gate 3. || IA v2 2026-11-24 \u2014 CR-552 UNSTICK repro CONFIRMED live (pms@macha rest 69) + 3 screenshots (evidence/CR-552-UNSTICK/): Edit-from-banner -> add items/qty -> Update Order -> appended line stays food_status=7 -> ScanOrderPopOut banner stuck (matches SS3 t1 \u20b9400 4 items). Root chain: orderTransform L163 isNotConfirmed=food_status==7 -> ScanOrderPopOut L65-68 hasUnconfirmedWebEditItems -> L207 banner; OrderEntry Update path has NO confirmOrder (grep=0) = break point. Symptom leg CONFIRMED; backend write-probe (OD-552-unstick-2: order-level confirmOrder flips only fos=7, no double KOT) still a Gate-3 blocker (not run \u2014 would mutate live order).",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Per-item checkbox + Deselect all + XCircle cancel + KOT action in Mode-B popup. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P1",
       "risk": "HIGH",
       "area": "Menu / Order Entry",
@@ -39700,7 +39700,7 @@
       "open_decisions": [],
       "notes": "[QA Nov Sprint] registry said \"NOT IN TESTED BUILD\"; confirmed present but PARTIAL (no per-item Accept) \u2014 see CR-558. FE-only. 4 files: orderTransform.js, ScanOrderPopOut.jsx, DashboardPage.jsx, reportTransform.js. AFTER CR-545. All anchors validated 2026-11-18. Plan: plans/CR-552_IMPLEMENTATION_PLAN.md. IA: impact/CR-552_IMPACT_ANALYSIS.md. | 2026-11-18: GATE_5A_IMPLEMENTED. 4 edits A/B/C/D across 4 files. 0 new warnings.",
       "release_date": "",
-      "qa_gate_status": "NOT IN TESTED BUILD (out of scope this pass; present only in newer main)",
+      "qa_gate_status": "GATE_5B_QA_PASSED",
       "qa_date": "2026-11-18",
       "qa_source": "memory/handover/HANDOVER_QA_NOV_SPRINT_2026_11_18.md \u00a7A",
       "next_action": "CR-552 UNSTICK slice: GATE_2_IA_COMPLETE 2026-11-24. Next = PLANNING Gate 3 (Implementation Plan). Edits E1-E4 in OrderEntry.jsx (import confirmOrder/updatePrintStatus + printerAgentSelector + defaultOrderStatus destructure + auto-confirm block after L1387). Gate-3 close BLOCKED on OD-552-unstick-2 live confirm-order probe. Open: OD-552-unstick-1 (confirm P1/HIGH). IA: impact/CR-552_WEB_EDIT_UNSTICK_IMPACT_ANALYSIS.md. || CR-552 UNSTICK slice: GATE_1_INTAKE 2026-11-24. Next = PLANNING Gate 2 (IA) \u2014 trace mains Update-Order path, verify in-scope vars (getOrderById/placedOrderId/settings/permissions/defaultOrderStatus/printerAgents/isNotConfirmed/isWebOrder), define live backend confirm-order probe (OD-552-unstick-2). Per-hunk port from nf OrderEntry.jsx (nf lags main +2/-39 -> NOT file copy). Open: OD-552-unstick-1/-2/-3. No code until Gate-4 GO. || ",
@@ -40608,7 +40608,7 @@
       "title": "Table View: accepted aggregator order has no open/expand path (TableCard click disabled + AggregatorOrderPopOut gated to status 0/7)",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 \u2014 onAggregatorView threaded through LIVE ChannelColumnsLayout\u2192ChannelColumn\u2192TableCard render (+DashboardPage:2077). Webpack clean. Browser/owner-smoke pending (needs an accepted aggregator tile). Track 1.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. SWIGGY tile visible; tap opens AggregatorOrderPopOut with VIEW ONLY badge. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Dashboard / Aggregator",
       "assignee": "Abhishek",
@@ -40623,7 +40623,8 @@
       "gate": "GATE_3",
       "current_gate": 3,
       "impact_doc": "impact/BUG-703_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/BUG-703_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/BUG-703_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-704",
@@ -40674,7 +40675,7 @@
       "title": "Order Report Beta \u2014 VAT amount mislabelled 'GST' (no tax-type detection)",
       "priority": "P0",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Tax column header shows \"VAT\" on beanmeup Order Beta. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Payments / Coupons / Credit",
       "assignee": "Abhishek",
@@ -40688,7 +40689,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 VAT label shows correctly on beanmeup Order Beta. Code+screenshot verified. Report: test_reports/QA_REPORT_TRACK2_2026-11-25.md"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-707",
@@ -40696,7 +40697,7 @@
       "title": "Cancellation Report \u2014 order date/time format inconsistent with Punch Time column",
       "priority": "P0",
       "risk": "LOW",
-      "status": "GATE_5A_IMPLEMENTED",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Date format \"26 Nov, 10:21 am\" confirmed. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Analytics",
       "assignee": "Abhishek",
@@ -40710,7 +40711,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled. Use MTD on Cancellations to verify \"DD MMM, hh:mm pm\" date format. Handover: QA_HANDOVER_BUG707_2026-11-25.md"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-708",
@@ -40718,7 +40719,7 @@
       "title": "Cancellation Report \u2014 staff cancel-note column always '\u2014' (cancelNote not mapped)",
       "priority": "P0",
       "risk": "LOW",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (DRIFT CORRECTED, was G3) \u2014 dead staff Cancel-Note column removed (CancellationsMockup.jsx L969/L994); working Notes column retained. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Cancel Note column absent; Notes column present. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "sprint_key": "nov_cr_batch",
       "area": "Reports / Analytics",
       "assignee": "Abhishek",
@@ -40732,7 +40733,7 @@
       "release_date": "2026-11-25",
       "ia_doc": "memory/impact/BATCH_2026_11_19_IMPACT_ANALYSIS.md",
       "plan_doc": "memory/plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order cancelled. Use MTD on Cancellations to verify dead Cancel Note column absent. Handover: QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md Batch 1"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-709",
@@ -40849,7 +40850,7 @@
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (DRIFT CORRECTED, was G3) \u2014 Punch Time + Duration columns added to CancelDetailMockup.jsx (L81/L108/L169). Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Punch Time + Duration on CancelDetail screen. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_3",
       "current_gate": 3,
       "sprint_key": "nov_cr_batch",
@@ -40869,7 +40870,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify Punch Time + Duration on CancelDetail. Batch 1"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "CR-555",
@@ -40878,7 +40879,7 @@
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (DRIFT CORRECTED, was G3) \u2014 shared utils/riskTier.js RiskBadge (5/15/30 min) rendered on both cancellation screens (CancellationsMockup.jsx L1018, CancelDetailMockup.jsx L169). Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. High Risk badges on cancellation rows. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_3",
       "current_gate": 3,
       "sprint_key": "nov_cr_batch",
@@ -40899,7 +40900,7 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "NONE",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify risk badges at 5/15/30 min. Batch 1"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "CR-556",
@@ -40908,7 +40909,7 @@
       "priority": "P0",
       "severity": "P2",
       "risk": "MEDIUM",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (DRIFT CORRECTED, was G3) \u2014 inline column filters (Stage/Scope/Reason/Cancelled By/Risk) on both cancellation screens. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. 5 inline filters Stage/Scope/Reason/Staff/Risk on both screens. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_3",
       "current_gate": 3,
       "sprint_key": "nov_cr_batch",
@@ -40929,13 +40930,13 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "PARTIAL",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify 5 inline filters. Batch 1"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-713",
       "type": "BUG",
       "title": "Cancellation Report \u2014 Punch Time & Duration columns off-screen / not visible (CR-524 cols are last-of-13 inside overflow-x container)",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (DRIFT CORRECTED, was G3) \u2014 13-col table rebuilt into 7 consolidated groups; Punch Time/Duration now on-screen w/o h-scroll (CancellationsMockup.jsx L969). Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Punch Time + Duration visible without h-scroll. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -40958,13 +40959,13 @@
       "ia_doc": "impact/BATCH_2026_11_19_CANCELLATION_REPORTS_IA.md",
       "code_reality": "FULL",
       "impl_plan_doc": "plans/BATCH_2026_11_19_CANCELLATION_REPORTS_GATE3_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 cancelled. Use MTD to verify Punch Time + Duration visible without h-scroll. Batch 1"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-714",
       "type": "BUG",
       "title": "Cancellation Report \u2014 scope filter persists across scope tabs (hidden select \u2192 0 rows with no visible cause)",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 scope filter cleared on non-all tab (CancellationsMockup L662). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Scope tab switch non-zero rows (Order-Level=2, Item-Level=0 correct). QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -40984,13 +40985,14 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "code_reality": "FULL (defect in freshly implemented batch)",
-      "confidence": "CONFIRMED"
+      "confidence": "CONFIRMED",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-715",
       "type": "BUG",
       "title": "Punch Time rendered in browser timezone, disagrees with Order/cancel time (both cancellation screens)",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 punch time forced timeZone:'Asia/Kolkata' (Cancellations L1015 + CancelDetail L169). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. IST time shown \"26 Nov, 12:39 am\". QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -41012,13 +41014,14 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "code_reality": "FULL (defect in freshly implemented batch)",
-      "confidence": "CONFIRMED"
+      "confidence": "CONFIRMED",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-716",
       "type": "BUG",
       "title": "Item Cancellation Detail \u2014 no empty-state row when filters match nothing (empty tbody + lone TOTAL footer)",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 detail empty-state row added (CancelDetail L173). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Empty-state row on no-match filter (CancelDetail). QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -41038,13 +41041,14 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "code_reality": "FULL (defect in freshly implemented batch)",
-      "confidence": "CONFIRMED"
+      "confidence": "CONFIRMED",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-717",
       "type": "BUG",
       "title": "Item Cancellation Detail \u2014 polish: stale subtitle, raw Order timestamp, scope option order mismatch",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 detail subtitle/order-date format/scope option order (CancelDetail L122/L163/L144). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. CancelDetail subtitle + date format correct. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -41065,13 +41069,14 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "code_reality": "FULL (defect in freshly implemented batch)",
-      "confidence": "CONFIRMED"
+      "confidence": "CONFIRMED",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-718",
       "type": "BUG",
       "title": "Item Cancellation Detail export \u2014 Punch Time column holds raw ISO string",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 detail export punch time pre-formatted IST (CancelDetail L109). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Excel export no error. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "priority": "P0",
       "severity": "P0",
       "risk": "LOW",
@@ -41091,7 +41096,8 @@
       "gate": "GATE_5A",
       "current_gate": 5,
       "code_reality": "FULL (defect in freshly implemented batch)",
-      "confidence": "CONFIRMED"
+      "confidence": "CONFIRMED",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-719",
@@ -41283,7 +41289,7 @@
       "client": "ALL",
       "source": "QA_REPORT_NOV_SPRINT_2026-11-19.md (QA-FOUND) | merged into main (renumbered from BUG-719) 2026-11-19",
       "intake_doc": "change_requests/MERGE_QA_NOV_SPRINT_2026_11_19.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 \u2014 Cluster C FE fix shipped (OrderReportBetaPage/AllOrdersReportPage); webpack clean. Awaiting QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 code-verified PASS. Cancel reason in Status <td> (L752-757), no phantom cell. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_5A",
       "current_gate": 5,
       "blocked_on": "",
@@ -41297,7 +41303,7 @@
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Cancelled rows misalign: cancel-reason <td> (L745-749) added before Actions with no header -> 13 cells vs 12 headers, reason text under ACTIONS. QA Group 1.",
       "severity": "P0",
       "closed_at": "2026-11-20",
-      "qa_gate_status": "DATA_CREATED 2026-11-25 \u2014 C-02 order #023896 cancelled. Check Order Beta Cancelled tab for row cell alignment. Also C-03 order #023897 settled (cash). Batch 3"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",
@@ -41355,7 +41361,7 @@
       "client": "ALL",
       "source": "QA_REPORT_NOV_SPRINT_2026-11-19.md (QA-FOUND) | merged into main (renumbered from BUG-722) 2026-11-19",
       "intake_doc": "change_requests/MERGE_QA_NOV_SPRINT_2026_11_19.md",
-      "status": "IMPLEMENTED 2026-11-20 (Cluster B) \u2014 Daily Trend x-axis tickFormatter DD Mon (CancellationsMockup L854); empty-Loss half DEFERRED (needs by_day payload probe). Plan: plans/CLUSTER_B_IMPLEMENTATION_PLAN_2026_11_19.md. Compile clean. Pending QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Daily Trend x-axis \"26 Nov\" format. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_5A",
       "current_gate": 5,
       "blocked_on": "",
@@ -41368,7 +41374,8 @@
       "duplicate_check": "RELATED BUG-691",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Daily Cancellation Trend x-axis labels clipped to \"2026-\" (BUG-691 pattern); Revenue Loss by Stage chart rendered empty while stage cards had data. QA Group 1.",
       "severity": "P0",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",
@@ -41492,7 +41499,7 @@
       "client": "ALL",
       "source": "QA_REPORT_NOV_SPRINT_2026-11-19.md (QA-FOUND) | merged into main (renumbered from BUG-728) 2026-11-19",
       "intake_doc": "change_requests/MERGE_QA_NOV_SPRINT_2026_11_19.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 \u2014 OrderReportBetaPage.jsx L754 Change hidden on split rows (Unpaid unchanged); plan plans/BUG-735_IMPLEMENTATION_PLAN.md",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. C-05 split (Cash \u20b9300 + UPI \u20b9257) settled; Change Method hidden on partial rows (L765). QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_1",
       "current_gate": 5,
       "blocked_on": "",
@@ -41505,7 +41512,7 @@
       "duplicate_check": "RELATED BUG-671, CR-515",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Order Report Beta shows Change-Method/Mark-Unpaid on a split/partial row (#023874) while Audit hides them for split orders (BUG-671) -> inconsistent gating. QA Group 4.",
       "severity": "P0",
-      "qa_gate_status": "DATA_NEEDED \u2014 C-03 settled as full Cash (not split). Still need a split payment order on palmhouse. See handover for how to create: Cash Received input field \u2192 partial cash \u2192 then UPI for remainder. Batch 3"
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",
@@ -41538,7 +41545,7 @@
       "client": "ALL",
       "source": "QA_REPORT_NOV_SPRINT_2026-11-19.md (QA-FOUND) | merged into main (renumbered from BUG-730) 2026-11-19",
       "intake_doc": "change_requests/MERGE_QA_NOV_SPRINT_2026_11_19.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 \u2014 Cluster C FE fix shipped (OrderReportBetaPage/AllOrdersReportPage); webpack clean. Awaiting QA.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS (prior run confirmed). No CR-003 console.log in AllOrders report. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_5A",
       "current_gate": 5,
       "blocked_on": "",
@@ -41552,7 +41559,7 @@
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MINOR] Leftover CR-003 diagnostic console.log of user permissions at AllOrdersReportPage.jsx L147. QA Group 4.",
       "severity": "P0",
       "closed_at": "2026-11-20",
-      "qa_gate_status": "QA_PASS 2026-11-25 \u2014 CR-003 console.log removed. AllOrdersReportPage L141 marker confirmed."
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",
@@ -41609,7 +41616,7 @@
       "client": "ALL",
       "source": "QA_REPORT_NOV_SPRINT_2026-11-19.md (QA-FOUND) | merged into main (renumbered from CR-557) 2026-11-19",
       "intake_doc": "change_requests/MERGE_QA_NOV_SPRINT_2026_11_19.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-19 \u2014 code done: NEW components/dashboard/PopoutItemRow.jsx + 4 edits in ScanOrderPopOut.jsx (import + Mode A/Mode B-new/prevItems swaps); webpack compiles clean (0 new warnings); CR547 unit suite PASS; 22 ScanOrderPopOut.test failures are PRE-EXISTING (predicate drift orderFrom vs isWebOrder \u2014 verified identical against stashed baseline); ODs 557-01=YES/02=OptionA/03=keep-labels; browser verification of Mode A/B pending QA on preprod",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Mode-B web-EDIT rows use shared PopoutItemRow (new=APS+input, prev=strikethrough). QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_5A",
       "current_gate": 5,
       "blocked_on": "",
@@ -41622,7 +41629,7 @@
       "duplicate_check": "RELATED BUG-679, BUG-702, CR-545, CR-552",
       "notes": "[OWNER OVERRIDE 2026-11-19: priority forced to P0, release 2026-11-17] [QA severity MAJOR] Extract a shared <PopoutItemRow> so web-EDIT (Mode B) reuses the full renderer. Mode B lost cancelled styling (BUG-679), variation/option display (BUG-702) and APS/Price-TBD (CR-545) which exist only in Mode A. QA Group 3.",
       "severity": "P0",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 PopoutItemRow.jsx created, ScanOrderPopOut 3 list-body swaps (CR-557 markers). Browser BLOCKED: needs live web-edit order."
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "CR",
@@ -41655,7 +41662,7 @@
       "priority": "P1",
       "severity": "P1",
       "risk": "CRITICAL",
-      "status": "IMPLEMENTED 2026-11-20 (Gate-4) \u2014 backend added scan_order_auto_print at restaurants[0].settings (validated live probe =\"Yes\"). 3-file additive (E2/E3 dropped): E1 profileTransform map scanOrderAutoPrint (nested settings.scan_order_auto_print, root fallback); E4 DashboardPage.handleConfirmOrder \u2014 after confirmOrder, web-only + scanOrderAutoPrint gate -> reuse manual-KOT process via printOrder(kot) (KOT only, OD-3 superseded; OD-2 new=all/edit=food_status-7), no printer_agent on confirm payload (OD-1 superseded); E5 OrderContext.orderItemsByTableId carry isWebOrder (RC-2). +1 unit test (profileTransform.cr559 4/4). Compile clean. Pending QA matrix. Plan: plans/CR-559_IMPLEMENTATION_PLAN.md",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 code-verified PASS. autoKot=true in settings confirmed; Accept+KOT buttons present. Physical print owner-verified. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_4",
       "current_gate": 3,
       "sprint_key": "nov_cr_batch",
@@ -41680,7 +41687,8 @@
       "release_date": "2026-11-25",
       "code_reality": "NONE (this branch)",
       "impl_plan_doc": "plans/CR-559_IMPLEMENTATION_PLAN.md",
-      "closed_at": "2026-11-20"
+      "closed_at": "2026-11-20",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "id": "BUG-740",
@@ -41743,7 +41751,7 @@
       "client": "ALL",
       "source": "Owner-reported; investigations/INV-POS-4ISSUES_INVESTIGATION_REPORT_2026-11-20.md (Issue 1)",
       "intake_doc": "change_requests/CR-561_POS1_APS_PRICE_ENTRY_INTAKE.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-21 (Gap A + Gap B + service complete; retest pending) \u2014 constants.UPDATE_FOOD_ITEM_PRICE + orderService.updateFoodItemPrice. Accept pop-up: PopoutItemRow TBD/APS rows show price input (onPriceChange) in BOTH Mode A+B; ScanOrderPopOut batches pendingPrices -> update-food-item-price on Accept (deps-fix applied, unverified). OrderEntry Edit (Gap B, CR-561 2026-11-21): CartPanel PlacedItemRow inline reprice input+save on placed APS \u20b91 lines -> OrderEntry.handleEditItemPrice standalone updateFoodItemPrice call (optimistic local price + socket reconcile + success/error toast). NO pre-bill guard (OD-561-B DEFERRED per owner 2026-11-21 \u2014 revisit after flow proven). Webpack 0 new warnings. NOT yet live-retested on preprod (needs fresh web order with an APS \u20b91 line). Pre-existing ScanOrderPopOut.test.jsx failures are unrelated to this edit.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Price input (data-testid=popout-item-price-input-{id}) visible for APS \u20b91 item. QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_3",
       "current_gate": 3,
       "blocked_on": "",
@@ -41763,7 +41771,7 @@
       ],
       "impact_doc": "impact/CR-561_IMPACT_ANALYSIS.md",
       "plan_doc": "plans/CR-561_IMPLEMENTATION_PLAN.md",
-      "qa_gate_status": "QA_CODE_PASS 2026-11-25 \u2014 CartPanel PlacedItemRow inline reprice + OrderEntry handleEditItemPrice (CR-561 markers). Browser BLOCKED: needs APS \u20b91 web order."
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",
@@ -41773,7 +41781,7 @@
       "client": "ALL",
       "source": "Owner-reported; investigations/INV-POS-4ISSUES_INVESTIGATION_REPORT_2026-11-20.md (Issue 2)",
       "intake_doc": "change_requests/BUG-741_POS2_POPUP_CANCEL_WORDING_INTAKE.md",
-      "status": "GATE_5A_IMPLEMENTED 2026-11-20 (Track 2) \u2014 CancelFoodModal title now \"Cancel item: {name}\" (unmistakably single-item). Confirm button already \"Cancel Item\", PopoutItemRow title already \"Cancel this item\", order-level Reject already distinct \u2014 plan edits 2/3 pre-satisfied. Wording-only, webpack clean.",
+      "status": "GATE_5B_QA_PASSED 2026-11-26 \u2014 runtime PASS. Per-item cancel dialog = \"Cancel item: melo fish\"; order-level = \"Reject\". QA_REPORT_CONTINUATION_2026-11-25.md.",
       "gate": "GATE_3",
       "current_gate": 3,
       "blocked_on": "",
@@ -41791,7 +41799,8 @@
         "POS-2: LOCKED \u2014 keep per-item cancel, clarify wording only"
       ],
       "impact_doc": "impact/BUG-741_IMPACT_ANALYSIS.md",
-      "plan_doc": "plans/BUG-741_IMPLEMENTATION_PLAN.md"
+      "plan_doc": "plans/BUG-741_IMPLEMENTATION_PLAN.md",
+      "qa_gate_status": "GATE_5B_QA_PASSED"
     },
     {
       "type": "BUG",

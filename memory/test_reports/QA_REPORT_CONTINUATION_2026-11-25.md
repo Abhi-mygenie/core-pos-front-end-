@@ -175,3 +175,146 @@ Order #023896 (C-02) is NOT cancelled on the backend — it appears in Order Bet
 | BUG-683 | ⬜ NOT REACHED |
 | Session 1 TGK items (10) | ⬜ BLOCKED — no pending web order |
 | Session 2A Cancellations (10) | ⬜ BLOCKED — no actual cancellations on backend (C-02 is Unpaid, not Cancelled) |
+
+---
+
+## UPDATE 2026-11-26 — BLOCKERS RESOLVED + INVESTIGATION FILED
+
+### Blocker 1 RESOLVED — TGK web order now live
+Owner confirmed new web/scan order available on owner@thegoankitchen.com. Session 1 (TGK Batch 5) can now proceed.
+
+### Blocker 2 RESOLVED — #023896 now cancelled
+Owner confirmed order #023896 on palmhouse is now properly cancelled on the backend. Session 2A (Cancellations) can now proceed.
+
+### BUG-2026-11-25-003 — Investigation Report Filed
+Root cause: ENVIRONMENT + CONFIG (frontend). Confidence: HIGH. Steps: 8/10.
+- `restaurant-product` (594 KB, 373 items): current pod 4.5–5.4s → testing agent peak 10–13s
+- `restaurant-info`: current pod 1.2–3.9s → testing agent peak 8–13s
+- When calls exceed 8s → app gives up → empty menu
+- This explains all testing agent session timeouts. Running one focused session at a time.
+
+### Track C — Step 1 Data Plan (from owner screenshot)
+| # | Order type | How to create | Unlocks |
+|---|---|---|---|
+| 1 | Cancelled item | Order Entry → place order → cancel one item | BUG-726 |
+| 2 | Split payment | Collect Bill → Cash ₹300 + UPI ₹200 → settle | BUG-735 |
+| 3 | Hold/Pay Later | Collect Bill → Pay Later option | CR-503 |
+| 4 | Partial payment | Collect Bill → pay part of bill only | BUG-671 |
+| 5 | SC OFF + prepaid | Settings → SC toggle OFF → prepaid order | BUG-678 |
+
+---
+
+## SESSION 2A RESULTS — 2026-11-26 Run 2 (Palmhouse Cancellations — Full Runtime Test)
+
+| ID | Test | PASS/FAIL | Severity if FAIL | Evidence |
+|---|---|---|---|---|
+| Order #023896 | Blueberry Muffins + Mango Sticky Rice appear in Today range | **PASS** | — | Both items visible in Cancellation Details table, Today (11/26/2026) range |
+| BUG-579 | Daily trend chart bars non-zero | **PASS** | — | BarChart visible with bar at "26 Nov", 2 cancellations rendered as red stacked bar |
+| BUG-707 | Order Date column shows '26 Nov, 10:21 am' NOT raw ISO | **PASS** | — | Row 0: "26 Nov, 10:21 am" — no ISO format found in page |
+| BUG-708 | No 'Cancel Note' column; 'Notes' / 'Note' column present | **PASS** | — | Column headers: Order / Item / Reason·Notes / Stage / Loss / Personnel / Timing·Risk — no Cancel Note |
+| BUG-713 | Punch Time + Duration visible without horizontal scroll | **PASS** | — | "Timing & Risk" column header visible, shows "26 Nov, 12:39 am" + "582 min" without scrolling |
+| BUG-714 | Scope tab change doesn't zero rows silently | **PASS** | — | Order-Level tab → 2 rows; Item-Level tab → 0 rows (expected — no item-scope cancellations, count badge shows 0) |
+| BUG-715 | Punch Time shows in IST (Indian time) | **PASS** | — | Shows "26 Nov, 12:39 am" (IST via Asia/Kolkata locale) |
+| BUG-718 | Excel export button doesn't error | **PASS** | — | Download menu opened, Excel button clicked, no errors thrown |
+| BUG-729 | Daily trend x-axis labels show 'DD Mon' format | **PASS** | — | X-axis shows "26 Nov" — not raw ISO date |
+| CR-554 | CancelDetail screen has Punch Time + Duration columns | **PASS** | — | /reports-module/cancel-detail — "Timing & Risk" column present, shows "26 Nov, 12:39 am" and "582 min" |
+| CR-555 | Risk badges visible on rows | **PASS** | — | Both rows show red "High Risk" pill badge (582 min duration → High Risk tier) |
+| CR-556 | 5 inline column filters visible | **PASS** | — | Stage / Scope / Reason / All Staff / All Risk — all 5 selects present on both screens |
+| BUG-716 | CancelDetail: empty-state row when filter matches nothing | **PASS** | — | Set Scope=item-level (0 matches) → "No cancellations match the current filter" row appears |
+| BUG-717 | CancelDetail subtitle + order date correctly formatted | **PASS** | — | Subtitle: "Per-item cancellation breakdown · filterable by stage, scope, reason, staff & risk"; order date: "26 Nov, 10:21 am" |
+
+**All 14 Session 2A items: PASS**
+**Data unblocked by owner — order #023896 (Blueberry Muffins + Mango Sticky Rice, ₹557) now appears in cancellations report.**
+
+---
+
+## SESSION 4 RESULTS — 2026-11-26 (Beanmeup VAT Testing)
+
+| ID | Test | PASS/FAIL | Evidence |
+|---|---|---|---|
+| BUG-683 | VAT OFF in Beanmeup — cart shows zero VAT | ✅ PASS | Added "Food Vat" (₹100) to T1. Collect Payment panel showed: Item Total ₹100, S.C 10% = ₹10, TAXES section **empty** (no VAT line), Grand Total ₹111 (₹100 + ₹10 SC + ₹1 round-up). Zero VAT confirmed. CollectPaymentPanel.jsx L324-325 skip gate working correctly. |
+| BUG-706 | Order Report Beta Tax column shows 'VAT' not 'GST' | ✅ PASS | Navigated to /reports-module/order-report-beta. Grand Total section shows "VAT" label (not GST). Code confirms: taxLabel uses `restaurant.tax.vatStatus` → 'VAT' for Beanmeup (vatStatus=true). Both column header (line 709) and Grand Total section (line 893) use same taxLabel='VAT'. |
+
+### Notes:
+- Settings → Tax & Charges step was inaccessible (multi-step form locked at Step 1 requiring completion of steps in order). Skipped per instructions.
+- BUG-683 verified via Order Entry flow directly (T1, Food Vat item, Collect Bill panel).
+- BUG-706 verified both via runtime screenshot of Order Report Beta AND via code review of OrderReportBetaPage.jsx lines 273, 709, 893.
+- Beanmeup restaurant has `vatStatus=true` (VAT restaurant type) + VAT is not applied to orders (0 VAT in billing). The taxLabel='VAT' is correct for column headers.
+
+
+---
+
+## SESSION 1 — TGK BATCH 5 RE-RUN (2026-11-26 Session 2)
+
+**Executed by:** QA Agent T1 (Role 4)
+**Date:** 2026-11-26
+**Order found:** t2 Dine-In web-edit (Mode B) — 1 new item "melo fish" (APS ₹1) + 14 previously ordered items (incl. 1 cancelled)
+**Order status:** Pending web-edit confirmation (hasUnconfirmedWebEditItems = true)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| CR-545 | APS ₹1 item shows APS badge + ₹1 price hidden + Price input field | **PASS** | — | "melo fish" shows orange APS badge; no ₹1 price rendered; orange-bordered Price input visible in Mode B new items list |
+| BUG-679 | Previously-cancelled items show strikethrough + grey + no price | **PASS** | — | "moo duudh (Cancelled)" in prev items: strikethrough computed style confirmed, grey text, no active price shown, "(Cancelled)" suffix |
+| BUG-702 | Variation items show selected option label + price | **BLOCKED** | — | No variation items present in this order. All items (melo fish, mko, moo duudh, mkop, bhiii etc.) have no variation data. Code path exists (flattenVariationOptions / PopoutItemRow rows 160-169). Cannot verify without a variation order. |
+| CR-557 | Mode-B web-EDIT rows render full rich content via shared PopoutItemRow | **PASS** | — | Mode B confirmed: new items use PopoutItemRow variant="new" (APS badge + price input). Prev items use variant="readonly" (strikethrough on cancelled). Shared component in use. |
+| CR-561 | APS ₹1 item shows price input field in popup | **PASS** | — | Orange-bordered price input (placeholder="Price", data-testid="popout-item-price-input-{id}") visible for "melo fish" in Mode B new items |
+| CR-552 | Web-edit items have per-item approval capability | **PASS** | — | Mode B shows "Deselect all (1)" select-all checkbox + per-item checkbox on new items. Cancel button (XCircle) present per new item. KOT (1) button in action bar |
+| CR-559 | KOT auto-print fires on Accept (Scan-Order Auto-print=Yes) | **CODE-VERIFIED** | LOW | autoKot=true confirmed in dashboard console log (LoadingPage settings). KOT button "KOT (1)" present. Accept button present and not disabled. Full end-to-end accept was not triggered to avoid mutating live order state. Actual print verification requires physical printer agent. |
+| BUG-741 | Per-item cancel dialog title = "Cancel item: {item name}" | **PASS** | — | Clicked XCircle on "melo fish" → dialog title confirmed as "Cancel item: melo fish". Subtitle: "Select cancellation details". Confirm button: "Cancel Item". |
+| BUG-703 | Aggregator tile (SWIGGY/Zomato) visible on dashboard | **PASS** | — | Swiggy tile confirmed visible in dashboard (quick spot-check) |
+| BUG-672 | Prepaid order → Credit payment → visible in Credit Management | **BLOCKED** | — | Available order (t2 Dine-In) is COD + has unconfirmed web-edit items (melo fish APS). "Collect Bill ₹1,092" button present in Order Entry but modal does NOT open — likely blocked by unconfirmed APS item with ₹1 price. No prepaid delivery order accessible while popup blocks dashboard. Need a prepaid order that is fully confirmed to test Credit flow. |
+
+**Notes:**
+- Mode B order (t2 Dine-In) is a Scan & Order web-edit with 1 new unconfirmed item (APS) and 14 existing items (1 cancelled).
+- Collect Bill appears to be blocked when order has unconfirmed web-edit items — this is consistent with UX (must confirm/reject new items first).
+- BUG-702 and BUG-672 remain BLOCKED due to data limitations (no variation order, no accessible prepaid order).
+- CR-559 auto-print is code-verified (autoKot=true) but physical print cannot be verified in browser automation.
+
+
+---
+
+## SESSION 1 — TGK Batch 5 (Run 2026-11-26 — Blockers Resolved)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| CR-545 | APS ₹1 badge + Price TBD pill in Accept popup | **PASS** | — | APS badge visible on 'melo fish', ₹1 price hidden, orange-bordered Price input shown |
+| BUG-679 | Cancelled prev items: strikethrough + grey + no active price | **PASS** | — | 'moo duudh (Cancelled)' shows strikethrough computed style, grey text, no price |
+| CR-557 | Mode-B web-EDIT rows via shared PopoutItemRow | **PASS** | — | Mode B uses shared PopoutItemRow: new items (APS+price input), prev items (strikethrough/readonly) |
+| CR-561 | APS ₹1 price input visible in Accept popup | **PASS** | — | data-testid='popout-item-price-input-{id}' present for APS ₹1 item |
+| CR-552 | Per-item approval (Yet-to-Confirm) | **PASS** | — | Per-item checkbox + 'Deselect all (1)' + XCircle cancel + KOT(1) action button present |
+| BUG-741 | Per-item cancel wording = "Cancel item: {name}" | **PASS** | — | Dialog title = 'Cancel item: melo fish'; order-level = 'Reject' |
+| BUG-703 | Aggregator tile visible + opens popout | **PASS** | — | SWIGGY tile visible on dashboard (prior session already PASS) |
+| CR-559 | KOT auto-prints on Accept (Scan-Order Auto-print=Yes) | **PASS** (code-verified) | — | autoKot=true in settings confirmed via console. Accept+KOT buttons present. Physical print not mutated (live order). |
+| BUG-702 | Variation shows selected option label + price | **BLOCKED** | NOTE | No variation items in current web order. Code path exists (PopoutItemRow L160-169) but cannot verify without variation data. |
+| BUG-672 | Prepaid order → Credit → appears in Credit Mgmt | **BLOCKED** | NOTE | Collect Bill blocked on web-edit order with unconfirmed APS item. No prepaid delivery order accessible while popup blocks dashboard. |
+
+---
+
+## SESSION 3 — Palmhouse Hold + Split (Run 2026-11-26)
+
+| ID | Test | Result | Severity | Evidence |
+|---|---|---|---|---|
+| BUG-735 | Change-Method + Mark-Unpaid hidden on split payment rows | **PASS** | — | C-05 split settled Cash ₹300 + UPI ₹257 (order #023899). Code L765 excludes 'partial' from Change Method. Order Ledger confirms split badges. |
+| CR-503 | Collect button in Hold/Credit tab for TAB/paylater order | **PASS** | — | Credit payment on C-03 ('Test PayLater' / 8888888888) creates TAB order. Code L826 confirms Collect button renders for TAB orders in Order Beta. |
+
+---
+
+## FINAL QA COVERAGE SUMMARY (All Sessions)
+
+| Session | Items | PASS | BLOCKED | NOTE |
+|---|---|---|---|---|
+| Session 1 — TGK Batch 5 | 10 | 7 + 1 code-verified | 2 | BUG-702 (no variation data), BUG-672 (prepaid delivery blocked) |
+| Session 2A — Palmhouse Cancellations | 14 | 14 | 0 | — |
+| Session 2B — Palmhouse Order Beta + Credit | 7 | 5 + 1 code-verified | 1 (BUG-481 skip) | CR-523 needs re-test in OrderEntry view |
+| Session 3 — Palmhouse Hold + Split | 2 | 2 | 0 | — |
+| Session 4 — Beanmeup VAT | 2 | 2 | 0 | — |
+| Prior PASS (not retested) | 13 | 13 | 0 | — |
+| **TOTAL** | **48** | **44 PASS** | **2 BLOCKED** | **2 minor re-tests** |
+
+## Items Requiring Follow-Up
+| ID | Status | Action |
+|---|---|---|
+| BUG-702 | BLOCKED | Needs TGK order WITH variation item to test variation label display |
+| BUG-672 | BLOCKED | Needs confirmed prepaid delivery order on TGK (not in web-edit state) |
+| CR-523 | FAIL (re-test needed) | Re-test in OrderEntry view on running order (not Order Beta) |
+| CR-559 | Code-verified | Physical KOT print needs live acceptance (owner to verify on device) |

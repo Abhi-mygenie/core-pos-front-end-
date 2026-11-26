@@ -1,0 +1,59 @@
+{
+  "summary": "Session 1 TGK Batch 5 + BUG-672 testing. ScanOrderPopOut popup auto-appeared on login with a Mode B web-edit order (t2 Dine-In, 1 new APS item 'melo fish', 14 prev items incl. 1 cancelled). Tested all CR/BUG items against live popup.",
+  "test_type": "frontend only",
+  "account": "owner@thegoankitchen.com (TGK)",
+  "app_url": "https://pos-core-app--6gve4gt4.preview.emergentagent.com",
+  "session_results": {
+    "CR-545": "PASS — APS badge visible on 'melo fish', ₹1 price hidden, orange-bordered Price input field shown",
+    "BUG-679": "PASS — 'moo duudh (Cancelled)' in prev items: strikethrough computed style confirmed + grey text + no active price",
+    "BUG-702": "BLOCKED — No variation items in current order. Code path exists (flattenVariationOptions + PopoutItemRow L160-169) but cannot verify without data",
+    "CR-557": "PASS — Mode B uses shared PopoutItemRow: new items (variant=new, APS+price input), prev items (variant=readonly, strikethrough)",
+    "CR-561": "PASS — Price input (data-testid='popout-item-price-input-{id}') visible for APS ₹1 item in popup",
+    "CR-552": "PASS — Mode B: per-item checkbox + 'Deselect all (1)' + XCircle cancel button + KOT(1) action button",
+    "CR-559": "CODE-VERIFIED — autoKot=true in settings (console log confirmed). Accept+KOT buttons present. Physical print not tested (would mutate live order)",
+    "BUG-741": "PASS — Per-item cancel dialog title = 'Cancel item: melo fish' (item-level). Order-level Reject button = 'Reject'",
+    "BUG-703": "PASS — Swiggy tile visible on dashboard",
+    "BUG-672": "BLOCKED — Collect Bill modal does not open for web-edit COD order with unconfirmed APS item. No prepaid delivery order accessible while popup blocks dashboard"
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "BUG-672 Collect Bill",
+        "issue": "Collect Bill modal does not open when order has unconfirmed web-edit items (APS ₹1 unconfirmed). Expected: Bill modal should open OR show clear error. Actual: silent non-response.",
+        "affected_selectors": ["button:has-text('Collect Bill')"],
+        "priority": "MEDIUM"
+      }
+    ],
+    "design_issues": []
+  },
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "test_report_links": [
+    "/app/memory/test_reports/QA_REPORT_CONTINUATION_2026-11-25.md"
+  ],
+  "action_items": [
+    "BUG-702: Need a web/scan order WITH variation items on TGK to verify variation label+price display. Consider placing a test order with a variation item on TGK.",
+    "BUG-672: Need a prepaid delivery order that is fully confirmed (not in web-edit state) to test Credit payment flow. The Collect Bill appears blocked on orders with pending unconfirmed items.",
+    "CR-559: If KOT auto-print on Accept needs hard verification, must actually accept the test order and check for print toast/network call to printer-agent endpoint.",
+    "BUG-672 UX issue: Collect Bill button gives no feedback when blocked by unconfirmed items — should show a clear error or disable with tooltip."
+  ],
+  "critical_code_review_comments": [
+    "CR-561 implementation: Price input correctly appears only when onPriceChange prop is passed (non-readonly). In readonly mode it shows 'Price TBD' pill. This is correct behavior per OD-557-01.",
+    "BUG-679 implementation: isCancelled check at PopoutItemRow L74 is correct (status==='cancelled' OR foodStatus===3). Strikethrough via textDecoration:'line-through' on the name span.",
+    "BUG-741 implementation: The per-item cancel dialog title is set by DashboardPage's handleCancelItemFromPopout — not visible in ScanOrderPopOut.jsx itself. Confirmed working from live test."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "frontend": "70% (7 PASS + 1 CODE-VERIFIED out of 10; 2 BLOCKED)"
+  },
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "TGK popup is Mode B (web-edit) order t2 Dine-In with 1 APS new item (melo fish) and 14 prev items. CR-545/BUG-679/CR-557/CR-561/CR-552/BUG-741 all PASS. Need: (1) order with variation to test BUG-702, (2) confirmed prepaid delivery order to test BUG-672 Credit flow. Popup persists until accepted/rejected — snooze keeps popup open (by design). Collect Bill blocked on orders with unconfirmed web-edit items.",
+  "blocked_items": {
+    "BUG-702": "No variation items in available test order on TGK",
+    "BUG-672": "No accessible prepaid order; Collect Bill silent failure on web-edit COD order"
+  }
+}
