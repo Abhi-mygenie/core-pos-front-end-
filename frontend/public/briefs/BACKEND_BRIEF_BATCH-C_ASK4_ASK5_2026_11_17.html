@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backend Brief — CR-544 + CR-546 (Batch C ASK 4–5) — MyGenie POS</title>
+<style>
+body{font-family:Georgia,serif;margin:32px;color:#1d1d1b;background:#faf8f3}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 6px;border-bottom:2px solid #1d1d1b;padding-bottom:4px}h3{font-size:15px;margin:20px 0 4px}
+p.meta{font-size:13px;color:#555;margin:2px 0 12px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:8px 0 16px}
+th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#efeadb}
+code{background:#f0ece0;padding:1px 4px;border-radius:3px;font-size:12px}
+pre{background:#f0ece0;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;white-space:pre}
+.s{font-weight:bold;font-size:11px;padding:2px 6px;border-radius:3px}
+.open{background:#ffe2c2}.done{background:#cdeccf}.blocked{background:#f6c9c9}
+.tag{display:inline-block;font-size:11px;font-weight:bold;padding:1px 6px;border-radius:3px;margin:0 2px}
+.p0{background:#f6c9c9;color:#8b1a1a}.high{background:#ffe2c2;color:#8b4513}
+</style>
+</head>
+<body>
+<h1>Backend Brief — Batch C: ASK 3 (CR-543) + ASK 4 (CR-544) + ASK 5 (CR-546)</h1>
+<p class="meta">Assigned to: <b>Gyan</b> · Priority: <span class="tag p0">P0</span> · Risk: <span class="tag high">HIGH</span> · Date: 2026-11-17 (v2 — all ODs locked)</p>
+<p class="meta">Endpoint: <code>POST /api/v2/vendoremployee/report/insights-dashboard</code> → <code>audits</code> section</p>
+<p class="meta">Context: Extends the same audit section delivered for CR-528 (ASK 2b). All asks are additive — no breaking changes.</p>
+<p class="meta"><a href="/backend-tracker.html#batch-c">← Back to Tracker</a> · Individual contracts: <a href="/briefs/BATCH-C_CR-543_API_CONTRACT_2026_11_17_v2.html">CR-543 v2</a> · <a href="/briefs/BATCH-C_CR-544_API_CONTRACT_2026_11_17_v2.html">CR-544 v2</a> · <a href="/briefs/BATCH-C_CR-546_API_CONTRACT_2026_11_17.html">CR-546</a></p>
+
+<hr>
+
+<h2>ASK 3 — CR-543: Late Cancellation Audit — 4-Tier Risk Classification</h2>
+<p><b>Owner decision (LOCKED):</b> Replace configurable threshold with fixed tiers. No settings API needed.</p>
+
+<table>
+<tr><th>Tier</th><th>Duration (punch → cancel)</th><th>Risk Level</th><th><code>risk_level</code></th><th>FE Color</th></tr>
+<tr><td>1</td><td><b>0–5 min</b></td><td>✅ OK</td><td><code>"ok"</code></td><td>Green</td></tr>
+<tr><td>2</td><td><b>5–15 min</b></td><td>⚠️ Doubt</td><td><code>"doubt"</code></td><td>Amber</td></tr>
+<tr><td>3</td><td><b>15–30 min</b></td><td>🔶 Risk</td><td><code>"risk"</code></td><td>Orange</td></tr>
+<tr><td>4</td><td><b>30+ min</b></td><td>🔴 High Risk</td><td><code>"high_risk"</code></td><td>Red</td></tr>
+</table>
+
+<h3>Detection Logic</h3>
+<p>For every cancelled item in the date range: compute <code>duration_minutes = cancel_time − punch_time</code>, classify into tier, emit <code>late_cancel</code> event.</p>
+
+<h3>Event Type: <code>late_cancel</code></h3>
+<pre>{
+  "type": "late_cancel",
+  "order_id": "021544",
+  "food_name": "Paneer Tikka",
+  "amount": 350.00,
+  "by": "Counter",
+  "punch_time": "2026-11-16T14:10:00",
+  "cancel_time": "2026-11-16T14:45:00",
+  "duration_minutes": 35,
+  "risk_level": "high_risk",
+  "scope": "item"
+}</pre>
+
+<h3>KPI Counts (5)</h3>
+<table>
+<tr><th>Field</th><th>Type</th></tr>
+<tr><td><code>late_cancel_count</code></td><td>integer (total)</td></tr>
+<tr><td><code>late_cancel_ok_count</code></td><td>integer (0–5 min)</td></tr>
+<tr><td><code>late_cancel_doubt_count</code></td><td>integer (5–15 min)</td></tr>
+<tr><td><code>late_cancel_risk_count</code></td><td>integer (15–30 min)</td></tr>
+<tr><td><code>late_cancel_high_risk_count</code></td><td>integer (30+ min)</td></tr>
+</table>
+
+<p><b>Dependency:</b> <code>punched_at</code> (ASK 1 / CR-524 — ✅ DONE)</p>
+
+<hr>
+
+<h2>ASK 4 — CR-544: Cancel After Making Unpaid — Audit Event</h2>
+<p><b>Fraud pattern:</b> Cashier marks order as "unpaid" (step 1, already tracked) → then cancels items or entire order (step 2) → pockets the difference.</p>
+
+<h3>Detection Logic</h3>
+<p>For each order in the date range that was made unpaid (<code>make_unpaid</code> event exists):</p>
+<ul>
+<li>Get <code>made_unpaid_at</code> (timestamp of the make_unpaid action)</li>
+<li>For each cancellation (item or order) on that order WHERE <code>cancel_at &gt; made_unpaid_at</code>: emit audit event</li>
+</ul>
+
+<h3>New Event Type: <code>cancel_after_unpaid</code></h3>
+<pre>{
+  "type": "cancel_after_unpaid",
+  "order_id": "021544",
+  "food_name": "Paneer Tikka",
+  "amount": 200.00,
+  "by": "Counter",
+  "made_unpaid_at": "2026-11-16T14:30:00",
+  "cancel_time": "2026-11-16T14:35:00",
+  "scope": "item",
+  "gap_minutes": 5
+}</pre>
+
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>type</code></td><td>string</td><td><code>"cancel_after_unpaid"</code> LOCKED</td></tr>
+<tr><td><code>order_id</code></td><td>string</td><td>Order ID (preserve leading zeros)</td></tr>
+<tr><td><code>food_name</code></td><td>string</td><td>Cancelled item name (null/absent for full-order cancel)</td></tr>
+<tr><td><code>amount</code></td><td>number</td><td>₹ value of cancelled item/order</td></tr>
+<tr><td><code>by</code></td><td>string</td><td>Employee who cancelled</td></tr>
+<tr><td><code>made_unpaid_at</code></td><td>datetime</td><td>When order was marked unpaid</td></tr>
+<tr><td><code>cancel_time</code></td><td>datetime</td><td>When the cancel happened</td></tr>
+<tr><td><code>scope</code></td><td>string</td><td><code>"item"</code> or <code>"order"</code></td></tr>
+<tr><td><code>gap_minutes</code></td><td>integer</td><td>Minutes between unpaid and cancel</td></tr>
+</table>
+
+<h3>New KPI Count</h3>
+<table>
+<tr><th>Field</th><th>Type</th></tr>
+<tr><td><code>cancel_after_unpaid_count</code></td><td>integer</td></tr>
+</table>
+
+<h3>Data Availability</h3>
+<p><code>operations[].operation = 'make_unpaid'</code> with <code>created_at</code> already exists in <code>order-logs-report</code>. Backend can derive <code>made_unpaid_at</code> from this existing data.</p>
+
+<hr>
+
+<h2>ASK 5 — CR-546: Discount After Bill Print — Audit Events (Apply &amp; Remove)</h2>
+<p><b>Fraud pattern:</b> Staff applies or removes a discount on an order <em>after</em> the bill has already been printed — indicating post-settlement manipulation.</p>
+
+<h3>Detection Logic</h3>
+<p>For each order where <code>bill_printed_at IS NOT NULL</code>:</p>
+<ul>
+<li>If a discount was applied WHERE <code>discount_applied_at &gt; bill_printed_at</code> → emit <code>discount_apply_after_print</code></li>
+<li>If a discount was removed WHERE <code>discount_removed_at &gt; bill_printed_at</code> → emit <code>discount_remove_after_print</code></li>
+</ul>
+
+<h3>New Event Type: <code>discount_apply_after_print</code></h3>
+<pre>{
+  "type": "discount_apply_after_print",
+  "order_id": "021544",
+  "amount": 350.00,
+  "discount_amount": 50.00,
+  "discount_type": "percent",
+  "discount_value": 10,
+  "by": "Manager",
+  "bill_printed_at": "2026-11-17T14:10:00",
+  "discount_time": "2026-11-17T14:15:00"
+}</pre>
+
+<h3>New Event Type: <code>discount_remove_after_print</code></h3>
+<pre>{
+  "type": "discount_remove_after_print",
+  "order_id": "021544",
+  "amount": 350.00,
+  "discount_amount": 50.00,
+  "discount_type": "percent",
+  "discount_value": 10,
+  "by": "Manager",
+  "bill_printed_at": "2026-11-17T14:10:00",
+  "discount_time": "2026-11-17T14:20:00"
+}</pre>
+
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>type</code></td><td>string</td><td><code>"discount_apply_after_print"</code> or <code>"discount_remove_after_print"</code> LOCKED</td></tr>
+<tr><td><code>order_id</code></td><td>string</td><td>Order ID (preserve leading zeros)</td></tr>
+<tr><td><code>amount</code></td><td>number</td><td>Order amount at time of action</td></tr>
+<tr><td><code>discount_amount</code></td><td>number</td><td>₹ value of discount applied/removed</td></tr>
+<tr><td><code>discount_type</code></td><td>string</td><td><code>"percent"</code> / <code>"flat"</code> / <code>"preset"</code></td></tr>
+<tr><td><code>discount_value</code></td><td>number</td><td>Raw input value (e.g., 10 for 10%)</td></tr>
+<tr><td><code>by</code></td><td>string</td><td>Employee who applied/removed</td></tr>
+<tr><td><code>bill_printed_at</code></td><td>datetime</td><td>When bill was printed</td></tr>
+<tr><td><code>discount_time</code></td><td>datetime</td><td>When discount was applied/removed</td></tr>
+</table>
+
+<h3>New KPI Counts</h3>
+<table>
+<tr><th>Field</th><th>Type</th></tr>
+<tr><td><code>discount_apply_after_print_count</code></td><td>integer</td></tr>
+<tr><td><code>discount_remove_after_print_count</code></td><td>integer</td></tr>
+</table>
+
+<hr>
+
+<h2>Combined <code>total</code> Update</h2>
+<p><code>total</code> should sum all event counts:</p>
+<pre>total = make_unpaid_count
+      + payment_method_change_count
+      + item_cancel_after_print_count      (CR-528)
+      + order_cancel_after_print_count     (CR-528)
+      + order_edit_after_print_count       (CR-528)
+      + cancel_after_unpaid_count          (CR-544 — this ASK)
+      + discount_apply_after_print_count   (CR-546 — this ASK)
+      + discount_remove_after_print_count  (CR-546 — this ASK)</pre>
+
+<h2>Backward Compatibility</h2>
+<ul>
+<li>Additive only — no breaking changes</li>
+<li>Existing 5 event types unchanged</li>
+<li>Same endpoint, same filters, same response structure</li>
+<li>No migration needed</li>
+</ul>
+
+<h2>Summary</h2>
+<table>
+<tr><th>ASK</th><th>CR</th><th>What</th><th>Priority</th><th>Status</th></tr>
+<tr><td>3</td><td>CR-543</td><td><code>late_cancel</code> events with 4-tier risk classification (OK/Doubt/Risk/High Risk) + 5 KPI counts</td><td><span class="tag p0">P0</span></td><td><span class="s blocked">BLOCKING</span></td></tr>
+<tr><td>4</td><td>CR-544</td><td><code>cancel_after_unpaid</code> events — no time limit, flag re-paid, <code>unpaid_count</code></td><td><span class="tag p0">P0</span></td><td><span class="s blocked">BLOCKING</span></td></tr>
+<tr><td>5</td><td>CR-546</td><td><code>discount_apply_after_print</code> + <code>discount_remove_after_print</code> events</td><td><span class="tag p0">P0</span></td><td><span class="s blocked">BLOCKING</span></td></tr>
+</table>
+
+<p class="meta">Markdown sources: <code>backend_briefs/BACKEND_BRIEF_BATCH-C_2026_11_16_v2.md</code> (ASK 4) · <code>backend_briefs/BACKEND_BRIEF_CR-546_2026_11_17.md</code> (ASK 5)</p>
+</body>
+</html>

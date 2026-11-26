@@ -1,0 +1,11 @@
+=== CR-503 PROBE: Beta API structure + TAB rows ===
+days: 13
+total rows: 584
+TAB/Hold rows: 14
+payment_methods: ['pending', 'card', 'partial', 'cash', 'TAB', 'Cancel', 'upi']
+f_order_status values: ['3', '6']
+TAB row keys: ['source', 'order_id', 'invoice_details', 'restaurant_order_id', 'original_restaurant_order_id', 'f_order_status', 'order_status', 'payment_status', 'payment_method', 'razorpay_order_id', 'order_in', 'order_from', 'table_id', 'parent_order_id', 'order_plateform', 'order_type', 'waiter_id', 'employee_id', 'waiter', 'collected_by']
+order_id: 1526551
+payment_method: TAB
+payment_method_raw: tab
+f_order_status: 6

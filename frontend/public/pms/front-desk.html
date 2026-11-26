@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyGenie PMS — Front Desk</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:#F7F7F7;color:#1A1A1A;font-size:13px}
+  .sb{width:64px;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+  .sb-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:#666;transition:background .15s;flex-shrink:0}
+  .sb-icon:hover{background:#F7F7F7}
+  .sb-nav-item{width:100%;height:44px;display:flex;align-items:center;justify-content:center;border-left:3px solid transparent;cursor:pointer;border:none;background:transparent;color:#666;transition:background .15s}
+  .sb-nav-item:hover{background:#F7F7F7;color:#1A1A1A}
+  .sb-nav-item.active{border-left-color:#329937;background:rgba(50,153,55,.08);color:#329937}
+  .sb-nav-section{height:1px;background:#F0F0F0;margin:4px 8px}
+  /* Grid: SOURCE | GUEST | ROOM·GUESTS | BALANCE | STATUS | ACTION */
+  .arr-grid{display:grid;grid-template-columns:115px 1fr 138px 72px 108px 86px;align-items:center;gap:0 12px}
+  .arr-hdr{padding:7px 16px;background:#F7F7F7;border-bottom:1px solid #EEEEEE;border-top:1px solid #EEEEEE}
+  .arr-hdr span{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#999}
+  .arr-row{padding:10px 16px;border-bottom:1px solid #F2F2F2;transition:background .12s}
+  .arr-row:hover{background:#FAFAFA}
+  .arr-row:last-child{border-bottom:none}
+  .src{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 6px;background:#fff;border:1px solid #E5E5E5;border-radius:5px;font-size:11px;color:#555;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .src img,.src i{width:13px;height:13px;flex-shrink:0}
+  .badge-pending{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:#FFF7E6;color:#B76E00;border:1px solid rgba(244,161,26,.3);white-space:nowrap}
+  .badge-in{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(50,153,55,.08);color:#217A28;border:1px solid rgba(50,153,55,.2);white-space:nowrap}
+  .badge-prepaid{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(50,153,55,.08);color:#217A28;border:1px solid rgba(50,153,55,.2);white-space:nowrap}
+  .sr-badge{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;padding:1px 5px;border-radius:4px;background:#FFF8EC;color:#B76E00;border:1px solid rgba(244,161,26,.35);white-space:nowrap;flex-shrink:0}
+  .btn-checkin{height:30px;padding:0 12px;background:#329937;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+  .btn-checkin:hover{background:#2a7e2f}
+  .btn-view{height:30px;padding:0 12px;background:#fff;color:#666;border:1px solid #E5E5E5;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+  .kpi-tile{background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:0;text-decoration:none;color:inherit;transition:box-shadow .15s,border-color .15s}
+  .kpi-tile:hover{box-shadow:0 2px 12px rgba(0,0,0,.07);border-color:#D0D0D0}
+  @keyframes pdot{0%,100%{opacity:1}50%{opacity:.35}}.pdot{animation:pdot 2s ease-in-out infinite}
+  ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:#DDD;border-radius:4px}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;overflow:hidden">
+
+<!-- SIDEBAR (collapsed 64px) -->
+<aside class="sb">
+  <div style="padding:12px 0 10px;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <img src="https://customer-assets.emergentagent.com/job_react-pos-phase1/artifacts/dwikbb41_logo111.svg" style="height:28px;width:28px;object-fit:contain" title="MyGenie">
+    <button class="sb-icon" title="Expand sidebar"><i data-lucide="panel-left" style="width:18px;height:18px"></i></button>
+  </div>
+  <div style="padding:8px 0;border-bottom:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:4px">
+    <button class="sb-icon" style="color:#F26B33;background:rgba(242,107,51,.08)" title="Table View"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></button>
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)" title="By Channel"><i data-lucide="columns" style="width:18px;height:18px"></i></button>
+  </div>
+  <nav style="flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 0;display:flex;flex-direction:column;align-items:center">
+    <button class="sb-nav-item" title="Dashboard"><i data-lucide="home" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Day Closure"><i data-lucide="banknote" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Menu Management"><i data-lucide="utensils-crossed" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Credit Management"><i data-lucide="wallet" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item active" title="Rooms & Reservations"><i data-lucide="bed-double" style="width:18px;height:18px"></i></button>
+    <div class="sb-nav-section"></div>
+    <button class="sb-nav-item" title="Daily Report"><i data-lucide="bar-chart-3" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Settings"><i data-lucide="settings" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Inventory"><i data-lucide="package" style="width:18px;height:18px"></i></button>
+    <button class="sb-nav-item" title="Insights"><i data-lucide="line-chart" style="width:18px;height:18px"></i></button>
+  </nav>
+  <div style="padding:8px 0 10px;border-top:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;gap:2px">
+    <button class="sb-icon" style="color:#329937;background:rgba(50,153,55,.08)" title="Ringer On"><i data-lucide="bell" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon" style="color:#F26B33" title="Refresh"><i data-lucide="refresh-cw" style="width:17px;height:17px"></i></button>
+    <button class="sb-icon" title="Owner (Admin) · #541">
+      <div style="width:28px;height:28px;border-radius:50%;background:#F26B33;display:flex;align-items:center;justify-content:center"><i data-lucide="user" style="width:14px;height:14px;color:#fff"></i></div>
+    </button>
+    <button class="sb-icon" style="color:#EF4444" title="Logout"><i data-lucide="log-out" style="width:17px;height:17px"></i></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main style="flex:1;overflow-y:auto;min-width:0">
+
+  <!-- Top bar -->
+  <div style="background:#fff;border-bottom:1px solid #E5E5E5;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+    <div>
+      <h1 style="font-size:18px;font-weight:700;line-height:1.2">Good Morning</h1>
+      <p style="font-size:12px;color:#888;margin-top:1px">Thursday, 27 August 2026 &nbsp;·&nbsp; 09:14 AM &nbsp;·&nbsp; The Palm House</p>
+    </div>
+    <a href="new-booking.html" style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;background:#F26B33;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
+      <i data-lucide="plus" style="width:15px;height:15px"></i> New Booking
+    </a>
+  </div>
+
+  <div style="padding:16px 24px;display:flex;flex-direction:column;gap:14px">
+
+    <!-- KPI Strip — tiles link to detail pages -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+
+      <!-- Occupancy (no detail page) -->
+      <div class="kpi-tile">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#999">Occupancy</div>
+            <div style="font-size:22px;font-weight:700;color:#1A1A1A;margin-top:3px;line-height:1">70%</div>
+            <div style="font-size:11px;color:#888;margin-top:3px">14 of 20 rooms</div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(242,107,51,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="percent" style="width:15px;height:15px;color:#F26B33"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:#F0F0F0;border-radius:3px;margin-top:10px">
+          <div style="width:70%;height:100%;background:#F26B33;border-radius:3px"></div>
+        </div>
+      </div>
+
+      <!-- Arrivals → links to arrivals.html -->
+      <a href="arrivals.html" class="kpi-tile">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#999">Arrivals Today</div>
+            <div style="font-size:22px;font-weight:700;color:#1A1A1A;margin-top:3px;line-height:1">40</div>
+            <div style="font-size:11px;margin-top:3px"><span style="color:#329937;font-weight:600">6 checked in</span><span style="color:#888"> · 34 pending</span></div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(50,153,55,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="log-in" style="width:15px;height:15px;color:#329937"></i>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#999;display:flex;align-items:center;gap:4px">
+          <span>View all 40</span><i data-lucide="arrow-right" style="width:11px;height:11px"></i>
+        </div>
+      </a>
+
+      <!-- Departures → links to departures.html -->
+      <a href="departures.html" class="kpi-tile">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#999">Departures</div>
+            <div style="font-size:22px;font-weight:700;color:#1A1A1A;margin-top:3px;line-height:1">30</div>
+            <div style="font-size:11px;color:#888;margin-top:3px"><span style="color:#EF4444;font-weight:600">3 overdue</span> · due 11:00 AM</div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(244,161,26,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="log-out" style="width:15px;height:15px;color:#F4A11A"></i>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#999;display:flex;align-items:center;gap:4px">
+          <span>View all 30</span><i data-lucide="arrow-right" style="width:11px;height:11px"></i>
+        </div>
+      </a>
+
+      <!-- In-House -->
+      <div class="kpi-tile">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#999">In-House</div>
+            <div style="font-size:22px;font-weight:700;color:#1A1A1A;margin-top:3px;line-height:1">11</div>
+            <div style="font-size:11px;color:#888;margin-top:3px">Currently staying</div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(242,107,51,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="users" style="width:15px;height:15px;color:#F26B33"></i>
+          </div>
+        </div>
+      </div>
+    </div><!-- /KPI -->
+
+    <!-- Two-col layout -->
+    <div style="display:flex;gap:14px;align-items:flex-start">
+
+      <!-- Arrivals Table -->
+      <div style="flex:1;min-width:0;background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+        <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #EEEEEE">
+          <span style="font-size:14px;font-weight:600">Today's Arrivals</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;font-weight:500;color:#666;background:#F5F5F5;padding:2px 10px;border-radius:20px">Showing 6 of 40</span>
+            <a href="arrivals.html" style="font-size:12px;color:#329937;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:3px">View all <i data-lucide="arrow-right" style="width:12px;height:12px"></i></a>
+          </div>
+        </div>
+
+        <!-- Col headers -->
+        <div class="arr-grid arr-hdr">
+          <span>Source</span>
+          <span>Guest</span>
+          <span>Room · Guests</span>
+          <span style="text-align:right">Balance</span>
+          <span style="text-align:center">Status</span>
+          <span></span>
+        </div>
+
+        <!-- Row 1: Rahul Sharma — Booking.com · 2A · SR · Pay at Hotel -->
+        <div class="arr-grid arr-row">
+          <div><div class="src"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" alt="">Booking.com</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Rahul Sharma</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">+91 98765 43210</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Standard · 2 nights</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+              <span style="font-size:11px;color:#666">2A · 0C</span>
+              <span class="sr-badge"><i data-lucide="message-circle" style="width:9px;height:9px"></i>SR</span>
+            </div>
+          </div>
+          <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:#1A1A1A">₹6,200</div></div>
+          <div style="display:flex;justify-content:center"><span class="badge-pending">Pending</span></div>
+          <div style="display:flex;justify-content:flex-end;gap:5px">
+            <a href="check-in.html" class="btn-checkin"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Check In</a>
+            <a href="self-checkin.html" title="Send self check-in link to guest" style="height:30px;padding:0 8px;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #E5E5E5;border-radius:6px;color:#666;text-decoration:none;flex-shrink:0;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap"><i data-lucide="send" style="width:11px;height:11px"></i>Send link</a>
+          </div>
+        </div>
+
+        <!-- Row 2: Kavita Patel — Expedia · 2A·1C · No SR · Pay at Hotel -->
+        <div class="arr-grid arr-row">
+          <div><div class="src"><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=13" alt="">Expedia</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Kavita Patel</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">+91 87654 32109</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Deluxe · 3 nights</div>
+            <div style="margin-top:2px"><span style="font-size:11px;color:#666">2A · 1C</span></div>
+          </div>
+          <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:#1A1A1A">₹14,580</div></div>
+          <div style="display:flex;justify-content:center"><span class="badge-pending">Pending</span></div>
+          <div style="display:flex;justify-content:flex-end;gap:5px">
+            <a href="check-in.html" class="btn-checkin"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Check In</a>
+            <a href="self-checkin.html" title="Send self check-in link to guest" style="height:30px;padding:0 8px;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #E5E5E5;border-radius:6px;color:#666;text-decoration:none;flex-shrink:0;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap"><i data-lucide="send" style="width:11px;height:11px"></i>Send link</a>
+          </div>
+        </div>
+
+        <!-- Row 3: Amit Singh — Airbnb · 3A · SR · PREPAID (pah=false) -->
+        <div class="arr-grid arr-row" style="background:#FAFFF8">
+          <div><div class="src"><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=13" alt="">Airbnb</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Amit Singh</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">Rm 201 · Suite</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Suite · 5 nights</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+              <span style="font-size:11px;color:#666">3A · 0C</span>
+              <span class="sr-badge"><i data-lucide="message-circle" style="width:9px;height:9px"></i>SR</span>
+            </div>
+          </div>
+          <!-- PREPAID — pah=false -->
+          <div style="text-align:right"><span class="badge-prepaid">Prepaid</span></div>
+          <div style="display:flex;justify-content:center"><span class="badge-in">Checked In</span></div>
+          <div style="display:flex;justify-content:flex-end"><a href="check-in.html" class="btn-view"><i data-lucide="eye" style="width:13px;height:13px"></i>View</a></div>
+        </div>
+
+        <!-- Row 4: Neha Gupta — Walk-in · 1A · No SR -->
+        <div class="arr-grid arr-row">
+          <div><div class="src"><i data-lucide="user-plus" style="color:#329937"></i>Walk-in</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Neha Gupta</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">+91 65432 10987</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Standard · 1 night</div>
+            <div style="margin-top:2px"><span style="font-size:11px;color:#666">1A · 0C</span></div>
+          </div>
+          <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:#1A1A1A">₹3,600</div></div>
+          <div style="display:flex;justify-content:center"><span class="badge-pending">Pending</span></div>
+          <div style="display:flex;justify-content:flex-end;gap:5px">
+            <a href="check-in.html" class="btn-checkin"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Check In</a>
+            <a href="self-checkin.html" title="Send self check-in link to guest" style="height:30px;padding:0 8px;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #E5E5E5;border-radius:6px;color:#666;text-decoration:none;flex-shrink:0;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap"><i data-lucide="send" style="width:11px;height:11px"></i>Send link</a>
+          </div>
+        </div>
+
+        <!-- Row 5: Sunita Mehta — Direct · 2A·2C · SR -->
+        <div class="arr-grid arr-row">
+          <div><div class="src"><i data-lucide="phone" style="color:#F26B33"></i>Direct</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sunita Mehta</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">+91 54321 09876</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Deluxe · 4 nights</div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+              <span style="font-size:11px;color:#666">2A · 2C</span>
+              <span class="sr-badge"><i data-lucide="message-circle" style="width:9px;height:9px"></i>SR</span>
+            </div>
+          </div>
+          <div style="text-align:right"><div style="font-size:13px;font-weight:600;color:#1A1A1A">₹19,440</div></div>
+          <div style="display:flex;justify-content:center"><span class="badge-pending">Pending</span></div>
+          <div style="display:flex;justify-content:flex-end;gap:5px">
+            <a href="check-in.html" class="btn-checkin"><i data-lucide="check-circle" style="width:13px;height:13px"></i>Check In</a>
+            <a href="self-checkin.html" title="Send self check-in link to guest" style="height:30px;padding:0 8px;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #E5E5E5;border-radius:6px;color:#666;text-decoration:none;flex-shrink:0;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap"><i data-lucide="send" style="width:11px;height:11px"></i>Send link</a>
+          </div>
+        </div>
+
+        <!-- Row 6: Vikram Reddy — Booking.com · 2A · PREPAID -->
+        <div class="arr-grid arr-row" style="background:#FAFFF8">
+          <div><div class="src"><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" alt="">Booking.com</div></div>
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Vikram Reddy</div>
+            <div style="font-size:11px;color:#999;margin-top:1px">Expected after 2 PM</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#1A1A1A">Standard · 2 nights</div>
+            <div style="margin-top:2px"><span style="font-size:11px;color:#666">2A · 0C</span></div>
+          </div>
+          <!-- PREPAID -->
+          <div style="text-align:right"><span class="badge-prepaid">Prepaid</span></div>
+          <div style="display:flex;justify-content:center"><span class="badge-in">Checked In</span></div>
+          <div style="display:flex;justify-content:flex-end"><a href="check-in.html" class="btn-view"><i data-lucide="eye" style="width:13px;height:13px"></i>View</a></div>
+        </div>
+
+        <!-- Footer: view all link -->
+        <div style="padding:10px 16px;border-top:1px solid #F0F0F0;display:flex;align-items:center;justify-content:space-between;background:#FAFAFA">
+          <span style="font-size:12px;color:#888">Showing 6 of 40 arrivals</span>
+          <a href="arrivals.html" style="font-size:12px;font-weight:600;color:#329937;text-decoration:none;display:flex;align-items:center;gap:4px">View all 40 arrivals <i data-lucide="arrow-right" style="width:13px;height:13px"></i></a>
+        </div>
+      </div><!-- /Arrivals -->
+
+      <!-- Right Panel (256px) -->
+      <div style="width:256px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">
+
+        <!-- Channel Sync -->
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+            <span style="font-size:13px;font-weight:600">Channel Sync</span>
+            <button style="display:flex;align-items:center;gap:4px;font-size:11px;color:#888;background:none;border:none;cursor:pointer;font-family:'Poppins',sans-serif"><i data-lucide="refresh-cw" style="width:12px;height:12px"></i>Sync</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#329937;flex-shrink:0" class="pdot"></div><span style="font-size:12px;font-weight:600;color:#1A1A1A">AIOSELL</span></div><span style="font-size:11px;color:#bbb">2 min ago</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#329937;flex-shrink:0" class="pdot"></div><img src="https://www.google.com/s2/favicons?domain=booking.com&sz=13" style="width:13px;height:13px;border-radius:2px"><span style="font-size:12px;color:#555">Booking.com</span></div><span style="font-size:11px;color:#bbb">2 min ago</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#329937;flex-shrink:0" class="pdot"></div><img src="https://www.google.com/s2/favicons?domain=expedia.com&sz=13" style="width:13px;height:13px;border-radius:2px"><span style="font-size:12px;color:#555">Expedia</span></div><span style="font-size:11px;color:#bbb">5 min ago</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:#329937;flex-shrink:0" class="pdot"></div><img src="https://www.google.com/s2/favicons?domain=airbnb.com&sz=13" style="width:13px;height:13px;border-radius:2px"><span style="font-size:12px;color:#555">Airbnb</span></div><span style="font-size:11px;color:#bbb">12 min ago</span></div>
+          </div>
+          <div style="margin-top:11px;padding-top:11px;border-top:1px solid #F2F2F2;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#888">Available tonight</span><span style="font-weight:600;color:#1A1A1A">6 / 20</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#888">Pending sync</span><span style="font-weight:600;color:#F4A11A">2 items</span></div>
+          </div>
+        </div>
+
+        <!-- Departures Today -->
+        <div style="background:#fff;border:1px solid #E5E5E5;border-radius:10px;overflow:hidden">
+          <div style="padding:11px 14px;border-bottom:1px solid #EEEEEE;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;font-weight:600">Departures Today</span>
+            <a href="departures.html" style="display:flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#F4A11A;text-decoration:none">30 <i data-lucide="arrow-right" style="width:11px;height:11px"></i></a>
+          </div>
+          <!-- 3 urgent rows (overdue/due now) -->
+          <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F5F5F5;gap:8px;background:#FFF8F8">
+            <div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Raj Kumar</div><div style="font-size:11px;color:#EF4444;margin-top:1px;white-space:nowrap">Rm 204 · OVERDUE</div></div>
+            <div style="font-size:13px;font-weight:700;color:#EF4444;flex-shrink:0">₹4,200</div>
+            <a href="departures.html" style="flex-shrink:0;height:28px;padding:0 10px;border:1px solid #E5E5E5;border-radius:6px;font-size:11px;font-weight:500;color:#555;background:#fff;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;text-decoration:none;display:flex;align-items:center">Check Out</a>
+          </div>
+          <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F5F5F5;gap:8px">
+            <div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anita Joshi</div><div style="font-size:11px;color:#999;margin-top:1px;white-space:nowrap">Rm 112 · 11am</div></div>
+            <div style="font-size:13px;font-weight:600;color:#bbb;flex-shrink:0">₹0</div>
+            <a href="departures.html" style="flex-shrink:0;height:28px;padding:0 10px;border:1px solid #E5E5E5;border-radius:6px;font-size:11px;font-weight:500;color:#555;background:#fff;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;text-decoration:none;display:flex;align-items:center">Check Out</a>
+          </div>
+          <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #F5F5F5">
+            <div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Suresh Nair</div><div style="font-size:11px;color:#999;margin-top:1px;white-space:nowrap">Rm 301 · 12pm</div></div>
+            <div style="font-size:13px;font-weight:700;color:#EF4444;flex-shrink:0">₹9,800</div>
+            <a href="departures.html" style="flex-shrink:0;height:28px;padding:0 10px;border:1px solid #E5E5E5;border-radius:6px;font-size:11px;font-weight:500;color:#555;background:#fff;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;text-decoration:none;display:flex;align-items:center">Check Out</a>
+          </div>
+          <div style="padding:8px 14px;background:#FAFAFA;border-top:1px solid #F0F0F0;text-align:center">
+            <a href="departures.html" style="font-size:12px;font-weight:600;color:#F4A11A;text-decoration:none;display:inline-flex;align-items:center;gap:4px">View all 30 departures <i data-lucide="arrow-right" style="width:12px;height:12px"></i></a>
+          </div>
+        </div>
+
+      </div><!-- /Right panel -->
+    </div><!-- /Two-col -->
+  </div>
+</main>
+</div>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

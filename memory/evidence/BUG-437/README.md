@@ -1,0 +1,1 @@
+BUG-437 evidence → memory/evidence/CR-385/qa_2026_09_21_p0/qa_reruns/20260921_095623/qa_cm_scope.jpeg (Arrivals landing: chip "Today 0" active, table "No today arrivals", chip "Late 10" red one click away) — mockup default S.chip.arrivals='today'.

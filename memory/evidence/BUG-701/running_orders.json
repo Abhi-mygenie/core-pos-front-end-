@@ -1,0 +1,24 @@
+{
+  "probe": "employee-orders-list",
+  "note": "PII stripped; token not stored",
+  "orders": [
+    {
+      "id": 1578881,
+      "order_type": "pos",
+      "order_in": "RM",
+      "order_from": null,
+      "f_order_status": 5,
+      "rtype": "RM",
+      "table_no": "a1",
+      "num_details": 8,
+      "detail_food_status_sample": [
+        5,
+        5,
+        3,
+        3,
+        3,
+        7
+      ]
+    }
+  ]
+}

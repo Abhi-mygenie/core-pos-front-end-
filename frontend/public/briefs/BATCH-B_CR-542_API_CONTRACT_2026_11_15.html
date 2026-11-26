@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_CR-542_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-B_CR-542_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_CR-542_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-542 Reason mandatory on Make Unpaid — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BB-04, BB-05 · IA doc: <code>impact/CR-542_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong></p>
+<h2>1. Separate Unpaid reasons list (BB-04) — LOCKED OD-B-BB04-FINAL</h2>
+<p><strong>OD-B-BB04-FINAL:</strong> Separate list, NOT part of <code>cancellation-reasons</code>. Endpoint <strong>LOCKED</strong> (per R19: use this name; if backend already has an existing endpoint, they confirm the existing path and FE uses it as-is).</p>
+<p>Endpoint: <code>GET /api/v2/vendoremployee/unpaid-reasons</code></p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[].id</code></td>
+<td>integer</td>
+<td>Reason ID</td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>[].reason</code></td>
+<td>string</td>
+<td>Reason label text</td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Backend admin: add / edit Unpaid reasons in a dedicated admin screen (separate from cancellation reasons).</p>
+<h2>2. reason on make-order-unpaid (BB-05) — LOCKED OD-B-BB05</h2>
+<p>Endpoint: <code>PUT /api/v2/vendoremployee/order/make-order-unpaid</code></p>
+<p>Applies to: <strong>Make Unpaid</strong> (Audit, Order Beta) · <strong>Remove from Credit</strong> · <strong>Remove from Room</strong> — <strong>LOCKED OD-B-BB05-SCOPE</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Field (request body)</th>
+<th>Type</th>
+<th>Values</th>
+<th>Default</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reason</code></td>
+<td>string</td>
+<td>Selected reason label (or free text if “Other”)</td>
+<td>—</td>
+<td>NEW — <strong>LOCKED OD-B-BB05-REASON</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule:</strong> <code>reason</code> required (non-empty string). Empty or missing → 422 <code>UNPAID_REASON_REQUIRED</code>. <strong>LOCKED.</strong></p>
+<p>No <code>reason_id</code> — <strong>LOCKED OD-B-BB05-REASON</strong> (owner: reason text only).</p>
+<p>Backend stores <code>reason</code> and returns it in: order logs · Order Beta report · audit. Backend to confirm return paths in sign-off.</p>
+<h2>3. Errors</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNPAID_REASON_REQUIRED</code></td>
+<td>422</td>
+<td><code>reason</code> empty or missing on make-order-unpaid (all 3 actions) — <strong>LOCKED</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>4. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-04">BB-04</td>
+<td></td>
+<td>Confirm endpoint path or share existing</td>
+<td></td>
+</tr>
+<tr>
+<td id="BB-05">BB-05</td>
+<td></td>
+<td>Confirm <code>reason</code> stored + returned in logs/reports</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

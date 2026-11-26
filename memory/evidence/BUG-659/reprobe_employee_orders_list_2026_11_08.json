@@ -1,0 +1,47 @@
+{
+  "probe_date": "2026-11-08",
+  "context": "Reprobe after backend fix \u2014 discount_type + round_up added to employee-orders-list",
+  "total_orders": 63,
+  "discounted_orders": 5,
+  "sample_discounted": [
+    {
+      "id": 1537884,
+      "restaurant_order_id": "000662",
+      "restaurant_discount_amount": 119.05,
+      "discount_value": "50.00",
+      "discount_type": "Percent",
+      "order_discount_type": "Percent",
+      "round_up": "0.49",
+      "order_amount": 138.01
+    },
+    {
+      "id": 1537883,
+      "restaurant_order_id": "000661",
+      "restaurant_discount_amount": 119.05,
+      "discount_value": "50.00",
+      "discount_type": "Percent",
+      "order_discount_type": "Percent",
+      "round_up": "0.49",
+      "order_amount": 138.01
+    },
+    {
+      "id": 1537814,
+      "restaurant_order_id": "000629",
+      "restaurant_discount_amount": 449.5,
+      "discount_value": "50.00",
+      "discount_type": "Percent",
+      "order_discount_type": "Percent",
+      "round_up": "0.00",
+      "order_amount": 449.5
+    }
+  ],
+  "verification": "PASS \u2014 discount_type and round_up now returned",
+  "before": {
+    "discount_type": null,
+    "round_up": null
+  },
+  "after": {
+    "discount_type": "Percent",
+    "round_up": "0.49"
+  }
+}

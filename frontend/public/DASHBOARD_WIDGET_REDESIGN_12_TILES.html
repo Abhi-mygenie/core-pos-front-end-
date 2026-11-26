@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dashboard Widget Redesign — 12 Widgets (4×3) — 2026-11-17</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#71717A;--b:#E4E4E7;--bg:#FAFAFA}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px;position:sticky;top:0;z-index:10}
+nav a{color:var(--o);margin-right:16px;text-decoration:none;font-weight:600}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 16px}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-left:6px}
+.tag-fix{background:#FEE2E2;color:#991B1B}.tag-new{background:#DBEAFE;color:#1E40AF}.tag-move{background:#FEF3C7;color:#92400E}
+.diff{margin:16px 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:14px 18px}
+.diff li{margin:4px 0}
+
+/* Dashboard mockup */
+.dash{background:#FAFAFA;border-radius:12px;border:1px solid #ddd;overflow:hidden;padding:20px}
+.dash-head{margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.dash-head h4{margin:0;font-size:17px;font-weight:700}
+.row-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gt);margin:16px 0 8px 4px;display:flex;align-items:center;gap:6px}
+.row-label .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Widget grid */
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:4px}
+
+/* Widget card */
+.w{background:#fff;border:1px solid #E4E4E7;border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .15s;position:relative;min-height:170px;display:flex;flex-direction:column}
+.w:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1);border-color:#ccc}
+.w .w-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.w .w-label{font-size:12px;font-weight:600;color:var(--gt)}
+.w .w-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+.w .w-num{font-size:28px;font-weight:900;font-family:ui-monospace,monospace;line-height:1.1;margin-bottom:2px}
+.w .w-sub{font-size:11px;color:var(--gt);margin-bottom:8px}
+.w .w-body{flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.w .w-nav{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--o);margin-top:auto;padding-top:8px;border-top:1px solid #F4F4F5}
+
+/* Mini breakdown rows */
+.mini-row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;border-bottom:1px solid #F4F4F5}
+.mini-row:last-child{border:0}
+.mini-row .ml{color:var(--gt)}.mini-row .mv{font-weight:700;font-family:ui-monospace,monospace}
+
+/* Mini grid inside widget */
+.mini-grid{display:grid;gap:4px}
+.mini-grid.g2{grid-template-columns:1fr 1fr}
+.mini-grid.g3{grid-template-columns:1fr 1fr 1fr}
+.mini-box{background:#F9FAFB;border:1px solid #F4F4F5;border-radius:8px;padding:6px 8px;text-align:center}
+.mini-box .mb-val{font-size:14px;font-weight:800;font-family:ui-monospace,monospace}
+.mini-box .mb-label{font-size:9px;font-weight:600;color:var(--gt);text-transform:uppercase}
+
+/* Risk mini-bar */
+.risk-mini{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:6px 0}
+.risk-mini .rm-ok{background:#22C55E}.risk-mini .rm-doubt{background:#F59E0B}.risk-mini .rm-risk{background:#F97316}.risk-mini .rm-high{background:#EF4444}.risk-mini .rm-unk{background:#A1A1AA}
+
+/* Accent borders */
+.w-accent-green{border-left:3px solid var(--g)}
+.w-accent-red{border-left:3px solid #EF4444}
+.w-accent-amber{border-left:3px solid #F59E0B}
+.w-accent-purple{border-left:3px solid #8B5CF6}
+.w-accent-blue{border-left:3px solid #3B82F6}
+.w-accent-orange{border-left:3px solid var(--o)}
+.w-accent-teal{border-left:3px solid #0D9488}
+.w-accent-rose{border-left:3px solid #E11D48}
+
+/* Flag items inside widget */
+.flag{display:flex;align-items:center;gap:4px;font-size:11px;padding:3px 0}
+.flag-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Comparison layout */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.vs-col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;font-weight:700}
+.vs-col.old h3{color:#999}.vs-col.new h3{color:var(--g)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dashboard Widget Redesign — 12 Widgets in 4×3 Grid</h1>
+  <p>Fix: navigation, Net Sales terminology, add Batch C risk/fraud widgets, every widget clicks through to its insight page</p>
+</header>
+
+<nav>
+  <a href="#current">Current (9 tiles)</a>
+  <a href="#proposed">Proposed (12 tiles)</a>
+  <a href="#detail">Widget Details</a>
+  <a href="#nav">Navigation Map</a>
+</nav>
+
+<!-- ==================== CURRENT STATE ==================== -->
+<section id="current">
+  <h2>Current Dashboard — 9 Widgets (3×3)</h2>
+  <p class="meta">Problems: 7 of 9 tiles are dead-ends (no click navigation). "Net Sales" label is wrong. No risk/fraud visibility.</p>
+
+  <div class="dash">
+    <div class="wgrid">
+      <div class="w w-accent-green">
+        <div class="w-top"><span class="w-label">Net Sales <span class="tag tag-fix">WRONG LABEL</span></span></div>
+        <div class="w-num">&#8377;4,64,938</div>
+        <div class="w-sub">448 paid orders</div>
+        <div class="w-nav" style="color:var(--g)">→ Items page</div>
+      </div>
+      <div class="w"><div class="w-top"><span class="w-label">Channels</span></div><div class="w-num" style="font-size:20px">Dine-In</div><div class="w-sub">top channel</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w"><div class="w-top"><span class="w-label">Items</span></div><div class="w-sub">Top 3 sellers</div><div class="w-nav" style="color:var(--g)">→ Items page</div></div>
+      <div class="w"><div class="w-top"><span class="w-label">Payments</span></div><div class="w-sub">By method</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w w-accent-red"><div class="w-top"><span class="w-label">Cancellations</span></div><div class="w-num" style="color:#DC2626">101</div><div class="w-sub">No risk tiers shown</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w"><div class="w-top"><span class="w-label">Discounts</span></div><div class="w-sub">Direct/Coupon/Loyalty/Comp</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w w-accent-amber"><div class="w-top"><span class="w-label">Post-Settle Edits <span class="tag tag-fix">DEAD END</span></span></div><div class="w-num" style="color:#D97706">24</div><div class="w-sub">Made Unpaid 9 · Pay Change 0</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w"><div class="w-top"><span class="w-label">Kitchen</span></div><div class="w-sub">Prep + Serve time</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+      <div class="w"><div class="w-top"><span class="w-label">Customers</span></div><div class="w-sub">Repeat vs New</div><div class="w-nav" style="color:#ccc">✗ No click</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PROPOSED ==================== -->
+<section id="proposed">
+  <h2>Proposed Dashboard — 12 Widgets (4×3) <span class="tag tag-new">REDESIGN</span></h2>
+  <p class="meta">Every widget clickable. 4 rows: Money → Operations → Risk → Audit. Owner sees what's wrong at a glance.</p>
+
+  <div class="dash">
+    <div class="dash-head"><h4>Insights Dashboard</h4><small>7 Nov — 17 Nov 2026 · Ruby ZAP</small></div>
+
+    <!-- ROW 1: MONEY (what came in) -->
+    <div class="row-label"><span class="dot" style="background:var(--g)"></span> Revenue</div>
+    <div class="wgrid">
+
+      <!-- 1. Total Sales (FIXED) -->
+      <div class="w w-accent-green">
+        <div class="w-top">
+          <span class="w-label">Total Sales <span class="tag tag-fix">RENAMED</span></span>
+          <span class="w-badge" style="background:#D1FAE5;color:#065F46">448 orders</span>
+        </div>
+        <div class="w-num">&#8377;4,64,938</div>
+        <div class="w-sub">Gross revenue including taxes</div>
+        <div class="w-body">
+          <div class="mini-row"><span class="ml">Net Sales (excl. tax)</span><span class="mv">&#8377;4,22,671</span></div>
+          <div class="mini-row"><span class="ml">GST</span><span class="mv">&#8377;21,147</span></div>
+          <div class="mini-row"><span class="ml">VAT</span><span class="mv">&#8377;0</span></div>
+          <div class="mini-row"><span class="ml">Service Charge</span><span class="mv">&#8377;21,120</span></div>
+        </div>
+        <div class="w-nav">→ Sales Audit Report</div>
+      </div>
+
+      <!-- 2. Payments -->
+      <div class="w w-accent-blue">
+        <div class="w-top"><span class="w-label">Payments</span><span class="w-badge" style="background:#DBEAFE;color:#1E40AF">&#8377;4,64,938</span></div>
+        <div class="w-body">
+          <div class="mini-row"><span class="ml">Cash</span><span class="mv">&#8377;2,31,200</span></div>
+          <div class="mini-row"><span class="ml">Card</span><span class="mv">&#8377;1,45,000</span></div>
+          <div class="mini-row"><span class="ml">UPI</span><span class="mv">&#8377;67,738</span></div>
+          <div class="mini-row"><span class="ml">Room</span><span class="mv">&#8377;21,000</span></div>
+        </div>
+        <div class="w-nav">→ Settlement Report</div>
+      </div>
+
+      <!-- 3. Channels -->
+      <div class="w w-accent-teal">
+        <div class="w-top"><span class="w-label">Channels</span><span class="w-badge" style="background:#CCFBF1;color:#0F766E">448 orders</span></div>
+        <div class="w-body">
+          <div class="mini-row"><span class="ml">Dine-In</span><span class="mv">312</span></div>
+          <div class="mini-row"><span class="ml">Delivery</span><span class="mv">89</span></div>
+          <div class="mini-row"><span class="ml">Takeaway</span><span class="mv">34</span></div>
+          <div class="mini-row"><span class="ml">Aggregator</span><span class="mv">13</span></div>
+        </div>
+        <div class="w-nav">→ Channel Report</div>
+      </div>
+    </div>
+
+    <!-- ROW 2: OPERATIONS (what happened) -->
+    <div class="row-label"><span class="dot" style="background:#3B82F6"></span> Operations</div>
+    <div class="wgrid">
+
+      <!-- 4. Items -->
+      <div class="w">
+        <div class="w-top"><span class="w-label">Top Items</span><span class="w-badge" style="background:#F4F4F5;color:#3F3F46">186 unique</span></div>
+        <div class="w-body">
+          <div class="mini-row"><span class="ml">1. Butter Chicken</span><span class="mv">&#8377;42,500</span></div>
+          <div class="mini-row"><span class="ml">2. Paneer Tikka</span><span class="mv">&#8377;38,200</span></div>
+          <div class="mini-row"><span class="ml">3. Dal Makhani</span><span class="mv">&#8377;31,800</span></div>
+        </div>
+        <div class="w-nav">→ Item Sales Report</div>
+      </div>
+
+      <!-- 5. Kitchen -->
+      <div class="w">
+        <div class="w-top"><span class="w-label">Kitchen</span></div>
+        <div class="w-body">
+          <div class="mini-grid g2">
+            <div class="mini-box"><div class="mb-val">12m</div><div class="mb-label">Avg Prep</div></div>
+            <div class="mini-box"><div class="mb-val">18m</div><div class="mb-label">Avg Serve</div></div>
+          </div>
+        </div>
+        <div class="w-nav">→ KOT Variance Report</div>
+      </div>
+
+      <!-- 6. Customers -->
+      <div class="w">
+        <div class="w-top"><span class="w-label">Customers</span><span class="w-badge" style="background:#F4F4F5;color:#3F3F46">289 total</span></div>
+        <div class="w-body">
+          <div class="mini-grid g2">
+            <div class="mini-box"><div class="mb-val">78</div><div class="mb-label">Repeat</div></div>
+            <div class="mini-box"><div class="mb-val">211</div><div class="mb-label">New</div></div>
+          </div>
+        </div>
+        <div class="w-nav">→ Customer Report</div>
+      </div>
+    </div>
+
+    <!-- ROW 3: RISK (what's wrong) -->
+    <div class="row-label"><span class="dot" style="background:#EF4444"></span> Risk & Leakage</div>
+    <div class="wgrid">
+
+      <!-- 7. Cancellations (with risk bar from CR-543) -->
+      <div class="w w-accent-red">
+        <div class="w-top"><span class="w-label">Cancellations</span><span class="w-badge" style="background:#FEE2E2;color:#991B1B">&#8377;18,420 lost</span></div>
+        <div class="w-num" style="color:#DC2626">101</div>
+        <div class="w-sub">total cancelled items</div>
+        <div class="w-body">
+          <div class="risk-mini">
+            <div class="rm-ok" style="width:48.5%"></div>
+            <div class="rm-doubt" style="width:6.9%"></div>
+            <div class="rm-risk" style="width:1%"></div>
+            <div class="rm-high" style="width:43.6%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gt)">
+            <span>49 OK</span>
+            <span>7 Doubt</span>
+            <span>1 Risk</span>
+            <span style="color:#DC2626;font-weight:800">44 High Risk</span>
+          </div>
+        </div>
+        <div class="w-nav" style="color:#DC2626">→ Cancellation Report (with risk tiers)</div>
+      </div>
+
+      <!-- 8. Discounts -->
+      <div class="w w-accent-purple">
+        <div class="w-top"><span class="w-label">Discounts</span></div>
+        <div class="w-num" style="color:#7C3AED">&#8377;12,340</div>
+        <div class="w-sub">total discount given</div>
+        <div class="w-body">
+          <div class="mini-row"><span class="ml">Direct</span><span class="mv">&#8377;8,200</span></div>
+          <div class="mini-row"><span class="ml">Coupon</span><span class="mv">&#8377;2,140</span></div>
+          <div class="mini-row"><span class="ml">Loyalty</span><span class="mv">&#8377;1,200</span></div>
+          <div class="mini-row"><span class="ml">Comp Items</span><span class="mv">&#8377;800</span></div>
+        </div>
+        <div class="w-nav">→ Discount Report</div>
+      </div>
+
+      <!-- 9. Cancel After Unpaid (CR-544 — FRAUD) -->
+      <div class="w w-accent-rose">
+        <div class="w-top"><span class="w-label">Cancel After Unpaid <span class="tag tag-new">NEW</span></span></div>
+        <div class="w-num" style="color:#E11D48">2</div>
+        <div class="w-sub">fraud pattern detected</div>
+        <div class="w-body">
+          <div class="flag"><span class="flag-dot" style="background:#DC2626"></span> <b>#000680</b> — 2 items, unpaid 3×, gap 2 days</div>
+          <div style="margin-top:4px">
+            <div class="mini-grid g2">
+              <div class="mini-box" style="border-color:#FCA5A5;background:#FEF2F2"><div class="mb-val" style="color:#991B1B">2</div><div class="mb-label">Still Unpaid</div></div>
+              <div class="mini-box" style="border-color:#93C5FD;background:#EFF6FF"><div class="mb-val" style="color:#1E40AF">0</div><div class="mb-label">Re-Paid</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="w-nav" style="color:#E11D48">→ Audit: Cancel After Unpaid</div>
+      </div>
+    </div>
+
+    <!-- ROW 4: AUDIT (what was changed after the fact) -->
+    <div class="row-label"><span class="dot" style="background:#F59E0B"></span> Post-Action Audit</div>
+    <div class="wgrid">
+
+      <!-- 10. Post-Settle Edits (existing — made unpaid + payment change) -->
+      <div class="w w-accent-amber">
+        <div class="w-top"><span class="w-label">Post-Settle Edits</span></div>
+        <div class="w-num" style="color:#D97706">6</div>
+        <div class="w-sub">orders modified after settlement</div>
+        <div class="w-body">
+          <div class="mini-grid g2">
+            <div class="mini-box" style="border-color:#FCA5A5;background:#FEF2F2"><div class="mb-val" style="color:#991B1B">5</div><div class="mb-label">Made Unpaid</div></div>
+            <div class="mini-box" style="border-color:#FDE68A;background:#FFFBEB"><div class="mb-val" style="color:#92400E">1</div><div class="mb-label">Pay Changed</div></div>
+          </div>
+        </div>
+        <div class="w-nav">→ Audit: Post-Settle Edits</div>
+      </div>
+
+      <!-- 11. Post-Bill-Print Changes (CR-528 — NEW WIDGET) -->
+      <div class="w w-accent-orange">
+        <div class="w-top"><span class="w-label">Post-Bill-Print <span class="tag tag-new">NEW</span></span></div>
+        <div class="w-num" style="color:var(--o)">4</div>
+        <div class="w-sub">orders changed after bill print</div>
+        <div class="w-body">
+          <div class="mini-grid g3">
+            <div class="mini-box" style="border-color:#FDBA74;background:#FFF7ED"><div class="mb-val" style="color:#9A3412">2</div><div class="mb-label">Item Cancel</div></div>
+            <div class="mini-box" style="border-color:#FDA4AF;background:#FFF1F2"><div class="mb-val" style="color:#BE123C">1</div><div class="mb-label">Order Cancel</div></div>
+            <div class="mini-box" style="border-color:#93C5FD;background:#EFF6FF"><div class="mb-val" style="color:#1E40AF">1</div><div class="mb-label">Order Edit</div></div>
+          </div>
+        </div>
+        <div class="w-nav">→ Audit: Post-Print Changes</div>
+      </div>
+
+      <!-- 12. Discount After Print (CR-546 — NEW WIDGET) -->
+      <div class="w w-accent-purple">
+        <div class="w-top"><span class="w-label">Discount After Print <span class="tag tag-new">NEW</span></span></div>
+        <div class="w-num" style="color:#7C3AED">8</div>
+        <div class="w-sub">discount changes after bill print</div>
+        <div class="w-body">
+          <div class="mini-grid g2">
+            <div class="mini-box" style="border-color:#86EFAC;background:#F0FDF4"><div class="mb-val" style="color:#166534">4</div><div class="mb-label">Applied</div></div>
+            <div class="mini-box" style="border-color:#FCA5A5;background:#FEF2F2"><div class="mb-val" style="color:#991B1B">4</div><div class="mb-label">Removed</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--gt);margin-top:4px">Includes 2 replacements on #000766</div>
+        </div>
+        <div class="w-nav" style="color:#7C3AED">→ Audit: Discount After Print</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== WIDGET DETAILS ==================== -->
+<section id="detail">
+  <h2>Widget Content Specification</h2>
+  <p class="meta">What each widget shows and what changes from current.</p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:10px;overflow:hidden">
+    <thead><tr style="background:#FAFAFA">
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b);width:30px">#</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Widget</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Change</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Content</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Data Source</th>
+    </tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">1</td>
+        <td style="padding:8px 10px"><b>Total Sales</b></td>
+        <td style="padding:8px 10px"><span class="tag tag-fix">FIX</span> Rename "Net Sales"</td>
+        <td style="padding:8px 10px">Total Sales (gross) + breakdown: Net Sales (excl tax), GST, VAT, Service Charge. Order count badge.</td>
+        <td style="padding:8px 10px"><code>insights-dashboard</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">2</td>
+        <td style="padding:8px 10px"><b>Payments</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Total collected + breakdown by method (Cash, Card, UPI, Room, etc.)</td>
+        <td style="padding:8px 10px"><code>insights-dashboard</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">3</td>
+        <td style="padding:8px 10px"><b>Channels</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Order count per channel (Dine-In, Delivery, Takeaway, Aggregator)</td>
+        <td style="padding:8px 10px"><code>insights-dashboard</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">4</td>
+        <td style="padding:8px 10px"><b>Top Items</b></td>
+        <td style="padding:8px 10px">Keep</td>
+        <td style="padding:8px 10px">Top 3 items by revenue</td>
+        <td style="padding:8px 10px"><code>insights-items</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">5</td>
+        <td style="padding:8px 10px"><b>Kitchen</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Avg prep time + avg serve time</td>
+        <td style="padding:8px 10px"><code>insights-dashboard.kitchen</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">6</td>
+        <td style="padding:8px 10px"><b>Customers</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Total + Repeat vs New breakdown</td>
+        <td style="padding:8px 10px"><code>insights-dashboard</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FEF2F2">
+        <td style="padding:8px 10px;font-weight:800">7</td>
+        <td style="padding:8px 10px"><b>Cancellations</b></td>
+        <td style="padding:8px 10px"><span class="tag tag-new">CR-543</span> Add risk bar</td>
+        <td style="padding:8px 10px">Total count + revenue lost + <b>risk tier mini-bar</b> (OK/Doubt/Risk/High Risk counts). The key signal: "44 High Risk" in bold red.</td>
+        <td style="padding:8px 10px"><code>insights-dashboard.audits</code> (risk tiers) + <code>insights-cancellations</code> (count/revenue)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">8</td>
+        <td style="padding:8px 10px"><b>Discounts</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Total discount + Direct/Coupon/Loyalty/Comp breakdown</td>
+        <td style="padding:8px 10px"><code>insights-dashboard</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FFF1F2">
+        <td style="padding:8px 10px;font-weight:800">9</td>
+        <td style="padding:8px 10px"><b>Cancel After Unpaid</b></td>
+        <td style="padding:8px 10px"><span class="tag tag-new">CR-544 NEW</span></td>
+        <td style="padding:8px 10px">Fraud count + flagged orders + paid vs unpaid at cancel. Shows top offending order inline.</td>
+        <td style="padding:8px 10px"><code>insights-dashboard.audits</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5">
+        <td style="padding:8px 10px;font-weight:800">10</td>
+        <td style="padding:8px 10px"><b>Post-Settle Edits</b></td>
+        <td style="padding:8px 10px">Add click</td>
+        <td style="padding:8px 10px">Made Unpaid count + Payment Changed count. <b>Existing widget — just add navigation.</b></td>
+        <td style="padding:8px 10px"><code>insights-dashboard.audits</code></td>
+      </tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FFF7ED">
+        <td style="padding:8px 10px;font-weight:800">11</td>
+        <td style="padding:8px 10px"><b>Post-Bill-Print</b></td>
+        <td style="padding:8px 10px"><span class="tag tag-move">SPLIT</span> from old Audits tile</td>
+        <td style="padding:8px 10px">Item Cancel + Order Cancel + Order Edit after print counts. <b>Split from old "Post-Settle Edits" tile</b> which mixed both concepts.</td>
+        <td style="padding:8px 10px"><code>insights-dashboard.audits</code></td>
+      </tr>
+      <tr style="background:#F5F3FF">
+        <td style="padding:8px 10px;font-weight:800">12</td>
+        <td style="padding:8px 10px"><b>Discount After Print</b></td>
+        <td style="padding:8px 10px"><span class="tag tag-new">CR-546 NEW</span></td>
+        <td style="padding:8px 10px">Applied + Removed counts after bill print. Notes replacements.</td>
+        <td style="padding:8px 10px"><code>insights-dashboard.audits</code></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ==================== NAVIGATION MAP ==================== -->
+<section id="nav">
+  <h2>Click Navigation Map — Every Widget → Insight Page</h2>
+  <p class="meta">Current: 2 of 9 navigate. Proposed: 12 of 12 navigate.</p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:10px;overflow:hidden">
+    <thead><tr style="background:#FAFAFA">
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Widget</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Current Click</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Proposed Click → Page</th>
+      <th style="padding:10px;text-align:left;border-bottom:2px solid var(--b)">Page Exists?</th>
+    </tr></thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Total Sales</b></td><td style="padding:8px 10px">→ Items (wrong)</td><td style="padding:8px 10px"><code>/reports-module/sales-audit</code></td><td style="padding:8px 10px">✅ SalesAuditPage.jsx</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Payments</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/settlement</code></td><td style="padding:8px 10px">✅ SettlementReportMockup.jsx</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Channels</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/sales</code></td><td style="padding:8px 10px">✅ SalesMockup.jsx</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Top Items</b></td><td style="padding:8px 10px">→ Items ✅</td><td style="padding:8px 10px"><code>/reports-module/items</code></td><td style="padding:8px 10px">✅ Keep as-is</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Kitchen</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/kot-variance</code></td><td style="padding:8px 10px">✅ KotVarianceMockup.jsx</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Customers</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/customers</code></td><td style="padding:8px 10px">✅ Exists in routes</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FEF2F2"><td style="padding:8px 10px"><b>Cancellations</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/cancellations</code></td><td style="padding:8px 10px">✅ CancellationsMockup.jsx (needs risk tier column)</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Discounts</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/items</code> (discount tab)</td><td style="padding:8px 10px">✅ Exists</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FFF1F2"><td style="padding:8px 10px"><b>Cancel After Unpaid</b></td><td style="padding:8px 10px">N/A (new)</td><td style="padding:8px 10px"><code>/reports-module/audit-log?filter=cancel_after_unpaid</code></td><td style="padding:8px 10px">✅ AuditLogMockup.jsx (needs Batch C update)</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5"><td style="padding:8px 10px"><b>Post-Settle Edits</b></td><td style="padding:8px 10px">✗ None</td><td style="padding:8px 10px"><code>/reports-module/audit-log?filter=post_settle</code></td><td style="padding:8px 10px">✅ AuditLogMockup.jsx</td></tr>
+      <tr style="border-bottom:1px solid #F4F4F5;background:#FFF7ED"><td style="padding:8px 10px"><b>Post-Bill-Print</b></td><td style="padding:8px 10px">N/A (split)</td><td style="padding:8px 10px"><code>/reports-module/audit-log?filter=post_print</code></td><td style="padding:8px 10px">✅ AuditLogMockup.jsx (needs filter chip support)</td></tr>
+      <tr style="background:#F5F3FF"><td style="padding:8px 10px"><b>Discount After Print</b></td><td style="padding:8px 10px">N/A (new)</td><td style="padding:8px 10px"><code>/reports-module/audit-log?filter=discount_after_print</code></td><td style="padding:8px 10px">✅ AuditLogMockup.jsx (needs Batch C update)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="diff" style="margin-top:16px">
+    <strong>Key takeaways:</strong>
+    <ul>
+      <li><b>All 12 pages already exist</b> — no new pages needed. Just wire onClick + pass date filters via query params.</li>
+      <li><b>Audit page</b> needs filter param support (<code>?filter=post_settle</code>) so widgets can deep-link to their section.</li>
+      <li><b>Cancellation page</b> needs risk tier column added (CR-543 data).</li>
+      <li><b>SalesAuditPage</b> already shows Net Sales + taxes — just fix the dashboard widget label to match.</li>
+    </ul>
+  </div>
+</section>
+
+<footer style="padding:20px 32px;text-align:center;font-size:11px;color:#999">
+  Dashboard Widget Redesign — 12 Widgets (4×3) — 2026-11-17 — Awaiting owner approval
+</footer>
+
+</body>
+</html>

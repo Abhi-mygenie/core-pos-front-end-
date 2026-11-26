@@ -1,0 +1,25 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/api/v2/vendoremployee/print/update-print-status",
+  "json": {
+   "order_id": 1578761,
+   "bill_print": "Yes",
+   "kot_print": "No"
+  },
+  "data": null
+ },
+ "status": 200,
+ "response": {
+  "success": true,
+  "message": "Print counters updated successfully",
+  "data": {
+   "order_id": 1578761,
+   "bill_print_count": 1,
+   "kot_print_count": 0,
+   "socket_publish_attempted": true,
+   "bill_print": "Yes",
+   "kot_print": "No"
+  }
+ }
+}

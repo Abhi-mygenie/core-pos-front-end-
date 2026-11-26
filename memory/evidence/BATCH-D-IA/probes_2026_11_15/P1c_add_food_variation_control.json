@@ -1,0 +1,69 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/api/v2/vendoremployee/product/add-food",
+  "json": null,
+  "data": {
+   "food_info": "{\"name\": \"BATCHD_IA_PROBE_FOOD_CTRL\", \"description\": \"\", \"category_id\": 10739, \"price\": 10, \"discount\": 0, \"discount_type\": \"amount\", \"food_for\": \"Normal\", \"dinein\": \"Yes\", \"delivery\": \"No\", \"takeaway\": \"No\", \"live_web\": \"N\", \"available_time_starts\": \"00:00:00\", \"available_time_ends\": \"23:59:59\", \"prepration_time_min\": 0, \"serve_time_in_min\": 0, \"pack_charges\": \"0\", \"takeaway_charge\": \"0\", \"delivery_charge\": \"0\", \"tax_type\": \"GST\", \"tax\": \"0\", \"complementary\": \"No\", \"give_discount\": \"No\", \"item_code\": \"\", \"kcal\": 0, \"allergens\": \"\", \"item_type\": 1, \"veg\": 1, \"is_inventory\": \"No\", \"packed_food\": \"No\", \"stock_out\": \"N\", \"is_disable\": \"Y\", \"tax_calc\": \"Exclusive\", \"variations\": [{\"name\": \"Size\", \"type\": \"single\", \"required\": \"off\", \"min\": 0, \"max\": 0, \"values\": [{\"label\": \"Small\", \"optionPrice\": \"3\"}, {\"label\": \"Large\", \"optionPrice\": \"5\"}]}], \"item_unit\": \"\", \"item_unit_price\": \"\"}"
+  }
+ },
+ "status": 200,
+ "response": {
+  "id": 248234,
+  "name": "BATCHD_IA_PROBE_FOOD_CTRL",
+  "item_code": "",
+  "price": 10,
+  "category_id": 10739,
+  "image": "1.png",
+  "food_for": "Normal",
+  "veg": 1,
+  "dinein": "Yes",
+  "give_discount": "No",
+  "takeaway": "No",
+  "delivery": "No",
+  "pack_charges": 0,
+  "takeaway_charge": 0,
+  "delivery_charge": 0,
+  "available_time_starts": "00:00:00",
+  "available_time_ends": "23:59:59",
+  "discount_type": "amount",
+  "live_web": "N",
+  "discount": 0,
+  "food_order": 0,
+  "serve_time_in_min": 0,
+  "add_ons": [],
+  "variations": [
+   {
+    "name": "Size",
+    "type": "single",
+    "min": 0,
+    "max": 0,
+    "required": "off",
+    "values": [
+     {
+      "label": "Small",
+      "optionPrice": "3"
+     },
+     {
+      "label": "Large",
+      "optionPrice": "5"
+     }
+    ]
+   }
+  ],
+  "tax": 0,
+  "tax_type": "GST",
+  "tax_calc": "Exclusive",
+  "hsn_code": null,
+  "packed_food": "No",
+  "is_inventory": "No",
+  "stock_out": "N",
+  "allergens": [],
+  "kcal": 0,
+  "portion_size": null,
+  "item_unit": "",
+  "item_unit_price": 10,
+  "complementary": "No",
+  "complementary_price": 0
+ }
+}

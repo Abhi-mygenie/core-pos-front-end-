@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backend Brief + Contract Checklist — Batch A — MyGenie POS</title>
+<style>
+body{font-family:Georgia,serif;margin:32px;color:#1d1d1b;background:#faf8f3;max-width:1240px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:19px;margin:34px 0 6px;border-bottom:2px solid #1d1d1b;padding-bottom:4px}h3{font-size:14px;margin:16px 0 6px;text-transform:uppercase;letter-spacing:.05em;color:#555}
+p.meta{font-size:13px;color:#555;margin:2px 0 12px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin-bottom:8px}
+th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#efeadb}
+td.id{white-space:nowrap;font-weight:bold}
+.s{font-weight:bold;font-size:11px;padding:2px 6px;border-radius:3px;white-space:nowrap}
+.p0{background:#ffe2c2}.p1{background:#dce8ff}.ph2{background:#eee}.qa{background:#e8f5e9}.new{background:#fff3c4}
+.wait{background:#ffe2c2}.replied{background:#dce8ff}.ok{background:#cdeccf}.rej{background:#f6c9c9}
+code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}
+ul{font-size:14px}li{margin:3px 0}
+.box{background:#fff;border:1px solid #d6d2c4;padding:10px 14px;font-size:14px}
+.rule{border:2px solid #b91c1c}
+.status{font-size:14px;margin:8px 0 10px}
+.ck td:nth-child(3),.ck td:nth-child(4),.ck td:nth-child(5){background:#fdfcf8;min-width:90px}
+nav{font-size:13px;line-height:1.9}nav a{margin-right:12px;color:#8a4b14}
+@media(max-width:800px){body{margin:14px}}
+</style>
+</head>
+<body>
+<h1>Backend Brief + Contract Checklist — Batch A</h1>
+<p class="meta">BASE DOCUMENT for Batch A backend work (owner R21, 2026-11-15). Brief, links to the locked contracts, and the reply checklist all live on this page. Supersedes <code>BACKEND_BRIEF_BATCH-A_2026_11_14.md</code>, <code>BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md</code> and <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code>. · Client: ALL · FE: Abhishek · Backend: Gyan (BA-xx), Parth (B-495-x)</p>
+<nav><a href="#rules">0 Rules</a><a href="#summary">Status summary</a><a href="#bug674">BUG-674</a><a href="#bug670">BUG-670</a><a href="#cr493">CR-493</a><a href="#cr492">CR-492</a><a href="#cr515">CR-515</a><a href="#cr494">CR-494</a><a href="#cr495">CR-495</a><a href="#cr443">CR-443</a><a href="#p1">P1 / later</a><a href="#release">Release impact</a><a href="#reply">How to reply</a></nav>
+
+<h2 id="rules">0. Contract rules (owner R19–R21)</h2>
+<div class="box rule">
+<ol>
+<li><b>Names are fixed.</b> Endpoints, field names, types and enum values are as written in each CR's contract file (linked per section). Contracts APPROVED by owner 2026-11-15 (R20).</li>
+<li><b>Backend may only answer</b> ✅ OK · ⏱ ETA · ❌ not feasible (with reason).</li>
+<li><b>No renames.</b> A reply or handover file that renames, retypes, drops or adds a field, or changes an enum → <b>REJECTED, not merged</b>, back to owner. Only the owner changes a contract.</li>
+<li><b>Existing keys are never renamed.</b> If a key already exists for something marked NEW, backend gives its exact current name and FE uses it as is. New keys only when none exists, exactly as written.</li>
+<li>Additive only: existing requests/responses keep working.</li>
+<li>Errors: HTTP 403 (right/PIN) or 422 (validation) with <code>{ "error_code": "&lt;CODE&gt;", "message": "&lt;text&gt;" }</code>.</li>
+<li>Yes/No flags as strings <code>"Yes"</code>/<code>"No"</code>. Money in ₹, 2 decimals, incl. tax where a threshold is compared. Business day = restaurant schedule / day-closure.</li>
+<li><b>Checklist use:</b> when a reply arrives, FE agent fills <i>Backend reply</i>, <i>Match</i> (✅/❌) and <i>Date</i> per row. Any ❌ → reply rejected. All ✅ → the CR's plan may be frozen.</li>
+</ol>
+Legend: <span class="s wait">WAITING</span> <span class="s replied">REPLIED</span> <span class="s ok">MATCHED</span> <span class="s rej">REJECTED</span> · <span class="s new">NEW</span> field to add · <span class="s qa">QA check</span> backend-only, verified in QA.
+</div>
+
+<h2 id="summary">Status summary</h2>
+<table data-testid="brief-summary">
+<tr><th>CR</th><th>Backend IDs</th><th>Owner</th><th>Contract</th><th>Status</th><th>FE plan</th></tr>
+<tr><td class="id">BUG-674</td><td>BA-02, 03, 04, 24</td><td>Gyan</td><td><a href="../contracts/BATCH-A_BUG-674_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>PARTIAL</td></tr>
+<tr><td class="id">BUG-670</td><td>BA-01</td><td>Gyan</td><td><a href="../contracts/BATCH-A_BUG-670_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>BLOCKED</td></tr>
+<tr><td class="id">CR-493</td><td>BA-05, 06, 23</td><td>Gyan</td><td><a href="../contracts/BATCH-A_CR-493_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>PARTIAL</td></tr>
+<tr><td class="id">CR-492</td><td>BA-07, 08</td><td>Gyan</td><td><a href="../contracts/BATCH-A_CR-492_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>READY FE</td></tr>
+<tr><td class="id">CR-515</td><td>BA-09</td><td>Gyan</td><td><a href="../contracts/BATCH-A_CR-515_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>PARTIAL</td></tr>
+<tr><td class="id">CR-494</td><td>BA-11..15</td><td>Gyan</td><td><a href="../contracts/BATCH-A_CR-494_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>SKELETON</td></tr>
+<tr><td class="id">CR-495</td><td>B-495-1..7</td><td>Parth (cc Gyan)</td><td><a href="../contracts/BATCH-A_CR-495_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>SKELETON</td></tr>
+<tr><td class="id">CR-443</td><td>BA-19..22</td><td>Gyan</td><td><a href="../contracts/BATCH-A_CR-443_API_CONTRACT_2026_11_15.md">contract</a></td><td><span class="s wait">WAITING</span></td><td>SKELETON</td></tr>
+<tr><td class="id">CR-372-B</td><td>—</td><td>—</td><td>none (no backend)</td><td><span class="s ok">N/A</span></td><td>FROZEN</td></tr>
+</table>
+
+<!-- ============ BUG-674 ============ -->
+<h2 id="bug674">BUG-674 — Order-cancel note</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_BUG-674_API_CONTRACT_2026_11_15.md">BATCH-A_BUG-674_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th><th>Evidence</th></tr>
+<tr><td class="id">BA-02</td><td><span class="s p0">P0</span></td><td>Order Beta: return order cancel reason + note, and per-line cancel reason/note.</td><td>File 09: no cancel fields on Order Beta row.</td></tr>
+<tr><td class="id">BA-03</td><td><span class="s qa">QA check</span></td><td>Full-order cancel must NOT overwrite each line's <code>reason</code> with the order note.</td><td>Line 3969231 <code>reason</code> = order note.</td></tr>
+<tr><td class="id">BA-04</td><td><span class="s qa">QA check</span></td><td>Save order cancel note EMPTY when blank.</td><td>OD-674-A.</td></tr>
+<tr><td class="id">BA-24</td><td><span class="s p0">P0</span></td><td>Refund-cancel: FE sends Refund Note as <code>cancellation_note</code> on order-status-update. Confirm key.</td><td>Owner R14-Q1.</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-bug674">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td><code>cancellation_note</code> on order-status-update</td><td>EXISTING · <code>""</code> stored empty (BA-04)</td><td></td><td></td><td></td></tr>
+<tr><td>Refund-cancel note key (BA-24)</td><td><code>cancellation_note</code> (no new key)</td><td></td><td></td><td></td></tr>
+<tr><td>cancel-order-list <code>orders[].cancellation_note</code></td><td>EXISTING · returns stored note</td><td></td><td></td><td></td></tr>
+<tr><td>Line <code>reason</code> not overwritten (BA-03)</td><td>BEHAVIOUR</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta order <code>cancellation_reason</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta order <code>cancellation_note</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta order <code>canceled_by_name</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta line <code>cancel_reason</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta line <code>cancel_item_note</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ BUG-670 ============ -->
+<h2 id="bug670">BUG-670 — Item-cancel note</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_BUG-670_API_CONTRACT_2026_11_15.md">BATCH-A_BUG-670_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th><th>Evidence</th></tr>
+<tr><td class="id">BA-01</td><td><span class="s p0">P0</span></td><td>Accept + store an item cancel note on <code>PUT cancel-food-item</code>; return it per line in cancel-order-list, insights cancellations and Order Beta.</td><td>Keys tried (<code>cancel_reason_text</code>, <code>notes</code>, <code>cancellation_note</code>, <code>cancel_note</code>) → 200, none stored (files 20–26).</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-bug670">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td>cancel-food-item request <code>cancel_item_note</code></td><td><span class="s new">NEW</span> string, <code>""</code> allowed, max 255, stored per line</td><td></td><td></td><td></td></tr>
+<tr><td>cancel-order-list line <code>cancel_item_note</code></td><td><span class="s new">NEW</span> string|null</td><td></td><td></td><td></td></tr>
+<tr><td>insights-cancellations <code>items[].cancel_item_note</code></td><td><span class="s new">NEW</span> string|null (<code>items[].notes</code> unchanged)</td><td></td><td></td><td></td></tr>
+<tr><td>Order Beta line <code>cancel_item_note</code></td><td><span class="s new">NEW</span> (same as BUG-674)</td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-493 ============ -->
+<h2 id="cr493">CR-493 — Cancel reason / notes setting / auto-cancel</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-493_API_CONTRACT_2026_11_15.md">BATCH-A_CR-493_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th><th>Evidence</th></tr>
+<tr><td class="id">BA-05</td><td><span class="s p0">P0</span></td><td>Restaurant setting: cancel notes mandatory / optional (one key, order + item), default optional.</td><td>No key in settings-list (file 03).</td></tr>
+<tr><td class="id">BA-06</td><td>Info</td><td>Reasons list keeps <code>item_type</code> Order / Food.</td><td>File 06.</td></tr>
+<tr><td class="id">BA-23</td><td><span class="s p0">P0</span></td><td>Auto-cancel after last item: store reason + who; mark the source; Insights must not double count. Same for merge.</td><td>Orders 021028, 021319, 021432; 5 rows / ₹1,360 (<code>evidence/BATCH-A-G3/05_*, 07_*</code>).</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr493">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td><code>cancel_note_mandatory</code> in profile <code>restaurants[0]</code> + settings-list + update-settings</td><td><span class="s new">NEW</span> "Yes"/"No", default "No"</td><td></td><td></td><td></td></tr>
+<tr><td>Empty note when setting "Yes"</td><td>422 <code>CANCEL_NOTE_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>cancellation-reasons <code>[].item_type</code></td><td>EXISTING "Order"/"Food"</td><td></td><td></td><td></td></tr>
+<tr><td>Auto-cancel order <code>cancellation_reason</code> / <code>canceled_by</code></td><td>BEHAVIOUR · last item's reason / who (not null)</td><td></td><td></td><td></td></tr>
+<tr><td><code>cancel_source</code> on order (cancel list, insights, Order Beta)</td><td><span class="s new">NEW</span> "manual" / "auto_last_item" / "merge"</td><td></td><td></td><td></td></tr>
+<tr><td>Insights no double count</td><td>BEHAVIOUR · exclude auto_last_item / merge as order cancels</td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-492 ============ -->
+<h2 id="cr492">CR-492 — Complimentary right</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-492_API_CONTRACT_2026_11_15.md">BATCH-A_CR-492_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th><th>Evidence</th></tr>
+<tr><td class="id">BA-07</td><td><span class="s qa">QA check</span></td><td>Enforce <code>complementary_food</code> server-side (item and whole-order).</td><td>Files 31/32: comp accepted without right.</td></tr>
+<tr><td class="id">BA-08</td><td><span class="s p0">P0</span></td><td>Explain restaurant <code>complementary</code> flag ("No" on cafe103 / Palm House) — does it interact with the right?</td><td>Question.</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr492">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td>Right key <code>complementary_food</code></td><td>EXISTING</td><td></td><td></td><td></td></tr>
+<tr><td>New comp without right</td><td>403 <code>COMP_RIGHT_REQUIRED</code>; unchanged existing comp lines accepted</td><td></td><td></td><td></td></tr>
+<tr><td>Runtime comp with empty <code>complementary_reason</code></td><td>422 <code>COMP_REASON_REQUIRED</code> (catalogue comp exempt)</td><td></td><td></td><td></td></tr>
+<tr><td>Profile <code>complementary</code> flag meaning (BA-08)</td><td>EXISTING · answer only, no rename</td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-515 ============ -->
+<h2 id="cr515">CR-515 — Payment rights</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-515_API_CONTRACT_2026_11_15.md">BATCH-A_CR-515_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th><th>Evidence</th></tr>
+<tr><td class="id">BA-09</td><td><span class="s p0">P0</span></td><td>Uses EXISTING rights <code>update_payment</code>, <code>order_unpaid</code>; confirm the existing key for collect pay-later (add <code>collect_pay_later</code> only if none exists). Server-side enforcement.</td><td>Role lists 04/05/07.</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr515">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td>Collect pay-later right key</td><td>existing key as is, else <span class="s new">NEW</span> <code>collect_pay_later</code></td><td></td><td></td><td></td></tr>
+<tr><td>change-order-payment-method needs <code>update_payment</code></td><td>403 <code>RIGHT_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>make-order-unpaid needs <code>order_unpaid</code></td><td>403 <code>RIGHT_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>Bill payment on held order needs pay-later right</td><td>403 <code>RIGHT_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>cancel-food-item needs <code>order_cancel</code></td><td>403 <code>RIGHT_REQUIRED</code></td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-494 ============ -->
+<h2 id="cr494">CR-494 — PIN, thresholds, daily limits (all new)</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-494_API_CONTRACT_2026_11_15.md">BATCH-A_CR-494_API_CONTRACT_2026_11_15.md</a></p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th></tr>
+<tr><td class="id">BA-11</td><td><span class="s p0">P0</span></td><td>Separate PIN per action (cancel before serve, cancel after serve, cancel after bill, edit after bill, discount, complimentary). Set in backend admin. No endpoints today (file 30: all 404).</td></tr>
+<tr><td class="id">BA-12</td><td><span class="s p0">P0</span></td><td>Threshold per action in ₹ incl. tax; ≤ no PIN, &gt; PIN, 0 = always. Discount = ₹ of discount.</td></tr>
+<tr><td class="id">BA-13</td><td><span class="s p0">P0</span></td><td>Edit-after-bill PIN for EVERYONE.</td></tr>
+<tr><td class="id">BA-14</td><td><span class="s p0">P0</span></td><td>Daily per-user limits (cancel + discount, ₹ and count), server-side, per business day; over → PIN.</td></tr>
+<tr><td class="id">BA-15</td><td><span class="s p0">P0</span></td><td>APIs: config, verify, usage, reject without valid PIN.</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr494">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td><code>action</code> enum</td><td>cancel_before_serve · cancel_after_serve · cancel_after_bill · edit_after_bill · discount · complimentary</td><td></td><td></td><td></td></tr>
+<tr><td><code>GET /api/v2/vendoremployee/pin/config</code></td><td><span class="s new">NEW</span> <code>actions[]{action, pin_enabled, threshold_amount}</code>, <code>daily_limits{cancel_amount, cancel_count, discount_amount, discount_count}</code>; never returns PIN</td><td></td><td></td><td></td></tr>
+<tr><td><code>GET /api/v2/vendoremployee/pin/usage</code></td><td><span class="s new">NEW</span> <code>business_date, cancel_amount_used, cancel_count_used, discount_amount_used, discount_count_used</code></td><td></td><td></td><td></td></tr>
+<tr><td><code>POST /api/v2/vendoremployee/pin/verify</code></td><td><span class="s new">NEW</span> req <code>{action, pin, order_id, amount}</code> → <code>{verified, pin_token, expires_at}</code>; fail 403 <code>PIN_INVALID</code></td><td></td><td></td><td></td></tr>
+<tr><td><code>pin_token</code> on cancel-food-item, order-status-update, update-order after bill, bill payment/place-order (discount/comp)</td><td><span class="s new">NEW</span> optional string; missing when needed → 403 <code>PIN_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>Edit-after-bill PIN for everyone (BA-13)</td><td>BEHAVIOUR</td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-495 ============ -->
+<h2 id="cr495">CR-495 — Meal package at check-in + room comp limit (Parth, cc Gyan)</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-495_API_CONTRACT_2026_11_15.md">BATCH-A_CR-495_API_CONTRACT_2026_11_15.md</a> · Mockups M8, M8b, M5, M5c</p>
+<div class="box"><b>Why:</b> non-PMS outlets have no meal package and no guest count (Palm House probe: room order <code>room_info</code> = advance / balance / discount / price only).<br>
+<b>Owner rules:</b> package at check-in incl. walk-in (Room only / Breakfast / Half board / Full board) · OTA = channel meal plan · PMS + non-PMS same release · limit = ₹ per guest × guests, separate per meal, per business day · above limit → PIN · Room only → comp with PIN · <b>R16:</b> half board → guest chooses lunch or dinner at check-in; cashier picks the meal on each comp · <b>R18:</b> meal outside the package → comp with PIN.</div>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Ask</th></tr>
+<tr><td class="id">B-495-1</td><td>Meal package (+ half-board second meal) on check-in; returned on room list, room order <code>room_info</code>, folio.</td></tr>
+<tr><td class="id">B-495-2</td><td>Guest count at check-in, editable during stay.</td></tr>
+<tr><td class="id">B-495-3</td><td>Limit settings: ₹ per guest per meal for each package.</td></tr>
+<tr><td class="id">B-495-4</td><td>Server-side used counter per room, per meal, per business day.</td></tr>
+<tr><td class="id">B-495-5</td><td>Meal slot: cashier picks (R16); comp save carries the meal.</td></tr>
+<tr><td class="id">B-495-6</td><td>Enforcement: over limit / outside package / room only without valid PIN → reject.</td></tr>
+<tr><td class="id">B-495-7</td><td>OTA mapping to the 4 packages (PMS outlets), same release.</td></tr>
+</table>
+<p class="meta">Questions for Parth: (1) can the new fields be added to the existing check-in API without breaking it? (2) reuse the existing business-day / day-closure? (Half-board meal and meal-slot questions answered by owner R16.)</p>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr495">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td>check-in <code>meal_package</code></td><td><span class="s new">NEW</span> room_only · breakfast · half_board · full_board (required)</td><td></td><td></td><td></td></tr>
+<tr><td>check-in <code>half_board_meal</code></td><td><span class="s new">NEW</span> lunch · dinner (required when half_board, else null)</td><td></td><td></td><td></td></tr>
+<tr><td>check-in <code>guest_count</code></td><td><span class="s new">NEW</span> int ≥ 1</td><td></td><td></td><td></td></tr>
+<tr><td>Invalid check-in fields</td><td>422 <code>MEAL_PACKAGE_INVALID</code></td><td></td><td></td><td></td></tr>
+<tr><td><code>PUT /api/v2/vendoremployee/pos/room-guest-count</code></td><td><span class="s new">NEW</span> <code>{order_id, guest_count}</code></td><td></td><td></td><td></td></tr>
+<tr><td>Same 3 fields on get-room-list, <code>room_info</code>, folio, OTA</td><td><span class="s new">NEW</span> same names/types</td><td></td><td></td><td></td></tr>
+<tr><td>Setting <code>room_comp_limits</code></td><td><span class="s new">NEW</span> object per package → per meal ₹/guest</td><td></td><td></td><td></td></tr>
+<tr><td><code>GET /api/v2/vendoremployee/pos/room-comp-usage?order_id=</code></td><td><span class="s new">NEW</span> <code>business_date, guest_count, meal_package, half_board_meal, meals{breakfast|lunch|dinner:{in_package, limit, used, remaining}}</code></td><td></td><td></td><td></td></tr>
+<tr><td>Comp line <code>comp_meal</code> on room orders</td><td><span class="s new">NEW</span> breakfast · lunch · dinner; missing → 422 <code>COMP_MEAL_REQUIRED</code></td><td></td><td></td><td></td></tr>
+<tr><td>PIN rule on room comp</td><td>over remaining / outside package / room_only without <code>pin_token</code> → 403 <code>PIN_REQUIRED</code></td><td></td><td></td><td></td></tr>
+</table>
+
+<!-- ============ CR-443 ============ -->
+<h2 id="cr443">CR-443 (+CR-496) — Staff alerts</h2>
+<p class="status">Status: <span class="s wait">WAITING</span> · Contract: <a href="../contracts/BATCH-A_CR-443_API_CONTRACT_2026_11_15.md">BATCH-A_CR-443_API_CONTRACT_2026_11_15.md</a> · Mockup M9</p>
+<h3>Asks</h3>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th></tr>
+<tr><td class="id">BA-19</td><td><span class="s p0">P0</span></td><td>7 push events: cancel before serve, cancel after serve, unpaid, payment method changed, discount above ₹X, complimentary, cancel after bill print. Content: order, item, table/room, who, reason.</td></tr>
+<tr><td class="id">BA-20</td><td><span class="s p0">P0</span></td><td>Delivery via existing Firebase token (<code>fcm_token</code> at login); POS + phone.</td></tr>
+<tr><td class="id">BA-21</td><td><span class="s p0">P0</span></td><td>New right deciding who can receive; per-device mute is FE only.</td></tr>
+<tr><td class="id">BA-22</td><td><span class="s p0">P0</span></td><td>Setting for the "discount above ₹X" amount.</td></tr>
+</table>
+<h3>Reply checklist</h3>
+<table class="ck" data-testid="ck-cr443">
+<tr><th>Field / rule</th><th>Contract</th><th>Backend reply</th><th>Match</th><th>Date</th></tr>
+<tr><td>FCM <code>data.type</code> values</td><td><span class="s new">NEW</span> staff_cancel_before_serve · staff_cancel_after_serve · staff_order_unpaid · staff_payment_method_changed · staff_discount_above_limit · staff_complimentary · staff_cancel_after_bill</td><td></td><td></td><td></td></tr>
+<tr><td>FCM <code>data</code> keys</td><td><span class="s new">NEW</span> type, title, body, order_id, restaurant_order_id, table_name, room_no, item_names, amount, by_employee_id, by_employee_name, reason, note, created_at (+ old/new_payment_method)</td><td></td><td></td><td></td></tr>
+<tr><td>Right <code>receive_staff_alerts</code></td><td><span class="s new">NEW</span> (or existing key as is)</td><td></td><td></td><td></td></tr>
+<tr><td>Setting <code>alert_discount_above_amount</code></td><td><span class="s new">NEW</span> number ₹; 0/missing → no alert</td><td></td><td></td><td></td></tr>
+</table>
+
+<h2 id="p1">P1 / phase 2 (not in Batch A P0 — no contract yet)</h2>
+<table>
+<tr><th>ID</th><th>Pri</th><th>Ask</th></tr>
+<tr><td class="id">BA-10</td><td><span class="s ph2">Phase 2</span></td><td>Separate item-cancel right key. Phase 1 uses <code>order_cancel</code>.</td></tr>
+<tr><td class="id">BA-16</td><td><span class="s ph2">Phase 2</span></td><td>OTP for all PIN actions (CR-529).</td></tr>
+<tr><td class="id">BA-17</td><td><span class="s p1">P1</span></td><td>Whole-order comp as existing 100% "Complementary" preset, reason required, in Discount report (CR-445).</td></tr>
+<tr><td class="id">BA-18</td><td><span class="s p1">P1</span></td><td>Whole-order comp: right required, no PIN; normal orders only (CR-445).</td></tr>
+</table>
+
+<h2 id="release">Release impact (confirm before release)</h2>
+<ul>
+<li><b>R-1:</b> comp hidden for everyone without <code>complementary_food</code>; owners lacking it today (cafe103 RID 644, Palm House RID 541) lose comp → backend updates role defaults first.</li>
+<li><b>R-2:</b> item cancel moves from <code>food</code> to <code>order_cancel</code>. Owner approved.</li>
+<li><b>R-3:</b> <code>/local-printer-setup</code> requires login (FE only). Confirm no printer device opens it without login.</li>
+</ul>
+
+<h2 id="reply">How to reply</h2>
+<div class="box rule">Answer per ID: ✅ OK · ⏱ ETA · ❌ not feasible (reason). Do not rename or change any field (Rule 3). Save replies as received: Gyan <code>backend_replies/BACKEND_REPLY_BATCH-A_&lt;date&gt;.md</code> · Parth <code>backend_replies/BACKEND_REPLY_CR-495_&lt;date&gt;.md</code>. The FE agent then fills the checklists on this page and updates each CR status.</div>
+<p class="meta">Sources: <code>impact/BATCH-A_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md</code> · <code>change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md</code> (R1–R21) · evidence <code>evidence/BATCH-A-IA/probes_2026_11_14/</code>, <code>evidence/BATCH-A-G3/</code> · cross-batch tracker <code>backend_briefs/BACKEND_BRIEF_TRACKER.html</code>.</p>
+</body>
+</html>

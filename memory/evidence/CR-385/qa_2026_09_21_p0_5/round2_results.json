@@ -1,0 +1,70 @@
+{
+  "RT-1_BUG-435_caseC": {
+    "pass": true,
+    "step1_delta": {
+      "lr": 1,
+      "board": 1,
+      "kpis": 1
+    },
+    "step2_debounced_delta_lr": 0,
+    "batch_done_at_s": 16.42309546470642,
+    "focus_at_s": 23.424594163894653
+  },
+  "RT-2_BUG-434_recovery": {
+    "pass": true,
+    "inflight_state_ok": true,
+    "recovered_within_30s": true,
+    "elapsed_s": 3.562685489654541,
+    "local_reservations_requests_for_click": 1,
+    "request_events": [
+      {
+        "t": 30.60409164428711,
+        "kind": "req",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+      },
+      {
+        "t": 31.72847890853882,
+        "kind": "resp",
+        "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+        "status": 200
+      }
+    ]
+  },
+  "RT-3_BUG-434_rooms_retry": {
+    "pass": true,
+    "inflight_ok": true,
+    "recovered": true,
+    "elapsed_s": 2.037606954574585
+  },
+  "RT-4_BUG-435_caseB_coalesce": {
+    "pass": true,
+    "lr_requests": 1
+  },
+  "REG-1": {
+    "tile_counts": {
+      "arrivals_count": 0,
+      "departures_count": 2,
+      "inhouse_count": 2
+    },
+    "late_selected": "true",
+    "late_count": 10,
+    "today_count": 0,
+    "chip_rule_ok": true,
+    "expansion_count": 1,
+    "one_expansion_ok": true,
+    "no_channel_manager": true,
+    "dup_testids_arrivals": [
+      "fd-row-17-checkin-btn",
+      "fd-row-17-kebab"
+    ],
+    "dup_testids_rooms": [],
+    "no_duplicates_ok": false,
+    "pass": false
+  },
+  "console_errors_non_ignored": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ]
+}

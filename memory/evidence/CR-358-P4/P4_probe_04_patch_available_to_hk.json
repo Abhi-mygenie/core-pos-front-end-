@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "PATCH",
+    "path": "/api/v2/vendoremployee/aiosell/room-status/8528",
+    "body": {
+      "status": "hk"
+    }
+  },
+  "body": {
+    "status": true,
+    "message": "Room marked for housekeeping.",
+    "data": {
+      "room": {
+        "restaurant_table_id": 8528,
+        "table_no": "r1",
+        "title": null,
+        "manual_status": "hk",
+        "room_operational_status_at": "2026-09-04 03:00:51"
+      },
+      "inventory_push_warning": null
+    }
+  }
+}

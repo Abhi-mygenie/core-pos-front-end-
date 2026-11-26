@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BACKEND_BRIEF_BATCH-D_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BACKEND_BRIEF_BATCH-D_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BACKEND_BRIEF_BATCH-D_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>Backend Brief: Batch D (Order Cards · Customer Link) · 2026-11-15</h1>
+<p>To: Gyan (backend) · FE: Abhishek · Client: ALL · Gate 2 closed on this brief.
+Sources: <code>impact/BATCH-D_IMPACT_ANALYSIS_SUMMARY_2026_11_15.md</code>, <code>impact/CR-525_IMPACT_ANALYSIS.md</code>, <code>impact/CR-523_IMPACT_ANALYSIS.md</code>, <code>change_requests/BATCH_D_OWNER_DECISIONS_2026_11_14.md</code>, evidence <code>evidence/BATCH-D-IA/probes_2026_11_15/</code>.
+Owner rule: changes are ADDITIVE. Existing behaviour must keep working.</p>
+<h2>1. Reset "bill printed" when items are added after print (CR-525 + CR-521). <strong>Release blocker</strong> (OD-525-E: FE waits for this)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BD-01">BD-01</td>
+<td>On <code>PUT /api/v2/vendoremployee/order/update-place-order</code> with a <strong>non-empty <code>cart-update</code></strong>, set <code>bill_print = 'No'</code> on the order and publish the usual <code>update-order</code> socket so every POS refreshes.</td>
+<td>Probe P2 (order id 1578761): after <code>print/update-print-status bill_print=Yes</code>, adding 1 item returned 200 and <code>bill_print</code> <strong>stayed <code>Yes</code></strong> (<code>P_P2_07_after_edit_readback.json</code>).</td>
+</tr>
+<tr>
+<td id="BD-02">BD-02</td>
+<td><strong>Do NOT reset</strong> on a customer-only update (empty <code>cart-update</code>, see §2).</td>
+<td>CR-523 uses this call for customer save.</td>
+</tr>
+<tr>
+<td id="BD-03">BD-03</td>
+<td>Confirm other edit paths that change the bill amount should also reset: item cancel (<code>cancel-food-item</code>), quantity change, transfer-food-item, discount apply (<code>ORDER_DISCOUNT.MANAGE</code>). Propose a list and the FE will follow it.</td>
+<td>Question.</td>
+</tr>
+<tr>
+<td id="BD-04">BD-04</td>
+<td>Keep <code>bill_print_count</code> as is (history). Only the <code>bill_print</code> flag resets.</td>
+<td><code>P2_04_mark_bill_printed.json</code> returns <code>bill_print_count</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Customer-only update on a placed order (CR-523)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BD-05">BD-05</td>
+<td>Confirm <code>update-place-order</code> with <code>cart-update: []</code> + <code>print_kot:'No'</code> + <code>printer_agent: []</code> is a supported "customer only" call (no KOT, no new lines, totals unchanged).</td>
+<td>Probe P3: 200, amount 420 unchanged, lines unchanged, <code>user_id</code> linked (51320), change → 51321 (<code>P3_02</code>-<code>P3_06</code>).</td>
+</tr>
+<tr>
+<td id="BD-06">BD-06</td>
+<td><strong>Remove customer</strong> (OD-523-C): today an empty <code>cust_name</code> + <code>cust_mobile</code> keeps the old customer (<code>P3_08</code>: still 51321). Add support for unlinking (e.g. <code>cust_remove: true</code>, or treat empty name + mobile as unlink). Propose the field.</td>
+<td>Owner chose "Allow remove".</td>
+</tr>
+<tr>
+<td id="BD-07">BD-07</td>
+<td><code>order_edit_count</code> goes +1 on every customer-only call (<code>P3_04</code>: 2, <code>P3_06</code>: 3, <code>P3_08</code>: 4). Can a customer-only update skip the edit count / edit log so reports don't show fake "edits"?</td>
+<td>Question.</td>
+</tr>
+<tr>
+<td id="BD-08">BD-08</td>
+<td>The response text says "Items added to order successfully!" even when no items were sent. Optional: a clearer message for the customer-only case.</td>
+<td>Cosmetic.</td>
+</tr>
+</tbody>
+</table>
+<h2>3. Test data to clean (owner asked the team)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BD-09">BD-09</td>
+<td>Delete the probe customers on CAFE 103 (restaurant 644): user <strong>51320</strong> "TEST_BATCHD_CUST" 9999900001, user <strong>51321</strong> "TEST_BATCHD_CUST2" 9999900002. Test order #021544 (id 1578761) is cancelled. Remove it from reports if needed.</td>
+</tr>
+</tbody>
+</table>
+<h2>Not needed from the backend</h2>
+<ul>
+<li>BUG-669: <code>add-addon</code> price 0 → 201; <code>add-food</code> / <code>foods/{id}</code> variation <code>optionPrice "0"</code> → 200. FE-only fix (the variation case is still being checked by the owner, and the Aggregator endpoint was not probed).</li>
+<li>BUG-667, BUG-673: FE only.</li>
+<li>CR-525 setting: uses the existing <code>order_edit_access</code> (CR-489). No new key.</li>
+</ul><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

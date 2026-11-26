@@ -1,0 +1,538 @@
+# CR-358 — Gate 2: Impact Analysis
+## PMS Module + Channel Manager Integration (AIOSELL)
+
+**CR ID:** CR-358 *(was labelled CR-351 — renumbered; see §1 GAP-01)*
+**Date:** 2026-08-28 | **Updated:** 2026-08-31 (OD answers + probe results)
+**Agent Role:** PLANNING — Gate 2 (Impact Analysis only)
+**Gate:** 2 ✅ CLOSED — All 8 ODs answered, all probes run, all designs complete. Gate 3 READY.
+**Code Reality:** NONE — no frontend AIOSELL/PMS code exists anywhere in `src/`
+**Risk:** HIGH (new module, AIOSELL API integration — DashboardPage + RoomCheckInModal CONFIRMED NOT TOUCHED per OD-01)
+
+---
+
+## §OD — Owner Decisions Log (2026-08-31)
+
+| ID | Question | Answer | Source |
+|---|---|---|---|
+| OD-01 | PMS check-in page vs RoomCheckInModal.jsx | **(b) CO-EXIST** — full parallel build. RoomCheckInModal.jsx + DashboardPage.jsx NOT touched | Owner confirmed |
+| OD-02 | Does ROOM_CHECK_IN auto-link OTA booking? | **No** — FE must pass `booking_id` explicitly in payload | Probe VERIFY-02 (422 confirms field required) |
+| OD-03 | Where does AIOSELL setup UI live? | **(a) Inside S8** — "Connect AIOSELL" section at top of Channel Manager panel | Owner confirmed |
+| OD-04 | Where does room mapping UI live? | **(a) Inside S8** — new "Room Mapping" tab inside Channel Manager | Owner confirmed |
+| OD-05 | Self check-in (S5) — MVP or Phase 2? | **Phase 2** — S5 screen entirely out of CR-358 scope | Owner confirmed |
+| OD-06 | "Save as Booking" — which approach? | **(b) Backend builds direct-reservation** — endpoint confirmed in handover_2, has BUG-BE-03 | Probe confirmed endpoint exists |
+| OD-07 | HK/OOO room state — FE or backend? | **(b) Backend field** — must persist across devices/sessions | Owner confirmed "should be from backend" |
+| OD-08 | Decode meal plan from rateplanCode? | **(a) YES — Meal Plan Badge** — decode suffix: ep→Room Only, cp→Breakfast Incl., map→Half Board, ap→Full Board | ✅ CONFIRMED |
+
+## §NS — New Scope Decisions (2026-08-31)
+
+| ID | Question | Answer |
+|---|---|---|
+| NS-01 | New S8 endpoints in scope? | **YES** — push-rates, fetch-rates, push-inventory-restrictions, push-rate-restrictions, mark-no-show all in S8 |
+| NS-02 | Dashboard KPIs — wait or approximate? | **Wait for backend** — `/aiosell/dashboard-kpis` endpoint to be built by backend |
+
+## §PROBE — Curl Verification Results (2026-08-31, restaurant 69)
+
+| Probe | Endpoint | Result | Status |
+|---|---|---|---|
+| VERIFY-04 | GET /aiosell/status | `is_running: true`, hotel_code: sandbox-pms | ✅ CLOSED |
+| VERIFY-05 | GET /aiosell/rooms | `mapping_complete: true`, `can_push_inventory: true`, 5 rooms | ✅ CLOSED |
+| VERIFY-01 | GET /aiosell/local-reservations | **HTTP 500** — RelationNotFoundException [order] on AiosellReservationRoom | 🔴 BUG-BE-01 |
+| VERIFY-02 | POST user-group-check-in (Online + booking_id) | **HTTP 422** — same RelationNotFoundException | 🔴 BUG-BE-02 |
+| VERIFY-03 | POST /aiosell/fetch-inventory | HTTP 200 — executive=5 available | ✅ CLOSED |
+| B-06 | POST /aiosell/direct-reservation | **HTTP 500** — ENUM 'Direct' not in user_id_documents.booking_type | 🔴 BUG-BE-03 |
+| B-08 | GET /aiosell/dashboard-kpis | **HTTP 404** — endpoint does not exist yet | ⏳ BACKEND TO BUILD |
+
+## §RE-PROBE — 2026-09-01 (post backend fix, restaurant 69, agent-verified)
+
+Backend reported fixes live on preprod (`reply_2.md`). Re-probed directly with owner credentials — both confirmed.
+
+| Probe | Endpoint | Result | Status |
+|---|---|---|---|
+| VERIFY-01 (retest) | `GET /aiosell/local-reservations?view=arrivals` | **HTTP 200** — `data.reservations[]` with `operational_status`, per-room `line_status`, `guest{}`, `rooms[]` | ✅ **CLOSED — AGENT VERIFIED 2026-09-01** |
+| B-06 (retest) | `POST /aiosell/direct-reservation` | **HTTP 201** — `channel="Direct"`, `booking_id=MG-69-...`, `operational_status="pending"` | ✅ **CLOSED — AGENT VERIFIED 2026-09-01** |
+
+**Still open (backend-confirmed via reply_3.md, agent-verified 2026-09-01):**
+
+| # | Endpoint | Status |
+|---|---|---|
+| BUG-BE-02 | `POST user-group-check-in` (`booking_type=Online` + `booking_id`) | ✅ **CONFIRMED FIXED — agent re-verified** (booking `BDC8899464`: `operational_status=in_house`, `line_status=checked_in`, `order_id=1232181`) |
+| BUG-BE-04 | `POST user-group-check-in` (`booking_type=Direct` + `booking_id`) | ✅ **CONFIRMED FIXED — agent re-verified** (booking `MG-69-69BCC4D3-...`: `operational_status=in_house`, `line_status=checked_in`, `order_id=1232179`) |
+| — | `POST /aiosell/mark-no-show` | Only 200 for `booking.com`/`gommt` pending — still UNVERIFIED (optional, not a Gate 3 blocker) |
+
+**New backend deliveries (handover_3.md — 2026-09-02):**
+
+| Probe | Endpoint | Result | Status |
+|---|---|---|---|
+| H3-01 | `GET /aiosell/room-status-board` | Returns ALL `rtype=RM` rooms with pre-computed `display_status` (5 states: available/occupied/booked/hk/ooo). `guest{}` block when occupied, `reservation{}` when booked. `auto_hk_on_rm_checkout` setting included. Supersedes planned two-source merge. | ✅ **DELIVERED 2026-09-02** |
+| H3-02 | `PATCH /aiosell/room-status/{table_id}` | Accepts `hk/ooo/available`. 422 if room occupied. `inventory_push_warning` in response if push fails. OOO reduces AIOSELL inventory; HK does not. Auto-HK fires on RM checkout via `order-bill-payment` V2. Migration required. | ✅ **DELIVERED 2026-09-02 — MISSING-02 RESOLVED** |
+
+**FE note from backend (important for aiosellTransform.js later):** `view=in_house` only returns a reservation once today falls between `checkin`/`checkout` — for testing/future dates use `view=all&booking_id=`. Also, check-in `room_id` must map to the SAME Aiosell `room_code` as the reservation line (a `suite` booking needs a RM mapped to `suite`, not `executive`).
+
+## §BUGS — Backend Blockers (must fix before FE implementation)
+
+**BUG-BE-01 + BUG-BE-02 (same root cause)** — ✅ **BOTH FULLY RESOLVED AND AGENT-VERIFIED 2026-09-01.** BUG-BE-01 (local-reservations 200) and BUG-BE-02 (OTA check-in, `booking_id=BDC8899464` → `in_house`/`checked_in`) both confirmed live.
+- Root cause: Migration `2026_08_31_160000_aiosell_reservation_room_assignments.php` NOT run on preprod. `AiosellReservationRoom` model missing `order` HasOne relationship.
+- Fix: Run migration on preprod + confirm model relationship added.
+- Blocks: S1 Front Desk, S2 Tape Chart, S4 Check-In (OTA), S9 Arrivals, S10 Departures — **ALL UNBLOCKED**
+
+**BUG-BE-03 + BUG-BE-04** — ✅ **BOTH FULLY RESOLVED AND AGENT-VERIFIED 2026-09-01.** BUG-BE-03 (direct-reservation 201) and BUG-BE-04 (Direct check-in, `booking_id=MG-69-69BCC4D3-...` → `in_house`/`checked_in`, was 403) both confirmed live.
+- Root cause: `user_id_documents.booking_type` ENUM only has WalkIn, Online. Value "Direct" missing.
+- Fix: `ALTER TABLE user_id_documents MODIFY booking_type ENUM('WalkIn','Online','Direct')`
+- Blocks: S3 New Booking "Save as Booking" + Direct check-in (§6.4) — **ALL UNBLOCKED**
+
+**MISSING-01 — /aiosell/dashboard-kpis**
+- ⏳ **STILL NOT BUILT (as of 2026-09-02)**
+- Endpoint does not exist. Backend to build: occupancy_pct, arrivals_today, departures_today, in_house_count.
+- Blocks: S1 KPI strip — non-blocking skeleton state per NS-02, does not block Gate 3.
+
+**MISSING-02 — `GET /aiosell/room-status-board` + `PATCH /aiosell/room-status/{table_id}`**
+✅ **DELIVERED 2026-09-02 via handover_3.md — MISSING-02 FULLY RESOLVED**
+- `GET /aiosell/room-status-board` — purpose-built endpoint replacing the planned GET_ROOM_LIST + GET /aiosell/rooms two-source merge. Returns ALL `rtype=RM` rooms with server-side pre-computed `display_status` (5 states: available/occupied/booked/hk/ooo). Resolves GAP-08.
+- `PATCH /aiosell/room-status/{table_id}` — accepts `hk/ooo/available`. OD-07 confirmed: backend field, persists across devices. 422 if room occupied. `inventory_push_warning` in response if push fails.
+- **Migration required before Phase 4 QA:** `php artisan migrate --path=database/migrations/2026_09_02_140000_add_room_operational_status.php` (adds `room_operational_status`, `room_operational_status_at`, `room_operational_status_by` on `restaurant_table`; `auto_hk_on_rm_checkout` on `restaurant_settings`).
+- **Phase 4 entry gate: CLEARED.**
+
+**Gate 3 status: ALL 4 backend blockers (BUG-BE-01/02/03/04) CLOSED. No remaining hard backend blockers for Phase 1-3 scope.**
+
+---
+
+## Boot Sequence Completed
+
+```
+✅ CONTROL_DASHBOARD.md — read
+✅ Intake doc — CR-351_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md — read
+✅ Design Spec — plans/CR-351_DESIGN_SPEC_2026_08_27.md — read (709 lines)
+✅ FILE_OWNERSHIP.md — read (983 lines)
+✅ OPEN_GAPS_REGISTER.md — read
+✅ roomService.js — read (source code reality check)
+✅ roomListTransform.js — read (response shape confirmed)
+✅ DashboardPage.jsx — room trigger logic traced
+✅ RoomCheckInModal.jsx — field signatures + flags confirmed
+✅ CollectPaymentPanel.jsx — AIOSELL inventory call grep (NONE found)
+✅ registry.json — CR-351 conflict confirmed
+✅ API handover doc (handover_1.md) — full AIOSELL API spec read
+```
+
+---
+
+## §0 — Step 0: Code Reality Check
+
+```bash
+grep -rn "aiosell|AIOSELL|pmsService|channelManager|frontDesk|tapeChart|selfCheck" \
+  /app/frontend/src/ --include="*.js" --include="*.jsx"
+# → ZERO RESULTS
+```
+
+**Code Reality: NONE**
+
+No AIOSELL integration, PMS module, channel manager panel, tape chart, self check-in, front desk dashboard, arrivals page, or departures page exists in `src/`.
+
+**Existing room-related code (NOT PMS — must not be confused):**
+
+| File | What it does | Relation to PMS |
+|---|---|---|
+| `roomService.js` | `checkIn()` → `ROOM_CHECK_IN`, `getRoomList()` → `GET_ROOM_LIST`, `splitRoomOrder()`, `recordPartialPayment()` | REUSE `checkIn()` for PMS check-in flow |
+| `roomListTransform.js` | Normalises `/get-room-list` (in-house rooms only) | REUSE for In-House Guests list (S6) |
+| `RoomCheckInModal.jsx` | Existing 1362-line check-in modal triggered from Dashboard room cards | CONFLICT — see §1 |
+| `RoomOrdersReportPage.jsx` | Read-only room orders report | NOT TOUCHED |
+| `DashboardPage.jsx` | Mounts `RoomCheckInModal`, manages `checkInRoom` state | CONFLICT — see §1 |
+
+---
+
+## §1 — Step 1: Conflict Pre-Check
+
+### CONFLICT-01 — CR-358 ID RENUMBER (CRITICAL)
+
+**Registry shows:** `CR-351: status=IMPLEMENTED, title="Local Printer Setup: Bill Content + Bill Style Tabs"`
+
+The PMS design was erroneously assigned CR-351. This is a **registry collision**. The PMS CR must be renumbered.
+
+Next available ID: **CR-358** (CR-352 = Printer Routing Gate, QA PASS).
+
+**Files requiring rename:**
+- `/app/memory/change_requests/CR-351_PMS_CHANNEL_MANAGER_CHECKIN_REDESIGN_INTAKE.md` → `CR-358_...`
+- `/app/memory/plans/CR-351_DESIGN_SPEC_2026_08_27.md` → `CR-358_...`
+- `/app/memory/impact/CR-351_IMPACT_ANALYSIS.md` → `CR-358_...` (previous placeholder)
+- All design mockup HTML files (the cr-351 references in comments)
+
+**Action:** Register CR-358 in `registry.json`. Rename files. Owner to confirm renumber.
+
+---
+
+### CONFLICT-02 — `RoomCheckInModal.jsx` (HIGH RISK)
+
+**Recent modifications:** CR-350 (2026-08-26), BUG-351 (2026-08-26), BUG-360 (2026-08-26), CR-129 (2026-08-05), BUG-092 (2026-06-15)
+
+**Conflict:** The new PMS check-in page (S4) calls the **same endpoint** (`ROOM_CHECK_IN = /api/v1/vendoremployee/pos/user-group-check-in`) as `RoomCheckInModal.jsx`. Two UI paths will call the same backend.
+
+**Architectural decision needed (OD-01):** See §6 Owner Decision Queue.
+
+**Execution order:** CR-358 must execute AFTER confirming no in-flight changes to `RoomCheckInModal.jsx` (CR-350 is IMPLEMENTED, no active CRs queued on it).
+
+---
+
+### CONFLICT-03 — `Sidebar.jsx` BUG-361 localStorage sweep
+
+BUG-361 swept 68 files (2026-08-26) to add localStorage persistence for sidebar state using key `mygenie_sidebar_expanded`. Any new PMS section added to `Sidebar.jsx` must follow the **same BUG-361 pattern**:
+- Each new Sidebar entry must use the existing `isExpanded` state driven by localStorage
+- The "Rooms & Reservations" section collapse/expand state must persist via the same mechanism
+
+**Execution:** CR-358 Sidebar work must grep BUG-361 pattern before writing code.
+
+---
+
+### CONFLICT-04 — `DashboardPage.jsx` hotspot (MEDIUM)
+
+**Last touched:** BUG-358 (sidebar persistence). Room cards are shown as columns on Dashboard. `checkInRoom` state triggers `RoomCheckInModal`.
+
+**Risk:** If CR-358 routes room check-in through the new PMS check-in page (`/pms/check-in`), the `checkInRoom` state + `RoomCheckInModal` mount in `DashboardPage.jsx` becomes redundant. The two systems must not both exist or the user experience forks.
+
+**Decision needed (OD-01)** — see §6.
+
+---
+
+## §2 — Risk Classification
+
+**Risk: HIGH**
+
+| Trigger | Risk Level |
+|---|---|
+| Touches `DashboardPage.jsx` (hotspot R5) | HIGH |
+| Touches `RoomCheckInModal.jsx` (recent, complex) | HIGH |
+| Touches `Sidebar.jsx` (BUG-361 sweep) | HIGH |
+| New AIOSELL API integration (unproven in FE) | HIGH |
+| New public-facing route (self check-in — auth bypass risk) | HIGH |
+| New `App.js` routes (8+) | MEDIUM |
+
+**Fast Lane:** NOT eligible. HIGH risk, touches multiple hotspot files, API integration.
+
+---
+
+## §3 — API-to-Design Full Mapping
+
+### A. Existing APIs (already wired, REUSE for PMS)
+
+| Endpoint constant | URL | Used in PMS screen | Notes |
+|---|---|---|---|
+| `ROOM_CHECK_IN` | `/api/v1/vendoremployee/pos/user-group-check-in` | S4 Staff Check-In, S5 Self Check-In (indirectly) | Accepts `booking_type: "WalkIn"` or `"Online"`. Sends `room_id[]`, `total_adult`, `booking_for`, `checkin_date`, `checkout_date`, `room_price`, `advance_payment`, `order_note` |
+| `GET_ROOM_LIST` | `/api/v2/vendoremployee/get-room-list` | S6 In-House Guests, S7 Room Status Board (occupied rooms) | Returns ONLY currently-occupied rooms. Includes: `table.id`, `table.table_no`, `order_id`, `user.f_name`, `user.l_name`, `user.phone` |
+| `ROOM_RECORD_PAYMENT` | `/api/v2/vendoremployee/pos/room-payment` | S10 Departures → existing CollectPaymentPanel | Unchanged (D3 decision) |
+
+### B. New AIOSELL APIs (from handover — NOT yet wired in FE)
+
+| Endpoint | Method | URL | PMS Screen | Fields |
+|---|---|---|---|---|
+| Get AIOSELL status | GET | `/api/v2/vendoremployee/aiosell/status` | S8 Channel Manager | `service_status`, `is_running`, `is_active`, `hotel_code`, `pms_slug` |
+| Save property | POST | `/api/v2/vendoremployee/aiosell/property` | AIOSELL Setup UI (GAP-04) | `hotel_code`, `pms_slug`, `api_base_url`, `api_key`, `webhook_secret`, `is_active` |
+| Start service | POST | `/api/v2/vendoremployee/aiosell/start` | S8 Channel Manager `[Sync Now]` | — |
+| Stop service | POST | `/api/v2/vendoremployee/aiosell/stop` | S8 Channel Manager | — |
+| Get rooms + mapping | GET | `/api/v2/vendoremployee/aiosell/rooms` | Room Mapping UI (GAP-05) + S7 Available rooms | `local_rooms[]`, `aiosell.body.rooms[]`, `mappings[]`, `availability{}`, `mapping.can_push_inventory` |
+| Save room mapping | POST | `/api/v2/vendoremployee/aiosell/room-mapping` | Room Mapping UI (GAP-05) | `mappings[{restaurant_table_id, aiosell_room_code, aiosell_rateplan_code}]` |
+| Push inventory | POST | `/api/v2/vendoremployee/aiosell/push-inventory` | S8 Channel Manager `[Sync All Now]` | `start_date`, `end_date` |
+| Fetch inventory | POST | `/api/v2/vendoremployee/aiosell/fetch-inventory` | S8 Channel Manager (inventory bars) | `start_date`, `end_date` → `updates[].rooms[].roomCode`, `available` |
+| Fetch reservations from AIOSELL CM | POST | `/api/v2/vendoremployee/aiosell/fetch-reservations` | S8 sync log | `start_date`, `end_date`, `import: bool` |
+| Inbound webhook (Aiosell → MyGenie) | POST | `/api/v2/aiosell/reservations` (PUBLIC) | NOT a FE call — backend receives this | Creates `aiosell_reservations`, `aiosell_guests`, `aiosell_reservation_rooms`, `user_id_documents` |
+| WalkIn check-in (existing) | POST | `/api/v1/vendoremployee/pos/user-group-check-in` | S4 Check-In, S3 New Booking | `room_id[]`, `booking_type`, `total_adult`, `total_children`, `booking_for`, `checkin_date`, `checkout_date`, `order_amount`, `advance_payment`, `balance_payment`, `id_type`, `name`, `phone`, `firm_name`, `firm_gst` |
+
+### C. AIOSELL Reservation Webhook → PMS UI Field Mapping
+
+| AIOSELL Webhook Field | PMS Screen | UI Element | Status |
+|---|---|---|---|
+| `action` (book/modify/cancel) | All screens | Reservation status | ✅ Mapped |
+| `channel` (Booking.com etc.) | S1 Front Desk, S2 Tape Chart, S4 Check-In, S9 Arrivals | Source pill (favicon + name) | ✅ Mapped |
+| `bookingId` | S4 Check-In header | "BK-88213" reference | ✅ Mapped |
+| `cmBookingId` | S4 Check-In header | "CM: AAABBB123" | ✅ Mapped |
+| `bookedOn` | — | NOT shown | ⚠ Design omits booked-on date — low priority |
+| `checkin` | S1, S2, S4, S9, S10 | Check-in date field | ✅ Mapped |
+| `checkout` | S1, S2, S4, S9, S10 | Check-out date field | ✅ Mapped |
+| `specialRequests` | S1 SR badge, S4 pre-filled amber box, S9 SR dot | Orange SR badge when non-empty | ✅ Mapped |
+| `pah` | S1 Balance column, S4 PAH badge | `false`→"Prepaid" badge; `true`→"PAY AT HOTEL" | ✅ Mapped |
+| `guest.firstName + lastName` | S1, S4, S9 | Guest name | ✅ Mapped |
+| `guest.phone` | S1, S4, S9 | Phone (read-only pre-fill) | ✅ Mapped |
+| `guest.email` | S4 | Email (read-only pre-fill) | ✅ Mapped |
+| `guest.address` | S4 | Collapsible section | ⚠ Design notes "collapsible" but no screen shows it — GAP-13 |
+| `rooms[].roomCode` | S2 tape chart rows, S4 Room Type | Group header + booked type field | ✅ Mapped |
+| `rooms[].rateplanCode` | S4 Rate Plan badge | Grey pill next to rate | ✅ Mapped (format will be AIOSELL native e.g., `executive-s-ep`) |
+| `rooms[].occupancy.adults` | S4 Adults field, S1/S9 "2A" in GUESTS column | Pre-filled from webhook | ✅ Mapped |
+| `rooms[].occupancy.children` | S4 Children field, S9 "1C" | Pre-filled from webhook | ✅ Mapped |
+| `rooms[].prices[].sellRate` | S4 Rate field (locked with AIOSELL badge) | Locked, per-night rate | ✅ Mapped |
+| `amount.amountAfterTax` | S1 Balance, S9 Balance | Balance due column | ✅ Mapped |
+| `amount.commission` | S8 Channel Manager | Revenue after commission | ⚠ NOT shown in any screen currently — GAP noted |
+| `amount.tcs`, `amount.tds` | — | NOT shown | Low priority |
+| Meal plan (from rateplanCode suffix: ep/cp/map/ap) | — | NOT decoded/shown | ⚠ GAP-11 |
+| `rooms[].prices[]` (per-night breakdown) | — | NOT shown in any screen | ⚠ Design shows single rate, not per-night breakdown |
+
+---
+
+## §4 — All Gaps Identified (17 total)
+
+### P0 — BLOCKERS (must resolve before Gate 3 can start)
+
+**GAP-01: CR-351 ID collision — must renumber to CR-358**
+- **Type:** Registry/Admin
+- **Detail:** `registry.json` CR-351 = "Local Printer Setup" (IMPLEMENTED). PMS design uses same ID. Collision in registry, change_requests folder, plans folder, impact folder, mockups.
+- **Resolution:** Rename all files to CR-358. Register in registry.json as new CR-358.
+- **Owner decision needed:** Confirm renumber is acceptable.
+
+---
+
+### P1 — BLOCKERS (cannot implement without resolving)
+
+**GAP-02: No GET endpoint for local `aiosell_reservations`**
+- **Type:** Missing backend API
+- **Affects:** S2 Tape Chart, S9 Arrivals, S10 Departures, S1 Front Desk
+- **Current state:** `fetch-reservations` reads AIOSELL CM (not local DB). Sandbox returns empty. No `GET /aiosell/local-reservations` exists.
+- **Why it matters:** The tape chart must show bookings from `aiosell_reservations` (local DB). The arrivals list must show today's check-ins (OTA + walk-in) from local records. Without this, S1/S2/S9/S10 cannot be populated.
+- **Required backend endpoint:** `GET /api/v2/vendoremployee/aiosell/local-reservations?start_date=X&end_date=Y` returning: `[{ id, bookingId, cmBookingId, channel, checkin, checkout, status, specialRequests, pah, guest: {firstName, lastName, phone, email}, rooms: [{roomCode, rateplanCode, occupancy, prices}], amount }]`
+- **Alternative:** Does `fetch-reservations` with `import: true` backfill local DB AND return local records? **Must curl-probe before Gate 3.**
+
+**GAP-03: OTA guest check-in → physical room assignment API unclear**
+- **Type:** API contract gap
+- **Affects:** S4 Staff Check-In (OTA flow)
+- **Current state:** `ROOM_CHECK_IN` (`/api/v1/vendoremployee/pos/user-group-check-in`) accepts `booking_type: "WalkIn" | "Online"`. But when `booking_type="Online"`, does it link the check-in to `aiosell_reservations.id`? No `aiosell_reservation_id` field is in the current `roomService.checkIn()` FormData.
+- **Why it matters:** When staff checks in an OTA guest, the `user_id_documents` record must be linked to the AIOSELL reservation so the reservation shows as "Checked In" on the tape chart.
+- **Owner decision needed (OD-02):** Does `ROOM_CHECK_IN` already handle Online booking linkage? Or does it need a new field?
+
+**GAP-04: No AIOSELL setup/configuration UI designed**
+- **Type:** Design gap + missing screen
+- **Affects:** Phase A of AIOSELL integration (prerequisite for everything)
+- **Current state:** Channel Manager panel (S8) shows status/sync only. The Phase A config (`hotel_code`, `pms_slug`, `api_base_url`, `api_key`, `webhook_secret`) must be entered BEFORE inventory push, room mapping, or webhook works.
+- **Why it matters:** Without setup, `GET /aiosell/status` returns no config, service can't start. Room mapping page can't load AIOSELL room types.
+- **Owner decision needed (OD-03):** Where does AIOSELL setup live? Options:
+  - (a) New "Connect AIOSELL" section within S8 Channel Manager panel (top, before OTA list)
+  - (b) New step in Restaurant Settings wizard (Step 9 — Channel Manager)
+  - (c) Separate admin-only setup screen
+
+**GAP-05: No room mapping UI designed**
+- **Type:** Design gap + missing screen
+- **Affects:** Inventory push prerequisite
+- **Current state:** `GET /aiosell/rooms` returns local `restaurant_table` rooms (rtype=RM) + AIOSELL room types + existing mappings. Until mappings exist, `can_push_inventory = false` and inventory push returns 422.
+- **Why it matters:** Staff must map physical rooms (e.g., Room 101, 102, 103 → `executive`) before AIOSELL inventory works. Without this, the Channel Manager panel's inventory bars cannot be populated and OTA availability will be wrong.
+- **Owner decision needed (OD-04):** Where does room mapping UI live? Options:
+  - (a) Within S8 Channel Manager panel (new "Room Mapping" tab/section)
+  - (b) Within Room Status Board (S7) — map rooms to AIOSELL types from there
+  - (c) Separate setup wizard step
+
+**GAP-06: Self check-in (S5) has NO backend support**
+- **Type:** Missing backend APIs (multiple)
+- **Affects:** S5 Self Check-In (entire screen)
+- **Current state:** The self check-in flow needs:
+  1. `GET /api/v2/public/reservation/{token}` — retrieve booking WITHOUT auth token
+  2. `POST /api/v2/public/reservation/{token}/checkin` — mark checked-in WITHOUT auth token
+  3. Token generation when "Send link" is triggered
+  4. WhatsApp/SMS dispatch with the link
+- **Neither endpoint exists.** The existing `ROOM_CHECK_IN` requires Bearer token.
+- **Why it matters:** Self check-in (S5) CANNOT be implemented until backend builds public endpoints.
+- **Owner decision needed (OD-05):** Should self check-in backend be scoped to Phase 2? Or is it in MVP?
+
+**GAP-07: "Save as Booking (Check-in later)" has no API**
+- **Type:** Missing backend API + design decision
+- **Affects:** S3 New Booking → "Save as Booking" button
+- **Current state:** `ROOM_CHECK_IN` creates an immediate check-in (`user_id_documents` + occupies room order). There is NO "pending reservation" state for direct advance bookings. OTA advance bookings come via webhook → `aiosell_reservations` (not immediately checked-in). But a staff-created phone/direct advance booking has no API.
+- **Why it matters:** The "Save as Booking (Check-in later)" button on S3 has nothing to call. If we use `ROOM_CHECK_IN` with a future `checkin_date`, the room will appear "occupied" immediately even though the guest hasn't arrived.
+- **Owner decision needed (OD-06):** Options:
+  - (a) Remove "Save as Booking" from S3 for direct bookings — walk-in only = immediate check-in. Advance direct bookings are manual (staff note elsewhere).
+  - (b) Backend builds `POST /api/v2/vendoremployee/aiosell/direct-reservation` to create a pending `aiosell_reservations` record for direct bookings (same table, `channel: "direct"`)
+  - (c) Staff creates advance bookings via AIOSELL dashboard UI directly (not via MyGenie FE)
+
+---
+
+### P2 — Significant gaps (implementation risks if unresolved)
+
+**GAP-08: `GET_ROOM_LIST` returns ONLY occupied rooms — Room Status Board (S7) needs ALL rooms**
+- **Type:** API limitation
+- ✅ **RESOLVED 2026-09-02 — `GET /api/v2/vendoremployee/aiosell/room-status-board` delivered (handover_3.md).** Returns ALL `rtype=RM` rooms with server-side pre-computed `display_status` (5 states: available / occupied / booked / hk / ooo). Includes `guest{}` when occupied, `reservation{}` when booked. `auto_hk_on_rm_checkout` setting exposed.
+- **Supersedes plan:** The original two-source merge (GET_ROOM_LIST + GET /aiosell/rooms) is no longer needed. Phase 4 `roomStatusTransform.js` must use the single `room-status-board` endpoint. See NS-B in `INVESTIGATION_CR358_HANDOVER3_GAP_AUDIT_2026_09_02.md`.
+- **OD-07 answered:** Backend field confirmed — HK/OOO state persists across devices/sessions.
+- **New scope from this endpoint:** "booked" is a 5th `display_status` value (pending reservation, not yet checked in) — not in original plan. S7 tile must handle `reservation{}` block. See NS-C.
+
+**GAP-09: Inventory release after checkout — not confirmed**
+- **Type:** Unknown backend behaviour
+- **Detail:** Handover doc: WalkIn check-in triggers inventory push (outbound, non-blocking). When a guest checks out via `CollectPaymentPanel.jsx`, does inventory release get pushed to AIOSELL? `CollectPaymentPanel.jsx` has ZERO AIOSELL inventory call (grep confirmed nothing). If checkout doesn't trigger push, AIOSELL availability will show rooms as occupied after guest leaves.
+- **Resolution:** Must curl-probe: check `aiosell_sync_logs` after a checkout to see if an outbound inventory log appears. **Cannot assume this works without verification.**
+- **2026-09-02 update (handover_3.md):** ⚠ PARTIALLY ADDRESSED — auto-HK fires server-side on RM checkout via `order-bill-payment` V2 (when `auto_hk_on_rm_checkout=true`). However, **HK does NOT push inventory**. Staff must PATCH `available` after cleaning → triggers best-effort inventory push. Full automatic inventory release on checkout remains UNCONFIRMED. **Phase 5 `aiosell_sync_logs` probe still required.**
+
+**GAP-10: No real-time socket event for new AIOSELL reservations**
+- **Type:** Missing real-time update
+- **Detail:** When AIOSELL webhook fires (new OTA booking), S1 Front Desk arrivals list and S2 Tape Chart won't update until user manually refreshes. Existing socket system (`useSocketEvents.js`) handles order events but not reservation events.
+- **Resolution:** Backend adds a socket event (e.g., `new_reservation`) when webhook processes successfully. FE adds a subscription in `useSocketEvents.js`.
+- **Deferrable to Phase 2** if owner accepts manual refresh for MVP.
+
+**GAP-11: Meal plan not shown in design**
+- **Type:** Design gap (UX)
+- **Detail:** AIOSELL `rateplanCode` format: `executive-s-ep` = European Plan (room only), `executive-d-cp` = Continental Plan (breakfast). Hotel guests need to know if breakfast is included. Current design shows rateplanCode as a raw grey pill (e.g., "BK-STANDARD-NR-101" in mockup — actual will be AIOSELL format).
+- **Owner decision needed (OD-08):** Decode meal plan from rateplanCode and show badge (e.g., "Room Only" / "Breakfast Included")? Or show raw rateplanCode only?
+
+**GAP-12: `booking_type` for direct/phone advance bookings is undefined**
+- **Type:** API contract gap
+- **Detail:** `ROOM_CHECK_IN` accepts `booking_type: "WalkIn" | "Online"`. The design shows "Direct" and "Phone" as source types. A same-day direct booking → `booking_type: "WalkIn"` ✅. An advance phone booking (see GAP-07) → no API path currently.
+- **Resolution:** Tied to GAP-07 resolution.
+
+---
+
+### P3 — Minor gaps (low priority, can be noted in Phase 2)
+
+**GAP-13: `guest.address` from AIOSELL not shown in any screen**
+- Design spec says "shown in guest info (collapsible)" but no screen has this UI. Low priority — guests rarely need address displayed at front desk.
+
+**GAP-14: Rate override reason not stored in `ROOM_CHECK_IN`**
+- Design says "logged locally, not pushed back to AIOSELL." The `order_note` field of `ROOM_CHECK_IN` can carry this. Needs confirmation.
+
+**GAP-15: Multi-room bookings not handled**
+- AIOSELL webhook `rooms[]` can have multiple entries. WalkIn API supports `room_id[]`. No multi-room UI designed. Low priority for MVP (most bookings are single-room).
+
+**GAP-16: `bookedOn` timestamp not shown**
+- AIOSELL webhook sends `bookedOn` (booking creation time). Not shown in any screen. Useful for disputes but not critical.
+
+**GAP-17: `amount.commission` / TCS / TDS not shown**
+- AIOSELL sends OTA commission, TCS, TDS fields. Design spec lists them under Channel Manager but no screen UI for reconciliation. Low priority for MVP.
+
+---
+
+## §5 — Scope Lock
+
+### Files WILL change (estimated)
+
+| File | Change Type | Risk |
+|---|---|---|
+| `App.js` | ADD 8+ PMS routes + imports | MEDIUM |
+| `components/layout/Sidebar.jsx` | ADD "Rooms & Reservations" section (5 sub-items) | HIGH (BUG-361 pattern must be preserved) |
+| `api/constants.js` | ADD AIOSELL endpoint constants (7 new) | LOW |
+| `api/services/aiosellService.js` | **NEW** — AIOSELL API calls (all Phase A–D endpoints) | MEDIUM |
+| `api/services/pmsService.js` | **NEW** — PMS data aggregation (arrivals, departures, room status) | MEDIUM |
+| `api/transforms/aiosellTransform.js` | **NEW** — webhook payload → UI model + room mapping transforms | MEDIUM |
+| `api/transforms/roomStatusTransform.js` | **NEW** — room status derivation (occupied from GET_ROOM_LIST + available from aiosell/rooms) | LOW |
+| `pages/pms/FrontDeskPage.jsx` | **NEW** (S1) | MEDIUM |
+| `pages/pms/ReservationsPage.jsx` | **NEW** (S2 Tape Chart) | HIGH (complex Gantt grid) |
+| `pages/pms/NewBookingPage.jsx` | **NEW** (S3) | MEDIUM |
+| `pages/pms/CheckInPage.jsx` | **NEW** (S4) | HIGH (calls ROOM_CHECK_IN — shares logic with RoomCheckInModal) |
+| `pages/pms/InHouseGuestsPage.jsx` | **NEW** (S6) | LOW |
+| `pages/pms/RoomStatusPage.jsx` | **NEW** (S7) | MEDIUM |
+| `pages/pms/ChannelManagerPage.jsx` | **NEW** (S8) | MEDIUM |
+| `pages/pms/ArrivalsPage.jsx` | **NEW** (S9) | LOW |
+| `pages/pms/DeparturesPage.jsx` | **NEW** (S10) | LOW |
+| `pages/DashboardPage.jsx` | CONDITIONAL — depends on OD-01 resolution | HIGH (hotspot) |
+| `components/modals/RoomCheckInModal.jsx` | CONDITIONAL — depends on OD-01 | HIGH (recently modified) |
+
+**Self check-in (S5) is blocked — excluded from scope until GAP-06/OD-05 is resolved.**
+
+---
+
+### Files WILL NOT be touched (scope lock — CONFIRMED 2026-08-31)
+
+| File | Reason |
+|---|---|
+| `components/order-entry/CollectPaymentPanel.jsx` | D3 decision: checkout unchanged. Links from PMS → existing CollectPaymentPanel. |
+| `components/order-entry/OrderEntry.jsx` | No interaction with PMS module |
+| `api/transforms/orderTransform.js` | Financial logic untouched |
+| `api/socket/socketHandlers.js` | No new socket events in MVP (GAP-10 deferred) |
+| `api/socket/useSocketEvents.js` | No new subscriptions in MVP |
+| `components/modals/RoomCheckInModal.jsx` | **CONFIRMED NOT TOUCHED** — OD-01 = CO-EXIST. PMS is parallel build. |
+| `pages/DashboardPage.jsx` | **CONFIRMED NOT TOUCHED** — OD-01 = CO-EXIST. No routing changes to existing dashboard. |
+| All report pages (`pages/reports-module/*`) | Unrelated |
+| All Insights services | Unrelated |
+| All expense/inventory files | Unrelated |
+
+---
+
+## §6 — Owner Decision Queue (OD) — ANSWERED 2026-08-31
+
+| ID | Question | **ANSWER** | Status |
+|---|---|---|---|
+| OD-01 | PMS check-in vs RoomCheckInModal? | **(b) CO-EXIST** — parallel build, existing modal untouched | ✅ CONFIRMED |
+| OD-02 | ROOM_CHECK_IN auto-link OTA? | **No** — FE passes `booking_id` explicitly | ✅ CONFIRMED (probe) |
+| OD-03 | AIOSELL setup UI location? | **(a) Inside S8** — Connect AIOSELL section at top | ✅ CONFIRMED |
+| OD-04 | Room mapping UI location? | **(a) Inside S8** — Room Mapping tab | ✅ CONFIRMED |
+| OD-05 | Self check-in (S5) scope? | **Phase 2** — S5 out of CR-358 entirely | ✅ CONFIRMED |
+| OD-06 | Save as Booking approach? | **(b) direct-reservation endpoint** — exists in handover_2 | ✅ CONFIRMED |
+| OD-07 | HK/OOO state storage? | **(b) Backend field** — persists across devices/sessions | ✅ CONFIRMED |
+| OD-08 | Decode meal plan from rateplanCode? | **(a) YES — Meal Plan Badge** — ep/cp/map/ap decoded to human labels | ✅ CONFIRMED |
+
+---
+
+## §7 — New Backend Endpoints Required
+
+These endpoints did NOT exist per the original handover doc. **Status as of 2026-09-02:** Original Gate 3 blockers (rows 1–4) are resolved. Row 5 (dashboard-kpis) still not built — non-blocking per NS-02.
+
+| # | Endpoint | Method | Priority | Required For | Notes |
+|---|---|---|---|---|---|
+| 1 | `/api/v2/vendoremployee/aiosell/local-reservations` | GET | P1 — BLOCKER | S1, S2, S9, S10 | ✅ DELIVERED + agent-verified 2026-09-01 (BUG-BE-01) |
+| 2 | `/api/v2/public/reservation/{token}` | GET | P1 — if OD-05=YES | S5 Self Check-In | ➖ OUT OF SCOPE — OD-05 = Phase 2 of product |
+| 3 | `/api/v2/public/reservation/{token}/checkin` | POST | P1 — if OD-05=YES | S5 Self Check-In | ➖ OUT OF SCOPE — OD-05 = Phase 2 of product |
+| 4 | `/api/v2/vendoremployee/aiosell/direct-reservation` | POST | P1 — if OD-06=YES | S3 "Save as Booking" | ✅ DELIVERED + agent-verified 2026-09-01 (BUG-BE-03) |
+| 5 | `/api/v2/vendoremployee/aiosell/dashboard-kpis` | GET | P2 | S1 KPI strip | ⏳ STILL NOT BUILT — non-blocking skeleton per NS-02 |
+
+**Delivered via handover_3.md (2026-09-02) — not in original §7 table:**
+
+| # | Endpoint | Method | Status | Required For |
+|---|---|---|---|---|
+| B-09a | `/api/v2/vendoremployee/aiosell/room-status-board` | GET | ✅ DELIVERED 2026-09-02 | S7 — replaces two-source merge. Returns ALL RM rooms with `display_status` (5 states). |
+| B-09b | `/api/v2/vendoremployee/aiosell/room-status/{table_id}` | PATCH | ✅ DELIVERED 2026-09-02 | S7 HK/OOO toggle. Migration: `2026_09_02_140000_add_room_operational_status.php` |
+
+---
+
+## §8 — Downstream Consumer Check
+
+| Changed area | Downstream consumers to verify |
+|---|---|
+| `Sidebar.jsx` — new section | `DashboardPage.jsx` (mounts Sidebar), all 68 BUG-361-swept pages (sidebar state key unchanged, no impact) |
+| `App.js` — new routes | `ProtectedRoute` HOC (all PMS routes must be protected), `LoadingPage.jsx` (bootstrap must complete before PMS renders) |
+| `ROOM_CHECK_IN` endpoint reuse | `RoomOrdersReportPage.jsx` (reads same data — verify room appears in report after PMS check-in), `CollectPaymentPanel.jsx` (checkout path — verify works for PMS-checked-in rooms) |
+| `GET_ROOM_LIST` reuse | `roomListTransform.js` already normalises — reuse transform for In-House list |
+| `roomService.checkIn()` reuse | New `CheckInPage.jsx` will call same function. Must not change its signature (CR-350 depends on it) |
+
+---
+
+## §9 — Verification Matrix (seeds Gate 5 QA)
+
+| # | Screen | API call | Expected result | Automated? |
+|---|---|---|---|---|
+| V1 | S1 Front Desk | `GET /aiosell/local-reservations?checkin_date=today` | Arrivals list shows OTA + walk-in bookings for today | NO |
+| V2 | S2 Tape Chart | `GET /aiosell/local-reservations?start_date=X&end_date=Y` | Blocks appear in UNASSIGNED section for bookings without room assigned | NO |
+| V3 | S3 New Booking | `POST /api/v1/vendoremployee/pos/user-group-check-in` with `booking_type=WalkIn` | Response: `{ message: "Group check-in completed successfully", user_id: N }` | YES (curl) |
+| V4 | S4 Check-In (OTA) | `POST ROOM_CHECK_IN` with `booking_type=Online` | Check-in completes; room appears occupied in `GET_ROOM_LIST` | YES (curl) |
+| V5 | S6 In-House | `GET /api/v2/vendoremployee/get-room-list` | Table shows all currently-in-house guests | YES (curl) |
+| V6 | S7 Room Status | `GET /aiosell/rooms` + `GET_ROOM_LIST` combined | Board shows occupied rooms (from GET_ROOM_LIST) + available rooms (from aiosell/rooms) | NO |
+| V7 | S8 Channel Manager | `GET /aiosell/status` | AIOSELL connection card shows `is_running: true`, last sync timestamp | YES (curl) |
+| V8 | S8 Push Inventory | `POST /aiosell/push-inventory` | 200 OK + `aiosell_sync_logs` shows outbound inventory success | YES (curl) |
+| V9 | S9 Arrivals | `GET /aiosell/local-reservations?checkin_date=today&page=1` | Paginated table with correct SR badge, Prepaid badge, 2A·1C counts | NO |
+| V10 | Checkout → Inventory | After `CollectPaymentPanel` checkout | `aiosell_sync_logs` shows outbound inventory push (room type available +1) | YES (curl) |
+| V11 | GAP-06 blocker | `GET /public/reservation/{token}` | 200 with booking data if token valid, 401 if invalid | YES (curl) — only if OD-05=YES |
+
+---
+
+## §10 — Post-Code Registry Checklist (for Implementation agent)
+
+```
+□ 1. registry.json: CR-358 status → IMPLEMENTED, sprint_key: pos_5_2
+□ 2. CR_REGISTRY.md: CR-358 row updated to IMPLEMENTED
+□ 3. FILE_OWNERSHIP.md: all new + modified files listed with CR-358 + date
+□ 4. Code markers: // CR-358 comment in every modified file
+□ 5. COMPILE CHECK: webpack 0 new warnings
+```
+
+---
+
+## §11 — Impact Analysis Summary
+
+```
+Planning complete: CR-358
+Stage: Impact Analysis (Gate 2 only)
+Code reality: NONE — greenfield PMS module
+Risk: HIGH (AIOSELL API, DashboardPage hotspot, RoomCheckInModal conflict, Sidebar sweep)
+
+Files WILL change: App.js, Sidebar.jsx, api/constants.js, 7 new service/transform files, 9 new PMS pages,
+                   DashboardPage.jsx (conditional on OD-01), RoomCheckInModal.jsx (conditional on OD-01)
+Files WILL NOT touch: CollectPaymentPanel.jsx, OrderEntry.jsx, orderTransform.js, all financial/report files
+
+Gaps found: 17 total (1 P0, 6 P1, 6 P2, 4 P3)
+New backend endpoints required: 5 (2 mandatory, 3 conditional on OD answers)
+
+Owner decisions: ALL 8 ANSWERED (OD-01 through OD-08). Gate 3 READY.
+Docs: plans/CR-358_DESIGN_SPEC_2026_08_27.md (design), impact/CR-358_PMS_CHANNEL_MANAGER_IMPACT_ANALYSIS.md (this doc)
+Next: Gate 3 Implementation Plan — READY TO WRITE. Backend must fix BUG-BE-01/02/03 + build 2 missing endpoints in parallel.
+```
+
+---
+
+*Impact Analysis: 2026-08-28 | Planning agent | Gate 2 complete | Gate 3 BLOCKED pending 8 owner decisions*

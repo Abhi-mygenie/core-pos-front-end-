@@ -1,0 +1,56 @@
+{
+ "status": true,
+ "message": "Dashboard KPIs fetched successfully",
+ "data": {
+  "as_of_date": "2026-09-03",
+  "range": {
+   "start_date": "2026-09-03",
+   "end_date": "2026-09-03"
+  },
+  "today": {
+   "arrivals_count": 1,
+   "departures_count": 0,
+   "in_house_count": 0,
+   "occupancy_percent_physical": 40
+  },
+  "physical": {
+   "total_rooms": 5,
+   "by_room_code": {
+    "suite": {
+     "mapped_rooms": 3
+    },
+    "executive": {
+     "mapped_rooms": 2
+    }
+   },
+   "days": [
+    {
+     "date": "2026-09-03",
+     "room_types": [
+      {
+       "room_code": "executive",
+       "capacity": 2,
+       "available": 0,
+       "occupied": 2,
+       "occupancy_percent": 100
+      },
+      {
+       "room_code": "suite",
+       "capacity": 3,
+       "available": 3,
+       "occupied": 0,
+       "occupancy_percent": 0
+      }
+     ],
+     "totals": {
+      "capacity": 5,
+      "available": 3,
+      "occupied": 2,
+      "occupancy_percent": 40
+     }
+    }
+   ]
+  },
+  "channel": null
+ }
+}

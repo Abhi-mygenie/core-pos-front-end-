@@ -1,0 +1,13 @@
+{
+  "probe_date": "2026-11-18",
+  "account": "owner@beanmeup.com",
+  "rid": 742,
+  "vat_info": {
+    "status": true,
+    "code": "30720314025"
+  },
+  "vat_info_location": "TOP-LEVEL of profile response (sibling of restaurants)",
+  "vat_info_type": "status=bool",
+  "gst_status": false,
+  "gst_status_location": "restaurants[0].gst_status"
+}

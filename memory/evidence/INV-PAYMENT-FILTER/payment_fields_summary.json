@@ -1,0 +1,233 @@
+[
+  {
+    "restaurant_order_id": "001414",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "14.29",
+    "payment_breakdown": {
+      "cash": "14.29",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001415",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "61.91",
+    "payment_breakdown": {
+      "cash": "61.91",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001416",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "274.99",
+    "payment_breakdown": {
+      "cash": "274.99",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001417",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "78.00",
+    "payment_breakdown": {
+      "cash": "78.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001418",
+    "payment_method_raw": "pending",
+    "payment_method": "pending",
+    "payment_type": "Unpaid",
+    "payment_status": "unpaid",
+    "order_amount_raw": "275.00",
+    "payment_breakdown": {
+      "cash": "0.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001419",
+    "payment_method_raw": "pending",
+    "payment_method": "pending",
+    "payment_type": "Unpaid",
+    "payment_status": "unpaid",
+    "order_amount_raw": "143.00",
+    "payment_breakdown": {
+      "cash": "0.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001420",
+    "payment_method_raw": "pending",
+    "payment_method": "pending",
+    "payment_type": "Unpaid",
+    "payment_status": "unpaid",
+    "order_amount_raw": "275.00",
+    "payment_breakdown": {
+      "cash": "0.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001421",
+    "payment_method_raw": "pending",
+    "payment_method": "pending",
+    "payment_type": "Unpaid",
+    "payment_status": "unpaid",
+    "order_amount_raw": "275.00",
+    "payment_breakdown": {
+      "cash": "0.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001422",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "275.00",
+    "payment_breakdown": {
+      "cash": "275.00",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001423",
+    "payment_method_raw": "cash",
+    "payment_method": "cash",
+    "payment_type": "Cash",
+    "payment_status": "paid",
+    "order_amount_raw": "138.01",
+    "payment_breakdown": {
+      "cash": "138.01",
+      "card": "0.00",
+      "upi": "0.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  },
+  {
+    "restaurant_order_id": "001424",
+    "payment_method_raw": "partial",
+    "payment_method": "partial",
+    "payment_type": "Partial",
+    "payment_status": "paid",
+    "order_amount_raw": "275.00",
+    "payment_breakdown": {
+      "cash": "100.00",
+      "card": "0.00",
+      "upi": "175.00",
+      "tab": "0.00",
+      "room": "0.00",
+      "dineout": "0.00",
+      "zomatogold": "0.00",
+      "eazydiner": "0.00",
+      "partial": "0.00",
+      "partialpayment": "0.00",
+      "paylater": "0.00"
+    }
+  }
+]

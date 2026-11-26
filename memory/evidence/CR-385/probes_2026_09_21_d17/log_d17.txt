@@ -1,0 +1,17 @@
+board: {8524: 'occupied', 8525: 'hk', 8526: 'occupied', 8527: 'hk', 8528: 'hk'}
+free: [8525, 8527, 8528]
+
+== A_noadv_form500_card room 8525 order 1232640: resp charge adv/due 500/42924 | LR adv/due 500/42924 total 43424 | folio adv 500.00 mode card paid 500
+   ledger [(500, 'card', 'advance', '')]
+   TAB: Room payment received via TAB | LR after: departed 0
+
+== B_book1000_form0 room 8527 order 1232641: resp charge adv/due 1000/42424 | LR adv/due 1000/42424 total 43424 | folio adv 1000.00 mode Cash paid 1000
+   ledger [(1000, 'upi', 'advance', '')]
+   TAB: Room payment received via TAB | LR after: departed 0
+
+== C_book1000_form500_upi room 8528 order 1232642: resp charge adv/due 1500/41924 | LR adv/due 1500/41924 total 43424 | folio adv 1500.00 mode upi paid 1500
+   ledger [(1000, 'upi', 'advance', ''), (500, 'upi', 'advance', '')]
+   TAB: Room payment received via TAB | LR after: departed 0
+
+settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+board: {8524: 'occupied', 8525: 'hk', 8526: 'occupied', 8527: 'hk', 8528: 'hk'}

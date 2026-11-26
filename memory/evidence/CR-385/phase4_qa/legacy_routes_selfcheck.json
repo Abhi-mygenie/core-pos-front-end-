@@ -1,0 +1,28 @@
+{
+ "console_errors": [],
+ "landing": "/dashboard",
+ "hard_reload_departures_lands_on": "/pms/departures",
+ "inapp_departures": {
+  "url": "/pms/departures",
+  "headings": [
+   "Today's Departures"
+  ],
+  "testid_present": true
+ },
+ "inapp_new-booking": {
+  "url": "/pms/new-booking",
+  "headings": [
+   "New Booking",
+   "Guest Details",
+   "Room Selection"
+  ],
+  "testid_present": null
+ },
+ "inapp_check-in": {
+  "url": "/pms/check-in",
+  "headings": [
+   "Check-In"
+  ],
+  "testid_present": null
+ }
+}

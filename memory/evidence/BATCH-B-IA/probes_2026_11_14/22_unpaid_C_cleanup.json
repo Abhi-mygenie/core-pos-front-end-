@@ -1,0 +1,11 @@
+{
+ "status": 200,
+ "body": {
+  "success": true,
+  "message": "Order marked as unpaid successfully.",
+  "order_id": 1578754,
+  "report_updated_for": "2026-11-15 10:50:39",
+  "waiter_collections_deleted": 1,
+  "partial_payments_deleted": 0
+ }
+}

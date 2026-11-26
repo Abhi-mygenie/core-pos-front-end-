@@ -1,0 +1,7 @@
+1232643 in_house adv 0 due 2100
+  TAB: Room payment received via TAB
+1232644 in_house adv 500 due 1600
+  TAB: Room payment received via TAB
+1232645 in_house adv 500 due 1600
+  TAB: Room payment received via TAB
+{8524: 'occupied', 8525: 'hk', 8526: 'occupied', 8527: 'hk', 8528: 'hk'}

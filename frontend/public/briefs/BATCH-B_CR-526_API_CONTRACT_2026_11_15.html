@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_CR-526_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-B_CR-526_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_CR-526_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-526 Make Unpaid / day-settlement lock — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BB-02, BB-03 · IA doc: <code>impact/CR-526_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong></p>
+<h2>1. Settled-day signal (BB-02)</h2>
+<p><strong>OD-B-BB02-FINAL:</strong> Proactively grey out the Unpaid / Remove button for orders from settled days. <code>day_settled</code> on order rows confirmed. <strong>Condition (OD-B-BB02-FINAL):</strong> only relevant when restaurant has settlement enabled (<code>settelment_report: "Yes"</code> in settings-list). When settlement is OFF, <code>day_settled</code> is always <code>false</code> or absent.</p>
+<p><code>day_settled = true</code> when the day is settled by EITHER: (a) manual cashier day-closure OR (b) auto 6 AM settlement.</p>
+<h3>Order rows — <code>GET /api/v2/vendoremployee/report/daily-order-report-details-combined</code> + order detail</h3>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Type</th>
+<th>Values</th>
+<th>Default</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order row</td>
+<td><code>day_settled</code></td>
+<td>boolean</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+<td>NEW — <strong>LOCKED OD-B-BB02-FINAL</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Probe result (R5 probe 34_0..6, 7 days, RID 541): waiter rows today carry <code>today_settlement</code>, <code>balance_to_settle</code>, <code>pilferage</code> — no settled flag or timestamp.</p>
+<p><strong>Settlement report shape:</strong> owner chose order-rows only. No new fields needed on <code>get-settlement-report</code>.</p>
+<h2>2. Reject make-order-unpaid / change-method after settlement (BB-03)</h2>
+<p>Endpoints: <code>PUT /api/v2/vendoremployee/order/make-order-unpaid</code> · change-payment-method (TBD — same or separate endpoint; backend to confirm)</p>
+<p><strong>Behaviour (BB-03):</strong> When the order's business day is already settled, the backend MUST reject the action.</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make-order-unpaid</code> + change-method</td>
+<td>—</td>
+<td>Reject when order’s day is settled</td>
+<td>BEHAVIOUR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Error code LOCKED (OD-B-BB03):</strong> 422 <code>DAY_ALREADY_SETTLED</code>, "Day already settled".</p>
+<h2>3. Errors</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DAY_ALREADY_SETTLED</code></td>
+<td>422</td>
+<td>Day settled (manual closure or auto 6 AM); Unpaid or change-method attempted — <strong>LOCKED OD-B-BB03</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>4. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-02">BB-02</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="BB-03">BB-03</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

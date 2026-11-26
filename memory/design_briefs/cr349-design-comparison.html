@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-349 Design Comparison — Settled Tab Action Buttons</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'IBM Plex Sans', sans-serif; }
+    h1, h2, h3, .heading { font-family: 'Work Sans', sans-serif; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+    .action-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 22px; padding: 0 7px; border-radius: 4px; font-size: 10px;
+      font-weight: 500; letter-spacing: 0.04em; white-space: nowrap;
+      flex-shrink: 0; cursor: pointer; transition: background-color 0.15s, opacity 0.15s;
+      border-width: 1px; border-style: solid; gap: 3px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; padding: 1px 6px;
+      border-radius: 9999px; font-size: 10px; font-weight: 500; border: 1px solid transparent;
+    }
+    tr.settled-row:hover td { background-color: #fafafa; }
+    .comparison-label {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .change-indicator {
+      position: relative;
+    }
+    .change-indicator::after {
+      content: 'NEW';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #2563eb;
+      color: white;
+      font-size: 7px;
+      font-weight: 700;
+      padding: 1px 3px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body class="bg-zinc-50 min-h-screen">
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-zinc-200 px-8 py-5 sticky top-0 z-10 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mb-0.5">Design Comparison</div>
+        <h1 class="heading text-xl font-bold text-zinc-900 tracking-tight">CR-349 — Settled Tab: Action Buttons</h1>
+        <p class="text-xs text-zinc-500 mt-0.5">OrderReportBetaPage · Option B: wire directly · 1 file only</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="badge" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0; font-size:11px; padding: 3px 10px;">Gate 2 Complete</span>
+        <span class="badge" style="background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; font-size:11px; padding: 3px 10px;">Awaiting Gate 4 GO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-8 py-6">
+
+    <!-- Legend -->
+    <div class="flex items-center gap-4 mb-6 p-3 bg-white rounded-xl border border-zinc-200 text-xs text-zinc-600">
+      <span class="font-semibold text-zinc-700">Button colour key:</span>
+      <span class="action-btn" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">Change</span>
+      <span class="action-btn" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">Unpaid</span>
+      <span class="action-btn" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;">Reprint</span>
+      <span class="action-btn" style="background:#fffbeb;color:#b45309;border-color:#fde68a;">Refund</span>
+      <span class="action-btn" style="background:#f4f4f5;color:#a1a1aa;border-color:#e4e4e7;opacity:0.5;cursor:not-allowed;">Disabled</span>
+      <div class="ml-auto flex items-center gap-4 text-zinc-400">
+        <span>PG = Razorpay order</span>
+        <span>·</span>
+        <span>Non-PG = Cash/Card/UPI</span>
+      </div>
+    </div>
+
+    <!-- Side-by-side comparison -->
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- LEFT: BEFORE -->
+      <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden shadow-sm">
+        <div class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-zinc-400"></div>
+            <span class="comparison-label text-zinc-500">Before</span>
+          </div>
+          <span class="text-[10px] text-zinc-400 font-medium">Current: Refund only (Razorpay PG rows)</span>
+        </div>
+
+        <div class="px-3 py-2 bg-zinc-50/50 border-b border-zinc-100">
+          <div class="text-[10px] text-zinc-500 font-medium">Settled tab · Active</div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs" style="border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f9fafb; border-bottom:1px solid #e5e7eb;">
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Order #</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Time</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Platform</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Waiter</th>
+                <th class="px-3 py-2 text-right text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Amount</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Payment</th>
+                <th class="px-3 py-2 text-right text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Row 1: Razorpay PG — shows Refund -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002403</td>
+                <td class="px-3 py-2.5 text-zinc-500">09:44</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa;">Zomato</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Rahul</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹1,240</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">Cash</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex justify-end">
+                    <span class="action-btn" style="background:#fffbeb;color:#b45309;border-color:#fde68a;" data-testid="refund-order-btn-1001">Refund</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 2: Cash order — NO Refund, nothing -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002404</td>
+                <td class="px-3 py-2.5 text-zinc-500">10:15</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Priya</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹680</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">Cash</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex justify-end">
+                    <span class="text-zinc-300 text-[10px]">—</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 3: UPI order — nothing -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002405</td>
+                <td class="px-3 py-2.5 text-zinc-500">11:02</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Amit</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹2,100</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">UPI</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex justify-end">
+                    <span class="text-zinc-300 text-[10px]">—</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 4: Card/PG order — Refund button -->
+              <tr class="settled-row">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002406</td>
+                <td class="px-3 py-2.5 text-zinc-500">11:38</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Ravi</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹450</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe;">Card/PG</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex justify-end">
+                    <span class="action-btn" style="background:#fffbeb;color:#b45309;border-color:#fde68a;" data-testid="refund-order-btn-1004">Refund</span>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pain point callout -->
+        <div class="px-4 py-3 bg-red-50 border-t border-red-100 flex items-start gap-2">
+          <svg class="w-3.5 h-3.5 text-red-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p class="text-[10px] text-red-700 leading-relaxed">
+            Staff cannot Change payment method, mark as Unpaid, or Reprint bills from this screen.
+            Cash and UPI rows have <strong>zero actions</strong>. Only PG orders get Refund. Staff must leave Beta Report.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT: AFTER -->
+      <div class="bg-white rounded-xl border-2 border-emerald-300 overflow-hidden shadow-md">
+        <div class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between" style="background:linear-gradient(90deg,#f0fdf4,#fff);">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+            <span class="comparison-label text-emerald-700">After CR-349</span>
+          </div>
+          <span class="text-[10px] text-emerald-600 font-medium">Change + Unpaid + Reprint wired inline</span>
+        </div>
+
+        <div class="px-3 py-2 bg-zinc-50/50 border-b border-zinc-100">
+          <div class="text-[10px] text-zinc-500 font-medium">Settled tab · Active</div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs" style="border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f9fafb; border-bottom:1px solid #e5e7eb;">
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Order #</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Time</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Platform</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Waiter</th>
+                <th class="px-3 py-2 text-right text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Amount</th>
+                <th class="px-3 py-2 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Payment</th>
+                <th class="px-3 py-2 text-right text-zinc-500 font-semibold uppercase tracking-wider text-[10px]" style="min-width:160px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Row 1: Zomato PG — Reprint + Refund (no Change/Unpaid for PG) -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002403</td>
+                <td class="px-3 py-2.5 text-zinc-500">09:44</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa;">Zomato</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Rahul</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹1,240</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">Cash</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                    <!-- Reprint: shown for all settled -->
+                    <span class="action-btn change-indicator" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;" data-testid="reprint-btn-1001">
+                      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                      Reprint
+                    </span>
+                    <!-- Refund: PG only — unchanged -->
+                    <span class="action-btn" style="background:#fffbeb;color:#b45309;border-color:#fde68a;" data-testid="refund-order-btn-1001">Refund</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 2: Cash order — Change + Unpaid + Reprint -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6; background:#f0fdf410;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002404</td>
+                <td class="px-3 py-2.5 text-zinc-500">10:15</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Priya</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹680</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">Cash</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                    <span class="action-btn change-indicator" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;" data-testid="change-btn-1002">Change</span>
+                    <span class="action-btn change-indicator" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;" data-testid="unpaid-btn-1002">Unpaid</span>
+                    <span class="action-btn change-indicator" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;" data-testid="reprint-btn-1002">
+                      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                      Reprint
+                    </span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 3: UPI — Change in-flight/disabled state -->
+              <tr class="settled-row" style="border-bottom:1px solid #f3f4f6;">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002405</td>
+                <td class="px-3 py-2.5 text-zinc-500">11:02</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Amit</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹2,100</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">UPI</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                    <!-- Change: disabled (in-flight) -->
+                    <span class="action-btn" style="background:#f4f4f5;color:#a1a1aa;border-color:#e4e4e7;opacity:0.5;cursor:not-allowed;" title="Change in progress…">
+                      <svg class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                      Change
+                    </span>
+                    <span class="action-btn" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;" data-testid="unpaid-btn-1003">Unpaid</span>
+                    <span class="action-btn" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;" data-testid="reprint-btn-1003">
+                      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                      Reprint
+                    </span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 4: Card/PG — Reprint + Refund only (PG: no Change/Unpaid) -->
+              <tr class="settled-row">
+                <td class="px-3 py-2.5 mono font-medium text-zinc-800">#002406</td>
+                <td class="px-3 py-2.5 text-zinc-500">11:38</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0;">POS</span>
+                </td>
+                <td class="px-3 py-2.5 text-zinc-600">Ravi</td>
+                <td class="px-3 py-2.5 text-right font-medium text-zinc-800">₹450</td>
+                <td class="px-3 py-2.5">
+                  <span class="badge" style="background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe;">Card/PG</span>
+                </td>
+                <td class="px-3 py-2.5">
+                  <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                    <span class="action-btn change-indicator" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;" data-testid="reprint-btn-1004">
+                      <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                      Reprint
+                    </span>
+                    <span class="action-btn" style="background:#fffbeb;color:#b45309;border-color:#fde68a;" data-testid="refund-order-btn-1004">Refund</span>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Benefit callout -->
+        <div class="px-4 py-3 bg-emerald-50 border-t border-emerald-100 flex items-start gap-2">
+          <svg class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p class="text-[10px] text-emerald-700 leading-relaxed">
+            Staff can now Change, mark Unpaid, and Reprint directly from this screen.
+            PG orders (Razorpay) still show Refund + Reprint only — Change/Unpaid suppressed per existing policy.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conditional logic matrix -->
+    <div class="mt-6 bg-white rounded-xl border border-zinc-200 overflow-hidden shadow-sm">
+      <div class="px-4 py-3 border-b border-zinc-100">
+        <h2 class="heading text-sm font-bold text-zinc-800 tracking-tight">Button Visibility Matrix — Settled Rows</h2>
+        <p class="text-[10px] text-zinc-500 mt-0.5">Gate: <code class="bg-zinc-100 px-1 rounded text-[10px]">row.f_order_status === 6</code> required for all buttons</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs" style="border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f9fafb; border-bottom:1px solid #e5e7eb;">
+              <th class="px-4 py-2.5 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Order Type</th>
+              <th class="px-4 py-2.5 text-center text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Change</th>
+              <th class="px-4 py-2.5 text-center text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Unpaid</th>
+              <th class="px-4 py-2.5 text-center text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Reprint</th>
+              <th class="px-4 py-2.5 text-center text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Refund</th>
+              <th class="px-4 py-2.5 text-left text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f3f4f6;">
+              <td class="px-4 py-2.5 font-medium text-zinc-700">Cash / UPI / Card (non-PG)</td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-zinc-500 text-[10px]"><code>!row.razorpay_order_id</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f3f4f6;">
+              <td class="px-4 py-2.5 font-medium text-zinc-700">Razorpay PG (Swiggy/Zomato/PG)</td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#fffbeb;color:#b45309;border-color:#fde68a;">Show</span></td>
+              <td class="px-4 py-2.5 text-zinc-500 text-[10px]"><code>row.razorpay_order_id != null</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f3f4f6; background:#eff6ff10;">
+              <td class="px-4 py-2.5 font-medium text-zinc-700">Change in-flight (pending)</td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f4f4f5;color:#a1a1aa;border-color:#e4e4e7;opacity:0.6;">Disabled</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#fff1f2;color:#be123c;border-color:#fecdd3;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-zinc-500 text-[10px]"><code>pendingChangeMethodIds.has(id)</code></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2.5 font-medium text-zinc-700">Optimistic unpaid (after click)</td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f4f4f5;color:#52525b;border-color:#e4e4e7;">Show</span></td>
+              <td class="px-4 py-2.5 text-center"><span class="badge" style="background:#f1f5f9;color:#64748b;border-color:#e2e8f0;">Hide</span></td>
+              <td class="px-4 py-2.5 text-zinc-500 text-[10px]"><code>optimisticUnpaidIds.has(id)</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Open question callout -->
+    <div class="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+      <svg class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div>
+        <p class="text-xs font-semibold text-amber-800 mb-1">Gate 3 open question — Change Payment Method Picker (Q1)</p>
+        <p class="text-[10px] text-amber-700 leading-relaxed">
+          AllOrdersReportPage uses a <strong>ChangeMethodButton</strong> inline component that shows a small dropdown of available payment methods (Cash, UPI, Card) before confirming.
+          CR-349 Option B can either: <strong>(A)</strong> replicate that same dropdown button inline, or
+          <strong>(B)</strong> use a simpler `&lt;select&gt;` element that triggers the change on selection.
+          Both work. (A) matches AllOrdersReportPage exactly. (B) is ~5 lines simpler.
+          Confirm preference before Gate 3.
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-6 flex items-center justify-between text-[10px] text-zinc-400">
+      <span>CR-349 · Gate 2 Impact Analysis · 2026-08-26</span>
+      <span>1 file: <code class="bg-zinc-100 px-1 rounded">OrderReportBetaPage.jsx</code> · Risk: MEDIUM</span>
+    </div>
+
+  </div>
+</body>
+</html>
