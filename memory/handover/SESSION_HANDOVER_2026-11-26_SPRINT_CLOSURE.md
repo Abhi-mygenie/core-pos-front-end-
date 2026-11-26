@@ -357,6 +357,43 @@ Step 7  → Gate 6 Owner Smoke across all 56+ QA-passed items
 
 ---
 
+## 10B. SPRINT CLOSURE TRACKER — MAINTENANCE RULE (MANDATORY)
+
+The sprint closure HTML tracker at `/app/frontend/public/sprint-closure-tracker.html` is the **single live source of truth** for sprint progress. It is served at:
+> `https://core-pos-3--04y1cpk6.preview.emergentagent.com/sprint-closure-tracker.html`
+
+**Every agent that closes a QA item or ships an implementation MUST update this file** before writing their session handover. No exceptions.
+
+### What to update per action:
+
+| Action completed | What to change in the HTML |
+|---|---|
+| QA item PASS → GATE_5B | Increment `QA Passed` stat counter · Move card from its section to a "Done ✅" note or remove it |
+| QA item newly BLOCKED | Add card to "QA Blocked" tab with exact unblock steps |
+| Bug/CR implemented | Decrement "Not Coded" stat · Move card to "Implemented — Needs QA" or remove |
+| Implemented item QA'd | Decrement "Impl, Not QA'd" stat (if shown) · Increment "QA Passed" |
+| Owner decision answered | Update the Owner Decisions tab — mark resolved |
+| Backend fix lands | Move from "Backend Blocked" to appropriate gate |
+| New P0 bug registered | Add to "P0 in Intake" tab · Increment counter |
+
+### How to update (search_replace pattern):
+```
+# Stat counter — example: increment QA Passed from 56 to 57
+search: <div class="stat-num green">56</div><div class="stat-label">QA Passed</div>
+replace: <div class="stat-num green">57</div><div class="stat-label">QA Passed</div>
+
+# Last-updated line
+search: Last updated: 2026-11-26 (session N)
+replace: Last updated: 2026-11-27 (session N+1)
+```
+
+### After updating the HTML:
+1. `git add frontend/public/sprint-closure-tracker.html`
+2. Commit with message: `chore: tracker update — <what changed>`
+3. Push to new timestamp branch (or existing session branch)
+
+---
+
 ## 11. FILE PATHS QUICK REFERENCE
 
 | Artifact | Path |

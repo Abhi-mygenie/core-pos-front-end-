@@ -109,11 +109,11 @@
 
 <div class="header">
   <h1>Sprint Closure Tracker — Nov 2026</h1>
-  <p>Last updated: 2026-11-26 &nbsp;·&nbsp; Tracking open items to close the Nov sprint</p>
+  <p>Last updated: 2026-11-26 (session 2) &nbsp;·&nbsp; Tracking open items to close the Nov sprint &nbsp;·&nbsp; <strong>Future agents: update this file at /app/frontend/public/sprint-closure-tracker.html after every QA or implementation session</strong></p>
   <div class="stats">
-    <div class="stat"><div class="stat-num green">47</div><div class="stat-label">QA Passed</div></div>
+    <div class="stat"><div class="stat-num green">56</div><div class="stat-label">QA Passed</div></div>
     <div class="stat"><div class="stat-num red">5</div><div class="stat-label">QA Blocked</div></div>
-    <div class="stat"><div class="stat-num yellow">9</div><div class="stat-label">Impl, Not QA'd</div></div>
+    <div class="stat"><div class="stat-num green">0</div><div class="stat-label">Impl, Not QA'd</div></div>
     <div class="stat"><div class="stat-num orange">5</div><div class="stat-label">Not Coded</div></div>
     <div class="stat"><div class="stat-num blue">5</div><div class="stat-label">Backend Blocked</div></div>
     <div class="stat"><div class="stat-num orange">11</div><div class="stat-label">P0 In Intake</div></div>
@@ -122,7 +122,7 @@
 
 <div class="tabs">
   <div class="tab active" onclick="show('qa-blocked')">QA Blocked <span class="count">5</span></div>
-  <div class="tab" onclick="show('impl-not-qa')">Impl — Not QA'd <span class="count">9</span></div>
+  <div class="tab" onclick="show('impl-not-qa')">Impl — Not QA'd <span class="count">0</span></div>
   <div class="tab" onclick="show('not-impl')">Not Implemented <span class="count">5</span></div>
   <div class="tab" onclick="show('backend')">Backend Blocked <span class="count">5</span></div>
   <div class="tab" onclick="show('intake-p0')">P0 in Intake <span class="count">11</span></div>
@@ -280,7 +280,12 @@
 ═══════════════════════════════════════════ -->
 <div class="section" id="impl-not-qa">
   <div class="section-title">Implemented — Not Yet QA'd (Pre-Nov Batch)</div>
-  <div class="section-desc">These 9 bugs were coded as a batch on 2026-11-18 and are at <code>GATE_5A_IMPLEMENTED</code>. They were NOT included in the Nov sprint QA plan. Code is compiled and clean — just needs browser verification. All use <strong>palmhouse or preprod</strong>. Can be batched into one QA session.</div>
+  <div class="section-desc" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:12px 16px;color:#166534;">
+    ✅ <strong>All 9 items QA-verified and GATE_5B_QA_PASSED on 2026-11-26.</strong><br>
+    BUG-685, BUG-686, BUG-688, BUG-690, BUG-691, BUG-695, BUG-697, BUG-698, BUG-700 — all PASS.<br>
+    One bug fix applied during QA: <strong>BUG-698</strong> (<code>datePresets.js</code> FY formula — now returns Apr 2026–Mar 2027).<br>
+    QA report: <code>memory/test_reports/QA_REPORT_NOV_SPRINT_PRE_BATCH_2026-11-26.md</code>
+  </div>
 
   <!-- BUG-685 -->
   <div class="card">
