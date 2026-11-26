@@ -2386,3 +2386,23 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 | **BUG-630** | Item Sales Ledger "Net Sales" definition wrong — includes GST/VAT/SC, should be after discount only. Net Sales > Gross Revenue (₹14,79,478 > ₹14,39,944). Backend `total_sales` = Total Billed. BB-14 required for `net_sales` field. | **P0** | **MEDIUM** | **IMPLEMENTED 2026-11-19** — Phase A (10 edits, GATE_5A 2026-11-18) + **Phase B (E1) landed 2026-11-19 after BB-14 backend handoff delivered & preprod-verified**: `topFoodSalesService.js` netSales now reads `r.net_sales` (pre-tax, no fallback); totalSales = corrected service-inclusive `r.total_sales`. Unit test (verified preprod fixtures) added. Plan: `plans/BUG-630_IMPLEMENTATION_PLAN_2026_11_18.md`. Remaining: QA render/baseline on preprod. | `topFoodSalesService.js` · `ItemSalesLedgerMockup.jsx` |
 
 | **BUG-742** | Custom (out-of-menu) item KOT not printed on first placement (POS-4) — `customItemFromAPI` (orderTransform.js:2326) omits `station` → `cartStationsToSet` [] → `selectAgentsForKot` [] → payload `printer_agent: []` + item `station: null` → backend can't route KOT. Reprint works (socket enriches `station: detail.station \|\| 'KDS'`, orderTransform.js:134). Fix ref: add `station: data.station \|\| null`. 1 file/1 line. | **P1** | **CRITICAL** | **GATE_5A_IMPLEMENTED 2026-11-20 (Track 1)** — AGENT-DISCOVERED (INV-KOT-CUSTOM-ITEM-2026-11-20, HIGH confidence). DISTINCT; RELATED CR-561, BUG-663/297, CR-449. Printing hotspot → NOT planning-skip without owner risk-downgrade (OD-742-B). Owner: OD-742-A severity, OD-742-C station selector vs backend. | `orderTransform.js` (R5) |
+
+---
+
+## BUG-753 — Collect Bill Silent Block on Unconfirmed Web-Edit Items
+**Registered:** 2026-11-26 | **Severity:** P2 | **Risk:** MEDIUM | **Sprint:** nov_cr_batch
+**Status:** GATE_1_INTAKE | **Assignee:** Abhishek | **Client:** ALL | **Area:** Order Entry
+**Summary:** When a table has a pending web-edit order with unconfirmed APS items, the Collect Bill button in Order Entry appears enabled but silently does nothing on click — no modal, no toast, no error. Operator has no feedback.
+**Source:** QA-FOUND Session 1 TGK 2026-11-26. **Duplicate:** DISTINCT. **Blast radius:** SMALL (OrderEntry.jsx R5).
+**Open decision:** OD-753-01 — disable button with tooltip vs toast on click.
+**Intake doc:** `change_requests/BUG-753_COLLECT_BILL_SILENT_BLOCK_UNCONFIRMED_WEB_EDIT_INTAKE.md`
+
+---
+
+## BUG-754 — Order Beta Tax Label Shows 'GST' When VAT Restaurant Has VAT OFF
+**Registered:** 2026-11-26 | **Severity:** P3 | **Risk:** LOW | **Sprint:** nov_cr_batch
+**Status:** GATE_1_INTAKE | **Assignee:** Abhishek | **Client:** ALL | **Area:** Reports
+**Summary:** `taxLabel` formula at `OrderReportBetaPage.jsx` L273 falls back to `'GST'` when both `gstStatus=false` AND `vatStatus=false`. A VAT-type restaurant with VAT toggled OFF would see 'GST' in the Tax column header instead of 'VAT'.
+**Source:** QA code review Session 4 Beanmeup 2026-11-26. **Duplicate:** DISTINCT (RELATED BUG-706). **Blast radius:** SMALL (1 file, 1-line fix).
+**Fast Lane eligible:** YES (owner must approve). **Open decision:** OD-754-01 — correct fallback.
+**Intake doc:** `change_requests/BUG-754_ORDER_BETA_TAX_LABEL_GST_FALLBACK_VAT_OFF_INTAKE.md`

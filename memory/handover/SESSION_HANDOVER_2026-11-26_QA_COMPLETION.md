@@ -222,3 +222,46 @@ Once the 3 remaining items (CR-523 re-test, BUG-702, BUG-672) are resolved, all 
 1. Access `https://pos-core-app--6gve4gt4.preview.emergentagent.com`
 2. Login to palmhouse, TGK, beanmeup accounts
 3. Spot-check the key flows: APS order popup, Cancellations report, Order Beta, Credit Management, VAT toggle, split payment
+
+---
+
+## UPDATE — 2026-11-26 (Intake Role: BUG-753 + BUG-754 Registered)
+
+Two new bugs found during QA session were registered via Intake Role (Role 1).
+
+### BUG-753 — Collect Bill Silent Block (P2 / MEDIUM)
+- **Status:** GATE_1_INTAKE
+- **Summary:** Collect Bill button in Order Entry silently does nothing when a web-edit order has unconfirmed APS items. No modal, no toast, no disabled state — zero feedback to operator.
+- **Reproduced:** TGK t2 order with unconfirmed 'melo fish' APS ₹1 item.
+- **File:** `frontend/src/components/order-entry/OrderEntry.jsx` (R5 hotspot → full Gate flow)
+- **Open decision:** OD-753-01: disable button with tooltip vs show toast on click?
+- **Intake doc:** `change_requests/BUG-753_COLLECT_BILL_SILENT_BLOCK_UNCONFIRMED_WEB_EDIT_INTAKE.md`
+- **Next:** Planning Gate 2 (after owner resolves OD-753-01)
+
+### BUG-754 — Order Beta Tax Label GST Fallback (P3 / LOW)
+- **Status:** GATE_1_INTAKE
+- **Summary:** `taxLabel` formula falls back to 'GST' when both `gstStatus=false` AND `vatStatus=false`. Affects VAT restaurants with VAT toggled off — Tax column shows 'GST' instead of 'VAT'.
+- **File:** `frontend/src/pages/reports-module/OrderReportBetaPage.jsx` L273 (non-hotspot)
+- **Open decision:** OD-754-01: correct fallback = (a) `tax_type` field / (b) empty / (c) keep 'GST'?
+- **Fast Lane eligible:** YES (owner must approve) — 1 file, ≤3 lines, LOW risk, non-hotspot
+- **Intake doc:** `change_requests/BUG-754_ORDER_BETA_TAX_LABEL_GST_FALLBACK_VAT_OFF_INTAKE.md`
+- **Next:** Fast Lane implementation (pending OD-754-01 owner answer)
+
+### Intake Final Response Format
+```
+Intake complete: BUG-753
+Classification: BUG, Severity: P2, Risk: MEDIUM
+Duplicate check: DISTINCT (RELATED BUG-752, CR-552)
+Evidence: reproduced in browser automation (TGK t2)
+Blast radius: SMALL (1 R5 file)
+Docs: change_requests/BUG-753_..._INTAKE.md, registry.json, BUG_TRACKER.md
+Next: Planning Gate 2 (after OD-753-01)
+
+Intake complete: BUG-754
+Classification: BUG, Severity: P3, Risk: LOW
+Duplicate check: DISTINCT (RELATED BUG-706)
+Evidence: code trace OrderReportBetaPage.jsx L273
+Blast radius: SMALL (1 non-hotspot file)
+Docs: change_requests/BUG-754_..._INTAKE.md, registry.json, BUG_TRACKER.md
+Next: Fast Lane implementation (after OD-754-01)
+```

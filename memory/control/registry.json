@@ -42192,6 +42192,42 @@
       "release_date": "2026-11-25",
       "notes": "Long confirm buzzer not stopped by ScanOrderPopOut Accept/Reject/cancel-item/reject-new actions. The buzzer started on order arrival keeps playing even after staff interacts with the popup. Fix: ScanOrderPopOut.jsx \u2014 wired stopBuzzer() into all four action handlers (Accept, Reject, cancel-item, reject-new). Related to BUG-453 (original intermittent buzzer) and BUG-747 (reload buzzer).",
       "closed_at": "2026-11-24"
+    },
+    {
+      "id": "BUG-753",
+      "title": "Collect Bill button silently does nothing when web-edit order has unconfirmed items",
+      "type": "BUG",
+      "status": "GATE_1_INTAKE",
+      "severity": "P2",
+      "risk": "MEDIUM",
+      "area": "Order Entry",
+      "sprint_key": "nov_cr_batch",
+      "client": "ALL",
+      "assignee": "Abhishek",
+      "qa_gate_status": "GATE_1_INTAKE",
+      "source": "QA-FOUND 2026-11-26",
+      "duplicate_check": "DISTINCT",
+      "blast_radius": "SMALL",
+      "fast_lane_eligible": false,
+      "notes": "QA Session 1 TGK discovery. Collect Bill modal does not open and gives no feedback when order has unconfirmed web-edit APS items. OD-753-01 open: disable button vs toast on click. Intake: change_requests/BUG-753_COLLECT_BILL_SILENT_BLOCK_UNCONFIRMED_WEB_EDIT_INTAKE.md"
+    },
+    {
+      "id": "BUG-754",
+      "title": "Order Beta tax column header shows 'GST' when both gstStatus=false and vatStatus=false (VAT restaurant with VAT OFF)",
+      "type": "BUG",
+      "status": "GATE_1_INTAKE",
+      "severity": "P3",
+      "risk": "LOW",
+      "area": "Reports",
+      "sprint_key": "nov_cr_batch",
+      "client": "ALL",
+      "assignee": "Abhishek",
+      "qa_gate_status": "GATE_1_INTAKE",
+      "source": "QA-FOUND 2026-11-26 (code review Session 4 Beanmeup)",
+      "duplicate_check": "DISTINCT (RELATED BUG-706)",
+      "blast_radius": "SMALL",
+      "fast_lane_eligible": true,
+      "notes": "taxLabel formula at OrderReportBetaPage.jsx L273 falls back to 'GST' when both gstStatus=false AND vatStatus=false. Fast Lane eligible (owner must approve). OD-754-01 open: correct fallback = tax_type field vs empty vs keep GST. Intake: change_requests/BUG-754_ORDER_BETA_TAX_LABEL_GST_FALLBACK_VAT_OFF_INTAKE.md"
     }
   ],
   "meta": {
