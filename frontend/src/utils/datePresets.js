@@ -48,9 +48,9 @@ export const computePresetRange = (preset) => {
     case 'YTD':
       f = fmtISO(new Date(now.getFullYear(), 0, 1));
       break;
-    case 'FY': {
-      const fyEndYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
-      return { from: fmtISO(new Date(fyEndYear - 1, 3, 1)), to: fmtISO(new Date(fyEndYear, 2, 31)) };
+    case 'FY': { // BUG-698: fyStartYear (Apr of current FY) — was fyEndYear causing off-by-1 (previous FY)
+      const fyStartYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+      return { from: fmtISO(new Date(fyStartYear, 3, 1)), to: fmtISO(new Date(fyStartYear + 1, 2, 31)) };
     }
     case '1Y':
       f = fmtISO(new Date(now.getTime() - 364 * 86400000));
