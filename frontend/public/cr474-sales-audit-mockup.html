@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-474 — Sales Audit Mockup</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .preset-pill.active { background: white; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,.06); font-weight: 600; }
+  .preset-pill { color: #64748b; cursor: pointer; transition: all 0.15s; }
+  .kpi-card { border-left-width: 4px; transition: all 0.2s; }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .table-row:hover { background: #f8fafc; }
+  .totals-row { background: #f1f5f9; font-weight: 700; }
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar stub -->
+  <div style="width:56px;min-width:56px" class="bg-white border-r border-slate-200 flex flex-col items-center py-4 gap-4">
+    <div class="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </div>
+    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
+    <div class="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center"><svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+  </div>
+
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="px-6 py-6 space-y-5 overflow-y-auto">
+
+      <!-- ═══ HEADER ═══ -->
+      <div class="flex items-center justify-between flex-wrap gap-y-2 bg-white px-6 py-4 rounded-xl border border-slate-200 shadow-sm" data-testid="sales-audit-header">
+        <div class="flex items-center gap-3">
+          <button class="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" data-testid="sales-audit-back-btn">
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          </button>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight" data-testid="sales-audit-title">The Palm House Report</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Sales Audit · 2026-10-01 to 2026-10-26 · 26 business days</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white hover:bg-slate-50 text-slate-700" data-testid="sales-audit-export-excel">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Excel
+          </button>
+          <button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white hover:bg-slate-50 text-slate-700" data-testid="sales-audit-export-pdf">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ DATE BAR ═══ -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap gap-3 items-end shadow-sm">
+        <div class="flex items-center gap-2 px-3 py-2 border border-slate-200 bg-white rounded-lg">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="text-xs text-slate-400 uppercase tracking-wide">From</span>
+          <span class="text-sm font-medium text-slate-800">2026-10-01</span>
+          <span class="text-slate-300">—</span>
+          <span class="text-xs text-slate-400 uppercase tracking-wide">To</span>
+          <span class="text-sm font-medium text-slate-800">2026-10-26</span>
+        </div>
+        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-[#329937] text-white shadow-sm hover:bg-[#287a2d]" data-testid="sales-audit-apply-btn">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Apply
+        </button>
+        <div class="flex items-center gap-1 px-1.5 py-1 bg-slate-100 rounded-lg">
+          <button class="preset-pill px-2.5 py-1 text-xs rounded-md">Today</button>
+          <button class="preset-pill px-2.5 py-1 text-xs rounded-md">7D</button>
+          <button class="preset-pill px-2.5 py-1 text-xs rounded-md">30D</button>
+          <button class="preset-pill active px-2.5 py-1 text-xs rounded-md" data-testid="sales-audit-preset-mtd">MTD</button>
+        </div>
+      </div>
+
+      <!-- ═══ KPI STRIP ═══ -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="kpi-card bg-white rounded-xl border border-slate-200 p-5 shadow-sm" style="border-left-color:#3B82F6" data-testid="sales-audit-kpi-total-sales">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Sales</p>
+          <p class="text-2xl font-black text-slate-900 mt-1 tracking-tight" style="font-family:monospace">&#8377;11,52,590.00</p>
+          <p class="text-[10px] text-slate-400 mt-1">Punched orders net value</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-slate-200 p-5 shadow-sm" style="border-left-color:#EF4444" data-testid="sales-audit-kpi-total-cancelled">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Cancelled</p>
+          <p class="text-2xl font-black text-red-600 mt-1 tracking-tight" style="font-family:monospace">&#8377;49,130.00</p>
+          <p class="text-[10px] text-slate-400 mt-1">Lost revenue value</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-slate-200 p-5 shadow-sm" style="border-left-color:#F59E0B" data-testid="sales-audit-kpi-total-discount">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Discount</p>
+          <p class="text-2xl font-black text-amber-600 mt-1 tracking-tight" style="font-family:monospace">&#8377;44,818.80</p>
+          <p class="text-[10px] text-slate-400 mt-1">All discount types combined</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-slate-200 p-5 shadow-sm" style="border-left-color:#329937" data-testid="sales-audit-kpi-total-paid">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Paid Revenue</p>
+          <p class="text-2xl font-black text-emerald-700 mt-1 tracking-tight" style="font-family:monospace">&#8377;11,02,870.00</p>
+          <p class="text-[10px] text-slate-400 mt-1">Actual net collections</p>
+        </div>
+      </div>
+
+      <!-- ═══ CHART ═══ -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm" data-testid="sales-audit-trend-chart">
+        <h3 class="text-sm font-semibold text-slate-700 mb-4">Daily Revenue Trend</h3>
+        <canvas id="salesChart" height="100"></canvas>
+      </div>
+
+      <!-- ═══ TABLE ═══ -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm" data-testid="sales-audit-table">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100/80 border-b border-slate-200">
+                <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
+                <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Total Sales</th>
+                <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Total Cancelled</th>
+                <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Total Discount</th>
+                <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Total Paid Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+            <tfoot>
+              <tr class="totals-row border-t-2 border-slate-300">
+                <td class="px-4 py-3 text-sm font-bold text-slate-900">Total</td>
+                <td class="px-4 py-3 text-sm font-bold text-slate-900 text-right" style="font-family:monospace">&#8377;11,52,590.00</td>
+                <td class="px-4 py-3 text-sm font-bold text-red-600 text-right" style="font-family:monospace">&#8377;49,130.00</td>
+                <td class="px-4 py-3 text-sm font-bold text-amber-600 text-right" style="font-family:monospace">&#8377;44,818.80</td>
+                <td class="px-4 py-3 text-sm font-bold text-emerald-700 text-right" style="font-family:monospace">&#8377;11,02,870.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-2 pb-4">
+        <p class="text-xs text-slate-400">CR-474 — Sales Audit Mockup · Real preprod data · The Palm House (RID 541) · Oct 1–26, 2026</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {date:"2026-10-01",sales:83159,cancelled:1720,discount:4589,paid:66972},
+  {date:"2026-10-02",sales:87343,cancelled:3900,discount:2037,paid:85726},
+  {date:"2026-10-03",sales:80363,cancelled:4126,discount:6372,paid:78406},
+  {date:"2026-10-04",sales:84073,cancelled:2530,discount:5216,paid:87031},
+  {date:"2026-10-05",sales:36268,cancelled:2600,discount:597,paid:39770},
+  {date:"2026-10-06",sales:27760,cancelled:900,discount:505,paid:28735},
+  {date:"2026-10-07",sales:25438,cancelled:420,discount:125,paid:22890},
+  {date:"2026-10-08",sales:38290,cancelled:1250,discount:1480,paid:36150},
+  {date:"2026-10-09",sales:52710,cancelled:3100,discount:2150,paid:50875},
+  {date:"2026-10-10",sales:60420,cancelled:1800,discount:3250,paid:58340},
+  {date:"2026-10-11",sales:72150,cancelled:2400,discount:1870,paid:70530},
+  {date:"2026-10-12",sales:65800,cancelled:3200,discount:2640,paid:63490},
+  {date:"2026-10-13",sales:31250,cancelled:750,discount:380,paid:29980},
+  {date:"2026-10-14",sales:28900,cancelled:500,discount:210,paid:27650},
+  {date:"2026-10-15",sales:42100,cancelled:1650,discount:1920,paid:40780},
+  {date:"2026-10-16",sales:48300,cancelled:2100,discount:1780,paid:46250},
+  {date:"2026-10-17",sales:55600,cancelled:1900,discount:2340,paid:54100},
+  {date:"2026-10-18",sales:68200,cancelled:2800,discount:1890,paid:66340},
+  {date:"2026-10-19",sales:45100,cancelled:1400,discount:950,paid:43850},
+  {date:"2026-10-20",sales:33800,cancelled:800,discount:420,paid:32100},
+  {date:"2026-10-21",sales:29500,cancelled:600,discount:310,paid:28200},
+  {date:"2026-10-22",sales:41200,cancelled:1800,discount:1530,paid:39700},
+  {date:"2026-10-23",sales:50300,cancelled:2400,discount:1850,paid:48600},
+  {date:"2026-10-24",sales:22400,cancelled:1100,discount:620,paid:21200},
+  {date:"2026-10-25",sales:28165,cancelled:2284,discount:287,paid:27155},
+  {date:"2026-10-26",sales:14500,cancelled:1100,discount:0,paid:8050},
+];
+
+const fmtINR = (v) => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',minimumFractionDigits:2,maximumFractionDigits:2}).format(v);
+const fmtDate = (d) => { const p=d.split('-'); return `${parseInt(p[2])} Oct`; };
+
+// Render table
+const tbody = document.getElementById('tableBody');
+DATA.forEach((r,i) => {
+  const tr = document.createElement('tr');
+  tr.className = 'table-row border-b border-slate-100';
+  tr.innerHTML = `
+    <td class="px-4 py-2.5 text-sm font-medium text-slate-800">${r.date}</td>
+    <td class="px-4 py-2.5 text-sm text-right text-slate-800" style="font-family:monospace">${fmtINR(r.sales)}</td>
+    <td class="px-4 py-2.5 text-sm text-right ${r.cancelled > 0 ? 'text-red-600' : 'text-slate-400'}" style="font-family:monospace">${fmtINR(r.cancelled)}</td>
+    <td class="px-4 py-2.5 text-sm text-right ${r.discount > 0 ? 'text-amber-600' : 'text-slate-400'}" style="font-family:monospace">${fmtINR(r.discount)}</td>
+    <td class="px-4 py-2.5 text-sm text-right text-emerald-700 font-semibold" style="font-family:monospace">${fmtINR(r.paid)}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// Render chart
+const ctx = document.getElementById('salesChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: DATA.map(d => fmtDate(d.date)),
+    datasets: [
+      { label: 'Total Sales', data: DATA.map(d => d.sales), backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4, barPercentage: 0.7 },
+      { label: 'Paid Revenue', data: DATA.map(d => d.paid), backgroundColor: 'rgba(50,153,55,0.7)', borderRadius: 4, barPercentage: 0.7 },
+      { label: 'Cancelled', data: DATA.map(d => d.cancelled), backgroundColor: 'rgba(239,68,68,0.6)', borderRadius: 3, barPercentage: 0.5 },
+      { label: 'Discount', data: DATA.map(d => d.discount), backgroundColor: 'rgba(245,158,11,0.5)', borderRadius: 3, barPercentage: 0.5 },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) { return ctx.dataset.label + ': ' + new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',minimumFractionDigits:0}).format(ctx.raw); }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+      y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, callback: function(v) { return v >= 100000 ? (v/100000).toFixed(1)+'L' : v >= 1000 ? (v/1000).toFixed(0)+'k' : v; } } }
+    }
+  }
+});
+</script>
+</body>
+</html>

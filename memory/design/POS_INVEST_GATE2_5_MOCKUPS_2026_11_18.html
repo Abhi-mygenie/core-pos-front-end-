@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>POS Investigations — Gate 2.5 Design Options</title>
+<style>
+  :root{
+    --orange:#F26B33; --dark:#1A1A1A; --gray:#666; --border:#E5E5E5;
+    --sec:#F7F7F7; --err:#EF4444; --green:#16A34A; --blue:#2563EB;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#ECECEC;color:var(--dark);padding:28px 18px;line-height:1.45}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:4px}
+  .sub{color:var(--gray);font-size:13px;margin-bottom:26px}
+  .section{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:26px}
+  .section > h2{font-size:16px;margin-bottom:2px}
+  .section > .meta{color:var(--gray);font-size:12px;margin-bottom:16px}
+  .opts{display:flex;gap:16px;flex-wrap:wrap}
+  .opt{flex:1 1 300px;min-width:280px;border:1px solid var(--border);border-radius:12px;padding:14px;background:#fff;position:relative}
+  .opt.rec{border-color:var(--orange);box-shadow:0 0 0 2px rgba(242,107,51,.12)}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-bottom:10px}
+  .tag.rec{background:var(--orange);color:#fff}
+  .tag.alt{background:var(--sec);color:var(--gray)}
+  .opt h3{font-size:13px;margin-bottom:10px;color:var(--dark)}
+  .note{font-size:11px;color:var(--gray);margin-top:10px}
+  /* popup-ish item rows */
+  .card{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .row{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
+  .row:last-child{border-bottom:none}
+  .nm{flex:1;font-size:13px}
+  .vr{font-size:11px;color:var(--gray);margin-top:2px}
+  .vr .grp{color:#999}
+  .vr .pr{color:var(--orange)}
+  .qty{font-size:11px;color:var(--gray);white-space:nowrap}
+  .amt{font-size:12px;font-weight:600;white-space:nowrap}
+  .x{width:22px;height:22px;border-radius:999px;border:none;background:var(--sec);color:var(--gray);cursor:pointer;font-size:12px}
+  .cbx{width:18px;height:18px;border:2px solid var(--orange);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;margin-top:1px;flex-shrink:0}
+  .cbx.on{background:var(--orange)}
+  .cbx.off{background:#fff}
+  .foot{display:flex;gap:8px;padding:12px;background:var(--sec);align-items:center;flex-wrap:wrap}
+  .btn{min-height:40px;border-radius:9px;border:1px solid var(--border);background:#fff;font-size:13px;font-weight:600;padding:0 14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .btn.kot{border-color:var(--orange);color:var(--orange)}
+  .btn.kot.primary{background:var(--orange);color:#fff}
+  .btn.rej{border-color:var(--err);color:var(--err)}
+  .spacer{flex:1}
+  .selcount{font-size:12px;color:var(--gray)}
+  /* aggregator tile + popup */
+  .tile{width:150px;border:1px solid var(--border);border-radius:14px;padding:12px;position:relative;background:#fff}
+  .tile .src{position:absolute;top:8px;right:8px;background:#FC8019;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px}
+  .tile .tlabel{font-weight:700;font-size:14px}
+  .tile .tamt{color:var(--orange);font-weight:700;margin-top:6px}
+  .tile .tstat{font-size:10px;color:var(--green);margin-top:4px;font-weight:600}
+  .tile .viewbtn{margin-top:10px;width:100%;border:1px solid var(--orange);color:var(--orange);background:#fff;border-radius:8px;font-size:11px;font-weight:700;padding:5px 0;cursor:pointer}
+  .pop{border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:340px}
+  .pop .ph{background:#FC8019;color:#fff;padding:10px 12px;font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .pop .ro{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px}
+  .pop .tot{display:flex;justify-content:space-between;padding:10px 12px;font-weight:700;font-size:13px;background:var(--sec)}
+  .vbadge{background:rgba(255,255,255,.25);font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .screen{border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:360px}
+  .screen .sh{background:var(--dark);color:#fff;font-size:12px;padding:8px 12px;font-weight:600}
+  .screen .sb{display:flex}
+  .screen .menu{flex:1;padding:10px;font-size:11px;color:var(--gray);border-right:1px solid var(--border)}
+  .screen .cart{flex:1;padding:10px;font-size:11px}
+  .arrow{align-self:center;color:var(--gray);font-size:26px;padding:0 4px}
+  .flowrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .legend{font-size:11px;color:var(--gray);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>POS Investigations — Gate 2.5 Design Options</h1>
+  <div class="sub">2026-11-18 · Pick one option per section. Orange outline = my recommendation. Styling mirrors the live ScanOrderPopOut (primary #F26B33).</div>
+
+  <!-- ============ BUG-702 ============ -->
+  <div class="section">
+    <h2>BUG-702 — Confirmation popup: how the chosen variation shows</h2>
+    <div class="meta">Example item: <strong>Cappuccino ×1 · ₹120</strong> with selected options “Oat milk” (+₹40) and “Large” (+₹20). Risk LOW · display only.</div>
+    <div class="opts">
+      <div class="opt rec">
+        <span class="tag rec">Option A · Recommended</span>
+        <h3>Selected option name(s) + each price</h3>
+        <div class="card">
+          <div class="row">
+            <div class="nm">Cappuccino
+              <div class="vr"><span>Oat milk</span> <span class="pr">(+₹40.00)</span>, <span>Large</span> <span class="pr">(+₹20.00)</span></div>
+            </div>
+            <div class="qty">×1</div><div class="amt">₹180.00</div>
+          </div>
+        </div>
+        <div class="note">Mirrors the cart exactly (CartPanel). Staff see what the guest picked and the upcharge. Line total reflects variations.</div>
+      </div>
+      <div class="opt">
+        <span class="tag alt">Option B</span>
+        <h3>Group label + selected option(s)</h3>
+        <div class="card">
+          <div class="row">
+            <div class="nm">Cappuccino
+              <div class="vr"><span class="grp">Choice of milk:</span> Oat milk · <span class="grp">Size:</span> Large</div>
+            </div>
+            <div class="qty">×1</div><div class="amt">₹180.00</div>
+          </div>
+        </div>
+        <div class="note">More explicit, but busier. No per-option price shown.</div>
+      </div>
+      <div class="opt">
+        <span class="tag alt">Option C</span>
+        <h3>Selected option name(s) only</h3>
+        <div class="card">
+          <div class="row">
+            <div class="nm">Cappuccino
+              <div class="vr">Oat milk, Large</div>
+            </div>
+            <div class="qty">×1</div><div class="amt">₹180.00</div>
+          </div>
+        </div>
+        <div class="note">Simplest; hides the +₹ amounts.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BUG-703 ============ -->
+  <div class="section">
+    <h2>BUG-703 — Re-opening an ACCEPTED aggregator order in Table View</h2>
+    <div class="meta">Today the aggregator tile click is a no-op once accepted (status 1/2/5). Three ways to let staff view it again. Risk MEDIUM.</div>
+    <div class="opts">
+      <div class="opt rec">
+        <span class="tag rec">Option A · Recommended</span>
+        <h3>Tap the tile → read-only details popup</h3>
+        <div class="flowrow">
+          <div class="tile">
+            <div class="src">SWIGGY</div>
+            <div class="tlabel">#A1283</div>
+            <div class="tamt">₹642</div>
+            <div class="tstat">● Accepted</div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="pop">
+            <div class="ph"><span>Swiggy · #A1283</span><span class="vbadge">VIEW ONLY</span></div>
+            <div class="ro"><span>Paneer Tikka ×1</span><span>₹320</span></div>
+            <div class="ro"><span>Butter Naan ×2</span><span>₹120</span></div>
+            <div class="ro"><span>Dal Makhani ×1</span><span>₹202</span></div>
+            <div class="tot"><span>Total</span><span>₹642</span></div>
+          </div>
+        </div>
+        <div class="legend">Reuses the existing aggregator popup in a view-only mode — no Accept/Reject buttons. Lowest-surprise, matches the new-order popup staff already know.</div>
+      </div>
+      <div class="opt">
+        <span class="tag alt">Option B</span>
+        <h3>Open it in the full order screen</h3>
+        <div class="screen">
+          <div class="sh">Order Entry · Swiggy #A1283 (read-only)</div>
+          <div class="sb">
+            <div class="menu">Menu<br/>categories<br/>disabled…</div>
+            <div class="cart">Paneer Tikka ×1<br/>Butter Naan ×2<br/>Dal Makhani ×1<br/><br/><strong>Total ₹642</strong></div>
+          </div>
+        </div>
+        <div class="legend">Full context (like dine-in), but heavier; order-entry is edit-oriented so it needs a read-only lock.</div>
+      </div>
+      <div class="opt">
+        <span class="tag alt">Option C</span>
+        <h3>A small “View” button on the card</h3>
+        <div class="tile">
+          <div class="src">SWIGGY</div>
+          <div class="tlabel">#A1283</div>
+          <div class="tamt">₹642</div>
+          <div class="tstat">● Accepted</div>
+          <button class="viewbtn">View order</button>
+        </div>
+        <div class="legend">Keeps the tile click disabled; adds an explicit button. Clear, but adds clutter to every aggregator tile.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CR-547 ============ -->
+  <div class="section">
+    <h2>CR-547 — Selective KOT in the confirmation popup <span style="font-size:11px;color:var(--gray)">(pattern chosen: checkboxes → one KOT, only their stations)</span></h2>
+    <div class="meta">Approve the look. Tick items → one KOT prints only the selected items to just their stations. Risk HIGH (print payload).</div>
+    <div class="opts">
+      <div class="opt rec" style="flex:1 1 520px">
+        <span class="tag rec">Chosen pattern — for approval</span>
+        <h3>Checkboxes per item · single KOT for selected</h3>
+        <div class="card">
+          <div class="row"><span class="cbx on">✓</span><div class="nm">Paneer Tikka <div class="vr">Station: <strong>Tandoor</strong></div></div><div class="qty">×1</div><div class="amt">₹320</div><button class="x">✕</button></div>
+          <div class="row"><span class="cbx on">✓</span><div class="nm">Veg Fried Rice <div class="vr">Station: <strong>Chinese</strong></div></div><div class="qty">×1</div><div class="amt">₹180</div><button class="x">✕</button></div>
+          <div class="row"><span class="cbx off"></span><div class="nm">Cold Coffee <div class="vr">Station: <strong>Beverages</strong></div></div><div class="qty">×2</div><div class="amt">₹240</div><button class="x">✕</button></div>
+        </div>
+        <div class="foot">
+          <span class="selcount"><strong>2 of 3</strong> items selected · <strong>2 stations</strong> (Tandoor, Chinese)</span>
+          <span class="spacer"></span>
+          <button class="btn">👁 Edit</button>
+          <button class="btn kot primary">🖨 Print KOT (2 items)</button>
+          <button class="btn rej">Reject</button>
+        </div>
+        <div class="note">KOT routes only to Tandoor &amp; Chinese — Beverages gets nothing because Cold Coffee is unticked. A “select all / none” toggle sits in the list header. If none are ticked, the KOT button is disabled.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">BUG-701 is non-visual (state/refresh fix) — no mockup. My code/architecture recommendation is in chat.</div>
+</div>
+</body>
+</html>

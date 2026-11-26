@@ -1,0 +1,6 @@
+operations type: list
+operations[0]: {'operation': 'order_bill_payment', 'created_at': '2026-11-01 21:39:31', 'previous_order_amount': '693.00', 'current_order_amount': 693, 'previous_payment_method': 'pending', 'current_payment_method':
+operations keys: ['operation', 'created_at', 'previous_order_amount', 'current_order_amount', 'previous_payment_method', 'current_payment_method', 'vendor_employee_name', 'food_id', 'restaurant_order_id']
+order_info keys: ['id', 'restaurant_order_id', 'table_id', 'table_name', 'discount_for']
+orders_table keys: ['id', 'restaurant_order_id', 'created_at', 'collect_bill', 'updated_at', 'f_order_status', 'payment_method', 'payment_status', 'payment_type', 'order_amount', 'received_amount', 'reconcile_amount', 'order_in', 'order_type', 'order_from', 'order_sub_total_amount', 'order_sub_total_without_tax', 'delivery_charge', 'delivery_charge_gst', 'tip_amount']
+orders_table BILL/PRINT keys: ['collect_bill', 'f_order_status', 'payment_status', 'snapshot_razorpay_status', 'order_status', 'cancel_state', 'print_bill_status', 'print_kot']

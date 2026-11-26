@@ -1,6 +1,8 @@
 // craco.config.js
 const path = require("path");
 require("dotenv").config();
+// BUG-661: build id baked into bundle + written to version.json (prod) — 'dev' in craco start
+process.env.REACT_APP_BUILD_ID = process.env.NODE_ENV === 'production' ? String(Date.now()) : 'dev';
 
 // Check if we're in development/preview mode (not production build)
 // Craco sets NODE_ENV=development for start, NODE_ENV=production for build
@@ -10,53 +12,6 @@ const isDevServer = process.env.NODE_ENV !== "production";
 const config = {
   enableHealthCheck: process.env.ENABLE_HEALTH_CHECK === "true",
 };
-
-function makeDevServerV5Compatible(devServerConfig) {
-  const {
-    https,
-    onAfterSetupMiddleware,
-    onBeforeSetupMiddleware,
-    onListening,
-    setupMiddlewares,
-    ...compatibleConfig
-  } = devServerConfig;
-
-  compatibleConfig.server =
-    typeof https === "object"
-      ? { type: "https", options: https }
-      : https
-        ? "https"
-        : "http";
-  compatibleConfig.headers = {
-    ...compatibleConfig.headers,
-    "Cross-Origin-Resource-Policy": "same-origin",
-  };
-
-  if (onBeforeSetupMiddleware || setupMiddlewares) {
-    compatibleConfig.setupMiddlewares = (middlewares, devServer) => {
-      if (onBeforeSetupMiddleware) {
-        onBeforeSetupMiddleware(devServer);
-      }
-
-      return setupMiddlewares
-        ? setupMiddlewares(middlewares, devServer)
-        : middlewares;
-    };
-  }
-
-  compatibleConfig.onListening = (devServer) => {
-    devServer.close ??= (callback) => devServer.stopCallback(callback);
-
-    if (onListening) {
-      onListening(devServer);
-    }
-    if (onAfterSetupMiddleware) {
-      onAfterSetupMiddleware(devServer);
-    }
-  };
-
-  return compatibleConfig;
-}
 
 // Conditionally load health check modules only if enabled
 let WebpackHealthPlugin;
@@ -69,32 +24,28 @@ if (config.enableHealthCheck) {
   healthPluginInstance = new WebpackHealthPlugin();
 }
 
-// Branded error overlay + preview health probe, dev server only. Fails open: a broken
-// overlay must degrade to "no overlay", never to "no dev server".
-let emergentOverlay;
-if (isDevServer && process.env.DISABLE_EMERGENT_OVERLAY !== "true") {
-  try {
-    emergentOverlay = require("@emergentbase/overlay/craco").emergentOverlayCraco({
-      root: __dirname,
-    });
-    // A wrong shape would otherwise TypeError at dev-server config time, past this catch.
-    if (
-      typeof emergentOverlay.devServer !== "function" ||
-      typeof emergentOverlay.attach !== "function" ||
-      typeof emergentOverlay.webpackPlugin?.apply !== "function"
-    ) {
-      throw new Error("unexpected adapter shape");
-    }
-  } catch (err) {
-    emergentOverlay = undefined;
-    console.warn(
-      "[emergent-overlay] not loaded — overlay disabled:",
-      err instanceof Error ? err.message : err,
-    );
-  }
-}
-
 let webpackConfig = {
+  jest: {
+    configure: (jestConfig) => {
+      // React Router v7 uses subpath exports which Jest can't resolve by default
+      jestConfig.moduleNameMapper = {
+        ...jestConfig.moduleNameMapper,
+        '^react-router/dom$': '<rootDir>/node_modules/react-router/dist/production/dom-export.js',
+        '^react-router-dom$': '<rootDir>/node_modules/react-router-dom/dist/index.js',
+        '^react-router$': '<rootDir>/node_modules/react-router/dist/production/index.js',
+        // Mirror the webpack '@' → src alias (needed by shadcn ui components in jest)
+        '^@/(.*)$': '<rootDir>/src/$1',
+        // BUG-382: axios 1.x ships ESM (`"type":"module"`); CRA jest does not transform node_modules → map to CJS build
+        '^axios$': '<rootDir>/node_modules/axios/dist/node/axios.cjs',
+      };
+      // Add polyfill setup for TextEncoder/TextDecoder (React Router v7)
+      jestConfig.setupFiles = [
+        ...(jestConfig.setupFiles || []),
+        '<rootDir>/src/setupTests.polyfills.js',
+      ];
+      return jestConfig;
+    },
+  },
   eslint: {
     configure: {
       extends: ["plugin:react-hooks/recommended"],
@@ -109,6 +60,53 @@ let webpackConfig = {
       '@': path.resolve(__dirname, 'src'),
     },
     configure: (webpackConfig) => {
+
+      // ── Compat fix: Firebase 12.x + recharts 3.x with webpack 5 ──────────────
+      // 1. NormalModuleReplacementPlugin – swap CJS shims for ESM-friendly wrappers
+      const webpack = require('webpack');
+      webpackConfig.plugins = webpackConfig.plugins || [];
+      webpackConfig.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /use-sync-external-store\/shim\/with-selector$/,
+          path.resolve(__dirname, 'webpack-shims/use-sync-external-store-with-selector.js')
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+          /es-toolkit\/compat\/isPlainObject$/,
+          path.resolve(__dirname, 'node_modules/es-toolkit/compat/isPlainObject.mjs')
+        )
+      );
+
+      // BUG-661: emit build/version.json with the same build id (overwrites public/version.json stub)
+      if (process.env.NODE_ENV === 'production') {
+        webpackConfig.plugins.push({
+          apply: (compiler) => compiler.hooks.thisCompilation.tap('BuildVersion', (compilation) => {
+            compilation.hooks.processAssets.tap(
+              { name: 'BuildVersion', stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL },
+              () => compilation.emitAsset('version.json', new webpack.sources.RawSource(JSON.stringify({ buildId: process.env.REACT_APP_BUILD_ID })))
+            );
+          }),
+        });
+      }
+
+      // 2. Downgrade export-presence errors → warnings (CJS modules webpack can't tree-shake)
+      webpackConfig.module = webpackConfig.module || {};
+      webpackConfig.module.parser = {
+        ...(webpackConfig.module.parser || {}),
+        javascript: {
+          ...(webpackConfig.module?.parser?.javascript || {}),
+          exportsPresence: 'warn',
+        },
+      };
+
+      // 3. Mark firebase + shim files as javascript/auto inside the oneOf block
+      const oneOfRule = webpackConfig.module.rules.find(r => r.oneOf);
+      if (oneOfRule) {
+        oneOfRule.oneOf.unshift(
+          { test: /node_modules\/(firebase|@firebase)\//, type: 'javascript/auto' },
+          { test: /webpack-shims\//, type: 'javascript/auto' }
+        );
+      }
+      // ─────────────────────────────────────────────────────────────────────────
 
       // Add ignored patterns to reduce watched directories
         webpackConfig.watchOptions = {
@@ -128,16 +126,36 @@ let webpackConfig = {
         webpackConfig.plugins.push(healthPluginInstance);
       }
 
-      // Overlay's HTML injection + compile-error capture; self-gates on mode !== development.
-      if (emergentOverlay) {
-        webpackConfig.plugins.push(emergentOverlay.webpackPlugin);
+      // CR-046: Exclude __dev/ from production build
+      // CRA's CopyPlugin copies public/ → build/. We hook into the compiler
+      // to delete __dev/ after the copy completes.
+      if (process.env.NODE_ENV === 'production') {
+        const fs = require('fs');
+        const rimraf = (dir) => { if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true }); };
+        webpackConfig.plugins.push({
+          apply: (compiler) => {
+            compiler.hooks.afterEmit.tapAsync('RemoveDevDashboard', (compilation, callback) => {
+              const devDir = path.resolve(compiler.outputPath, '__dev');
+              rimraf(devDir);
+              console.log('[CR-046] __dev/ excluded from production build');
+              callback();
+            });
+          }
+        });
       }
+
       return webpackConfig;
     },
   },
 };
 
 webpackConfig.devServer = (devServerConfig) => {
+  // webpack-dev-server 4.15+ removed these deprecated options that react-scripts 5.0.1 injects
+  delete devServerConfig.onBeforeSetupMiddleware;
+  delete devServerConfig.onAfterSetupMiddleware;
+  // 'https' is not a valid top-level option in webpack-dev-server 4.x (moved to 'server')
+  delete devServerConfig.https;
+
   // Add health check endpoints if enabled
   if (config.enableHealthCheck && setupHealthEndpoints && healthPluginInstance) {
     const originalSetupMiddlewares = devServerConfig.setupMiddlewares;
@@ -158,72 +176,20 @@ webpackConfig.devServer = (devServerConfig) => {
   return devServerConfig;
 };
 
-// Wrap with visual edits (automatically adds babel plugin, dev server, and overlay in dev mode)
-if (isDevServer) {
-  try {
-    const { withVisualEdits } = require("@emergentbase/visual-edits/craco");
-    webpackConfig = withVisualEdits(webpackConfig);
-  } catch (err) {
-    if (err.code === 'MODULE_NOT_FOUND' && err.message.includes('@emergentbase/visual-edits/craco')) {
-      console.warn(
-        "[visual-edits] @emergentbase/visual-edits not installed — visual editing disabled."
-      );
-    } else {
-      throw err;
-    }
-  }
-}
-
-// Overlay wraps last: visual-edits assigns setupMiddlewares instead of chaining onto it,
-// so anything registered before it is dropped.
-if (emergentOverlay) {
-  const devServerBeforeOverlay = webpackConfig.devServer;
-
-  // Fail open at each call site too: a throw inside the adapter costs the overlay, never
-  // the dev server. Warns once, then this path stops calling it.
-  let overlay = emergentOverlay;
-  const overlayFailed = (site, err) => {
-    overlay = undefined;
-    console.warn(
-      `[emergent-overlay] ${site} failed — overlay disabled:`,
-      err instanceof Error ? err.message : err,
-    );
-  };
-
-  webpackConfig.devServer = (devServerConfig) => {
-    devServerConfig = devServerBeforeOverlay(devServerConfig);
-
-    // Overlay owns runtime errors; webpack keeps compile errors.
-    try {
-      devServerConfig = overlay.devServer(devServerConfig);
-    } catch (err) {
-      overlayFailed("devServer config", err);
-    }
-
-    const previousSetupMiddlewares = devServerConfig.setupMiddlewares;
-
-    devServerConfig.setupMiddlewares = (middlewares, devServer) => {
-      // Registered ahead of the chain's own body parsers, which would consume the raw stream
-      // the overlay reads. Adapter taking a pre-parsed req.body is the overlay-side fix.
-      try {
-        if (overlay) overlay.attach(devServer);
-      } catch (err) {
-        overlayFailed("attach", err);
-      }
-
-      if (previousSetupMiddlewares) {
-        middlewares = previousSetupMiddlewares(middlewares, devServer);
-      }
-
-      return middlewares;
-    };
-
-    return devServerConfig;
-  };
-}
-
-const configureDevServer = webpackConfig.devServer;
-webpackConfig.devServer = (devServerConfig) =>
-  makeDevServerV5Compatible(configureDevServer(devServerConfig));
+// Visual edits disabled to avoid webpack resolution issues
+// if (isDevServer) {
+//   try {
+//     const { withVisualEdits } = require("@emergentbase/visual-edits/craco");
+//     webpackConfig = withVisualEdits(webpackConfig);
+//   } catch (err) {
+//     if (err.code === 'MODULE_NOT_FOUND' && err.message.includes('@emergentbase/visual-edits/craco')) {
+//       console.warn(
+//         "[visual-edits] @emergentbase/visual-edits not installed — visual editing disabled."
+//       );
+//     } else {
+//       throw err;
+//     }
+//   }
+// }
 
 module.exports = webpackConfig;

@@ -1,0 +1,252 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BACKEND_BRIEF_BATCH-B_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BACKEND_BRIEF_BATCH-B_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>Backend Brief — Batch B (Payments · Credit · GST) — 2026-11-15</h1>
+<p>To: Gyan (backend) · FE: Abhishek
+Client: ALL · Gate 2 closed on this brief.
+<strong>SEND STATUS: DRAFT — NOT SENT (2026-11-15).</strong> Owner will decide how backend briefs are sent. Do not treat any BB item as acknowledged.
+Sources: <code>impact/BATCH-B_IMPACT_ANALYSIS_SUMMARY_2026_11_14.md</code>, <code>change_requests/BATCH_B_OWNER_DECISIONS_2026_11_14.md</code>, per-item <code>impact/&lt;ID&gt;_IMPACT_ANALYSIS.md</code>, evidence <code>evidence/BATCH-B-IA/probes_2026_11_14/</code> (RID 644 cafe103, read + test-order writes) and <code>evidence/BATCH-B-IA/probes_2026_11_15_r5/</code> (RID 541 The Palm House, read-only). All payloads masked.
+Owner rule: all changes ADDITIVE — existing behaviour must keep working. Field names below are proposals; reply with the final names and FE will use them.</p>
+<h2>Priority / blocking view</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>FE can ship without backend?</th>
+<th>Backend IDs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BUG-671</td>
+<td>YES</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BUG-672</td>
+<td>YES</td>
+<td id="BB-01">BB-01 (soft)</td>
+</tr>
+<tr>
+<td>CR-526</td>
+<td>PARTIAL (buttons yes; settled-day block no)</td>
+<td>BB-02, BB-03</td>
+</tr>
+<tr>
+<td>CR-542</td>
+<td>NO</td>
+<td>BB-04, BB-05</td>
+</tr>
+<tr>
+<td>CR-514</td>
+<td>NO (card 4-digit stays until then)</td>
+<td>BB-06, BB-07</td>
+</tr>
+<tr>
+<td>CR-522</td>
+<td>NO</td>
+<td id="BB-08">BB-08</td>
+</tr>
+<tr>
+<td>CR-527</td>
+<td>NO</td>
+<td id="BB-09">BB-09</td>
+</tr>
+<tr>
+<td>CR-536</td>
+<td>NO</td>
+<td id="BB-10">BB-10</td>
+</tr>
+<tr>
+<td>BUG-607</td>
+<td>FE: note only; fix is backend</td>
+<td>BB-11, BB-12</td>
+</tr>
+<tr>
+<td>CR-394</td>
+<td>YES (UI); data fix by backend</td>
+<td id="BB-13">BB-13</td>
+</tr>
+</tbody>
+</table>
+<h2>1. Credit on prepaid orders (BUG-672)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-01">BB-01</td>
+<td>(Soft, defence in depth) Enforce <code>payment_types</code> TAB <code>prepaid</code> flag: reject TAB/credit on a prepaid order when TAB <code>prepaid:0</code> on <code>order-bill-payment</code> and <code>place-order</code>.</td>
+<td>Probe 21_B / 24: prepaid order + <code>payment_mode:TAB</code> → 200 "Bill cleared via TAB" though TAB <code>prepaid:0</code> (02_profile). FE will hide Credit by the flag. <strong>Owner housekeeping:</strong> enable TAB <code>prepaid:1</code> on cafe103 for QA.</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Make Unpaid / Remove from credit (CR-526, CR-542)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-02">BB-02</td>
+<td>Settled-day signal: tell POS whether an order's business day is already settled (waiter settlement done). Proposal: <code>is_settled</code> + <code>settled_at</code> per waiter/date in <code>get-settlement-report</code>, and <code>day_settled</code> (bool) on order rows in <code>daily-order-report-details-combined</code> / order detail.</td>
+<td>R5 probe 34_0..6 (7 days): waiter rows have <code>today_settlement</code>, <code>balance_to_settle</code>, <code>pilferage</code>, no settled flag. OD-526-B.</td>
+</tr>
+<tr>
+<td id="BB-03">BB-03</td>
+<td><code>make-order-unpaid</code> (and change payment method) must REJECT when the order's day is settled, message "Day already settled".</td>
+<td>Probe 22_*: endpoint succeeds with no settlement check.</td>
+</tr>
+<tr>
+<td id="BB-04">BB-04</td>
+<td>New reason type <code>item_type = 'Unpaid'</code> in <code>GET cancellation-reasons</code> + backend admin to add/edit them.</td>
+<td>Probe 07: only <code>Order</code> / <code>Food</code> today. OD-542-A.</td>
+</tr>
+<tr>
+<td id="BB-05">BB-05</td>
+<td><code>make-order-unpaid</code> accepts + stores <code>reason</code> (text) and <code>reason_id</code> (nullable, null when "Other"); return it in order logs / Order Beta / audit. Same endpoint is used for "Remove from credit" and "Remove from room".</td>
+<td>Today body is <code>{order_id}</code> only (FE <code>paymentMutationService.js</code> L99).</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>Remove from credit = <code>make-order-unpaid</code> on the TAB order — already reverses the credit ledger. No new endpoint needed.</td>
+<td>Probe 26: credit 420 → 0.</td>
+</tr>
+</tbody>
+</table>
+<h2>3. Reference box per payment method (CR-514)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-06">BB-06</td>
+<td>On each item of profile <code>payment_types</code> add: <code>ref_enabled</code> (0/1), <code>ref_required</code> (0/1), <code>ref_label</code> (text, optional, e.g. "UPI Ref"), <code>ref_max_len</code> (optional). Editable in backend admin per method.</td>
+<td>Owner Q18: config lives on each payment method (same list as <code>prepaid/postpaid</code>). Probe 02: no ref flags today.</td>
+</tr>
+<tr>
+<td id="BB-07">BB-07</td>
+<td>Confirm <code>transaction_id</code> is stored per split part (<code>partial_payments[].transaction_id</code>) and returned per part in Order Beta / audit.</td>
+<td>Probe 21_C / 25: single UPI <code>transaction_id</code> stored + returned. Split per-part not verified.</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Payment tolerance (CR-522)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-08">BB-08</td>
+<td>Restaurant setting <code>reconcile_tolerance_pct</code> (decimal, nullable) in <code>restaurant-settings/settings-list</code> (<code>basic</code>, next to <code>reconcile_amount</code>) + admin field. Blank/null = tolerance OFF (POS skips the ± check).</td>
+<td>Owner Q17. Probe 03/33: only <code>reconcile_amount: "No"</code>. FE hardcodes ±3% today. Phase 2 (POS Settings write) later.</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Diner on credit orders (CR-527)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-09">BB-09</td>
+<td><code>GET /api/v2/vendoremployee/pos/tap-customer-record-list</code> credit rows: add the order's customer (diner) name — proposal <code>diner_name</code> (+ optional <code>diner_mobile</code>) taken from the order at credit time.</td>
+<td>R5 probe 31_0..2 (534/238/119 rows): no name field on credit rows. Credit can go to someone other than the diner (OD-527-A).</td>
+</tr>
+</tbody>
+</table>
+<h2>6. B2B invoice address (CR-536)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-10b">BB-10b (added 2026-11-15)</td>
+<td>Optional: store a billing address on the customer profile next to <code>gst_number</code> so POS can pre-fill it (owner OD-536-C: pre-fill, editable). Today only delivery <code>addresses[]</code> exist.</td>
+<td>Gate 2.5 M7.</td>
+</tr>
+<tr>
+<td id="BB-10">BB-10</td>
+<td>Accept + store <code>custGSTAddress</code> (text) with existing <code>custGST</code> / <code>custGSTName</code> on <code>order-bill-payment</code> and <code>place-order</code>; print it on the bill under GST name; return <code>cust_gst</code>, <code>cust_gst_name</code>, <code>cust_gst_address</code> in order report rows / order detail.</td>
+<td>OD-536-A. No UPI ID (OD-536-B).</td>
+</tr>
+</tbody>
+</table>
+<h2>7. GST mode "category" (BUG-607) — Gyan</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-11">BB-11</td>
+<td>When <code>restaurant_gst = category</code>, every server-side tax path (scan / web / aggregator orders, bill print, reports, e-invoice) must use each item's <code>tax</code> — never restaurant <code>gst_tax</code>. No restaurant fallback (OD-607-A).</td>
+<td>Probe 03 (RID 644): <code>restaurant_gst=category</code>, <code>gst_tax=5.00</code>. R5 probe 32 (RID 541): all 286 products carry item tax (5% GST ×220, 0% GST ×61, 0% VAT ×5), 9/32 categories mixed. POS already bills per item.</td>
+</tr>
+<tr>
+<td id="BB-12">BB-12</td>
+<td>Share one order id where restaurant-level GST was applied wrongly, for regression.</td>
+<td>Needed to close BUG-607 QA.</td>
+</tr>
+</tbody>
+</table>
+<h2>8. One-time data fix: Inclusive → Exclusive (CR-394) — added 2026-11-15</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Ask</th>
+<th>Evidence / detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-13">BB-13</td>
+<td>One-time update: every product with <code>tax_calc = Inclusive</code> → <code>Exclusive</code>, <strong>only for outlets with GST ON</strong> (<code>gst_status = 1</code>). GST-off outlets untouched. Share count of products changed per outlet. POS removes the Inclusive choice from all screens.</td>
+<td>Owner OD-394-B (Gate 2.5 M8). R5 probe 32 (RID 541): 0 Inclusive products.</td>
+</tr>
+</tbody>
+</table>
+<h2>Gate 2.5 decisions that change backend asks (2026-11-15)</h2>
+<ul>
+<li>BB-05: reason also required on "Remove from Room" (same endpoint) — OD-542-B.</li>
+<li>BB-08: tolerance <code>0</code> = same as blank = no check — OD-522-B.</li>
+</ul>
+<h2>Release impact</h2>
+<ul>
+<li>BB-03 changes behaviour (unpaid blocked after settlement) — owner-approved (OD-526-B).</li>
+<li>BB-01 changes behaviour only when admin sets TAB <code>prepaid:0</code> — that is the intended rule.</li>
+<li>All other asks are additive fields.</li>
+</ul>
+<h2>Reply format</h2>
+<p>Per ID: DONE / WILL DO (date) / NOT POSSIBLE (reason) + final field names. FE Gate 3 plans wait on BB-02..BB-10 replies for the blocked items.</p><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

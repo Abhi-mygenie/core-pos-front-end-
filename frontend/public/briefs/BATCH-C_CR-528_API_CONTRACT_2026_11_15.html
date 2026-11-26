@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-C_CR-528_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-528 Post-bill-print changes in Audit report — DRAFT v1 — 2026-11-15</h1>
+<div style="background:#f6c9c9;border:2px solid #c0392b;padding:12px 16px;border-radius:6px;margin:12px 0"><strong>⚠️ SUPERSEDED by v2 (2026-11-16).</strong> This v1 contract targeted <code>order-logs-report</code> — the wrong endpoint. The Audit page (<code>AuditLogMockup.jsx</code>) uses <code>insights-dashboard</code>, not <code>order-logs-report</code>. <strong>See <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.html">v2 contract</a> for the correct version.</strong></div>
+<div style="background:#cdeccf;border:2px solid #27ae60;padding:12px 16px;border-radius:6px;margin:12px 0"><strong>Backend reply on v1 (2026-11-16):</strong> Gyan delivered ALL 6 items on <code>order-logs-report</code> — <code>bill_printed_at</code>, <code>bill_print_count</code>, <code>print_bill_status</code>, <code>operations[]</code> with <code>bill_print</code>/<code>item_cancel</code>/<code>order_cancel</code> events. This confirms the database-level plumbing works. The remaining ask is to surface these on <code>insights-dashboard</code> → <code>audits</code> (v2 contract).</div>
+<p>Backend: Gyan · ID: ASK 2 · IA doc: <code>impact/CR-528_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong>
+<strong>Status: <s>DRAFT v1</s> SUPERSEDED — see <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.html">v2</a>. Backend delivered v1 fields on order-logs-report (2026-11-16).</strong></p>
+<h2>1. Persist bill_print_status and log every print (ASK 2)</h2>
+<p>Endpoint: <code>GET /api/v2/vendoremployee/report/order-logs-report</code> → <code>orders_table</code> rows + <code>operations[]</code></p>
+<p><strong>Problem (probe 02g/02f):</strong> <code>print_bill_status</code> exists on <code>orders_table</code> but stays <code>'No'</code> even after printing. <code>operations[]</code> today only has <code>order_edit</code> entries — no <code>bill_print</code> event.</p>
+<h3>a) <code>orders_table</code> row — persist print flag + timestamp</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Default</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orders_table[].print_bill_status</code></td>
+<td>string</td>
+<td><code>'Yes'</code> / <code>'No'</code></td>
+<td><code>'No'</code></td>
+<td>EXISTING — <strong>fix: persist <code>Yes</code> when bill is printed</strong></td>
+</tr>
+<tr>
+<td><code>orders_table[].bill_printed_at</code></td>
+<td>string (datetime) or null</td>
+<td>Datetime of <strong>latest</strong> bill print (incl. reprints)</td>
+<td><code>null</code></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>orders_table[].bill_print_count</code></td>
+<td>integer</td>
+<td>Total number of times bill was printed</td>
+<td><code>0</code></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>b) <code>operations[]</code> — log every bill print event</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operations[].operation</code></td>
+<td>string</td>
+<td><code>'bill_print'</code></td>
+<td>NEW value — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>operations[].created_at</code></td>
+<td>string (datetime)</td>
+<td>When bill was printed</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>operations[].employee</code></td>
+<td>string</td>
+<td>Name of employee who printed</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>operations[].amount</code></td>
+<td>number</td>
+<td>Order amount at time of print</td>
+<td>NEW</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule:</strong> one <code>operations[]</code> entry per print event, including reprints after an edit (OD-C-R3 Q5: every print, not just first).</p>
+<h3>c) Item-level cancels in operations (OD-528-B)</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operations[].operation</code></td>
+<td>string</td>
+<td><code>'item_cancel'</code></td>
+<td>EXISTING — confirm present today</td>
+</tr>
+</tbody>
+</table>
+<p>OD-528-B: post-print section shows both order-level AND item-level cancels. Backend confirms <code>item_cancel</code> appears in <code>operations[]</code> for items cancelled after print.</p>
+<h3>d) Order-level cancel in operations</h3>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>operations[].operation</code></td>
+<td>string</td>
+<td><code>'order_cancel'</code></td>
+<td>NEW — log whole-order cancellation after print</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASK 2</td>
+<td></td>
+<td>Confirm: (1) <code>print_bill_status</code> persisted; (2) <code>bill_print</code> in ops with time/employee/amount; (3) <code>bill_print_count</code>; (4) <code>bill_printed_at</code> (latest); (5) <code>item_cancel</code> in ops confirmed; (6) <code>order_cancel</code> added to ops</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto;font-size:12px}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}.banner{padding:12px 16px;border-radius:6px;margin:12px 0}.done{background:#cdeccf;border:2px solid #27ae60}.warn{background:#ffe2c2;border:2px solid #e67e22}</style></head><body><div class="wrap">
+<p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p>
+
+<h1>API Contract — CR-528 Post-bill-print changes in Order Edit Audit — REVISED v2 — 2026-11-16</h1>
+
+<p>Backend: Gyan · ID: ASK 2 (revised) · IA doc: <code>impact/CR-528_IMPACT_ANALYSIS.md</code><br>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong><br>
+<strong>Status: DRAFT v2 — READY TO SEND. Waiting backend reply on <code>insights-dashboard</code> events. BLOCKING.</strong></p>
+
+<div class="banner warn"><strong>v2 CHANGE (2026-11-16):</strong> Corrected target endpoint from <code>order-logs-report</code> to <code>insights-dashboard</code>. The Order Edit Audit page (<code>AuditLogMockup.jsx</code>) consumes <code>insights-dashboard</code> → <code>audits</code>, NOT <code>order-logs-report</code>. All asks below target the correct endpoint. <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_15.html">v1 (superseded)</a></div>
+
+<div class="banner done"><strong>Foundation confirmed (2026-11-16):</strong> Backend delivered v1 fields on <code>order-logs-report</code> — <code>bill_printed_at</code>, <code>bill_print_count</code>, <code>print_bill_status</code> all persist correctly. <code>operations[]</code> logs <code>bill_print</code>, <code>item_cancel</code>, <code>order_cancel</code>, <code>order_edit</code> events with timestamps and employee. <strong>The database-level data exists. Remaining work: query it and emit computed audit events on <code>insights-dashboard</code> → <code>audits</code>.</strong></div>
+
+<hr>
+
+<h2>1. Target page and current data source</h2>
+<p><strong>Page:</strong> Order Edit Audit (<code>AuditLogMockup.jsx</code>, route <code>/reports-module/audit-log</code>)<br>
+<strong>Current endpoint:</strong> <code>POST /api/v2/vendoremployee/report/insights-dashboard</code><br>
+<strong>Event types today:</strong> <code>make_unpaid</code>, <code>payment_method_change</code></p>
+
+<pre>{
+  "audits": {
+    "total": 5,
+    "make_unpaid_count": 2,
+    "payment_method_change_count": 3,
+    "orders": [
+      {
+        "order_id": "021018",
+        "type": "make_unpaid",
+        "amount": 500.00,
+        "by": "Counter",
+        "prev_method": "Cash",
+        "curr_method": "pending"
+      }
+    ]
+  }
+}</pre>
+
+<hr>
+
+<h2>2. New audit event types needed (CR-528)</h2>
+
+<h3>a) Item cancel after bill print</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>string</td><td><code>"item_cancel_after_print"</code></td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>order_id</code></td><td>string</td><td>Restaurant order ID</td><td>EXISTING pattern</td></tr>
+<tr><td><code>food_name</code></td><td>string</td><td>Name of the cancelled item</td><td>NEW</td></tr>
+<tr><td><code>amount</code></td><td>number</td><td>Value of the cancelled item</td><td>EXISTING pattern</td></tr>
+<tr><td><code>by</code></td><td>string</td><td>Employee who cancelled</td><td>EXISTING pattern</td></tr>
+<tr><td><code>bill_printed_at</code></td><td>string (datetime)</td><td>When the bill was printed</td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>cancel_time</code></td><td>string (datetime)</td><td>When the item was cancelled</td><td>NEW</td></tr>
+</tbody></table>
+
+<h3>b) Order cancel after bill print</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>string</td><td><code>"order_cancel_after_print"</code></td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>order_id</code></td><td>string</td><td>Restaurant order ID</td><td>EXISTING pattern</td></tr>
+<tr><td><code>amount</code></td><td>number</td><td>Full order amount at time of cancel</td><td>EXISTING pattern</td></tr>
+<tr><td><code>by</code></td><td>string</td><td>Employee who cancelled</td><td>EXISTING pattern</td></tr>
+<tr><td><code>bill_printed_at</code></td><td>string (datetime)</td><td>When the bill was printed</td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>cancel_time</code></td><td>string (datetime)</td><td>When the order was cancelled</td><td>NEW</td></tr>
+</tbody></table>
+
+<h3>c) Order edit after bill print (items added/removed)</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>type</code></td><td>string</td><td><code>"order_edit_after_print"</code></td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>order_id</code></td><td>string</td><td>Restaurant order ID</td><td>EXISTING pattern</td></tr>
+<tr><td><code>amount</code></td><td>number</td><td>Order amount after the edit</td><td>EXISTING pattern</td></tr>
+<tr><td><code>prev_amount</code></td><td>number</td><td>Order amount before the edit</td><td>NEW</td></tr>
+<tr><td><code>by</code></td><td>string</td><td>Employee who edited</td><td>EXISTING pattern</td></tr>
+<tr><td><code>bill_printed_at</code></td><td>string (datetime)</td><td>When the bill was printed</td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>edit_time</code></td><td>string (datetime)</td><td>When the edit happened</td><td>NEW</td></tr>
+</tbody></table>
+
+<h3>d) New KPI counts in <code>audits</code></h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><code>item_cancel_after_print_count</code></td><td>integer</td><td>Count of item cancels after print</td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>order_cancel_after_print_count</code></td><td>integer</td><td>Count of order cancels after print</td><td>NEW — <strong>LOCKED</strong></td></tr>
+<tr><td><code>order_edit_after_print_count</code></td><td>integer</td><td>Count of order edits after print</td><td>NEW — <strong>LOCKED</strong></td></tr>
+</tbody></table>
+
+<hr>
+
+<h2>3. Backend prerequisites</h2>
+<table>
+<thead><tr><th>#</th><th>Requirement</th><th>Current state</th><th>Priority</th></tr></thead>
+<tbody>
+<tr><td>P-1</td><td><s><strong>Persist <code>bill_printed_at</code></strong></s> ✅ DONE on order-logs-report</td><td>Delivered 2026-11-16 — now needs to be queried for insights-dashboard</td><td>DONE</td></tr>
+<tr><td>P-2</td><td><s><strong>Persist <code>print_bill_status = 'Yes'</code></strong></s> ✅ DONE on order-logs-report</td><td>Delivered 2026-11-16</td><td>DONE</td></tr>
+<tr><td>P-3</td><td><strong>Detect cancels/edits after <code>bill_printed_at</code> and emit as audit events</strong></td><td>No logic exists today on insights-dashboard</td><td>BLOCKING</td></tr>
+</tbody></table>
+
+<hr>
+
+<h2>4. Detection logic (backend-side)</h2>
+<pre>For each order in the date range:
+  IF bill_printed_at IS NOT NULL:
+    FOR each item cancellation WHERE cancel_at > bill_printed_at:
+      → emit { type: "item_cancel_after_print", ... }
+    IF order cancelled WHERE cancel_at > bill_printed_at:
+      → emit { type: "order_cancel_after_print", ... }
+    FOR each order_edit WHERE edit_at > bill_printed_at:
+      → emit { type: "order_edit_after_print", ... }</pre>
+
+<hr>
+
+<h2>5. Backward compatibility</h2>
+<ul>
+<li>Existing <code>make_unpaid</code> and <code>payment_method_change</code> events UNCHANGED</li>
+<li>New event types are ADDITIVE in <code>audits.orders[]</code></li>
+<li><code>audits.total</code> should now sum all event types (old + new)</li>
+<li>FE will handle unknown event types gracefully (skip rendering)</li>
+</ul>
+
+<hr>
+
+<h2>6. Backend sign-off</h2>
+<table>
+<thead><tr><th>ID</th><th>OK / ETA / Not feasible</th><th>Notes</th><th>Date</th></tr></thead>
+<tbody>
+<tr><td>ASK 2 (revised)</td><td></td><td>Confirm: (1) <code>bill_printed_at</code> will be persisted; (2) three new event types in <code>insights-dashboard</code> → <code>audits</code>; (3) KPI counts added; (4) <code>print_bill_status</code> fix</td><td></td></tr>
+</tbody></table>
+
+<hr>
+
+<h2>7. Supersedes</h2>
+<p>This contract <strong>supersedes</strong> the <a href="/briefs/BATCH-C_CR-528_API_CONTRACT_2026_11_15.html">DRAFT v1 (2026-11-15)</a> which incorrectly targeted <code>order-logs-report</code>. The <code>order-logs-report</code> asks (operations logging, bill_print events) are still valid for that endpoint's own purposes, but the Order Edit Audit page does NOT use that endpoint.</p>
+
+</div>
+<script>document.querySelectorAll('.copy-md').forEach(b=>b.addEventListener('click',async()=>{try{const r=await fetch(b.dataset.src);const t=await r.text();await navigator.clipboard.writeText(t);b.textContent='Copied!';setTimeout(()=>b.textContent='Copy .md',1500)}catch(e){b.textContent='Failed'}}))</script>
+</body></html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-142 + CR-143 Design Review — Addon Master V2 + Aggregator Leftover</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1e293b; }
+  .page { max-width: 1240px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  .header { background: #fff; border-radius: 12px; padding: 24px 28px; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+  .header h1 { font-size: 21px; font-weight: 800; color: #0f172a; }
+  .header p { font-size: 12px; color: #64748b; margin-top: 5px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .p1h { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; }
+  .p1m { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; }
+
+  .section { background: #fff; border-radius: 12px; padding: 24px 28px; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+  .section-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+  .section-sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
+  hr.div { border: none; border-top: 1px solid #f1f5f9; margin: 22px 0; }
+
+  /* Layout helpers */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:860px){ .grid2,.grid3{grid-template-columns:1fr;} }
+  .flex { display: flex; } .flex-col { flex-direction: column; }
+  .items-center { align-items: center; } .justify-between { justify-content: space-between; }
+  .gap-2 { gap: 8px; } .gap-3 { gap: 12px; }
+  .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; }
+  .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; }
+  .text-xs { font-size: 11px; color: #64748b; }
+  .bold { font-weight: 700; } .green { color: #16a34a; } .orange { color: #ea580c; } .red { color: #dc2626; }
+  .new-badge { background: #16a34a; color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 4px; margin-left: 5px; text-transform: uppercase; }
+  .changed-badge { background: #3b82f6; color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 4px; margin-left: 5px; text-transform: uppercase; }
+
+  /* Mock card */
+  .mock { border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 12px; }
+  .mock-hd { background: #f8fafc; padding: 9px 14px; font-size: 11px; font-weight: 700; color: #475569; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+  .mock-body { padding: 14px; }
+
+  /* Addon row */
+  .addon-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .veg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .addon-name { font-size: 12px; flex: 1; color: #1e293b; }
+  .addon-tag { font-size: 10px; padding: 1px 6px; border-radius: 4px; }
+  .tag-gray { background: #f1f5f9; color: #64748b; }
+  .tag-blue { background: #eff6ff; color: #3b82f6; }
+  .tag-amber { background: #fef3c7; color: #92400e; }
+  .addon-price { font-size: 11px; color: #64748b; min-width: 36px; text-align: right; }
+
+  /* Table */
+  table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  th { background: #f8fafc; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
+  td { padding: 8px 12px; border: 1px solid #e2e8f0; vertical-align: middle; color: #334155; }
+  tr:hover td { background: #f8fafc; }
+  .th-new { background: #f0fdf4; color: #15803d; }
+
+  /* Chips */
+  .chip { display: inline-flex; align-items: center; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+  .chip-green { background: rgba(22,163,74,.1); color: #16a34a; border: 1px solid rgba(22,163,74,.2); }
+  .chip-amber { background: rgba(245,158,11,.1); color: #d97706; border: 1px solid rgba(245,158,11,.2); }
+  .chip-gray  { background: rgba(148,163,184,.1); color: #64748b; border: 1px solid rgba(148,163,184,.2); }
+  .chip-red   { background: rgba(239,68,68,.1); color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
+  .chip-blue  { background: rgba(59,130,246,.1); color: #3b82f6; border: 1px solid rgba(59,130,246,.2); }
+
+  /* Buttons */
+  .btn { padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-green { background: #16a34a; color: #fff; }
+  .btn-orange { background: #ea580c; color: #fff; }
+  .btn-outline { background: #fff; border: 1px solid #e2e8f0; color: #475569; }
+  .btn-red { background: #dc2626; color: #fff; }
+  .btn-sm { padding: 4px 8px; font-size: 10px; }
+  .btn-enable { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; padding: 3px 9px; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; }
+  .btn-disable { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; padding: 3px 9px; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; }
+  .btn-oos { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; padding: 3px 9px; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; }
+
+  /* Tab bar */
+  .tab-bar { display: flex; border-bottom: 1px solid #e2e8f0; margin-bottom: 18px; overflow-x: auto; }
+  .tab { padding: 9px 16px; font-size: 12px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab.active { color: #ea580c; border-bottom-color: #ea580c; }
+  .tab.new-tab { color: #16a34a; }
+
+  /* Action card */
+  .action-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .action-card.danger { border-color: #fca5a5; background: #fff5f5; }
+  .action-card.new-card { border-color: #bbf7d0; background: #f0fdf4; }
+  .ac-title { font-size: 12px; font-weight: 700; color: #1e293b; }
+  .ac-desc  { font-size: 11px; color: #64748b; margin-top: 3px; line-height: 1.5; }
+
+  /* Warn banner */
+  .warn { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 13px; font-size: 11px; color: #92400e; margin-bottom: 14px; }
+
+  /* Toggle */
+  .toggle { width: 34px; height: 18px; border-radius: 9px; position: relative; flex-shrink: 0; }
+  .toggle.on { background: #16a34a; } .toggle.off { background: #cbd5e1; }
+  .toggle::after { content:''; width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .toggle.on::after { left: 18px; } .toggle.off::after { left: 2px; }
+
+  /* Variation accordion */
+  .var-food { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+  .var-food-hd { background: #f8fafc; padding: 9px 13px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .var-food-title { font-size: 12px; font-weight: 700; color: #1e293b; }
+  .var-food-body { padding: 10px 13px; }
+  .var-group { margin-bottom: 8px; }
+  .var-group-name { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+  .var-value-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+  .var-value-label { font-size: 12px; color: #334155; flex: 1; }
+  .var-value-price { font-size: 11px; color: #64748b; min-width: 32px; }
+
+  /* OD box */
+  .od-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-top: 18px; }
+  .od-box h4 { font-size: 11px; font-weight: 800; color: #92400e; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+  .od-row { font-size: 12px; color: #78350f; padding: 5px 0; border-bottom: 1px solid #fef3c7; }
+  .od-row:last-child { border: none; }
+
+  /* Before/after label */
+  .before-label { font-size: 10px; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .after-label  { font-size: 10px; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+
+  input[type=text], input[type=number], select {
+    padding: 5px 8px; border: 1px solid #e2e8f0; border-radius: 6px;
+    font-size: 11px; color: #334155; background: #fff; outline: none;
+  }
+  .disabled-toggle { opacity: .4; cursor: not-allowed; }
+  .tooltip { font-size: 10px; color: #94a3b8; margin-left: 4px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div style="margin-bottom:8px;">
+      <span class="badge p1h">CR-142 · P1 · HIGH</span>
+      <span class="badge p1m">CR-143 · P1 · MEDIUM</span>
+    </div>
+    <h1>Addon Master V2 + Aggregator Leftover — Design Review</h1>
+    <p>Gate 2 Impact Analysis · 2026-08-14 · Awaiting owner approval before Gate 3 (Implementation Plan)</p>
+  </div>
+
+  <!-- ═══ CR-142 ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title"><span class="badge p1h">CR-142 · HIGH</span> Addon Master V2 — Full CRUD Upgrade + Standalone Panel</div>
+    <div class="section-sub">5 gaps: wrong transform (7 fields dropped), addAddon incomplete, updateAddon wrong method, no status-toggle, no management UI.</div>
+
+    <!-- A. ProductForm Food Addons — Before/After -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:10px;">A. ProductForm — Food Addons Section <span class="changed-badge">CHANGED</span></h3>
+    <div class="grid2">
+      <div>
+        <div class="before-label">Before (current)</div>
+        <div class="mock">
+          <div class="mock-hd">Food Addons <span style="color:#ea580c;font-size:10px;">2 selected</span></div>
+          <div class="mock-body">
+            <div class="addon-row">
+              <input type="checkbox" checked style="accent-color:#ea580c;">
+              <span class="addon-name">Extra Cheese</span>
+              <span class="addon-price">₹40</span>
+            </div>
+            <div class="addon-row">
+              <input type="checkbox">
+              <span class="addon-name">Garlic Sauce</span>
+              <span class="addon-price">₹25</span>
+            </div>
+            <div class="addon-row" style="opacity:.45;">
+              <input type="checkbox">
+              <span class="addon-name">Dark Choco</span>
+              <span class="addon-price">₹10</span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end;padding-top:8px;border-top:1px solid #f1f5f9;margin-top:4px;">
+              <input type="text" placeholder="New add-on name" style="flex:1;">
+              <input type="number" placeholder="Price" style="width:70px;">
+              <button class="btn btn-orange btn-sm">Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-xs">Only name + price shown. No veg indicator. No weight. No inactive dimming. Quick-create: name+price only.</div>
+      </div>
+      <div>
+        <div class="after-label">After CR-142</div>
+        <div class="mock">
+          <div class="mock-hd">Food Addons <span style="color:#ea580c;font-size:10px;">2 selected</span></div>
+          <div class="mock-body">
+            <div class="addon-row">
+              <input type="checkbox" checked style="accent-color:#ea580c;">
+              <div class="veg-dot" style="background:#16a34a;"></div>
+              <span class="addon-name">Extra Cheese</span>
+              <span class="addon-tag tag-gray">50g</span>
+              <span class="addon-tag tag-blue">INV</span>
+              <span class="addon-price">₹40</span>
+            </div>
+            <div class="addon-row">
+              <input type="checkbox">
+              <div class="veg-dot" style="background:#ef4444;"></div>
+              <span class="addon-name">Garlic Sauce</span>
+              <span class="addon-price">₹25</span>
+            </div>
+            <div class="addon-row" style="opacity:.4;">
+              <input type="checkbox" disabled>
+              <div class="veg-dot" style="background:#9ca3af;"></div>
+              <span class="addon-name">Dark Choco <span style="font-size:10px;color:#94a3b8;">(inactive)</span></span>
+              <span class="addon-price">₹10</span>
+            </div>
+            <!-- Quick-create with veg -->
+            <div style="display:flex;gap:6px;align-items:flex-end;padding-top:8px;border-top:1px solid #f1f5f9;margin-top:4px;">
+              <input type="text" placeholder="Add-on name" style="flex:1;">
+              <select style="width:70px;"><option>Veg</option><option>Non-V</option><option>Egg</option></select>
+              <input type="number" placeholder="₹" style="width:55px;">
+              <button class="btn btn-orange btn-sm">Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="text-xs" style="color:#16a34a;">+ Veg dot · Weight badge · INV badge · Inactive dimming · Veg select in quick-create</div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- B. Addon Management Panel -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:4px;">B. Addon Management Panel <span class="new-badge">NEW</span></h3>
+    <div class="text-xs mb-3">Opened via "Add-ons" button in Menu Management header. Full CRUD with all V2 fields.</div>
+
+    <!-- Header with Add button -->
+    <div class="mock">
+      <div class="mock-hd" style="background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:14px;font-weight:800;color:#0f172a;">Manage Add-ons</span>
+          <button class="btn btn-green btn-sm">+ Add Addon</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="text" placeholder="Search add-ons..." style="width:180px;">
+          <button class="btn btn-outline btn-sm">✕ Close</button>
+        </div>
+      </div>
+      <div class="mock-body" style="padding:0;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;">Type</th>
+              <th>Name</th>
+              <th style="width:70px;">Price</th>
+              <th style="width:80px;">Weight</th>
+              <th style="width:65px;">Stock</th>
+              <th style="width:80px;">Inventory</th>
+              <th style="width:100px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="veg-dot" style="background:#16a34a;margin:auto;"></div></td>
+              <td><span style="font-weight:600;">Extra Cheese</span></td>
+              <td>₹40</td>
+              <td><span class="chip chip-gray">50g</span></td>
+              <td><span class="chip chip-green">On</span></td>
+              <td><span class="chip chip-blue">Yes</span></td>
+              <td><button class="btn btn-outline btn-sm">Edit</button> <button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;">Del</button></td>
+            </tr>
+            <!-- Inline edit row example -->
+            <tr style="background:#f0fdf4;">
+              <td><div class="veg-dot" style="background:#ef4444;margin:auto;"></div></td>
+              <td colspan="5">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                  <input type="text" value="Garlic Sauce" style="width:140px;">
+                  <span class="text-xs">₹</span><input type="number" value="25" style="width:60px;">
+                  <span class="text-xs">Weight (g)</span><input type="number" value="0" style="width:60px;">
+                  <select style="width:80px;"><option>Veg</option><option selected>Non-Veg</option><option>Egg</option><option>Other</option></select>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="text-xs">Inventory</span>
+                    <div class="toggle off disabled-toggle"></div>
+                    <span class="tooltip">No recipe attached</span>
+                  </div>
+                </div>
+              </td>
+              <td><button class="btn btn-green btn-sm">Save</button> <button class="btn btn-outline btn-sm">✕</button></td>
+            </tr>
+            <tr style="opacity:.5;">
+              <td><div class="veg-dot" style="background:#9ca3af;margin:auto;"></div></td>
+              <td><span style="color:#94a3b8;">Dark Choco</span> <span class="chip chip-gray" style="font-size:9px;">inactive</span></td>
+              <td>₹10</td>
+              <td><span class="chip chip-gray">0g</span></td>
+              <td><span class="chip chip-amber">Off</span></td>
+              <td><span class="chip chip-gray">No</span></td>
+              <td><button class="btn btn-outline btn-sm">Edit</button> <button class="btn btn-sm" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;">Del</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="text-xs">Inventory toggle disabled (greyed) when <code>has_recipe: false</code> — tooltip: "Attach a recipe first".</div>
+
+    <!-- OD box -->
+    <div class="od-box">
+      <h4>CR-142 — All ODs Adopted (owner can override at Gate 4)</h4>
+      <div class="od-row"><strong>OQ-1 → A</strong> — Addon panel lives inside MenuManagementPanel (new "Add-ons" button in header, replaces card/bulk view)</div>
+      <div class="od-row"><strong>OQ-2 → A</strong> — Inline row edit (BulkEditor pattern — no modal)</div>
+      <div class="od-row"><strong>OQ-3 → Filed</strong> — SQL weight column error filed as backend brief `BACKEND_BRIEF_BUG-ADDON-SQL_2026_08_14.md`</div>
+    </div>
+  </div>
+
+
+  <!-- ═══ CR-143 ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title"><span class="badge p1m">CR-143 · MEDIUM</span> Aggregator Leftover — Force-Swiggy + Addon Stock + Variation Stock</div>
+    <div class="section-sub">3 gaps: force-enable-all-on-Swiggy button (SyncCatalogTab), Addon Stock tab (Tab 5), Variation Stock tab (Tab 6).</div>
+
+    <!-- Tab bar: current → after -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:10px;">A. AggregatorSetupView — Tab Bar (after CR-143)</h3>
+    <div class="mock">
+      <div class="mock-hd">Aggregator Setup — /aggregator/setup</div>
+      <div class="mock-body" style="padding:0 16px;">
+        <div class="tab-bar">
+          <div class="tab">Configuration</div>
+          <div class="tab">Operational Settings</div>
+          <div class="tab">Sync &amp; Catalog</div>
+          <div class="tab">Category Timings</div>
+          <div class="tab new-tab active">Addon Stock <span class="new-badge">new</span></div>
+          <div class="tab new-tab">Variation Stock <span class="new-badge">new</span></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- B. SyncCatalogTab: Force Enable card -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:10px;">B. Sync &amp; Catalog Tab — Force Enable card added <span class="new-badge">NEW CARD</span></h3>
+    <div style="max-width:580px;">
+      <div class="action-card new-card">
+        <div>
+          <div class="ac-title green">Force Enable All Items on Swiggy</div>
+          <div class="ac-desc">Re-enables all active Swiggy items for <strong>Main Brand</strong> on UrbanPiper. Use after store outage or reset. Chunks 400 items with 3s delay.</div>
+        </div>
+        <button class="btn btn-green" style="white-space:nowrap;">Force Enable Swiggy →</button>
+      </div>
+      <div class="action-card">
+        <div>
+          <div class="ac-title">Sync Menu to UrbanPiper</div>
+          <div class="ac-desc">Pushes Main Brand's full menu to Swiggy &amp; Zomato. Async — store pass fires after response.</div>
+        </div>
+        <button class="btn btn-green">Sync Catalog →</button>
+      </div>
+      <div class="action-card">
+        <div><div class="ac-title">Clear Store Catalog</div><div class="ac-desc">Removes Main Brand's items. Other brands unaffected.</div></div>
+        <button class="btn btn-outline">Clear Store →</button>
+      </div>
+      <div class="action-card">
+        <div><div class="ac-title">Clear Modifiers</div><div class="ac-desc">Removes option/modifier groups for this store.</div></div>
+        <button class="btn btn-outline">Clear Modifiers →</button>
+      </div>
+      <div class="action-card danger">
+        <div><div class="ac-title" style="color:#dc2626;">⛔ Full Master Reset</div><div class="ac-desc" style="color:#b91c1c;">DANGER: Wipes ALL brands' shared catalog. Type RESET to confirm.</div></div>
+        <button class="btn btn-red">Full Reset ⛔</button>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- C. Addon Stock Tab -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:4px;">C. Addon Stock — Tab 5 <span class="new-badge">NEW TAB</span></h3>
+    <div class="text-xs mb-3">Manage addon availability in catalog + UrbanPiper stock toggle. Key split: catalog = restaurant-wide; UP toggle = per-brand.</div>
+    <div style="max-width:760px;">
+      <div class="warn">⚠ <strong>Catalog status</strong> (enable / out of stock) applies to <strong>ALL brands</strong> restaurant-wide.<br>
+        <strong>UrbanPiper toggle</strong> affects only the selected brand's store.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="text-xs bold" style="text-transform:uppercase;letter-spacing:.4px;">Brand</span>
+          <select style="width:160px;"><option>Main Brand</option><option>mallu goan</option></select>
+        </div>
+        <button class="btn btn-outline btn-sm">Refresh</button>
+      </div>
+      <div class="mock">
+        <div class="mock-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:180px;">Addon</th>
+                <th style="width:60px;">Price</th>
+                <th>Catalog Status (all brands)</th>
+                <th>UrbanPiper (this brand)</th>
+                <th style="width:40px;">↕</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="font-weight:600;">Dark</span></td>
+                <td>₹10</td>
+                <td>
+                  <span class="chip chip-green">● Available</span>
+                  <button class="btn-oos" style="margin-left:8px;">Out of Stock</button>
+                </td>
+                <td>
+                  <button class="btn-enable">Enable</button>
+                  <button class="btn-disable" style="margin-left:4px;">Disable</button>
+                </td>
+                <td style="text-align:center;cursor:pointer;color:#64748b;">▼</td>
+              </tr>
+              <!-- Expanded row showing foods -->
+              <tr style="background:#f8fafc;">
+                <td colspan="5" style="padding:8px 16px;">
+                  <div class="text-xs bold" style="margin-bottom:4px;color:#475569;">Used in foods (Main Brand):</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <span class="chip chip-gray">Plain Dosa</span>
+                    <span class="chip chip-gray">Masala Dosa</span>
+                    <span class="chip chip-gray">Egg Dosa</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-weight:600;">extra flesh</span></td>
+                <td>₹35</td>
+                <td>
+                  <span class="chip chip-green">● Available</span>
+                  <button class="btn-oos" style="margin-left:8px;">Out of Stock</button>
+                </td>
+                <td>
+                  <button class="btn-enable">Enable</button>
+                  <button class="btn-disable" style="margin-left:4px;">Disable</button>
+                </td>
+                <td style="text-align:center;cursor:pointer;color:#64748b;">▶</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- OOS confirm dialog preview -->
+      <div class="text-xs bold mb-2" style="color:#c2410c;margin-top:12px;">OOS Confirm Dialog (OQ-1=A)</div>
+      <div style="border:1px solid #fca5a5;border-radius:10px;padding:14px;background:#fff5f5;max-width:380px;">
+        <div style="font-size:13px;font-weight:700;color:#c2410c;margin-bottom:6px;">Mark "Dark" as Out of Stock?</div>
+        <div style="font-size:11px;color:#7f1d1d;margin-bottom:12px;line-height:1.6;">This changes the catalog status for <strong>all brands</strong> restaurant-wide. The item will be unavailable until you manually re-enable it.</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="btn btn-outline btn-sm">Cancel</button>
+          <button class="btn btn-sm" style="background:#c2410c;color:#fff;">Confirm OOS</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="div">
+
+    <!-- D. Variation Stock Tab -->
+    <h3 style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:4px;">D. Variation Stock — Tab 6 <span class="new-badge">NEW TAB</span></h3>
+    <div class="text-xs mb-3">Toggle individual variation option values on/off on UrbanPiper. Per-brand. Group-level enable/disable supported (OQ-2=A).</div>
+    <div style="max-width:680px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <span class="text-xs bold" style="text-transform:uppercase;letter-spacing:.4px;">Brand</span>
+        <select style="width:160px;"><option>Main Brand</option><option>mallu goan</option></select>
+      </div>
+
+      <div class="var-food">
+        <div class="var-food-hd">
+          <div>
+            <span class="var-food-title">69 special</span>
+            <span class="chip chip-gray" style="margin-left:8px;">Special</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-enable btn-sm">Enable All</button>
+            <button class="btn-disable btn-sm">Disable All</button>
+            <span style="color:#64748b;font-size:13px;cursor:pointer;">▼</span>
+          </div>
+        </div>
+        <div class="var-food-body">
+          <div class="var-group">
+            <div class="var-group-name">Variation: "choice of" &nbsp;<span class="chip chip-gray">single</span></div>
+            <div class="var-value-row">
+              <div class="veg-dot" style="background:#9ca3af;margin-right:8px;"></div>
+              <span class="var-value-label">salsa</span>
+              <span class="var-value-price">₹0</span>
+              <div style="display:flex;gap:6px;margin-left:12px;">
+                <button class="btn-enable">Enable</button>
+                <button class="btn-disable">Disable</button>
+              </div>
+            </div>
+            <div class="var-value-row">
+              <div class="veg-dot" style="background:#9ca3af;margin-right:8px;"></div>
+              <span class="var-value-label">gogo</span>
+              <span class="var-value-price">₹10</span>
+              <div style="display:flex;gap:6px;margin-left:12px;">
+                <button class="btn-enable">Enable</button>
+                <button class="btn-disable">Disable</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="var-food">
+        <div class="var-food-hd">
+          <div>
+            <span class="var-food-title">Cheese Dosa</span>
+            <span class="chip chip-gray" style="margin-left:8px;">Dosa</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-enable btn-sm">Enable All</button>
+            <button class="btn-disable btn-sm">Disable All</button>
+            <span style="color:#64748b;font-size:13px;cursor:pointer;">▶</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- OD box -->
+    <div class="od-box">
+      <h4>CR-143 — All ODs Adopted (owner can override at Gate 4)</h4>
+      <div class="od-row"><strong>OQ-1 → A</strong> — OOS catalog change shows confirm dialog (warns restaurant-wide impact)</div>
+      <div class="od-row"><strong>OQ-2 → A</strong> — Group-level Enable All / Disable All buttons per variation group + individual per-value toggles</div>
+      <div class="od-row"><strong>OQ-3 → A</strong> — Force-Swiggy toast shows triggered item count: "X items enabled on Swiggy"</div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="section">
+    <div class="section-title">Implementation Scope Summary</div>
+    <div class="section-sub">All changes isolated to addon management + aggregator setup pages. Zero regression risk on order/payment flows.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>CR</th><th>File</th><th>Action</th><th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge p1h" style="font-size:10px;padding:2px 7px;">CR-142</span></td><td>menuManagementTransform.js</td><td><span class="chip chip-blue">EDIT</span></td><td>fromAPI.addonList() +7 V2 fields</td></tr>
+        <tr><td><span class="badge p1h" style="font-size:10px;padding:2px 7px;">CR-142</span></td><td>menuManagementService.js</td><td><span class="chip chip-blue">EDIT</span></td><td>addAddon payload, updateAddon POST→PUT, +toggleAddonStatus()</td></tr>
+        <tr><td><span class="badge p1h" style="font-size:10px;padding:2px 7px;">CR-142</span></td><td>ProductForm.jsx</td><td><span class="chip chip-blue">EDIT</span></td><td>Addon row: veg dot + weight + dim; quick-create: +veg select</td></tr>
+        <tr><td><span class="badge p1h" style="font-size:10px;padding:2px 7px;">CR-142</span></td><td>MenuManagementPanel.jsx</td><td><span class="chip chip-blue">EDIT</span></td><td>+Add-ons button + addonPanelMode state + branch</td></tr>
+        <tr><td><span class="badge p1h" style="font-size:10px;padding:2px 7px;">CR-142</span></td><td>AddonManagementPanel.jsx</td><td><span class="chip chip-green">NEW</span></td><td>Full CRUD panel (list + inline edit + status toggle + delete)</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>constants.js</td><td><span class="chip chip-blue">EDIT</span></td><td>+7 AGGREGATOR_SYNC_ENDPOINTS entries</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>aggregatorConfigService.js</td><td><span class="chip chip-blue">EDIT</span></td><td>+7 service functions (forceSwiggyEnable, getBulkAddons, applyBulkAddon, toggleAddonStock, getVariations, toggleVariation, getBulkAddonItems)</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>SyncCatalogTab.jsx</td><td><span class="chip chip-blue">EDIT</span></td><td>+Force Enable on Swiggy action card</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>AggregatorSetupView.jsx</td><td><span class="chip chip-blue">EDIT</span></td><td>+2 tab buttons + 2 conditional renders (Tab 5 + Tab 6)</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>AddonStockTab.jsx</td><td><span class="chip chip-green">NEW</span></td><td>Addon stock management (catalog OOS + UP per-brand toggle)</td></tr>
+        <tr><td><span class="badge p1m" style="font-size:10px;padding:2px 7px;">CR-143</span></td><td>VariationStockTab.jsx</td><td><span class="chip chip-green">NEW</span></td><td>Variation stock (accordion + group toggle + per-value toggle)</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px;padding:12px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:12px;color:#15803d;">
+      ✅ <strong>Gate 2 Complete.</strong> Both impact analyses written. All ODs adopted with reasonable defaults. Awaiting owner Gate 4 GO → Gate 3 (Implementation Plan).
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

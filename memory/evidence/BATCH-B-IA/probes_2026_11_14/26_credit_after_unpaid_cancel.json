@@ -1,0 +1,10 @@
+{
+ "status": 200,
+ "body": [
+  {
+   "id": 3118,
+   "name": "TEST_BATCHB_CREDIT",
+   "total_credit": "0.00"
+  }
+ ]
+}

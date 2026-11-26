@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch A — Gate 2.5 Addendum · CR-495 M8b + M5c (Current vs Proposed) — 2026-11-15</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px}nav a{color:var(--o);margin-right:14px;text-decoration:none}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 12px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.frame{background:rgba(0,0,0,.35);padding:22px;border-radius:12px;min-height:120px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;color:#fff;font-weight:700;font-size:15px;background:var(--g)}.btn.dis{opacity:.5}
+.new .add{outline:3px solid var(--g);outline-offset:3px;border-radius:10px}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.tbd{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}.diff li{margin:3px 0}
+.hint{font-size:11px;color:var(--gt)}
+.panel{background:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.line{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eee}.line:last-child{border:0}
+.box{width:14px;height:14px;border:1.5px solid #888;border-radius:3px;margin-top:2px;flex:none}.box.on{background:var(--g);border-color:var(--g)}
+.grow{flex:1}.amt{font-weight:600}
+.mini{display:block;width:100%;border:1px solid #ddd;border-radius:4px;padding:3px 6px;font-size:11px;color:#999;margin-top:3px}
+.ci{background:#fff;border-radius:10px;padding:14px;font-size:12px}
+.ci .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.ci .opt,.chip{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600;font-size:12px;background:#fff}
+.ci .opt.on,.chip.on{box-shadow:0 0 0 2px #1A1A1A}
+.chip.off{color:#bbb;background:#F4F4F4;border-style:dashed}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.ci input{border:1px solid var(--b);border-radius:6px;padding:6px 8px;width:80px}
+.note{font-size:12px;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;margin-top:10px}
+.q{background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px;font-size:13px;margin-top:12px}.q li{margin:4px 0}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}section,header,nav{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<header data-testid="mockup-addendum-header">
+<h1>Batch A — Gate 2.5 Addendum · CR-495 · Current vs Proposed</h1>
+<p style="font-weight:700;color:#FCA5A5">SUPERSEDED 2026-11-15 — M8b and M5c are merged into the single Batch A mockup page <code>design/BATCH-A_GATE2_5_MOCKUPS_2026_11_14.html</code>. Kept for history; not updated.</p>
+<p>2026-11-15 · From owner decisions R16: half board → guest picks the second meal at check-in; each room comp → cashier picks the meal. "Current" = today's screen in the code (CheckInForm.jsx / CollectPaymentPanel.jsx). "Proposed" builds on the approved M8 and M5 and marks each change with a green outline and tag.</p>
+<p style="margin-top:8px;font-weight:700;color:#86EFAC">STATUS: M8b + M5c APPROVED BY OWNER 2026-11-15 (R17) · default meal = none (cashier must pick) · meal outside package = allowed with comp PIN (R18)</p>
+</header>
+<nav><a href="#m8b">M8b Half-board second meal</a><a href="#m5c">M5c Meal pick on room comp</a><a href="#open">Open points</a></nav>
+
+<section id="m8b" data-testid="mockup-m8b">
+<h2>M8b · Check-in: half board → choose second meal</h2>
+<p class="meta">CR-495 · R16 · PMS and non-PMS outlets · File: components/pms/frontdesk/CheckInForm.jsx · Backend B-495-1 (store second meal with package)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (today's code)</h3><div class="frame"><div class="ci">
+<b>Check in</b> <span class="hint">· Guest name · Booking ID</span><br><br>
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<b>Primary Guest</b><div class="row"><span class="opt">ID type</span><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<span class="hint">No meal package, no second-meal choice, no guest count.</span>
+<div style="margin-top:10px"><button class="btn" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div></div>
+<div class="col new"><h3>Proposed (M8 + M8b)</h3><div class="frame"><div class="ci">
+<b>Check in</b> <span class="hint">· Guest name · Booking ID</span><br><br>
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<b>Meal package</b> <span class="hint">(approved M8)</span><div class="row"><span class="opt">Room only</span><span class="opt">Breakfast</span><span class="opt on">Half board</span><span class="opt">Full board</span></div>
+<div class="add" style="padding:6px;margin-bottom:10px"><b>Second meal (with breakfast)</b> <span class="chg">NEW · only when Half board</span>
+<div class="row"><span class="opt on">Lunch</span><span class="opt">Dinner</span></div>
+<span class="hint">Required before Confirm. Hidden for Room only / Breakfast / Full board.</span></div>
+<b>Guests checked in</b> <span class="hint">(approved M8)</span> <input value="2" readonly> <span class="hint">editable during stay</span>
+<b style="display:block;margin-top:10px">Primary Guest</b><div class="row"><span class="opt">ID type</span><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<div><button class="btn" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div></div>
+</div>
+<ul class="diff">
+<li><b>Added:</b> "Second meal" choice (Lunch / Dinner), shown only when Half board is picked. Required.</li>
+<li><b>Comp limit effect:</b> Half board + Lunch → breakfast and lunch limits apply; dinner has no package limit.</li>
+<li><b>OTA booking (PMS):</b> package pre-selected from the channel meal plan; second meal <span class="tbd">TBD</span> pre-filled if the channel sends it, else the front desk picks.</li>
+<li>No other change to the check-in form.</li></ul>
+</section>
+
+<section id="m5c" data-testid="mockup-m5c">
+<h2>M5c · Room comp: cashier picks the meal</h2>
+<p class="meta">CR-495 · R16 · Builds on approved M5 + M5b · File: CollectPaymentPanel.jsx (room-service list) · Backend B-495-4/5/6 (counter per meal, comp save carries meal)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (today's code · room order)</h3><div class="frame"><div class="panel">
+<b style="font-size:11px;color:#666">ROOM 101 · ROOM SERVICE</b>
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini">Reason (optional)</span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box"></span><span class="grow">Cold Coffee</span><span class="amt">₹180</span></div>
+<div style="margin-top:10px"><button class="btn">Pay ₹180</button></div>
+<p class="hint" style="margin:6px 0 0">No meal, no package, no limit shown.</p></div></div></div>
+<div class="col new"><h3>Proposed (M5 + M5b + M5c)</h3><div class="frame"><div class="panel">
+<b style="font-size:11px;color:#666">ROOM 101 · HALF BOARD (Breakfast + Lunch) · 2 GUESTS</b>
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b>
+<div class="add" style="padding:4px;margin:4px 0"><span class="hint"><b>Meal</b></span> <span class="chg">NEW</span>
+<div class="chips"><span class="chip on">Breakfast</span><span class="chip">Lunch</span><span class="chip off">Dinner</span></div>
+<span class="hint">Comp left today (breakfast): ₹380 of ₹500</span></div>
+<span class="mini" style="color:#666">Reason (required) <span class="hint">(M5b)</span></span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box on"></span><span class="grow">Cold Coffee <b style="color:#329937;font-size:10px">(Complimentary)</b>
+<div class="add" style="padding:4px;margin:4px 0"><span class="hint"><b>Meal</b></span> <span class="chg">NEW</span>
+<div class="chips"><span class="chip">Breakfast</span><span class="chip">Lunch</span><span class="chip off">Dinner</span></div>
+<span class="hint" style="color:#DC2626">Pick a meal</span></div>
+<span class="mini" style="border-color:#EF4444">Reason (required)</span></span><span class="amt">₹0</span></div>
+<div style="margin-top:10px"><button class="btn dis">Pay ₹0</button><p class="hint" style="margin:6px 0 0">Pay disabled while a room comp line has no meal or no reason. Over the meal's limit → comp PIN (M4).</p></div></div></div></div>
+</div>
+<ul class="diff">
+<li><b>Added (room orders only):</b> meal chips under each comp line — Breakfast / Lunch / Dinner. Shown after the comp box is ticked (by a user with the comp right).</li>
+<li><b>Meals outside the package</b> (e.g. Dinner on Half board + Lunch): greyed but pressable → comp allowed with the comp PIN (M4), same as Room only (approved R18).</li>
+<li><b>Remaining limit</b> shown for the picked meal (approved M5 line, now per picked meal).</li>
+<li><b>Default meal:</b> none, so the cashier must pick (approved R17).</li>
+<li>Part comp (MarkCompModal, qty 2+): same chips on the comp line after the popup closes. Non-room orders: no change.</li>
+<li>Bill print: unchanged (meal not printed).</li></ul>
+</section>
+
+<section id="open" data-testid="mockup-open-points">
+<h2>Open points for owner (with this approval)</h2>
+<ol class="q">
+<li>M8b: approve the "Second meal" choice as drawn (only for Half board, required)?</li>
+<li>M5c: approve the meal chips on each room comp line, with Pay blocked until a meal is picked?</li>
+<li>Meal outside the package (e.g. dinner on Half board + Lunch): block, or allow with the comp PIN?</li>
+<li>Default meal: none (cashier must pick), or pre-picked from the time of day (cashier can change)?</li>
+</ol>
+<p class="note">After approval, these move into the CR-495 plan (G4-B4, G4-B7). Backend still needs to deliver B-495-1..7.</p>
+</section>
+</body>
+</html>

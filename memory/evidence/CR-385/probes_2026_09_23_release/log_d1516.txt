@@ -1,0 +1,40 @@
+[d1516] login OK · host https://preprod.mygenie.online
+board before: {8524: ('hk', 'hk', False, None), 8525: ('hk', 'hk', False, None), 8526: ('hk', 'hk', False, None), 8527: ('hk', 'hk', False, None), 8528: ('occupied_hk', 'hk', True, 'coke')}
+[s0_settings_set] HTTP 200 :: 
+  set {'allow_early_checkin': True, 'extend_rate_mode': 'calendar'} -> HTTP 200 :: {'allow_early_checkin': True, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+[s1_direct] HTTP 201 :: 
+ RES 282 charge {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 8600, 'sgst': 774, 'cgst': 774, 'total_with_gst': 10148, 'advance_payment': 1000, 'balance_due': 9148}
+[s2_checkin] HTTP 200 :: 
+ ORDER 1232701 charge {'rate_per_night': 8600, 'nights': 1, 'rateplan_code': 'executive-s-ep', 'rateplan_name': 'executive-s-ep', 'upgrade_amount': 1500, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'prepaid_amount': 0, 'advance_payment': 1000, 'balance_due': 10918}
+[s3_extend] HTTP 200 :: 
+ EXTEND {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688}
+[s4_move] HTTP 200 :: 
+ MOVE(D16) {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} room 8527
+  board: ('hk', 'hk', False, None) ('occupied', None, True, 'P5 QA D15D16 Guest')
+[s5_shorten] HTTP 200 :: 
+ SHORTEN(D15) {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 1000, 'balance_due': 10918} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}]
+  LR {'nights': 1, 'rate_per_night': 8600, 'booking_charge': 10100, 'sgst': 909, 'cgst': 909, 'total_with_gst': 11918, 'advance_payment': 1000, 'balance_due': 10918} checkout 2026-10-11
+[s6_reextend] HTTP 200 :: 
+ REEXTEND {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} 
+  nights_detail [{'date': '2026-10-10', 'rate': 8600, 'source': 'held', 'gst_percent': 18, 'gst': 1548}, {'date': '2026-10-11', 'rate': 7400, 'source': 'calendar', 'gst_percent': 5, 'gst': 370}]
+  LR {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 1000, 'balance_due': 18688} checkout 2026-10-12
+[s7_split] HTTP 201 :: 
+ SPLIT advance_payment 1000 | 'split' in echo: False
+[s7_cancel] HTTP 200 :: {"status": true, "message": "Reservation cancelled successfully", "data": {"status": "cancelled", "cancelled_at": "2026-09-24 00:32:47", "cancel_reason": "BQ20 unused", "reservation": {"id": 283, "booking_id": "MG-69-4BA81D03-6BFC-4360-9E01-699E0049C79C", "cm_booking_id": null, "channel": "Direct", "hotel_code": "sandbox-pms", "checkin": "2026-10-20", "checkout": "2026-10-21", "status": "cancelled", "cancelled_at": "2026-09-24 00:32:47", "cancel_reason": "BQ20 unused", "cancelled_by": "probe", "pah": true, "operational_status": "cancelled", "booked_on": "2026-09-24 00:32:46", "amount_before_ta
+[s7b_split_badsum] HTTP 422 :: {"status": false, "message": "advance.split_payments amounts must sum to advance.amount."}
+[s8_tab] HTTP 200 :: {"message": "Room payment received via TAB"}
+ after TAB: departed {'nights': 2, 'rate_per_night': 8000, 'booking_charge': 17500, 'sgst': 1094, 'cgst': 1094, 'total_with_gst': 19688, 'advance_payment': 19688, 'balance_due': 0}
+[s9_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+ settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+board after: {8524: ('hk', 'hk', False, None), 8525: ('hk', 'hk', False, None), 8526: ('hk', 'hk', False, None), 8527: ('hk', 'hk', False, None), 8528: ('occupied_hk', 'hk', True, 'coke')}
+== CLEANUP
+[cleanup_restore_set] HTTP 200 :: 
+  set {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False} -> HTTP 200 :: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+  board after: {8524: 'hk', 8525: 'hk', 8526: 'hk', 8527: 'hk', 8528: 'occupied_hk'}
+  business_date 2026-09-24 · counts {'arrivals_today': 0, 'arrivals_late': 10, 'arrivals_tomorrow': 0, 'departures_today': 1, 'departures_overdue': 0, 'in_house': 1, 'leaving_today': 1, 'arrived_today': 0} · qa_rows_left []

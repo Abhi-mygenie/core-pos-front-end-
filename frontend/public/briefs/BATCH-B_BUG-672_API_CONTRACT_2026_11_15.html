@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_BUG-672_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-B_BUG-672_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_BUG-672_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — BUG-672 Credit on prepaid orders — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BB-01 · IA doc: <code>impact/BUG-672_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong></p>
+<h2>1. BB-01 — FE-only fix (no backend change required)</h2>
+<p><strong>OD-B-BB01-FINAL (R1c):</strong> Owner decided FE hiding the Credit button is sufficient. <strong>No backend enforcement needed.</strong> BB-01 is a FE-only change.</p>
+<p><strong>What POS will do (FE only):</strong>
+- Read <code>payment_types[TAB].prepaid</code> from the existing profile response.
+- When <code>prepaid: 0</code> → hide the Credit / TAB button on prepaid orders.
+- When <code>prepaid: 1</code> → Credit button shown and works as normal.</p>
+<p><strong>Backend:</strong> no change to <code>order-bill-payment</code> or <code>place-order</code> needed for this CR.</p>
+<p>Existing field (read-only by FE):</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Type</th>
+<th>Values</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/v2/vendoremployee/profile</code> → <code>restaurants[0].payment_types[]</code></td>
+<td><code>prepaid</code></td>
+<td>integer</td>
+<td><code>0</code> / <code>1</code></td>
+<td>EXISTING — confirm unchanged</td>
+</tr>
+</tbody>
+</table>
+<h2>2. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-01">BB-01</td>
+<td>FE only — no backend change needed</td>
+<td>Confirm <code>prepaid</code> field exists and is unchanged</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

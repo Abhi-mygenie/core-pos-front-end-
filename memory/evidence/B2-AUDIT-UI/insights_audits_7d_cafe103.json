@@ -1,0 +1,43 @@
+{
+ "make_unpaid_count": 3,
+ "payment_method_change_count": 0,
+ "item_cancel_after_print_count": 0,
+ "order_cancel_after_print_count": 0,
+ "order_edit_after_print_count": 0,
+ "discount_apply_after_print_count": 0,
+ "discount_remove_after_print_count": 0,
+ "total": 3,
+ "orders": [
+  {
+   "order_id": "021537",
+   "type": "make_unpaid",
+   "amount": 252,
+   "by": "Owner",
+   "prev_method": "partial",
+   "curr_method": "pending"
+  },
+  {
+   "order_id": "021537",
+   "type": "make_unpaid",
+   "amount": 252,
+   "by": "Owner",
+   "prev_method": "partial",
+   "curr_method": "pending"
+  },
+  {
+   "order_id": "021537",
+   "type": "make_unpaid",
+   "amount": 252,
+   "by": "Owner",
+   "prev_method": "partial",
+   "curr_method": "pending"
+  }
+ ],
+ "late_cancel_count": 0,
+ "late_cancel_ok_count": 0,
+ "late_cancel_doubt_count": 0,
+ "late_cancel_risk_count": 0,
+ "late_cancel_high_risk_count": 0,
+ "late_cancel_unknown_count": 0,
+ "cancel_after_unpaid_count": 0
+}

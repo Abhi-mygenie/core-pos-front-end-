@@ -1,0 +1,268 @@
+{
+  "property": {
+    "restaurant_id": 69,
+    "hotel_code": "sandbox-pms",
+    "pms_slug": "sample-pms",
+    "api_base_url": "https://live.aiosell.com",
+    "service_status": "running",
+    "is_active": true,
+    "is_running": true,
+    "last_sync_at": "2026-09-03 15:04:00"
+  },
+  "mapping": {
+    "mapping_required": false,
+    "mapping_complete": true,
+    "total_local_rooms": 5,
+    "mapped_count": 5,
+    "unmapped_count": 0,
+    "unmapped_local_rooms": [],
+    "by_aiosell_room_code": [
+      {
+        "aiosell_room_code": "executive",
+        "mapped_count": 4,
+        "restaurant_table_ids": [
+          8524,
+          8525,
+          8526,
+          8528
+        ]
+      },
+      {
+        "aiosell_room_code": "suite",
+        "mapped_count": 1,
+        "restaurant_table_ids": [
+          8527
+        ]
+      }
+    ],
+    "can_push_inventory": true,
+    "can_receive_bookings_with_room": true
+  },
+  "aiosell": {
+    "success": true,
+    "http_status": 200,
+    "body": {
+      "address": {
+        "line": "India, Bangalore",
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "location": {
+          "long": "12.917836347560788",
+          "latt": "77.6750138517398"
+        },
+        "country_code": "IN"
+      },
+      "currency": "INR",
+      "timezone": "Asia/Kolkata",
+      "contact": {
+        "phone": "",
+        "email": "",
+        "website": ""
+      },
+      "rooms": [
+        {
+          "description": "Free Wifi",
+          "count": 25,
+          "active": true,
+          "type": "primary",
+          "rateplans": [
+            {
+              "description": "",
+              "occupancy": 1,
+              "rateplan_id": "executive-s-ep",
+              "rateplan_name": "Room Only",
+              "no_of_meals": 0,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 2,
+              "rateplan_id": "executive-d-ep",
+              "rateplan_name": "Room Only",
+              "no_of_meals": 0,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 1,
+              "rateplan_id": "executive-s-cp",
+              "rateplan_name": "Breakfast",
+              "no_of_meals": 1,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 2,
+              "rateplan_id": "executive-d-cp",
+              "rateplan_name": "Breakfast",
+              "no_of_meals": 2,
+              "extra_adult": 500
+            }
+          ],
+          "room_id": "executive",
+          "room_name": "EXECUTIVE",
+          "min_occ": 1,
+          "max_occ": 2
+        },
+        {
+          "description": "Free Wifi",
+          "count": 5,
+          "active": true,
+          "type": "primary",
+          "rateplans": [
+            {
+              "description": "",
+              "occupancy": 1,
+              "rateplan_id": "suite-s-ep",
+              "rateplan_name": "Room Only",
+              "no_of_meals": 0,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 2,
+              "rateplan_id": "suite-d-ep",
+              "rateplan_name": "Room Only",
+              "no_of_meals": 0,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 1,
+              "rateplan_id": "suite-s-cp",
+              "rateplan_name": "Breakfast",
+              "no_of_meals": 1,
+              "extra_adult": 500
+            },
+            {
+              "description": "",
+              "occupancy": 2,
+              "rateplan_id": "suite-d-cp",
+              "rateplan_name": "Breakfast",
+              "no_of_meals": 2,
+              "extra_adult": 500
+            }
+          ],
+          "room_id": "suite",
+          "room_name": "SUITE",
+          "min_occ": 1,
+          "max_occ": 3
+        }
+      ],
+      "hotel_id": "sandbox-pms",
+      "hotel_name": "Sandbox PMS",
+      "property_category": "hotel",
+      "tax_id": ""
+    },
+    "error": null
+  },
+  "mappings": [
+    {
+      "id": 3,
+      "restaurant_table_id": 8524,
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": "executive-s-ep",
+      "table": {
+        "id": 8524,
+        "restaurant_id": 69,
+        "title": null,
+        "table_no": "r3",
+        "rtype": "RM"
+      }
+    },
+    {
+      "id": 4,
+      "restaurant_table_id": 8525,
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": "executive-s-ep",
+      "table": {
+        "id": 8525,
+        "restaurant_id": 69,
+        "title": null,
+        "table_no": "r4",
+        "rtype": "RM"
+      }
+    },
+    {
+      "id": 2,
+      "restaurant_table_id": 8526,
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": "executive-s-ep",
+      "table": {
+        "id": 8526,
+        "restaurant_id": 69,
+        "title": null,
+        "table_no": "r2",
+        "rtype": "RM"
+      }
+    },
+    {
+      "id": 5,
+      "restaurant_table_id": 8527,
+      "aiosell_room_code": "suite",
+      "aiosell_rateplan_code": "suite-d-cp",
+      "table": {
+        "id": 8527,
+        "restaurant_id": 69,
+        "title": null,
+        "table_no": "r5",
+        "rtype": "RM"
+      }
+    },
+    {
+      "id": 1,
+      "restaurant_table_id": 8528,
+      "aiosell_room_code": "executive",
+      "aiosell_rateplan_code": "executive-s-ep",
+      "table": {
+        "id": 8528,
+        "restaurant_id": 69,
+        "title": null,
+        "table_no": "r1",
+        "rtype": "RM"
+      }
+    }
+  ],
+  "local_rooms": [
+    {
+      "id": 8524,
+      "title": null,
+      "table_no": "r3",
+      "rtype": "RM"
+    },
+    {
+      "id": 8525,
+      "title": null,
+      "table_no": "r4",
+      "rtype": "RM"
+    },
+    {
+      "id": 8526,
+      "title": null,
+      "table_no": "r2",
+      "rtype": "RM"
+    },
+    {
+      "id": 8527,
+      "title": null,
+      "table_no": "r5",
+      "rtype": "RM"
+    },
+    {
+      "id": 8528,
+      "title": null,
+      "table_no": "r1",
+      "rtype": "RM"
+    }
+  ],
+  "availability": [
+    {
+      "roomCode": "executive",
+      "available": 3
+    },
+    {
+      "roomCode": "suite",
+      "available": 1
+    }
+  ]
+}

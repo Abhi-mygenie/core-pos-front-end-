@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch C — Gate 2.5 Design v2 — "What's Wrong" First — 2026-11-17</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#71717A;--b:#E4E4E7;--bg:#FAFAFA}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px;position:sticky;top:0;z-index:10}
+nav a{color:var(--o);margin-right:16px;text-decoration:none;font-weight:600}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 16px}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-left:6px}
+.tag-new{background:#DBEAFE;color:#1E40AF}.tag-redesign{background:#DCFCE7;color:#166534}
+.diff{margin:16px 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:14px 18px}
+.diff li{margin:4px 0}
+
+/* Page shell */
+.page{background:var(--bg);border-radius:12px;border:1px solid #ddd;overflow:hidden;font-size:13px}
+.page-head{background:#fff;padding:14px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.page-head h4{margin:0;font-size:17px;font-weight:700;color:#09090B}
+.page-head small{color:var(--gt);font-size:11px}
+.page-body{padding:20px}
+
+/* ===== LEVEL 1: ALERT CARDS ===== */
+.alert-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.alert-card{border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.alert-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.alert-card .alert-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.alert-card .alert-number{font-size:36px;font-weight:900;font-family:ui-monospace,monospace;line-height:1;margin-bottom:4px}
+.alert-card .alert-label{font-size:14px;font-weight:700;margin-bottom:6px}
+.alert-card .alert-desc{font-size:12px;line-height:1.4;opacity:.8}
+.alert-card .alert-cta{font-size:11px;font-weight:700;margin-top:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
+
+/* Red alert */
+.alert-red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border:1px solid #FECACA;color:#7F1D1D}
+.alert-red .alert-icon{background:#FEE2E2;color:#DC2626}
+.alert-red .alert-number{color:#B91C1C}
+
+/* Amber alert */
+.alert-amber{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A;color:#78350F}
+.alert-amber .alert-icon{background:#FEF3C7;color:#D97706}
+.alert-amber .alert-number{color:#92400E}
+
+/* Purple alert */
+.alert-purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:1px solid #DDD6FE;color:#3B0764}
+.alert-purple .alert-icon{background:#EDE9FE;color:#7C3AED}
+.alert-purple .alert-number{color:#6D28D9}
+
+/* ===== LEVEL 2: RISK BREAKDOWN ===== */
+.breakdown{background:#fff;border:1px solid var(--b);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.breakdown-title{font-size:12px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.breakdown-title .count{font-size:11px;background:#F4F4F5;padding:2px 8px;border-radius:6px;color:#3F3F46}
+
+/* Risk bar (horizontal stacked) */
+.risk-bar-wrap{margin-bottom:12px}
+.risk-bar{display:flex;height:32px;border-radius:8px;overflow:hidden;background:#F4F4F5}
+.risk-bar .seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;min-width:24px;transition:width .3s}
+.seg-ok{background:#22C55E}.seg-doubt{background:#F59E0B}.seg-risk{background:#F97316}.seg-high{background:#EF4444}.seg-unk{background:#A1A1AA}
+.risk-legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.risk-legend .leg{display:flex;align-items:center;gap:5px;font-size:12px}
+.risk-legend .dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* Fraud summary cards */
+.fraud-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fraud-card{background:#fff;border:1px solid var(--b);border-radius:10px;padding:14px 16px}
+.fraud-card .fc-label{font-size:11px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.04em}
+.fraud-card .fc-val{font-size:22px;font-weight:900;font-family:ui-monospace,monospace;margin:4px 0}
+.fraud-card .fc-desc{font-size:11px;color:var(--gt);line-height:1.4}
+
+/* Badge */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap}
+.b-ok{background:#DCFCE7;color:#166534}.b-doubt{background:#FEF3C7;color:#92400E}
+.b-risk{background:#FFEDD5;color:#9A3412}.b-high{background:#FEE2E2;color:#991B1B}
+.b-unk{background:#F4F4F5;color:#52525B}.b-unpaid{background:#FEE2E2;color:#991B1B}
+.b-paid{background:#DBEAFE;color:#1E40AF}
+.b-apply{background:#DCFCE7;color:#166534}.b-remove{background:#FEE2E2;color:#991B1B}.b-replace{background:#EDE9FE;color:#6D28D9}
+
+/* Event type pills */
+.evt{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ===== LEVEL 3: DRILL-DOWN TABLE ===== */
+.drill-section{background:#fff;border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-top:16px}
+.drill-head{padding:12px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:#FAFAFA}
+.drill-head h5{margin:0;font-size:13px;font-weight:700;color:#3F3F46}
+.drill-head .pill{font-size:11px;background:#F4F4F5;padding:3px 10px;border-radius:6px;color:var(--gt);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#FAFAFA;padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gt);border-bottom:1px solid var(--b);white-space:nowrap}
+.tbl th.r{text-align:right}
+.tbl td{padding:8px 12px;border-bottom:1px solid #F4F4F5;color:#3F3F46}
+.tbl td.r{text-align:right;font-family:ui-monospace,monospace;font-weight:600}
+.tbl td.mono{font-family:ui-monospace,monospace}
+.tbl tr:hover{background:#FAFAFA}
+.tbl tr.danger{background:#FEF2F2}
+
+/* Quiet stats bar */
+.quiet-bar{display:flex;gap:20px;padding:14px 20px;background:#fff;border:1px solid var(--b);border-radius:12px;margin-bottom:20px}
+.quiet-bar .qs{display:flex;align-items:center;gap:6px}
+.quiet-bar .qs-val{font-size:16px;font-weight:800;font-family:ui-monospace,monospace}
+.quiet-bar .qs-label{font-size:11px;color:var(--gt)}
+.quiet-bar .qs-sep{width:1px;background:var(--b);align-self:stretch}
+
+/* OD box */
+.od{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px 16px;margin:10px 0;font-size:13px}
+.od b{color:#92400E}
+
+/* Comparison */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.vs-col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;font-weight:700}
+.vs-col.old h3{color:#999}.vs-col.new h3{color:var(--g)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Batch C — Gate 2.5 Design v2 — "What's Wrong at a Glance"</h1>
+  <p>CR-543 + CR-544 + CR-546 &middot; AuditLogMockup.jsx &middot; Design principle: Owner sees the problem in 3 seconds, drills down when needed</p>
+</header>
+
+<nav>
+  <a href="#philosophy">Design Idea</a>
+  <a href="#level1">Level 1: Alerts</a>
+  <a href="#level2">Level 2: Breakdown</a>
+  <a href="#level3">Level 3: Drill-Down</a>
+  <a href="#ods">Decisions</a>
+</nav>
+
+<!-- ==================== DESIGN PHILOSOPHY ==================== -->
+<section id="philosophy">
+  <h2>Design Idea: 3 Levels of Detail</h2>
+  <p class="meta">Owner opens page → sees what's wrong → taps to understand → scrolls for evidence</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0">
+    <div style="background:#fff;border:1px solid var(--b);border-radius:12px;padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">&#128680;</div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:4px">Level 1 — What's Wrong</div>
+      <div style="font-size:12px;color:var(--gt)">3 big alert cards. Red = act now. Amber = watch. Owner reads headline numbers in 3 seconds.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--b);border-radius:12px;padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">&#128200;</div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:4px">Level 2 — How Bad Is It</div>
+      <div style="font-size:12px;color:var(--gt)">Risk distribution bar, fraud pattern breakdown, discount manipulation summary. Visual, not numbers.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--b);border-radius:12px;padding:18px;text-align:center">
+      <div style="font-size:28px;margin-bottom:8px">&#128269;</div>
+      <div style="font-size:14px;font-weight:800;margin-bottom:4px">Level 3 — Show Me Everything</div>
+      <div style="font-size:12px;color:var(--gt)">Expandable drill-down tables per category. Full event detail, timestamps, amounts. Only when owner wants it.</div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>vs Current Design (v1 mockup):</strong>
+    <ul>
+      <li><b>v1:</b> 15 KPI tiles dumped in 4 sections → owner has to scan and do math to understand severity</li>
+      <li><b>v2:</b> 3 alert cards with plain English → owner sees "44 High Risk Cancellations" and knows immediately</li>
+      <li><b>v1:</b> One giant table with all 121 events → overwhelming</li>
+      <li><b>v2:</b> Drill-down per category, collapsed by default → clean, focused</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== LEVEL 1: ALERTS ==================== -->
+<section id="level1">
+  <h2>Level 1 — "What's Wrong" Alert Cards <span class="tag tag-redesign">REDESIGN</span></h2>
+  <p class="meta">First thing the owner sees. Each card = one fraud/risk category. The number tells the story.</p>
+
+  <div class="page">
+    <div class="page-head">
+      <h4>Order Edit Audit</h4>
+      <small>7 Nov — 17 Nov 2026 &middot; Ruby ZAP</small>
+    </div>
+    <div class="page-body">
+
+      <!-- Quiet stats: existing CR-528 counters (not alarming, just context) -->
+      <div class="quiet-bar">
+        <div class="qs"><span class="qs-val">121</span><span class="qs-label">Total Events</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">5</span><span class="qs-label">Made Unpaid</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">1</span><span class="qs-label">Pay Method Changed</span></div>
+        <div class="qs-sep"></div>
+        <div class="qs"><span class="qs-val">4</span><span class="qs-label">Post-Print Edits</span></div>
+      </div>
+
+      <!-- THE 3 ALERT CARDS -->
+      <div class="alert-row">
+
+        <!-- CR-543: Late Cancellations -->
+        <div class="alert-card alert-red">
+          <div class="alert-icon">&#9888;</div>
+          <div class="alert-number">44</div>
+          <div class="alert-label">High Risk Cancellations</div>
+          <div class="alert-desc">Items cancelled 30+ minutes after being ordered. Out of 101 total cancellations, 44 are suspicious.</div>
+          <div class="alert-cta">View breakdown &#8595;</div>
+        </div>
+
+        <!-- CR-544: Cancel After Unpaid -->
+        <div class="alert-card alert-red">
+          <div class="alert-icon">&#128274;</div>
+          <div class="alert-number">2</div>
+          <div class="alert-label">Cancelled After Unpaid</div>
+          <div class="alert-desc">Items cancelled after the bill was marked unpaid — a known fraud pattern. Both on the same order.</div>
+          <div class="alert-cta">View details &#8595;</div>
+        </div>
+
+        <!-- CR-546: Discount After Print -->
+        <div class="alert-card alert-purple">
+          <div class="alert-icon">&#128176;</div>
+          <div class="alert-number">8</div>
+          <div class="alert-label">Discount Changes After Print</div>
+          <div class="alert-desc">Discounts applied or removed after the bill was already printed. Includes 2 replacements.</div>
+          <div class="alert-cta">View details &#8595;</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Why this works:</strong>
+    <ul>
+      <li>Owner opens page → sees <b>"44 High Risk Cancellations"</b> in red → instantly knows there's a problem</li>
+      <li>Plain English descriptions — no jargon, no codes, no "late_cancel_high_risk_count"</li>
+      <li>Red = act now (cancellations, fraud). Purple = investigate (discounts). Color = urgency.</li>
+      <li>Existing CR-528 counters (Make Unpaid, Pay Change, Post-Print Edits) stay as a quiet stats bar — they're context, not the headline</li>
+      <li>Each card is clickable → scrolls to drill-down</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== LEVEL 2: BREAKDOWN ==================== -->
+<section id="level2">
+  <h2>Level 2 — Risk Breakdown (How Bad Is It) <span class="tag tag-new">NEW</span></h2>
+  <p class="meta">Below the alerts. Visual breakdown per category — bar charts and summary cards, not raw numbers.</p>
+
+  <div class="page">
+    <div class="page-body">
+
+      <!-- CR-543: Risk Distribution Bar -->
+      <div class="breakdown">
+        <div class="breakdown-title">
+          Cancellation Risk Distribution
+          <span class="count">101 cancelled items</span>
+        </div>
+        <div class="risk-bar-wrap">
+          <div class="risk-bar">
+            <div class="seg seg-ok" style="width:48.5%">49</div>
+            <div class="seg seg-doubt" style="width:6.9%">7</div>
+            <div class="seg seg-risk" style="width:1%">1</div>
+            <div class="seg seg-high" style="width:43.6%">44</div>
+          </div>
+          <div class="risk-legend">
+            <div class="leg"><span class="dot" style="background:#22C55E"></span> OK (0–4 min): <b>49</b></div>
+            <div class="leg"><span class="dot" style="background:#F59E0B"></span> Doubt (5–14 min): <b>7</b></div>
+            <div class="leg"><span class="dot" style="background:#F97316"></span> Risk (15–29 min): <b>1</b></div>
+            <div class="leg"><span class="dot" style="background:#EF4444"></span> High Risk (30+ min): <b>44</b></div>
+            <div class="leg"><span class="dot" style="background:#A1A1AA"></span> Unknown: <b>0</b></div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--gt);margin-top:8px">
+          &#9888; <b>43% of cancellations are High Risk</b> — these items were cancelled 30+ minutes after ordering. Focus investigation here.
+        </div>
+      </div>
+
+      <!-- CR-544 + CR-546: Fraud patterns -->
+      <div class="fraud-row">
+        <div class="fraud-card" style="border-left:3px solid #EF4444">
+          <div class="fc-label">Cancel-After-Unpaid Pattern</div>
+          <div class="fc-val" style="color:#B91C1C">2 items</div>
+          <div class="fc-desc">
+            1 order (#000680) &middot; Unpaid 3 times &middot; Cancelled 2 days later<br>
+            Status at cancel: <span class="badge b-unpaid">Still Unpaid</span>
+          </div>
+        </div>
+        <div class="fraud-card" style="border-left:3px solid #7C3AED">
+          <div class="fc-label">Discount Manipulation After Print</div>
+          <div class="fc-val" style="color:#6D28D9">8 events</div>
+          <div class="fc-desc">
+            <span class="badge b-apply">4 Applied</span>
+            <span class="badge b-remove">4 Removed</span>
+            &middot; Includes 2 replacements on order #000766
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Key design choices:</strong>
+    <ul>
+      <li><b>Risk bar</b> — one horizontal bar shows distribution visually. Owner sees "almost half is red" without reading any number.</li>
+      <li><b>Insight sentence</b> — "43% of cancellations are High Risk" tells the owner what to do (investigate).</li>
+      <li><b>Fraud cards</b> — CR-544 and CR-546 get summary cards with plain English. "1 order, unpaid 3 times, cancelled 2 days later" tells a clear story.</li>
+      <li>No raw KPI tiles — everything is contextual and interpreted.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== LEVEL 3: DRILL-DOWN ==================== -->
+<section id="level3">
+  <h2>Level 3 — Drill-Down Tables (Show Me Everything) <span class="tag tag-new">NEW</span></h2>
+  <p class="meta">Expandable sections per category. Collapsed by default. Owner clicks to expand. Each table shows only relevant columns.</p>
+
+  <div class="page">
+    <div class="page-body" style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- DRILL-DOWN 1: High Risk Cancellations (CR-543) -->
+      <div class="drill-section">
+        <div class="drill-head">
+          <h5>&#9888; High Risk Cancellations (30+ min)</h5>
+          <span class="pill">44 items — click to expand</span>
+        </div>
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Item</th>
+            <th>Risk</th>
+            <th class="r">Amount</th>
+            <th>By</th>
+            <th>Ordered At</th>
+            <th>Cancelled At</th>
+            <th>Time Gap</th>
+          </tr></thead>
+          <tbody>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td>test cccc</td>
+              <td><span class="badge b-high">High Risk</span></td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2 days 15 min</td>
+            </tr>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td>Gulab Jamun (2 Pcs)</td>
+              <td><span class="badge b-high">High Risk</span></td>
+              <td class="r">&#8377;149.00</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2 days 15 min</td>
+            </tr>
+            <tr>
+              <td colspan="8" style="text-align:center;color:var(--gt);padding:10px">... 42 more high-risk items</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Expandable: Other risk tiers -->
+      <div class="drill-section" style="opacity:.7">
+        <div class="drill-head">
+          <h5>Doubt + Risk Cancellations (5–29 min)</h5>
+          <span class="pill">8 items — collapsed</span>
+        </div>
+      </div>
+
+      <div class="drill-section" style="opacity:.5">
+        <div class="drill-head">
+          <h5>OK Cancellations (0–4 min)</h5>
+          <span class="pill">49 items — collapsed</span>
+        </div>
+      </div>
+
+      <!-- DRILL-DOWN 2: Cancel After Unpaid (CR-544) -->
+      <div class="drill-section">
+        <div class="drill-head" style="background:#FEF2F2">
+          <h5>&#128274; Cancel After Unpaid</h5>
+          <span class="pill" style="background:#FEE2E2;color:#991B1B">2 items — fraud pattern detected</span>
+        </div>
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Item</th>
+            <th>Payment Status</th>
+            <th class="r">Amount</th>
+            <th>By</th>
+            <th>Made Unpaid</th>
+            <th>Cancelled</th>
+            <th>Gap</th>
+            <th>Times Unpaid</th>
+          </tr></thead>
+          <tbody>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td>test cccc</td>
+              <td><span class="badge b-unpaid">Still Unpaid</span></td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2 days</td>
+              <td style="text-align:center"><span class="badge b-unpaid">3×</span></td>
+            </tr>
+            <tr class="danger">
+              <td class="mono">#000680</td>
+              <td>Gulab Jamun (2 Pcs)</td>
+              <td><span class="badge b-unpaid">Still Unpaid</span></td>
+              <td class="r">&#8377;149.00</td>
+              <td>n</td>
+              <td class="mono">10 Nov 21:08</td>
+              <td class="mono">12 Nov 21:23</td>
+              <td class="mono" style="color:#B91C1C;font-weight:800">2 days</td>
+              <td style="text-align:center"><span class="badge b-unpaid">3×</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DRILL-DOWN 3: Discount After Print (CR-546) -->
+      <div class="drill-section">
+        <div class="drill-head" style="background:#F5F3FF">
+          <h5>&#128176; Discount Changes After Print</h5>
+          <span class="pill" style="background:#EDE9FE;color:#6D28D9">8 events on 1 order</span>
+        </div>
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Action</th>
+            <th>What Changed</th>
+            <th class="r">Order Total</th>
+            <th>By</th>
+            <th>Bill Printed</th>
+            <th>Changed At</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="badge b-apply">Applied</span></td>
+              <td>10% discount (&#8377;2.00)</td>
+              <td class="r">&#8377;20.00</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr style="background:#F5F3FF">
+              <td class="mono">#000766</td>
+              <td><span class="badge b-replace">Replaced</span></td>
+              <td>10% (&#8377;2) &#8594; Fixed &#8377;3</td>
+              <td class="r">&#8377;20.00</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="badge b-remove">Removed</span></td>
+              <td>5% discount (&#8377;1.00)</td>
+              <td class="r">&#8377;20.00</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Key drill-down design choices:</strong>
+    <ul>
+      <li><b>High Risk first</b> — drill-downs sorted by severity. Owner sees worst cases at top.</li>
+      <li><b>Collapsed by default</b> — OK cancellations (49 items) are hidden unless owner explicitly wants them. Keeps page clean.</li>
+      <li><b>Human-readable time gaps</b> — "2 days 15 min" instead of "2,895 min". Owner shouldn't do math.</li>
+      <li><b>CR-546 "Replaced" rows merged</b> — instead of showing 2 separate rows (remove old + apply new), show 1 row: "10% (&#8377;2) → Fixed &#8377;3" with purple highlight.</li>
+      <li><b>Category-specific columns</b> — each drill-down shows only its relevant columns (no "—" spam).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== DESIGN DECISIONS ==================== -->
+<section id="ods">
+  <h2>Design Decisions for Approval</h2>
+
+  <div class="od">
+    <b>OD-DESIGN-01:</b> Should "OK Cancellations" (49 items, 0–4 min) be shown at all, or hidden behind a "Show safe cancellations" toggle? They're not suspicious — showing them might dilute the signal.
+  </div>
+
+  <div class="od">
+    <b>OD-DESIGN-02:</b> For CR-546 "Replace" events — the backend sends 2 separate rows (remove old + apply new). Should the frontend <b>merge them into 1 row</b> showing "Old → New" (cleaner), or <b>keep as 2 rows</b> (matches raw data)?
+  </div>
+
+  <div class="od">
+    <b>OD-DESIGN-03:</b> Should there be a "Download Report" that generates a PDF/Excel with just the suspicious events (High Risk + Cancel After Unpaid + Discount Changes), excluding OK cancellations? Useful for sharing with management.
+  </div>
+
+  <div class="diff" style="margin-top:16px">
+    <strong>Summary of the v2 design approach:</strong>
+    <ul>
+      <li><b>Level 1:</b> 3 alert cards (plain English, big numbers, color-coded urgency)</li>
+      <li><b>Level 2:</b> Risk bar + fraud summary cards (visual, interpreted, no raw KPI tiles)</li>
+      <li><b>Level 3:</b> Drill-down tables per category (collapsed by default, severity-sorted, human-readable gaps)</li>
+      <li><b>Existing CR-528 events:</b> Quiet stats bar at top (not removed, just deprioritized)</li>
+    </ul>
+  </div>
+</section>
+
+<footer style="padding:20px 32px;text-align:center;font-size:11px;color:#999">
+  Batch C Gate 2.5 Design v2 &middot; "What's Wrong at a Glance" &middot; 2026-11-17 &middot; Awaiting owner approval
+</footer>
+
+</body>
+</html>
