@@ -343,7 +343,11 @@ const ChannelColumn = ({
                     }
                     
                     // List View - render OrderCard
-                    const order = item.order || item;
+                    // BUG-755: for room items, use enriched amount (computeRoomCardAmount)
+                    // from allRoomsList rather than raw order.amount (food only).
+                    const order = item.isRoom && item.amount != null
+                      ? { ...(item.order || item), amount: item.amount }
+                      : (item.order || item);
                     // CR-432: wrap in break-inside:avoid div for column-count masonry layout
                     if (isOrderDesktop) {
                       return (

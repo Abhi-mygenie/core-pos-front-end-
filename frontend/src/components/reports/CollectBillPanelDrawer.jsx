@@ -273,7 +273,15 @@ const CollectBillPanelDrawer = ({
               onPaymentComplete={handlePaymentComplete}
               // Print bill is supported (see plan); CollectPaymentPanel
               // calls its native printer pipeline. We pass through.
-              onPrintBill={onPrintBill ?? null} // CR-503: accept external print handler
+              // BUG-756: inject order.id into CPP overrides before forwarding to
+              // the external handler. CPP's overrides object contains financial values
+              // only (no order identifier) so handlePrintBillFromBeta receives
+              // undefined order_id → 403. The drawer already has order.id at mount.
+              onPrintBill={
+                onPrintBill
+                  ? (overrides) => onPrintBill({ ...overrides, id: order?.id, order_id: order?.id })
+                  : null
+              } // CR-503: accept external print handler
               // Split-bill / runtime-complimentary toggling are
               // intentionally not wired from a held-row collect — the
               // operator should use the dashboard for those flows.
