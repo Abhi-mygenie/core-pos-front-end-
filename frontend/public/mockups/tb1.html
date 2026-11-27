@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=2048">
+<title>TB1 – Billing Tablet</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{mono:['SF Mono','Fira Code','Consolas','monospace']}}}}</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:2048px;height:1536px;overflow:hidden;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+.dimmed{filter:brightness(0.6)}
+.hl-zone{outline:3px solid #F87171;outline-offset:6px;border-radius:16px;position:relative;z-index:10}
+</style>
+</head>
+<body>
+<!-- Status Bar -->
+<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 48px;background:#F2F2F7;font-size:28px;font-weight:600;color:#111827">
+  <span>8:52</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:26px">5G</span>
+    <svg width="52" height="26" viewBox="0 0 52 26"><rect x="1" y="1" width="46" height="24" rx="5" fill="#111827" stroke="#111827" stroke-width="2"/><rect x="47" y="8" width="4" height="10" rx="2" fill="#111827"/></svg>
+  </div>
+</div>
+
+<!-- Nav Bar -->
+<div style="display:flex;align-items:center;gap:24px;padding:20px 48px;background:white;border-bottom:1px solid #E5E7EB">
+  <div style="width:72px;height:72px;background:#F3F4F6;border-radius:18px;display:flex;align-items:center;justify-content:center">
+    <span style="font-size:36px;color:#374151;font-weight:300">‹</span>
+  </div>
+  <div>
+    <div style="font-size:52px;font-weight:700;color:#111827;line-height:1">Order #1012</div>
+    <div style="font-size:30px;color:#9CA3AF;margin-top:4px">Takeaway · Demo Kitchen — Koramangala</div>
+  </div>
+</div>
+
+<!-- Category Tabs -->
+<div style="display:flex;gap:16px;padding:28px 48px 20px;background:white">
+  <div class="tab-unsel" style="padding:16px 40px;border-radius:999px;background:#F3F4F6;font-size:30px;font-weight:500;color:#6B7280">Starters</div>
+  <div class="tab-sel" style="padding:16px 40px;border-radius:999px;background:#111827;font-size:30px;font-weight:600;color:white">Main Course</div>
+  <div class="tab-unsel" style="padding:16px 40px;border-radius:999px;background:#F3F4F6;font-size:30px;font-weight:500;color:#6B7280">Breads</div>
+  <div class="tab-unsel" style="padding:16px 40px;border-radius:999px;background:#F3F4F6;font-size:30px;font-weight:500;color:#6B7280">Beverages</div>
+</div>
+
+<!-- Main Two-Panel Area -->
+<div style="display:flex;flex:1;height:1180px;gap:0">
+
+  <!-- Left: Menu Grid -->
+  <div style="flex:0 0 60%;padding:24px 48px;overflow:hidden" id="menu-panel">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <!-- Paneer Butter Masala - selected -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;border:3px solid #F58346;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="position:absolute;top:-12px;right:-12px;width:44px;height:44px;background:#F58346;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:24px">1</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Paneer Butter Masala</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹380.00</div>
+      </div>
+      <!-- Kadai Paneer -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Kadai Paneer</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹340.00</div>
+      </div>
+      <!-- Dal Makhani -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Dal Makhani</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹290.00</div>
+      </div>
+      <!-- Veg Hakka Noodles -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Veg Hakka Noodles</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹260.00</div>
+      </div>
+      <!-- Butter Naan - selected x2 -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;border:3px solid #F58346;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="position:absolute;top:-12px;right:-12px;width:44px;height:44px;background:#F58346;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:24px">2</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Butter Naan</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹60.00</div>
+      </div>
+      <!-- Sweet Lime Soda - selected x2 -->
+      <div style="background:white;border-radius:20px;padding:28px 32px;border:3px solid #F58346;position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+        <div style="position:absolute;top:-12px;right:-12px;width:44px;height:44px;background:#F58346;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:24px">2</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <div style="width:28px;height:28px;background:#1DAA4B;border-radius:6px"></div>
+          <span style="font-size:34px;font-weight:700;color:#111827">Sweet Lime Soda</span>
+        </div>
+        <div style="font-size:28px;color:#9CA3AF">₹90.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Order Panel -->
+  <div style="flex:0 0 40%;padding:24px 48px 24px 0;display:flex;flex-direction:column" id="order-panel">
+    <div style="background:white;border-radius:24px;padding:40px;flex:1;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px">
+        <span style="font-size:34px;font-weight:700;color:#111827;letter-spacing:0.03em">ORDER</span>
+        <span style="background:#DCFCE7;color:#166534;border:1px solid #BBF7D0;padding:8px 24px;border-radius:999px;font-size:26px;font-weight:600">POS</span>
+      </div>
+      <!-- Items -->
+      <div style="font-size:30px;color:#111827;margin-bottom:20px;display:flex;justify-content:space-between">
+        <span>1×  Paneer Butter Masala</span><span style="font-weight:600">₹380.00</span>
+      </div>
+      <div style="font-size:30px;color:#111827;margin-bottom:20px;display:flex;justify-content:space-between">
+        <span>2×  Butter Naan</span><span style="font-weight:600">₹120.00</span>
+      </div>
+      <div style="font-size:30px;color:#111827;margin-bottom:28px;display:flex;justify-content:space-between">
+        <span>2×  Sweet Lime Soda</span><span style="font-weight:600">₹180.00</span>
+      </div>
+      <div style="border-top:2px dashed #E5E7EB;margin-bottom:28px"></div>
+      <!-- Grand Total -->
+      <div id="grand-total-zone" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:48px">
+        <span style="font-size:28px;font-weight:700;color:#6B7280;letter-spacing:0.08em;text-transform:uppercase">GRAND TOTAL</span>
+        <span style="font-size:52px;font-weight:900;font-family:'SF Mono',Consolas,monospace;color:#111827;letter-spacing:-0.02em">₹680.00</span>
+      </div>
+      <!-- Buttons -->
+      <div style="display:flex;gap:16px;margin-top:auto">
+        <button style="flex:1;padding:28px;border-radius:16px;background:#F3F4F6;font-size:32px;font-weight:600;color:#374151;border:none;cursor:pointer">Place Order</button>
+        <button id="collect-bill-btn" style="flex:2;padding:28px;border-radius:16px;background:#1DAA4B;font-size:32px;font-weight:700;color:white;border:none;cursor:pointer">Collect Bill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const isHL = new URLSearchParams(location.search).get('hl') === '1';
+if (isHL) {
+  document.getElementById('menu-panel').style.filter = 'brightness(0.6)';
+  document.querySelector('.tab-sel').style.filter = 'brightness(0.6)';
+  document.querySelectorAll('.tab-unsel').forEach(e=>e.style.filter='brightness(0.6)');
+  const zone = document.getElementById('grand-total-zone');
+  const btn = document.getElementById('collect-bill-btn');
+  // Wrap both in a highlight container
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'outline:3px solid #F87171;outline-offset:8px;border-radius:16px;position:relative;z-index:10';
+  zone.parentNode.insertBefore(wrapper, zone);
+  wrapper.appendChild(zone);
+  btn.style.outline = '3px solid #F87171';
+  btn.style.outlineOffset = '4px';
+}
+</script>
+</body>
+</html>
