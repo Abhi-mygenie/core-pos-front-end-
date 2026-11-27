@@ -2417,3 +2417,19 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 | **BUG-755** | Dashboard room tile amount differs between Table View and Order View — Order View shows `order.amount` (F&B only); Table View shows `computeRoomCardAmount` (F&B + room balance). Rooms with outstanding booking balances show materially lower amounts in Order View (e.g. R1: ₹473 Table → ₹126 Order, R2: ₹525 → ₹0). Dine-in and zero-balance rooms unaffected. Break point: `DashboardPage.jsx` ~L2066 `viewType` prop switches room rendering path. | **P1** | **HIGH** | GATE_1_INTAKE 2026-11-27 | Abhishek |
 
 Source: OWNER-REPORTED (owner@palmforest.com). Investigation Role 6, 8/10 steps, HIGH confidence. RELATED BUG-532 (SC gap, CLOSED). Intake: `change_requests/BUG-755_DASHBOARD_ROOM_AMOUNT_TABLE_VS_ORDER_VIEW_INTAKE.md`. Evidence: `memory/evidence/BUG-DASH-PRICE-VIEW/`. Next: Planning Gate 2 (Impact Analysis). Full gate flow required (R5 hotspot + financial display).
+
+
+---
+
+**CURRENT 2026-11-27 — INTAKE: BUG-756 + BUG-757 registered (investigation-found, GATE_1_INTAKE→GATE_2_IA_COMPLETE).**
+
+| ID | Title | Sev | Risk | Status | Assignee |
+|---|---|---|---|---|---|
+| **BUG-756** | Print Bill 403 for PayLater from Order Report Beta — `CollectBillPanelDrawer` passes `onPrintBill` without `order.id`; CPP `overrides` has no order identifier → `get-single-order-new` receives `{}` → 403 | **P1** | **LOW** | GATE_2_IA_COMPLETE 2026-11-27 | Abhishek |
+| **BUG-757** | Dashboard Room Check-In: Nights not auto-calculated when checkout date changed — `RoomCheckInModal` checkout `onChange` never calls `setNights()` → nights stays 1 → wrong balance shown and submitted | **P1** | **MEDIUM** | GATE_2_IA_COMPLETE 2026-11-27 | Abhishek |
+
+IA docs: `impact/BUG-756_IMPACT_ANALYSIS.md` · `impact/BUG-757_IMPACT_ANALYSIS.md`. Next: Gate 3 GO.
+
+**2026-11-27 — BUG-755 → GATE_2_IA_COMPLETE.** IA at `impact/BUG-755_IMPACT_ANALYSIS.md`.
+Break point: `ChannelColumn.jsx` L349 — `const order = item.order || item` extracts raw order (amount = food only), discards `item.amount = computeRoomCardAmount`. Fix: 1 file `ChannelColumn.jsx`, guard by `item.isRoom`. DashboardPage.jsx NOT touched.
+
