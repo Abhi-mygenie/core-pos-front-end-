@@ -14,12 +14,18 @@ import AssignRiderModal from "../modals/AssignRiderModal";
 // CR-017: WhatsApp Payment Link
 import WhatsAppPaymentModal from "./WhatsAppPaymentModal";
 
-// CR-099: Format elapsed milliseconds as "Xm" or "Xh Ym"
+// CR-099: Format elapsed milliseconds as "Xm", "Xh Ym", or "Xd Yh"
+// BUG-758: add days branch — mirrors TableCard.formatDuration for consistency
 const formatElapsed = (ms) => {
   if (!ms || ms < 0) return '';
   const mins = Math.floor(ms / 60000);
   if (mins < 60) return `${mins}m`;
   const h = Math.floor(mins / 60);
+  const days = Math.floor(h / 24);
+  if (days > 0) {
+    const remH = h % 24;
+    return remH > 0 ? `${days}d ${remH}h` : `${days}d`;
+  }
   const m = mins % 60;
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 };

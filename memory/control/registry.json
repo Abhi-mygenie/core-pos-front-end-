@@ -42240,11 +42240,11 @@
       "id": "BUG-755",
       "title": "Dashboard room tile amount differs between Table View and Order View (Order View uses order.amount, Table View uses computeRoomCardAmount including room balance)",
       "type": "BUG",
-      "status": "GATE_3_PLAN_COMPLETE 2026-11-27",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-27",
       "severity": "P1",
       "risk": "HIGH",
       "area": "Dashboard",
-      "sprint_key": "nov_cr_batch",
+      "sprint_key": "dec_sprint",
       "client": "ALL",
       "assignee": "Abhishek",
       "qa_gate_status": "GATE_3_PLAN_COMPLETE",
@@ -42348,7 +42348,7 @@
       "id": "BUG-756",
       "title": "Print Bill 403 for PayLater orders from Order Report Beta \u2014 CollectBillPanelDrawer passes onPrintBill without order.id; CPP overrides has no order identifier",
       "type": "BUG",
-      "status": "GATE_3_PLAN_COMPLETE 2026-11-27",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-27",
       "severity": "P1",
       "risk": "LOW",
       "area": "Reports / Analytics",
@@ -42366,7 +42366,7 @@
       "id": "BUG-757",
       "title": "RoomCheckInModal: nights not auto-calculated when checkout date is changed \u2014 setNights never called on checkout onChange",
       "type": "BUG",
-      "status": "GATE_3_PLAN_COMPLETE 2026-11-27",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-27",
       "severity": "P1",
       "risk": "MEDIUM",
       "area": "PMS / Rooms",
@@ -42379,6 +42379,25 @@
       "blast_radius": "SMALL (1 file RoomCheckInModal.jsx, 1-3 lines)",
       "fast_lane_eligible": false,
       "notes": "Break point: RoomCheckInModal.jsx L1347 checkout date onChange sets setManualCheckout(true) + setCheckoutDate() but never calls setNights(). nights stays at 1. Balance shown wrong. Submitted balancePayment uses 1-night state value (wrong). Fix: add setNights(diff) in checkout onChange. Investigation: investigations/BUG-757_INVESTIGATION_REPORT_2026_11_27_NIGHTS_NOT_CALCULATED.md"
+    },
+    {
+      "id": "BUG-756-B",
+      "type": "BUG",
+      "title": "handlePrintBillFromBeta: wrong response unwrap + wrong printOrder signature",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-27",
+      "sprint_key": "dec_sprint",
+      "risk": "HIGH",
+      "files": "src/pages/reports-module/OrderReportBetaPage.jsx",
+      "parent": "BUG-756"
+    },
+    {
+      "id": "BUG-758",
+      "type": "BUG",
+      "title": "Order View: item-level prep/serve times show raw hours instead of days",
+      "status": "GATE_5A_IMPLEMENTED 2026-11-27",
+      "sprint_key": "dec_sprint",
+      "risk": "LOW",
+      "files": "src/components/cards/OrderCard.jsx"
     }
   ],
   "meta": {
