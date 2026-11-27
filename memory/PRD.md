@@ -3,8 +3,8 @@
 ## Original Problem Statement
 Deploy the existing React frontend repo directly into /app and run it as-is, with no code edits.
 - Repo: https://github.com/Abhi-mygenie/core-pos-front-end-.git
-- Branch: 20261126_164747
-- Destination: /app (repo contents pulled directly into /app, not a subfolder)
+- Branch: ultimate-fix (latest as of 2026-11-27)
+- Destination: /app (repo contents pulled directly into /app/frontend per supervisor config)
 
 ## Architecture
 - **Frontend**: React 19 (CRA + CRACO), running via supervisor from `/app/frontend`
@@ -46,6 +46,15 @@ Deploy the existing React frontend repo directly into /app and run it as-is, wit
 | REACT_APP_GOOGLE_MAPS_KEY | set via secrets |
 | REACT_APP_SHOW_AUDIT_TAB | true |
 | CORS_ORIGINS | * |
+
+## What's Been Implemented (2026-11-27) — Branch: ultimate-fix
+- Cloned branch `ultimate-fix` into `/tmp/pos-repo`, synced `frontend/` → `/app/frontend/`
+- Full memory sync: 3698 files from repo memory → `/app/memory/` (confirmed 3700 total)
+- All 15 REACT_APP env vars set in `/app/frontend/.env`
+- Secrets (Firebase API Key, VAPID Key, Google Maps Key, CRM API Keys) set via secrets manager
+- `yarn install --frozen-lockfile` completed (60s), webpack compiled with 1 lint warning only
+- Frontend RUNNING on port 3000, HTTP 200, login page confirmed via screenshot
+- Deployment record written to `/app/memory/PRD_DEPLOYMENT_RECORD_2026-11-27_EMERGENT_E1_ULTIMATE_FIX.md`
 
 ## Backlog / Next Steps
 - P0: Verify login flow connects correctly to preprod API
