@@ -5,7 +5,7 @@
 **Sprint:** nov_cr_batch
 **Priority:** P0
 **Risk:** LOW (1 line primary + 3 prop wires, 4 files, not hotspot)
-**Status:** GATE_1_INTAKE_COMPLETE
+**Status:** GATE_5A_QA_FAILED
 **Client:** ALL
 **Assignee:** Abhishek
 **Routing reason:** FE-only fix
