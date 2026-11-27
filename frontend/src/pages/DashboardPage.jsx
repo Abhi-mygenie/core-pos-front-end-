@@ -8,7 +8,7 @@ import { DineInCard, DeliveryCard, OrderCard } from "../components/cards";
 import TableCard from "../components/cards/TableCard";
 import { OrderEntry } from "../components/order-entry";
 import { sortByActiveFirst, TABLE_STATUS_PRIORITY } from "../utils";
-import { useRestaurant, useTables, useOrders, useAuth, useSettings } from "../contexts";
+import { useRestaurant, useTables, useOrders, useAuth, useSettings, useNotifications } from "../contexts";
 // CR-041: SettingsPanel, MenuManagementPanel, CreditManagementPanel, SettlementPanel
 // removed — migrated to full-page routes (/settings, /menu, /credit, /day-closure)
 import { useRefreshAllData } from "../hooks/useRefreshAllData";
@@ -202,6 +202,7 @@ const DashboardPage = () => {
     orderItemsByTableId, getOrderByTableId, getOrdersByTableId, removeOrder, waitForOrderRemoval,
     isOrderEngaged, getOrderById,
   } = useOrders();
+  const { soundEnabled } = useNotifications();
   const refreshAllData = useRefreshAllData();
   const { updateTableStatus, isTableEngaged, setTableEngaged } = useTables();
   // BUG-167: socket events now handled by AppSocketManager (app-level)
@@ -513,6 +514,33 @@ const DashboardPage = () => {
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
+  }, []);
+
+  // Instance-only Mute: when a new alert actually plays, reset Mute button color.
+  // Sound still rings (no isOrderMuted gate); only snoozedOrders UI is cleared.
+  useEffect(() => {
+    const onAlertPlayed = (e) => {
+      const rawId = e?.detail?.orderId;
+      setSnoozedOrders((prev) => {
+        if (!prev || prev.size === 0) return prev;
+        if (rawId == null || rawId === '') {
+          return new Set();
+        }
+        const idStr = String(rawId);
+        if (!prev.has(idStr) && !prev.has(rawId) && !prev.has(Number(rawId))) {
+          // Different order rang — clear all so any open Mute UI is not stuck orange.
+          return new Set();
+        }
+        const next = new Set(prev);
+        next.delete(idStr);
+        next.delete(rawId);
+        const asNum = Number(rawId);
+        if (Number.isFinite(asNum)) next.delete(asNum);
+        return next;
+      });
+    };
+    window.addEventListener('mygenie:order-alert-played', onAlertPlayed);
+    return () => window.removeEventListener('mygenie:order-alert-played', onAlertPlayed);
   }, []);
 
   // BUG-387: fetch OOO/HK room IDs from status board on mount — exclude from Room column
@@ -1312,14 +1340,17 @@ const DashboardPage = () => {
   // --- Handlers ---
   const toggleSnooze = (orderId) => {
     // Instance-only mute: stop the current ring only. Do NOT toggleOrderMute —
-    // a later FCM for the same order (e.g. item edit) must be able to ring again.
+    // a later FCM (new item / another order) must ring; Mute button color resets
+    // via mygenie:order-alert-played when that alert plays.
     try { soundManager.stop(); } catch { /* ignore */ }
+    const idStr = String(orderId);
     setSnoozedOrders(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(orderId)) {
+      if (newSet.has(idStr) || newSet.has(orderId)) {
+        newSet.delete(idStr);
         newSet.delete(orderId);
       } else {
-        newSet.add(orderId);
+        newSet.add(idStr);
       }
       return newSet;
     });
@@ -1948,6 +1979,7 @@ const DashboardPage = () => {
           onRejectNewItems={handleRejectNewItems} // CR-552
           currencySymbol={currencySymbol}
           suppressed={Boolean(orderEntryType) || Boolean(cancelOrderEntry)}
+          soundEnabled={soundEnabled}
         />
       )}
       {/* CR-106: Aggregator order popup (Swiggy/Zomato) */}

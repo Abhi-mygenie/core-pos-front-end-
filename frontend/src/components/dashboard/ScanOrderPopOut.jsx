@@ -29,7 +29,8 @@
 //     DashboardPage.toggleSnooze — this file still calls ONLY stop() +
 //     onToggleSnooze. NO direct mute-registry calls from here.
 //   - NO NotificationContext import. Pop-out remains a silent layer for
-//     the FCM-driven audio path; existing chime pipeline untouched.
+//     the FCM-driven audio path. Mute grey in Silent Mode uses read-only
+//     prop `soundEnabled` from Dashboard (visual only).
 //   - NO direct service / API / socket call. Every action goes through
 //     the props the caller already wires for normal YTC cards.
 //   - NO writes to localStorage / sessionStorage / IndexedDB / backend.
@@ -186,6 +187,7 @@ const formatItemCount = (order) => {
  * @param {(order: object) => void} onReject — wraps handleCancelOrderFromCard
  * @param {(tableEntry: object) => void} onEdit — wraps handleTableClick
  * @param {string} currencySymbol — '₹' / '$' etc. for total display
+ * @param {boolean} soundEnabled — sidebar Silent Mode; Mute button grey when false
  */
 const ScanOrderPopOut = ({
   orders = [],
@@ -199,6 +201,7 @@ const ScanOrderPopOut = ({
   onRejectNewItems,    // CR-552: (order) => void — reject web-edit new items only
   currencySymbol = '₹',
   suppressed = false,
+  soundEnabled = true,
 }) => {
   // Derived queue: web YTC orders. Sort: FIFO by createdAt ascending (oldest first).
   const queue = useMemo(() => {
@@ -741,14 +744,32 @@ const ScanOrderPopOut = ({
             onClick={() => handleSnoozeClick(activeOrder.orderId)}
             disabled={isAccepting}
             className="min-h-[44px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{
-              borderColor: COLORS.borderGray,
-              color: COLORS.darkText,
-              backgroundColor: isUnderlyingSnoozed ? '#FFEDD5' : 'white',
-            }}
-            title={isUnderlyingSnoozed ? 'Currently snoozed' : 'Mute sound'}
+            style={
+              !soundEnabled
+                ? {
+                    borderColor: '#D1D5DB',
+                    color: '#6B7280',
+                    backgroundColor: '#F3F4F6',
+                  }
+                : {
+                    borderColor: COLORS.borderGray,
+                    color: COLORS.darkText,
+                    backgroundColor: isUnderlyingSnoozed ? '#FFEDD5' : 'white',
+                  }
+            }
+            title={
+              !soundEnabled
+                ? 'Silent Mode — sound already off'
+                : isUnderlyingSnoozed
+                  ? 'Currently snoozed'
+                  : 'Mute sound'
+            }
           >
-            {isUnderlyingSnoozed ? <BellOff className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+            {!soundEnabled || isUnderlyingSnoozed ? (
+              <BellOff className="w-4 h-4" />
+            ) : (
+              <Bell className="w-4 h-4" />
+            )}
             <span>Mute</span>
           </button>
           <button
