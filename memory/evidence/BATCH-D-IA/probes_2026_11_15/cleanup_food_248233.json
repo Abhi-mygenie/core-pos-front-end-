@@ -1,0 +1,14 @@
+{
+ "request": {
+  "method": "DELETE",
+  "path": "/api/v2/vendoremployee/product/delete/248233",
+  "json": {
+   "delete_reason": "Duplicate item"
+  },
+  "data": null
+ },
+ "status": 200,
+ "response": {
+  "message": "food removed successfully"
+ }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-B_CR-514_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-B_CR-514_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-B_CR-514_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-514 Payment reference box — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BB-06, BB-07 · IA doc: <code>impact/CR-514_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong></p>
+<h2>1. Per-method reference-box config (BB-06) — LOCKED OD-B-BB06</h2>
+<p>Endpoint: <code>GET /api/v2/vendoremployee/profile</code> → <code>restaurants[0].payment_types[]</code></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Values</th>
+<th>Default</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ref_enabled</code></td>
+<td>integer</td>
+<td><code>0</code> / <code>1</code></td>
+<td><code>0</code></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>ref_required</code></td>
+<td>integer</td>
+<td><code>0</code> / <code>1</code></td>
+<td><code>0</code></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>ref_label</code></td>
+<td>string or null</td>
+<td>Display label e.g. <code>"UPI Ref"</code></td>
+<td><code>null</code></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+<tr>
+<td><code>ref_max_len</code></td>
+<td>integer or null</td>
+<td>Max characters for reference input</td>
+<td><strong><code>50</code> when admin leaves blank</strong></td>
+<td>NEW — <strong>LOCKED</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Editable per method in backend admin (OD-514-B). Current probe (02_profile): <code>payment_types</code> items have <code>id, name, display_name, prepaid, postpaid</code> — no ref flags.</p>
+<p><strong>Rule:</strong> <code>ref_enabled: 0</code> → no reference box shown. <code>ref_enabled: 1, ref_required: 1</code> → Pay button locked until reference is entered. <code>ref_max_len: null</code> → treat as 50.</p>
+<h2>2. transaction_id per split part (BB-07)</h2>
+<p>Endpoints: <code>POST /api/v2/vendoremployee/pos/order-bill-payment</code> · <code>POST /api/v2/vendoremployee/pos/place-order</code> → <code>partial_payments[]</code></p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>partial_payments[].transaction_id</code></td>
+<td>string</td>
+<td>EXISTING — <strong>confirm stored + returned per split part</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Probe: single-payment <code>transaction_id: TESTREF514</code> stored and returned in Order Beta row (probe 21_C / 25). Split per-part: TBD — backend to confirm in sign-off.</p>
+<h2>3. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BB-06">BB-06</td>
+<td></td>
+<td>Confirm 4 fields added per method</td>
+<td></td>
+</tr>
+<tr>
+<td id="BB-07">BB-07</td>
+<td></td>
+<td>Confirm <code>transaction_id</code> stored + returned per split part</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

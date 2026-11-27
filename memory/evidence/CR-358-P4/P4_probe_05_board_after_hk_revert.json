@@ -1,0 +1,106 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  "body": {
+    "status": true,
+    "message": "Room status board fetched successfully",
+    "data": {
+      "auto_hk_on_rm_checkout": true,
+      "rooms": [
+        {
+          "restaurant_table_id": 8524,
+          "table_no": "r3",
+          "title": null,
+          "aiosell_room_code": "suite",
+          "manual_status": null,
+          "display_status": "occupied",
+          "room_operational_status_at": null,
+          "guest": {
+            "name": "Test1 Guest1",
+            "phone": "***",
+            "email": "***",
+            "booking_id": "BDC3590615",
+            "order_id": 1232218
+          },
+          "reservation": null
+        },
+        {
+          "restaurant_table_id": 8525,
+          "table_no": "r4",
+          "title": null,
+          "aiosell_room_code": "suite",
+          "manual_status": null,
+          "display_status": "booked",
+          "room_operational_status_at": null,
+          "guest": null,
+          "reservation": {
+            "booking_id": "BDC7497606",
+            "channel": "booking.com",
+            "checkin": "2026-09-07",
+            "checkout": "2026-09-09",
+            "guest_name": "Test Guest",
+            "room_code": "suite",
+            "reservation_room_id": 4
+          }
+        },
+        {
+          "restaurant_table_id": 8526,
+          "table_no": "r2",
+          "title": null,
+          "aiosell_room_code": "executive",
+          "manual_status": "hk",
+          "display_status": "occupied",
+          "room_operational_status_at": "2026-09-04 02:20:48",
+          "guest": {
+            "name": "poii poii",
+            "phone": "***",
+            "email": "***",
+            "booking_id": "San110f43523659",
+            "order_id": 1232217
+          },
+          "reservation": null
+        },
+        {
+          "restaurant_table_id": 8527,
+          "table_no": "r5",
+          "title": null,
+          "aiosell_room_code": "suite",
+          "manual_status": null,
+          "display_status": "booked",
+          "room_operational_status_at": null,
+          "guest": null,
+          "reservation": {
+            "booking_id": "BDC6263973",
+            "channel": "booking.com",
+            "checkin": "2026-09-10",
+            "checkout": "2026-09-12",
+            "guest_name": "Test Guest",
+            "room_code": "suite",
+            "reservation_room_id": 24
+          }
+        },
+        {
+          "restaurant_table_id": 8528,
+          "table_no": "r1",
+          "title": null,
+          "aiosell_room_code": "executive",
+          "manual_status": "hk",
+          "display_status": "hk",
+          "room_operational_status_at": "2026-09-04 03:00:51",
+          "guest": null,
+          "reservation": {
+            "booking_id": "MG-69-8859D21E-D077-45A7-97CB-00070C6DCF9C",
+            "channel": "Direct",
+            "checkin": "2026-09-07",
+            "checkout": "2026-09-09",
+            "guest_name": null,
+            "room_code": "executive",
+            "reservation_room_id": 12
+          }
+        }
+      ]
+    }
+  }
+}

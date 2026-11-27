@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BACKEND_BRIEF_BATCH-C_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BACKEND_BRIEF_BATCH-C_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BACKEND_BRIEF_BATCH-C_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>BACKEND_BRIEF_BATCH-C — Batch C FE Impact Analysis Backend Asks — 2026-11-15</h1>
+<p><strong>Assigned to:</strong> Gyan
+<strong>Priority:</strong> P0 (CR-524 blocks FE implementation; CR-528 partial — workaround available)
+<strong>Classification:</strong> CONTRACT_MISMATCH (CR-524) + DATA_GAP (CR-528)
+<strong>Frontend impact:</strong> CR-524 Punch Time + Duration columns cannot be computed without <code>created_at</code>; CR-528 post-print-edit section requires a print timestamp</p>
+<hr />
+<h2 id="ASK-1">ASK 1 — CR-524: Add <code>created_at</code> to insights-cancellations items</h2>
+<h3>Summary</h3>
+<ul>
+<li>Issue: <code>created_at</code> (item punch timestamp) is absent from the <code>insights-cancellations</code> API response. The FE needs it to compute "Cancellation Duration" (minutes between item punch and cancellation).</li>
+<li>Classification: CONTRACT_MISMATCH — field exists in backend DB but not surfaced in API</li>
+<li>Frontend impact: CR-524 "Punch Time" and "Cancellation Duration" columns cannot be shown</li>
+<li>Priority: P0 / LOW risk</li>
+</ul>
+<h3>Endpoint</h3>
+<ul>
+<li>Method: POST</li>
+<li>URL: <code>/api/v2/vendoremployee/report/insights-cancellations</code></li>
+<li>Auth: Bearer token (restaurant employee)</li>
+</ul>
+<h3>Current response (items array — observed 2026-11-15, RID 644):</h3>
+<pre><code>food_id, name, food_name, unit_price, scope, qty, amount, value, item_total,
+discount, service_charge, gst, vat, stage, cancel_type, reason, notes,
+cancel_date, cancel_time, cancelled_by, punched_by, station,
+order_id, order_number, restaurant_order_id, table_no, table_name, order_date
+</code></pre>
+<p><code>cancel_time</code> = "16:15" (HH:MM only, no date component)</p>
+<h3>Required additions:</h3>
+<pre><code class="language-json">{
+  &quot;created_at&quot;: &quot;2026-11-01T16:10:00&quot;,  // full ISO — when the food item was punched/added
+  &quot;cancel_time_full&quot;: &quot;2026-11-01T16:15:00&quot;  // optional: full ISO cancel datetime
+                                              // FE can combine cancel_date + cancel_time if kept as-is
+}
+</code></pre>
+<p><strong>Minimum ask:</strong> Add <code>created_at</code> (full ISO datetime) per item.
+<strong>FE will compute:</strong> <code>duration_min = Math.max(0, Math.round((cancel_datetime - created_at_datetime) / 60000))</code></p>
+<hr />
+<h2 id="ASK-2">ASK 2 — CR-528: Add <code>bill_printed_at</code> timestamp to order-logs-report</h2>
+<h3>Summary</h3>
+<ul>
+<li>Issue: <code>orders_table.print_bill_status</code> exists (Yes/No) but no timestamp of WHEN the bill was printed. FE needs the timestamp to filter <code>operations</code> and item-level <code>cancel_at</code> values to those that occurred AFTER bill print.</li>
+<li>Classification: DATA_GAP — field present but incomplete</li>
+<li>Frontend impact: CR-528 "Post-Bill-Print Changes" section can filter orders (using Yes/No flag) but cannot accurately determine which operations happened AFTER the print without a timestamp</li>
+<li>Priority: P0 / MEDIUM (workaround: use <code>collect_bill</code> as proxy)</li>
+</ul>
+<h3>Endpoint</h3>
+<ul>
+<li>Method: POST</li>
+<li>URL: <code>/api/v2/vendoremployee/report/order-logs-report</code></li>
+<li>Auth: Bearer token</li>
+</ul>
+<h3>Current response (orders_table per order — observed 2026-11-15, RID 644):</h3>
+<pre><code>print_bill_status: 'No'  ← exists, but only Yes/No, no timestamp
+collect_bill: '2026-11-01 21:39:31'  ← payment collection time (NOT print time)
+</code></pre>
+<h3>Required addition:</h3>
+<pre><code class="language-json">{
+  &quot;bill_printed_at&quot;: &quot;2026-11-01 21:35:00&quot;  // datetime when bill was first printed
+                                             // null if never printed
+}
+</code></pre>
+<h3>Workaround (acceptable if backend cannot add timestamp quickly):</h3>
+<p>FE will use <code>collect_bill</code> as proxy for bill-print time. This is conservative — catches only edits between print and collection. Known limitation: documented in release notes.</p>
+<h3>Also confirm:</h3>
+<ul>
+<li>What values does <code>print_bill_status</code> take? FE assumes <code>'Yes'</code> / <code>'No'</code>. Confirm expected values.</li>
+<li>Does <code>operations[*].operation = 'item_cancel'</code> or similar exist? Currently only <code>order_edit</code> seen for edits. Confirm if item-level cancellations also appear as operations, or only in <code>order_details_table[*].cancel_at</code>.</li>
+</ul>
+<hr />
+<h2>REVISION 2026-11-15 — after write probe (orders 1578757–1578760, all cancelled)</h2>
+<p>Evidence: <code>/app/memory/evidence/BATCH-C-IA/probes_2026_11_15_write/</code></p>
+<h3>ASK 1 (CR-524) — updated</h3>
+<ul>
+<li>Return <code>punched_at</code> per cancelled line = the ORIGINAL line's add time. Partial cancel splits the line and the new row's <code>created_at</code> = cancel time (row 3969224 vs parent 3969222).</li>
+<li>Same timezone as <code>cancel_time</code> (IST), or ISO with offset. Today <code>order_details.created_at</code> is UTC Z and everything else is IST.</li>
+<li>Order-scope cancels: return item-level lines (or per-item <code>punched_at</code>). Owner wants one duration per item.</li>
+</ul>
+<h3>ASK 2 (CR-528) — upgraded to BLOCKING, no proxy (owner)</h3>
+<ul>
+<li><code>update-print-status</code> bill_print=Yes returns <code>bill_print_count: 1</code>, but <code>print_bill_status</code> stays 'No' and nothing appears in <code>operations[]</code>. Please:</li>
+<li>Persist <code>print_bill_status</code> = Yes on print.</li>
+<li><strong>Owner round 3: REQUIRED</strong> — log a <code>bill_print</code> event in <code>operations[]</code> for <strong>every</strong> bill print, including reprints after an edit (time, employee, order amount at print). Also give <code>bill_print_count</code> and <code>bill_printed_at</code> (latest print) on orders_table in <code>order-logs-report</code>.</li>
+<li>Fix <code>order_edit</code> previous/current_order_amount (logged 420→420 while order went 420→630).</li>
+<li>Log order-level cancel in <code>operations[]</code> (<code>item_cancel</code> already exists).</li>
+</ul>
+<hr />
+<h2>Evidence artifacts</h2>
+<pre><code>/app/memory/evidence/BATCH-C-IA/probes_2026_11_15/
+  01c_cr524_items_full.txt   — CR-524: full item keys, created_at MISSING confirmed
+  02g_cr528_orders_table_full.txt — CR-528: full orders_table, no bill_printed_at
+  02f_cr528_ops_detail.txt   — CR-528: operations types incl. order_edit
+</code></pre>
+<hr />
+<h2>Frontend workaround (if delayed)</h2>
+<table>
+<thead>
+<tr>
+<th>Ask</th>
+<th>Workaround</th>
+<th>Quality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CR-524 <code>created_at</code></td>
+<td>Cannot show Punch Time or Duration columns</td>
+<td>No workaround — feature blocked</td>
+</tr>
+<tr>
+<td>CR-528 <code>bill_printed_at</code></td>
+<td>~~Use <code>collect_bill</code> as proxy~~ — rejected by owner 2026-11-15</td>
+<td>Feature blocked until backend</td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

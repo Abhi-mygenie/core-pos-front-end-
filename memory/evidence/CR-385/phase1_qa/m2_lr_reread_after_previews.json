@@ -1,0 +1,75 @@
+{
+ "check": "M2-4 preview persistence \u2014 row 223 after 3 preview PATCHes (2 UI + 1 curl)",
+ "expected": {
+  "checkin": "2026-09-21",
+  "checkout": "2026-09-22",
+  "nights": 1,
+  "total_with_gst": 37170
+ },
+ "row": {
+  "id": 223,
+  "booking_id": "MG-69-C5164D2D-F9B1-471A-8D1D-20774D3B2CB2",
+  "cm_booking_id": null,
+  "channel": "Direct",
+  "hotel_code": "sandbox-pms",
+  "checkin": "2026-09-21",
+  "checkout": "2026-09-22",
+  "status": "confirmed",
+  "cancelled_at": null,
+  "cancel_reason": null,
+  "cancelled_by": null,
+  "pah": true,
+  "operational_status": "pending",
+  "booked_on": "2026-09-21 22:40:56",
+  "amount_before_tax": "31500.00",
+  "amount_after_tax": "37170.00",
+  "advance_payment": 0,
+  "balance_payment": 31500,
+  "charge": {
+   "rate_per_night": 31500,
+   "nights": 1,
+   "rateplan_code": "suite-s-ep",
+   "rateplan_name": "suite-s-ep",
+   "upgrade_amount": 0,
+   "booking_charge": 31500,
+   "sgst": 2835,
+   "cgst": 2835,
+   "total_with_gst": 37170,
+   "prepaid_amount": 0,
+   "advance_payment": 0,
+   "balance_due": 37170
+  },
+  "currency": "INR",
+  "special_requests": null,
+  "user_id_document_id": 17245,
+  "guest": {
+   "first_name": "QA-P1-Modify",
+   "last_name": "",
+   "email": null,
+   "phone": "9999900002",
+   "address_city": null,
+   "address_state": null,
+   "address_country": null
+  },
+  "rooms": [
+   {
+    "id": 234,
+    "room_code": "suite",
+    "rateplan_code": "suite-s-ep",
+    "guest_name": null,
+    "adults": 1,
+    "children": 0,
+    "line_status": "pending",
+    "restaurant_table_id": null,
+    "table_no": null,
+    "table_title": null,
+    "order_id": null,
+    "user_id_document_id": null,
+    "order_f_order_status": null,
+    "order_payment_status": null,
+    "checked_in_at": null,
+    "checked_out_at": null
+   }
+  ]
+ }
+}

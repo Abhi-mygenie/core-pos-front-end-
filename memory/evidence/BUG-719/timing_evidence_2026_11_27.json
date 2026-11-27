@@ -1,0 +1,84 @@
+{
+  "investigation": "BUG-719 / BUG-722 + Insights + Daily Report Performance",
+  "date": "2026-11-27",
+  "environment": "preprod.mygenie.online",
+  "restaurant": "palmhouse (RID 541)",
+  "probes": {
+    "insights_dashboard": {
+      "30D (29 days)": {
+        "http": 200,
+        "time_s": 47.7,
+        "status": "PASS but CRITICAL \u2014 47.7s, only 12s headroom before 60s timeout"
+      },
+      "50D": {
+        "http": 200,
+        "time_s": 65.4,
+        "status": "TIMEOUT \u2014 exceeds 60s axios limit (BUG-719)"
+      },
+      "LM (Oct 2026, 31 days)": {
+        "http": 200,
+        "time_s": 65.3,
+        "status": "TIMEOUT \u2014 exceeds 60s (BUG-722)"
+      },
+      "FY (240 days)": {
+        "http": "000",
+        "time_s": 90.0,
+        "status": "HARD TIMEOUT \u2014 curl 90s limit hit (BUG-722)"
+      }
+    },
+    "daily_order_report_combined": {
+      "1 month (30d, 1.93MB, 1075 rows)": {
+        "http": 200,
+        "time_s": 10.1,
+        "status": "OK \u2014 well within timeout"
+      },
+      "2 months chunk-1 (3.6MB)": {
+        "http": 200,
+        "time_s": 18.9,
+        "status": "OK \u2014 but sequential"
+      },
+      "2 months chunk-2 (1.9MB)": {
+        "http": 200,
+        "time_s": 11.1,
+        "status": "OK \u2014 but sequential, total ~30s for 2 months"
+      }
+    },
+    "insights_sub_endpoints_30D": {
+      "insights-discounts": {
+        "http": 200,
+        "time_s": 2.7,
+        "status": "FAST"
+      },
+      "insights-sales": {
+        "http": 200,
+        "time_s": 4.0,
+        "status": "FAST"
+      },
+      "insights-tax": {
+        "http": 200,
+        "time_s": 4.0,
+        "status": "FAST"
+      },
+      "insights-customers": {
+        "http": 200,
+        "time_s": 4.5,
+        "status": "FAST"
+      },
+      "insights-staff": {
+        "http": 200,
+        "time_s": 6.7,
+        "status": "ACCEPTABLE"
+      },
+      "insights-cancellations": {
+        "http": 200,
+        "time_s": 9.1,
+        "status": "SLOW but OK"
+      },
+      "insights-items": {
+        "http": 200,
+        "time_s": 13.1,
+        "status": "SLOW \u2014 backend heavy"
+      }
+    }
+  }
+}

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 2 + CR-528 — Design Change Comparison</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f4f5f7; color: #1a1a2e; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; padding: 32px 48px; }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 14px; opacity: 0.7; }
+  .section { padding: 32px 48px; }
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #1a1a2e; }
+  .section-sub { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .compare-panel { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
+  .compare-label { padding: 12px 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .label-before { background: #fef2f2; color: #dc2626; border-bottom: 2px solid #fecaca; }
+  .label-after { background: #f0fdf4; color: #16a34a; border-bottom: 2px solid #bbf7d0; }
+  .compare-content { padding: 20px; }
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700; }
+  .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+
+  /* Mockup Components */
+  .mock-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px 20px; }
+  .mock-card-red { border-color: #fecaca; background: rgba(254,226,226,0.15); }
+  .mock-card-amber { border-color: #fde68a; background: rgba(254,243,199,0.15); }
+  .mock-card-orange { border-color: #fed7aa; background: rgba(255,237,213,0.15); }
+  .mock-card-rose { border-color: #fecdd3; background: rgba(255,228,230,0.15); }
+  .mock-card-blue { border-color: #bfdbfe; background: rgba(219,234,254,0.15); }
+  .mock-kpi-label { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .mock-kpi-label span { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; }
+  .mock-kpi-value { font-size: 24px; font-weight: 800; }
+  .kpi-grid { display: grid; gap: 12px; }
+  .kpi-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .kpi-grid-6 { grid-template-columns: repeat(3, 1fr); }
+
+  /* Table mockup */
+  .mock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .mock-table th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6b7280; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+  .mock-table td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
+  .mock-table tr:hover { background: #fafafa; }
+  .text-right { text-align: right; }
+  .text-mono { font-family: 'JetBrains Mono', monospace; }
+  .text-muted { color: #9ca3af; }
+  .text-sm { font-size: 12px; }
+
+  /* Popup mockup */
+  .mock-popup { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-width: 420px; margin: 0 auto; overflow: hidden; }
+  .mock-popup-header { padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+  .mock-popup-body { padding: 16px 20px; }
+  .mock-popup-footer { padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e5e7eb; display: flex; gap: 8px; }
+  .mock-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .mock-btn-green { background: #329937; color: #fff; }
+  .mock-btn-red { background: #ef4444; color: #fff; }
+  .mock-btn-ghost { background: transparent; color: #6b7280; border: 1px solid #e5e7eb; }
+
+  .item-row { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; gap: 8px; }
+  .item-row:last-child { border-bottom: none; }
+  .item-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .item-price { font-family: monospace; color: #6b7280; white-space: nowrap; }
+  .cancel-x { width: 22px; height: 22px; border-radius: 4px; border: none; background: transparent; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .cancel-x:hover { background: #fef2f2; }
+
+  .new-marker { position: relative; }
+  .new-marker::after { content: 'NEW'; position: absolute; top: -8px; right: -8px; background: #16a34a; color: #fff; font-size: 8px; font-weight: 800; padding: 1px 5px; border-radius: 4px; }
+
+  .divider { height: 1px; background: #e5e7eb; margin: 48px 0 32px; }
+  .no-change-banner { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px 20px; color: #0369a1; font-size: 13px; display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .icon-circle { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Batch 2 + CR-528 — Design Change Comparison</h1>
+  <p>Session 2026-11-16 · BUG-678 · BUG-677 · CR-545 · CR-528</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- BUG-678 -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-678 — Service Charge Payload Fix</div>
+  <div class="section-sub">P0 CRITICAL · OrderEntry.jsx · 2 lines changed · IMPLEMENTED</div>
+  <div class="no-change-banner">
+    <div class="icon-circle" style="background:#dbeafe; color:#2563eb;">✓</div>
+    <div><strong>No visual change.</strong> Logic-only fix — removed <code>autoServiceCharge ||</code> from prepaid SC condition. UI was already correct (toggle OFF = ₹0 displayed). The fix ensures the API payload matches what the UI shows.</div>
+  </div>
+</div>
+
+<div style="padding: 0 48px;"><div class="divider"></div></div>
+
+<!-- ============================================================ -->
+<!-- BUG-677 -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">BUG-677 — Socket Disconnection PWA Resilience</div>
+  <div class="section-sub">P0 HIGH · 4 files · 6 fixes · ~91 lines · GATE 3 PLAN COMPLETE</div>
+  <div class="no-change-banner">
+    <div class="icon-circle" style="background:#dbeafe; color:#2563eb;">✓</div>
+    <div><strong>No visual change.</strong> All 6 fixes are infrastructure-level (socket reconnection, heartbeat, polling). Users will experience fewer "socket disconnected" moments — the app self-heals in the background. No new UI elements, icons, or layout changes.</div>
+  </div>
+</div>
+
+<div style="padding: 0 48px;"><div class="divider"></div></div>
+
+<!-- ============================================================ -->
+<!-- CR-545 -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">CR-545 — APS (₹1) Web Order: Tag + Item Cancel</div>
+  <div class="section-sub">P1 HIGH · ScanOrderPopOut.jsx + DashboardPage.jsx · ~45 lines · GATE 2 IA COMPLETE</div>
+
+  <div class="compare-grid">
+    <!-- BEFORE -->
+    <div class="compare-panel">
+      <div class="compare-label label-before">Before — Current ScanOrderPopOut</div>
+      <div class="compare-content">
+        <div class="mock-popup">
+          <div class="mock-popup-header">
+            <div>
+              <div style="font-weight:700; font-size:15px;">Order 1 of 3</div>
+              <div style="font-size:12px; color:#6b7280;">Table 12 · Dine-In · #000845</div>
+            </div>
+            <span class="badge" style="background:#e8f5e9; color:#329937;">PAID</span>
+          </div>
+          <div class="mock-popup-body">
+            <div style="font-size:12px; color:#6b7280; margin-bottom:12px;">Customer: Rahul · 9876543210</div>
+            <div style="border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+              <div class="item-row" style="padding:10px 12px;">
+                <div class="item-info">
+                  <span style="font-weight:500;">2× Butter Chicken</span>
+                </div>
+                <span class="item-price">₹500.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div class="item-info">
+                  <span style="font-weight:500;">1× Melo Fish</span>
+                  <span style="font-size:11px; color:#9ca3af;">(APS item at ₹1)</span>
+                </div>
+                <span class="item-price">₹1.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div class="item-info">
+                  <span style="font-weight:500;">3× Naan</span>
+                </div>
+                <span class="item-price">₹90.00</span>
+              </div>
+            </div>
+            <div style="text-align:right; margin-top:12px; font-weight:700; font-size:16px;">Total: ₹591.00</div>
+          </div>
+          <div class="mock-popup-footer">
+            <button class="mock-btn mock-btn-green" style="flex:1;">✓ Accept</button>
+            <button class="mock-btn mock-btn-ghost">✎ Edit</button>
+            <button class="mock-btn mock-btn-red">✕ Reject</button>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; font-size:12px; color:#92400e;">
+          <strong>Problem:</strong> ₹1 "Melo Fish" looks like a normal item. No visual cue that it's APS (needs price entry). No way to cancel individual items from the popup.
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="compare-panel">
+      <div class="compare-label label-after">After — CR-545 Phase 1</div>
+      <div class="compare-content">
+        <div class="mock-popup">
+          <div class="mock-popup-header">
+            <div>
+              <div style="font-weight:700; font-size:15px;">Order 1 of 3</div>
+              <div style="font-size:12px; color:#6b7280;">Table 12 · Dine-In · #000845</div>
+            </div>
+            <span class="badge" style="background:#e8f5e9; color:#329937;">PAID</span>
+          </div>
+          <div class="mock-popup-body">
+            <div style="font-size:12px; color:#6b7280; margin-bottom:12px;">Customer: Rahul · 9876543210</div>
+            <div style="border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+              <!-- APS item SORTED TO TOP -->
+              <div class="item-row" style="padding:10px 12px; background:#fff7ed;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <div class="item-info">
+                  <span style="font-weight:500;">1× Melo Fish</span>
+                  <span class="new-marker">
+                    <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span>
+                  </span>
+                </div>
+                <span class="item-price">₹1.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <div class="item-info">
+                  <span style="font-weight:500;">2× Butter Chicken</span>
+                </div>
+                <span class="item-price">₹500.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;" title="Cancel this item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <div class="item-info">
+                  <span style="font-weight:500;">3× Naan</span>
+                </div>
+                <span class="item-price">₹90.00</span>
+              </div>
+            </div>
+            <div style="text-align:right; margin-top:12px; font-weight:700; font-size:16px;">Total: ₹591.00</div>
+          </div>
+          <div class="mock-popup-footer">
+            <button class="mock-btn mock-btn-green" style="flex:1;">✓ Accept</button>
+            <button class="mock-btn mock-btn-ghost new-marker" style="border-color:#6b7280;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              KOT
+            </button>
+            <button class="mock-btn mock-btn-ghost">✎ Edit</button>
+            <button class="mock-btn mock-btn-red">✕ Reject</button>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px; background:#ecfdf5; border-radius:8px; font-size:12px; color:#065f46;">
+          <strong>Phase 1 Changes:</strong><br>
+          ① <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items + <strong>sorted to top</strong> of item list<br>
+          ② <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Cancel button per item — <strong>grey XCircle</strong> (matches CartPanel style)<br>
+          ③ <strong>🖨 KOT</strong> print button in footer (reuses OrderCard logic via props)<br>
+          ④ Accept works normally — NOT gated by ₹1 items
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST-ACCEPT FLOW -->
+  <h3 style="font-size:15px; font-weight:600; margin:32px 0 16px; color:#374151;">Post-Accept Price Edit Flow (Phase 1 — existing workaround)</h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#f0f9ff; color:#0369a1; border-bottom:2px solid #bae6fd;">STEP 1–2: Accept → Edit opens OrderEntry</div>
+      <div class="compare-content">
+        <div style="background:#f8fafc; border-radius:8px; padding:16px; font-size:13px;">
+          <div style="margin-bottom:12px;">
+            <strong>1.</strong> Staff taps <span style="background:#329937; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">✓ Accept</span> → order confirmed at ₹1<br>
+            <strong>2.</strong> Staff taps <span style="background:#fff; border:1px solid #e5e7eb; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600;">✎ Edit</span> or opens from dashboard → OrderEntry opens
+          </div>
+          <div style="border:1px solid #e5e7eb; border-radius:8px; padding:12px; background:#fff;">
+            <div style="font-size:11px; color:#666; font-weight:600; margin-bottom:8px;">CART (OrderEntry)</div>
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid #f3f4f6;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <span style="flex:1;">Melo Fish <span class="tag" style="background:#FFF3E0; color:#E65100;">APS ₹1</span></span>
+              <span style="font-family:monospace; color:#666;">₹1.00</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 0;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#F7F7F7; display:flex; align-items:center; justify-content:center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <span style="flex:1;">Butter Chicken ×2</span>
+              <span style="font-family:monospace; color:#666;">₹500.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#f0f9ff; color:#0369a1; border-bottom:2px solid #bae6fd;">STEP 3–5: Cancel ₹1 → Re-add with price → Update</div>
+      <div class="compare-content">
+        <div style="background:#f8fafc; border-radius:8px; padding:16px; font-size:13px;">
+          <div style="margin-bottom:12px;">
+            <strong>3.</strong> Staff taps <svg style="vertical-align:middle" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> on Melo Fish → CancelFoodModal → picks reason → item cancelled<br>
+            <strong>4.</strong> Staff taps <strong>Melo Fish</strong> from menu → <strong>BUG-035 "Enter Price" modal</strong> opens:
+          </div>
+          <div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff; max-width:300px; margin:0 auto;">
+            <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Melo Fish — set the actual price</div>
+            <div style="font-size:12px; color:#666; margin-bottom:12px;">This item requires manual pricing</div>
+            <div style="border:2px solid #F26B33; border-radius:8px; padding:10px; font-size:18px; font-weight:700; text-align:center; margin-bottom:8px;">₹ 350</div>
+            <button style="width:100%; background:#329937; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:700; font-size:14px;">Add to Cart</button>
+          </div>
+          <div style="margin-top:12px;">
+            <strong>5.</strong> Item added at ₹350 → staff taps <strong>Update Order</strong> → done
+          </div>
+          <div style="margin-top:12px; padding:8px; background:#fef3c7; border-radius:6px; font-size:11px; color:#92400e;">
+            ⚠ This is 4 extra steps. <strong>Phase 2</strong> eliminates this with inline price edit in the popup.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 PREVIEW -->
+  <h3 style="font-size:15px; font-weight:600; margin:32px 0 16px; color:#374151;">Phase 2 Preview — Inline Price Edit in Popup <span style="background:#fef3c7; color:#92400e; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px;">BACKEND BLOCKED</span></h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label" style="background:#fef3c7; color:#92400e; border-bottom:2px solid #fde68a;">PHASE 2 — Needs update-food-price endpoint (B3/B4)</div>
+      <div class="compare-content">
+        <div class="mock-popup">
+          <div class="mock-popup-header">
+            <div>
+              <div style="font-weight:700; font-size:15px;">Order 1 of 3</div>
+              <div style="font-size:12px; color:#6b7280;">Table 12 · Dine-In · #000845</div>
+            </div>
+            <span class="badge" style="background:#e8f5e9; color:#329937;">PAID</span>
+          </div>
+          <div class="mock-popup-body">
+            <div style="border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+              <div class="item-row" style="padding:10px 12px; background:#fff7ed;">
+                <div class="item-info" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-weight:500;">1× Melo Fish</span>
+                    <span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px; width:100%;">
+                    <span style="font-size:12px; color:#666;">Price:</span>
+                    <div style="border:2px solid #F26B33; border-radius:6px; padding:4px 8px; font-size:14px; font-weight:700; width:80px; text-align:center; background:#fff;">350</div>
+                    <span style="font-size:11px; color:#329937; font-weight:600;">✓ Set</span>
+                  </div>
+                </div>
+                <span class="item-price" style="text-decoration:line-through; color:#9ca3af; font-size:11px;">₹1.00</span>
+              </div>
+              <div class="item-row" style="padding:10px 12px;">
+                <div class="item-info"><span style="font-weight:500;">2× Butter Chicken</span></div>
+                <span class="item-price">₹500.00</span>
+              </div>
+            </div>
+            <div style="text-align:right; margin-top:12px; font-weight:700; font-size:16px;">Total: ₹940.00 <span style="font-size:11px; color:#666; font-weight:400;">(was ₹591)</span></div>
+          </div>
+          <div class="mock-popup-footer">
+            <button class="mock-btn mock-btn-green" style="flex:1;">✓ Accept at ₹940</button>
+            <button class="mock-btn mock-btn-ghost">✎ Edit</button>
+            <button class="mock-btn mock-btn-red">✕ Reject</button>
+          </div>
+        </div>
+        <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; font-size:12px; color:#92400e;">
+          <strong>Phase 2 flow (single-click):</strong><br>
+          ① Staff types actual price (₹350) in the inline input<br>
+          ② Total updates live (₹591 → ₹940)<br>
+          ③ Staff taps Accept → <code>update-food-price</code> API called → then <code>confirmOrder</code><br>
+          ④ One click, zero workaround steps<br><br>
+          <strong>Blocked on:</strong> Backend B3 (<code>update-food-price</code> endpoint) or B4 (extend confirm with <code>price_overrides</code>)
+        </div>
+      </div>
+    </div>
+    <div class="compare-panel" style="display:flex; align-items:center; justify-content:center;">
+      <div style="text-align:center; padding:40px; color:#9ca3af;">
+        <div style="font-size:48px; margin-bottom:12px;">⏳</div>
+        <div style="font-size:14px; font-weight:600;">Backend endpoint needed</div>
+        <div style="font-size:12px; margin-top:8px;">Brief filed: <code>BACKEND_BRIEF_APS_PRICE_EDIT_2026-11-16.md</code></div>
+        <div style="font-size:12px; margin-top:4px;">B3: <code>PUT update-food-price</code></div>
+        <div style="font-size:12px;">B4: extend <code>confirmOrder</code> with <code>price_overrides</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 0 48px;"><div class="divider"></div></div>
+
+<!-- ============================================================ -->
+<!-- CR-528 -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-title">CR-528 — Order Edit Audit: Post-Bill-Print Events</div>
+  <div class="section-sub">P0 HIGH · AuditLogMockup.jsx · ~65 lines · GATE 2 IA COMPLETE (backend unblocked)</div>
+
+  <!-- KPI CARDS COMPARISON -->
+  <h3 style="font-size:15px; font-weight:600; margin-bottom:16px; color:#374151;">KPI Cards</h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label label-before">Before — 3 KPI Cards</div>
+      <div class="compare-content">
+        <div class="kpi-grid kpi-grid-3">
+          <div class="mock-card">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fef3c7; color:#d97706; font-size:14px;">⚠</div>
+              <span>Total Audit Events</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#1a1a2e;">9</div>
+          </div>
+          <div class="mock-card mock-card-red">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fecaca; color:#dc2626; font-size:14px;">▲</div>
+              <span>Make Unpaid</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#dc2626;">4</div>
+          </div>
+          <div class="mock-card mock-card-amber">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fde68a; color:#d97706; font-size:14px;">↻</div>
+              <span>Payment Method Change</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#d97706;">5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare-panel">
+      <div class="compare-label label-after">After — 6 KPI Cards</div>
+      <div class="compare-content">
+        <div class="kpi-grid kpi-grid-6">
+          <div class="mock-card">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fef3c7; color:#d97706; font-size:14px;">⚠</div>
+              <span>Total Audit Events</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#1a1a2e;">21</div>
+          </div>
+          <div class="mock-card mock-card-red">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fecaca; color:#dc2626; font-size:14px;">▲</div>
+              <span>Make Unpaid</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#dc2626;">4</div>
+          </div>
+          <div class="mock-card mock-card-amber">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fde68a; color:#d97706; font-size:14px;">↻</div>
+              <span>Payment Change</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#d97706;">5</div>
+          </div>
+        </div>
+        <div class="kpi-grid kpi-grid-6" style="margin-top:12px;">
+          <div class="mock-card mock-card-orange new-marker">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fed7aa; color:#ea580c; font-size:14px;">⊘</div>
+              <span>Item Cancel After Print</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#ea580c;">5</div>
+          </div>
+          <div class="mock-card mock-card-rose new-marker">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#fecdd3; color:#e11d48; font-size:14px;">⊗</div>
+              <span>Order Cancel After Print</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#e11d48;">5</div>
+          </div>
+          <div class="mock-card mock-card-blue new-marker">
+            <div class="mock-kpi-label">
+              <div class="icon-circle" style="background:#bfdbfe; color:#2563eb; font-size:14px;">✎</div>
+              <span>Order Edit After Print</span>
+            </div>
+            <div class="mock-kpi-value" style="color:#2563eb;">2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE COMPARISON -->
+  <h3 style="font-size:15px; font-weight:600; margin-bottom:16px; margin-top:32px; color:#374151;">Audit Trail Table</h3>
+  <div class="compare-grid">
+    <div class="compare-panel">
+      <div class="compare-label label-before">Before — 2 Event Types, 6 Columns</div>
+      <div class="compare-content" style="overflow-x:auto;">
+        <table class="mock-table">
+          <thead><tr>
+            <th>Order ID</th>
+            <th>Type</th>
+            <th class="text-right">Amount</th>
+            <th>By</th>
+            <th>Previous</th>
+            <th>Current</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="text-mono">#021018</td>
+              <td><span class="badge" style="background:#fecaca; color:#dc2626;">Make Unpaid</span></td>
+              <td class="text-right" style="font-weight:600;">₹500.00</td>
+              <td>Counter</td>
+              <td>Cash</td>
+              <td>pending</td>
+            </tr>
+            <tr>
+              <td class="text-mono">#021019</td>
+              <td><span class="badge" style="background:#fde68a; color:#92400e;">Payment Change</span></td>
+              <td class="text-right" style="font-weight:600;">₹750.00</td>
+              <td>Manager</td>
+              <td>Cash</td>
+              <td>UPI</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="compare-panel">
+      <div class="compare-label label-after">After — 5 Event Types, 8+ Columns</div>
+      <div class="compare-content" style="overflow-x:auto;">
+        <table class="mock-table">
+          <thead><tr>
+            <th>Order</th>
+            <th>Type</th>
+            <th>Item</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">Prev Amt</th>
+            <th>By</th>
+            <th>Bill Printed</th>
+            <th>Event Time</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="text-mono">#021018</td>
+              <td><span class="badge" style="background:#fecaca; color:#dc2626;">Make Unpaid</span></td>
+              <td class="text-muted">—</td>
+              <td class="text-right" style="font-weight:600;">₹500.00</td>
+              <td class="text-right text-muted">—</td>
+              <td>Counter</td>
+              <td class="text-muted">—</td>
+              <td class="text-muted">—</td>
+            </tr>
+            <tr>
+              <td class="text-mono">#021019</td>
+              <td><span class="badge" style="background:#fde68a; color:#92400e;">Payment Change</span></td>
+              <td class="text-muted">—</td>
+              <td class="text-right" style="font-weight:600;">₹750.00</td>
+              <td class="text-right text-muted">—</td>
+              <td>Manager</td>
+              <td class="text-muted">—</td>
+              <td class="text-muted">—</td>
+            </tr>
+            <tr style="background:#fff7ed;">
+              <td class="text-mono">#000782</td>
+              <td><span class="badge" style="background:#fed7aa; color:#ea580c;">Item Cancel ⚡</span></td>
+              <td style="font-weight:500;">Melo Fish</td>
+              <td class="text-right" style="font-weight:600;">₹10.00</td>
+              <td class="text-right text-muted">—</td>
+              <td>Manager</td>
+              <td class="text-sm">22:26:16</td>
+              <td class="text-sm">22:26:21</td>
+            </tr>
+            <tr style="background:#fff1f2;">
+              <td class="text-mono">#000782</td>
+              <td><span class="badge" style="background:#fecdd3; color:#e11d48;">Order Cancel ⚡</span></td>
+              <td class="text-muted">—</td>
+              <td class="text-right" style="font-weight:600;">₹20.00</td>
+              <td class="text-right text-muted">—</td>
+              <td>Manager</td>
+              <td class="text-sm">22:26:16</td>
+              <td class="text-sm">22:26:22</td>
+            </tr>
+            <tr style="background:#eff6ff;">
+              <td class="text-mono">#000782</td>
+              <td><span class="badge" style="background:#bfdbfe; color:#2563eb;">Order Edit ⚡</span></td>
+              <td class="text-muted">—</td>
+              <td class="text-right" style="font-weight:600;">₹30.00</td>
+              <td class="text-right" style="font-weight:500; color:#6b7280;">₹20.00</td>
+              <td>Manager</td>
+              <td class="text-sm">22:26:16</td>
+              <td class="text-sm">22:26:19</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px; padding:10px; background:#f0fdf4; border-radius:6px; font-size:11px; color:#065f46;">
+          ⚡ = Post-bill-print event. <strong>Bill Printed</strong> and <strong>Event Time</strong> columns only populated for new types. <strong>Prev Amt</strong> populated for edits only. Existing types (Make Unpaid, Payment Change) render <strong>Previous/Current Method</strong> in their own columns (collapsed in this mockup for space).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 0 48px;"><div class="divider"></div></div>
+
+<!-- ============================================================ -->
+<!-- SUMMARY -->
+<!-- ============================================================ -->
+<div class="section" style="padding-bottom:48px;">
+  <div class="section-title">Summary — All Items</div>
+  <div class="section-sub">Visual changes at a glance</div>
+  <table class="mock-table" style="background:#fff; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
+    <thead><tr>
+      <th style="width:140px;">Item</th>
+      <th style="width:100px;">Gate</th>
+      <th>Visual Change</th>
+      <th style="width:100px;">Files</th>
+      <th style="width:80px;">Lines</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:600;">BUG-678</td>
+        <td><span class="badge" style="background:#dcfce7; color:#16a34a;">5a ✓</span></td>
+        <td><span class="text-muted">None — logic-only fix (SC payload)</span></td>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;">BUG-677</td>
+        <td><span class="badge" style="background:#fef3c7; color:#d97706;">Gate 3</span></td>
+        <td><span class="text-muted">None — socket infrastructure (reconnection, heartbeat, polling)</span></td>
+        <td>4</td>
+        <td>~91</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;">CR-545</td>
+        <td><span class="badge" style="background:#e0e7ff; color:#4f46e5;">Gate 2</span></td>
+        <td><span class="tag" style="background:#FFF3E0; color:#E65100;">APS</span> badge on ₹1 items + <span style="color:#ef4444; font-weight:700;">✕</span> per-item cancel + <span style="font-weight:600;">🖨 KOT</span> print button in ScanOrderPopOut</td>
+        <td>2</td>
+        <td>~80</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;">CR-528</td>
+        <td><span class="badge" style="background:#e0e7ff; color:#4f46e5;">Gate 2</span></td>
+        <td>3 new KPI cards + 3 new event type rows + 4 new columns in Audit Trail table + updated export</td>
+        <td>1</td>
+        <td>~65</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

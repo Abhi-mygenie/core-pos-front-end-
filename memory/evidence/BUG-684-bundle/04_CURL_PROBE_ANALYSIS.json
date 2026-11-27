@@ -1,0 +1,106 @@
+{
+  "probe_date": "2026-11-18",
+  "total_orders_analyzed": 100,
+  "mismatches": 11,
+  "mismatch_details": [
+    {
+      "order": "000792",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000791",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000790",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000789",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000788",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000787",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000786",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000785",
+      "raw": 313.96,
+      "paise": 96,
+      "correct": 314,
+      "buggy": 313,
+      "backend_amount": 314.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000783",
+      "raw": 250.01999999999998,
+      "paise": 2,
+      "correct": 250,
+      "buggy": 251,
+      "backend_amount": 250.0,
+      "direction": "\u2191 OVER"
+    },
+    {
+      "order": "000733",
+      "raw": 1027.93,
+      "paise": 93,
+      "correct": 1028,
+      "buggy": 1027,
+      "backend_amount": 1024.0,
+      "direction": "\u2193 UNDER"
+    },
+    {
+      "order": "000732",
+      "raw": 3000.92,
+      "paise": 92,
+      "correct": 3001,
+      "buggy": 3000,
+      "backend_amount": 2988.0,
+      "direction": "\u2193 UNDER"
+    }
+  ]
+}

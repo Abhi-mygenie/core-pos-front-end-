@@ -1,0 +1,13 @@
+{
+ "status": 200,
+ "at_utc": "2026-11-15 08:25:53",
+ "body": {
+  "success": true,
+  "message": "Cancel handled successfully",
+  "data": {
+   "order_amount": 420,
+   "subtotal": 400,
+   "tax": 20
+  }
+ }
+}

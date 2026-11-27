@@ -1,0 +1,20 @@
+{
+ "place": {
+  "message": "Order placed successfully",
+  "order_id": 1578757,
+  "daily_token": null,
+  "restaurant_order_id": "021538",
+  "payment_status": "unpaid"
+ },
+ "lines": [
+  {
+   "id": 3969233,
+   "complementary": null,
+   "complementary_price": null,
+   "complementary_reason": null,
+   "price": 0,
+   "food_status": 1
+  }
+ ],
+ "cleanup_status": 200
+}

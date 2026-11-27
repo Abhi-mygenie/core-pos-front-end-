@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch C — Gate 2.5 Design Mockups — CR-543 + CR-544 + CR-546 — 2026-11-17</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px;position:sticky;top:0;z-index:10}
+nav a{color:var(--o);margin-right:14px;text-decoration:none;font-weight:600}nav a:hover{text-decoration:underline}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 16px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px;font-weight:700}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.rem{display:inline-block;background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.add{display:inline-block;background:#DBEAFE;color:#1E40AF;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}
+.diff li{margin:4px 0}
+.hint{font-size:11px;color:var(--gt)}
+
+/* Page mockup styles */
+.page{background:#FAFAFA;border-radius:12px;border:1px solid #ddd;overflow:hidden;font-size:13px}
+.page-head{background:#fff;padding:14px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.page-head h4{margin:0;font-size:16px;font-weight:700;color:#09090B}
+.page-head small{color:#71717A;font-size:11px}
+
+/* KPI Grid */
+.kpi-grid{display:grid;gap:10px;padding:16px 18px}
+.kpi-grid.cols-6{grid-template-columns:repeat(6,1fr)}
+.kpi-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.kpi-grid.cols-5{grid-template-columns:repeat(5,1fr)}
+.kpi{background:#fff;border:1px solid #E4E4E7;border-radius:10px;padding:12px 14px}
+.kpi .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#71717A;margin-bottom:4px}
+.kpi .val{font-size:20px;font-weight:800;color:#09090B;font-family:ui-monospace,monospace}
+
+/* Section grouping */
+.section-group{padding:0 18px 16px}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#71717A;margin:0 0 8px;padding:0 2px;display:flex;align-items:center;gap:6px}
+.section-label .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Risk badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-ok{background:#DCFCE7;color:#166534}
+.badge-doubt{background:#FEF3C7;color:#92400E}
+.badge-risk{background:#FFEDD5;color:#9A3412}
+.badge-high{background:#FEE2E2;color:#991B1B}
+.badge-unknown{background:#F4F4F5;color:#52525B}
+.badge-unpaid{background:#FEE2E2;color:#991B1B}
+.badge-paid{background:#DBEAFE;color:#1E40AF}
+.badge-apply{background:#DCFCE7;color:#166534}
+.badge-remove{background:#FEE2E2;color:#991B1B}
+.badge-replace{background:#EDE9FE;color:#6D28D9}
+
+/* Event type badges */
+.evt{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.evt-red{background:#FEE2E2;color:#B91C1C}
+.evt-amber{background:#FEF3C7;color:#92400E}
+.evt-orange{background:#FFEDD5;color:#9A3412}
+.evt-rose{background:#FFE4E6;color:#BE123C}
+.evt-blue{background:#DBEAFE;color:#1E40AF}
+.evt-teal{background:#CCFBF1;color:#0F766E}
+.evt-purple{background:#EDE9FE;color:#6D28D9}
+.evt-emerald{background:#D1FAE5;color:#065F46}
+.evt-slate{background:#F1F5F9;color:#334155}
+
+/* Filter chips */
+.filter-bar{padding:12px 18px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid #eee;background:#fff}
+.chip{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #E4E4E7;background:#fff;cursor:pointer}
+.chip.active{background:#1A1A1A;color:#fff;border-color:#1A1A1A}
+.chip .cnt{font-weight:800;margin-left:3px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#FAFAFA;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#71717A;border-bottom:1px solid #E4E4E7;white-space:nowrap}
+.tbl th.r{text-align:right}
+.tbl td{padding:8px 10px;border-bottom:1px solid #F4F4F5;color:#3F3F46}
+.tbl td.r{text-align:right;font-family:ui-monospace,monospace;font-weight:600}
+.tbl td.mono{font-family:ui-monospace,monospace}
+.tbl tr:hover{background:#FAFAFA}
+.tbl tr.highlight{background:#FEF2F2}
+
+/* Tier summary mini cards */
+.tier-row{display:flex;gap:8px}
+.tier-card{flex:1;background:#fff;border:1px solid #E4E4E7;border-radius:8px;padding:8px 10px;text-align:center}
+.tier-card .t-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.tier-card .t-val{font-size:18px;font-weight:800;font-family:ui-monospace,monospace;margin-top:2px}
+.tier-card.ok{border-left:3px solid #22C55E}.tier-card.ok .t-label{color:#166534}.tier-card.ok .t-val{color:#166534}
+.tier-card.doubt{border-left:3px solid #F59E0B}.tier-card.doubt .t-label{color:#92400E}.tier-card.doubt .t-val{color:#92400E}
+.tier-card.risk{border-left:3px solid #F97316}.tier-card.risk .t-label{color:#9A3412}.tier-card.risk .t-val{color:#9A3412}
+.tier-card.high{border-left:3px solid #EF4444}.tier-card.high .t-label{color:#991B1B}.tier-card.high .t-val{color:#991B1B}
+.tier-card.unk{border-left:3px solid #A1A1AA}.tier-card.unk .t-label{color:#52525B}.tier-card.unk .t-val{color:#52525B}
+
+/* OD box */
+.od{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13px}
+.od b{color:#92400E}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Batch C — Gate 2.5 Design Mockups</h1>
+  <p>CR-543 (Late Cancellation) + CR-544 (Cancel After Unpaid) + CR-546 (Discount After Print) &middot; AuditLogMockup.jsx &middot; 2026-11-17</p>
+</header>
+
+<nav>
+  <a href="#m0">M0: KPI Redesign</a>
+  <a href="#m1">M1: Filter Chips</a>
+  <a href="#m2">M2: CR-543 Risk Tiers</a>
+  <a href="#m3">M3: CR-544 Unpaid Fraud</a>
+  <a href="#m4">M4: CR-546 Discount Audit</a>
+  <a href="#m5">M5: Full Page View</a>
+  <a href="#ods">Open Decisions</a>
+</nav>
+
+<!-- ==================== M0: KPI REDESIGN ==================== -->
+<section id="m0">
+  <h2>M0: KPI Strip Redesign — Grouped Sections <span class="chg">REDESIGN</span></h2>
+  <p class="meta">Current: 6 flat KPI tiles in one row &middot; Proposed: 15 KPIs grouped into 4 logical sections</p>
+
+  <div class="cmp">
+    <div class="col cur">
+      <h3>Current (CR-528)</h3>
+      <div class="page">
+        <div class="page-head"><h4>Order Edit Audit</h4></div>
+        <div class="kpi-grid cols-6">
+          <div class="kpi"><div class="label">Total Audits</div><div class="val">121</div></div>
+          <div class="kpi" style="border-color:#FCA5A5;background:#FEF2F2"><div class="label">Make Unpaid</div><div class="val" style="color:#B91C1C">5</div></div>
+          <div class="kpi" style="border-color:#FDE68A;background:#FFFBEB"><div class="label">Payment Change</div><div class="val" style="color:#92400E">1</div></div>
+          <div class="kpi" style="border-color:#FDBA74;background:#FFF7ED"><div class="label">Item Cancel AP</div><div class="val" style="color:#9A3412">2</div></div>
+          <div class="kpi" style="border-color:#FDA4AF;background:#FFF1F2"><div class="label">Order Cancel AP</div><div class="val" style="color:#BE123C">1</div></div>
+          <div class="kpi" style="border-color:#93C5FD;background:#EFF6FF"><div class="label">Order Edit AP</div><div class="val" style="color:#1E40AF">1</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col new">
+      <h3>Proposed (Batch C)</h3>
+      <div class="page">
+        <div class="page-head"><h4>Order Edit Audit</h4></div>
+
+        <!-- Section 1: Overview -->
+        <div class="section-group" style="padding-top:16px">
+          <div class="kpi-grid cols-4" style="padding:0">
+            <div class="kpi"><div class="label">Total Audits</div><div class="val">121</div></div>
+            <div class="kpi" style="border-color:#FCA5A5;background:#FEF2F2"><div class="label">Make Unpaid</div><div class="val" style="color:#B91C1C">5</div></div>
+            <div class="kpi" style="border-color:#FDE68A;background:#FFFBEB"><div class="label">Payment Change</div><div class="val" style="color:#92400E">1</div></div>
+            <div class="kpi" style="border-color:#FDA4AF;background:#FFF1F2"><div class="label">Cancel After Unpaid</div><div class="val" style="color:#BE123C">2</div></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Post-Print Edits (CR-528) -->
+        <div class="section-group">
+          <div class="section-label"><span class="dot" style="background:#3B82F6"></span> Post-Print Changes</div>
+          <div class="kpi-grid cols-4" style="padding:0">
+            <div class="kpi" style="border-color:#FDBA74;background:#FFF7ED"><div class="label">Item Cancel</div><div class="val" style="color:#9A3412">2</div></div>
+            <div class="kpi" style="border-color:#FDA4AF;background:#FFF1F2"><div class="label">Order Cancel</div><div class="val" style="color:#BE123C">1</div></div>
+            <div class="kpi" style="border-color:#93C5FD;background:#EFF6FF"><div class="label">Order Edit</div><div class="val" style="color:#1E40AF">1</div></div>
+            <div class="kpi" style="border-color:#A78BFA;background:#F5F3FF"><div class="label">Discount Changes</div><div class="val" style="color:#6D28D9">8</div></div>
+          </div>
+        </div>
+
+        <!-- Section 3: Late Cancellation Risk (CR-543) -->
+        <div class="section-group">
+          <div class="section-label"><span class="dot" style="background:#EF4444"></span> Cancellation Risk (101 items)</div>
+          <div class="tier-row">
+            <div class="tier-card ok"><div class="t-label">OK (0–4m)</div><div class="t-val">49</div></div>
+            <div class="tier-card doubt"><div class="t-label">Doubt (5–14m)</div><div class="t-val">7</div></div>
+            <div class="tier-card risk"><div class="t-label">Risk (15–29m)</div><div class="t-val">1</div></div>
+            <div class="tier-card high"><div class="t-label">High Risk (30m+)</div><div class="t-val">44</div></div>
+            <div class="tier-card unk"><div class="t-label">Unknown</div><div class="t-val">0</div></div>
+          </div>
+        </div>
+
+        <!-- Section 4: Discount After Print (CR-546) -->
+        <div class="section-group">
+          <div class="section-label"><span class="dot" style="background:#8B5CF6"></span> Discount After Print</div>
+          <div class="kpi-grid cols-4" style="padding:0">
+            <div class="kpi" style="border-color:#86EFAC;background:#F0FDF4"><div class="label">Applied</div><div class="val" style="color:#166534">4</div></div>
+            <div class="kpi" style="border-color:#FCA5A5;background:#FEF2F2"><div class="label">Removed</div><div class="val" style="color:#991B1B">4</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Changes:</strong>
+    <ul>
+      <li>KPIs grouped into 4 sections with colored section labels instead of one flat 6×1 row</li>
+      <li>CR-543 risk tiers shown as a dedicated 5-card strip with color-coded left borders (green → red → grey)</li>
+      <li>CR-544 "Cancel After Unpaid" count promoted to top overview row (fraud visibility)</li>
+      <li>CR-546 discount apply/remove counts in a dedicated section</li>
+      <li>Total tile count: 6 → 15, but grouped so it doesn't feel crowded</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== M1: FILTER CHIPS ==================== -->
+<section id="m1">
+  <h2>M1: Event Type Filter Chips <span class="add">NEW</span></h2>
+  <p class="meta">Allow filtering the audit table by event category. Chips show counts.</p>
+
+  <div class="cmp">
+    <div class="col cur">
+      <h3>Current</h3>
+      <div class="page">
+        <div class="page-head"><h4>Audit Trail</h4></div>
+        <p style="padding:16px 18px;color:#999;font-size:12px">No filter chips — all events shown in one list, no way to focus on a category</p>
+      </div>
+    </div>
+
+    <div class="col new">
+      <h3>Proposed</h3>
+      <div class="page">
+        <div class="page-head"><h4>Audit Trail</h4></div>
+        <div class="filter-bar">
+          <div class="chip active">All<span class="cnt">121</span></div>
+          <div class="chip">Make Unpaid<span class="cnt">5</span></div>
+          <div class="chip">Pay Change<span class="cnt">1</span></div>
+          <div class="chip" style="border-color:#EF4444;color:#B91C1C">Late Cancel<span class="cnt">101</span></div>
+          <div class="chip" style="border-color:#BE123C;color:#BE123C">Cancel+Unpaid<span class="cnt">2</span></div>
+          <div class="chip" style="border-color:#F97316;color:#9A3412">Post-Print<span class="cnt">4</span></div>
+          <div class="chip" style="border-color:#8B5CF6;color:#6D28D9">Discount<span class="cnt">8</span></div>
+        </div>
+        <p style="padding:12px 18px;font-size:11px;color:#999">Clicking a chip filters the table below. "Post-Print" = item_cancel + order_cancel + order_edit after print. "Discount" = apply + remove after print.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== M2: CR-543 LATE CANCEL RISK ==================== -->
+<section id="m2">
+  <h2>M2: CR-543 — Late Cancellation Table Rows <span class="add">NEW EVENT TYPE</span></h2>
+  <p class="meta">Event type: <code>late_cancel</code> &middot; Risk tier badge + duration column + punch time</p>
+
+  <div class="col new" style="max-width:100%">
+    <h3>Proposed Table (filtered to "Late Cancel")</h3>
+    <div class="page">
+      <div class="filter-bar">
+        <div class="chip">All<span class="cnt">121</span></div>
+        <div class="chip active" style="background:#B91C1C;border-color:#B91C1C;color:#fff">Late Cancel<span class="cnt">101</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Type</th>
+            <th>Risk <span class="add">NEW</span></th>
+            <th>Item</th>
+            <th class="r">Amount</th>
+            <th>By</th>
+            <th>Punch Time <span class="add">NEW</span></th>
+            <th>Cancel Time</th>
+            <th>Duration <span class="add">NEW</span></th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">#000758</td>
+              <td><span class="evt evt-red">Late Cancel</span></td>
+              <td><span class="badge badge-ok">OK</span></td>
+              <td>ddd</td>
+              <td class="r">&#8377;114.29</td>
+              <td>Manager</td>
+              <td class="mono">14:43</td>
+              <td class="mono">14:44</td>
+              <td class="mono">0 min</td>
+            </tr>
+            <tr>
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-red">Late Cancel</span></td>
+              <td><span class="badge badge-doubt">Doubt</span></td>
+              <td>QA Test Item</td>
+              <td class="r">&#8377;50.00</td>
+              <td>Counter</td>
+              <td class="mono">21:08</td>
+              <td class="mono">21:15</td>
+              <td class="mono">7 min</td>
+            </tr>
+            <tr>
+              <td class="mono">#000644</td>
+              <td><span class="evt evt-red">Late Cancel</span></td>
+              <td><span class="badge badge-risk">Risk</span></td>
+              <td>Butter Naan</td>
+              <td class="r">&#8377;60.00</td>
+              <td>Counter</td>
+              <td class="mono">14:30</td>
+              <td class="mono">14:52</td>
+              <td class="mono">22 min</td>
+            </tr>
+            <tr class="highlight">
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-red">Late Cancel</span></td>
+              <td><span class="badge badge-high">High Risk</span></td>
+              <td>test cccc</td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">21:08</td>
+              <td class="mono">21:23 (+2d)</td>
+              <td class="mono" style="color:#B91C1C;font-weight:700">2,895 min</td>
+            </tr>
+            <tr>
+              <td class="mono">#000001</td>
+              <td><span class="evt evt-red">Late Cancel</span></td>
+              <td><span class="badge badge-unknown">Unknown</span></td>
+              <td>QA item</td>
+              <td class="r">&#8377;50.00</td>
+              <td>QA cashier</td>
+              <td style="color:#A1A1AA">—</td>
+              <td class="mono">15:20</td>
+              <td style="color:#A1A1AA">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>New columns for <code>late_cancel</code> events:</strong>
+    <ul>
+      <li><b>Risk</b> — badge with 5 colors: <span class="badge badge-ok">OK</span> <span class="badge badge-doubt">Doubt</span> <span class="badge badge-risk">Risk</span> <span class="badge badge-high">High Risk</span> <span class="badge badge-unknown">Unknown</span></li>
+      <li><b>Punch Time</b> — when item was ordered (null → "—")</li>
+      <li><b>Duration</b> — minutes between punch and cancel. High risk (30m+) in bold red. Unknown → "—"</li>
+      <li>High Risk rows get subtle red background highlight</li>
+      <li>Multi-day gaps show "+Nd" suffix (e.g., "21:23 (+2d)")</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== M3: CR-544 CANCEL AFTER UNPAID ==================== -->
+<section id="m3">
+  <h2>M3: CR-544 — Cancel After Unpaid Table Rows <span class="add">NEW EVENT TYPE</span></h2>
+  <p class="meta">Event type: <code>cancel_after_unpaid</code> &middot; Fraud pattern badge + gap + unpaid count</p>
+
+  <div class="col new" style="max-width:100%">
+    <h3>Proposed Table (filtered to "Cancel+Unpaid")</h3>
+    <div class="page">
+      <div class="filter-bar">
+        <div class="chip">All<span class="cnt">121</span></div>
+        <div class="chip active" style="background:#BE123C;border-color:#BE123C;color:#fff">Cancel+Unpaid<span class="cnt">2</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Type</th>
+            <th>Status <span class="add">NEW</span></th>
+            <th>Item</th>
+            <th class="r">Amount</th>
+            <th>By</th>
+            <th>Made Unpaid <span class="add">NEW</span></th>
+            <th>Cancel Time</th>
+            <th>Gap <span class="add">NEW</span></th>
+            <th>Unpaid Count <span class="add">NEW</span></th>
+          </tr></thead>
+          <tbody>
+            <tr class="highlight">
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-rose">Cancel+Unpaid</span></td>
+              <td><span class="badge badge-unpaid">Unpaid</span></td>
+              <td>test cccc</td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">21:08</td>
+              <td class="mono">21:23 (+2d)</td>
+              <td class="mono" style="color:#B91C1C;font-weight:700">2,895 min</td>
+              <td style="text-align:center"><span class="badge badge-unpaid">3×</span></td>
+            </tr>
+            <tr class="highlight">
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-rose">Cancel+Unpaid</span></td>
+              <td><span class="badge badge-unpaid">Unpaid</span></td>
+              <td>Gulab Jamun (2 Pcs)</td>
+              <td class="r">&#8377;149.00</td>
+              <td>n</td>
+              <td class="mono">21:08</td>
+              <td class="mono">21:23 (+2d)</td>
+              <td class="mono" style="color:#B91C1C;font-weight:700">2,895 min</td>
+              <td style="text-align:center"><span class="badge badge-unpaid">3×</span></td>
+            </tr>
+            <tr>
+              <td class="mono">#000002</td>
+              <td><span class="evt evt-rose">Cancel+Unpaid</span></td>
+              <td><span class="badge badge-paid">Re-Paid</span></td>
+              <td>QA item</td>
+              <td class="r">&#8377;50.00</td>
+              <td>QA cashier</td>
+              <td class="mono">15:10</td>
+              <td class="mono">15:20</td>
+              <td class="mono">10 min</td>
+              <td style="text-align:center"><span class="badge badge-paid">1×</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>New columns for <code>cancel_after_unpaid</code> events:</strong>
+    <ul>
+      <li><b>Status</b> — <span class="badge badge-unpaid">Unpaid</span> (direct fraud) or <span class="badge badge-paid">Re-Paid</span> (laundering pattern — order re-paid before cancel)</li>
+      <li><b>Made Unpaid</b> — timestamp of first make_unpaid action</li>
+      <li><b>Gap</b> — minutes between first unpaid and cancel</li>
+      <li><b>Unpaid Count</b> — how many times order was made unpaid (3× = highly suspicious)</li>
+      <li>All rows get red background — these are always suspicious events</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== M4: CR-546 DISCOUNT AFTER PRINT ==================== -->
+<section id="m4">
+  <h2>M4: CR-546 — Discount After Print Table Rows <span class="add">NEW EVENT TYPE</span></h2>
+  <p class="meta">Event types: <code>discount_apply_after_print</code> + <code>discount_remove_after_print</code> &middot; Operation badge + discount details</p>
+
+  <div class="col new" style="max-width:100%">
+    <h3>Proposed Table (filtered to "Discount")</h3>
+    <div class="page">
+      <div class="filter-bar">
+        <div class="chip">All<span class="cnt">121</span></div>
+        <div class="chip active" style="background:#6D28D9;border-color:#6D28D9;color:#fff">Discount<span class="cnt">8</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Type</th>
+            <th>Operation <span class="add">NEW</span></th>
+            <th class="r">Order Amt</th>
+            <th>Discount <span class="add">NEW</span></th>
+            <th>By</th>
+            <th>Bill Printed</th>
+            <th>Discount Time</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="evt evt-emerald">Discount Applied</span></td>
+              <td><span class="badge badge-apply">Apply</span></td>
+              <td class="r">&#8377;20.00</td>
+              <td>10% (&#8377;2.00)</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="evt evt-red">Discount Removed</span></td>
+              <td><span class="badge badge-replace">Replace</span></td>
+              <td class="r">&#8377;20.00</td>
+              <td>10% (&#8377;2.00)</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="evt evt-emerald">Discount Applied</span></td>
+              <td><span class="badge badge-replace">Replace</span></td>
+              <td class="r">&#8377;20.00</td>
+              <td>Fixed &#8377;3.00</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="evt evt-red">Discount Removed</span></td>
+              <td><span class="badge badge-remove">Remove</span></td>
+              <td class="r">&#8377;20.00</td>
+              <td>5% (&#8377;1.00)</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+              <td class="mono">15:17</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>New columns for discount events:</strong>
+    <ul>
+      <li><b>Operation</b> — <span class="badge badge-apply">Apply</span> <span class="badge badge-remove">Remove</span> <span class="badge badge-replace">Replace</span> (replace pairs share the same order + timestamp)</li>
+      <li><b>Discount</b> — combined display: "10% (&#8377;2.00)" for percent, "Fixed &#8377;3.00" for fixed amount</li>
+      <li>Replace events are visually linked — consecutive rows with same order ID + purple "Replace" badge</li>
+      <li>Type column: "Discount Applied" (green) vs "Discount Removed" (red)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== M5: FULL PAGE ==================== -->
+<section id="m5">
+  <h2>M5: Full Page — All Events Combined <span class="chg">COMBINED VIEW</span></h2>
+  <p class="meta">When "All" filter is active, the table shows a universal set of columns. Event-specific columns show "—" for non-applicable rows.</p>
+
+  <div class="col new" style="max-width:100%">
+    <h3>Proposed — "All" filter active (9 event types)</h3>
+    <div class="page">
+      <div class="filter-bar">
+        <div class="chip active">All<span class="cnt">121</span></div>
+        <div class="chip">Make Unpaid<span class="cnt">5</span></div>
+        <div class="chip">Pay Change<span class="cnt">1</span></div>
+        <div class="chip" style="border-color:#EF4444;color:#B91C1C">Late Cancel<span class="cnt">101</span></div>
+        <div class="chip" style="border-color:#BE123C;color:#BE123C">Cancel+Unpaid<span class="cnt">2</span></div>
+        <div class="chip" style="border-color:#F97316;color:#9A3412">Post-Print<span class="cnt">4</span></div>
+        <div class="chip" style="border-color:#8B5CF6;color:#6D28D9">Discount<span class="cnt">8</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>Order</th>
+            <th>Type</th>
+            <th>Detail</th>
+            <th>Item</th>
+            <th class="r">Amount</th>
+            <th>By</th>
+            <th>Event Time</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono">#000755</td>
+              <td><span class="evt evt-red">Make Unpaid</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td class="r">&#8377;450.00</td>
+              <td>Counter</td>
+              <td class="mono">12:34</td>
+            </tr>
+            <tr>
+              <td class="mono">#000758</td>
+              <td><span class="evt evt-teal">Late Cancel</span></td>
+              <td><span class="badge badge-ok">OK</span> 0 min</td>
+              <td>ddd</td>
+              <td class="r">&#8377;114.29</td>
+              <td>Manager</td>
+              <td class="mono">14:44</td>
+            </tr>
+            <tr class="highlight">
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-teal">Late Cancel</span></td>
+              <td><span class="badge badge-high">High Risk</span> 2,895 min</td>
+              <td>test cccc</td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">21:23</td>
+            </tr>
+            <tr class="highlight">
+              <td class="mono">#000680</td>
+              <td><span class="evt evt-rose">Cancel+Unpaid</span></td>
+              <td><span class="badge badge-unpaid">Unpaid</span> 3× &middot; 2,895m gap</td>
+              <td>test cccc</td>
+              <td class="r">&#8377;34.00</td>
+              <td>n</td>
+              <td class="mono">21:23</td>
+            </tr>
+            <tr>
+              <td class="mono">#000766</td>
+              <td><span class="evt evt-purple">Discount Applied</span></td>
+              <td><span class="badge badge-replace">Replace</span> Fixed &#8377;3</td>
+              <td>—</td>
+              <td class="r">&#8377;20.00</td>
+              <td>Manager</td>
+              <td class="mono">15:17</td>
+            </tr>
+            <tr>
+              <td class="mono">#000741</td>
+              <td><span class="evt evt-orange">Item Cancel (Post-Print)</span></td>
+              <td>—</td>
+              <td>Paneer Tikka</td>
+              <td class="r">&#8377;350.00</td>
+              <td>Counter</td>
+              <td class="mono">22:26</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <strong>Key design decisions for "All" view:</strong>
+    <ul>
+      <li><b>"Detail" column</b> — consolidated context column that adapts per event type:
+        <br>Late Cancel → risk badge + duration
+        <br>Cancel+Unpaid → paid/unpaid badge + unpaid count + gap
+        <br>Discount → operation badge + discount value
+        <br>Others → "—"
+      </li>
+      <li>7 universal columns in "All" view (compact). Filter-specific views expand to 8–10 columns with full detail.</li>
+      <li>Color-coded type badges distinguish 9 event types at a glance</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== OPEN DECISIONS ==================== -->
+<section id="ods">
+  <h2>Open Design Decisions</h2>
+
+  <div class="od">
+    <b>OD-DESIGN-01:</b> Should the "Late Cancel" filter chip show a sub-filter for risk tiers (OK/Doubt/Risk/High Risk/Unknown), or is the table-level sorting sufficient?
+  </div>
+
+  <div class="od">
+    <b>OD-DESIGN-02:</b> For the "All" view, should the "Detail" column be a single combined column (compact, as shown in M5), or should event-specific columns always be visible (wider, more explicit)?
+  </div>
+
+  <div class="od">
+    <b>OD-DESIGN-03:</b> Should CR-546 "Replace" event pairs be visually grouped (e.g., connected row styling, "Old → New" labels), or shown as separate rows with the purple "Replace" badge linking them?
+  </div>
+
+  <div class="diff" style="margin-top:16px">
+    <strong>Summary of new AUDIT_TYPE_MAP entries:</strong>
+    <ul>
+      <li><span class="evt evt-teal">Late Cancel</span> — CR-543 (<code>late_cancel</code>)</li>
+      <li><span class="evt evt-rose">Cancel+Unpaid</span> — CR-544 (<code>cancel_after_unpaid</code>)</li>
+      <li><span class="evt evt-emerald">Discount Applied</span> — CR-546 (<code>discount_apply_after_print</code>)</li>
+      <li><span class="evt evt-red">Discount Removed</span> — CR-546 (<code>discount_remove_after_print</code>)</li>
+    </ul>
+    <p style="margin-top:8px;font-size:12px;color:#666">Total event types: 5 existing + 4 new = 9</p>
+  </div>
+</section>
+
+<footer style="padding:20px 32px;text-align:center;font-size:11px;color:#999">
+  Batch C Gate 2.5 Design Mockups &middot; CR-543 + CR-544 + CR-546 &middot; 2026-11-17 &middot; Awaiting owner approval
+</footer>
+
+</body>
+</html>

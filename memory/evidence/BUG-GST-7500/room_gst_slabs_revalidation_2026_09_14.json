@@ -1,0 +1,17 @@
+{
+  "slabs": [
+    {
+      "itc": false,
+      "max": 7500,
+      "min": 0,
+      "gst_percent": 5
+    },
+    {
+      "itc": true,
+      "max": null,
+      "min": 7500.01,
+      "gst_percent": 18
+    }
+  ],
+  "fetched": "2026-09-14"
+}

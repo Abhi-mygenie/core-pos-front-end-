@@ -1,0 +1,3 @@
+=== CR-528 PROBE: order-logs-report structure ===
+top_keys: ['success', 'message']
+errors: none

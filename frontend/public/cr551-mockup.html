@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>CR-551 Mockup v2 — Customize vs Edit</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F0F0; padding: 28px 20px; }
+
+  .page-title { font-size: 15px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+  .page-sub   { font-size: 12px; color: #666; margin-bottom: 24px; }
+
+  /* ── Three-column layout ── */
+  .cols { display: flex; gap: 20px; align-items: flex-start; }
+  .col  { flex: 1; min-width: 0; }
+  .col-label { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+               color: #fff; padding: 5px 12px; border-radius: 6px 6px 0 0; display: inline-block; }
+  .label-row { background: #1A1A1A; }
+  .label-cust { background: #F26B33; }
+  .label-edit { background: #329937; }
+
+  /* ── Cart Panel ── */
+  .cart-panel { background: #fff; border-radius: 0 10px 10px 10px; border: 1.5px solid #E5E5E5;
+                box-shadow: 0 2px 8px rgba(0,0,0,.07); overflow: hidden; }
+  .cart-header { background: #F7F7F7; padding: 9px 13px; border-bottom: 1px solid #E5E5E5;
+                 font-size: 13px; font-weight: 700; color: #1A1A1A; display: flex; justify-content: space-between; align-items: center; }
+  .cart-header span { font-size: 11px; color: #666; font-weight: 400; }
+
+  /* ── Cart Item Row ── */
+  .cart-item   { display: flex; align-items: flex-start; gap: 7px; padding: 9px 11px; border-bottom: 1px solid #E5E5E5; }
+  .cart-item.base  { background: #fff; }
+  .cart-item.dup   { background: #FEF2F2; border-left: 3px solid #EF4444; }
+  .cart-item.upd   { background: #F0FDF4; border-left: 3px solid #329937; }
+  .cart-item.same  { background: #fff; }
+
+  .trash-btn   { width: 26px; height: 26px; border-radius: 50%; border: none; background: #FEE2E2;
+                 display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+  .trash-btn svg { width: 12px; height: 12px; color: #EF4444; }
+
+  .item-info   { flex: 1; min-width: 0; }
+  .item-name   { font-size: 13px; font-weight: 600; color: #1A1A1A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-custom { font-size: 11px; color: #329937; margin-top: 1px; }
+  .item-actions { display: flex; gap: 0; margin-top: 4px; margin-left: -6px; flex-wrap: wrap; }
+
+  .btn-cust  { font-size: 11px; color: #F26B33; background: none; border: none; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .btn-edit  { font-size: 11px; color: #329937; background: none; border: none; padding: 4px 6px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .btn-note  { font-size: 11px; color: #666;    background: none; border: none; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .btn-cust:hover, .btn-edit:hover, .btn-note:hover { background: #F7F7F7; }
+
+  .qty-wrap  { display: flex; align-items: center; gap: 1px; padding-left: 8px; border-left: 1px solid #E5E5E5; flex-shrink: 0; }
+  .qty-btn   { width: 28px; height: 28px; border: none; background: none; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-btn.m { color: #666; }
+  .qty-btn.p { color: #329937; }
+  .qty-num   { font-size: 13px; font-weight: 700; color: #329937; min-width: 18px; text-align: center; }
+
+  .price-wrap { width: 58px; text-align: right; padding-left: 7px; border-left: 1px solid #E5E5E5; flex-shrink: 0; }
+  .price      { font-size: 13px; font-weight: 700; color: #1A1A1A; }
+  .price-sub  { font-size: 10px; color: #999; }
+
+  /* ── Badge ── */
+  .badge      { display: inline-flex; align-items: center; font-size: 9px; font-weight: 700; padding: 1px 6px;
+                border-radius: 20px; margin-left: 5px; vertical-align: middle; }
+  .b-red      { background: #FEE2E2; color: #EF4444; }
+  .b-grn      { background: #DCFCE7; color: #16A34A; }
+
+  /* ── Step header ── */
+  .step { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: #F7F7F7; border-top: 1px solid #E5E5E5; }
+  .step-num { width: 18px; height: 18px; border-radius: 50%; background: #329937; color: #fff;
+              font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-num.orange { background: #F26B33; }
+  .step-num.gray   { background: #666; }
+  .step-txt { font-size: 11px; color: #444; }
+  .step-txt strong { color: #1A1A1A; }
+
+  /* ── Modal hint ── */
+  .modal-hint { margin: 8px 11px; border: 1.5px dashed #E5E5E5; border-radius: 8px; padding: 9px 11px; background: #FAFAFA; }
+  .mh-title   { font-size: 10px; font-weight: 700; color: #666; margin-bottom: 5px; }
+  .mh-row     { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #EFEFEF; }
+  .mh-row:last-of-type { border-bottom: none; }
+  .mh-row span:first-child { font-size: 11px; color: #444; }
+  .mh-row span:last-child  { font-size: 11px; font-weight: 600; color: #1A1A1A; }
+  .dot        { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 3px; vertical-align: middle; }
+
+  .save-btn-cust { width: 100%; margin-top: 7px; padding: 7px; background: #F26B33; color: #fff;
+                   border: none; border-radius: 7px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .save-btn-edit { width: 100%; margin-top: 7px; padding: 7px; background: #329937; color: #fff;
+                   border: none; border-radius: 7px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+  /* ── Annotation pill ── */
+  .ann     { font-size: 10px; padding: 2px 10px 2px 11px; display: block; }
+  .ann-red { color: #EF4444; }
+  .ann-grn { color: #329937; }
+
+  /* ── Cart footer ── */
+  .cart-footer  { padding: 9px 13px; background: #F7F7F7; border-top: 1px solid #E5E5E5; }
+  .total-row    { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #1A1A1A; }
+  .collect-btn  { margin-top: 7px; width: 100%; padding: 9px; border-radius: 7px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; color: #fff; }
+  .collect-btn.orange { background: #F26B33; }
+  .collect-btn.green  { background: #329937; }
+
+  /* ── Separator arrow ── */
+  .sep { display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+         padding-top: 80px; gap: 4px; }
+  .sep-arrow { font-size: 20px; color: #ccc; }
+  .sep-label { font-size: 9px; color: #aaa; text-align: center; white-space: nowrap; }
+
+  /* ── Summary table ── */
+  .summary { margin-top: 24px; background: #fff; border-radius: 10px; border: 1.5px solid #E5E5E5; overflow: hidden; max-width: 900px; }
+  .s-head { background: #1A1A1A; color: #fff; padding: 9px 16px; font-size: 12px; font-weight: 700; }
+  .s-row  { display: flex; border-bottom: 1px solid #E5E5E5; }
+  .s-row:last-child { border-bottom: none; }
+  .s-cell { padding: 9px 14px; font-size: 11px; color: #444; flex: 1; border-right: 1px solid #E5E5E5; }
+  .s-cell:last-child { border-right: none; }
+  .s-cell strong { color: #1A1A1A; display: block; margin-bottom: 2px; }
+  .s-cell.head    { font-weight: 700; color: #1A1A1A; background: #F7F7F7; font-size: 11px; }
+  .tag-cust { background: #FFF0EB; color: #F26B33; padding: 1px 7px; border-radius: 10px; font-weight: 700; font-size: 10px; display: inline-block; }
+  .tag-edit { background: #DCFCE7; color: #329937; padding: 1px 7px; border-radius: 10px; font-weight: 700; font-size: 10px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="page-title">CR-551 — NewItemRow: Customize (unchanged) + Edit (new, in-place)</div>
+<div class="page-sub">Both buttons open <strong>ItemCustomizationModal</strong> — but with different save behaviour. Only "Edit" is new code.</div>
+
+<!-- ═══════════════════════════════════════ ROW DESIGN ════════════════════════════════════ -->
+<div style="margin-bottom:20px;">
+  <div class="col-label label-row" style="border-radius:6px; margin-bottom:8px;">NewItemRow — Updated Design</div>
+  <div class="cart-panel" style="max-width:520px;">
+    <div class="cart-header">Cart — Table 3 <span>Dine-In</span></div>
+    <div class="cart-item base">
+      <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      <div class="item-info">
+        <div class="item-name">Woko Pasta</div>
+        <div class="item-custom">Whole Wheat Noodles, Extra Cheese Add-on x1</div>
+        <div class="item-actions">
+          <button class="btn-cust">Customize</button>
+          <button class="btn-edit">✎ Edit</button>
+          <button class="btn-note">Add Note</button>
+        </div>
+      </div>
+      <div class="qty-wrap">
+        <button class="qty-btn m">−</button>
+        <span class="qty-num">1</span>
+        <button class="qty-btn p">+</button>
+      </div>
+      <div class="price-wrap"><div class="price">₹365</div><div class="price-sub">per item</div></div>
+    </div>
+  </div>
+  <div style="margin-top:7px; font-size:11px; color:#666;">
+    <span style="color:#F26B33; font-weight:600">Customize</span> — orange, unchanged behaviour &nbsp;|&nbsp;
+    <span style="color:#329937; font-weight:600">✎ Edit</span> — green, new in-place replace &nbsp;|&nbsp;
+    <span style="color:#666">Add Note</span> — unchanged
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ FLOWS ════════════════════════════════════ -->
+<div class="cols">
+
+  <!-- ── Col 1: Customize flow (unchanged) ── -->
+  <div class="col">
+    <div class="col-label label-cust">Customize — No Change</div>
+    <div class="cart-panel">
+      <div class="cart-header">Cart — Table 3 <span>Dine-In</span></div>
+
+      <div class="step"><div class="step-num orange">1</div><div class="step-txt">Cashier taps <strong style="color:#F26B33">Customize</strong></div></div>
+      <div class="cart-item base">
+        <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <div class="item-info">
+          <div class="item-name">Woko Pasta</div>
+          <div class="item-custom">Whole Wheat, Extra Cheese x1</div>
+          <div class="item-actions">
+            <button class="btn-cust" style="background:#FFF0EB; border-radius:6px;">Customize</button>
+            <button class="btn-edit">✎ Edit</button>
+            <button class="btn-note">Add Note</button>
+          </div>
+        </div>
+        <div class="qty-wrap"><button class="qty-btn m">−</button><span class="qty-num">1</span><button class="qty-btn p">+</button></div>
+        <div class="price-wrap"><div class="price">₹365</div></div>
+      </div>
+
+      <div class="modal-hint">
+        <div class="mh-title">📋 Modal opens (may or may not be pre-filled) — user picks new combo</div>
+        <div class="mh-row"><span>Size</span><span><span class="dot" style="background:#F26B33"></span>Rice Noodles (changed)</span></div>
+        <div class="mh-row"><span>Add-on</span><span>Mushrooms x1 (changed)</span></div>
+        <div class="mh-row"><span>Qty</span><span>1</span></div>
+        <button class="save-btn-cust">Add to Order ✓</button>
+      </div>
+
+      <div class="step"><div class="step-num orange">2</div><div class="step-txt">Existing merge/append logic runs (unchanged)</div></div>
+      <div class="ann ann-red">— If key differs → new item added (may duplicate)</div>
+
+      <div class="cart-item base">
+        <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <div class="item-info">
+          <div class="item-name">Woko Pasta</div>
+          <div class="item-custom">Whole Wheat, Extra Cheese x1</div>
+          <div class="item-actions"><button class="btn-cust">Customize</button><button class="btn-edit">✎ Edit</button><button class="btn-note">Add Note</button></div>
+        </div>
+        <div class="qty-wrap"><button class="qty-btn m">−</button><span class="qty-num">1</span><button class="qty-btn p">+</button></div>
+        <div class="price-wrap"><div class="price">₹365</div></div>
+      </div>
+
+      <div class="cart-item dup">
+        <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <div class="item-info">
+          <div class="item-name">Woko Pasta <span class="badge b-red">NEW LINE</span></div>
+          <div class="item-custom">Rice Noodles, Mushrooms x1</div>
+          <div class="item-actions"><button class="btn-cust">Customize</button><button class="btn-edit">✎ Edit</button><button class="btn-note">Add Note</button></div>
+        </div>
+        <div class="qty-wrap"><button class="qty-btn m">−</button><span class="qty-num">1</span><button class="qty-btn p">+</button></div>
+        <div class="price-wrap"><div class="price">₹390</div></div>
+      </div>
+
+      <div class="cart-footer">
+        <div class="total-row"><span>Total (2 items)</span><span>₹755</span></div>
+        <button class="collect-btn orange">Collect Bill ₹755</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Separator ── -->
+  <div class="sep">
+    <div class="sep-arrow">↔</div>
+    <div class="sep-label">Different<br>intent</div>
+  </div>
+
+  <!-- ── Col 2: Edit flow (new) ── -->
+  <div class="col">
+    <div class="col-label label-edit">✎ Edit — New In-Place Replace</div>
+    <div class="cart-panel">
+      <div class="cart-header">Cart — Table 3 <span>Dine-In</span></div>
+
+      <div class="step"><div class="step-num">1</div><div class="step-txt">Cashier taps <strong style="color:#329937">✎ Edit</strong></div></div>
+      <div class="cart-item base">
+        <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <div class="item-info">
+          <div class="item-name">Woko Pasta</div>
+          <div class="item-custom">Whole Wheat, Extra Cheese x1</div>
+          <div class="item-actions">
+            <button class="btn-cust">Customize</button>
+            <button class="btn-edit" style="background:#DCFCE7; border-radius:6px;">✎ Edit</button>
+            <button class="btn-note">Add Note</button>
+          </div>
+        </div>
+        <div class="qty-wrap"><button class="qty-btn m">−</button><span class="qty-num">1</span><button class="qty-btn p">+</button></div>
+        <div class="price-wrap"><div class="price">₹365</div><div class="price-sub">per item</div></div>
+      </div>
+
+      <div class="modal-hint">
+        <div class="mh-title">📋 Modal opens <strong>pre-populated</strong> with current selections</div>
+        <div class="mh-row"><span>Size</span><span><span class="dot" style="background:#329937"></span>Whole Wheat → <strong>Rice Noodles</strong></span></div>
+        <div class="mh-row"><span>Add-on</span><span>Extra Cheese x1 ✓</span></div>
+        <div class="mh-row"><span>Qty</span><span>1</span></div>
+        <button class="save-btn-edit">Save Changes ✓</button>
+      </div>
+
+      <div class="step"><div class="step-num">2</div><div class="step-txt"><strong>_cartKey detected → original removed → updated in place</strong></div></div>
+      <div class="ann ann-grn">✅ Always replaces — never duplicates</div>
+
+      <div class="cart-item upd">
+        <button class="trash-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        <div class="item-info">
+          <div class="item-name">Woko Pasta <span class="badge b-grn">EDITED</span></div>
+          <div class="item-custom">Rice Noodles, Extra Cheese Add-on x1</div>
+          <div class="item-actions"><button class="btn-cust">Customize</button><button class="btn-edit">✎ Edit</button><button class="btn-note">Add Note</button></div>
+        </div>
+        <div class="qty-wrap"><button class="qty-btn m">−</button><span class="qty-num">1</span><button class="qty-btn p">+</button></div>
+        <div class="price-wrap"><div class="price">₹365</div></div>
+      </div>
+
+      <div style="height:72px; border-bottom:1px solid #E5E5E5;"></div><!-- spacer to align footer -->
+
+      <div class="cart-footer">
+        <div class="total-row"><span>Total (1 item)</span><span>₹365</span></div>
+        <button class="collect-btn green">Collect Bill ₹365</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════ SUMMARY TABLE ════════════════════════════════════ -->
+<div class="summary">
+  <div class="s-head">Button Behaviour Summary</div>
+  <div class="s-row">
+    <div class="s-cell head">Button</div>
+    <div class="s-cell head">Modal opens</div>
+    <div class="s-cell head">Save button text</div>
+    <div class="s-cell head">On save</div>
+    <div class="s-cell head">Code change needed?</div>
+  </div>
+  <div class="s-row">
+    <div class="s-cell"><span class="tag-cust">Customize</span></div>
+    <div class="s-cell">Modal (may be pre-filled via existing logic)</div>
+    <div class="s-cell">"Add to Order"</div>
+    <div class="s-cell">Existing merge/append — may add new line if combo differs</div>
+    <div class="s-cell"><strong>NONE</strong> — zero changes</div>
+  </div>
+  <div class="s-row">
+    <div class="s-cell"><span class="tag-edit">✎ Edit</span></div>
+    <div class="s-cell">Modal <strong>always pre-populated</strong> from _cartKey item</div>
+    <div class="s-cell">"Save Changes"</div>
+    <div class="s-cell">Remove original (_cartKey) → add updated → <strong>always 1 item</strong></div>
+    <div class="s-cell"><strong>NEW:</strong> Edit button in CartPanel + handler in OrderEntry + _editMode flag in modal + ~8 lines</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ IMPLEMENTATION DELTA ════════════════════════════════════ -->
+<div style="margin-top:20px; background:#fff; border-radius:10px; border:1.5px solid #E5E5E5; padding:15px 18px; max-width:900px;">
+  <div style="font-size:12px; font-weight:700; color:#1A1A1A; margin-bottom:12px;">📌 Implementation Delta from v2 IA (scope update)</div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; font-size:11px;">
+    <div style="background:#F7F7F7; border-radius:8px; padding:11px 13px;">
+      <div style="font-weight:700; color:#1A1A1A; margin-bottom:7px;">v2 IA said (now revised)</div>
+      <div style="color:#666">• Change <em>Customize</em> save logic to do replace-in-place</div>
+      <div style="color:#666">• 1 file, ~5 lines in <code>addCustomizedItemToCart</code></div>
+    </div>
+    <div style="background:#F0FDF4; border-radius:8px; padding:11px 13px; border:1px solid #BBF7D0;">
+      <div style="font-weight:700; color:#329937; margin-bottom:7px;">Actual scope (after owner clarification)</div>
+      <div>• <strong>Customize</strong>: untouched — zero code change</div>
+      <div>• <strong>Edit button</strong>: new in CartPanel (1 file, ~6 lines)</div>
+      <div>• <strong>OrderEntry handler</strong>: <code>handleEditCartItem</code> (~8 lines)</div>
+      <div>• <strong>Modal</strong>: <code>editMode</code> prop → "Save Changes" text (~4 lines)</div>
+      <div style="margin-top:5px; color:#666"><em>Total: 3 files, ~18 lines. Still MEDIUM risk.</em></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

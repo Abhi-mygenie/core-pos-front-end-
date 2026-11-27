@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-A_CR-495_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-A_CR-495_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-A_CR-495_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-495 Meal package + room comp limit — v1 — 2026-11-15</h1>
+<p>Backend: Parth (cc Gyan) · IDs: B-495-1..7 · FE plan: <code>plans/BATCH-A_CR-495_IMPLEMENTATION_PLAN_2026_11_15.md</code> · Mockups M8, M8b, M5, M5c
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong>
+Owner rules: R6–R10, R16–R18 (<code>change_requests/BATCH_A_OWNER_DECISIONS_2026_11_14.md</code>).</p>
+<h2>1. Enums</h2>
+<ul>
+<li><code>meal_package</code>: <code>room_only</code> · <code>breakfast</code> · <code>half_board</code> · <code>full_board</code></li>
+<li><code>half_board_meal</code>: <code>lunch</code> · <code>dinner</code> (required only when <code>half_board</code>)</li>
+<li><code>meal</code>: <code>breakfast</code> · <code>lunch</code> · <code>dinner</code></li>
+</ul>
+<h2>2. Check-in — <code>POST /api/v1/vendoremployee/pos/user-group-check-in</code> (request, B-495-1/2) — additive</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Values</th>
+<th>Req</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>existing check-in fields</td>
+<td>—</td>
+<td>as today</td>
+<td>—</td>
+<td>EXISTING</td>
+</tr>
+<tr>
+<td><code>meal_package</code></td>
+<td>string</td>
+<td>enum</td>
+<td>Y</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>half_board_meal</code></td>
+<td>string | null</td>
+<td><code>lunch</code>/<code>dinner</code></td>
+<td>Y when <code>half_board</code>, else null</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>guest_count</code></td>
+<td>int</td>
+<td>≥ 1</td>
+<td>Y</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td>Missing/invalid → 422 <code>MEAL_PACKAGE_INVALID</code>.</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>3. Edit guest count during stay — <code>PUT /api/v2/vendoremployee/pos/room-guest-count</code> (B-495-2) — NEW</h2>
+<p>Request <code>{ "order_id": 123, "guest_count": 3 }</code> → <code>{ "guest_count": 3 }</code>.</p>
+<h2>4. Returned on (B-495-1/2)</h2>
+<p><code>GET /api/v2/vendoremployee/get-room-list</code> (per room), room order <code>room_info</code>, folio: <code>meal_package</code>, <code>half_board_meal</code>, <code>guest_count</code> (same names/types). OTA bookings (B-495-7): same three fields filled from the channel meal plan; <code>half_board_meal</code> null if the channel doesn't send it.</p>
+<h2>5. Limit settings (B-495-3) — settings-list + profile <code>restaurants[0]</code> + update-settings</h2>
+<p><code>room_comp_limits</code> (object, ₹ per guest per meal):</p>
+<pre><code class="language-json">{ &quot;breakfast&quot;:  { &quot;breakfast&quot;: 300.00 },
+  &quot;half_board&quot;: { &quot;breakfast&quot;: 300.00, &quot;lunch&quot;: 500.00, &quot;dinner&quot;: 500.00 },
+  &quot;full_board&quot;: { &quot;breakfast&quot;: 300.00, &quot;lunch&quot;: 500.00, &quot;dinner&quot;: 600.00 } }
+</code></pre>
+<p>Meals in package: breakfast → breakfast; half_board → breakfast + <code>half_board_meal</code>; full_board → all three; room_only → none.</p>
+<h2>6. Usage — <code>GET /api/v2/vendoremployee/pos/room-comp-usage?order_id=123</code> (B-495-4) — NEW</h2>
+<pre><code class="language-json">{ &quot;business_date&quot;: &quot;2026-11-15&quot;, &quot;guest_count&quot;: 2, &quot;meal_package&quot;: &quot;half_board&quot;, &quot;half_board_meal&quot;: &quot;lunch&quot;,
+  &quot;meals&quot;: {
+    &quot;breakfast&quot;: { &quot;in_package&quot;: &quot;Yes&quot;, &quot;limit&quot;: 600.00, &quot;used&quot;: 220.00, &quot;remaining&quot;: 380.00 },
+    &quot;lunch&quot;:     { &quot;in_package&quot;: &quot;Yes&quot;, &quot;limit&quot;: 1000.00, &quot;used&quot;: 0.00, &quot;remaining&quot;: 1000.00 },
+    &quot;dinner&quot;:    { &quot;in_package&quot;: &quot;No&quot;,  &quot;limit&quot;: 0.00, &quot;used&quot;: 0.00, &quot;remaining&quot;: 0.00 } } }
+</code></pre>
+<p><code>limit</code> = per-guest limit × <code>guest_count</code>. Server-side counter, per room, per meal, per business day, shared across devices.</p>
+<h2>7. Comp save on a room order (B-495-5/6)</h2>
+<table>
+<thead>
+<tr>
+<th>Field (comp line)</th>
+<th>Type</th>
+<th>Values</th>
+<th>Req</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_complementary</code>, <code>complementary_reason</code></td>
+<td>—</td>
+<td>as CR-492 contract</td>
+<td>Y</td>
+<td>EXISTING</td>
+</tr>
+<tr>
+<td><code>comp_meal</code></td>
+<td>string</td>
+<td><code>meal</code> enum, picked by cashier (R16)</td>
+<td>Y on room orders when <code>is_complementary = "Yes"</code></td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>pin_token</code></td>
+<td>string</td>
+<td>from CR-494 verify (<code>action</code> = <code>complimentary</code>)</td>
+<td>when PIN required</td>
+<td>NEW (CR-494)</td>
+</tr>
+<tr>
+<td>PIN required when: over <code>remaining</code> for <code>comp_meal</code>, or <code>comp_meal</code> not in package (R18), or <code>room_only</code> (R7). Missing → 403 <code>PIN_REQUIRED</code>. Missing <code>comp_meal</code> → 422 <code>COMP_MEAL_REQUIRED</code>.</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>8. Errors</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MEAL_PACKAGE_INVALID</code></td>
+<td>422</td>
+<td>bad/missing package, half-board meal or guest count</td>
+</tr>
+<tr>
+<td><code>COMP_MEAL_REQUIRED</code></td>
+<td>422</td>
+<td>room comp without <code>comp_meal</code></td>
+</tr>
+<tr>
+<td><code>PIN_REQUIRED</code></td>
+<td>403</td>
+<td>over limit / outside package / room only, no valid token</td>
+</tr>
+</tbody>
+</table>
+<h2>9. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="B-495-1">B-495-1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-2">B-495-2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-3">B-495-3</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-4">B-495-4</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-5">B-495-5</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-6">B-495-6</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="B-495-7">B-495-7</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

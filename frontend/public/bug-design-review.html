@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUG-562 / 563 / 564 Design Options</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
+  .section { margin-bottom: 48px; }
+  .section-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 6px; padding: 8px 14px; background: #e5e7eb; border-radius: 8px; display: inline-block; }
+  .bug-tag { font-size: 11px; font-weight: 700; background: #ef4444; color: white; border-radius: 4px; padding: 2px 7px; margin-left: 8px; vertical-align: middle; }
+  .bug-tag.p2 { background: #f59e0b; }
+  .bug-tag.p3 { background: #6b7280; }
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+  .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.10); border: 1px solid #e5e7eb; flex-shrink: 0; }
+  .card-label { font-size: 12px; font-weight: 700; padding: 10px 14px 8px; border-bottom: 1px solid #f3f4f6; color: #374151; display: flex; align-items: center; gap: 8px; }
+  .tag-now { background: #fee2e2; color: #b91c1c; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+  .tag-fix { background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+  .tag-opt { background: #dbeafe; color: #1d4ed8; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+  .note { font-size: 11px; color: #6b7280; margin-top: 12px; max-width: 680px; line-height: 1.6; }
+  .note strong { color: #111; }
+
+  /* ─── SIDEBAR MOCK ─────────────────────────── */
+  .sidebar-mock { width: 240px; height: 320px; display: flex; flex-direction: column; }
+  .sb-logo { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+  .sb-logo img { width: 80px; }
+  .sb-logo svg { color: #9ca3af; }
+  .sb-nav { flex: 1; overflow: hidden; position: relative; padding: 4px 0; }
+  .sb-nav-inner { padding: 0; }
+  .sb-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 13px; font-weight: 500; color: #374151; }
+  .sb-item svg { width: 18px; height: 18px; flex-shrink: 0; color: #6b7280; }
+  .sb-item.active { background: rgba(50,153,55,0.08); color: #329937; }
+  .sb-item.active svg { color: #329937; }
+  .sb-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
+
+  /* BEFORE: no fade */
+  .sb-nav.no-fade { }
+
+  /* AFTER: CSS fade */
+  .sb-nav.with-fade::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, #ffffff);
+    pointer-events: none;
+  }
+
+  .sb-actions { padding: 8px 14px; border-top: 1px solid #e5e7eb; display: flex; gap: 12px; align-items: center; font-size: 12px; color: #6b7280; }
+  .sb-actions svg { width: 16px; height: 16px; }
+
+  /* ─── CATEGORY PANEL MOCK ─────────────────── */
+  .oe-mock { display: flex; height: 260px; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+  .cat-panel { flex-shrink: 0; display: flex; flex-direction: column; background: #f9fafb; border-right: 1px solid #e5e7eb; overflow: hidden; }
+  .cat-back { padding: 8px; border-bottom: 1px solid #e5e7eb; }
+  .cat-back-btn { width: 32px; height: 32px; background: #f97316; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+  .cat-items { flex: 1; overflow-y: auto; }
+  .cat-item { padding: 8px 10px; font-size: 12px; font-weight: 500; color: #374151; border-bottom: 1px solid #f3f4f6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  .cat-item.active { background: #329937; color: white; }
+  .cat-item.two-line { white-space: normal; overflow: visible; text-overflow: unset; word-break: break-word; line-height: 1.3; }
+  .menu-area { flex: 1; background: white; display: flex; align-items: center; justify-content: center; color: #d1d5db; font-size: 12px; }
+  .w-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+  .w128 { background: #fee2e2; color: #b91c1c; }
+  .w144 { background: #dcfce7; color: #15803d; }
+
+  /* ─── TOGGLE MOCK ──────────────────────────── */
+  .toggles-mock { display: flex; flex-direction: column; gap: 6px; padding: 12px; background: #f9fafb; border-radius: 8px; width: 220px; }
+  .toggle-btn { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .toggle-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .toggle-orange { background: rgba(249,115,22,0.12); color: #ea580c; }
+  .toggle-green { background: rgba(50,153,55,0.12); color: #329937; }
+  .toggle-header { font-size: 11px; color: #9ca3af; font-weight: 600; padding: 0 4px 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<h1>BUG-562 / 563 / 564 — Design Options</h1>
+<p class="subtitle">Review each option before approving the fix</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BUG-562 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">BUG-562 — Sidebar Scroll Affordance <span class="bug-tag p2">P2</span></div>
+  <p class="note" style="margin-top:10px;margin-bottom:14px;">On short phones, <strong>Reports / Insights</strong> are below Day Closure + Expenses in the menu. Users can't see them without scrolling — but nothing tells them to scroll.</p>
+
+  <div class="cards">
+    <!-- BEFORE -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-now">NOW (broken)</span>
+        No scroll hint — user thinks list ends at Expenses
+      </div>
+      <div class="sidebar-mock">
+        <div class="sb-logo">
+          <span style="font-weight:700;font-size:14px;color:#f97316;">m</span><span style="font-weight:700;font-size:14px;">ygenie</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="sb-nav no-fade">
+          <div class="sb-nav-inner">
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Dashboard
+            </div>
+            <div class="sb-item active">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Day Closure
+            </div>
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              Expenses
+            </div>
+            <!-- These are below fold but no indicator -->
+          </div>
+          <!-- NO gradient — user sees a hard edge, thinks list is done -->
+        </div>
+        <div class="sb-actions">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+          Ringer On
+          &nbsp;&nbsp;
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.93"/></svg>
+          Refresh
+        </div>
+      </div>
+      <div style="padding:8px 12px;background:#fff7ed;font-size:11px;color:#92400e;border-top:1px solid #fde68a;">
+        ❌ Reports, Insights, Inventory hidden — no clue to scroll
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-fix">FIXED (option a)</span>
+        Soft fade at bottom — universal "more below" signal
+      </div>
+      <div class="sidebar-mock">
+        <div class="sb-logo">
+          <span style="font-weight:700;font-size:14px;color:#f97316;">m</span><span style="font-weight:700;font-size:14px;">ygenie</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="sb-nav with-fade">
+          <div class="sb-nav-inner">
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              Dashboard
+            </div>
+            <div class="sb-item active">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Day Closure
+            </div>
+            <div class="sb-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              Expenses
+            </div>
+            <div class="sb-item" style="opacity:0.4;">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Daily Report
+            </div>
+          </div>
+          <!-- WITH gradient — fades into white, user knows to scroll -->
+        </div>
+        <div class="sb-actions">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+          Ringer On
+          &nbsp;&nbsp;
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.93"/></svg>
+          Refresh
+        </div>
+      </div>
+      <div style="padding:8px 12px;background:#f0fdf4;font-size:11px;color:#166534;border-top:1px solid #bbf7d0;">
+        ✅ Fade says "scroll for more" — universally understood. 3 lines CSS.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BUG-563 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">BUG-563 — Category Name Truncation <span class="bug-tag p2">P2</span></div>
+  <p class="note" style="margin-top:10px;margin-bottom:14px;">Category panel was made narrower (128px) in BUG-555 tablet fix. Long names cut off on phone — no hover tooltip on touch. Three options shown.</p>
+
+  <div class="cards">
+
+    <!-- NOW: 128px truncated -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-now">NOW (broken)</span>
+        128px — names cut off, no way to read on phone
+      </div>
+      <div class="oe-mock" style="width:280px;">
+        <div class="cat-panel" style="width:128px;">
+          <div class="cat-back"><div class="cat-back-btn">‹</div></div>
+          <div class="cat-items">
+            <div class="cat-item">Popular (4)</div>
+            <div class="cat-item active">All (8)</div>
+            <div class="cat-item" style="width:108px;">Indo-Fusion...</div>
+            <div class="cat-item" style="width:108px;">subject one (...</div>
+            <div class="cat-item" style="width:108px;">Wōko Chicke...</div>
+          </div>
+          <div class="w-badge w128" style="margin:4px 8px;display:block;">128px</div>
+        </div>
+        <div class="menu-area">menu items →</div>
+      </div>
+      <div style="padding:8px 12px;background:#fff7ed;font-size:11px;color:#92400e;border-top:1px solid #fde68a;">
+        ❌ Can't tell "Indo-Fusion Menu" from "Indo-Fusion Starters" on touch
+      </div>
+    </div>
+
+    <!-- OPTION A: 144px -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-opt">OPTION A</span>
+        144px — 1 line change. Shows ~2 more chars per name
+      </div>
+      <div class="oe-mock" style="width:290px;">
+        <div class="cat-panel" style="width:144px;">
+          <div class="cat-back"><div class="cat-back-btn">‹</div></div>
+          <div class="cat-items">
+            <div class="cat-item">Popular (4)</div>
+            <div class="cat-item active">All (8)</div>
+            <div class="cat-item" style="width:124px;">Indo-Fusion M...</div>
+            <div class="cat-item" style="width:124px;">subject one (te...</div>
+            <div class="cat-item" style="width:124px;">Wōko Chicken...</div>
+          </div>
+          <div class="w-badge w144" style="margin:4px 8px;display:block;">144px</div>
+        </div>
+        <div class="menu-area">menu items →</div>
+      </div>
+      <div style="padding:8px 12px;background:#f0fdf4;font-size:11px;color:#166534;border-top:1px solid #bbf7d0;">
+        ✅ Slightly wider. Still truncates but owner approved.
+      </div>
+    </div>
+
+    <!-- OPTION WRAP: 2 lines -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-opt">OPTION — 2 LINE WRAP</span>
+        128px, word wrap ON — shows full name, taller rows
+      </div>
+      <div class="oe-mock" style="width:280px;">
+        <div class="cat-panel" style="width:128px;">
+          <div class="cat-back"><div class="cat-back-btn">‹</div></div>
+          <div class="cat-items">
+            <div class="cat-item two-line" style="padding:6px 10px;">Popular (4)</div>
+            <div class="cat-item two-line active" style="padding:6px 10px;">All (8)</div>
+            <div class="cat-item two-line" style="padding:6px 10px;">Indo-Fusion Menu (5)</div>
+            <div class="cat-item two-line" style="padding:6px 10px;">subject one (test) (3)</div>
+            <div class="cat-item two-line" style="padding:6px 10px;">Wōko Chicken Starters (8)</div>
+          </div>
+        </div>
+        <div class="menu-area">menu items →</div>
+      </div>
+      <div style="padding:8px 12px;background:#eff6ff;font-size:11px;color:#1e40af;border-top:1px solid #bfdbfe;">
+        ✅ Full name always visible. Rows are taller → fewer fit on screen at once.
+      </div>
+    </div>
+
+  </div>
+  <p class="note" style="margin-top:14px;">
+    <strong>Trade-off:</strong> Option A (144px) = quick, still truncates very long names. Option 2-line = fully readable, but each row is ~2× taller so you see fewer categories at once (4-5 visible vs 7-8). 
+    If most of your category names are short-medium (&lt;15 chars), <strong>option A is fine</strong>. If names are long, 2-line wrap is better UX.
+  </p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BUG-564 -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">BUG-564 — Sidebar Toggle Labels <span class="bug-tag p3">P3</span></div>
+  <p class="note" style="margin-top:10px;margin-bottom:14px;">Owner decision: label should show the view you are <strong>currently in</strong>. Already mostly correct — just the Channel/Status naming needs to match.</p>
+
+  <div class="cards">
+
+    <!-- NOW -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-now">NOW</span>
+        "Table View" / "By Status" — inconsistent naming style
+      </div>
+      <div style="padding:14px;">
+        <div class="toggles-mock">
+          <div class="toggle-header">Dashboard view</div>
+          <div class="toggle-btn toggle-orange">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Table View
+          </div>
+          <div class="toggle-btn toggle-green">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><columns/><rect x="2" y="3" width="7" height="18"/><rect x="15" y="3" width="7" height="18"/></svg>
+            By Status ← inconsistent ("By" prefix)
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 12px;background:#fff7ed;font-size:11px;color:#92400e;border-top:1px solid #fde68a;">
+        ❌ "Table View" uses "View" · "By Status" uses "By" — two different naming patterns
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="card">
+      <div class="card-label">
+        <span class="tag-fix">FIXED — 2 lines changed</span>
+        "Table View" / "Status View" — consistent "X View" pattern
+      </div>
+      <div style="padding:14px;">
+        <div class="toggles-mock">
+          <div class="toggle-header">Dashboard view</div>
+          <!-- Scenario A: in Table View + Status View -->
+          <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;">You are in: Table View + Status View</div>
+          <div class="toggle-btn toggle-orange">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Table View ✓
+          </div>
+          <div class="toggle-btn toggle-green">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="18"/><rect x="15" y="3" width="7" height="18"/></svg>
+            Status View ✓ (was "By Status")
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:#9ca3af;margin-bottom:6px;">You are in: Order View + Channel View</div>
+          <div class="toggle-btn toggle-orange">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Order View ✓
+          </div>
+          <div class="toggle-btn toggle-green">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="4" height="18"/><rect x="9" y="3" width="4" height="18"/><rect x="16" y="3" width="6" height="18"/></svg>
+            Channel View ✓ (was "By Channel")
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 12px;background:#f0fdf4;font-size:11px;color:#166534;border-top:1px solid #bbf7d0;">
+        ✅ All 4 states now use "X View" pattern. Consistent. Shows where you are.
+      </div>
+    </div>
+
+  </div>
+  <p class="note" style="margin-top:14px;">
+    <strong>What changes:</strong> "By Status" → "Status View" and "By Channel" → "Channel View". That's 2 string changes in 1 file. "Table View" and "Order View" are already correct — no change needed there.
+  </p>
+</div>
+
+<div style="height:32px;"></div>
+</body>
+</html>

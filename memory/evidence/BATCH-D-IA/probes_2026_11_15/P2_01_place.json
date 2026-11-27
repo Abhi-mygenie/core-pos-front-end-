@@ -1,0 +1,16 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/api/v2/vendoremployee/order/place-order",
+  "json": null,
+  "data": null
+ },
+ "status": 200,
+ "response": {
+  "message": "Order placed successfully",
+  "order_id": 1578761,
+  "daily_token": null,
+  "restaurant_order_id": "021544",
+  "payment_status": "unpaid"
+ }
+}

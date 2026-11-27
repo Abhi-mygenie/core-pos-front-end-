@@ -1,0 +1,1157 @@
+{
+  "id": 1578830,
+  "restaurant_order_id": "002397",
+  "user_id": null,
+  "employee_id": 5179,
+  "user_name": "",
+  "order_amount": 474,
+  "order_sub_total_without_tax": 451.5,
+  "order_sub_total_amount": 430,
+  "restaurant_discount_amount": 0,
+  "order_discount": "0.00",
+  "discount_value": null,
+  "order_discount_type": null,
+  "discount_type": null,
+  "round_up": "-0.08",
+  "total_service_tax_amount": "21.50",
+  "total_gst_tax_amount": "22.58",
+  "total_vat_tax_amount": "0.00",
+  "gst_tax": "22.58",
+  "vat_tax": "0.00",
+  "service_tax": "21.50",
+  "order_note": "",
+  "print_kot": "Yes",
+  "print_bill_status": "No",
+  "order_type": "dinein",
+  "checked": 0,
+  "restaurant_id": 839,
+  "table_id": 8598,
+  "waiter_id": 5179,
+  "daily_token": null,
+  "tip_amount": "0.00",
+  "tip_tax_amount": "0.00",
+  "f_order_status": 5,
+  "b_order_status": 0,
+  "k_order_status": 0,
+  "order_status": "queue",
+  "tablepart": null,
+  "parent_order_id": null,
+  "payment_status": "unpaid",
+  "payment_method": "pending",
+  "payment_type": "postpaid",
+  "delivery_man_status": "No",
+  "order_dispatch_status": "No",
+  "delivery_man": null,
+  "schedule_at": null,
+  "delivery_man_id": null,
+  "send_payment_link": null,
+  "payment_id": null,
+  "audio_file": null,
+  "order_edit_count": 0,
+  "delivery_charge": 0,
+  "cancel_at": null,
+  "canceled_by": null,
+  "delivery_address": null,
+  "room_discount": null,
+  "created_at": "2026-11-17 20:16:37",
+  "updated_at": "2026-11-17 20:16:37",
+  "user": null,
+  "vendorEmployee": {
+    "id": 5179,
+    "f_name": "Owner",
+    "l_name": null
+  },
+  "restaurantTable": {
+    "id": 8598,
+    "restaurant_id": 839,
+    "title": "Indoor",
+    "table_no": "Inside 1",
+    "waiter_id": 5177,
+    "rtype": "TB",
+    "waiter": {
+      "id": 5177,
+      "f_name": "Manager",
+      "l_name": null
+    }
+  },
+  "orderDetails": [
+    {
+      "id": 3969362,
+      "order_id": 1578830,
+      "food_details": {
+        "id": 225204,
+        "name": "Your Wok. Your Way.",
+        "description": "",
+        "image": "1.png",
+        "category_id": 9150,
+        "category_ids": [
+          {
+            "id": "9150",
+            "position": 1
+          }
+        ],
+        "variations": [
+          {
+            "name": "1.Base",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "Classic Noodles",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Jasmine Rice",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Whole Wheat Noodles",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Udon Noodles",
+                "optionPrice": "55"
+              },
+              {
+                "label": "Flat Rice Noodles",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Quinoa",
+                "optionPrice": "45"
+              }
+            ]
+          },
+          {
+            "name": "2.Regular Veggies",
+            "type": "multi",
+            "min": 1,
+            "max": 3,
+            "required": "on",
+            "values": [
+              {
+                "label": "Mixed Peppers",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Red Onions",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Bean Sprouts",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Mushroom",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Baby Corn",
+                "optionPrice": "0"
+              },
+              {
+                "label": "French Beans",
+                "optionPrice": "0"
+              },
+              {
+                "label": "No Veggies",
+                "optionPrice": "0"
+              },
+              {
+                "label": "No Stir Fry MIx",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "3.Extra Veggies",
+            "type": "multi",
+            "min": 0,
+            "max": 6,
+            "required": "off",
+            "values": [
+              {
+                "label": "Mixed Peppers",
+                "optionPrice": "23"
+              },
+              {
+                "label": "Red Onions",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Bean Sprouts",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Mushroom",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Baby Corn",
+                "optionPrice": "25"
+              },
+              {
+                "label": "French Beans",
+                "optionPrice": "25"
+              }
+            ]
+          },
+          {
+            "name": "4.Exotic Veggies",
+            "type": "multi",
+            "min": 0,
+            "max": 5,
+            "required": "off",
+            "values": [
+              {
+                "label": "Zucchini",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Broccoli",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Bamboo Shoots",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Bok choy  ",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Snow Peas",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Edamame",
+                "optionPrice": "65"
+              }
+            ]
+          },
+          {
+            "name": "5.Flavour",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "OG Street Style",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Tokyo Teriyaki",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Bangkok Pad Thai",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Seoul Gochujang",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Singapore Black Pepper Smash",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Saigon Lemongrass Wok",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Penang Laksa",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Jakarta Goreng",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "6.Toppings",
+            "type": "multi",
+            "min": 0,
+            "max": 2,
+            "required": "off",
+            "values": [
+              {
+                "label": "Crispy Onion",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Crispy Garlic",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Chives",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Sesame Seeds",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Peanuts",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Coriander",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Spring Onion",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "7.Extra Toppings",
+            "type": "multi",
+            "min": 0,
+            "max": 6,
+            "required": "off",
+            "values": [
+              {
+                "label": "Crispy Onion",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Crispy Garlic",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Chives",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Sesame Seeds",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Peanuts",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Coriander",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Spring Onions",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "8.Spice Level",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "No Spice",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Medium",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Hot",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Extra Hot",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Woko Fire",
+                "optionPrice": "0"
+              }
+            ]
+          }
+        ],
+        "add_ons": [
+          {
+            "id": 13260,
+            "name": "Paneer",
+            "price": 75,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:24:43.000000Z",
+            "updated_at": "2026-08-28T10:24:43.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13261,
+            "name": "Tofu",
+            "price": 95,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:01.000000Z",
+            "updated_at": "2026-10-28T09:04:59.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13262,
+            "name": "Egg",
+            "price": 45,
+            "weight": 0,
+            "show_type": null,
+            "veg": 3,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:16.000000Z",
+            "updated_at": "2026-10-22T14:55:57.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13263,
+            "name": "Chicken",
+            "price": 95,
+            "weight": 0,
+            "show_type": null,
+            "veg": 2,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:29.000000Z",
+            "updated_at": "2026-11-07T10:06:39.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13265,
+            "name": "Prawn",
+            "price": 125,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T12:20:29.000000Z",
+            "updated_at": "2026-08-28T12:20:29.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          }
+        ],
+        "attributes": "[]",
+        "choice_options": "[]",
+        "price": 365,
+        "portion_size": "",
+        "tax": 5,
+        "tax_type": "GST",
+        "tax_calc": "Exclusive",
+        "discount": 0,
+        "discount_type": "percent",
+        "available_time_starts": "00:00:00",
+        "available_time_ends": "23:59:59",
+        "web_available_time_starts": null,
+        "web_available_time_ends": null,
+        "veg": 0,
+        "allergen": "[]",
+        "egg": 0,
+        "jain": 0,
+        "status": 1,
+        "restaurant_id": 839,
+        "order_count": 0,
+        "avg_rating": 0,
+        "rating_count": 0,
+        "recommended": 0,
+        "slug": "your-wok-your-way-1789637098",
+        "food_status": 0,
+        "food_stock": 0,
+        "food_for": "Normal",
+        "dinein": "Yes",
+        "takeaway": "Yes",
+        "delivery": "Yes",
+        "takeaway_charge": "0.00",
+        "delivery_charge": "0.00",
+        "food_order": 1,
+        "prepration_time_min": 15,
+        "serve_time_in_min": 10,
+        "give_discount": "Yes",
+        "is_disable": "N",
+        "complementary": "no",
+        "complementary_price": "0",
+        "item_code": "",
+        "is_inventory": "No",
+        "packed_food": "No",
+        "is_recipe": "N",
+        "recipe_id": null,
+        "live_web": "Y",
+        "stock_out": "N",
+        "pack_charges": "0.00",
+        "created_at": "2026-09-17T09:24:58.000000Z",
+        "updated_at": "2026-10-02T13:03:11.000000Z",
+        "kcal": "0.00",
+        "item_unit": "",
+        "item_unit_price": "365.00",
+        "hsn_code": null,
+        "restaurant_printer_id": null,
+        "upd": 0,
+        "restaurant_name": "W\u014dko - Flame Fired Asian",
+        "restaurant_status": 1,
+        "restaurant_discount": 0,
+        "restaurant_opening_time": "10:00",
+        "restaurant_closing_time": "23:00",
+        "schedule_order": false,
+        "free_delivery": 0,
+        "min_delivery_time": 0,
+        "max_delivery_time": 0,
+        "cuisines": [],
+        "recipe_status": "No",
+        "recipe": null
+      },
+      "variation": [
+        {
+          "name": "1.Base",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "Whole Wheat Noodles",
+              "optionPrice": "65"
+            }
+          ]
+        },
+        {
+          "name": "5.Flavour",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "OG Street Style",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "8.Spice Level",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "No Spice",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "2.Regular Veggies",
+          "type": "multi",
+          "min": 1,
+          "max": 3,
+          "required": "on",
+          "values": [
+            {
+              "label": "Mushroom",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "6.Toppings",
+          "type": "multi",
+          "min": 0,
+          "max": 2,
+          "required": "off",
+          "values": [
+            {
+              "label": "Crispy Onion",
+              "optionPrice": "0"
+            }
+          ]
+        }
+      ],
+      "add_ons": [],
+      "unit_price": "365.00",
+      "price": 365,
+      "total_add_on_price": 0,
+      "total_variation_price": "65.00",
+      "gst_tax_amount": "21.50",
+      "vat_tax_amount": "0.00",
+      "tax_amount": 21.5,
+      "discount_on_food": 0,
+      "discount_amount": "0.00",
+      "item_type": "KDS",
+      "quantity": 1,
+      "food_status": 5,
+      "food_level_notes": "",
+      "station": "KDS",
+      "ready_at": null,
+      "serve_at": null,
+      "cancel_at": null,
+      "cancel_by": null,
+      "item_update_count": 0,
+      "created_at": "2026-11-17 20:16:37",
+      "updated_at": "2026-11-17 20:16:37"
+    }
+  ],
+  "serve_order_details": [
+    {
+      "id": 3969362,
+      "order_id": 1578830,
+      "food_details": {
+        "id": 225204,
+        "name": "Your Wok. Your Way.",
+        "description": "",
+        "image": "1.png",
+        "category_id": 9150,
+        "category_ids": [
+          {
+            "id": "9150",
+            "position": 1
+          }
+        ],
+        "variations": [
+          {
+            "name": "1.Base",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "Classic Noodles",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Jasmine Rice",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Whole Wheat Noodles",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Udon Noodles",
+                "optionPrice": "55"
+              },
+              {
+                "label": "Flat Rice Noodles",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Quinoa",
+                "optionPrice": "45"
+              }
+            ]
+          },
+          {
+            "name": "2.Regular Veggies",
+            "type": "multi",
+            "min": 1,
+            "max": 3,
+            "required": "on",
+            "values": [
+              {
+                "label": "Mixed Peppers",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Red Onions",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Bean Sprouts",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Mushroom",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Baby Corn",
+                "optionPrice": "0"
+              },
+              {
+                "label": "French Beans",
+                "optionPrice": "0"
+              },
+              {
+                "label": "No Veggies",
+                "optionPrice": "0"
+              },
+              {
+                "label": "No Stir Fry MIx",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "3.Extra Veggies",
+            "type": "multi",
+            "min": 0,
+            "max": 6,
+            "required": "off",
+            "values": [
+              {
+                "label": "Mixed Peppers",
+                "optionPrice": "23"
+              },
+              {
+                "label": "Red Onions",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Bean Sprouts",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Mushroom",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Baby Corn",
+                "optionPrice": "25"
+              },
+              {
+                "label": "French Beans",
+                "optionPrice": "25"
+              }
+            ]
+          },
+          {
+            "name": "4.Exotic Veggies",
+            "type": "multi",
+            "min": 0,
+            "max": 5,
+            "required": "off",
+            "values": [
+              {
+                "label": "Zucchini",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Broccoli",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Bamboo Shoots",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Bok choy  ",
+                "optionPrice": "45"
+              },
+              {
+                "label": "Snow Peas",
+                "optionPrice": "65"
+              },
+              {
+                "label": "Edamame",
+                "optionPrice": "65"
+              }
+            ]
+          },
+          {
+            "name": "5.Flavour",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "OG Street Style",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Tokyo Teriyaki",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Bangkok Pad Thai",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Seoul Gochujang",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Singapore Black Pepper Smash",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Saigon Lemongrass Wok",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Penang Laksa",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Jakarta Goreng",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "6.Toppings",
+            "type": "multi",
+            "min": 0,
+            "max": 2,
+            "required": "off",
+            "values": [
+              {
+                "label": "Crispy Onion",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Crispy Garlic",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Chives",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Sesame Seeds",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Peanuts",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Coriander",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Spring Onion",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "7.Extra Toppings",
+            "type": "multi",
+            "min": 0,
+            "max": 6,
+            "required": "off",
+            "values": [
+              {
+                "label": "Crispy Onion",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Crispy Garlic",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Chives",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Sesame Seeds",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Peanuts",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Coriander",
+                "optionPrice": "25"
+              },
+              {
+                "label": "Spring Onions",
+                "optionPrice": "0"
+              }
+            ]
+          },
+          {
+            "name": "8.Spice Level",
+            "type": "single",
+            "min": 0,
+            "max": 0,
+            "required": "on",
+            "values": [
+              {
+                "label": "No Spice",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Medium",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Hot",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Extra Hot",
+                "optionPrice": "0"
+              },
+              {
+                "label": "Woko Fire",
+                "optionPrice": "0"
+              }
+            ]
+          }
+        ],
+        "add_ons": [
+          {
+            "id": 13260,
+            "name": "Paneer",
+            "price": 75,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:24:43.000000Z",
+            "updated_at": "2026-08-28T10:24:43.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13261,
+            "name": "Tofu",
+            "price": 95,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:01.000000Z",
+            "updated_at": "2026-10-28T09:04:59.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13262,
+            "name": "Egg",
+            "price": 45,
+            "weight": 0,
+            "show_type": null,
+            "veg": 3,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:16.000000Z",
+            "updated_at": "2026-10-22T14:55:57.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13263,
+            "name": "Chicken",
+            "price": 95,
+            "weight": 0,
+            "show_type": null,
+            "veg": 2,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T10:25:29.000000Z",
+            "updated_at": "2026-11-07T10:06:39.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          },
+          {
+            "id": 13265,
+            "name": "Prawn",
+            "price": 125,
+            "weight": 0,
+            "show_type": null,
+            "veg": null,
+            "inventory_id": null,
+            "recipe_id": null,
+            "has_inventory": "No",
+            "created_at": "2026-08-28T12:20:29.000000Z",
+            "updated_at": "2026-08-28T12:20:29.000000Z",
+            "restaurant_id": 839,
+            "status": 1
+          }
+        ],
+        "attributes": "[]",
+        "choice_options": "[]",
+        "price": 365,
+        "portion_size": "",
+        "tax": 5,
+        "tax_type": "GST",
+        "tax_calc": "Exclusive",
+        "discount": 0,
+        "discount_type": "percent",
+        "available_time_starts": "00:00:00",
+        "available_time_ends": "23:59:59",
+        "web_available_time_starts": null,
+        "web_available_time_ends": null,
+        "veg": 0,
+        "allergen": "[]",
+        "egg": 0,
+        "jain": 0,
+        "status": 1,
+        "restaurant_id": 839,
+        "order_count": 0,
+        "avg_rating": 0,
+        "rating_count": 0,
+        "recommended": 0,
+        "slug": "your-wok-your-way-1789637098",
+        "food_status": 0,
+        "food_stock": 0,
+        "food_for": "Normal",
+        "dinein": "Yes",
+        "takeaway": "Yes",
+        "delivery": "Yes",
+        "takeaway_charge": "0.00",
+        "delivery_charge": "0.00",
+        "food_order": 1,
+        "prepration_time_min": 15,
+        "serve_time_in_min": 10,
+        "give_discount": "Yes",
+        "is_disable": "N",
+        "complementary": "no",
+        "complementary_price": "0",
+        "item_code": "",
+        "is_inventory": "No",
+        "packed_food": "No",
+        "is_recipe": "N",
+        "recipe_id": null,
+        "live_web": "Y",
+        "stock_out": "N",
+        "pack_charges": "0.00",
+        "created_at": "2026-09-17T09:24:58.000000Z",
+        "updated_at": "2026-10-02T13:03:11.000000Z",
+        "kcal": "0.00",
+        "item_unit": "",
+        "item_unit_price": "365.00",
+        "hsn_code": null,
+        "restaurant_printer_id": null,
+        "upd": 0,
+        "restaurant_name": "W\u014dko - Flame Fired Asian",
+        "restaurant_status": 1,
+        "restaurant_discount": 0,
+        "restaurant_opening_time": "10:00",
+        "restaurant_closing_time": "23:00",
+        "schedule_order": false,
+        "free_delivery": 0,
+        "min_delivery_time": 0,
+        "max_delivery_time": 0,
+        "cuisines": [],
+        "recipe_status": "No",
+        "recipe": null
+      },
+      "variation": [
+        {
+          "name": "1.Base",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "Whole Wheat Noodles",
+              "optionPrice": "65"
+            }
+          ]
+        },
+        {
+          "name": "5.Flavour",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "OG Street Style",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "8.Spice Level",
+          "type": "single",
+          "min": 0,
+          "max": 0,
+          "required": "on",
+          "values": [
+            {
+              "label": "No Spice",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "2.Regular Veggies",
+          "type": "multi",
+          "min": 1,
+          "max": 3,
+          "required": "on",
+          "values": [
+            {
+              "label": "Mushroom",
+              "optionPrice": "0"
+            }
+          ]
+        },
+        {
+          "name": "6.Toppings",
+          "type": "multi",
+          "min": 0,
+          "max": 2,
+          "required": "off",
+          "values": [
+            {
+              "label": "Crispy Onion",
+              "optionPrice": "0"
+            }
+          ]
+        }
+      ],
+      "add_ons": [],
+      "unit_price": "365.00",
+      "price": 365,
+      "total_add_on_price": 0,
+      "total_variation_price": "65.00",
+      "gst_tax_amount": "21.50",
+      "vat_tax_amount": "0.00",
+      "tax_amount": 21.5,
+      "discount_on_food": 0,
+      "discount_amount": "0.00",
+      "item_type": "KDS",
+      "quantity": 1,
+      "food_status": 5,
+      "food_level_notes": "",
+      "station": "KDS",
+      "ready_at": null,
+      "serve_at": null,
+      "cancel_at": null,
+      "cancel_by": null,
+      "item_update_count": 0,
+      "created_at": "2026-11-17 20:16:37",
+      "updated_at": "2026-11-17 20:16:37"
+    }
+  ],
+  "ready_order_details": [],
+  "associated_order_list": null,
+  "room_info": {},
+  "waiter_call": null
+}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CR-092 Mockup — Recipe Sort Controls</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'IBM Plex Sans', sans-serif; background: #F8FAFC; }
+    h1, .tab-label, th { font-family: 'Manrope', sans-serif; letter-spacing: -0.01em; }
+    .tab-active { border-bottom: 2px solid #F97316; color: #EA580C; font-weight: 700; }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #64748B; }
+    .card-lift { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .card-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Top nav -->
+  <div class="bg-white border-b border-slate-200 px-6">
+    <div class="max-w-7xl mx-auto flex items-center gap-1 text-xs font-semibold overflow-x-auto">
+      <span class="text-[10px] uppercase tracking-widest text-slate-400 mr-3 py-3">Setup</span>
+      <a href="#" class="px-3 py-3 text-slate-500">Ingredients</a>
+      <a href="#" class="px-3 py-3 bg-slate-900 text-white rounded-md">Recipes</a>
+      <a href="#" class="px-3 py-3 text-slate-500">Vendors</a>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-6">
+
+    <div class="flex items-center gap-3 mb-6">
+      <h1 class="text-xl font-extrabold text-slate-900">Recipes Management</h1>
+    </div>
+
+    <!-- Tabs + Create button -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-0 border-b border-slate-200">
+        <button class="tab-label tab-active px-4 py-2.5 text-sm">Standard Recipes <span class="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-bold">92</span></button>
+        <button class="tab-label tab-inactive px-4 py-2.5 text-sm font-medium">Sub-Recipes <span class="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold">7</span></button>
+        <button class="tab-label tab-inactive px-4 py-2.5 text-sm font-medium">Addon Recipes <span class="ml-1 text-xs px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-bold">1</span></button>
+        <button class="tab-label tab-inactive px-4 py-2.5 text-sm font-medium">By Ingredient</button>
+      </div>
+      <button class="h-9 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-semibold flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Create Recipe
+      </button>
+    </div>
+
+    <!-- Card / Bulk toggle -->
+    <div class="flex items-center justify-end mb-3 gap-1">
+      <button class="px-2.5 h-8 rounded-md text-xs font-medium flex items-center gap-1.5 bg-orange-100 text-orange-700 ring-1 ring-orange-300">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Card
+      </button>
+      <button class="px-2.5 h-8 rounded-md text-xs font-medium flex items-center gap-1.5 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Bulk
+      </button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- CR-092: NEW — Sort controls row                    -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="flex items-center justify-between mb-3 px-1">
+      <span class="text-xs text-slate-400">92 recipes</span>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Sort by</span>
+        <select class="h-8 text-xs border border-slate-200 rounded-md px-2 outline-none focus:border-orange-400 bg-white cursor-pointer" data-testid="recipe-sort-select">
+          <option>Name A→Z</option>
+          <option>Name Z→A</option>
+          <option selected>Cost High→Low</option>
+          <option>Cost Low→High</option>
+          <option>Most Ingredients</option>
+        </select>
+      </div>
+    </div>
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Recipe cards (sorted by Cost High→Low for demo) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+      <!-- Card 1: Highest cost -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Paneer Butter Masala</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: Paneer Butter Masala</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <div class="flex items-center gap-3 mb-3 text-xs text-slate-400">
+          <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Prep: 15</span>
+          <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Cook: 5</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (6):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Paneer</span><span class="text-slate-400">250 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Butter</span><span class="text-slate-400">50 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Cream</span><span class="text-slate-400">100 ml</span></div>
+          <p class="text-orange-500 font-medium">+ 3 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">Cost: ₹142.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700">Sale: ₹380.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-green-50 text-green-700">Margin: 63%</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Second highest cost -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Veg Biryani</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: Veg Biryani</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (8):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Basmati Rice</span><span class="text-slate-400">300 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Mixed Veg</span><span class="text-slate-400">200 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Paneer</span><span class="text-slate-400">100 gm</span></div>
+          <p class="text-orange-500 font-medium">+ 5 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">Cost: ₹95.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700">Sale: ₹320.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-green-50 text-green-700">Margin: 70%</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Third -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">Masala Dosa</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: Masala Dosa</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (5):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Dosa Batter</span><span class="text-slate-400">150 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Potato</span><span class="text-slate-400">120 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Onion</span><span class="text-slate-400">50 gm</span></div>
+          <p class="text-orange-500 font-medium">+ 2 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">Cost: ₹42.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700">Sale: ₹150.00</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-green-50 text-green-700">Margin: 72%</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Lower cost -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">50-50 Aam -E -Bahar</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: 50-50 Aam -E -Bahar</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (5):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Butter</span><span class="text-slate-400">3 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Sugar Syrup</span><span class="text-slate-400">13 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Base Cream</span><span class="text-slate-400">25 gm</span></div>
+          <p class="text-orange-500 font-medium">+ 2 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Cost: —</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Sale: —</span>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">50-50 Astha E Malai</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: 50-50 Astha E Malai</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (4):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Butter</span><span class="text-slate-400">13 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Sugar Syrup</span><span class="text-slate-400">13 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Roasted Pistachios</span><span class="text-slate-400">2.5 gm</span></div>
+          <p class="text-orange-500 font-medium">+ 1 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Cost: —</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Sale: —</span>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 card-lift cursor-pointer">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900">50-50 Bluebeery</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Menu: 50-50 Bluebeery</p>
+          </div>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-600 flex-shrink-0 ml-2">1 Serve</span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 mb-1.5">Ingredients (5):</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between"><span class="text-slate-600">Butter</span><span class="text-slate-400">13 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Sugar Syrup</span><span class="text-slate-400">13 gm</span></div>
+          <div class="flex justify-between"><span class="text-slate-600">Base Cream</span><span class="text-slate-400">30 gm</span></div>
+          <p class="text-orange-500 font-medium">+ 2 more</p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center gap-3">
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Cost: —</span>
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-50 text-slate-400">Sale: —</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Banner -->
+  <div class="fixed bottom-0 left-0 right-0 bg-slate-900 text-white py-2 px-4 text-center text-xs font-medium z-40">
+    CR-092 Mockup — Sort Controls · "Cost High→Low" selected · Cards sorted by cost descending · Static preview
+  </div>
+
+</body>
+</html>
