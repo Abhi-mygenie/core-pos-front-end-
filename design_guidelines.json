@@ -1,0 +1,579 @@
+{
+  "project_name": "MyGenie POS Round 4 Ad Screens (Gate 2.5)",
+  "version": "1.0.0",
+  "date": "2026-11-27",
+  "app_type": "static_mockup / marketing_asset",
+  "target_audience": "MyGenie POS marketing team placing screens into Facebook and Instagram ad creatives (frames, headlines, logos added separately). End viewers: café, QSR, cloud kitchen and family restaurant owners across India.",
+  "primary_design_mandate": "Pixel-accurate, faithful recreation of existing MyGenie POS app screens with authoritative demo data. NO redesign, no restyling, no tidying. Every screen must be delivered in two PNG versions: clean and highlight (_hl). Total: 18 PNG files (9 screens × 2 versions).",
+  "theme_strategy": {
+    "base_theme": "light",
+    "background_color": "#F2F2F7",
+    "surface_cards": "#FFFFFF",
+    "hero_kpi_card": "#0A0A0A",
+    "hero_kpi_text": "#FFFFFF",
+    "text_primary": "#111827",
+    "text_secondary": "#6B7280",
+    "text_muted": "#9CA3AF",
+    "brand_colors_context_only": {
+      "orange": "#F58346",
+      "green": "#1DAA4B",
+      "yellow": "#F5BE46"
+    },
+    "channel_colors": {
+      "pos": "#1DAA4B",
+      "swiggy": "#F58346",
+      "zomato": "#EF4444"
+    },
+    "p_and_l_colors": {
+      "revenue_green": "#1DAA4B",
+      "purchase_blue": "#2563EB",
+      "expenses_orange": "#F58346"
+    },
+    "highlight_style": {
+      "border_color": "#F87171",
+      "border_width": "3px",
+      "border_radius": "16px",
+      "background_dim_overlay": "rgba(0, 0, 0, 0.28)",
+      "highlight_z_index": 50,
+      "rule": "Soft coral/red rounded-rectangle outline enclosing highlighted section. Remainder of screen dimmed. No arrows, no callout text, no badges added."
+    }
+  },
+  "typography": {
+    "font_family_base": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    "font_family_mono": "Menlo, Monaco, Consolas, 'Courier New', monospace",
+    "headings": {
+      "page_title": "text-2xl font-bold tracking-tight text-gray-900",
+      "subtitle": "text-sm text-gray-500 font-normal",
+      "card_header": "text-xs font-bold uppercase tracking-wider text-gray-500",
+      "hero_kpi_label": "text-xs font-bold uppercase tracking-widest text-gray-400"
+    },
+    "kpi_digits": "font-mono font-black tracking-tight",
+    "currency_format": "₹XX,XXX.00 (Rupee symbol, Indian comma separator, two decimals)"
+  },
+  "demo_data_source_of_truth": {
+    "outlet_1": "Demo Kitchen — Koramangala",
+    "outlet_2": "Demo Kitchen — Indiranagar",
+    "status_bar_time": "8:52 PM",
+    "status_bar_indicators": "5G, 100% full battery",
+    "koramangala": {
+      "net_sales": "₹48,650.00",
+      "paid_orders": 112,
+      "top_channel": "POS",
+      "repeat_customers_pct": "38%",
+      "channel_sales": {
+        "pos": "₹29,190.00",
+        "swiggy": "₹11,680.00",
+        "zomato": "₹7,780.00"
+      },
+      "channel_orders": {
+        "pos": 74,
+        "swiggy": 22,
+        "zomato": 16
+      },
+      "payment_mix": {
+        "upi": "36%",
+        "aggregator": "34%",
+        "cash": "21%",
+        "card": "9%"
+      },
+      "cancellations": {
+        "count": 7,
+        "amount": "₹3,240.00",
+        "top_reason": "Customer changed mind"
+      },
+      "net_p_and_l": "₹9,850.00",
+      "p_and_l_breakdown": {
+        "sales": "₹48,650.00",
+        "paid_revenue": "₹46,900.00",
+        "purchase": "-₹16,500.00",
+        "expenses": "-₹22,300.00",
+        "net_profit": "₹9,850.00"
+      }
+    },
+    "indiranagar": {
+      "net_sales": "₹36,200.00",
+      "net_p_and_l": "₹6,900.00",
+      "orders": 87
+    },
+    "all_outlets": {
+      "net_sales": "₹84,850.00",
+      "net_p_and_l": "₹16,750.00",
+      "total_outlets": 2
+    },
+    "menu_categories": [
+      "Starters",
+      "Main Course",
+      "Breads",
+      "Beverages"
+    ],
+    "sample_bill_order_1012": {
+      "order_number": "#1012",
+      "order_type": "Takeaway",
+      "outlet": "Demo Kitchen — Koramangala",
+      "items": [
+        { "qty": 1, "name": "Paneer Butter Masala", "price": "₹380.00", "badge": "1" },
+        { "qty": 2, "name": "Butter Naan", "price": "₹120.00", "unit_price": "₹60.00", "badge": "2" },
+        { "qty": 2, "name": "Sweet Lime Soda", "price": "₹180.00", "unit_price": "₹90.00", "badge": "2" }
+      ],
+      "grand_total": "₹680.00",
+      "payment_mode": "UPI"
+    },
+    "recent_orders": [
+      { "id": "#1069", "channel": "POS", "type": "Dine-In", "table": "Table 4", "amount": "₹680.00", "status": "Paid" },
+      { "id": "#1068", "channel": "Swiggy", "type": "Delivery", "table": null, "amount": "₹540.00", "status": "Paid" },
+      { "id": "#1067", "channel": "Zomato", "type": "Delivery", "table": null, "amount": "₹720.00", "status": "Paid" },
+      { "id": "#1066", "channel": "POS", "type": "Takeaway", "table": null, "amount": "₹260.00", "status": "Paid" },
+      { "id": "#1065", "channel": "Swiggy", "type": "Delivery", "table": null, "amount": "₹410.00", "status": "Paid" }
+    ],
+    "delivery_rider_demo": {
+      "name": "Ravi",
+      "phone": "98XXXXXX21",
+      "order_id": "#1066",
+      "status": "Out for Delivery"
+    },
+    "takeaway_order_demo": {
+      "order_id": "#1066",
+      "status": "Ready for Pickup",
+      "items": "1× Paneer Butter Masala ₹380.00 + 2× Butter Naan ₹120.00",
+      "grand_total": "₹500.00"
+    },
+    "reports_list": [
+      "Dashboard Report",
+      "Profit & Loss",
+      "Orders",
+      "Item Sales",
+      "Cancellations",
+      "Payments",
+      "Staff",
+      "Customers",
+      "Payout Match"
+    ],
+    "live_ops_demo": {
+      "running_tables_count": 4,
+      "cards": [
+        { "table": "Table 2", "items_count": 2, "amount": "₹680.00", "status": "Running" },
+        { "table": "Table 5", "items_count": 3, "amount": "₹720.00", "status": "Running" },
+        { "table": "Table 7", "items_count": 1, "amount": "₹260.00", "status": "Running" },
+        { "channel": "Swiggy", "order_id": "#1068", "amount": "₹540.00", "status": "Preparing" }
+      ]
+    }
+  },
+  "screens_specification": [
+    {
+      "code": "TB1",
+      "screen_name": "Billing on Tablet",
+      "device": "Tablet (Landscape)",
+      "canvas_px": { "width": 2048, "height": 1536 },
+      "priority": 1,
+      "due_date": "2026-11-30",
+      "file_clean": "R4_TB1_billing-tablet.png",
+      "file_highlight": "R4_TB1_billing-tablet_hl.png",
+      "layout_structure": {
+        "type": "two-panel split landscape",
+        "left_panel_width": "64%",
+        "right_panel_width": "36%",
+        "status_bar": "Top bar: 8:52 PM left, 5G + battery full right",
+        "header": "Order #1012 · Takeaway · Demo Kitchen — Koramangala",
+        "category_tabs": ["Starters", "Main Course (active black pill)", "Breads", "Beverages"],
+        "left_menu_grid": {
+          "columns": 2,
+          "card_style": "white card, rounded-2xl p-6 shadow-sm border border-gray-100",
+          "items": [
+            { "name": "Paneer Butter Masala", "price": "₹380.00", "selected": true, "badge": "1", "border": "orange #F58346" },
+            { "name": "Kadai Paneer", "price": "₹340.00", "selected": false },
+            { "name": "Dal Makhani", "price": "₹290.00", "selected": false },
+            { "name": "Veg Hakka Noodles", "price": "₹260.00", "selected": false },
+            { "name": "Butter Naan", "price": "₹60.00", "selected": true, "badge": "2", "border": "orange #F58346" },
+            { "name": "Sweet Lime Soda", "price": "₹90.00", "selected": true, "badge": "2", "border": "orange #F58346" }
+          ]
+        },
+        "right_order_panel": {
+          "header": "ORDER with green POS pill top-right",
+          "lines": [
+            "1× Paneer Butter Masala  ₹380.00",
+            "2× Butter Naan           ₹120.00",
+            "2× Sweet Lime Soda       ₹180.00"
+          ],
+          "separator": "dashed line border-gray-200",
+          "grand_total": "GRAND TOTAL ₹680.00 (font-mono bold text-3xl)",
+          "actions": "Place Order (grey outline button) and Collect Bill (solid #1DAA4B green button)"
+        }
+      },
+      "highlight_target": "Grand total 'GRAND TOTAL ₹680.00' and 'Collect Bill' button container",
+      "data_testids": {
+        "status_bar": "status-bar-tb1",
+        "menu_category_main": "menu-category-main-course",
+        "item_paneer": "menu-item-paneer-butter-masala",
+        "item_naan": "menu-item-butter-naan",
+        "item_soda": "menu-item-sweet-lime-soda",
+        "order_grand_total": "order-summary-grand-total",
+        "btn_place_order": "order-action-place-order",
+        "btn_collect_bill": "order-action-collect-bill",
+        "highlight_box": "tb1-highlight-collect-bill-zone"
+      }
+    },
+    {
+      "code": "DT1",
+      "screen_name": "Dashboard on Desktop",
+      "device": "Desktop Widescreen",
+      "canvas_px": { "width": 1920, "height": 1080 },
+      "priority": 1,
+      "due_date": "2026-11-30",
+      "file_clean": "R4_DT1_dashboard-desktop.png",
+      "file_highlight": "R4_DT1_dashboard-desktop_hl.png",
+      "layout_structure": {
+        "type": "sidebar + main content",
+        "sidebar_width": "240px",
+        "content_area": "1680px fill",
+        "top_nav": {
+          "title": "Dashboard Report",
+          "subtitle": "Demo Kitchen — Koramangala · Today",
+          "actions": "Date preset filter pill 'Today' + branch badge"
+        },
+        "hero_kpi_card": {
+          "bg": "black #0A0A0A",
+          "label": "NET SALES",
+          "badge": "green dot + 'LIVE'",
+          "value": "₹48,650.00",
+          "sub_metrics": [
+            "112 Paid Orders",
+            "POS Top Channel",
+            "38% Repeat Customers"
+          ]
+        },
+        "channel_mix_card": {
+          "title": "CHANNEL MIX",
+          "bars": [
+            { "label": "POS", "amount": "₹29,190.00", "pct": "60%", "color": "#1DAA4B" },
+            { "label": "Swiggy", "amount": "₹11,680.00", "pct": "24%", "color": "#F58346" },
+            { "label": "Zomato", "amount": "₹7,780.00", "pct": "16%", "color": "#EF4444" }
+          ]
+        },
+        "bottom_grid": {
+          "columns": 2,
+          "card_left": {
+            "title": "PAYMENT MIX",
+            "primary": "UPI 36%",
+            "secondary": "Aggregator 34% · Cash 21% · Card 9%"
+          },
+          "card_right": {
+            "title": "CANCELLATIONS",
+            "primary": "7 · ₹3,240.00 (in red #EF4444)",
+            "secondary": "Top Reason: Customer changed mind"
+          }
+        }
+      },
+      "highlight_target": "Hero Net Sales figure '₹48,650.00'",
+      "data_testids": {
+        "sidebar": "nav-sidebar-desktop",
+        "top_title": "dashboard-title",
+        "hero_sales_value": "hero-net-sales-val",
+        "hero_live_indicator": "hero-live-pill",
+        "channel_bar_pos": "channel-mix-pos",
+        "channel_bar_swiggy": "channel-mix-swiggy",
+        "channel_bar_zomato": "channel-mix-zomato",
+        "payment_mix_upi": "payment-mix-upi-val",
+        "cancellations_val": "cancellations-kpi-val",
+        "highlight_box": "dt1-highlight-net-sales"
+      }
+    },
+    {
+      "code": "DT2",
+      "screen_name": "Orders All Channels, Desktop",
+      "device": "Desktop Widescreen",
+      "canvas_px": { "width": 1920, "height": 1080 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_DT2_orders-desktop.png",
+      "file_highlight": "R4_DT2_orders-desktop_hl.png",
+      "layout_structure": {
+        "title": "Orders (strictly NOT Orders (Beta))",
+        "subtitle": "Demo Kitchen — Koramangala · Today",
+        "channel_tiles_row": [
+          { "channel": "POS", "count": 74, "color_badge": "bg-green-100 text-green-800 border-green-300" },
+          { "channel": "Swiggy", "count": 22, "color_badge": "bg-orange-100 text-orange-800 border-orange-300" },
+          { "channel": "Zomato", "count": 16, "color_badge": "bg-red-100 text-red-800 border-red-300" }
+        ],
+        "orders_table": [
+          { "order": "#1069", "channel": "POS", "type": "Dine-In", "target": "Table 4", "amount": "₹680.00", "status": "Paid" },
+          { "order": "#1068", "channel": "Swiggy", "type": "Delivery", "target": "Online", "amount": "₹540.00", "status": "Paid" },
+          { "order": "#1067", "channel": "Zomato", "type": "Delivery", "target": "Online", "amount": "₹720.00", "status": "Paid" },
+          { "order": "#1066", "channel": "POS", "type": "Takeaway", "target": "Counter", "amount": "₹260.00", "status": "Paid" },
+          { "order": "#1065", "channel": "Swiggy", "type": "Delivery", "target": "Online", "amount": "₹410.00", "status": "Paid" }
+        ]
+      },
+      "highlight_target": "The row of 3 channel count tiles (POS 74, Swiggy 22, Zomato 16)",
+      "data_testids": {
+        "page_title": "orders-page-title",
+        "tile_pos": "channel-tile-pos-74",
+        "tile_swiggy": "channel-tile-swiggy-22",
+        "tile_zomato": "channel-tile-zomato-16",
+        "row_1069": "order-row-1069",
+        "highlight_box": "dt2-highlight-channel-tiles"
+      }
+    },
+    {
+      "code": "DT3",
+      "screen_name": "P&L Report, Desktop",
+      "device": "Desktop Widescreen",
+      "canvas_px": { "width": 1920, "height": 1080 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_DT3_pl-desktop.png",
+      "file_highlight": "R4_DT3_pl-desktop_hl.png",
+      "layout_structure": {
+        "header": "Profit & Loss Report · Demo Kitchen — Koramangala · Today",
+        "hero_card": {
+          "label": "NET P&L",
+          "value": "₹9,850.00",
+          "color": "text-green-400 font-mono text-5xl font-extrabold"
+        },
+        "breakdown_card": {
+          "rows": [
+            { "label": "Sales", "val": "₹48,650.00", "style": "text-gray-900 font-medium" },
+            { "label": "Paid Revenue", "val": "₹46,900.00", "style": "text-gray-900 font-medium" },
+            { "label": "Purchase", "val": "-₹16,500.00", "style": "text-blue-600 font-medium" },
+            { "label": "Expenses", "val": "-₹22,300.00", "style": "text-orange-600 font-medium" },
+            { "label": "Net P&L", "val": "₹9,850.00", "style": "text-green-600 font-bold text-xl border-t border-gray-200 pt-3" }
+          ],
+          "bar_visual": "3-segment horizontal progress bar: green (revenue), blue (purchase), orange (expenses)"
+        }
+      },
+      "highlight_target": "Net P&L hero figure '₹9,850.00'",
+      "data_testids": {
+        "hero_pl_val": "pl-hero-net-value",
+        "pl_sales": "pl-sales-line",
+        "pl_purchase": "pl-purchase-line",
+        "pl_expenses": "pl-expenses-line",
+        "pl_net_profit": "pl-net-line",
+        "highlight_box": "dt3-highlight-net-pl"
+      }
+    },
+    {
+      "code": "ML1_Desktop",
+      "screen_name": "Outlets, Desktop",
+      "device": "Desktop Widescreen",
+      "canvas_px": { "width": 1920, "height": 1080 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_ML1_outlets-desktop.png",
+      "file_highlight": "R4_ML1_outlets-desktop_hl.png",
+      "layout_structure": {
+        "header": "Outlets · Demo Kitchen · 2 outlets · Today",
+        "hero_card": {
+          "label": "ALL OUTLETS",
+          "columns": [
+            { "label": "NET SALES", "val": "₹84,850.00", "style": "text-white text-4xl font-bold font-mono" },
+            { "label": "NET P&L", "val": "₹16,750.00", "style": "text-green-400 text-4xl font-bold font-mono" }
+          ]
+        },
+        "outlet_cards_grid": {
+          "columns": 2,
+          "card_1": {
+            "name": "Demo Kitchen — Koramangala",
+            "icon": "orange location pin",
+            "sales": "₹48,650.00",
+            "pnl": "₹9,850.00",
+            "orders": 112
+          },
+          "card_2": {
+            "name": "Demo Kitchen — Indiranagar",
+            "icon": "orange location pin",
+            "sales": "₹36,200.00",
+            "pnl": "₹6,900.00",
+            "orders": 87
+          }
+        }
+      },
+      "highlight_target": "The full ALL OUTLETS hero summary card (₹84,850.00 / ₹16,750.00)",
+      "data_testids": {
+        "all_outlets_hero": "hero-all-outlets",
+        "hero_sales": "all-outlets-sales-val",
+        "hero_pnl": "all-outlets-pnl-val",
+        "outlet_koramangala": "outlet-card-koramangala",
+        "outlet_indiranagar": "outlet-card-indiranagar",
+        "highlight_box": "ml1-desktop-highlight-hero"
+      }
+    },
+    {
+      "code": "ML1_Tablet",
+      "screen_name": "Outlets, Tablet Landscape",
+      "device": "Tablet (Landscape)",
+      "canvas_px": { "width": 2048, "height": 1536 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_ML1_outlets-tablet.png",
+      "file_highlight": "R4_ML1_outlets-tablet_hl.png",
+      "layout_structure": {
+        "status_bar": "8:52 PM left, 5G full battery right",
+        "header": "Outlets · Demo Kitchen · 2 outlets · Today",
+        "hero_card": {
+          "label": "ALL OUTLETS",
+          "sales": "₹84,850.00",
+          "pnl": "₹16,750.00"
+        },
+        "outlet_cards_side_by_side": [
+          { "name": "Demo Kitchen — Koramangala", "sales": "₹48,650.00", "pnl": "₹9,850.00", "orders": 112 },
+          { "name": "Demo Kitchen — Indiranagar", "sales": "₹36,200.00", "pnl": "₹6,900.00", "orders": 87 }
+        ]
+      },
+      "highlight_target": "The ALL OUTLETS hero card",
+      "data_testids": {
+        "tablet_status_bar": "tablet-status-bar-ml1",
+        "hero_all_outlets": "tablet-hero-all-outlets",
+        "outlet_kora_tab": "tablet-outlet-koramangala",
+        "outlet_indi_tab": "tablet-outlet-indiranagar",
+        "highlight_box": "ml1-tablet-highlight-hero"
+      }
+    },
+    {
+      "code": "DL1",
+      "screen_name": "Delivery Order with Rider, Phone",
+      "device": "Phone (Portrait)",
+      "canvas_px": { "width": 1080, "height": 1920 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_DL1_delivery-rider.png",
+      "file_highlight": "R4_DL1_delivery-rider_hl.png",
+      "layout_structure": {
+        "status_bar": "8:52 PM left, 5G + battery right",
+        "nav_bar": "Back chevron · Order #1066 · Subtitle: Delivery · Demo Kitchen — Koramangala",
+        "status_badge": "Out for Delivery (vibrant green pill badge with soft pulsing dot)",
+        "order_items_card": {
+          "items": ["1× Veg Hakka Noodles  ₹260.00"],
+          "grand_total": "₹260.00"
+        },
+        "rider_assigned_card": {
+          "label": "RIDER ASSIGNED",
+          "rider_name": "Ravi",
+          "phone": "98XXXXXX21",
+          "status": "Out for Delivery",
+          "icon": "Rider helmet / motorcycle avatar icon"
+        }
+      },
+      "highlight_target": "Rider name 'Ravi' and the status badge 'Out for Delivery'",
+      "data_testids": {
+        "status_badge_delivery": "status-badge-out-for-delivery",
+        "rider_card": "card-rider-assigned",
+        "rider_name": "rider-name-ravi",
+        "rider_phone": "rider-phone-masked",
+        "highlight_box": "dl1-highlight-rider-status"
+      }
+    },
+    {
+      "code": "TK1",
+      "screen_name": "Takeaway Order Ready, Phone",
+      "device": "Phone (Portrait)",
+      "canvas_px": { "width": 1080, "height": 1920 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_TK1_takeaway-ready.png",
+      "file_highlight": "R4_TK1_takeaway-ready_hl.png",
+      "layout_structure": {
+        "status_bar": "8:52 PM left, 5G + battery right",
+        "nav_bar": "Back chevron · Order #1066 · Subtitle: Takeaway · Demo Kitchen — Koramangala",
+        "status_badge_prominent": "Ready for Pickup (large green badge, pill shape, high contrast)",
+        "order_items_card": {
+          "items": [
+            "1× Paneer Butter Masala  ₹380.00",
+            "2× Butter Naan           ₹120.00"
+          ],
+          "grand_total": "₹500.00"
+        },
+        "order_type_row": "Takeaway · Order #1066 · Counter 1"
+      },
+      "highlight_target": "The prominent 'Ready for Pickup' green status badge",
+      "data_testids": {
+        "status_badge_takeaway": "status-badge-ready-for-pickup",
+        "items_card_tk1": "items-card-takeaway-1066",
+        "grand_total_tk1": "grand-total-val-500",
+        "highlight_box": "tk1-highlight-ready-badge"
+      }
+    },
+    {
+      "code": "RP1",
+      "screen_name": "Reports List, Phone",
+      "device": "Phone (Portrait)",
+      "canvas_px": { "width": 1080, "height": 1920 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_RP1_reports-list.png",
+      "file_highlight": "R4_RP1_reports-list_hl.png",
+      "layout_structure": {
+        "status_bar": "8:52 PM left, 5G + battery right",
+        "nav_bar": "Back chevron · Reports · Demo Kitchen — Koramangala",
+        "list_items": [
+          { "index": 1, "title": "Dashboard Report", "icon": "ChartPieIcon" },
+          { "index": 2, "title": "Profit & Loss", "icon": "ReceiptPercentIcon" },
+          { "index": 3, "title": "Orders", "icon": "ShoppingBagIcon" },
+          { "index": 4, "title": "Item Sales", "icon": "TagIcon" },
+          { "index": 5, "title": "Cancellations", "icon": "XCircleIcon" },
+          { "index": 6, "title": "Payments", "icon": "CreditCardIcon" },
+          { "index": 7, "title": "Staff", "icon": "UsersIcon" },
+          { "index": 8, "title": "Customers", "icon": "UserGroupIcon" },
+          { "index": 9, "title": "Payout Match", "icon": "ScaleIcon" }
+        ],
+        "row_styling": "White surface, 16px padding, subtle border-b, title bold, soft grey right chevron"
+      },
+      "highlight_target": "Group of 3 consecutive reports: 'Dashboard Report', 'Profit & Loss', and 'Orders'",
+      "data_testids": {
+        "report_item_dashboard": "report-item-dashboard-report",
+        "report_item_pl": "report-item-profit-and-loss",
+        "report_item_orders": "report-item-orders",
+        "report_item_items": "report-item-item-sales",
+        "highlight_box": "rp1-highlight-top-3-reports"
+      }
+    },
+    {
+      "code": "LV1",
+      "screen_name": "Live Operations, Phone",
+      "device": "Phone (Portrait)",
+      "canvas_px": { "width": 1080, "height": 1920 },
+      "priority": 2,
+      "due_date": "2026-12-03",
+      "file_clean": "R4_LV1_live-ops.png",
+      "file_highlight": "R4_LV1_live-ops_hl.png",
+      "layout_structure": {
+        "status_bar": "8:52 PM left, 5G + battery right",
+        "nav_bar": "Back chevron · Live Operations · Demo Kitchen — Koramangala · Now",
+        "summary_banner": {
+          "title": "4 Running Tables",
+          "indicator": "green blinking live dot",
+          "style": "white card with shadow-sm, font-bold text-lg p-5"
+        },
+        "live_cards": [
+          { "title": "Table 2", "items": "2 items", "amount": "₹680.00", "status": "Running", "status_color": "green" },
+          { "title": "Table 5", "items": "3 items", "amount": "₹720.00", "status": "Running", "status_color": "green" },
+          { "title": "Table 7", "items": "1 item", "amount": "₹260.00", "status": "Running", "status_color": "green" },
+          { "title": "Swiggy #1068", "items": "Online Order", "amount": "₹540.00", "status": "Preparing", "status_color": "orange" }
+        ]
+      },
+      "highlight_target": "The summary banner '4 Running Tables' with live indicator",
+      "data_testids": {
+        "summary_live_count": "live-ops-summary-running-count",
+        "live_card_table_2": "live-card-table-2",
+        "live_card_table_5": "live-card-table-5",
+        "live_card_table_7": "live-card-table-7",
+        "live_card_swiggy": "live-card-swiggy-1068",
+        "highlight_box": "lv1-highlight-running-tables-count"
+      }
+    }
+  ],
+  "anti_patterns_and_exclusions": [
+    "NO Inter font for main headers or KPI numerals; use Apple System / SF Pro or Barcode/Mono styling",
+    "NO centered layouts by default; maintain asymmetrical tension and optical alignment",
+    "NO gradients over 20%; prefer crisp 1px borders, subtle drop shadows, and high contrast typography",
+    "NO OS chrome (no macOS titlebar, no Windows taskbar, no browser URL bar)",
+    "NO device frame on the delivered PNGs (frames added by marketing team)",
+    "NO rounded corners on the PNG outer canvas edge",
+    "NO fake third-party logos (plain text only for Swiggy/Zomato)",
+    "DO NOT include excluded screens (OW1, OW2, AI1, AI2, KD1, WA1, CR1)"
+  ],
+  "output_directory": "/app/memory/evidence/ad_screens_reference/Round4_Delivery/",
+  "instructions_to_main_agent": [
+    "1. Adhere strictly to the demo data source of truth table. Under no circumstances should old numbers (such as UPI 54% or Net P&L ₹24,600) be rendered.",
+    "2. Render each screen at the exact canvas pixel resolution specified (2048x1536 for tablet, 1920x1080 for desktop, 1080x1920 for phone).",
+    "3. Highlight version (_hl) must apply a dim scrim (rgba(0,0,0,0.28)) to the entire background while bringing the highlighted element into crisp elevation with a 3px soft coral/red rounded border (#F87171) and 16px corner radius.",
+    "4. All elements must carry data-testid attributes corresponding to the design_guidelines.json specification."
+  ]
+}
