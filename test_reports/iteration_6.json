@@ -1,0 +1,25 @@
+{
+  "summary": "BUG-698 RE-TEST: FY preset now returns CURRENT financial year (Apr 2026 - Mar 2027). PASS. Regression for Today, 7D, 30D also PASS.",
+  "test_date": "2026-11-26",
+  "bugs_tested": {
+    "BUG-698": {
+      "status": "PASS",
+      "description": "FY preset now returns CURRENT financial year. From = 2026-04-01, To = 2027-03-31.",
+      "fix_verified": "datePresets.js L52: fyStartYear = month>=3 ? year : year-1 (was fyEndYear). Fix correctly yields Apr 2026 - Mar 2027 for Nov 2026."
+    }
+  },
+  "regression": {
+    "Today": {"status": "PASS", "from": "2026-11-26", "to": "2026-11-26"},
+    "7D": {"status": "PASS", "from": "2026-11-20", "to": "2026-11-26"},
+    "30D": {"status": "PASS", "from": "2026-10-28", "to": "2026-11-26"}
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": ["/app/test_reports/iteration_6.json"],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BUG-698 PASS. All presets working correctly. 7/7 bugs from Nov-18 batch now PASS."
+}

@@ -17,8 +17,9 @@ const inferSoundFromContent = (title = '', body = '') => {
   const text = `${title} ${body}`.toLowerCase();
   if (text.includes('new order')) return 'new_order';
   if (text.includes('swiggy')) return 'swiggy_new_order';
-  if (text.includes('confirm')) return 'confirm_order';
-  if (text.includes('accepted')) return 'order_accepted';
+  // Do not treat "confirmed" / bare "confirm" as YTC — that reopened ScanOrderPopOut after Accept.
+  if (/\byet\s*to\s*confirm\b|\bto confirm\b|confirm[_\s-]?order/.test(text)) return 'confirm_order';
+  if (text.includes('accepted') || text.includes('confirmed')) return 'order_accepted';
   if (text.includes('rejected') || text.includes('cancelled')) return 'order_rejected';
   if (text.includes('ready')) return 'order_ready';
   if (text.includes('served') || text.includes('attend')) return 'attend_table';
@@ -185,12 +186,12 @@ export const NotificationProvider = ({ children }) => {
 
     // After reload, FCM can arrive before/without scan-new-order landing in
     // OrderContext — ask Dashboard to hydrate so ScanOrderPopOut can open.
-    // Real payloads often stamp sound=forty_five_sec_buzzer (not confirm_order),
-    // so also match title/body "confirm".
+    // Match yet-to-confirm / confirm_order only — NOT bare "confirm"/"confirmed"
+    // (Accept ACKs were re-opening ScanOrderPopOut for an instant).
+    const ytcText = `${title || ''} ${body || ''}`;
     const looksLikeYtcConfirm =
       isConfirmOrderNotification(data, resolvedSound) ||
-      /confirm/i.test(title) ||
-      /confirm/i.test(body);
+      /\byet\s*to\s*confirm\b|\bto confirm\b|confirm[_\s-]?order/i.test(ytcText);
     if (diagOrderId && looksLikeYtcConfirm) {
       const queuedId = enqueueYtcFcm(diagOrderId);
       try {
@@ -218,6 +219,12 @@ export const NotificationProvider = ({ children }) => {
         console.log('[Notification] Playing sound:', resolvedSound);
         try { fcmDiagLog.add('played', { source: diagSource, order_id: diagOrderId, sound: resolvedSound }); } catch { /* ignore */ }
         soundManager.play(resolvedSound);
+        // Instance-only Mute UI: next ringable alert resets Mute button color.
+        try {
+          window.dispatchEvent(new CustomEvent('mygenie:order-alert-played', {
+            detail: { orderId: diagOrderId || null },
+          }));
+        } catch { /* ignore */ }
       }
     }
 

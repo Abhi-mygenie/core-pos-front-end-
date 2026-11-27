@@ -1,0 +1,45 @@
+{
+  "summary": "SESSION 2A: Palmhouse Cancellations report — full runtime testing. All 14 items PASS. Order #023896 (Blueberry Muffins + Mango Sticky Rice) confirmed appearing in Today (2026-11-26) date range. All BUGs and CRs verified runtime against live data.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/memory/test_reports/QA_REPORT_CONTINUATION_2026-11-25.md"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/memory/test_reports/QA_REPORT_CONTINUATION_2026-11-25.md"
+  ],
+  "success_rate": {
+    "backend": "N/A",
+    "frontend": "100% (14/14 items PASS)"
+  },
+  "test_credentials": "owner@palmhouse.com / Qplazm@10 — RID 541",
+  "seed_data_creation": "None — used pre-existing order #023896 on palmhouse (now cancelled by owner)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Session 2A is complete — all 14 Palmhouse Cancellations items PASS. Remaining: TGK Session 1 (10 items blocked on pending web order — owner confirmed new web order available), Session 2B (CR-523 needs re-test in OrderEntry running order view), Session 3 BUG-735 (split payment incomplete — C-05 order in running/unpaid state on palmhouse). Key route for CancelDetail: /reports-module/cancel-detail. Data loads in Today preset (~30s wait needed).",
+  "session_2a_results": {
+    "Order_023896_visible": "PASS",
+    "BUG-579": "PASS — daily chart bars non-zero",
+    "BUG-707": "PASS — date format '26 Nov, 10:21 am'",
+    "BUG-708": "PASS — no Cancel Note column, Notes column present",
+    "BUG-713": "PASS — Timing & Risk column visible without h-scroll",
+    "BUG-714": "PASS — scope tab switch non-zero (Order-Level=2, Item-Level=0 correct)",
+    "BUG-715": "PASS — IST time shown '26 Nov, 12:39 am'",
+    "BUG-718": "PASS — Excel export no error",
+    "BUG-729": "PASS — x-axis '26 Nov' format",
+    "CR-554": "PASS — Timing & Risk + Duration on CancelDetail",
+    "CR-555": "PASS — High Risk badges on both rows",
+    "CR-556": "PASS — 5 filters: Stage/Scope/Reason/Staff/Risk",
+    "BUG-716": "PASS — empty state row on no-match filter",
+    "BUG-717": "PASS — subtitle + date format correct"
+  }
+}

@@ -35,6 +35,7 @@ const baseWebYtcOrder = (overrides = {}) => ({
   orderNumber: 'WO-1001',
   orderType: 'delivery',
   orderFrom: 'web',
+  isWebOrder: true, // Wave 6 predicate: isUnconfirmedScanOrder requires isWebOrder
   fOrderStatus: 7,
   status: 'yetToConfirm',
   tableId: 0,
@@ -368,11 +369,7 @@ describe('POS2-002 Phase 4 | ScanOrderPopOut — integration', () => {
 describe('POS2-002 Phase 4 | ScanOrderPopOut — anti-tests', () => {
   // A-1 — silent layer (no audio surface beyond the CR-approved
   // soundManager.stop() exception in handleSnoozeClick).
-  // CR SNOOZE_SOUND_STOP_AND_DURATION (Jan-2026) explicitly allows
-  // `import soundManager from '../../utils/soundManager'` and a single
-  // `soundManager.stop()` call inside handleSnoozeClick. EVERYTHING else
-  // on the audio surface (play, setEnabled, NotificationContext) is still
-  // forbidden.
+  // Mute grey in Silent Mode uses read-only prop `soundEnabled` only.
   test('A-1: the component module does not introduce play/setEnabled/NotificationContext audio surfaces', () => {
     // eslint-disable-next-line global-require
     const fs = require('fs');
@@ -386,13 +383,11 @@ describe('POS2-002 Phase 4 | ScanOrderPopOut — anti-tests', () => {
     const src = raw
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^[\s]*\/\/.*$/gm, '');
-    // NotificationContext is still off-limits.
+    // NotificationContext is still off-limits (soundEnabled comes via props).
     expect(src).not.toMatch(/from\s+['"][^'"]*NotificationContext/);
     expect(src).not.toMatch(/useNotification\s*\(/);
-    // No play / setEnabled on soundManager.
     expect(src).not.toMatch(/soundManager\s*\.\s*play\s*\(/);
     expect(src).not.toMatch(/soundManager\s*\.\s*setEnabled\s*\(/);
-    // No `new Audio(`, no raw audio element construction.
     expect(src).not.toMatch(/\bnew\s+Audio\s*\(/);
   });
 
@@ -424,8 +419,8 @@ describe('POS2-002 Phase 4 | ScanOrderPopOut — anti-tests', () => {
     expect(matches.length).toBe(1);
   });
 
-  // A-2 — no direct service / API / socket call
-  test('A-2: the component module does not import orderService / api / socketHandlers', () => {
+  // A-2 — no direct confirm/cancel/socket; CR-561 allows updateFoodItemPrice only.
+  test('A-2: the component module does not import api/axios / socketHandlers or confirm/cancel', () => {
     // eslint-disable-next-line global-require
     const fs = require('fs');
     // eslint-disable-next-line global-require
@@ -437,7 +432,6 @@ describe('POS2-002 Phase 4 | ScanOrderPopOut — anti-tests', () => {
     const src = raw
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/^[\s]*\/\/.*$/gm, '');
-    expect(src).not.toMatch(/from\s+['"][^'"]*orderService['"]/);
     expect(src).not.toMatch(/from\s+['"][^'"]*api\/axios['"]/);
     expect(src).not.toMatch(/from\s+['"][^'"]*socket\/socketHandlers['"]/);
     expect(src).not.toMatch(/\bconfirmOrder\s*\(/);
@@ -511,15 +505,14 @@ describe('POS2-002 Phase 4 | ScanOrderPopOut — anti-tests', () => {
 // ===========================================================================
 
 describe('POS2-002 Phase 4 | pure helpers', () => {
-  // Wave 6: predicate simplified to fOrderStatus === 7 only.
+  // Wave 6: fOrderStatus === 7 && isWebOrder && !scheduled
   test('isUnconfirmedScanOrder predicate quadrants', () => {
     expect(isUnconfirmedScanOrder(null)).toBe(false);
     expect(isUnconfirmedScanOrder(undefined)).toBe(false);
-    expect(isUnconfirmedScanOrder({ orderFrom: 'web', fOrderStatus: 7 })).toBe(true);
-    expect(isUnconfirmedScanOrder({ orderFrom: 'web', fOrderStatus: 1 })).toBe(false);
-    // Wave 6: orderFrom doesn't matter — only fOrderStatus === 7
-    expect(isUnconfirmedScanOrder({ orderFrom: 'pos', fOrderStatus: 7 })).toBe(true);
-    expect(isUnconfirmedScanOrder({ orderFrom: null, fOrderStatus: 7 })).toBe(true);
+    expect(isUnconfirmedScanOrder({ isWebOrder: true, fOrderStatus: 7 })).toBe(true);
+    expect(isUnconfirmedScanOrder({ isWebOrder: true, fOrderStatus: 1 })).toBe(false);
+    expect(isUnconfirmedScanOrder({ isWebOrder: false, fOrderStatus: 7 })).toBe(false);
+    expect(isUnconfirmedScanOrder({ isWebOrder: true, fOrderStatus: 7, scheduled: true })).toBe(false);
   });
 
   test('buildTableEntryFromOrder shapes for each channel', () => {

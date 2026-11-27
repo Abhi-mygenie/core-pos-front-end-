@@ -1311,7 +1311,16 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                       type="date"
                       min={yesterdayStr()}
                       value={checkinDate}
-                      onChange={(e) => { setCheckinDate(e.target.value); if (e.target.value) clearErr('checkin'); }}
+                      onChange={(e) => {
+                        setCheckinDate(e.target.value);
+                        if (e.target.value && manualCheckout && checkoutDate) { // BUG-757 E2: re-derive nights when checkout is locked (OD-757-01=A)
+                          const n = Math.max(1, Math.round(
+                            (new Date(checkoutDate + 'T00:00:00') - new Date(e.target.value + 'T00:00:00')) / 86400000
+                          ));
+                          setNights(n);
+                        }
+                        if (e.target.value) clearErr('checkin');
+                      }}
                       data-testid="checkin-date"
                       error={errors.checkin}
                     />
@@ -1344,7 +1353,17 @@ const RoomCheckInModal = ({ room, availableRooms = [], onClose, onSuccess, sideb
                         type="date"
                         min={checkinDate}
                         value={checkoutDate}
-                        onChange={(e) => { setManualCheckout(true); setCheckoutDate(e.target.value); if (e.target.value) clearErr('checkout'); }}
+                        onChange={(e) => {
+                          setManualCheckout(true); // OD-757-01=A: checkout date locks after manual edit
+                          setCheckoutDate(e.target.value);
+                          if (e.target.value && checkinDate) { // BUG-757 E1: sync nights to date diff
+                            const n = Math.max(1, Math.round(
+                              (new Date(e.target.value + 'T00:00:00') - new Date(checkinDate + 'T00:00:00')) / 86400000
+                            ));
+                            setNights(n);
+                          }
+                          if (e.target.value) clearErr('checkout');
+                        }}
                         data-testid="checkout-date"
                         error={errors.checkout}
                       />

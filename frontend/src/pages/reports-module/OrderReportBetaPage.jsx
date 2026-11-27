@@ -433,14 +433,29 @@ export default function OrderReportBetaPage() {
     // CR-503: Mirror AllOrdersReportPage.handlePrintBillFromAudit pattern
     try {
       const resp = await api.post(API_ENDPOINTS.SINGLE_ORDER_NEW, { order_id: row?.order_id || row?.id });
-      const raw = resp.data?.data;
-      if (!raw) throw new Error('No order data');
-      const transformed = orderFromAPI.order(raw);
-      const items = (transformed.items || []).map(it => ({ ...it, placed: true }));
-      await printOrder(items, printerAgents || [], { orderType: transformed.orderType, orderId: transformed.orderId });
+      // BUG-756-B E1: multi-fallback unwrap — endpoint returns { orders:[...] }, not { data:{} }
+      // BUG-368: empty array [] is truthy in JS — guard length explicitly before using orders[0]
+      const ordersArr = resp.data?.orders;
+      const raw =
+        (ordersArr && !Array.isArray(ordersArr) ? ordersArr?.order_details_order : null) ||
+        resp.data?.order_details_order ||
+        (Array.isArray(ordersArr) && ordersArr.length > 0 ? ordersArr[0] : null) ||
+        (ordersArr && !Array.isArray(ordersArr) ? ordersArr : null) ||
+        resp.data || null;
+      if (!raw || Array.isArray(raw)) {
+        toast({ title: 'Print failed', description: 'Order details unavailable', variant: 'destructive' });
+        return;
+      }
+      const order = orderFromAPI.order(raw);
+      if (!order?.rawOrderDetails?.length) {
+        toast({ title: 'Print failed', description: 'Order details unavailable', variant: 'destructive' });
+        return;
+      }
+      // BUG-756-B E2: correct printOrder signature — (orderId, 'bill', null, order, 0, {}, agents)
+      await printOrder(row?.order_id || row?.id, 'bill', null, order, 0, {}, printerAgents || []);
       toast({ title: 'Bill request sent', description: `Order #${row.restaurant_order_id || row.order_id}` });
     } catch (err) {
-      toast({ title: 'Print failed', description: err?.message || 'Could not print bill', variant: 'destructive' });
+      toast({ title: 'Print failed', description: err?.readableMessage || err?.message || 'Could not print bill', variant: 'destructive' });
     }
   }, [printerAgents, toast]);
 

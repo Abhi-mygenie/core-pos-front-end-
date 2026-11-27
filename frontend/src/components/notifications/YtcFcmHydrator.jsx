@@ -38,6 +38,12 @@ export default function YtcFcmHydrator() {
           return;
         }
       }
+      // Accept flash guard: never re-inject fos=7 for an order that is already
+      // known and no longer YTC / web-edit eligible (e.g. just accepted).
+      if (existing && !isUnconfirmedScanOrder(existing) && !hasUnconfirmedWebEditItems(existing)) {
+        removeYtcFcm(orderId);
+        return;
+      }
 
       inFlightRef.current.add(orderId);
       try {

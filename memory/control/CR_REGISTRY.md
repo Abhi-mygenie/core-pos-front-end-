@@ -1387,3 +1387,20 @@ All items below advanced to **Gate 5b — QA PASS** on 2026-09-15. Awaiting Gate
 | **CR-528** | Report: Order Edit and Cancel Operations After Bill Print — 3 new post-print audit event types (item cancel, order cancel, order edit) in Audit Log page. | **P0** | **HIGH** | **GATE_5A_IMPLEMENTED 2026-11-17** — 8 edits, 1 file (AuditLogMockup.jsx 152→207 lines). 6 KPI cards, 5 event type table, 10 columns, export updated. | `AuditLogMockup.jsx` |
 | **CR-546** | Discount After Bill Print: Audit Event — Apply & Remove. Two event types: `discount_apply_after_print` + `discount_remove_after_print`. Extends CR-528 audit page with 2 new KPI cards + type badges. Backend-blocked. | **P0** | **HIGH** | **GATE_1_INTAKE_COMPLETE 2026-11-17** — Owner directed. Backend brief: `backend_briefs/BACKEND_BRIEF_CR-546_2026_11_17.md`. | `change_requests/37_CR-546_DISCOUNT_AFTER_BILL_PRINT_AUDIT_INTAKE.md` |
 | **CR-551** | Edit Variations / Add-ons on Unplaced Cart Items — NEW ✎ Edit button on NewItemRow; opens ItemCustomizationModal pre-populated, always replaces original in-place (_cartKey). Customize button unchanged. 3 files ~30 lines. | **P0** | **MEDIUM** | **IMPLEMENTED 2026-11-18** — E1-E2: modal buttonLabel prop. E3-E5: CartPanel Edit button (gated: has customizations, not locked, not prepaid). E6-E8: workingCart in-place replace + onEdit wiring. 0 new warnings. Next: QA Gate 5b. | `ItemCustomizationModal.jsx` · `CartPanel.jsx` · `OrderEntry.jsx` |
+
+
+---
+
+**CURRENT 2026-11-27 — INTAKE BATCH: CR-563 to CR-567 registered (Audit Report enhancements from owner docx).**
+
+Source: `Audit_Report_Feedback_and_Enhancement_Requirements.docx` (owner@palmforest.com, 2026-11-27). All `GATE_1_INTAKE`, sprint `dec_sprint`, assignee Abhishek, client ALL. Intake: `change_requests/BATCH_INTAKE_2026_11_27_AUDIT_REPORT_ENHANCEMENTS_CR563_567.md`.
+
+| ID | Title | Sev | Risk | Status |
+|---|---|---|---|---|
+| **CR-563** | Audit Report — Interactive Risk Filter Bands (Doubt/Risk/High Risk clickable) | **P2** | MEDIUM | GATE_1_INTAKE |
+| **CR-564** | Audit Report — High-Risk Cancellations: Date + Actioned By + Cancellation Duration columns | **P2** | MEDIUM | GATE_1_INTAKE |
+| **CR-565** | Audit Report — Leakage After Unpaid: Date + Actioned By + Paid-to-Unpaid Duration columns | **P2** | MEDIUM | GATE_1_INTAKE |
+| **CR-566** | Audit Report — Global Filters + Sorting across all sections (Date, Person, Category, Amount, Duration, Time) | **P1** | MEDIUM | GATE_1_INTAKE |
+| **CR-567** | Audit Report — Expandable Order Activity Logs (click row to expand full audit history inline) | **P2** | MEDIUM | GATE_1_INTAKE |
+
+Duplicate checks: all DISTINCT (CR-556 is CancellationsMockup filters; CR-524/554 are CancellationsMockup columns; CR-509 is Order Beta page). AuditLogMockup.jsx target for all 5. Next: Planning Gate 2 (batch IA session recommended).

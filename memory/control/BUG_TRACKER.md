@@ -1,3 +1,15 @@
+**CURRENT 2026-11-28 — GATE_5A_IMPLEMENTED: BUG-759..763 ringer/YTC pack (registry sync).** Code @ `784aedf0` on tip built from `ultimate-fix`/`430edce9` + intake/IA/plan. Status advanced owner-directed after Gates 1–3 backfill. **Push target: `core/fix_ui`** for other-agent merge (not pushing `ultimate-fix` this pass). Next: merge + owner smoke (Accept flash, Mute color, compact banner, Sidebar unlock, Mute grey).
+
+
+**CURRENT 2026-11-28 — PLANNING Gate 3 PLAN COMPLETE: BUG-759..763 ringer/YTC pack.** Pack Implementation Plan at `plans/BUG-759_763_RINGER_YTC_PACK_IMPLEMENTATION_PLAN.md` (retroactive E1–E7; code already @ `784aedf0`). Verification matrix: ScanOrderPopOut 29/29 PASS; 6 manual smokes pending. Registry → GATE_3_PLAN_COMPLETE. Owner decisions: none. **Next: Gate 4 GO / waive** → GATE_5A_IMPLEMENTED + push `ultimate-fix` + owner smoke. No app code this pass.
+
+
+**CURRENT 2026-11-28 — PLANNING Gate 2 IA COMPLETE: BUG-759..763 ringer/YTC pack (one batch).** Pack IA at `impact/BUG-759_763_RINGER_YTC_PACK_IMPACT_ANALYSIS.md`. Code Reality FULL (owner-directed backfill of as-shipped fix @ `784aedf0` on `ultimate-fix` / base `430edce9`). Conflict: none blocking — additive on BUG-747/751/752. Risk MEDIUM; Fast Lane NO. Owner decisions: none. Registry → GATE_2_IA_COMPLETE for all five. **Next: Gate 3 thin retroactive Implementation Plan** (when owner asks), then GATE_5A status sync + push + QA smoke. No app code this pass.
+
+
+**CURRENT 2026-11-28 — INTAKE: BUG-759..763 ringer/YTC pack (CODE EXISTS on `ultimate-fix`).** Five DISTINCT Aggregator/Sockets bugs retroactively registered after fixes landed locally @ `784aedf0` (base `430edce9`). **BUG-759 (P1):** Accept popup flash — YtcFcmHydrator + tighter confirm detect. **BUG-760 (P2):** Mute color stuck orange — `order-alert-played` clears snoozedOrders UI. **BUG-761 (P2):** Compact SoundUnlockBanner + Keep it silent. **BUG-762 (P2):** Sidebar one-click leave Silent + unlock. **BUG-763 (P3):** Mute grey in Silent Mode. Client ALL, Assignee Abhishek, sprint `dec_sprint`. Status GATE_1_INTAKE with code_reality FULL. Related: BUG-453/747/751/752. Next: Planning Gates 2–3 or owner waive for already-coded pack + push when auth available. No sheet writeback this pass (not from Tech Task).
+
+
 **CURRENT 2026-11-24 — AUTHORITATIVE SYNC of FE FCM/YTC/sound pack from `notification-fix@254d9b6` (owner-directed cherry-pick).** Replaced 14 files verbatim from the branch tip (ytcFcmPending, YtcFcmHydrator, deviceTokenService + bug749 test, constants, NotificationContext, AppProviders, SoundUnlockBanner, Sidebar, LoadingPage, DashboardPage, soundManager, ScanOrderPopOut, OrderEntry) + handover doc. Two necessary deviations from "verbatim": (1) added required transitive dep `utils/fcmDiagLog.js` from the branch (picked files import it; self-contained localStorage diag, no order/pay/sound behaviour) — without it webpack fails `Module not found`; (2) removed the branch's **duplicate** `setBlockedHandler` in soundManager (ESLint `no-dupe-class-members` → CI-build blocker; byte-identical method, zero behaviour change). Dropped my earlier scaffold tests (`__tests__/api/deviceTokenService.test.js`, `__tests__/utils/soundManager.unlock.test.js`), superseded by branch `deviceTokenService.bug749.test.js`. Excluded as instructed: orderTransform(+test), credit sheet, diner handover, BE OrderController. **Verify:** webpack compiled clean (1 pre-existing OrderEntry exhaustive-deps warning, branch-authored); `deviceTokenService.bug749` 2/2, `soundManager.bug453` 4/4, `DashboardPage.bug452`/`BUG731`/`CR547` PASS. **Pre-existing (NOT from this pick):** `ScanOrderPopOut.test.jsx` 23 fail — fails identically on clean `origin/main` (stale POS2-002 anti-test vs CR-561's orderService import); out of scope. **BUG-750 now shipped too** via OrderEntry: Update-Order → `soundManager.stop()` only when a non-cancelled `isNotConfirmed` (fos=7) line remains; no FE auto-confirm (BE owns promote+KOT). Behaviours preserved: FCM listen survives reload; device-token register; YTC FCM→hydrator optimistic+fetch; ringer On/Silent/Tap-to-enable (banner only for Tap-to-enable); instance mute + Accept/Cancel stop. **PENDING:** browser E2E on rid 69.
 
 
@@ -2406,3 +2418,41 @@ All bug items below advanced to **Gate 5b — QA PASS** on 2026-09-15 by QA agen
 **Source:** QA code review Session 4 Beanmeup 2026-11-26. **Duplicate:** DISTINCT (RELATED BUG-706). **Blast radius:** SMALL (1 file, 1-line fix).
 **Fast Lane eligible:** YES (owner must approve). **Open decision:** OD-754-01 — correct fallback.
 **Intake doc:** `change_requests/BUG-754_ORDER_BETA_TAX_LABEL_GST_FALLBACK_VAT_OFF_INTAKE.md`
+
+
+---
+
+**CURRENT 2026-11-27 — INTAKE: BUG-755 registered (investigation-found, GATE_1_INTAKE).**
+
+| ID | Title | Sev | Risk | Status | Assignee |
+|---|---|---|---|---|---|
+| **BUG-755** | Dashboard room tile amount differs between Table View and Order View — Order View shows `order.amount` (F&B only); Table View shows `computeRoomCardAmount` (F&B + room balance). Rooms with outstanding booking balances show materially lower amounts in Order View (e.g. R1: ₹473 Table → ₹126 Order, R2: ₹525 → ₹0). Dine-in and zero-balance rooms unaffected. Break point: `DashboardPage.jsx` ~L2066 `viewType` prop switches room rendering path. | **P1** | **HIGH** | GATE_1_INTAKE 2026-11-27 | Abhishek |
+
+Source: OWNER-REPORTED (owner@palmforest.com). Investigation Role 6, 8/10 steps, HIGH confidence. RELATED BUG-532 (SC gap, CLOSED). Intake: `change_requests/BUG-755_DASHBOARD_ROOM_AMOUNT_TABLE_VS_ORDER_VIEW_INTAKE.md`. Evidence: `memory/evidence/BUG-DASH-PRICE-VIEW/`. Next: Planning Gate 2 (Impact Analysis). Full gate flow required (R5 hotspot + financial display).
+
+
+---
+
+**CURRENT 2026-11-27 — INTAKE: BUG-756 + BUG-757 registered (investigation-found, GATE_1_INTAKE→GATE_2_IA_COMPLETE).**
+
+| ID | Title | Sev | Risk | Status | Assignee |
+|---|---|---|---|---|---|
+| **BUG-756** | Print Bill 403 for PayLater from Order Report Beta — `CollectBillPanelDrawer` passes `onPrintBill` without `order.id`; CPP `overrides` has no order identifier → `get-single-order-new` receives `{}` → 403 | **P1** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+| **BUG-756-B** | `handlePrintBillFromBeta` in OrderReportBetaPage: (A) `resp.data?.data` wrong unwrap → "No order data"; (B) `printOrder(items, agents, opts)` wrong signature → NaN orderId + KOT branch. Both masked by BUG-756 403. | **P1** | **HIGH** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+| **BUG-757** | Dashboard Room Check-In: Nights not auto-calculated when checkout date changed — `RoomCheckInModal` checkout `onChange` never calls `setNights()` → nights stays 1 → wrong balance shown and submitted | **P1** | **MEDIUM** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+
+IA docs: `impact/BUG-756_IMPACT_ANALYSIS.md` · `impact/BUG-757_IMPACT_ANALYSIS.md` · `impact/BUG-756-B_IMPACT_ANALYSIS.md`
+Plan docs: `plans/BUG-756-B_IMPLEMENTATION_PLAN.md`. Awaiting Gate 4 GO for BUG-756-B.
+
+**2026-11-27 — BUG-755 → GATE_2_IA_COMPLETE.** IA at `impact/BUG-755_IMPACT_ANALYSIS.md`.
+Break point: `ChannelColumn.jsx` L349 — `const order = item.order || item` extracts raw order (amount = food only), discards `item.amount = computeRoomCardAmount`. Fix: 1 file `ChannelColumn.jsx`, guard by `item.isRoom`. DashboardPage.jsx NOT touched.
+
+
+**2026-11-27 — BUG-758 GATE_3_PLAN_COMPLETE.**
+
+| ID | Title | Sev | Risk | Status | Assignee |
+|---|---|---|---|---|---|
+| **BUG-758** | Order View: item-level prep/serve times show raw hours instead of days — `formatElapsed()` in OrderCard.jsx has no days branch; caps at "119h 47m" instead of "4d 23h". `formatDuration()` in TableCard.jsx (order dots) correctly converts ≥24h → days. | **P2** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+
+IA: `impact/BUG-758_IMPACT_ANALYSIS.md` · Plan: `plans/BUG-758_IMPLEMENTATION_PLAN.md`
+Fix: `OrderCard.jsx` L17-25 (`formatElapsed`) — add days branch (+4 lines). Awaiting Gate 4 GO.

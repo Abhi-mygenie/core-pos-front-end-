@@ -816,11 +816,19 @@ const Sidebar = ({
           type="button"
           data-testid="sidebar-silent-toggle"
           onClick={() => {
-            if (soundEnabled && !audioUnlocked) {
+            // Leaving Silent: turn sound on; if still autoplay-locked (e.g. after
+            // banner Keep it silent), unlock in the same gesture so UI is not stuck
+            // on Tap to enable.
+            if (!soundEnabled) {
+              setSoundEnabled(true);
+              if (!audioUnlocked) unlockAudioNow();
+              return;
+            }
+            if (!audioUnlocked) {
               unlockAudioNow();
               return;
             }
-            setSoundEnabled(!soundEnabled);
+            setSoundEnabled(false);
           }}
           className={`w-full flex items-center gap-3 px-2 py-2.5 mb-3 rounded-lg transition-colors ${
             isExpanded ? 'justify-start' : 'justify-center'
