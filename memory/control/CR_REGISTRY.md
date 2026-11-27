@@ -1404,4 +1404,3 @@ Source: `Audit_Report_Feedback_and_Enhancement_Requirements.docx` (owner@palmfor
 | **CR-567** | Audit Report — Expandable Order Activity Logs (click row to expand full audit history inline) | **P2** | MEDIUM | GATE_1_INTAKE |
 
 Duplicate checks: all DISTINCT (CR-556 is CancellationsMockup filters; CR-524/554 are CancellationsMockup columns; CR-509 is Order Beta page). AuditLogMockup.jsx target for all 5. Next: Planning Gate 2 (batch IA session recommended).
-
