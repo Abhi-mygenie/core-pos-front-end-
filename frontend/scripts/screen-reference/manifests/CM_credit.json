@@ -1,0 +1,19 @@
+{
+  "_comment": "CR-390: Credit Management module manifest",
+  "module_code": "CM",
+  "module_name": "Credit Management",
+  "eyebrow": "CREDIT MANAGEMENT",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    {
+      "route": "/credit",
+      "section": "Credit Ledger",
+      "states": [
+        { "slug": "credit-ledger-list", "title": "Credit Management", "description": "Pay-later ledger: all customers with outstanding balances.", "pre_actions": [] },
+        { "slug": "credit-customer-detail", "title": "Customer Credit Detail", "description": "Order-level credit history and outstanding balance for a single customer.", "pre_actions": [ { "type": "click", "selector": "[data-testid='credit-customer-row']:first-child, tr:first-child" }, { "type": "wait", "ms": 600 } ] },
+        { "slug": "credit-collect-payment", "title": "Collect Payment", "description": "Collect outstanding credit payment: amount, mode and confirmation.", "pre_actions": [ { "type": "click", "selector": "[data-testid='collect-payment-btn'], button:has-text('Collect')" }, { "type": "wait", "ms": 500 } ] }
+      ]
+    }
+  ]
+}

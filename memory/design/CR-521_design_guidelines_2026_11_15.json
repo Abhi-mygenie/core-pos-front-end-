@@ -1,0 +1,72 @@
+{
+  "typography": {
+    "headings": "Manrope, sans-serif",
+    "body": "IBM Plex Sans, sans-serif",
+    "rules": [
+      "Never use Inter for headings.",
+      "Tighten letter spacing for headings > 32px.",
+      "Use descriptive fonts for status indicators."
+    ]
+  },
+  "colors": {
+    "primaryOrange": "#F26B33",
+    "primaryGreen": "#329937",
+    "amber": "#F4A11A",
+    "lightBg": "#FFFFFF",
+    "borderGray": "#E5E5E5",
+    "darkText": "#1A1A1A",
+    "grayText": "#666666",
+    "billPrintedBg": "#FFEDD5",
+    "billPrintedBgHover": "#FED7AA"
+  },
+  "status_colors": {
+    "preparing": {
+      "border": "#F59E0B",
+      "background": "#FFFFFF"
+    },
+    "ready": {
+      "border": "#F26B33",
+      "background": "#FFFFFF"
+    },
+    "printed": {
+      "border": "#329937",
+      "background": "#FFEDD5"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": "Layered shadows (ambient + direct)",
+    "borders": "1px crisp borders for standard cards, 2px for status highlighting on POS cards.",
+    "radii": "Nested radii: child <= parent; concentric"
+  },
+  "grids": {
+    "dashboard_cards": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4",
+    "dense_view": "gap-2 for high-density fast-casual POS environments"
+  },
+  "layouts": {
+    "alignment": "Optical alignment over geometrical alignment. Left-align dense content.",
+    "spacing": "Generous Spacing Philosophy: p-4 to p-6 for card internals to ensure touch-target sizing on POS tablets."
+  },
+  "motion": {
+    "hover_states": "Slight lift (-translate-y-1) and subtle shadow (shadow-lg) for interactive elements.",
+    "transitions": "Use specific properties (e.g., transition: transform 0.2s ease, background-color 0.2s ease), never transition: all"
+  },
+  "accessibility": {
+    "contrast": "Maintain WCAG AA minimums. Minimum 4.5:1 for normal text.",
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute.",
+    "transparency": "DO NOT use complete transparent background in header, overlays, or dropdowns."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You MUST NOT apply universal transition (e.g., transition: all).",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "Never use AI assistant Emoji characters (e.g., 🤖🧠) for icons.",
+    "Prioritize pre-existing components from src/components/ui when building standard forms/dialogs.",
+    "Include data-testid attribute for all interactive elements to enable robust testing.",
+    "Use sonner for toast notifications."
+  ],
+  "instructions_to_main_agent": [
+    "Update constants/colors.js: change billPrintedBg from #E8F5E9 to #FFEDD5.",
+    "Maintain the existing 2px #329937 border on the bill printed cards.",
+    "Ensure inner card elements (like the header pill and delivery buttons) switch their background to #FFFFFF when the card is in the 'printed' state. This preserves WCAG contrast and aesthetic cleanliness against the new #FFEDD5 background."
+  ]
+}

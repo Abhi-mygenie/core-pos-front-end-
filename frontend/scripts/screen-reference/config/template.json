@@ -1,0 +1,18 @@
+{
+  "_comment": "CR-390: PDF template config (OD-390-08 \u2014 PMS v2.0 template as interim default)",
+  "brand_green": "#329937",
+  "page_size": "A4",
+  "orientation": "landscape",
+  "viewport": { "width": 1440, "height": 900 },
+  "screenshot_region": { "x": 10, "y": 20, "w": 277, "h": 155 },
+  "footer_text": "Sample data \u00b7 \u00a9 MyGenie 2026",
+  "cover_disclaimer": "All figures are sample data for illustration purposes only",
+  "edition_format": "vMAJOR.MINOR",
+  "scrub_rules": [
+    "No Beta labels",
+    "No coming-soon screens",
+    "No real restaurant names (DOM-swap to persona.business_name)",
+    "No internal CR/BUG IDs visible in UI",
+    "Realistic INR/GST figures"
+  ]
+}

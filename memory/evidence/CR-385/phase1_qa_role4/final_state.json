@@ -1,0 +1,9 @@
+{
+  "fd_rules": {
+    "early": false,
+    "cal": true,
+    "held": false,
+    "status": "Saved",
+    "save_disabled": true
+  }
+}

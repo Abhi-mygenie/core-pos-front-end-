@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyGenie POS — BUG-580 Discount Report Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#F26B33',
+              green: '#329937',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-zinc-100 text-zinc-900 min-h-screen pb-16">
+
+  <!-- Header Banner -->
+  <header class="bg-white border-b border-zinc-200 sticky top-0 z-50 shadow-sm" data-testid="bug580-header">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[#F26B33] font-bold text-lg">
+          %
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold tracking-tight text-zinc-950">Discount Report</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800 rounded-full border border-orange-200" data-testid="bug-id-tag">BUG-580 Fix</span>
+          </div>
+          <p class="text-xs text-zinc-500">MyGenie POS — Restaurant-Specific Discount Categories (Palm House Data)</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-xs text-zinc-600 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-200" data-testid="restaurant-context">
+        <span class="font-medium text-zinc-900">Restaurant:</span> Palm House
+        <span class="text-zinc-300">|</span>
+        <span class="font-medium text-zinc-900">Date Range:</span> Jun 01, 2026 – Oct 31, 2026
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+
+    <!-- Section 1: EXISTING KPI Strip -->
+    <section class="space-y-3" data-testid="section-kpi-strip">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+          <span>Section 1: KPI Summary</span>
+          <span class="px-2 py-0.5 text-[10px] bg-zinc-200 text-zinc-700 rounded font-normal uppercase">Existing & Working</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" data-testid="kpi-cards-container">
+        <!-- Total -->
+        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm" data-testid="kpi-total">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-zinc-500 uppercase">Total Discount</span>
+            <span class="text-xs text-red-500 font-bold">100%</span>
+          </div>
+          <div class="text-2xl font-extrabold text-red-600">₹1,22,821</div>
+          <p class="text-[11px] text-zinc-400 mt-1">Across all orders</p>
+        </div>
+        <!-- Manual -->
+        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm" data-testid="kpi-manual">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-zinc-500 uppercase">Manual</span>
+            <span class="w-2 h-2 rounded-full bg-[#F26B33]"></span>
+          </div>
+          <div class="text-2xl font-bold text-zinc-950">₹1,13,281</div>
+          <p class="text-[11px] text-zinc-400 mt-1">92.2% of total</p>
+        </div>
+        <!-- Coupon -->
+        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm" data-testid="kpi-coupon">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-zinc-500 uppercase">Coupon</span>
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          </div>
+          <div class="text-2xl font-bold text-zinc-950">₹0</div>
+          <p class="text-[11px] text-zinc-400 mt-1">0% applied</p>
+        </div>
+        <!-- Loyalty -->
+        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm" data-testid="kpi-loyalty">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-zinc-500 uppercase">Loyalty</span>
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+          </div>
+          <div class="text-2xl font-bold text-zinc-950">₹0</div>
+          <p class="text-[11px] text-zinc-400 mt-1">0% applied</p>
+        </div>
+        <!-- Comp -->
+        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm" data-testid="kpi-comp">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-zinc-500 uppercase">Complementary</span>
+            <span class="w-2 h-2 rounded-full bg-[#329937]"></span>
+          </div>
+          <div class="text-2xl font-bold text-zinc-950">₹9,540</div>
+          <p class="text-[11px] text-zinc-400 mt-1">7.8% of total</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sections 2 & 3: Daily Chart & Employee Chart Placeholders -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Section 2: Daily Chart Placeholder -->
+      <section class="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col justify-between" data-testid="section-daily-chart">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xs font-bold text-zinc-600 uppercase tracking-wider">Section 2: Daily Discount Trend</h2>
+            <span class="text-xs text-zinc-400">Placeholder (Existing)</span>
+          </div>
+          <div class="h-44 bg-zinc-50 rounded-lg border border-dashed border-zinc-200 flex flex-col items-center justify-center p-4 text-center">
+            <svg class="w-10 h-10 text-zinc-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+            <p class="text-xs font-medium text-zinc-500">[ Existing Area Chart: Daily Manual, Coupon, Comp Trend ]</p>
+            <p class="text-[11px] text-zinc-400 mt-1">Monitored continuously across selected date range</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Employee Chart Placeholder -->
+      <section class="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col justify-between" data-testid="section-employee-chart">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xs font-bold text-zinc-600 uppercase tracking-wider">Section 3: Discount by Employee</h2>
+            <span class="text-xs text-zinc-400">Placeholder (Existing)</span>
+          </div>
+          <div class="h-44 bg-zinc-50 rounded-lg border border-dashed border-zinc-200 flex flex-col items-center justify-center p-4 text-center">
+            <svg class="w-10 h-10 text-zinc-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <p class="text-xs font-medium text-zinc-500">[ Existing Horizontal Bar Chart: Discounts given per Cashier/Server ]</p>
+            <p class="text-[11px] text-zinc-400 mt-1">Staff accountability & authorization view</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Section 4: NEW — "Discount by Category" section -->
+    <section class="bg-white border border-orange-200 rounded-xl shadow-md overflow-hidden" data-testid="section-discount-by-category">
+      <div class="bg-gradient-to-r from-orange-50/80 to-white px-6 py-4 border-b border-orange-100 flex items-center justify-between flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 text-xs font-bold bg-[#F26B33] text-white rounded-md tracking-wider">NEW</span>
+          <h2 class="text-sm font-bold text-zinc-900 uppercase tracking-wide">Section 4: Discount by Category (Palm House Real Data)</h2>
+        </div>
+        <span class="text-xs text-zinc-500 font-medium">Per-category breakdown requested by backend enhancement</span>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Table -->
+        <div class="overflow-x-auto border border-zinc-200 rounded-lg">
+          <table class="w-full text-left border-collapse" data-testid="category-breakdown-table">
+            <thead>
+              <tr class="bg-zinc-50 border-b border-zinc-200 text-xs font-bold text-zinc-600 uppercase tracking-wider">
+                <th class="px-6 py-3.5">Category</th>
+                <th class="px-4 py-3.5 text-right">Manual ₹</th>
+                <th class="px-4 py-3.5 text-right">Coupon ₹</th>
+                <th class="px-4 py-3.5 text-right">Loyalty ₹</th>
+                <th class="px-4 py-3.5 text-right">Comp ₹</th>
+                <th class="px-6 py-3.5 text-right">Total ₹</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 text-sm">
+              <tr class="hover:bg-orange-50/30 transition-colors" data-testid="cat-row-thrive">
+                <td class="px-6 py-4 font-semibold text-zinc-900 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#F26B33]"></span>
+                  Thrive
+                </td>
+                <td class="px-4 py-4 text-right font-medium text-zinc-800">₹10,199</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-6 py-4 text-right font-bold text-zinc-950">₹10,199</td>
+              </tr>
+              <tr class="hover:bg-orange-50/30 transition-colors" data-testid="cat-row-google-review">
+                <td class="px-6 py-4 font-semibold text-zinc-900 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                  Google Review
+                </td>
+                <td class="px-4 py-4 text-right font-medium text-zinc-800">₹896</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-6 py-4 text-right font-bold text-zinc-950">₹896</td>
+              </tr>
+              <tr class="hover:bg-orange-50/30 transition-colors" data-testid="cat-row-complementary">
+                <td class="px-6 py-4 font-semibold text-zinc-900 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#329937]"></span>
+                  Complementary
+                </td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-4 text-right font-medium text-zinc-800">₹8,785</td>
+                <td class="px-6 py-4 text-right font-bold text-zinc-950">₹8,785</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-zinc-50 border-t-2 border-zinc-200 font-bold text-sm">
+                <td class="px-6 py-3.5 text-zinc-900 uppercase tracking-wide">Category Total</td>
+                <td class="px-4 py-3.5 text-right text-zinc-900">₹11,095</td>
+                <td class="px-4 py-3.5 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-3.5 text-right text-zinc-400">₹0</td>
+                <td class="px-4 py-3.5 text-right text-zinc-900">₹8,785</td>
+                <td class="px-6 py-3.5 text-right text-red-600 text-base">₹19,880</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Visual Weight: Horizontal Bar Chart -->
+        <div class="bg-zinc-50 p-4 border border-zinc-200 rounded-lg space-y-3" data-testid="category-visual-chart">
+          <div class="flex items-center justify-between text-xs font-bold text-zinc-700 uppercase tracking-wider">
+            <span>Visual Category Proportion</span>
+            <span class="text-zinc-400">Categorized Total: ₹19,880</span>
+          </div>
+          
+          <div class="space-y-2">
+            <!-- Thrive Bar -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-medium text-zinc-800">Thrive</span>
+                <span class="font-semibold text-zinc-900">₹10,199 (51.3%)</span>
+              </div>
+              <div class="w-full h-3 bg-zinc-200 rounded-full overflow-hidden">
+                <div class="h-full bg-[#F26B33] rounded-full transition-all duration-500" style="width: 51.3%"></div>
+              </div>
+            </div>
+
+            <!-- Complementary Bar -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-medium text-zinc-800">Complementary</span>
+                <span class="font-semibold text-zinc-900">₹8,785 (44.2%)</span>
+              </div>
+              <div class="w-full h-3 bg-zinc-200 rounded-full overflow-hidden">
+                <div class="h-full bg-[#329937] rounded-full transition-all duration-500" style="width: 44.2%"></div>
+              </div>
+            </div>
+
+            <!-- Google Review Bar -->
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-medium text-zinc-800">Google Review</span>
+                <span class="font-semibold text-zinc-900">₹896 (4.5%)</span>
+              </div>
+              <div class="w-full h-3 bg-zinc-200 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 4.5%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: FIXED — "Discount Orders" Table (BEFORE / AFTER) -->
+    <section class="space-y-6" data-testid="section-discount-orders-fix">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xs font-bold text-zinc-600 uppercase tracking-wider">Section 5: Discount Orders Table Fix</h2>
+          <p class="text-xs text-zinc-500">Comparison of Reason column & Date column rendering before vs after bug fix</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- BEFORE Card -->
+        <div class="bg-white border-2 border-red-200 rounded-xl shadow-sm overflow-hidden" data-testid="before-comparison-card">
+          <div class="bg-red-50 px-5 py-3 border-b border-red-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 text-xs font-bold bg-red-600 text-white rounded-md uppercase tracking-wider">BEFORE</span>
+              <span class="text-xs font-bold text-red-900">Missing Reason & Missing Dates</span>
+            </div>
+            <span class="text-xs text-red-700 font-medium">Issue reported in BUG-580</span>
+          </div>
+
+          <div class="p-4">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-zinc-50 text-zinc-500 border-b border-zinc-200 font-semibold uppercase tracking-wider">
+                  <th class="py-2 px-3">Order #</th>
+                  <th class="py-2 px-3">Date</th>
+                  <th class="py-2 px-3">Reason</th>
+                  <th class="py-2 px-3 text-right">Discount</th>
+                  <th class="py-2 px-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 text-zinc-700">
+                <tr class="hover:bg-red-50/20">
+                  <td class="py-2.5 px-3 font-medium">#016916</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold">—</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold bg-red-50/50">—</td>
+                  <td class="py-2.5 px-3 text-right">₹116</td>
+                  <td class="py-2.5 px-3 text-right font-semibold">₹116</td>
+                </tr>
+                <tr class="hover:bg-red-50/20">
+                  <td class="py-2.5 px-3 font-medium">#015887</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold">—</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold bg-red-50/50">—</td>
+                  <td class="py-2.5 px-3 text-right">₹400</td>
+                  <td class="py-2.5 px-3 text-right font-semibold">₹400</td>
+                </tr>
+                <tr class="hover:bg-red-50/20">
+                  <td class="py-2.5 px-3 font-medium">#014897</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold">—</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold bg-red-50/50">—</td>
+                  <td class="py-2.5 px-3 text-right">₹15</td>
+                  <td class="py-2.5 px-3 text-right font-semibold">₹15</td>
+                </tr>
+                <tr class="hover:bg-red-50/20">
+                  <td class="py-2.5 px-3 font-medium">#012499</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold">—</td>
+                  <td class="py-2.5 px-3 text-red-500 font-bold bg-red-50/50">—</td>
+                  <td class="py-2.5 px-3 text-right">₹930</td>
+                  <td class="py-2.5 px-3 text-right font-semibold">₹930</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="mt-4 p-3 bg-red-50 rounded-lg border border-red-200 text-xs text-red-800">
+              ⚠️ Reason column rendered fallback dash ("—") for all backend entries because category attributes were unmapped in table serializer.
+            </div>
+          </div>
+        </div>
+
+        <!-- AFTER Card -->
+        <div class="bg-white border-2 border-emerald-300 rounded-xl shadow-md overflow-hidden" data-testid="after-comparison-card">
+          <div class="bg-emerald-50 px-5 py-3 border-b border-emerald-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 text-xs font-bold bg-[#329937] text-white rounded-md uppercase tracking-wider">AFTER</span>
+              <span class="text-xs font-bold text-emerald-950">Category & Date Populated</span>
+            </div>
+            <span class="text-xs text-emerald-800 font-semibold">FIXED & VERIFIED</span>
+          </div>
+
+          <div class="p-4">
+            <table class="w-full text-left text-xs border-collapse" data-testid="fixed-orders-table">
+              <thead>
+                <tr class="bg-zinc-50 text-zinc-500 border-b border-zinc-200 font-semibold uppercase tracking-wider">
+                  <th class="py-2 px-3">Order #</th>
+                  <th class="py-2 px-3">Date</th>
+                  <th class="py-2 px-3">Reason</th>
+                  <th class="py-2 px-3 text-right">Discount</th>
+                  <th class="py-2 px-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-100 text-zinc-800">
+                <tr class="hover:bg-emerald-50/30 transition-colors">
+                  <td class="py-2.5 px-3 font-semibold text-zinc-900">#016916</td>
+                  <td class="py-2.5 px-3 font-medium text-zinc-600">2026-10-16</td>
+                  <td class="py-2.5 px-3">
+                    <span class="px-2 py-0.5 bg-orange-100 text-orange-800 font-semibold rounded text-[11px] border border-orange-200">Thrive</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-right font-medium">₹116</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-zinc-950">₹116</td>
+                </tr>
+                <tr class="hover:bg-emerald-50/30 transition-colors">
+                  <td class="py-2.5 px-3 font-semibold text-zinc-900">#015887</td>
+                  <td class="py-2.5 px-3 font-medium text-zinc-600">2026-08-18</td>
+                  <td class="py-2.5 px-3">
+                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-semibold rounded text-[11px] border border-emerald-200">Complementary</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-right font-medium">₹400</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-zinc-950">₹400</td>
+                </tr>
+                <tr class="hover:bg-emerald-50/30 transition-colors">
+                  <td class="py-2.5 px-3 font-semibold text-zinc-900">#014897</td>
+                  <td class="py-2.5 px-3 font-medium text-zinc-600">2026-07-22</td>
+                  <td class="py-2.5 px-3">
+                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-semibold rounded text-[11px] border border-blue-200">Google Review</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-right font-medium">₹15</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-zinc-950">₹15</td>
+                </tr>
+                <tr class="hover:bg-emerald-50/30 transition-colors">
+                  <td class="py-2.5 px-3 font-semibold text-zinc-900">#012499</td>
+                  <td class="py-2.5 px-3 font-medium text-zinc-600">2026-07-06</td>
+                  <td class="py-2.5 px-3">
+                    <span class="px-2 py-0.5 bg-zinc-100 text-zinc-500 font-medium rounded text-[11px] border border-zinc-200">— (Uncategorized)</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-right font-medium">₹930</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-zinc-950">₹930</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="mt-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-900 flex items-center gap-2">
+              <svg class="w-4 h-4 text-[#329937] shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span>Successfully extracts <code>discount_for</code> / category fields and converts timestamp strings into clean YYYY-MM-DD dates.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 6: TIMELINE — When categories started -->
+    <section class="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm space-y-4" data-testid="section-timeline">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
+        <div>
+          <h2 class="text-xs font-bold text-zinc-600 uppercase tracking-wider">Section 6: Category Adoption Timeline</h2>
+          <p class="text-xs text-zinc-500">Historic adoption timeline for restaurant-specific discount categories at Palm House</p>
+        </div>
+        <span class="text-xs font-semibold text-zinc-700 bg-zinc-100 px-2.5 py-1 rounded-full">3 Active Custom Categories</span>
+      </div>
+
+      <div class="relative pl-6 border-l-2 border-orange-200 space-y-6 my-4" data-testid="timeline-events-container">
+        
+        <!-- Pre-June 10 -->
+        <div class="relative" data-testid="timeline-event-uncategorized">
+          <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-zinc-300 border-2 border-white"></div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-zinc-500">BEFORE JUNE 10, 2026</span>
+              <span class="text-[10px] px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded font-medium">Historical Phase</span>
+            </div>
+            <h3 class="text-sm font-semibold text-zinc-900">All Discount Orders Uncategorized</h3>
+            <p class="text-xs text-zinc-600">354 total orders (97 + 257) recorded under generic manual discount without specific reason tags.</p>
+          </div>
+        </div>
+
+        <!-- Thrive -->
+        <div class="relative" data-testid="timeline-event-thrive">
+          <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-[#F26B33] border-2 border-white"></div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-[#F26B33]">JUNE 10, 2026</span>
+              <span class="text-[10px] px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-semibold">First Used</span>
+            </div>
+            <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              "Thrive" Category Activated
+              <span class="text-xs font-normal text-zinc-500">(84 orders · ₹10,199 total)</span>
+            </h3>
+            <p class="text-xs text-zinc-600">Introduced for tracking aggregator/direct partner promotional discounts.</p>
+          </div>
+        </div>
+
+        <!-- Complementary -->
+        <div class="relative" data-testid="timeline-event-complementary">
+          <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-[#329937] border-2 border-white"></div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-[#329937]">JUNE 12, 2026</span>
+              <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold">First Used</span>
+            </div>
+            <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              "Complementary" Category Activated
+              <span class="text-xs font-normal text-zinc-500">(18 orders · ₹8,785 total)</span>
+            </h3>
+            <p class="text-xs text-zinc-600">Introduced for goodwill comps, VIP guests, and management approvals.</p>
+          </div>
+        </div>
+
+        <!-- Google Review -->
+        <div class="relative" data-testid="timeline-event-google-review">
+          <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-blue-600">JUNE 16, 2026</span>
+              <span class="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold">First Used</span>
+            </div>
+            <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+              "Google Review" Category Activated
+              <span class="text-xs font-normal text-zinc-500">(13 orders · ₹896 total)</span>
+            </h3>
+            <p class="text-xs text-zinc-600">Introduced for on-spot feedback incentives and reviewer gratitude discounts.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-6 text-center text-xs text-zinc-400 border-t border-zinc-200 pt-6">
+    MyGenie POS Dashboard — BUG-580 Visual Specification & Verification Document
+  </footer>
+
+</body>
+</html>

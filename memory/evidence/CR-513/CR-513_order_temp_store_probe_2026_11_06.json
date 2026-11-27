@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "id": "CR-513",
+    "date": "2026-11-06",
+    "source": "OWNER-PROVIDED curl probe (pasted in intake brief)",
+    "endpoint": "POST https://preprod.mygenie.online/api/v1/vendoremployee/order-temp-store",
+    "auth": "Bearer *** (cafe103 owner alias)",
+    "note": "Response excerpt as provided by owner; non-relevant fields elided."
+  },
+  "request": {
+    "order_id": 99999999,
+    "discount_amount": 0,
+    "discount_percentage": 50,
+    "roundoff": 0.12,
+    "coupon_code": "",
+    "coupon_discount": 0,
+    "print_type": "bill"
+  },
+  "response": {
+    "status": true,
+    "message": "Order stored in temp table",
+    "data": {
+      "id": 206425,
+      "discount_percentage": 50,
+      "roundoff": 0.12,
+      "raw_payload": {
+        "discount_percentage": 50,
+        "roundoff": 0.12
+      }
+    }
+  }
+}

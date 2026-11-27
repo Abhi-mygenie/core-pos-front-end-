@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CR-433 — Code Preview · PalmHouse</title>
+<style>
+/* ══════════════════════════════════════════════════
+   EXACT VALUES FROM IMPLEMENTATION PLAN
+   getStatusColor(fOs, fallback):
+     fOs=1 → '#F59E0B'           (Yellow — Preparing)
+     fOs=2 → '#F26B33'           (Orange — Ready)
+     fOs=5/6 → '#329937'         (Green — Served/Billed)
+     others → fallback
+   COLORS.borderGray = '#E5E5E5'
+   COLORS.grayText   = '#666666'
+   COLORS.darkText   = '#1A1A1A'
+   COLORS.lightBg    = '#FFFFFF'
+═══════════════════════════════════════════════════ */
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:system-ui,-apple-system,sans-serif; background:#EFEFEF; padding:24px; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom:24px; }
+.page-header h1 { font-size:16px; font-weight:800; color:#1A1A1A; }
+.page-header p  { font-size:11px; color:#666; margin-top:2px; }
+.code-badge { display:inline-block; background:#1E293B; color:#94A3B8; font-size:10px; font-family:monospace; padding:2px 7px; border-radius:4px; margin-left:6px; vertical-align:middle; }
+.legend { display:flex; gap:16px; margin:12px 0 20px; flex-wrap:wrap; }
+.leg { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:600; }
+.leg-dot { width:10px;height:10px;border-radius:50%; }
+.section-head { font-size:12px; font-weight:700; color:#1A1A1A; background:#fff; padding:7px 12px; border-radius:7px; display:inline-flex; align-items:center; gap:7px; margin:22px 0 14px; }
+.lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; padding:2px 7px; border-radius:5px; display:inline-block; margin-bottom:7px; }
+.lbl-y { background:#FEF3C7; color:#92400E; }
+.lbl-o { background:#FEE2E2; color:#9B1C1C; }   /* using orange context */
+.lbl-g { background:#D1FAE5; color:#065F46; }
+.lbl-b { background:#F3F4F6; color:#374151; }
+.grid { display:flex; flex-wrap:wrap; gap:16px; }
+hr { border:none; border-top:1px solid #DDD; margin:24px 0; }
+
+/* ══ ORDER CARD ══
+   From OrderCard.jsx:
+   - root L455: border:2px solid getStatusColor(fOs,borderGray); breakInside:avoid
+   - header L467: backgroundColor: getHeaderBgColor() = '#F5F5F5' (unchanged)
+   - table label L481: color: getStatusColor(fOs,darkText)
+   - amount L517: color: getStatusColor(fOs,grayText)
+   - items section L687: px-3 border-b py-1.5 (unchanged outer)
+   - item row L728: py-0.5 (was isDineIn?py-1:py-0.5) ← E-OC5
+   - item name L747: text-[13px] font-semibold color:#1A1A1A ← E-OC4
+   - item variant L773: text-[9px] italic color:grayText (unchanged)
+*/
+.ocard { width:282px; border-radius:8px; background:#fff; overflow:hidden; }
+.ocard-hdr { padding:9px 12px; display:flex; align-items:center; gap:8px; background:#F5F5F5; border-bottom:1px solid #EBEBEB; }
+.hl { flex:1; min-width:0; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.tn { font-weight:800; font-size:15px; }           /* color from getStatusColor(fOs,darkText) */
+.on { font-size:11px; color:#888; }
+.cn { font-size:12px; font-weight:700; color:#1A1A1A; }
+.amt { font-size:19px; font-weight:900; flex-shrink:0; }  /* color from getStatusColor(fOs,grayText) */
+.tl { padding:3px 12px 5px; display:flex; align-items:center; gap:4px; background:#fff; }
+.td { width:7px;height:7px;border-radius:50%; }
+.td-g { background:#D1D5DB; }
+.td-o { width:7px;height:7px;border-radius:50%; }
+.tln { height:2px;width:14px;background:#E5E7EB;border-radius:1px; }
+.td-hollow { width:7px;height:7px;border-radius:50%;border:2px solid #D1D5DB; }
+.tl-t { font-size:9px;color:#9CA3AF;margin-left:2px; }
+.obody { padding:4px 12px 6px; border-top:1px solid #F0F0F0; background:#fff; }
+/* Item row — E-OC5: py-0.5 uniform */
+.irow { display:flex; justify-content:space-between; align-items:flex-start; padding:2px 0; }
+/* Item name — E-OC4: text-[13px] font-semibold color:#1A1A1A */
+.iname { font-size:13px; font-weight:600; color:#1A1A1A; line-height:1.3; }
+/* Item variant — unchanged: text-[9px] italic grayText */
+.ivar  { font-size:9px; color:#666666; font-style:italic; margin-top:1px; }
+.istat { font-size:11px; font-weight:700; flex-shrink:0; margin-left:8px; display:flex; align-items:center; gap:3px; }
+.ichk  { width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;border:2px solid; }
+.no-active { font-size:10px;color:#D1D5DB;font-style:italic;padding:5px 0; }
+.sdiv { margin-top:3px;border-top:1px dashed #E5E7EB;padding-top:4px; }
+.ofoot { padding:7px 12px; border-top:1px solid #F0F0F0; display:flex; gap:6px; align-items:center; background:#fff; }
+.bico { width:38px;height:38px;border-radius:7px;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;background:#fff;font-size:12px;color:#9CA3AF;flex-shrink:0; }
+.bwa  { border-color:#25D366;color:#25D366; }
+.bact { flex:1;height:38px;border-radius:7px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center; }
+
+/* Status-based colours — exact from getStatusColor */
+/* fOs=1 Preparing */
+.s1 { border:2px solid #F59E0B; }
+.s1 .tn,.s1 .amt { color:#F59E0B; }
+.s1 .istat,.s1 .ichk { color:#F59E0B; border-color:#F59E0B; }
+.s1 .td-o { background:#F59E0B; }
+.s1 .bact { background:#FFFDE7;color:#F59E0B;border:1.5px solid #F59E0B; }
+/* fOs=2 Ready */
+.s2 { border:2px solid #F26B33; }
+.s2 .tn,.s2 .amt { color:#F26B33; }
+.s2 .istat,.s2 .ichk { color:#F26B33; border-color:#F26B33; }
+.s2 .td-o { background:#F26B33; }
+.s2 .bact { background:#FFF3E8;color:#F26B33;border:1.5px solid #F26B33; }
+/* fOs=5/6 Served/Billed */
+.s56 { border:2px solid #329937; }
+.s56 .tn,.s56 .amt { color:#329937; }
+.s56 .istat,.s56 .ichk { color:#329937; border-color:#329937; }
+.s56 .td-o { background:#329937; }
+.s56 .bact { background:#329937;color:#fff;border:none; }
+/* default */
+.sdef { border:2px solid #E5E5E5; }
+.sdef .tn { color:#1A1A1A; }
+.sdef .amt { color:#666666; }
+.sdef .bact { background:#F3F4F6;color:#374151;border:none; }
+
+/* ══ TABLE CARD ══
+   From TableCard.jsx:
+   - cardStyle L282: border:2px solid getStatusColor(fOs,borderGray) ← E-TC1
+   - table label L348: color: getStatusColor(fOs,darkText) ← E-TC3
+   - amount L367: color: getStatusColor(fOs,grayText) ← E-TC2
+   header pill background unchanged: '#F5F5F5'
+*/
+.tc { width:152px; border-radius:14px; background:#fff; overflow:hidden; }
+.tc-hdr { padding:10px 10px 8px; background:#F5F5F5; border-bottom:1px solid #EBEBEB; display:flex; align-items:center; gap:5px; }
+.tc-icon { font-size:12px; flex-shrink:0; }
+.tc-lbl  { font-size:14px; font-weight:800; truncate:true; }   /* color from getStatusColor(fOs,darkText) */
+.tc-badge { font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;display:inline-block;margin-left:auto;flex-shrink:0; }
+.tc-body { padding:10px 10px 8px; background:#fff; }
+.tc-cust { font-size:11px; color:#1A1A1A; font-weight:700; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tc-sub  { font-size:10px; color:#9CA3AF; margin-bottom:6px; }
+.tc-amt  { font-size:15px; font-weight:900; }   /* color from getStatusColor(fOs,grayText) */
+.tc-foot { padding:6px 10px; border-top:1px solid #F0F0F0; display:flex; gap:5px; background:#fff; }
+.tc-btn  { flex:1;height:32px;border-radius:7px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center; }
+.tc-ico  { width:32px;height:32px;border-radius:7px;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;font-size:11px;color:#9CA3AF; }
+
+.ts1 { border:2px solid #F59E0B; }
+.ts1 .tc-lbl,.ts1 .tc-amt { color:#F59E0B; }
+.ts1 .tc-badge { background:#FEF3C7;color:#D97706; }
+.ts1 .tc-btn { background:#FFFDE7;color:#F59E0B;border:1.5px solid #F59E0B; }
+
+.ts2 { border:2px solid #F26B33; }
+.ts2 .tc-lbl,.ts2 .tc-amt { color:#F26B33; }
+.ts2 .tc-badge { background:#FFF3E8;color:#F26B33; }
+.ts2 .tc-btn { background:#FFF3E8;color:#F26B33;border:1.5px solid #F26B33; }
+
+.ts56 { border:2px solid #329937; }
+.ts56 .tc-lbl,.ts56 .tc-amt { color:#329937; }
+.ts56 .tc-badge { background:#DCFCE7;color:#15803D; }
+.ts56 .tc-btn { background:#329937;color:#fff;border:none; }
+
+.tsav { border:2px solid #E5E5E5; opacity:.5; }
+.tsav .tc-lbl { color:#D1D5DB; }
+.tsav .tc-amt { color:#D1D5DB; }
+.tsav .tc-btn { background:#F5F5F5;color:#9CA3AF;border:none; }
+
+/* comparison banner */
+.compare { display:flex; gap:0; margin-bottom:20px; border-radius:10px; overflow:hidden; border:1px solid #E5E7EB; }
+.compare-col { flex:1; padding:12px 14px; }
+.compare-col:first-child { background:#FFF8F5; border-right:1px solid #E5E7EB; }
+.compare-col:last-child { background:#F0FFF4; }
+.compare-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#9CA3AF; margin-bottom:6px; }
+.compare-item { font-size:11px; color:#374151; margin-bottom:3px; display:flex; gap:5px; align-items:baseline; }
+.compare-before { text-decoration:line-through; color:#9CA3AF; }
+.compare-after  { color:#1A1A1A; font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>CR-433 — Code Preview <span class="code-badge">PalmHouse · owner@palmhouse.com</span></h1>
+  <p>Exact CSS values from implementation plan · Real PalmHouse order data</p>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:#F59E0B"></div>Preparing (fOs=1) — <code style="font-size:10px">#F59E0B</code></div>
+  <div class="leg"><div class="leg-dot" style="background:#F26B33"></div>Ready (fOs=2) — <code style="font-size:10px">#F26B33</code></div>
+  <div class="leg"><div class="leg-dot" style="background:#329937"></div>Served/Billed (fOs=5/6) — <code style="font-size:10px">#329937</code></div>
+</div>
+
+<!-- CHANGE SUMMARY -->
+<div class="compare">
+  <div class="compare-col">
+    <div class="compare-title">Before CR-433</div>
+    <div class="compare-item"><span class="compare-before">1px solid #E5E5E5</span> border</div>
+    <div class="compare-item"><span class="compare-before">#666 grayText</span> amount</div>
+    <div class="compare-item"><span class="compare-before">#1A1A1A darkText</span> order no.</div>
+    <div class="compare-item"><span class="compare-before">text-[11px] #666</span> item names</div>
+    <div class="compare-item"><span class="compare-before">isDineIn?py-1:py-0.5</span> row spacing</div>
+  </div>
+  <div class="compare-col">
+    <div class="compare-title">After CR-433</div>
+    <div class="compare-item"><span class="compare-after">2px solid statusColor</span> border</div>
+    <div class="compare-item"><span class="compare-after">statusColor</span> amount</div>
+    <div class="compare-item"><span class="compare-after">statusColor</span> order no.</div>
+    <div class="compare-item"><span class="compare-after">text-[13px] font-semibold #1A1A1A</span> item names</div>
+    <div class="compare-item"><span class="compare-after">py-0.5 uniform</span> row spacing</div>
+  </div>
+</div>
+
+<!-- ═══ ORDER CARDS ═══ -->
+<div class="section-head">🍽️ OrderCard — PalmHouse real orders</div>
+<div class="grid">
+
+  <!-- fOs=1 PREPARING (real order #018644) -->
+  <div>
+    <div class="lbl lbl-y">fOs=1 · Preparing · #018644</div>
+    <div class="ocard s1">
+      <div class="ocard-hdr">
+        <div class="hl">
+          <span class="tn">#018644</span>
+          <span class="on">·</span>
+          <span class="cn">Owner</span>
+        </div>
+        <span class="amt">₹260</span>
+      </div>
+      <div class="tl">
+        <div class="td td-o s1" style="background:#F59E0B"></div><div class="tln"></div>
+        <div class="td td-g"></div><div class="tln"></div>
+        <div class="td-hollow"></div>
+        <span class="tl-t">0m</span>
+      </div>
+      <div class="obody">
+        <div class="irow">
+          <div>
+            <div class="iname">Palmyra Toddy (1)</div>
+          </div>
+          <div class="istat">Preparing</div>
+        </div>
+        <div class="irow">
+          <div>
+            <div class="iname">Roasted Chicken (1)</div>
+            <div class="ivar">Choice of sauce: Garlic</div>
+          </div>
+          <div class="istat">Preparing</div>
+        </div>
+      </div>
+      <div class="ofoot">
+        <div class="bico">🖨️</div>
+        <div class="bico bwa">📱</div>
+        <div class="bact">Ready ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- fOs=1 PREPARING (real #018645) -->
+  <div>
+    <div class="lbl lbl-y">fOs=1 · Preparing · #018645</div>
+    <div class="ocard s1">
+      <div class="ocard-hdr">
+        <div class="hl">
+          <span class="tn">#018645</span>
+          <span class="on">·</span>
+          <span class="cn">Owner</span>
+        </div>
+        <span class="amt">₹525</span>
+      </div>
+      <div class="tl">
+        <div class="td td-o" style="background:#F59E0B"></div><div class="tln"></div>
+        <div class="td td-g"></div><div class="tln"></div>
+        <div class="td-hollow"></div>
+        <span class="tl-t">0m</span>
+      </div>
+      <div class="obody">
+        <div class="irow">
+          <div>
+            <div class="iname">Neer Dosa (3)</div>
+          </div>
+          <div class="istat">Preparing</div>
+        </div>
+        <div class="irow">
+          <div>
+            <div class="iname">Fish Curry (1)</div>
+            <div class="ivar">Spice level: Medium</div>
+          </div>
+          <div class="istat">Preparing</div>
+        </div>
+        <div class="irow">
+          <div>
+            <div class="iname">Kingfisher Beer (1)</div>
+          </div>
+          <div class="istat">Preparing</div>
+        </div>
+      </div>
+      <div class="ofoot">
+        <div class="bico">🖨️</div>
+        <div class="bico bwa">📱</div>
+        <div class="bact">Ready ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- fOs=2 READY (real #018642) -->
+  <div>
+    <div class="lbl lbl-o" style="background:#FFF3E8;color:#C2410C">fOs=2 · Ready · #018642</div>
+    <div class="ocard s2">
+      <div class="ocard-hdr">
+        <div class="hl">
+          <span class="tn">BRAD</span>
+          <span class="on">#018642</span>
+          <span class="cn">Counter</span>
+        </div>
+        <span class="amt">₹378</span>
+      </div>
+      <div class="tl">
+        <div class="td td-o" style="background:#F26B33"></div><div class="tln"></div>
+        <div class="td td-o" style="background:#F26B33"></div><div class="tln"></div>
+        <div class="td-hollow"></div>
+        <span class="tl-t">57d</span>
+      </div>
+      <div class="obody">
+        <div class="irow">
+          <div>
+            <div class="iname">Prawn Masala (1)</div>
+          </div>
+          <div class="istat">Ready <div class="ichk">✓</div></div>
+        </div>
+        <div class="irow">
+          <div>
+            <div class="iname">Kingfisher (2)</div>
+          </div>
+          <div class="istat">Ready <div class="ichk">✓</div></div>
+        </div>
+      </div>
+      <div class="ofoot">
+        <div class="bico">🖨️</div>
+        <div class="bico bwa">📱</div>
+        <div class="bact">Serve</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- fOs=2 READY (real #018643) -->
+  <div>
+    <div class="lbl lbl-o" style="background:#FFF3E8;color:#C2410C">fOs=2 · Ready · #018643</div>
+    <div class="ocard s2">
+      <div class="ocard-hdr">
+        <div class="hl">
+          <span class="tn">202</span>
+          <span class="on">#018643</span>
+          <span class="cn">Counter</span>
+        </div>
+        <span class="amt">₹536</span>
+      </div>
+      <div class="tl">
+        <div class="td td-o" style="background:#F26B33"></div><div class="tln"></div>
+        <div class="td td-o" style="background:#F26B33"></div><div class="tln"></div>
+        <div class="td-hollow"></div>
+        <span class="tl-t">57d</span>
+      </div>
+      <div class="obody">
+        <div class="irow">
+          <div>
+            <div class="iname">Beef Fry (1)</div>
+          </div>
+          <div class="istat">Ready <div class="ichk">✓</div></div>
+        </div>
+        <div class="irow">
+          <div>
+            <div class="iname">Sol Kadhi (2)</div>
+            <div class="ivar">Size: Large</div>
+          </div>
+          <div class="istat">Ready <div class="ichk">✓</div></div>
+        </div>
+      </div>
+      <div class="ofoot">
+        <div class="bico">🖨️</div>
+        <div class="bico bwa">📱</div>
+        <div class="bact">Serve</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- fOs=6 BILLED (real #018554) -->
+  <div>
+    <div class="lbl lbl-g">fOs=6 · Billed · #018554</div>
+    <div class="ocard s56">
+      <div class="ocard-hdr">
+        <div class="hl">
+          <span class="tn">cowo</span>
+          <span class="on">#018554</span>
+          <span class="cn">Counter</span>
+        </div>
+        <span class="amt">₹488</span>
+      </div>
+      <div class="tl">
+        <div class="td td-o" style="background:#329937"></div><div class="tln"></div>
+        <div class="td td-o" style="background:#329937"></div><div class="tln"></div>
+        <div class="td td-o" style="background:#329937"></div>
+        <span class="tl-t">57d</span>
+      </div>
+      <div class="obody">
+        <p class="no-active">No active items</p>
+        <div class="sdiv">
+          <div class="irow">
+            <span style="font-size:12px;color:#9CA3AF">Fish Curry (1)</span>
+            <div class="istat">Served <div class="ichk">✓</div></div>
+          </div>
+          <div class="irow">
+            <span style="font-size:12px;color:#9CA3AF">Sol Kadhi (2)</span>
+            <div class="istat">Served <div class="ichk">✓</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ofoot">
+        <div class="bico">🖨️</div>
+        <div class="bico bwa">📱</div>
+        <div class="bact">Bill</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr/>
+
+<!-- ═══ TABLE CARDS ═══ -->
+<div class="section-head">📋 TableCard — PalmHouse status view</div>
+<div class="grid">
+
+  <div>
+    <div class="lbl lbl-y">fOs=1 · Preparing</div>
+    <div class="tc ts1">
+      <div class="tc-hdr">
+        <span class="tc-icon">🍽️</span>
+        <span class="tc-lbl">Walk In</span>
+        <span class="tc-badge">Preparing</span>
+      </div>
+      <div class="tc-body">
+        <div class="tc-cust">Owner</div>
+        <div class="tc-sub">0m ago</div>
+        <div class="tc-amt">₹260</div>
+      </div>
+      <div class="tc-foot">
+        <div class="tc-ico">🖨️</div>
+        <div class="tc-btn">Ready ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="lbl lbl-o" style="background:#FFF3E8;color:#C2410C">fOs=2 · Ready</div>
+    <div class="tc ts2">
+      <div class="tc-hdr">
+        <span class="tc-icon">🍽️</span>
+        <span class="tc-lbl">BRAD</span>
+        <span class="tc-badge">Ready</span>
+      </div>
+      <div class="tc-body">
+        <div class="tc-cust">Counter</div>
+        <div class="tc-sub">57d ago</div>
+        <div class="tc-amt">₹378</div>
+      </div>
+      <div class="tc-foot">
+        <div class="tc-ico">🖨️</div>
+        <div class="tc-btn">Serve</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="lbl lbl-g">fOs=5/6 · Served</div>
+    <div class="tc ts56">
+      <div class="tc-hdr">
+        <span class="tc-icon">🍽️</span>
+        <span class="tc-lbl">cowo</span>
+        <span class="tc-badge">Served</span>
+      </div>
+      <div class="tc-body">
+        <div class="tc-cust">Counter</div>
+        <div class="tc-sub">57d ago</div>
+        <div class="tc-amt">₹488</div>
+      </div>
+      <div class="tc-foot">
+        <div class="tc-ico">🖨️</div>
+        <div class="tc-btn">Bill</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="lbl lbl-g">fOs=5/6 · Served (Room)</div>
+    <div class="tc ts56">
+      <div class="tc-hdr">
+        <span class="tc-icon">🚪</span>
+        <span class="tc-lbl">107</span>
+        <span class="tc-badge">Served</span>
+      </div>
+      <div class="tc-body">
+        <div class="tc-cust">Ms. Sunny Nirbha...</div>
+        <div class="tc-sub">68d ago</div>
+        <div class="tc-amt">₹7,208.5</div>
+      </div>
+      <div class="tc-foot">
+        <div class="tc-ico">🖨️</div>
+        <div class="tc-btn">C/Out</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="lbl lbl-b">fOs=8 · Hold (unchanged)</div>
+    <div class="tc sdef" style="border:2px solid #E5E5E5">
+      <div class="tc-hdr" style="background:#F5F5F5">
+        <span class="tc-icon">🍽️</span>
+        <span class="tc-lbl" style="color:#1A1A1A">Walk In</span>
+        <span class="tc-badge" style="background:#FFF3E0;color:#F26B33">HOLD</span>
+      </div>
+      <div class="tc-body">
+        <div class="tc-cust">Owner</div>
+        <div class="tc-sub">On hold</div>
+        <div class="tc-amt" style="color:#666">₹420</div>
+      </div>
+      <div class="tc-foot">
+        <div class="tc-ico">🖨️</div>
+        <div class="tc-btn" style="background:#F3F4F6;color:#374151;border:none">Resume</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr/>
+<p style="font-size:10px;color:#9CA3AF;text-align:center;padding:8px 0">
+  CR-433 · Code preview · Exact CSS from implementation plan · PalmHouse data ·
+  <a href="/cr433-final.html" style="color:#F26B33">← Earlier mockup</a>
+</p>
+</body>
+</html>

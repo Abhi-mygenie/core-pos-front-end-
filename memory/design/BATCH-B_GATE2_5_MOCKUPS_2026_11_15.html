@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch B — Gate 2.5 Design Mockups (Current vs Proposed) — 2026-11-15</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px}nav a{color:var(--o);margin-right:14px;text-decoration:none}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 12px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.frame{background:rgba(0,0,0,.35);padding:22px;border-radius:12px;min-height:120px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;max-width:440px;margin:0 auto}
+.mh{padding:16px 18px;border-bottom:1px solid var(--b)}.mh b{font-size:18px}.mh p{margin:4px 0 0;font-size:13px;color:var(--gt)}
+.mb{padding:16px 18px}.mf{padding:12px 18px;border-top:1px solid var(--b);background:var(--s)}
+.warn{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.lbl{font-size:13px;font-weight:600;color:var(--gt);margin:0 0 6px}
+.sel{border:1px solid var(--b);border-radius:12px;padding:11px 14px;font-size:14px;display:flex;justify-content:space-between;margin-bottom:12px}
+.ta{border:1px solid var(--b);border-radius:12px;padding:10px 14px;font-size:13px;color:#999;height:64px;margin-bottom:6px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;color:#fff;font-weight:700;font-size:15px;background:var(--r)}
+.btn.g{background:var(--g)}.btn.dis{opacity:.5}
+.new .add{outline:3px solid var(--g);outline-offset:3px;border-radius:10px}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.rem{display:inline-block;background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.tbd{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}
+.diff li{margin:3px 0}
+.hint{font-size:11px;color:var(--gt)}
+.err{background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.pin{display:flex;gap:10px;justify-content:center;margin:12px 0}.pin span{width:44px;height:52px;border:2px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pin span.f{border-color:var(--o)}
+.panel{background:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.line{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eee}.line:last-child{border:0}
+.box{width:14px;height:14px;border:1.5px solid #888;border-radius:3px;margin-top:2px;flex:none}.box.on{background:var(--g);border-color:var(--g)}
+.grow{flex:1}.amt{font-weight:600}
+.mini{display:block;width:100%;border:1px solid #ddd;border-radius:4px;padding:3px 6px;font-size:11px;color:#999;margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{background:#FAFAFA;color:#71717a;font-weight:600}
+.pill{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--b);margin-right:4px;background:#fff}
+.banner{color:#fff;padding:9px 14px;font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:4px;border-radius:4px}
+.ci{background:#fff;border-radius:10px;padding:14px;font-size:12px}
+.ci .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.ci .opt{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600}.ci .opt.on{box-shadow:0 0 0 2px #1A1A1A}
+.ci input{border:1px solid var(--b);border-radius:6px;padding:6px 8px;width:80px}
+.login{background:#fff;border-radius:14px;padding:22px;text-align:center;max-width:300px;margin:0 auto;font-size:13px}
+.login .f{border:1px solid var(--b);border-radius:8px;padding:9px;margin:8px 0;text-align:left;color:#999}
+.toggle{display:inline-block;width:34px;height:18px;background:var(--g);border-radius:999px;position:relative;vertical-align:middle}.toggle:after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%}
+.note{font-size:12px;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;margin-top:10px}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}}
+.pm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}.pm span{border:1.5px solid var(--b);border-radius:10px;padding:9px 4px;text-align:center;font-size:12px;font-weight:600;background:#fff}
+.pm span.on{border-color:var(--o);background:#FFF4EE;color:var(--o)}.pm span.off{opacity:.35;text-decoration:line-through}
+.inp{border:1px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:#999;margin-bottom:6px;background:#fff}
+.inp.ok{border-color:var(--g);background:#f0fdf4;color:var(--d)}.inp.bad{border-color:#ef4444;background:#fef2f2;color:var(--d)}
+.act{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;border:1px solid var(--b);margin-right:4px;background:#fff}
+.act.u{color:#B45309;border-color:#F59E0B}.act.c{color:#2563EB;border-color:#93C5FD}.act.dis{opacity:.4}
+.col{min-width:0}.col table{display:block;overflow-x:auto;white-space:nowrap}
+.bill{background:#fff;font-family:monospace;font-size:11px;padding:12px;border-radius:6px;max-width:260px;margin:0 auto;line-height:1.5}
+.rv{margin-top:14px;background:#fff;border:2px dashed var(--o);border-radius:10px;padding:12px 16px;font-size:13px}
+.rv h4{margin:0 0 8px;font-size:13px;color:var(--o)}.rv .q{margin:8px 0 4px;font-weight:600}
+.rv label{display:inline-flex;align-items:center;gap:5px;margin:3px 14px 3px 0;cursor:pointer}
+.rv textarea{width:100%;min-height:48px;border:1px solid var(--b);border-radius:8px;padding:8px;font:inherit;margin-top:6px}
+.rv .st{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
+.rv .st.ok{background:#DCFCE7;color:#166534}.rv .st.no{background:#FEE2E2;color:#991B1B}.rv .st.pend{background:#F3F4F6;color:#666}
+#rvbar{position:sticky;top:0;z-index:5;background:#1A1A1A;color:#fff;padding:10px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+#rvbar button{border:0;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+#rvbar .p{background:var(--g);color:#fff}#rvbar .s{background:#fff;color:#1A1A1A}
+#rvout{display:none;margin:0 32px 20px;width:calc(100% - 64px);min-height:160px;font-family:monospace;font-size:12px}
+</style>
+</head>
+<body>
+<header data-testid="mockup-header">
+<h1>Batch B — Gate 2.5 Design Approval · Current vs Proposed</h1>
+<p>P0 items with on-screen changes · 2026-11-15 · "Current" is rebuilt from today's source code (same text and colours). "Proposed" marks every change with a green outline and tag. Approve or comment per screen (M1–M9). <span class="tbd">TBD</span> = choice for you.</p>
+<p style="margin-top:8px;font-weight:700;color:#86EFAC">STATUS: ALL M1–M9 (+M4b) APPROVED BY OWNER 2026-11-15 — Gate 2.5 closed. Choices: M2 hidden · M3 room reason yes · M4 Remove on Open rows only (Partial greyed) · M4b chips 2–5 / dropdown 6+ · M6 0% = no check · M7 pre-fill yes · M8 old Inclusive → Exclusive only where GST ON (backend BB-13) · M9 note yes.</p>
+</header>
+<div id="rvbar" data-testid="review-bar"><b>Your review:</b> <span id="rvcount">0/9 reviewed</span>
+<button class="s" onclick="approveAll()" data-testid="review-approve-all">Approve the rest (recommended choices)</button>
+<button class="p" onclick="copyReview()" data-testid="review-copy">Copy my review</button>
+<button class="s" onclick="resetReview()" data-testid="review-reset">Reset</button>
+<span id="rvmsg" style="color:#86EFAC"></span></div>
+<textarea id="rvout" readonly data-testid="review-output"></textarea>
+<nav>
+<a href="#m1">M1 Audit split Unpaid</a><a href="#m2">M2 Credit on prepaid</a><a href="#m3">M3 Unpaid reason</a><a href="#m4">M4 Credit detail</a><a href="#m5">M5 Reference box</a><a href="#m6">M6 Tolerance</a><a href="#m7">M7 B2B address</a><a href="#m8">M8 GST Exclusive only</a><a href="#m9">M9 GST per item note</a>
+</nav>
+
+<section id="m1" data-testid="mockup-m1">
+<h2>M1 · Audit Report — Paid tab row actions for a split payment</h2>
+<p class="meta">BUG-671 · File: OrderTable.jsx (L248-259)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3>
+<table><tr><th>Order</th><th>Method</th><th>Amount</th><th>Actions</th></tr>
+<tr><td>#021540</td><td>Cash</td><td>₹420</td><td><span class="act c">Change</span><span class="act u">Unpaid</span></td></tr>
+<tr><td>#021541</td><td>Partial</td><td>₹420</td><td><span class="hint">— no buttons —</span></td></tr></table></div>
+<div class="col new"><h3>Proposed</h3>
+<table><tr><th>Order</th><th>Method</th><th>Amount</th><th>Actions</th></tr>
+<tr><td>#021540</td><td>Cash</td><td>₹420</td><td><span class="act c">Change</span><span class="act u">Unpaid</span></td></tr>
+<tr class="add"><td>#021541</td><td>Partial</td><td>₹420</td><td><span class="act u">Unpaid</span> <span class="chg">NEW</span></td></tr></table></div>
+</div>
+<ul class="diff"><li><b>Added:</b> Unpaid on split / partly-paid rows. Whole bill becomes unpaid; backend removes both paid parts (tested).</li>
+<li><b>Not added:</b> Change method on split rows (Phase 2).</li>
+<li>Same today/yesterday window and <i>order_unpaid</i> right as single-method rows.</li></ul>
+</section>
+
+<section id="m2" data-testid="mockup-m2">
+<h2>M2 · Collect Bill on a prepaid order — Credit button</h2>
+<p class="meta">BUG-672 · Files: profileTransform.js, paymentMethods.js, CollectPaymentPanel.jsx, orderTransform.js (placeOrderWithPayment)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel">
+<div class="pm"><span>Cash</span><span>UPI</span><span>Card</span><span>Split</span><span class="on">Credit</span><span>To Room</span></div>
+<p class="hint">Credit always shown. On Place &amp; Pay the order is saved "paid / credit" but <b>no credit entry</b> is created for the customer.</p></div></div>
+<div class="col new"><h3>Proposed</h3>
+<div class="panel add"><b style="font-size:12px">Restaurant allows credit on prepaid (admin: Credit → prepaid ON)</b>
+<div class="pm"><span>Cash</span><span>UPI</span><span>Card</span><span>Split</span><span class="on">Credit</span><span>To Room</span></div>
+<p class="hint">Credit works: customer name + phone asked (same as today on normal orders) and the amount lands in Credit Management. <span class="chg">FIXED</span></p></div>
+<div class="panel add" style="margin-top:10px"><b style="font-size:12px">Restaurant does NOT allow it (prepaid OFF)</b>
+<div class="pm"><span>Cash</span><span>UPI</span><span>Card</span><span>Split</span><span class="off">Credit</span><span>To Room</span></div>
+<p class="hint">Credit button hidden on prepaid orders only. <span class="chg">CHANGED</span></p></div></div>
+</div>
+<ul class="diff"><li>Rule comes from backend admin per restaurant (no new user right).</li>
+<li>Postpaid orders: no change.</li>
+<li><span class="tbd">TBD</span> Hidden vs greyed-out with hint "Credit not allowed on prepaid orders" — proposal: hidden.</li></ul>
+</section>
+
+<section id="m3" data-testid="mockup-m3">
+<h2>M3 · Mark Unpaid dialog — reason required (all places)</h2>
+<p class="meta">CR-542 (+ CR-526 settled-day block, BUG-605 Order Beta dialog opens) · File: MarkUnpaidConfirmDialog.jsx · Used by: Audit, Order Beta, Credit Management, Room Orders "Remove from Room"</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Mark order #021541 as Unpaid?</b><p>The order will be removed from the Paid tab and will reappear on the dashboard as a running order. This action will be reflected on other terminals.</p></div>
+<div class="mf" style="display:flex;gap:8px"><button class="btn" style="background:#fff;color:#333;border:1px solid #ddd">Cancel</button><button class="btn" style="background:#D97706">Mark Unpaid</button></div></div>
+<p class="hint" style="color:#fff;margin-top:8px">Order Beta: tapping Unpaid does nothing today (dialog never opens).</p></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Mark order #021541 as Unpaid?</b><p>The order will be removed from the Paid tab and will reappear on the dashboard as a running order. This action will be reflected on other terminals.</p></div>
+<div class="mb add"><p class="lbl">Reason <span style="color:#EF4444">*</span> <span class="chg">NEW</span></p><div class="sel"><span>Wrong payment method entered</span><span>⌄</span></div>
+<p class="hint">List set in backend admin (like cancellation reasons). Last option: <b>Other</b> → text box (required).</p>
+<div class="ta">Other — type reason…</div></div>
+<div class="mf" style="display:flex;gap:8px"><button class="btn" style="background:#fff;color:#333;border:1px solid #ddd">Cancel</button><button class="btn dis" style="background:#D97706">Mark Unpaid</button></div></div>
+<div class="modal add" style="margin-top:12px"><div class="mb"><div class="err">Day already settled — this order can't be made unpaid. <span class="chg">NEW</span></div><p class="hint">Shown instead (button disabled) when backend says the day's settlement is done.</p></div></div>
+</div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> required reason dropdown + "Other" text. Mark Unpaid stays disabled until chosen.</li>
+<li><b>Fixed:</b> Order Beta Unpaid now opens this dialog (BUG-605).</li>
+<li><b>Added (after backend):</b> "Day already settled" block in Audit, Order Beta and Credit Management.</li>
+<li>No reasons configured → message "Add Unpaid reasons in admin" and button disabled (same pattern as Batch A cancel reasons).</li>
+<li><span class="tbd">TBD</span> Room Orders "Remove from Room" uses the same action — proposal: reason required there too.</li></ul>
+</section>
+
+<section id="m4" data-testid="mockup-m4">
+<h2>M4 · Credit Management — customer detail (Saurav)</h2>
+<p class="meta">CR-527 (diner name) + CR-526 (Remove from credit) · File: CreditCustomerDetailSheet.jsx</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3>
+<table><tr><th>#</th><th>Date</th><th>Order ID</th><th style="text-align:right">Credit ( Bill )</th><th>Status</th><th>Detail</th></tr>
+<tr><td>1</td><td>12 Nov</td><td>021540</td><td style="text-align:right;color:#F26B33">₹420.00</td><td><span class="pill" style="background:#FEE2E2;color:#991B1B">● Open</span></td><td><span class="act" style="color:#F26B33">View</span></td></tr>
+<tr><td>2</td><td>10 Nov</td><td>021388</td><td style="text-align:right;color:#F26B33">₹1,250.00</td><td><span class="pill" style="background:#FEF3C7;color:#92400E">● Partial</span></td><td><span class="act" style="color:#F26B33">View</span></td></tr>
+<tr><td>3</td><td>02 Nov</td><td>020911</td><td style="text-align:right;color:#F26B33">₹600.00</td><td><span class="pill" style="background:#DCFCE7;color:#166534">● Covered</span></td><td><span class="act" style="color:#F26B33">View</span></td></tr></table>
+<p class="hint">No way to see who ate. No way to remove a wrong credit.</p></div>
+<div class="col new"><h3>Proposed</h3>
+<div class="add" style="padding:4px"><div style="margin-bottom:6px;font-size:12px">Diner: <span class="pill" style="background:#1A1A1A;color:#fff">All</span><span class="pill">Saurav</span><span class="pill">Abhishek</span> <span class="chg">NEW</span></div>
+<table><tr><th>#</th><th>Date</th><th>Order ID</th><th>Diner <span class="chg">NEW</span></th><th style="text-align:right">Credit ( Bill )</th><th>Status</th><th>Detail</th></tr>
+<tr><td>1</td><td>12 Nov</td><td>021540</td><td><b>Abhishek</b></td><td style="text-align:right;color:#F26B33">₹420.00</td><td><span class="pill" style="background:#FEE2E2;color:#991B1B">● Open</span></td><td><span class="act" style="color:#F26B33">View</span><span class="act u">Remove</span></td></tr>
+<tr><td>2</td><td>10 Nov</td><td>021388</td><td>Saurav</td><td style="text-align:right;color:#F26B33">₹1,250.00</td><td><span class="pill" style="background:#FEF3C7;color:#92400E">● Partial</span></td><td><span class="act" style="color:#F26B33">View</span><span class="act u dis">Remove</span></td></tr>
+<tr><td>3</td><td>02 Nov</td><td>020911</td><td>—</td><td style="text-align:right;color:#F26B33">₹600.00</td><td><span class="pill" style="background:#DCFCE7;color:#166534">● Covered</span></td><td><span class="act" style="color:#F26B33">View</span></td></tr></table></div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> Diner column = name on the order. "—" when backend has no name. Diner filter chips appear only when the holder has 2+ different diners.</li>
+<li><b>Added:</b> Remove (amber) → M3 dialog with title "Remove order #021540 from credit?" → order becomes unpaid, credit reversed by backend. Right: <i>order_unpaid</i>. No day limit here.</li>
+<li><span class="tbd">TBD</span> Remove only on <b>Open</b> rows (proposal); Partial shown disabled with hint "Part already paid back"; Covered: no button.</li>
+<li>Needs backend BB-09 (diner name) before the column can fill.</li></ul>
+<h3 style="font-size:13px;margin:16px 0 8px;color:var(--g)">M4b · Many diners (e.g. 20 different names) <span class="chg">NEW 2026-11-15 — answer to owner comment</span></h3>
+<div class="cmp">
+<div class="col new"><h3>2–5 diners → chips (as above)</h3><div class="panel add"><div style="font-size:12px">Diner: <span class="pill" style="background:#1A1A1A;color:#fff">All (12)</span><span class="pill">Saurav (7)</span><span class="pill">Abhishek (3)</span><span class="pill">Rahul (2)</span></div><p class="hint">Count in brackets = number of credit orders.</p></div></div>
+<div class="col new"><h3>6+ diners → one searchable dropdown</h3><div class="panel add">
+<div class="sel" style="max-width:300px"><span>Diner: <b>All (58 orders · 20 diners)</b></span><span>⌄</span></div>
+<div style="border:1px solid var(--b);border-radius:10px;max-width:300px;padding:8px;background:#fff;font-size:12px">
+<div class="inp" style="margin-bottom:6px">Search diner…</div>
+<div class="line"><span class="grow"><b>All</b></span><span class="hint">58</span></div>
+<div class="line"><span class="grow">Saurav</span><span class="hint">14 · ₹6,240</span></div>
+<div class="line"><span class="grow">Abhishek</span><span class="hint">9 · ₹3,150</span></div>
+<div class="line"><span class="grow">Rahul</span><span class="hint">6 · ₹2,010</span></div>
+<div class="line"><span class="grow hint">… scroll, sorted by most orders</span></div>
+<div class="line"><span class="grow">(no name)</span><span class="hint">3</span></div></div>
+<p class="hint">Picking a diner filters the table and shows "Abhishek: 9 orders · ₹3,150 open" above it. Table Diner column stays one line (long names cut with … , full name on hover).</p></div></div>
+</div>
+</section>
+
+<section id="m5" data-testid="mockup-m5">
+<h2>M5 · Collect Bill — reference box per payment method</h2>
+<p class="meta">CR-514 · File: CollectPaymentPanel.jsx · Config per method in backend admin (show / required / label)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel">
+<div class="pm"><span>Cash</span><span class="on">UPI</span><span>Card</span></div><p class="hint">UPI: no box.</p>
+<div class="pm" style="margin-top:10px"><span>Cash</span><span>UPI</span><span class="on">Card</span></div>
+<p class="lbl" style="font-size:12px">Transaction ID (last 4 digits)</p><div class="inp" style="text-align:center;letter-spacing:4px">_ _ _ _</div><p class="hint">Card only, always required, exactly 4 digits.</p></div></div>
+<div class="col new"><h3>Proposed</h3><div class="panel add">
+<div class="pm"><span>Cash</span><span class="on">UPI</span><span>Card</span></div>
+<p class="lbl" style="font-size:12px">UPI Ref <span style="color:#EF4444">*</span> <span class="chg">NEW</span></p><div class="inp">e.g. 4321 8765 1122</div><p class="hint">Required → Pay locked until filled. Optional → label "UPI Ref (optional)".</p>
+<p class="lbl" style="font-size:12px;margin-top:10px">Split payment <span class="chg">NEW</span></p>
+<div class="line"><span class="grow">Cash ₹220</span><span class="hint">no box (Cash off in admin)</span></div>
+<div class="line"><span class="grow">UPI ₹200</span><span class="mini" style="width:140px">UPI Ref *</span></div></div></div>
+</div>
+<ul class="diff"><li><b>Changed:</b> box shown for any method the admin turns on, with the admin label; required/optional from admin.</li>
+<li><b>Kept:</b> Card "last 4 digits" exactly as today until the admin config exists for that restaurant.</li>
+<li>Saved ref shows in Order Beta / Audit detail as "Ref" (already displayed today for card).</li></ul>
+</section>
+
+<section id="m6" data-testid="mockup-m6">
+<h2>M6 · Received Amount — tolerance from restaurant setting</h2>
+<p class="meta">CR-522 · File: CollectPaymentPanel.jsx (L891-895, L3469-3497) · Only when "Reconcile amount" is ON</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel">
+<p class="lbl" style="font-size:12px">Received Amount</p><div class="inp ok">₹150</div><p class="hint">±3% allowed (₹143.56 – ₹152.44)</p>
+<div class="inp bad" style="margin-top:8px">₹160</div><p class="hint" style="color:#ef4444">Amount outside ±3% of bill (₹143.56 – ₹152.44)</p></div></div>
+<div class="col new"><h3>Proposed</h3>
+<div class="panel add"><b style="font-size:12px">Admin set 5%</b><p class="lbl" style="font-size:12px">Received Amount</p><div class="inp ok">₹150</div><p class="hint">±5% allowed (₹140.60 – ₹155.40) <span class="chg">CHANGED</span></p></div>
+<div class="panel add" style="margin-top:10px"><b style="font-size:12px">Admin left it blank</b><p class="lbl" style="font-size:12px">Received Amount</p><div class="inp ok">₹160</div><p class="hint">No range line, any amount accepted. <span class="chg">CHANGED</span></p></div></div>
+</div>
+<ul class="diff"><li>% comes from backend admin per restaurant (phase 1). Same ± both ways; outside = Pay blocked (as today).</li>
+<li>Blank = tolerance OFF (owner Q17).</li>
+<li><span class="tbd">TBD</span> Admin sets <b>0%</b> → proposal: amount must equal the bill exactly.</li></ul>
+</section>
+
+<section id="m7" data-testid="mockup-m7">
+<h2>M7 · B2B Invoice — billing address</h2>
+<p class="meta">CR-536 · Files: CollectPaymentPanel.jsx (L3385-3404), orderTransform.js, OrderEntry.jsx print calls · Bill printed by backend</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel">
+<p class="lbl" style="font-size:12px">B2B Invoice (Optional)</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="inp">GST Number</div><div class="inp">GST Registered Name</div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="panel add">
+<p class="lbl" style="font-size:12px">B2B Invoice (Optional)</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="inp">GST Number</div><div class="inp">GST Registered Name</div></div>
+<div class="inp" style="height:46px">Billing Address <span class="chg">NEW</span></div></div>
+<div class="bill add" style="margin-top:10px">TAX INVOICE<br>Bill #021540 · 12-11-2026<br>--------------------------<br>Bill to: ACME FOODS PVT LTD<br>GSTIN: 30ABCDE1234F1Z5<br><b>12, MG Road, Panaji, Goa</b> <span class="chg">NEW</span><br>--------------------------<br>…items…</div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> Billing Address under GST fields (all payment methods). Printed under GST name; shown in order reports when saved.</li>
+<li><b>Not added:</b> UPI ID (owner dropped).</li>
+<li><span class="tbd">TBD</span> Pre-fill GST no. / name / address from the selected customer's profile when it has a GST number — proposal: yes, editable.</li></ul>
+</section>
+
+<section id="m8" data-testid="mockup-m8">
+<h2>M8 · GST Exclusive only — custom item + menu product</h2>
+<p class="meta">CR-394 (owner Q16) · Files: AddCustomItemModal.jsx (L254-265), panels/menu/ProductCard.jsx (L220-228)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal"><div class="mh"><b>Add Custom Item</b></div><div class="mb">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><p class="lbl">GST %</p><div class="sel"><span>5</span></div></div><div><p class="lbl">Tax Calc</p><div class="sel"><span>Exclusive</span><span>⌄</span></div></div></div>
+<p class="hint">Options: Exclusive / Inclusive. Menu product edit has the same "Tax Calc" (Inclusive listed first).</p></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal"><div class="mh"><b>Add Custom Item</b></div><div class="mb add">
+<div><p class="lbl">GST %</p><div class="sel"><span>5</span></div></div>
+<p class="hint">GST is added on top of the price (Exclusive). <span class="rem">TAX CALC REMOVED</span></p></div></div></div></div>
+</div>
+<ul class="diff"><li><b>Removed:</b> Inclusive choice in custom items AND in menu product edit. Everything new saves Exclusive.</li>
+<li>Bulk editor already has no Tax Calc (BUG-359). Billing maths unchanged.</li>
+<li><span class="tbd">TBD</span> An old product already saved as Inclusive: proposal = keep its "Tax Incl." tag and maths until someone edits it, then it saves Exclusive. (Palm House: 0 such products.)</li></ul>
+</section>
+
+<section id="m9" data-testid="mockup-m9">
+<h2>M9 · Restaurant Settings — GST set per item</h2>
+<p class="meta">BUG-607 · File: panels/settings/ViewEditViews.jsx (L102-123) · Billing maths unchanged (POS already uses each item's GST)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel"><p class="lbl">GST %</p><div class="inp" style="color:#333">5 %</div><p class="hint">Editable, looks like it applies to every item, but POS bills by each item's GST.</p></div></div>
+<div class="col new"><h3>Proposed</h3><div class="panel add"><p class="lbl">GST %</p><div class="inp" style="background:#F3F4F6;color:#999">5 % (not used)</div>
+<div class="note">GST is set per item for this restaurant. Change it in Menu → item → GST %. <span class="chg">NEW</span></div></div></div>
+</div>
+<ul class="diff"><li>Only when backend setting "GST mode = category". Otherwise no change.</li>
+<li>Real fix is backend (Gyan, BB-11): scan / web / print / reports must use item GST.</li>
+<li><span class="tbd">TBD</span> Show this note or leave Settings untouched — proposal: show note.</li></ul>
+<p class="note">No screen change: BUG-671 logic beyond M1, BUG-672 payload fix, CR-526 settlement backend.</p>
+</section>
+<script>
+const TBD={
+m1:[],
+m2:[["Credit on prepaid when not allowed",["Hidden (recommended)","Greyed out with hint"]]],
+m3:[["Reason also required for Remove from Room",["Yes (recommended)","No"]]],
+m4:[["Remove button shows on",["Open rows only; Partial greyed (recommended)","Open + Partial rows","All rows"]]],
+m5:[],
+m6:[["Admin sets 0%",["Bill amount must match exactly (recommended)","Same as blank: no check"]]],
+m7:[["Pre-fill GST no./name/address from customer profile",["Yes, editable (recommended)","No, always type"]]],
+m8:[["Old products already saved Inclusive",["Keep as is until edited, then Exclusive (recommended)","Change all to Exclusive now"]]],
+m9:[["Show 'GST set per item' note in Settings",["Yes (recommended)","No, leave Settings as is"]]]
+};
+const KEY='batchb_g25_review_v1';
+let R=JSON.parse(localStorage.getItem(KEY)||'{}');
+function save(){localStorage.setItem(KEY,JSON.stringify(R));upd();}
+function upd(){let n=0;Object.keys(TBD).forEach(id=>{const v=(R[id]||{}).d;const el=document.getElementById('st-'+id);
+if(v){n++;el.className='st '+(v==='Approve'?'ok':'no');el.textContent=v==='Approve'?'APPROVED':'NEEDS CHANGE';}else{el.className='st pend';el.textContent='NOT REVIEWED';}});
+document.getElementById('rvcount').textContent=n+'/9 reviewed';}
+function build(){Object.keys(TBD).forEach(id=>{const sec=document.getElementById(id);if(!sec)return;R[id]=R[id]||{};
+const d=document.createElement('div');d.className='rv';d.setAttribute('data-testid','review-'+id);
+let h='<h4>YOUR REVIEW — '+id.toUpperCase()+'<span class="st pend" id="st-'+id+'"></span></h4>';
+h+='<div class="q">Decision</div>'+['Approve','Needs change'].map(o=>'<label><input type="radio" name="d-'+id+'" value="'+o+'" data-testid="review-'+id+'-'+(o==='Approve'?'approve':'change')+'"> '+o+'</label>').join('');
+TBD[id].forEach((t,i)=>{h+='<div class="q"><span class="tbd">TBD</span> '+t[0]+'</div>'+t[1].map((o,j)=>'<label><input type="radio" name="t-'+id+'-'+i+'" value="'+o+'" data-testid="review-'+id+'-tbd'+i+'-'+j+'"> '+o+'</label>').join('');});
+h+='<textarea placeholder="Comments (optional)" data-testid="review-'+id+'-comment"></textarea>';
+d.innerHTML=h;sec.appendChild(d);
+d.querySelectorAll('input[name="d-'+id+'"]').forEach(x=>{x.checked=R[id].d===x.value;x.onchange=()=>{R[id].d=x.value;save();}});
+TBD[id].forEach((t,i)=>d.querySelectorAll('input[name="t-'+id+'-'+i+'"]').forEach(x=>{x.checked=(R[id].t||{})[i]===x.value;x.onchange=()=>{R[id].t=R[id].t||{};R[id].t[i]=x.value;save();}}));
+const ta=d.querySelector('textarea');ta.value=R[id].c||'';ta.oninput=()=>{R[id].c=ta.value;save();};});upd();}
+function approveAll(){Object.keys(TBD).forEach(id=>{R[id]=R[id]||{};if(!R[id].d)R[id].d='Approve';R[id].t=R[id].t||{};TBD[id].forEach((t,i)=>{if(!R[id].t[i])R[id].t[i]=t[1][0];});});save();document.querySelectorAll('.rv').forEach(e=>e.remove());build();msg('Unreviewed screens set to Approve — check, then Copy');}
+function resetReview(){if(!confirm('Clear your review?'))return;R={};save();document.querySelectorAll('.rv').forEach(e=>e.remove());build();}
+function text(){let o='BATCH B GATE 2.5 REVIEW\n';Object.keys(TBD).forEach(id=>{const r=R[id]||{};o+='\n'+id.toUpperCase()+': '+(r.d||'NOT REVIEWED');
+TBD[id].forEach((t,i)=>{o+='\n  - '+t[0]+': '+((r.t||{})[i]||'(not chosen)');});if(r.c)o+='\n  - Comment: '+r.c;});return o;}
+function msg(m){const e=document.getElementById('rvmsg');e.textContent=m;setTimeout(()=>e.textContent='',4000);}
+function copyReview(){const t=text();const out=document.getElementById('rvout');out.value=t;out.style.display='block';
+(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>msg('Copied! Paste it in the chat.')).catch(()=>{out.select();msg('Select the text below and copy it.');});}
+build();
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BUG-630 Design Mockup — Item Sales KPI Strip</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f5; margin: 0; padding: 32px; color: #18181b; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .meta { font-size: 13px; color: #71717a; margin: 0 0 32px; }
+  a { color: #b4471b; }
+  .section { margin-bottom: 40px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #71717a; margin-bottom: 12px; }
+  .badge-wrong { display:inline-flex; align-items:center; gap:6px; background:#fff0eb; color:#b4471b; border:1px solid #fcd5c0; font-size:12px; font-weight:600; padding:4px 12px; border-radius:99px; }
+  /* Header bar */
+  .page-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .page-header h2 { font-size:22px; font-weight:700; margin:0; }
+  /* Date bar */
+  .date-bar { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid #e4e4e7; border-radius:10px; padding:10px 16px; width:fit-content; margin-bottom:20px; font-size:14px; }
+  .date-bar .from-label { font-size:11px; font-weight:700; letter-spacing:.06em; color:#71717a; text-transform:uppercase; }
+  .date-bar .date-val { font-weight:600; font-size:15px; }
+  .date-bar .cal-icon { color:#71717a; }
+  .date-bar .sep { color:#a1a1aa; font-weight:300; font-size:18px; padding:0 2px; }
+  /* KPI strip */
+  .kpi-strip { display:flex; gap:12px; flex-wrap:wrap; }
+  .kpi-card { background:#fff; border:1px solid #e4e4e7; border-radius:12px; padding:16px 20px; min-width:160px; flex:1; }
+  .kpi-card.accent { background:#fff7f4; border-color:#fcd5c0; }
+  .kpi-card.accent-green { background:#f0fdf4; border-color:#bbf7d0; }
+  .kpi-label { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#71717a; margin-bottom:8px; display:flex; align-items:center; gap:5px; }
+  .kpi-label.orange { color:#b4471b; }
+  .kpi-value { font-size:22px; font-weight:800; color:#18181b; line-height:1; }
+  .kpi-value.orange { color:#ea5a28; }
+  .kpi-value.wrong { color:#ef4444; text-decoration:line-through; opacity:.7; }
+  .kpi-sub { font-size:11px; color:#a1a1aa; margin-top:5px; }
+  /* Annotation */
+  .arrow-wrong { color:#ef4444; font-size:12px; font-weight:600; margin-top:6px; }
+  /* Diff arrow */
+  .change-arrow { text-align:center; font-size:28px; color:#71717a; padding: 12px 0; }
+  .pill { display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:99px; }
+  .pill-removed { background:#fee2e2; color:#991b1b; text-decoration:line-through; }
+  .pill-added { background:#dcfce7; color:#166534; }
+  .pill-fixed { background:#dbeafe; color:#1e40af; }
+  .change-list { font-size:13px; color:#3f3f46; line-height:1.9; margin:16px 0 0; }
+  .change-list li { margin-bottom:4px; }
+  table { border-collapse:collapse; font-size:13px; width:100%; background:#fff; }
+  th,td { border:1px solid #e4e4e7; padding:7px 10px; text-align:left; }
+  th { background:#fafaf9; font-weight:600; }
+  .blocked { color:#b4471b; font-style:italic; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p style="font-size:13px;color:#71717a;margin:0 0 4px"><a href="/backend-tracker.html">&larr; Backend tracker</a></p>
+  <h1>BUG-630 — Item Sales Ledger: Net Sales fix</h1>
+  <p class="meta">Design mockup · 2026-11-18 · Live data: woko.com (Oct 1 – Nov 18 2026, 51 items)</p>
+
+  <!-- BEFORE -->
+  <div class="section">
+    <div class="section-label">❌ BEFORE — current (buggy)</div>
+
+    <div class="page-header">
+      <h2>Item Sales</h2>
+      <span class="badge-wrong">1 API call · any range</span>
+      <span style="font-size:12px;color:#ef4444;font-weight:600;">← replace badge content</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div class="date-bar">
+        <span class="cal-icon">📅</span>
+        <span class="from-label">FROM</span>
+        <span class="date-val">03 / 11 / 2026</span>
+        <span class="cal-icon">📅</span>
+        <span class="sep">—</span>
+        <span class="from-label">TO</span>
+        <span class="date-val">18 / 11 / 2026</span>
+        <span class="cal-icon">📅</span>
+      </div>
+      <span style="font-size:12px;color:#ef4444;font-weight:600;">← "FROM" "TO" labels must be removed</span>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">📦 Unique Items</div>
+        <div class="kpi-value">51</div>
+        <div class="kpi-sub">dishes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📊 Units Sold</div>
+        <div class="kpi-value">—</div>
+        <div class="kpi-sub">servings</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">💰 Gross Revenue</div>
+        <div class="kpi-value">₹14,39,944</div>
+        <div class="kpi-sub">before disc</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">% Discount</div>
+        <div class="kpi-value">₹30,638</div>
+        <div class="kpi-sub">applied</div>
+      </div>
+      <div class="kpi-card accent">
+        <div class="kpi-label orange">₹ Net Sales</div>
+        <div class="kpi-value wrong orange">₹14,79,478</div>
+        <div class="kpi-sub" style="color:#ef4444;">after disc+GST</div>
+        <div class="arrow-wrong">⚠ Net Sales > Gross Revenue — impossible!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="change-arrow">↓</div>
+
+  <!-- AFTER -->
+  <div class="section">
+    <div class="section-label">✅ AFTER — fixed design</div>
+
+    <div class="page-header">
+      <h2>Item Sales</h2>
+      <span style="display:inline-flex;align-items:center;gap:6px;background:#fff0eb;color:#b4471b;border:1px solid #fcd5c0;font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;">Net Sales · Total Sales</span>
+      <span style="font-size:12px;color:#22c55e;font-weight:600;">✓ badge updated</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div class="date-bar" style="border-color:#bbf7d0;">
+        <span class="cal-icon">📅</span>
+        <span class="from-label">FROM</span>
+        <span class="date-val">03 / 11 / 2026</span>
+        <span class="cal-icon">📅</span>
+        <span class="sep">—</span>
+        <span class="from-label">TO</span>
+        <span class="date-val">18 / 11 / 2026</span>
+        <span class="cal-icon">📅</span>
+      </div>
+      <span style="font-size:12px;color:#22c55e;font-weight:600;">✓ unchanged (OD-630-03: keep as today)</span>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">📦 Unique Items</div>
+        <div class="kpi-value">51</div>
+        <div class="kpi-sub">dishes</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">📊 Units Sold</div>
+        <div class="kpi-value">—</div>
+        <div class="kpi-sub">servings</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">% Discount</div>
+        <div class="kpi-value">₹30,638</div>
+        <div class="kpi-sub">applied</div>
+      </div>
+      <div class="kpi-card accent">
+        <div class="kpi-label orange">₹ Net Sales</div>
+        <div class="kpi-value orange">₹14,09,305</div>
+        <div class="kpi-sub" id="sub-net">before taxes</div>
+        <div style="font-size:11px;color:#22c55e;margin-top:4px;">✓ always ≤ Gross Revenue</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">🧾 Tax</div>
+        <div class="kpi-value">₹70,173</div>
+        <div class="kpi-sub" id="sub-tax">GST + SC</div>
+      </div>
+      <div class="kpi-card accent-green">
+        <div class="kpi-label" style="color:#166534;">₹ Total Sales</div>
+        <div class="kpi-value" style="color:#15803d;">₹14,79,478</div>
+        <div class="kpi-sub" id="sub-total">incl. tax</div>
+
+    <div style="margin-top:12px;font-size:12px;color:#71717a;">
+      ✓ Relationship: Net Sales ₹14,09,305 + Tax ₹70,173 = Total Sales ₹14,79,478 ✅
+    </div>
+  </div>
+
+  <!-- What changes -->
+  <div class="section">
+    <div class="section-label">Change summary</div>
+    <ul class="change-list">
+      <li><span class="pill pill-fixed">Badge content</span> → <code>"1 API call · any range"</code> → <code>"Net Sales · Taxes · Discount · Total Sales"</code></li>
+      <li><span style="color:#71717a;text-decoration:line-through;">FROM / TO labels</span> → <strong>no change</strong> (OD-630-03: keep as today)</li>
+      <li><span class="pill pill-fixed">Net Sales KPI value</span> → reads new <code>r.net_sales</code> backend field (BB-14) — always ≤ Gross Revenue</li>
+      <li><span class="pill pill-fixed">Net Sales subtitle</span> → <code>"before taxes"</code> (discount already deducted)</li>
+      <li><span class="pill pill-added">Tax KPI</span> → new card, subtitle <code>"GST + SC"</code> — FE sums <code>gst + vat + service_charge</code> (no backend change)</li>
+      <li><span class="pill pill-added">Total Sales KPI</span> → renamed from "Net Sales", subtitle <code>"incl. tax"</code>, keeps <code>r.total_sales</code></li>
+      <li><span class="pill pill-added">Total Sales table column</span> → added alongside existing Net Sales column (OD-630-06)</li>
+      <li>Gross Revenue KPI card → <strong>removed</strong> (OD-630-08)</li>
+    </ul>
+  </div>
+
+  <!-- OD table -->
+  <div class="section">
+    <div class="section-label">Open owner decisions</div>
+    <table>
+      <thead><tr><th>OD</th><th>Decision</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>OD-630-01</td><td>Net Sales subtitle → <code>"before taxes"</code> (discount already deducted)</td><td>✅ LOCKED</td></tr>
+        <tr><td>OD-630-02</td><td>Gross Revenue subtitle → no change, keep <code>"before disc"</code></td><td>✅ LOCKED</td></tr>
+        <tr><td>OD-630-03</td><td>Date picker FROM/TO → no change, keep as today</td><td>✅ LOCKED</td></tr>
+        <tr><td>OD-630-04</td><td>Total Sales subtitle → <code>"incl. tax"</code></td><td>✅ LOCKED</td></tr>
+        <tr><td>OD-630-05</td><td>Tax KPI subtitle → <code>"GST + SC"</code></td><td>✅ LOCKED</td></tr>
+        <tr><td>OD-630-06</td><td>Add Total Sales as table column → Yes, both columns visible</td><td>✅ LOCKED</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Files -->
+  <div class="section">
+    <div class="section-label">Files that will change</div>
+    <table>
+      <thead><tr><th>File</th><th>Change</th><th>Backend dep?</th></tr></thead>
+      <tbody>
+        <tr><td><code>topFoodSalesService.js</code></td><td>Read <code>r.net_sales</code>; add <code>tax</code> + <code>totalSales</code> fields</td><td class="blocked">YES — BB-14 for net_sales</td></tr>
+        <tr><td><code>ItemSalesLedgerMockup.jsx</code></td><td>Remove badge + FROM/TO; add Tax + Total Sales KPI cards; fix subtitle</td><td>NO (Tax + relabel are FE-only)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

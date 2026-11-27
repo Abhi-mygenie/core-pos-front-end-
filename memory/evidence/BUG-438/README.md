@@ -1,0 +1,1 @@
+BUG-438 evidence → test_reports/iteration_6.json context_for_next_testing_agent ("Not tested this run (deferred): keyboard row navigation Arrow/Enter/Esc, phone-suffix search (A6), Turns cross-check (A5), focus-refresh (A4), legacy pages field-level compare R1–R6"); only the implementation self-test 2026-09-21 09:08 exercised ↑↓/Enter/Esc. No automated test asserts them.

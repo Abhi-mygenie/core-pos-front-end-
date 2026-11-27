@@ -1,0 +1,10 @@
+{
+ "status": 200,
+ "body": {
+  "message": "Order placed successfully",
+  "order_id": 1579069,
+  "daily_token": null,
+  "restaurant_order_id": "000023",
+  "payment_status": "unpaid"
+ }
+}

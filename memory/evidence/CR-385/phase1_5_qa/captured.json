@@ -1,0 +1,33 @@
+{
+  "cancels": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/230/cancel",
+      "method": "POST",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/228/cancel",
+      "method": "POST",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/229/cancel",
+      "method": "POST",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}"
+    },
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/231/cancel",
+      "method": "POST",
+      "body": "{\"reason\":\"guest cancelled\",\"cancelled_by\":\"Owner\",\"notify_cm\":true}"
+    }
+  ],
+  "modifies": [
+    {
+      "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations/229",
+      "method": "PATCH",
+      "body": "{\"reason\":\"\",\"checkin\":\"2026-09-22\",\"checkout\":\"2026-09-24\",\"amount_after_tax\":0}"
+    }
+  ],
+  "login_user": null,
+  "login_raw": "{\"token\":\"AK3oUMdsiDWLzN7ieK9gOsIKDaKUR0n0kFxeZ8rHtq0oMY6sEt5tbv6pn9ORUZHesIiqvy3Wpxsd5KXtGlV1i1IsZ4yaxQlD7wUcmraP6MmzRbFIobcnzdL3\",\"firebase_token\":null,\"crm_token\":\"dp_live_BByDf3Q8ldQovB0pMGDIsRiRObwpKJgixgjvy04S1AY\",\"first_login\":\"false\",\"role_names\":\"Owner\",\"permissions\":[\"Manager\",\"aggregator\",\"assign_online_order\",\"bill\",\"clear_payment\",\"complementary_food\",\"confirm_order\",\"customer_management\",\"discount\",\"food\",\"food_transfer\",\"merge_table\",\"order\",\"order_cancel\",\"order_edit\",\"order_unpaid\",\"pos\",\"print_icon\",\"Ready\",\"serve\",\"show_online_order\",\"table_view\",\"transfer_table\",\"update_payment\",\"virtual_wallet\",\"whatsapp_icon\",\"coupon\",\"delivery_management\",\"employee\",\"expence\",\"inventory\",\"Loyalty\",\"menu\",\"printer\",\"printer_management\",\"restaurant_settings\",\"restaurant_setup\",\"table_management\",\"cancellation_report\",\"consumption_report\",\"pl_report\",\"report\",\"report_summery\",\"revenue_report\",\"revenue_report_average\",\"room_report\",\"sales_report\",\"sattle_report\",\"waiter_revenue_report\",\"wastage_report\"],\"zone_wise_topic\":\"zone_6_restaurant\",\"login_type\":\"employee\"}"
+}

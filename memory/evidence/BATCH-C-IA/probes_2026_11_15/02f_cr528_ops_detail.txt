@@ -1,0 +1,19 @@
+orders: 63
+print_bill_status values: {'No'}
+all operation types: {'order_edit', 'order_status_update', 'item_ready', 'order_bill_payment', 'transfer_food_item_in', 'table_room_switch', 'make_unpaid', 'transfer_food_item_out'}
+orders with print_bill_status set: 63
+orders with operations: 63
+
+=== SAMPLE ORDER WITH BILL PRINTED + OPERATIONS ===
+print_bill_status: No
+collect_bill: 2026-11-01 21:39:31
+f_order_status: 6
+operations (3):
+   {'operation': 'order_bill_payment', 'created_at': '2026-11-01 21:39:31', 'previous_order_amount': '693.00', 'current_order_amount': 693, 'previous_payment_method': 'pending', 'current_payment_method': 'cash'}
+   {'operation': 'order_status_update', 'created_at': '2026-11-01 21:18:20', 'previous_order_amount': '693.00', 'current_order_amount': 693, 'previous_payment_method': 'pending', 'current_payment_method': 'pending'}
+   {'operation': 'order_status_update', 'created_at': '2026-11-01 21:18:19', 'previous_order_amount': '693.00', 'current_order_amount': 693, 'previous_payment_method': 'pending', 'current_payment_method': 'pending'}
+
+=== ORDER WITH MULTIPLE OPERATIONS ===
+  op: order_bill_payment | at: 2026-11-01 21:39:31 | by: Counter
+  op: order_status_update | at: 2026-11-01 21:18:20 | by: Counter
+  op: order_status_update | at: 2026-11-01 21:18:19 | by: Counter

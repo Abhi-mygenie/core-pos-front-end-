@@ -1,0 +1,8 @@
+{
+  "errors": [
+    {
+      "code": "role_name",
+      "message": "The role name field is required."
+    }
+  ]
+}

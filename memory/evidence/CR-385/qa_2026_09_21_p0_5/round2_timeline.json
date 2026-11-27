@@ -1,0 +1,332 @@
+[
+  {
+    "t": 11.529781103134155,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 11.52985668182373,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 11.52991795539856,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 12.545146226882935,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 13.066232204437256,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 13.116281747817993,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 15.210187196731567,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 15.210279941558838,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 15.210338354110718,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 15.808746576309204,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 15.991307735443115,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 16.301570415496826,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 23.435470581054688,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 23.43555784225464,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 23.435617208480835,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 24.641570568084717,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 24.665849208831787,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 25.281818628311157,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 28.529399871826172,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 28.536021947860718,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 28.53609800338745,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 28.53802490234375,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 500
+  },
+  {
+    "t": 28.981047868728638,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 29.196860790252686,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 29.356035947799683,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 29.357068061828613,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 29.357136249542236,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 29.364223957061768,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 500
+  },
+  {
+    "t": 29.825860023498535,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 29.97857975959778,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 30.60409164428711,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 30.604190826416016,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 30.604254007339478,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 31.1410870552063,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 31.374327421188354,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 31.72847890853882,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 34.24028301239014,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 34.24129319190979,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 34.2422239780426,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 34.24766707420349,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 500
+  },
+  {
+    "t": 35.17486214637756,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 35.857035875320435,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 36.722655296325684,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 36.72310829162598,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 36.72425937652588,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 36.73051381111145,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 500
+  },
+  {
+    "t": 37.40890598297119,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 37.70120406150818,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 38.971370458602905,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 38.97145414352417,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 38.97151589393616,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 39.498902320861816,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 39.9064576625824,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  },
+  {
+    "t": 40.10443663597107,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 46.10676312446594,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all"
+  },
+  {
+    "t": 46.106870889663696,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board"
+  },
+  {
+    "t": 46.10695147514343,
+    "kind": "req",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21"
+  },
+  {
+    "t": 47.16730761528015,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/room-status-board",
+    "status": 200
+  },
+  {
+    "t": 47.62915372848511,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/local-reservations?start_date=2026-08-22&end_date=2026-11-20&view=all",
+    "status": 200
+  },
+  {
+    "t": 48.67000198364258,
+    "kind": "resp",
+    "url": "https://preprod.mygenie.online/api/v2/vendoremployee/aiosell/dashboard-kpis?start_date=2026-09-21&end_date=2026-09-21",
+    "status": 200
+  }
+]

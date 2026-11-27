@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR-521: Orange Shade Decision</title>
+<style>
+  body { 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #F8F9FA; 
+    padding: 2rem; 
+    color: #1A1A1A; 
+  }
+  h1 { 
+    text-align: center; 
+    margin-bottom: 2rem; 
+  }
+  .grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 1.5rem; 
+  }
+  .card { 
+    border-radius: 8px; 
+    padding: 1rem; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+  }
+  .card-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+  }
+  .pill { 
+    padding: 4px 8px; 
+    border-radius: 12px; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+  }
+  .source { 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    font-size: 0.7rem; 
+    color: white; 
+    font-weight: bold;
+  }
+  .swiggy { background-color: #FC8019; }
+  .table-no { 
+    font-size: 1.25rem; 
+    font-weight: bold; 
+    color: #1A1A1A;
+  }
+  .details { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 0.875rem; 
+    color: #666666; 
+    margin-top: 4px;
+  }
+  .amount { 
+    font-weight: bold; 
+    color: #1A1A1A; 
+  }
+  .actions { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 1rem; 
+  }
+  .btn { 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    font-weight: bold; 
+    font-size: 0.875rem; 
+    cursor: pointer; 
+    border: none; 
+  }
+  .btn-green { 
+    background-color: #329937; 
+    color: white; 
+  }
+  .btn-outline { 
+    background-color: white; 
+    border: 1px solid #E5E5E5; 
+    color: #1A1A1A; 
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Status Specifics */
+  .prep { 
+    background-color: #FFFFFF; 
+    border: 2px solid #F59E0B; 
+  }
+  .prep .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .ready { 
+    background-color: #FFFFFF; 
+    border: 2px solid #F26B33; 
+  }
+  .ready .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .printed-old { 
+    background-color: #E8F5E9; 
+    border: 2px solid #329937; 
+  }
+  .printed-old .pill { background-color: #F5F5F5; color: #666666; }
+  
+  .printed-new { 
+    background-color: #FFEDD5; 
+    border: 2px solid #329937; 
+  }
+  /* Companion Adjustments */
+  .printed-new .pill { background-color: #FFFFFF; color: #666666; } 
+</style>
+</head>
+<body>
+
+<h1>CR-521: Bill Printed Card Comparison</h1>
+
+<div class="grid">
+  <!-- Preparing -->
+  <div class="card prep">
+    <div class="card-header">
+      <span class="pill">Preparing (12m)</span>
+      <span class="source swiggy">Swiggy</span>
+    </div>
+    <div>
+      <div class="table-no">Table 04</div>
+      <div class="details">
+        <span>4 Items</span>
+        <span class="amount">$ 42.50</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline">🖨️ KOT</button>
+      <button class="btn btn-outline">Update</button>
+    </div>
+  </div>
+
+  <!-- Ready -->
+  <div class="card ready">
+    <div class="card-header">
+      <span class="pill">Ready (2m)</span>
+      <span class="source swiggy">Swiggy</span>
+    </div>
+    <div>
+      <div class="table-no">Table 08</div>
+      <div class="details">
+        <span>2 Items</span>
+        <span class="amount">$ 18.00</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline">🖨️ KOT</button>
+      <button class="btn btn-green" style="background-color: #F26B33;">Dispatch</button>
+    </div>
+  </div>
+
+  <!-- Current Printed -->
+  <div class="card printed-old">
+    <div class="card-header">
+      <span class="pill">Printed (Current)</span>
+      <span class="source swiggy">Swiggy</span>
+    </div>
+    <div>
+      <div class="table-no">Table 12</div>
+      <div class="details">
+        <span>5 Items</span>
+        <span class="amount">$ 65.20</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline">🖨️ KOT</button>
+      <button class="btn btn-green">Bill</button>
+    </div>
+  </div>
+
+  <!-- Proposed Printed -->
+  <div class="card printed-new">
+    <div class="card-header">
+      <span class="pill">Printed (Proposed)</span>
+      <span class="source swiggy">Swiggy</span>
+    </div>
+    <div>
+      <div class="table-no">Table 12</div>
+      <div class="details">
+        <span>5 Items</span>
+        <span class="amount">$ 65.20</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline" style="background-color: #FFFFFF;">🖨️ KOT</button>
+      <button class="btn btn-green">Bill</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

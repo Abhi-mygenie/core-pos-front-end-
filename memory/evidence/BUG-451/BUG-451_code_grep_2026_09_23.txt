@@ -1,0 +1,18 @@
+# BUG-451 code-reality grep — 2026-09-23 @ HEAD 1be4055
+src/pages/LoadingPage.jsx:422:      const productsResponse = await productService.getProducts({ limit: 500, offset: 1, type: 'all' });
+src/pages/LoadingPage.jsx:491:      const reasonsResponse = await settingsService.getCancellationReasons({ limit: 100, offset: 1 });
+src/hooks/useRefreshAllData.js:29:      productService.getProducts({ limit: 500, offset: 1, type: 'all' }),
+src/api/services/productService.js:28:  const result = await getProducts({ limit: 500, offset: 1, type: 'all' });
+src/api/services/insightsService.js:62:    api.get(API_ENDPOINTS.PRODUCTS, { params: { limit: 10000, offset: 1, type: 'all' } }),
+src/api/services/insightsService.js:64:    api.get(API_ENDPOINTS.CANCELLATION_REASONS, { params: { limit: 100, offset: 1 } }).catch(() => ({ data: {} })),
+src/api/services/settingsService.js:27:  const result = await getCancellationReasons({ limit: 100, offset: 1 });
+
+463:export const PAGINATION = {
+464-  DEFAULT_LIMIT: 100, // Load all for caching
+465-  DEFAULT_OFFSET: 1,
+466-  PRODUCTS_TYPE: 'all',
+467-};
+
+## blast radius
+getProducts|getAllProducts refs: 8
+PAGINATION refs: 5

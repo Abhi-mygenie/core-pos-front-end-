@@ -1,0 +1,12 @@
+{
+ "status": 200,
+ "body": {
+  "success": true,
+  "message": "Order discount applied successfully.",
+  "order_id": 1579069,
+  "order_amount": 100,
+  "discount_amount": 0,
+  "discount_type": null,
+  "discount_value": "0.00"
+ }
+}

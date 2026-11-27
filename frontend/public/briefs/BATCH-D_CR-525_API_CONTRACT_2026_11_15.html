@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-D_CR-525_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-D_CR-525_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-525 (+ CR-521) After-print Collect Bill / bill_print reset — FINAL v1 — LOCKED 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BD-01, BD-02, BD-03, BD-04 · IA docs: <code>impact/CR-525_IMPACT_ANALYSIS.md</code> · <code>impact/CR-521_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong>
+<strong>Release note (OD-525-E):</strong> FE release of CR-525 and CR-521 waits for BD-01 (backend <code>bill_print</code> reset) before going live.</p>
+<h2>1. Reset bill_print on add-after-print (BD-01)</h2>
+<p>Endpoint: <code>PUT /api/v2/vendoremployee/order/update-place-order</code> — when request has a <strong>non-empty <code>cart-update</code></strong> (items added)</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order (server-side)</td>
+<td><code>bill_print</code></td>
+<td>Set to <code>'No'</code> immediately after a successful edit with new items</td>
+<td>BEHAVIOUR — NEW rule</td>
+</tr>
+<tr>
+<td>Socket</td>
+<td><code>update-order</code> event</td>
+<td>Publish after reset so all open POS tabs refresh — <strong>LOCKED OD-D-BD01-EVENT</strong></td>
+<td>BEHAVIOUR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Socket note (OD-D-BD01-EVENT):</strong> owner: "backend is already sending this on one of the sockets — need to check first." Backend to confirm in sign-off: (a) is <code>update-order</code> already emitted on <code>update-place-order</code>? (b) does the <code>bill_print</code> reset need an extra explicit emit, or is it bundled?</p>
+<p><strong>Condition:</strong> only when the outlet setting <code>order_edit_access</code> is ON (OD-525-A/E). When OFF, today’s behaviour is unchanged.</p>
+<h2>2. No reset on customer-only update (BD-02)</h2>
+<p>Endpoint: <code>PUT /api/v2/vendoremployee/order/update-place-order</code> — with <strong>empty <code>cart-update: []</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>Field</th>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order (server-side)</td>
+<td><code>bill_print</code></td>
+<td>Do NOT reset — leave unchanged</td>
+<td>BEHAVIOUR</td>
+</tr>
+</tbody>
+</table>
+<p>CR-523 uses this call for customer save (see <code>BATCH-D_CR-523_API_CONTRACT_2026_11_15.md</code> BD-05).</p>
+<h2>3. Other edit paths that reset bill_print (BD-03) — BEHAVIOUR — backend to confirm</h2>
+<p>TBD — backend to propose and confirm the full list in sign-off. Brief proposals:</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Resets <code>bill_print</code>?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Non-empty <code>cart-update</code> on <code>update-place-order</code></td>
+<td>Yes — BD-01 above</td>
+</tr>
+<tr>
+<td><code>cancel-food-item</code></td>
+<td>BEHAVIOUR — backend to confirm</td>
+</tr>
+<tr>
+<td><code>transfer-food-item</code></td>
+<td>BEHAVIOUR — backend to confirm</td>
+</tr>
+<tr>
+<td>Discount apply (<code>ORDER_DISCOUNT.MANAGE</code>)</td>
+<td>BEHAVIOUR — backend to confirm</td>
+</tr>
+</tbody>
+</table>
+<p>FE will follow the confirmed list exactly.</p>
+<h2>4. Keep bill_print_count unchanged (BD-04)</h2>
+<table>
+<thead>
+<tr>
+<th>Path (order)</th>
+<th>Type</th>
+<th>Rule</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bill_print_count</code></td>
+<td>integer</td>
+<td>Keeps incrementing on each print; NOT reset when <code>bill_print</code> resets</td>
+<td>EXISTING — confirm unchanged</td>
+</tr>
+</tbody>
+</table>
+<p>Only the <code>bill_print</code> flag resets on edit. <code>bill_print_count</code> preserves the full print history.</p>
+<h2>5. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BD-01">BD-01</td>
+<td></td>
+<td>Confirm socket event name + reset rule; confirm <code>order_edit_access</code> condition</td>
+<td></td>
+</tr>
+<tr>
+<td id="BD-02">BD-02</td>
+<td></td>
+<td>Confirm no reset on empty cart-update</td>
+<td></td>
+</tr>
+<tr>
+<td id="BD-03">BD-03</td>
+<td></td>
+<td>Provide full list of edit paths that reset <code>bill_print</code></td>
+<td></td>
+</tr>
+<tr>
+<td id="BD-04">BD-04</td>
+<td></td>
+<td>Confirm <code>bill_print_count</code> unchanged</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

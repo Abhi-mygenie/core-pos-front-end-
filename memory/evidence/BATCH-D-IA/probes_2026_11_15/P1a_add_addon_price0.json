@@ -1,0 +1,27 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/api/v2/vendoremployee/product/add-addon",
+  "json": {
+   "name": "BATCHD_IA_PROBE_ADDON",
+   "price": 0,
+   "weight": 0,
+   "veg": 1,
+   "status": 1,
+   "has_inventory": "No"
+  },
+  "data": null
+ },
+ "status": 201,
+ "response": {
+  "id": 13732,
+  "name": "BATCHD_IA_PROBE_ADDON",
+  "price": 0,
+  "status": 1,
+  "weight": 0,
+  "veg": 1,
+  "has_inventory": "No",
+  "recipe_id": null,
+  "has_recipe": false
+ }
+}

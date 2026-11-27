@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MyGenie POS — Nov Sprint Triage &amp; Handover Index (2026-11-20)</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --txt:#e7ebf0; --muted:#9aa4b2; --p0:#ef4444; --p1:#f59e0b; --p2:#64748b;
+    --ok:#22c55e; --warn:#eab308; --info:#38bdf8; --accent:#8b5cf6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+  .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 60px}
+  header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px}
+  .counts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .count{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:120px}
+  .count b{display:block;font-size:22px}
+  .count span{color:var(--muted);font-size:12px}
+  h2{font-size:16px;margin:34px 0 12px;display:flex;align-items:center;gap:10px}
+  h2 .pill{font-size:11px;color:var(--muted);font-weight:400}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card h3{margin:0 0 4px;font-size:14px}
+  .acct{color:var(--info);font-size:12px;margin-bottom:10px;font-family:ui-monospace,monospace}
+  .items{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-family:ui-monospace,monospace}
+  .tag.cr{border-color:#3b3566;background:#241f3a;color:#c9bbff}
+  .b{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;color:#0b0d11;vertical-align:middle}
+  .b.p0{background:var(--p0)} .b.p1{background:var(--p1)} .b.p2{background:var(--p2);color:#fff}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--panel2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  td code{font-family:ui-monospace,monospace;font-size:12px;color:#cbd5e1}
+  tr:last-child td{border-bottom:none}
+  .st{font-size:11px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .st.qa{background:#10351f;color:#86efac;border:1px solid #1d5c38}
+  .st.build{background:#3a2a10;color:#fcd34d;border:1px solid #6b4e14}
+  .st.block{background:#3a1216;color:#fca5a5;border:1px solid #6b1f26}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
+  .files{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:8px}
+  .file{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:ui-monospace,monospace;font-size:12px}
+  .file b{color:var(--accent)}
+  .note{color:var(--muted);font-size:12px;margin-top:6px}
+  .foot{margin-top:40px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>MyGenie POS — Nov Sprint Triage &amp; Handover Index</h1>
+    <div class="sub">Snapshot 2026-11-20 · scope = CR/bugs registered or implemented after 14 Nov · priorities are <b>impact-based</b> (override the 2026-11-19 blanket-P0)</div>
+    <div class="counts">
+      <div class="count"><b>~40</b><span>Implemented → QA</span></div>
+      <div class="count"><b>2</b><span>P0 to fix</span></div>
+      <div class="count"><b>5+2</b><span>P1 fix / verify</span></div>
+      <div class="count"><b>5</b><span>Backend-blocked</span></div>
+      <div class="count"><b>3</b><span>Deferred (P2)</span></div>
+    </div>
+    <div class="legend">
+      <span><span class="b p0">P0</span> security / money / control</span>
+      <span><span class="b p1">P1</span> broken feature / silent control</span>
+      <span><span class="b p2">P2</span> cosmetic / backend-enabler / later</span>
+      <span>All test accounts password <code>Qplazm@10</code></span>
+    </div>
+  </header>
+
+  <!-- QA -->
+  <h2>🧪 QA Handover <span class="pill">run all batches in parallel · QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md</span></h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Batch 1 — Cancellation Reports</h3>
+      <div class="acct">owner@palmhouse.com</div>
+      <div class="items">
+        <span class="tag cr">CR-524</span><span class="tag cr">CR-554</span><span class="tag cr">CR-555</span><span class="tag cr">CR-556</span>
+        <span class="tag">BUG-708</span><span class="tag">BUG-713</span><span class="tag">BUG-714</span><span class="tag">BUG-715</span><span class="tag">BUG-716</span><span class="tag">BUG-717</span><span class="tag">BUG-718</span><span class="tag">BUG-729</span>
+      </div>
+      <div class="note">Punch Time/Duration visible, risk badges 5/15/30, 5 inline filters, IST times, dead Cancel-Note col gone.</div>
+    </div>
+    <div class="card">
+      <h3>Batch 2 — Audit Report</h3>
+      <div class="acct">owner@palmhouse.com · ≤7D ranges</div>
+      <div class="items"><span class="tag">BUG-722</span><span class="tag">BUG-730</span><span class="tag">BUG-739</span></div>
+      <div class="note">Blank stale KPIs on error, "High Risk"→"Late Cancel", Total Events = event count + Excel summary fields.</div>
+    </div>
+    <div class="card">
+      <h3>Batch 3 — Order Beta + Credit + Prepaid→Credit</h3>
+      <div class="acct">owner@palmhouse.com · owner@thegoankitchen.com</div>
+      <div class="items">
+        <span class="tag">BUG-724</span><span class="tag">BUG-725</span><span class="tag">BUG-726</span><span class="tag">BUG-727</span><span class="tag">BUG-737</span><span class="tag">BUG-735</span><span class="tag">BUG-733</span><span class="tag">BUG-723</span>
+        <span class="tag cr">CR-523</span><span class="tag cr">CR-526</span><span class="tag cr">CR-527</span><span class="tag">BUG-671</span><span class="tag">BUG-672</span><span class="tag">BUG-481</span>
+      </div>
+      <div class="note">Incl. your "credit not working in prepaid" case: prepaid → Credit lands in Credit reports, NOT Order Beta (BUG-672).</div>
+    </div>
+    <div class="card">
+      <h3>Batch 4 — Order Entry + Tax</h3>
+      <div class="acct">owner@beanmeup.com (tax) · owner@palmhouse.com</div>
+      <div class="items"><span class="tag cr">CR-493</span><span class="tag">BUG-670</span><span class="tag">BUG-674</span><span class="tag">BUG-678</span><span class="tag">BUG-683</span><span class="tag">BUG-684</span></div>
+      <div class="note">Mandatory cancel reason (watch BUG-682), cancel notes, prepaid SC off, VAT-off, ₹1 round-off.</div>
+    </div>
+    <div class="card">
+      <h3>Batch 5 — ScanOrderPopOut / Web-Scan / Aggregator</h3>
+      <div class="acct">owner@thegoankitchen.com · order #1578881</div>
+      <div class="items"><span class="tag cr">CR-557</span><span class="tag cr">CR-545</span><span class="tag cr">CR-552</span><span class="tag cr">CR-559</span><span class="tag">BUG-679</span><span class="tag">BUG-702</span><span class="tag">BUG-703</span><span class="tag">BUG-742</span></div>
+      <div class="note">Rich Mode-B rows, APS ₹1, per-item approval, auto-print KOT, aggregator tile opens, custom-item KOT.</div>
+    </div>
+    <div class="card">
+      <h3>Batch 6 — Permissions + Cosmetic</h3>
+      <div class="acct">captain@themealbreak.com + owner baseline</div>
+      <div class="items"><span class="tag cr">CR-515</span><span class="tag cr">CR-521</span><span class="tag">BUG-741</span></div>
+      <div class="note">Staff rights gate Reprint/Collect (PARTIAL — no fine-grained no-rights staff account).</div>
+    </div>
+    <div class="card">
+      <h3>Batch 7 — Verification (believed-done / not reproducing)</h3>
+      <div class="acct">owner@beanmeup.com · owner@thegoankitchen.com</div>
+      <div class="items"><span class="tag">BUG-740</span><span class="tag cr">CR-510</span></div>
+      <div class="note">BUG-740: prepaid overcharge — owner says not happening → confirm NO DEFECT. CR-510: aggregator variations/add-ons likely already render.</div>
+    </div>
+  </div>
+  <div class="note">Excluded — already QA-passed: <span class="tag">BUG-731</span> <span class="tag cr">CR-525</span> · NOT QA-ready (needs rework): <span class="tag">BUG-647</span> (smoke-failed).</div>
+
+  <!-- P0 -->
+  <h2>🔴 P0 Fix Handover <span class="pill">HANDOVER_P0_FIXES_2026-11-20.md</span></h2>
+  <table>
+    <tr><th>ID</th><th>Title</th><th>Why P0</th><th>Status</th></tr>
+    <tr><td><code>BUG-720</code> <span class="b p0">P0</span></td><td>Route permission bypass + staff PII/password exposure</td><td>Security + data leak; App.js L253-289 ProtectedRoute→PermissionRoute. Blocked on role-key map.</td><td><span class="st build">to build</span></td></tr>
+    <tr><td><code>CR-561</code> <span class="b p0">P0</span></td><td>APS ₹1 price not enterable from Accept pop-up</td><td>UNBLOCKED 2026-11-20 — backend shipped update-food-item-price; now a full FE build.</td><td><span class="st build">to build</span></td></tr>
+  </table>
+  <div class="note">BUG-740 moved → QA Batch 7 · BUG-721 moved → P1.</div>
+
+  <!-- P1 -->
+  <h2>🟠 P1 Fix Handover <span class="pill">HANDOVER_P1_FIXES_2026-11-20.md</span></h2>
+  <table>
+    <tr><th>ID</th><th>Title</th><th>Why P1</th><th>Status</th></tr>
+    <tr><td><code>BUG-682</code> <span class="b p1">P1</span></td><td>CR-493 cancel-note-mandatory silently always-off</td><td>Neutralises a revenue-leakage control.</td><td><span class="st build">to fix</span></td></tr>
+    <tr><td><code>BUG-681</code> <span class="b p1">P1</span></td><td>CR-526 Remove/void-unpaid button never renders</td><td>coverage.status vs coverage.type → shipped feature dead.</td><td><span class="st build">to fix</span></td></tr>
+    <tr><td><code>BUG-738</code> <span class="b p1">P1</span></td><td>Channel/amount mismatch in popup (₹8,622 vs ₹411)</td><td>Misleading money/channel across dashboard/popout/OE.</td><td><span class="st build">to fix</span></td></tr>
+    <tr><td><code>BUG-734</code> <span class="b p1">P1</span></td><td>Credit [null] names + silent Remove failure</td><td>Silent failure + data display.</td><td><span class="st build">to fix</span></td></tr>
+    <tr><td><code>BUG-721</code> <span class="b p1">P1</span></td><td>Dashboard Print-KOT / YTC-Cancel not permission-gated</td><td>Re-graded from P0; ChannelColumn L321 misses perm props.</td><td><span class="st build">to fix</span></td></tr>
+    <tr><td><code>CR-505</code> <span class="b p1">P1</span></td><td>Order Beta partial-payment split + totals</td><td>Verify first — likely covered by BUG-645.</td><td><span class="st qa">verify</span></td></tr>
+    <tr><td><code>CR-510</code> <span class="b p1">P1</span></td><td>Aggregator item details in drill-down</td><td>Verify first — may already render (→ QA Batch 7).</td><td><span class="st qa">verify</span></td></tr>
+  </table>
+
+  <!-- Backend -->
+  <h2>⛔ Backend-Blocked Handover <span class="pill">BACKEND_HANDOVER_BLOCKED_ITEMS_2026-11-20.md</span></h2>
+  <table>
+    <tr><th>ID</th><th>Title</th><th>Missing backend piece</th></tr>
+    <tr><td><code>CR-561</code> <span class="st qa">DELIVERED</span></td><td>APS ₹1 price edit on placed line</td><td>✅ Backend shipped <code>update-food-item-price</code> 2026-11-20 → moved to P0 FE build.</td></tr>
+    <tr><td><code>BUG-719</code> <span class="b p1">P1</span></td><td>Audit 50-day range times out</td><td><code>insights-dashboard</code> ~78s &gt; 60s → optimise or paginate.</td></tr>
+    <tr><td><code>CR-443</code> <span class="b p2">P2</span></td><td>Employee notification mapping</td><td>No alert-right key / event endpoints.</td></tr>
+    <tr><td><code>CR-494</code> <span class="b p2">P2</span></td><td>Cancellation threshold + manager PIN</td><td>No PIN / threshold / limit config + validation endpoint.</td></tr>
+    <tr><td><code>CR-495</code> <span class="b p2">P2</span></td><td>Comp only for breakfast/meal-plan rooms</td><td>No room meal-plan / guest-count fields.</td></tr>
+    <tr><td><code>CR-560</code> <span class="b p2">P2</span></td><td>Server-side Excel for all reports</td><td>Endpoint matrix for 41 screens (only 4 known).</td></tr>
+  </table>
+  <div class="note">Backend order: BUG-719 → CR-443/494/495 (P2) → CR-560 last. CR-561 DELIVERED (→ P0 FE build); BUG-740 &amp; CR-510 moved to QA.</div>
+
+  <!-- Deferred -->
+  <h2>⚪ Deferred — can wait <span class="pill">re-graded P0→P2 (cosmetic / needs owner decision)</span></h2>
+  <table>
+    <tr><th>ID</th><th>Title</th><th>Reason</th></tr>
+    <tr><td><code>BUG-732</code> <span class="b p2">P2</span></td><td>Edited cart row jumps to bottom</td><td>Cosmetic UX.</td></tr>
+    <tr><td><code>BUG-736</code> <span class="b p2">P2</span></td><td>Update-toast overlaps table rows</td><td>Cosmetic UX.</td></tr>
+    <tr><td><code>BUG-728</code> <span class="b p2">P2</span></td><td>Cancelled KPI ≠ rows; day-header totals</td><td>Parked — needs owner decision OD-728-01.</td></tr>
+  </table>
+
+  <h2>📄 Source handover docs</h2>
+  <div class="files">
+    <div class="file"><b>QA</b><br/>QA_HANDOVER_6_BATCHES_PARALLEL_2026-11-20.md</div>
+    <div class="file"><b>P0</b><br/>HANDOVER_P0_FIXES_2026-11-20.md</div>
+    <div class="file"><b>P1</b><br/>HANDOVER_P1_FIXES_2026-11-20.md</div>
+    <div class="file"><b>Backend</b><br/>BACKEND_HANDOVER_BLOCKED_ITEMS_2026-11-20.md</div>
+  </div>
+
+  <div class="foot">
+    Generated 2026-11-20 · source of truth: <code>memory/control/registry.json</code> + code inspection ·
+    all four handovers live in <code>memory/handover/</code> on <code>main</code>.
+  </div>
+</div>
+</body>
+</html>

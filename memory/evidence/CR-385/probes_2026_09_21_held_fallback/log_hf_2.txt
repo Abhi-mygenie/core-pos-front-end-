@@ -1,0 +1,11 @@
+h2 not saved: [Errno 2] No such file or directory: 'h2_extend_1117.json'
+LR now: 2026-11-16 {'nights': 2, 'booking_charge': 73600, 'total_with_gst': 86848, 'balance_due': 86348} LR nights_detail: [('2026-11-14', 'held', 36800), ('2026-11-15', 'held_fallback', 36800)]
+TAB: Room payment received via TAB
+after TAB: departed 0
+restore HTTP: True Rates pushed successfully
+rate 2026-11-17 [('executive-s-ep', 7400), ('suite-s-ep', 31500)]
+rate 2026-11-16 [('executive-s-ep', 7400), ('suite-s-ep', 31500)]
+rate 2026-11-15 [('executive-s-ep', 7400), ('suite-s-ep', 31500)]
+rate 2026-11-14 [('executive-s-ep', 8600), ('suite-s-ep', 36800)]
+settings: {'allow_early_checkin': False, 'extend_rate_mode': 'calendar', 'auto_print_checkin_receipt': False}
+board: {8524: ('occupied', 1232583), 8525: ('hk', None), 8526: ('occupied', 1232602), 8527: ('hk', None), 8528: ('hk', None)}

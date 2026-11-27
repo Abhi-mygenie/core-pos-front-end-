@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Batch A — Gate 2.5 Design Mockups (Current vs Proposed) — 2026-11-14</title>
+<style>
+:root{--o:#F26B33;--g:#329937;--d:#1A1A1A;--gt:#666;--b:#E5E5E5;--s:#F7F7F7;--r:#EF4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#EDEBE6;color:var(--d)}
+header{background:#1A1A1A;color:#fff;padding:22px 32px}header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.8}
+nav{padding:12px 32px;background:#fff;border-bottom:1px solid var(--b);font-size:13px}nav a{color:var(--o);margin-right:14px;text-decoration:none}
+section{padding:28px 32px;border-bottom:1px solid #d8d4ca}
+h2{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:var(--gt);margin:0 0 12px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.col h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}
+.cur h3{color:#777}.new h3{color:var(--g)}
+.frame{background:rgba(0,0,0,.35);padding:22px;border-radius:12px;min-height:120px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;max-width:440px;margin:0 auto}
+.mh{padding:16px 18px;border-bottom:1px solid var(--b)}.mh b{font-size:18px}.mh p{margin:4px 0 0;font-size:13px;color:var(--gt)}
+.mb{padding:16px 18px}.mf{padding:12px 18px;border-top:1px solid var(--b);background:var(--s)}
+.warn{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.lbl{font-size:13px;font-weight:600;color:var(--gt);margin:0 0 6px}
+.sel{border:1px solid var(--b);border-radius:12px;padding:11px 14px;font-size:14px;display:flex;justify-content:space-between;margin-bottom:12px}
+.ta{border:1px solid var(--b);border-radius:12px;padding:10px 14px;font-size:13px;color:#999;height:64px;margin-bottom:6px}
+.btn{width:100%;border:0;border-radius:12px;padding:13px;color:#fff;font-weight:700;font-size:15px;background:var(--r)}
+.btn.g{background:var(--g)}.btn.dis{opacity:.5}
+.new .add{outline:3px solid var(--g);outline-offset:3px;border-radius:10px}
+.chg{display:inline-block;background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.rem{display:inline-block;background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.tbd{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;margin-left:6px}
+.diff{margin:14px 0 0;font-size:13px;background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px 16px}
+.diff li{margin:3px 0}
+.hint{font-size:11px;color:var(--gt)}
+.err{background:#FEE2E2;color:#B91C1C;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.pin{display:flex;gap:10px;justify-content:center;margin:12px 0}.pin span{width:44px;height:52px;border:2px solid var(--b);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.pin span.f{border-color:var(--o)}
+.panel{background:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.line{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #eee}.line:last-child{border:0}
+.box{width:14px;height:14px;border:1.5px solid #888;border-radius:3px;margin-top:2px;flex:none}.box.on{background:var(--g);border-color:var(--g)}
+.grow{flex:1}.amt{font-weight:600}
+.mini{display:block;width:100%;border:1px solid #ddd;border-radius:4px;padding:3px 6px;font-size:11px;color:#999;margin-top:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left}th{background:#FAFAFA;color:#71717a;font-weight:600}
+.pill{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--b);margin-right:4px;background:#fff}
+.banner{color:#fff;padding:9px 14px;font-size:13px;display:flex;gap:8px;align-items:center;margin-bottom:4px;border-radius:4px}
+.ci{background:#fff;border-radius:10px;padding:14px;font-size:12px}
+.ci .row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.ci .opt{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600}.ci .opt.on{box-shadow:0 0 0 2px #1A1A1A}
+.ci input{border:1px solid var(--b);border-radius:6px;padding:6px 8px;width:80px}
+.login{background:#fff;border-radius:14px;padding:22px;text-align:center;max-width:300px;margin:0 auto;font-size:13px}
+.login .f{border:1px solid var(--b);border-radius:8px;padding:9px;margin:8px 0;text-align:left;color:#999}
+.toggle{display:inline-block;width:34px;height:18px;background:var(--g);border-radius:999px;position:relative;vertical-align:middle}.toggle:after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%}
+.note{font-size:12px;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;margin-top:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.chip{border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-weight:600;font-size:12px;background:#fff}.chip.on{box-shadow:0 0 0 2px #1A1A1A}.chip.off{color:#bbb;background:#F4F4F4;border-style:dashed}
+@media(max-width:900px){.cmp{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header data-testid="mockup-header">
+<h1>Batch A — Gate 2.5 Design Approval · Current vs Proposed</h1>
+<p>P0 items with on-screen changes · 2026-11-14 · "Current" is rebuilt from today's source code (same layout, text and colours). "Proposed" marks every change with a green outline and tag. Approve or comment per screen (M1–M10).</p>
+<p style="margin-top:8px;font-weight:700;color:#86EFAC">STATUS: ALL M1–M10 APPROVED BY OWNER 2026-11-14 · M5b Option B APPROVED 2026-11-15 (R15) · M8b + M5c APPROVED 2026-11-15 (R17/R18) — Gate 2.5 closed. This page is the single Batch A mockup document.</p>
+</header>
+<nav>
+<a href="#m1">M1 Order cancel</a><a href="#m2">M2 Item cancel</a><a href="#m3">M3 No reasons</a><a href="#m4">M4 PIN popup</a><a href="#m5">M5 Comp in payment</a><a href="#m5b">M5b Comp reason (Option B approved)</a><a href="#m5c">M5c Room comp meal pick</a><a href="#m6">M6 Reports notes</a><a href="#m7">M7 Rights buttons</a><a href="#m8">M8 Check-in meal</a><a href="#m8b">M8b Half-board second meal</a><a href="#m9">M9 Alerts</a><a href="#m10">M10 Pages login</a>
+</nav>
+
+<section id="m1" data-testid="mockup-m1">
+<h2>M1 · Cancel Order dialog</h2>
+<p class="meta">BUG-674 (notes box) · CR-493 (notes mandatory setting) · CR-494 (PIN above limit) · File: CancelOrderModal.jsx</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Order</b><p>T4 · 3 items will be cancelled</p></div>
+<div class="mb"><div class="warn">This will cancel ALL items in this order. This action cannot be undone.</div>
+<p class="lbl">Cancellation Reason</p><div class="sel"><span>Customer left</span><span>⌄</span></div>
+<p class="hint">No notes box (only shown in refund mode).</p></div>
+<div class="mf"><button class="btn">Cancel Order</button></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Order</b><p>T4 · 3 items will be cancelled</p></div>
+<div class="mb"><div class="warn">This will cancel ALL items in this order. This action cannot be undone.</div>
+<p class="lbl">Cancellation Reason <span style="color:#EF4444">*</span></p><div class="sel"><span>Customer left</span><span>⌄</span></div>
+<div class="add"><p class="lbl">Notes (Optional) <span class="chg">NEW</span></p><div class="ta">Type here…</div>
+<p class="hint">Label becomes "Notes *" and is required when the restaurant turns on "Cancel notes mandatory".</p></div></div>
+<div class="mf"><button class="btn">Cancel Order</button></div></div></div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> Notes box in every cancel mode (not only refund). Saved as the order cancel note; blank = saved empty.</li>
+<li><b>Changed:</b> Reason marked required (*). Button already stays disabled until a reason is picked.</li>
+<li><b>Added:</b> If amount is above the "cancel" PIN limit → tapping Cancel Order opens the PIN popup (M4) before cancelling.</li></ul>
+</section>
+
+<section id="m2" data-testid="mockup-m2">
+<h2>M2 · Cancel Item dialog</h2>
+<p class="meta">BUG-670 (notes saved) · CR-493 · CR-494 · CR-515 (who sees the cancel button) · Files: CancelFoodModal.jsx, CartPanel.jsx, OrderEntry.jsx</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Paneer Tikka</b><p>Select cancellation details</p></div>
+<div class="mb"><p class="lbl">Cancellation Reason</p><div class="sel"><span>Select the Reason</span><span>⌄</span></div>
+<p class="lbl">Additional Notes (Optional)</p><div class="ta">Type here…</div><p class="hint" style="color:#B91C1C">Typed notes are dropped — never sent or saved.</p></div>
+<div class="mf"><button class="btn dis">Cancel Item</button></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Paneer Tikka</b><p>Select cancellation details</p></div>
+<div class="mb"><p class="lbl">Cancellation Reason <span style="color:#EF4444">*</span></p><div class="sel"><span>Select the Reason</span><span>⌄</span></div>
+<div class="add"><p class="lbl">Additional Notes (Optional) <span class="chg">NOW SAVED</span></p><div class="ta">Type here…</div>
+<p class="hint">Required (*) when "Cancel notes mandatory" is on.</p></div></div>
+<div class="mf"><button class="btn dis">Cancel Item</button></div></div></div></div>
+</div>
+<ul class="diff"><li><b>Changed (no visual change):</b> notes are sent and saved, then shown in reports (M6).</li>
+<li><b>Changed:</b> the item "cancel" button in the cart shows only for users with the <b>Cancel Orders</b> right (today: "food / View Menu Items" right).</li>
+<li><b>Added:</b> PIN popup (M4) for cancel before serve / after serve / after bill when above the limit.</li></ul>
+</section>
+
+<section id="m3" data-testid="mockup-m3">
+<h2>M3 · No cancellation reasons set up</h2>
+<p class="meta">CR-493 (OD-493-B: block + message) · Both cancel dialogs</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Order</b><p>T4 · 3 items will be cancelled</p></div>
+<div class="mb"><p class="lbl">Cancellation Reason</p><div class="sel"><span style="color:#999">Select reason</span><span>⌄</span></div><p class="hint">Dropdown opens empty — user is stuck with no explanation.</p></div>
+<div class="mf"><button class="btn dis">Cancel Order</button></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Cancel Order</b><p>T4 · 3 items will be cancelled</p></div>
+<div class="mb"><div class="err add">No cancellation reasons are set up for this restaurant. Ask the owner to add them in Settings → Cancellation Reasons. <span class="chg">NEW</span></div></div>
+<div class="mf"><button class="btn dis">Cancel Order</button></div></div></div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> clear blocking message; cancel stays disabled.</li></ul>
+</section>
+
+<section id="m4" data-testid="mockup-m4">
+<h2>M4 · PIN popup (new)</h2>
+<p class="meta">CR-494 · 6 actions, separate PIN each: cancel before serve, cancel after serve, cancel after bill, edit after bill, discount, complimentary · New component</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="frame"><div class="modal"><div class="mb"><p class="hint">No PIN today — any user with the right completes the action directly.</p></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame"><div class="modal add">
+<div class="mh"><b>Manager PIN required</b> <span class="chg">NEW</span><p>Cancel after bill · ₹1,250 is above the ₹500 limit</p></div>
+<div class="mb"><div class="pin"><span class="f">•</span><span class="f">•</span><span></span><span></span></div>
+<p class="hint" style="text-align:center">Your cancels today: ₹2,100 of ₹3,000 · 4 of 5</p>
+<div class="err" style="margin-top:10px">Wrong PIN. Try again.</div></div>
+<div class="mf" style="display:flex;gap:8px"><button class="btn" style="background:#9CA3AF">Back</button><button class="btn g">Confirm</button></div></div></div></div>
+</div>
+<ul class="diff"><li><b>When shown:</b> amount (incl. tax) above that action's limit; limit 0 = always; over the daily ₹ or count limit = always.</li>
+<li><b>Edit after bill:</b> asked from everyone, including users with order-edit access.</li>
+<li><b>Subtitle</b> names the action and why the PIN is needed. Daily usage line shown for cancels/discounts.</li>
+<li><b>Whole-order comp (CR-445, P1):</b> no PIN — right only.</li></ul>
+</section>
+
+<section id="m5" data-testid="mockup-m5">
+<h2>M5 · Complimentary in the payment panel</h2>
+<p class="meta">CR-492 (hide without right) · CR-494 (comp PIN) · CR-495 (room limit) · File: CollectPaymentPanel.jsx</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (every user)</h3><div class="frame"><div class="panel">
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini">Reason (optional)</span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box"></span><span class="grow">Cold Coffee</span><span class="amt">₹180</span></div></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="frame">
+<div class="panel" style="margin-bottom:10px"><b style="font-size:11px;color:#666">USER WITHOUT "complementary_food"</b> <span class="rem">CHECKBOX HIDDEN</span>
+<div class="line"><span class="grow">Masala Dosa</span><span class="amt">₹120</span></div>
+<div class="line"><span class="grow">Cold Coffee</span><span class="amt">₹180</span></div></div>
+<div class="panel add"><b style="font-size:11px;color:#666">USER WITH THE RIGHT</b>
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini" style="color:#666">Reason (required) <span class="chg">CHANGED</span></span>
+<span class="hint">Room 101 · comp left today (breakfast): ₹380 of ₹500 <span class="chg">NEW · room orders</span></span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box"></span><span class="grow">Cold Coffee</span><span class="amt">₹180</span></div></div>
+</div></div>
+</div>
+<ul class="diff"><li><b>Removed for users without the right:</b> comp checkbox. Existing comp lines stay visible but read-only (OD-492-A).</li>
+<li><b>Changed:</b> comp reason required. Above comp limit → PIN popup (M4).</li>
+<li><b>Room orders:</b> remaining comp for the meal shown; over → PIN. Meal is picked by the cashier on each comp — see <a href="#m5c">M5c</a> (R16).</li>
+<li><b>Release impact:</b> owners without the right today (cafe103, Palm House) lose this checkbox until roles are updated.</li></ul>
+</section>
+
+<section id="m5b" data-testid="mockup-m5b">
+<h2>M5b · Required complimentary reason (full + part comp) <span class="chg">OPTION B APPROVED BY OWNER 2026-11-15</span></h2>
+<p class="meta">CR-492 · Owner R14: reason required for full AND part comp; block Pay only; bill never prints the reason · Files: CollectPaymentPanel.jsx, MarkCompModal.jsx</p>
+<div class="panel" style="margin-bottom:14px"><b style="font-size:12px">Part comp today (to revalidate):</b> in Collect Bill, ticking the comp box on an item with qty 2+ opens the <b>Mark Complementary</b> popup with a <b>Comp Qty</b> stepper (e.g. 1 of 3). Code: MarkCompModal.jsx (BUG-298/299, QA PASS 2026-09-15). Part-comped lines show NO reason box today.</div>
+<div class="cmp">
+<div class="col new"><h3 style="color:#777">Option A — reason in the popup (NOT chosen)</h3><div class="frame"><div class="modal">
+<div class="mh"><b>Mark Complementary</b><p>Masala Dosa</p></div>
+<div class="mb"><div class="sel"><span>Current Quantity: <b>3</b></span><span>Comp Qty: <b>1</b></span></div>
+<p class="hint" style="margin:-6px 0 10px">1 complimentary (₹0) · 2 remain charged normally</p>
+<div class="add" style="padding:4px"><p class="lbl">Reason * <span class="chg">NEW</span></p><div class="ta" style="height:44px">Type reason…</div></div></div>
+<div class="mf"><button class="btn g dis">Mark 1 Complementary</button><p class="hint" style="margin:6px 0 0">Button disabled until a reason is typed</p></div></div></div>
+<ul class="diff"><li>Popup opens for EVERY comp (also qty 1) — reason typed at the moment of marking.</li><li>An item can never be comped without a reason → bill can never show a comp without a reason.</li><li>Existing inline reason box under the line becomes read-only text.</li></ul></div>
+<div class="col new"><h3>Option B — reason under every comp line (APPROVED)</h3><div class="frame"><div class="panel">
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini">Reason (required)</span></span><span class="amt">₹0</span></div>
+<div class="line add"><span class="box on"></span><span class="grow">Cold Coffee <b style="color:#329937;font-size:10px">(1 of 3 Complimentary)</b><span class="mini" style="border-color:#EF4444">Reason (required) <span class="chg">NEW</span></span></span><span class="amt">₹360</span></div>
+<div style="margin-top:10px"><button class="btn g dis">Pay ₹360</button><p class="hint" style="margin:6px 0 0">Pay disabled while any comp reason is empty (red outline)</p></div></div></div>
+<ul class="diff"><li>Part-comped lines get the same reason box as full comp.</li><li>Pay blocked until filled; Print Bill still works (bill shows item as complimentary, no reason).</li><li>Label changes "Reason (optional)" → "Reason (required)".</li><li>R15: if a comp line has no reason and the cashier has no comp right, Pay stays blocked (box read-only).</li></ul></div>
+</div>
+</section>
+
+<section id="m5c" data-testid="mockup-m5c">
+<h2>M5c · Room comp: cashier picks the meal <span class="chg">APPROVED BY OWNER 2026-11-15 (R17/R18)</span></h2>
+<p class="meta">CR-495 · R16 · Builds on approved M5 + M5b · File: CollectPaymentPanel.jsx (room-service list) · Contract: <code>comp_meal</code>, <code>room-comp-usage</code> (B-495-4/5/6)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (today's code · room order)</h3><div class="frame"><div class="panel">
+<b style="font-size:11px;color:#666">ROOM 101 · ROOM SERVICE</b>
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b><span class="mini">Reason (optional)</span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box"></span><span class="grow">Cold Coffee</span><span class="amt">₹180</span></div>
+<div style="margin-top:10px"><button class="btn g">Pay ₹180</button></div>
+<p class="hint" style="margin:6px 0 0">No meal, no package, no limit shown.</p></div></div></div>
+<div class="col new"><h3>Proposed (M5 + M5b + M5c)</h3><div class="frame"><div class="panel">
+<b style="font-size:11px;color:#666">ROOM 101 · HALF BOARD (Breakfast + Lunch) · 2 GUESTS</b>
+<div class="line"><span class="box on"></span><span class="grow">Masala Dosa <b style="color:#329937;font-size:10px">(Complimentary)</b>
+<div class="add" style="padding:4px;margin:4px 0"><span class="hint"><b>Meal</b></span> <span class="chg">NEW</span>
+<div class="chips"><span class="chip on">Breakfast</span><span class="chip">Lunch</span><span class="chip off">Dinner</span></div>
+<span class="hint">Comp left today (breakfast): ₹380 of ₹500</span></div>
+<span class="mini" style="color:#666">Reason (required) (M5b)</span></span><span class="amt">₹0</span></div>
+<div class="line"><span class="box on"></span><span class="grow">Cold Coffee <b style="color:#329937;font-size:10px">(Complimentary)</b>
+<div class="add" style="padding:4px;margin:4px 0"><span class="hint"><b>Meal</b></span> <span class="chg">NEW</span>
+<div class="chips"><span class="chip">Breakfast</span><span class="chip">Lunch</span><span class="chip off">Dinner</span></div>
+<span class="hint" style="color:#DC2626">Pick a meal</span></div>
+<span class="mini" style="border-color:#EF4444">Reason (required)</span></span><span class="amt">₹0</span></div>
+<div style="margin-top:10px"><button class="btn g dis">Pay ₹0</button><p class="hint" style="margin:6px 0 0">Pay disabled while a room comp line has no meal or no reason. Over the meal's limit → comp PIN (M4).</p></div></div></div></div>
+</div>
+<ul class="diff">
+<li><b>Added (room orders only):</b> meal buttons under each comp line — Breakfast / Lunch / Dinner — shown after the comp box is ticked (user with the comp right).</li>
+<li><b>Default meal:</b> none, so the cashier must pick (R17).</li>
+<li><b>Meal outside the package</b> (e.g. Dinner on Half board + Lunch): greyed but pressable → comp allowed with the comp PIN (M4), same as Room only (R18).</li>
+<li><b>Remaining limit</b> shown for the picked meal.</li>
+<li>Part comp (MarkCompModal, qty 2+): same buttons on the comp line after the popup closes. Non-room orders: no change. Bill print unchanged (meal not printed).</li></ul>
+</section>
+
+<section id="m6" data-testid="mockup-m6">
+<h2>M6 · Cancel notes in Cancellation report and Order Beta</h2>
+<p class="meta">BUG-674 · BUG-670 · Files: CancellationsMockup.jsx (notes column), OrderReportBetaPage.jsx</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3>
+<table><tr><th>Order</th><th>Item</th><th>Reason</th><th>Notes</th></tr>
+<tr><td>#021537</td><td>Paneer Tikka</td><td>Customer left</td><td style="color:#2563EB">Less spicy <span class="hint">(kitchen note)</span></td></tr>
+<tr><td>#021538</td><td>All items</td><td>Customer left</td><td>—</td></tr></table>
+<p class="hint" style="margin-top:6px">Order Beta: no reason / note shown on cancelled orders.</p></div>
+<div class="col new"><h3>Proposed</h3>
+<table class="add"><tr><th>Order</th><th>Item</th><th>Reason</th><th>Cancel note <span class="chg">CHANGED</span></th></tr>
+<tr><td>#021537</td><td>Paneer Tikka</td><td>Customer left</td><td style="color:#2563EB">Guest waited 40 min</td></tr>
+<tr><td>#021538</td><td>All items</td><td>Customer left</td><td style="color:#2563EB">Table walked out</td></tr></table>
+<p class="hint add" style="margin-top:6px;padding:6px">Order Beta cancelled row: <b>Reason:</b> Customer left · <b>Note:</b> Table walked out <span class="chg">NEW</span></p></div>
+</div>
+<ul class="diff"><li><b>Changed:</b> Notes column shows the cancel note (not the kitchen note). Needs backend BA-01 / BA-02.</li>
+<li><b>Added:</b> reason + note on cancelled orders in Order Beta.</li></ul>
+</section>
+
+<section id="m7" data-testid="mockup-m7">
+<h2>M7 · Buttons controlled by rights</h2>
+<p class="meta">CR-515 · Pages: Orders Beta, Order Report, dashboard, order screen · Existing rights: change payment method (update_payment), make unpaid (order_unpaid), collect pay-later (key to confirm, BA-09)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (every user)</h3><div class="panel">Order #021540 · ₹850 · Paid (UPI)<br><br>
+<span class="pill">Change payment method</span><span class="pill">Make unpaid</span><span class="pill">Collect pay-later</span></div></div>
+<div class="col new"><h3>Proposed (user with only "change payment method")</h3><div class="panel add">Order #021540 · ₹850 · Paid (UPI)<br><br>
+<span class="pill">Change payment method</span><span class="rem">Make unpaid HIDDEN</span> <span class="rem">Collect pay-later HIDDEN</span></div></div>
+</div>
+<ul class="diff"><li><b>Removed (per user):</b> each button hidden when the user lacks its right. No layout change otherwise. Labels stay as in the app today.</li>
+<li>Reprint right = P1 (not in this release).</li></ul>
+</section>
+
+<section id="m8" data-testid="mockup-m8">
+<h2>M8 · Check-in: meal package + guests</h2>
+<p class="meta">CR-495 · PMS and non-PMS outlets · File: CheckInForm.jsx · Backend B-495-1/2</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="ci">
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<b>Primary Guest</b><div class="row"><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<span class="hint">No meal package. No guest count field (OTA booking shows adults in the header only).</span>
+<div style="margin-top:10px"><button class="btn g" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div>
+<div class="col new"><h3>Proposed</h3><div class="ci">
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<div class="add" style="padding:6px"><b>Meal package</b> <span class="chg">NEW</span><div class="row"><span class="opt">Room only</span><span class="opt on">Breakfast</span><span class="opt">Half board</span><span class="opt">Full board</span></div>
+<span class="hint">OTA booking: pre-selected from the channel meal plan.</span><br><br>
+<b>Guests checked in</b> <span class="chg">NEW</span> <input value="2" readonly> <span class="hint">editable during stay</span></div>
+<b style="display:block;margin-top:8px">Primary Guest</b><div class="row"><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<div><button class="btn g" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div>
+</div>
+<ul class="diff"><li><b>Added:</b> meal package choice (required) and guest count. Comp limit = guests × per-meal limit, resets each business day.</li>
+<li><b>Room only:</b> comp still possible with PIN.</li>
+<li>Half board: guest chooses the second meal (lunch or dinner) at check-in — see <a href="#m8b">M8b</a> (R16).</li></ul>
+</section>
+
+<section id="m8b" data-testid="mockup-m8b">
+<h2>M8b · Check-in: half board → choose second meal <span class="chg">APPROVED BY OWNER 2026-11-15 (R17)</span></h2>
+<p class="meta">CR-495 · R16 · PMS and non-PMS outlets · File: components/pms/frontdesk/CheckInForm.jsx · Contract: <code>meal_package</code>, <code>half_board_meal</code>, <code>guest_count</code> (B-495-1/2)</p>
+<div class="cmp">
+<div class="col cur"><h3>Current (today's code)</h3><div class="frame"><div class="ci">
+<b>Check in</b> <span class="hint">· Guest name · Booking ID</span><br><br>
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<b>Primary Guest</b><div class="row"><span class="opt">ID type</span><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<span class="hint">No meal package, no second-meal choice, no guest count.</span>
+<div style="margin-top:10px"><button class="btn g" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div></div>
+<div class="col new"><h3>Proposed (M8 + M8b)</h3><div class="frame"><div class="ci">
+<b>Check in</b> <span class="hint">· Guest name · Booking ID</span><br><br>
+<b>Room</b><div class="row"><span class="opt on">101 · Deluxe</span></div>
+<b>Meal package</b> <span class="hint">(M8)</span><div class="row"><span class="opt">Room only</span><span class="opt">Breakfast</span><span class="opt on">Half board</span><span class="opt">Full board</span></div>
+<div class="add" style="padding:6px;margin-bottom:10px"><b>Second meal (with breakfast)</b> <span class="chg">NEW · only when Half board</span>
+<div class="row"><span class="opt on">Lunch</span><span class="opt">Dinner</span></div>
+<span class="hint">Required before Confirm. Hidden for Room only / Breakfast / Full board.</span></div>
+<b>Guests checked in</b> <span class="hint">(M8)</span> <input value="2" readonly> <span class="hint">editable during stay</span>
+<b style="display:block;margin-top:10px">Primary Guest</b><div class="row"><span class="opt">ID type</span><span class="opt">ID front</span><span class="opt">ID back</span></div>
+<div><button class="btn g" style="width:auto;padding:8px 14px;font-size:12px">Confirm check-in</button></div></div></div></div>
+</div>
+<ul class="diff">
+<li><b>Added:</b> "Second meal" choice (Lunch / Dinner), shown only when Half board is picked. Required.</li>
+<li><b>Comp limit effect:</b> Half board + Lunch → breakfast and lunch limits apply; dinner outside package (comp with PIN, R18).</li>
+<li><b>OTA booking (PMS):</b> package pre-selected from the channel meal plan; second meal pre-filled if the channel sends it, else the front desk picks.</li>
+<li>No other change to the check-in form.</li></ul>
+</section>
+
+<section id="m9" data-testid="mockup-m9">
+<h2>M9 · Alerts</h2>
+<p class="meta">CR-443 · 7 events · Existing NotificationBanner + Firebase token · New: device switch</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3>
+<div class="banner" style="background:#F26B33">● <b>New Order</b> — Swiggy #4411</div>
+<div class="banner" style="background:#DC2626">✕ <b>Order cancelled</b> — Zomato #8812</div>
+<p class="hint">Only order/aggregator notifications. No staff-action alerts. No per-device switch.</p></div>
+<div class="col new"><h3>Proposed</h3>
+<div class="add" style="padding:6px">
+<div class="banner" style="background:#DC2626">✕ <b>Cancelled after serve</b> — T4 · Paneer Tikka · by Ravi · Customer left</div>
+<div class="banner" style="background:#D97706">! <b>Discount ₹600</b> — T2 · by Asha · above ₹500</div>
+<div class="banner" style="background:#329937">✓ <b>Complimentary</b> — Room 101 · Masala Dosa · by Ravi</div>
+<div class="banner" style="background:#D97706">! <b>Payment method changed</b> — #021540 · UPI → Cash · by Asha</div></div>
+<div class="panel add" style="margin-top:10px">Receive staff alerts on this device <span class="toggle"></span> <span class="chg">NEW</span><br><span class="hint">Shown only to users with the "receive alerts" right. Where: new <b>Notifications</b> link in the sidebar, under Settings (owner 2026-11-14).</span></div>
+<div class="panel add" style="margin-top:10px;max-width:220px;font-size:12px"><b style="color:#666">SIDEBAR</b><br>Settings ▾<br>&nbsp;&nbsp;· Restaurant settings<br>&nbsp;&nbsp;· Printers<br>&nbsp;&nbsp;· <b>Notifications</b> <span class="chg">NEW LINK</span></div></div>
+</div>
+<ul class="diff"><li><b>Events:</b> cancel before serve, cancel after serve, unpaid, payment method changed, discount above ₹X, complimentary, cancel after bill print.</li>
+<li><b>Content:</b> order/table/room, item, who, reason. Same banner style and colours as today. Phone push via existing Firebase token.</li>
+<li>Phase 2: read tick + tap to open order.</li></ul>
+</section>
+
+<section id="m10" data-testid="mockup-m10">
+<h2>M10 · Pages that need login</h2>
+<p class="meta">CR-372-B (P0) · File: App.js</p>
+<div class="cmp">
+<div class="col cur"><h3>Current</h3><div class="panel"><b>/local-printer-setup</b> → opens printer setup without login<br><br><b>/settlement/preview</b> → opens demo settlement page<br><br><b>/restaurant-picker</b> → opens (no change)</div></div>
+<div class="col new"><h3>Proposed</h3><div class="panel add"><b>/local-printer-setup</b> → not logged in: MyGenie login page <span class="chg">CHANGED</span>; logged in: same printer setup<br><br><b>/settlement/preview</b> → page removed <span class="rem">REMOVED</span><br><br><b>/restaurant-picker</b> → no change</div></div>
+</div>
+<ul class="diff"><li>No new screens. Printer setup inside Settings is unchanged.</li></ul>
+<p class="note">Not in this mockup set (P1): CR-445 whole-order comp in payment list, CR-071, CR-529 OTP, CR-540.</p>
+</section>
+</body>
+</html>

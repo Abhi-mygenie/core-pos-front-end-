@@ -1,0 +1,12 @@
+{
+  "restaurant_discount_amount": null,
+  "discount_value": null,
+  "discount_type": null,
+  "order_discount_type": null,
+  "order_discount": null,
+  "round_up": null,
+  "round_off": null,
+  "order_amount": null,
+  "gst_tax": null,
+  "payment_status": null
+}

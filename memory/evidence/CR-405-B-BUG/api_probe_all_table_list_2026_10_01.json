@@ -1,0 +1,9 @@
+{
+  "endpoint": "/api/v1/vendoremployee/all-table-list",
+  "restaurant": "Soul King (RID 69)",
+  "date": "2026-10-01",
+  "finding": "API returns NO order_id field on any table object, even occupied/engaged ones",
+  "keys_returned": ["created_at","engage","hk_assigned_at","hk_assigned_by","hk_assignee_id","id","local_room_type_id","qr_code","restaurant_id","room_operational_status","room_operational_status_at","room_operational_status_by","rtype","status","table_no","title","updated_at","waiter_id"],
+  "order_related_keys": [],
+  "conclusion": "tableTransform.table() has no order_id to map. freshRooms from getTables() will NEVER have orderId."
+}

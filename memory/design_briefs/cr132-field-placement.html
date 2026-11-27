@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>CR-132 — Field Placement Design</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f8fafc; }
+  .new-field   { background:#fef3c7; border:1.5px dashed #f59e0b; border-radius:6px; padding:4px 8px; font-size:11px; font-weight:600; color:#92400e; }
+  .exist-field { background:#f0fdf4; border:1px solid #86efac; border-radius:6px; padding:4px 8px; font-size:11px; color:#166534; }
+  .readonly-badge { background:#dbeafe; color:#1e40af; font-size:9px; font-weight:700; padding:1px 5px; border-radius:9999px; }
+  .write-badge    { background:#dcfce7; color:#166534; font-size:9px; font-weight:700; padding:1px 5px; border-radius:9999px; }
+  .conflict-badge { background:#fef9c3; color:#854d0e; font-size:9px; font-weight:700; padding:1px 5px; border-radius:9999px; }
+  code { font-family: monospace; font-size:10px; background:#f1f5f9; padding:1px 4px; border-radius:3px; }
+</style>
+</head>
+<body class="p-6">
+<div class="max-w-7xl mx-auto">
+
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex items-center gap-3 mb-1">
+      <div class="w-2 h-8 bg-orange-500 rounded-full"></div>
+      <h1 class="text-xl font-bold text-slate-800">CR-132 — Field Placement Across Both Screens</h1>
+    </div>
+    <p class="text-xs text-slate-500 ml-5">16 new fields · No code edits · Planning only</p>
+  </div>
+
+  <!-- Critical Finding Banner -->
+  <div class="mb-6 bg-amber-50 border border-amber-300 rounded-xl p-4 flex gap-3">
+    <div class="text-amber-600 font-bold text-sm flex-shrink-0">⚠ KEY FINDING:</div>
+    <div class="text-xs text-amber-900">
+      <strong>Screen 1 tiles are READ-ONLY</strong> — <code>onSave</code> closes edit mode but makes no API call. Only <strong>Screen 2 wizard</strong> actually writes to the <code>settings-list</code> API.
+      → <code>isLoyalty</code> &amp; <code>isCustomerWallet</code> are already <em>displayed</em> in the General Settings tile but currently have no save path.
+      <br/>
+      <strong>Question at bottom of page needs owner answer before Gate 3.</strong>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex gap-3 mb-6 flex-wrap text-xs">
+    <span class="new-field">🟡 NEW field to add</span>
+    <span class="exist-field">✅ Already wired</span>
+    <span class="readonly-badge">READ-ONLY tile</span>
+    <span class="write-badge">WRITES to API</span>
+    <span class="conflict-badge">⚠ Already shown in tile</span>
+  </div>
+
+  <div class="grid grid-cols-2 gap-8">
+
+    <!-- ═══════ SCREEN 1 ═══════ -->
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full">Screen 1</span>
+        <span class="text-sm font-semibold text-slate-700">Settings Tiles</span>
+        <span class="readonly-badge">READ-ONLY (no API save currently)</span>
+      </div>
+      <p class="text-xs text-slate-500 mb-4">Data source: <code>useRestaurant()</code> → profileTransform context</p>
+
+      <!-- Tile grid preview -->
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <!-- Restaurant Info -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🏪</div>
+          <p class="text-xs font-medium text-slate-700">Restaurant Info</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">existing fields only</p>
+        </div>
+        <!-- Operating Hours -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🕐</div>
+          <p class="text-xs font-medium text-slate-700">Operating Hours</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+        <!-- Tax & GST -->
+        <div class="border-2 border-amber-400 rounded-lg p-2.5 bg-amber-50/40 text-center">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">💰</div>
+          <p class="text-xs font-medium text-slate-700">Tax &amp; GST</p>
+          <p class="text-[9px] text-amber-700 mt-0.5 font-semibold">1 new field</p>
+        </div>
+        <!-- Payment Methods -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">💳</div>
+          <p class="text-xs font-medium text-slate-700">Payment Methods</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+        <!-- Discount Types -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🏷</div>
+          <p class="text-xs font-medium text-slate-700">Discount Types</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+        <!-- Printers -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🖨</div>
+          <p class="text-xs font-medium text-slate-700">Printers</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">CR-133 done</p>
+        </div>
+        <!-- Cancellation Reasons -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🚫</div>
+          <p class="text-xs font-medium text-slate-700">Cancellation</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+        <!-- Table Management -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">📋</div>
+          <p class="text-xs font-medium text-slate-700">Table Mgmt</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+        <!-- Delivery Settings -->
+        <div class="border-2 border-amber-400 rounded-lg p-2.5 bg-amber-50/40 text-center">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">🚚</div>
+          <p class="text-xs font-medium text-slate-700">Delivery Settings</p>
+          <p class="text-[9px] text-amber-700 mt-0.5 font-semibold">2 new fields</p>
+        </div>
+        <!-- General Settings -->
+        <div class="border-2 border-amber-400 rounded-lg p-2.5 bg-amber-50/40 text-center col-span-2">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">⚙️</div>
+          <p class="text-xs font-medium text-slate-700">General Settings</p>
+          <p class="text-[9px] text-amber-700 mt-0.5 font-semibold">2 existing shown · 2 new fields · ⚠ needs save wiring</p>
+        </div>
+        <!-- Service Charge -->
+        <div class="border border-slate-200 rounded-lg p-2.5 bg-white text-center opacity-50">
+          <div class="w-7 h-7 bg-orange-100 rounded-lg mx-auto mb-1.5 flex items-center justify-center">%</div>
+          <p class="text-xs font-medium text-slate-700">Service Charge</p>
+          <p class="text-[9px] text-slate-400 mt-0.5">no change</p>
+        </div>
+      </div>
+
+      <!-- Tile detail expansions -->
+      <!-- Tax & GST -->
+      <div class="border border-slate-200 rounded-lg bg-white p-3 mb-3">
+        <p class="text-xs font-bold text-slate-700 mb-2">Tax &amp; GST tile</p>
+        <div class="space-y-1.5">
+          <div class="exist-field">Tax % — existing</div>
+          <div class="exist-field">GST % — existing</div>
+          <div class="exist-field">GST Code — existing</div>
+          <div class="new-field">🟡 Room GST Applicable — <code>room_gst_applicable</code> · toggle</div>
+        </div>
+        <p class="text-[10px] text-amber-700 mt-2 flex items-center gap-1">
+          <span class="readonly-badge">READ-ONLY</span> tile currently has no save call — needs save API wiring too
+        </p>
+      </div>
+
+      <!-- Delivery Settings -->
+      <div class="border border-slate-200 rounded-lg bg-white p-3 mb-3">
+        <p class="text-xs font-bold text-slate-700 mb-2">Delivery Settings tile</p>
+        <div class="space-y-1.5">
+          <div class="exist-field">Delivery toggle — existing</div>
+          <div class="exist-field">Takeaway toggle — existing</div>
+          <div class="new-field">🟡 Takeaway Charges — <code>takeaway_charges</code> · number input (₹)</div>
+          <div class="new-field">🟡 Auto Dispatch — <code>auto_dispatch</code> · toggle</div>
+        </div>
+        <p class="text-[10px] text-amber-700 mt-2 flex items-center gap-1">
+          <span class="readonly-badge">READ-ONLY</span> tile currently has no save call — needs save API wiring too
+        </p>
+      </div>
+
+      <!-- General Settings -->
+      <div class="border-2 border-amber-300 rounded-lg bg-amber-50/30 p-3 mb-3">
+        <p class="text-xs font-bold text-slate-700 mb-2">General Settings tile <span class="conflict-badge">⚠ contains 2 overlapping fields</span></p>
+        <div class="space-y-1.5">
+          <div class="exist-field">Coupons — existing</div>
+          <div class="bg-yellow-100 border border-yellow-400 border-dashed rounded px-2 py-1 text-xs text-yellow-800 font-medium">
+            ⚠ Loyalty — <code>isLoyalty</code> — already DISPLAYED here (read from profileTransform)<br/>
+            <span class="text-[10px]">→ if we also add to wizard Step 2, it appears in BOTH screens</span>
+          </div>
+          <div class="bg-yellow-100 border border-yellow-400 border-dashed rounded px-2 py-1 text-xs text-yellow-800 font-medium">
+            ⚠ Customer Wallet — <code>isCustomerWallet</code> — already DISPLAYED here<br/>
+            <span class="text-[10px]">→ same duplication risk</span>
+          </div>
+          <div class="exist-field">Aggregator Auto KOT — existing</div>
+          <div class="exist-field">Default Prep Time — existing</div>
+          <div class="new-field">🟡 Aggregator Order Tone — <code>aggregator_order_tone</code> · select (buzzer/…)</div>
+          <div class="new-field">🟡 Use Token — <code>use_token</code> · toggle</div>
+        </div>
+        <p class="text-[10px] text-amber-700 mt-2 flex items-center gap-1">
+          <span class="readonly-badge">READ-ONLY</span> tile currently has no save call — needs save API wiring too
+        </p>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 2 ═══════ -->
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="bg-green-700 text-white text-xs font-bold px-3 py-1 rounded-full">Screen 2</span>
+        <span class="text-sm font-semibold text-slate-700">Restaurant Setup Wizard</span>
+        <span class="write-badge">WRITES to settings-list API ✅</span>
+      </div>
+      <p class="text-xs text-slate-500 mb-4">Data source: <code>restaurantSettingsTransform.js</code> → <code>POST settings-update</code></p>
+
+      <!-- Step 1 -->
+      <div class="border border-slate-200 rounded-lg bg-white p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold text-slate-600">1</span>
+          <p class="text-xs font-bold text-slate-700">Restaurant Identity</p>
+          <span class="text-[10px] text-slate-400">name, address, GST, FSSAI</span>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Name, Phone, Address, FSSAI — existing</div>
+          <div class="exist-field">GST / VAT / Short Code — existing</div>
+          <p class="text-[10px] text-green-700 font-medium">✅ No new fields in Step 1</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="border-2 border-amber-400 rounded-lg bg-amber-50/30 p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-xs font-bold text-white">2</span>
+          <p class="text-xs font-bold text-slate-700">Channels &amp; Payments</p>
+          <span class="text-amber-700 text-[10px] font-semibold">+2 to +4 new fields</span>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Dine-in, Takeaway, Delivery, Room — existing</div>
+          <div class="exist-field">Payment methods (Cash, UPI, Card…) — existing</div>
+          <div class="new-field">🟡 Prepaid Auto Settle — <code>prepaid_auto_sattle</code> · toggle ⚠ HIGH</div>
+          <div class="new-field">🟡 Orders Auto Paid — <code>ordersAutoPaid</code> · toggle ⚠ HIGH</div>
+          <div class="bg-yellow-100 border border-yellow-400 border-dashed rounded px-2 py-1 text-xs text-yellow-800">
+            ❓ Loyalty &amp; Customer Wallet — already shown in Screen 1 tile.<br/>
+            Add here too (duplication) OR rely on tile only?
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="border-2 border-amber-400 rounded-lg bg-amber-50/30 p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-xs font-bold text-white">3</span>
+          <p class="text-xs font-bold text-slate-700">Charges &amp; Tips</p>
+          <span class="text-amber-700 text-[10px] font-semibold">+1 new field</span>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Service Charge, Tip, Discount, Rounding — existing</div>
+          <div class="new-field">🟡 Takeaway Charges — <code>takeaway_charges</code> · number input (₹)</div>
+          <div class="bg-yellow-100 border border-yellow-400 border-dashed rounded px-2 py-1 text-xs text-yellow-800">
+            ❓ Also in Delivery Settings tile (Screen 1). Same question — one place or both?
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="border-2 border-amber-400 rounded-lg bg-amber-50/30 p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-xs font-bold text-white">4</span>
+          <p class="text-xs font-bold text-slate-700">Order &amp; Kitchen</p>
+          <span class="text-amber-700 text-[10px] font-semibold">+6 new fields</span>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Print KOT, Voice KDS, Def Order Status… (14 existing fields) — existing</div>
+          <div class="new-field">🟡 Order Auto Serve — <code>order_auto_serve</code> · toggle ⚠ HIGH</div>
+          <div class="new-field">🟡 Print Customer Bill Copy — <code>print_bill_customer_copy</code> · toggle</div>
+          <div class="new-field">🟡 Token Number — <code>use_token</code> · toggle</div>
+          <div class="new-field">🟡 KOT Language — <code>kot_language</code> · select (English / Hindi / …)</div>
+          <div class="new-field">🟡 Location Selection — <code>locationSelection</code> · select (scanner / gps / …)</div>
+          <div class="new-field">🟡 Aggregator Order Tone — <code>aggregator_order_tone</code> · select (buzzer / …)</div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="border border-slate-200 rounded-lg bg-white p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold text-slate-600">5</span>
+          <p class="text-xs font-bold text-slate-700">Inventory &amp; Extras</p>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Inventory, Feedback, Settlement — existing</div>
+          <p class="text-[10px] text-green-700 font-medium">✅ No new fields in Step 5</p>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="border border-slate-200 rounded-lg bg-white p-3">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold text-slate-600">6</span>
+          <p class="text-xs font-bold text-slate-700">Owner Info</p>
+        </div>
+        <div class="space-y-1.5 pl-8">
+          <div class="exist-field">Vendor name, phone — existing</div>
+          <p class="text-[10px] text-green-700 font-medium">✅ No new fields in Step 6</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /grid -->
+
+  <!-- Decision Required -->
+  <div class="mt-8 bg-white rounded-xl border-2 border-orange-300 p-5">
+    <h2 class="text-sm font-bold text-slate-800 mb-4">❓ 3 Owner Decisions Needed Before Gate 3 Can Proceed</h2>
+    <div class="space-y-3">
+
+      <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p class="text-xs font-bold text-yellow-800">Q1 — Loyalty + Customer Wallet</p>
+        <p class="text-xs text-yellow-700 mt-1"><code>isLoyalty</code> &amp; <code>isCustomerWallet</code> are already displayed in the General Settings tile (Screen 1). Should they also appear in wizard Step 2, or stay in the tile only?</p>
+        <div class="flex gap-3 mt-2">
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">A: Tile only (remove from wizard plan)</span>
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">B: Both screens (wizard + tile)</span>
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">C: Wizard only (add save to tile later)</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p class="text-xs font-bold text-yellow-800">Q2 — Takeaway Charges + Auto Dispatch</p>
+        <p class="text-xs text-yellow-700 mt-1">These fit in both Delivery Settings tile (Screen 1) AND wizard Step 2/3 (Screen 2). Which screen should they be editable in?</p>
+        <div class="flex gap-3 mt-2">
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">A: Wizard only (simpler, one write path)</span>
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">B: Delivery Settings tile only (wire save to tile)</span>
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">C: Both</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p class="text-xs font-bold text-yellow-800">Q3 — Screen 1 tiles currently have no save call</p>
+        <p class="text-xs text-yellow-700 mt-1">If any new fields go in Screen 1, the tiles also need their <code>onSave</code> wired to the API. This is extra scope. Should we add save capability to tiles (Tax &amp; GST, Delivery, General Settings) as part of CR-132, or keep all writes in the wizard only?</p>
+        <div class="flex gap-3 mt-2">
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">A: All writes via wizard only — simplest</span>
+          <span class="text-[10px] bg-white border border-yellow-300 rounded px-2 py-1 text-yellow-800 font-medium">B: Wire tile saves too — more complete UX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary count -->
+  <div class="mt-6 grid grid-cols-4 gap-3">
+    <div class="bg-white rounded-lg border border-slate-200 p-3 text-center">
+      <p class="text-xl font-bold text-amber-600">7</p>
+      <p class="text-xs text-slate-500">Fields proposed for<br/>Screen 1 tiles</p>
+    </div>
+    <div class="bg-white rounded-lg border border-slate-200 p-3 text-center">
+      <p class="text-xl font-bold text-green-600">9</p>
+      <p class="text-xs text-slate-500">Fields proposed for<br/>Screen 2 wizard</p>
+    </div>
+    <div class="bg-white rounded-lg border border-slate-200 p-3 text-center">
+      <p class="text-xl font-bold text-yellow-600">4</p>
+      <p class="text-xs text-slate-500">Overlap / duplication<br/>questions (Q1+Q2)</p>
+    </div>
+    <div class="bg-white rounded-lg border border-slate-200 p-3 text-center">
+      <p class="text-xl font-bold text-red-600">3</p>
+      <p class="text-xs text-slate-500">Tiles needing<br/>save-wire if chosen</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

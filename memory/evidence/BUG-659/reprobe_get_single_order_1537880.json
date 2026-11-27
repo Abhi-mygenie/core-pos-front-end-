@@ -1,0 +1,11 @@
+{
+  "id": 1537880,
+  "restaurant_order_id": "000660",
+  "restaurant_discount_amount": 136.05,
+  "discount_value": "50.00",
+  "discount_type": "Percent",
+  "order_discount_type": "Percent",
+  "round_up": "0.71",
+  "order_amount": 157.01,
+  "payment_status": "paid"
+}

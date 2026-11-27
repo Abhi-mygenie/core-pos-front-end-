@@ -1,0 +1,12 @@
+{
+ "status": 200,
+ "at_utc": "2026-11-15 08:31:43",
+ "body": {
+  "success": true,
+  "message": "Order marked as unpaid successfully.",
+  "order_id": 1578760,
+  "report_updated_for": "2026-11-15 14:00:04",
+  "waiter_collections_deleted": 1,
+  "partial_payments_deleted": 0
+ }
+}

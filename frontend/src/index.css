@@ -1,3 +1,8 @@
+/* CR-482: keyboard shortcut focus ring + highlight — only consumed when kbdEnabled=true */
+.kbd-focus:focus-visible, .kbd-highlight { outline: 3px solid #F97316; outline-offset: 2px; }
+/* BUG-651: cart rows sit in an overflow-y scroll box that clips an outer ring — draw it inside */
+[data-kbd-cart-row].kbd-focus:focus-visible { outline-offset: -3px; }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -112,4 +117,63 @@ code {
         border-top-color: inherit;
         border-bottom-color: inherit;
     }
+}
+
+/* Req 2: Order Taking disabled — cursor feedback for non-clickable cards.
+   Keeps in-card action buttons (Mark Ready, Mark Served, Print, Confirm,
+   Cancel) interactive (they have explicit cursor styling and pointer-events). */
+.order-taking-disabled [data-testid^="table-card-"],
+.order-taking-disabled [data-testid^="dinein-card-"],
+.order-taking-disabled [data-testid^="delivery-card-"],
+.order-taking-disabled [data-testid^="order-card-"] {
+  cursor: default !important;
+}
+.order-taking-disabled [data-testid^="table-card-"] button,
+.order-taking-disabled [data-testid^="dinein-card-"] button,
+.order-taking-disabled [data-testid^="delivery-card-"] button,
+.order-taking-disabled [data-testid^="order-card-"] button {
+  cursor: pointer !important;
+}
+
+/* BUG-103 (POS3.0): Hide native browser spinner arrows on all number inputs.
+   Covers Chrome/Edge/Safari (webkit) and Firefox (moz). Replaces inconsistent
+   per-input Tailwind classes — 2 inputs already had the fix, 6 did not. */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+/* CR-011 S3: Drill sheet slide-in animation */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+/* CR-011 S4: Indeterminate progress bar for re-fetch ghost state */
+@keyframes progress-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.animate-progress-bar {
+  width: 40%;
+  animation: progress-bar 1.2s ease-in-out infinite;
 }

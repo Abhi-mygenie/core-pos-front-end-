@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BATCH-C CR-546 API Contract — Discount After Bill Print: Audit Events</title>
+<style>
+body{font-family:Georgia,serif;margin:32px;color:#1d1d1b;background:#faf8f3;max-width:900px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:24px 0 6px;border-bottom:2px solid #1d1d1b;padding-bottom:4px}h3{font-size:14px;margin:16px 0 4px}
+p.meta{font-size:13px;color:#555;margin:2px 0 12px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:8px 0 16px}
+th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#efeadb}
+code{background:#f0ece0;padding:1px 4px;border-radius:3px;font-size:12px}
+pre{background:#f0ece0;padding:12px;border-radius:6px;font-size:12px;overflow-x:auto;white-space:pre}
+.s{font-weight:bold;font-size:11px;padding:2px 6px;border-radius:3px}
+.blocked{background:#f6c9c9}
+a{color:#b4471b}
+</style>
+</head>
+<body>
+<p class="meta"><a href="/backend-tracker.html#batch-c">&larr; Back to Tracker</a> &middot; <a href="/briefs/BACKEND_BRIEF_BATCH-C_ASK4_ASK5_2026_11_17.html">Full Brief (ASK 4+5)</a></p>
+<div id="content"></div>
+<script>
+fetch('/briefs/BATCH-C_CR-546_API_CONTRACT_2026_11_17.md').then(r=>r.text()).then(md=>{
+  // Simple MD to HTML
+  let html = md
+    .replace(/^### (.*$)/gm,'<h3>$1</h3>')
+    .replace(/^## (.*$)/gm,'<h2>$1</h2>')
+    .replace(/^# (.*$)/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+    .replace(/```json\n([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/```\n([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^\| (.*)/gm, function(m){return '<tr>'+m.split('|').filter(c=>c.trim()).map(c=>'<td>'+c.trim()+'</td>').join('')+'</tr>';})
+    .replace(/^- (.*$)/gm,'<li>$1</li>')
+    .replace(/^(\d+)\. (.*$)/gm,'<li>$2</li>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/---/g,'<hr>');
+  document.getElementById('content').innerHTML = html;
+});
+</script>
+</body>
+</html>

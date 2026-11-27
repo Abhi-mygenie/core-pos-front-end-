@@ -1,0 +1,11 @@
+{
+ "status": 200,
+ "body": {
+  "f_order_status": 1,
+  "payment_status": "paid",
+  "payment_method": "credit",
+  "payment_type": "prepaid",
+  "order_amount": 420,
+  "credit_customers_total": 59
+ }
+}
