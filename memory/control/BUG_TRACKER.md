@@ -2425,10 +2425,12 @@ Source: OWNER-REPORTED (owner@palmforest.com). Investigation Role 6, 8/10 steps,
 
 | ID | Title | Sev | Risk | Status | Assignee |
 |---|---|---|---|---|---|
-| **BUG-756** | Print Bill 403 for PayLater from Order Report Beta — `CollectBillPanelDrawer` passes `onPrintBill` without `order.id`; CPP `overrides` has no order identifier → `get-single-order-new` receives `{}` → 403 | **P1** | **LOW** | GATE_2_IA_COMPLETE 2026-11-27 | Abhishek |
-| **BUG-757** | Dashboard Room Check-In: Nights not auto-calculated when checkout date changed — `RoomCheckInModal` checkout `onChange` never calls `setNights()` → nights stays 1 → wrong balance shown and submitted | **P1** | **MEDIUM** | GATE_2_IA_COMPLETE 2026-11-27 | Abhishek |
+| **BUG-756** | Print Bill 403 for PayLater from Order Report Beta — `CollectBillPanelDrawer` passes `onPrintBill` without `order.id`; CPP `overrides` has no order identifier → `get-single-order-new` receives `{}` → 403 | **P1** | **LOW** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+| **BUG-756-B** | `handlePrintBillFromBeta` in OrderReportBetaPage: (A) `resp.data?.data` wrong unwrap → "No order data"; (B) `printOrder(items, agents, opts)` wrong signature → NaN orderId + KOT branch. Both masked by BUG-756 403. | **P1** | **HIGH** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
+| **BUG-757** | Dashboard Room Check-In: Nights not auto-calculated when checkout date changed — `RoomCheckInModal` checkout `onChange` never calls `setNights()` → nights stays 1 → wrong balance shown and submitted | **P1** | **MEDIUM** | GATE_5A_IMPLEMENTED 2026-11-27 | Abhishek |
 
-IA docs: `impact/BUG-756_IMPACT_ANALYSIS.md` · `impact/BUG-757_IMPACT_ANALYSIS.md`. Next: Gate 3 GO.
+IA docs: `impact/BUG-756_IMPACT_ANALYSIS.md` · `impact/BUG-757_IMPACT_ANALYSIS.md` · `impact/BUG-756-B_IMPACT_ANALYSIS.md`
+Plan docs: `plans/BUG-756-B_IMPLEMENTATION_PLAN.md`. Awaiting Gate 4 GO for BUG-756-B.
 
 **2026-11-27 — BUG-755 → GATE_2_IA_COMPLETE.** IA at `impact/BUG-755_IMPACT_ANALYSIS.md`.
 Break point: `ChannelColumn.jsx` L349 — `const order = item.order || item` extracts raw order (amount = food only), discards `item.amount = computeRoomCardAmount`. Fix: 1 file `ChannelColumn.jsx`, guard by `item.isRoom`. DashboardPage.jsx NOT touched.
