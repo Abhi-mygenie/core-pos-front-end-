@@ -1,0 +1,33 @@
+{
+  "_comment": "CR-390: Insights Advanced module manifest (OD-390-12 locked \u2014 23 analyst/finance reports)",
+  "module_code": "IN-Advanced",
+  "module_name": "Insights Advanced",
+  "eyebrow": "INSIGHTS \u2014 ADVANCED REPORTS",
+  "journey_approved": false,
+  "journey_approved_date": null,
+  "journey": [
+    { "route": "/reports-module/channel-pivot", "section": "Channel & Payment", "states": [ { "slug": "channel-pivot", "title": "Channel & Payment", "description": "Revenue cross-tabulated by order channel and payment method.", "pre_actions": [] } ] },
+    { "route": "/reports-module/variation-addon-sales", "section": "Variation & Addon", "states": [ { "slug": "variation-addon-sales", "title": "Variation & Addon Sales", "description": "Revenue from item variations and add-ons.", "pre_actions": [] } ] },
+    { "route": "/reports-module/order-ledger", "section": "Orders Ledger", "states": [ { "slug": "order-ledger", "title": "Orders Ledger", "description": "Complete order-level ledger with item details and financials.", "pre_actions": [] } ] },
+    { "route": "/reports-module/gateway-recon", "section": "Gateway Recon", "states": [ { "slug": "gateway-recon", "title": "Gateway Reconciliation", "description": "Online payment gateway transactions matched against POS records.", "pre_actions": [] } ] },
+    { "route": "/reports-module/tips", "section": "Tip Report", "states": [ { "slug": "tip-report", "title": "Tip Report", "description": "Tips collected by waiter and payment mode.", "pre_actions": [] } ] },
+    { "route": "/reports-module/round-off", "section": "Round-Off", "states": [ { "slug": "round-off", "title": "Round-Off Report", "description": "Rounding adjustments applied across orders for the period.", "pre_actions": [] } ] },
+    { "route": "/reports-module/tax-detail", "section": "GST/VAT Detail", "states": [ { "slug": "tax-detail", "title": "GST/VAT Detail", "description": "Item-level GST with CGST, SGST, VAT split for tax filing.", "pre_actions": [] } ] },
+    { "route": "/reports-module/tax-slabs", "section": "Tax Slabs", "states": [ { "slug": "tax-slabs", "title": "Tax Slab Summary", "description": "Revenue and tax grouped by GST slab (0%, 5%, 12%, 18%, 28%).", "pre_actions": [] } ] },
+    { "route": "/reports-module/tax-calc", "section": "Inclusive/Exclusive", "states": [ { "slug": "tax-calc", "title": "Inclusive/Exclusive Tax", "description": "Comparison of tax-inclusive vs tax-exclusive revenue.", "pre_actions": [] } ] },
+    { "route": "/reports-module/coupons", "section": "Coupon Usage", "states": [ { "slug": "coupon-usage", "title": "Coupon Usage", "description": "Coupons applied: code, discount value and order count.", "pre_actions": [] } ] },
+    { "route": "/reports-module/cancel-detail", "section": "Item Cancel Detail", "states": [ { "slug": "cancel-detail", "title": "Item Cancel Detail", "description": "Cancelled items with reason, waiter, time and lost revenue.", "pre_actions": [] } ] },
+    { "route": "/reports-module/order-notes", "section": "Order Notes", "states": [ { "slug": "order-notes", "title": "Order Notes Audit", "description": "Orders where notes were added \u2014 useful for operations review.", "pre_actions": [] } ] },
+    { "route": "/reports-module/locations-delivery", "section": "Delivery Charges", "states": [ { "slug": "delivery-charges", "title": "Delivery Charges", "description": "Delivery charge collected per order and zone.", "pre_actions": [] } ] },
+    { "route": "/reports-module/locations-transfers", "section": "Room Transfers", "states": [ { "slug": "room-transfers", "title": "Room Transfer Trail", "description": "F&B orders transferred to room billing.", "pre_actions": [] } ] },
+    { "route": "/reports-module/staff-servers", "section": "Server Performance", "states": [ { "slug": "staff-servers", "title": "Server Performance", "description": "Waiter-wise order count, revenue and average ticket.", "pre_actions": [] } ] },
+    { "route": "/reports-module/staff-cashiers", "section": "Cashier Activity", "states": [ { "slug": "staff-cashiers", "title": "Cashier Activity", "description": "Cashier-wise settlements, voids and payment mode breakdown.", "pre_actions": [] } ] },
+    { "route": "/reports-module/audit-log", "section": "Order Edit Audit", "states": [ { "slug": "audit-log", "title": "Order Edit Audit", "description": "Log of all order edits: what changed, who changed it and when.", "pre_actions": [] } ] },
+    { "route": "/reports-module/customers-rfm", "section": "Customer Intelligence", "states": [ { "slug": "customers-rfm", "title": "Customer Intelligence", "description": "RFM analysis: recency, frequency and monetary value per customer.", "pre_actions": [] } ] },
+    { "route": "/reports-module/customers-mix", "section": "Guest vs Registered", "states": [ { "slug": "customers-mix", "title": "Guest vs Registered", "description": "Split of guest (walk-in) vs registered CRM customer orders.", "pre_actions": [] } ] },
+    { "route": "/reports-module/kitchen-ops", "section": "Kitchen Ops", "states": [ { "slug": "kitchen-ops", "title": "Kitchen Ops", "description": "Prep and serve time by item and station.", "pre_actions": [] } ] },
+    { "route": "/reports-module/kot-variance", "section": "KOT Variance", "states": [ { "slug": "kot-variance", "title": "KOT Variance", "description": "Difference between items KOT-ed and items billed.", "pre_actions": [] } ] },
+    { "route": "/reports-module/room-orders", "section": "Room Orders", "states": [ { "slug": "room-orders", "title": "Room Orders", "description": "F&B orders placed by room guests during their stay.", "pre_actions": [] } ] },
+    { "route": "/reports-module/food-court", "section": "Food Court", "states": [ { "slug": "food-court", "title": "Food Court Report", "description": "Station-wise revenue and order attribution for food court setups.", "pre_actions": [] } ] }
+  ]
+}

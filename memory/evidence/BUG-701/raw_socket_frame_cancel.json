@@ -1,0 +1,32 @@
+{
+  "note": "REAL raw socket.io frame captured via window.__SOCKET_SERVICE__.getSocket().onAny() during a live cancel-food-item on room order 1578881 (restaurant 69). Customer PII (names/phone/email) elided; diagnostic fields kept verbatim.",
+  "cancel_api_result": { "status": 200, "body": { "success": true, "message": "Cancel handled successfully", "data": { "order_amount": 600, "subtotal": 600, "tax": 0 } } },
+  "frames": [
+    { "event": "joined_restaurant", "args": [ { "room": "rest_69" } ] },
+    { "event": "order-engage_69", "args": [ 1578881, "000004", 69, "engage" ] },
+    {
+      "event": "new_order_69",
+      "args": [
+        "update-order-status", 1578881, 69, 5,
+        { "orders": [ {
+          "id": 1578881,
+          "restaurant_order_id": "000004",
+          "order_type": "pos",
+          "order_from": "pos",
+          "restaurant_id": 69,
+          "table_id": 9239,
+          "table_no": "a1",
+          "f_order_status": 5,
+          "b_order_status": 5,
+          "order_status": "queue",
+          "payment_status": "unpaid",
+          "payment_type": "postpaid",
+          "scheduled": 0,
+          "order_edit_count": 12,
+          "restaurantTable": { "id": 9239, "table_no": "a1", "rtype": "RM" }
+        } ] }
+      ]
+    }
+  ],
+  "interpretation": "The room order's socket payload carries order_from='pos' (NOT 'web') and rtype='RM'. orderTransform.order() -> isWebOrder = normaliseOrderFrom('pos')==='web' = false. hasUnconfirmedWebEditItems() is gated on isWebOrder, so the order is dropped from the ScanOrderPopOut queue on this refresh -> popup unmounts. get-single-order-new returns order_from=null for the same order, yielding the same isWebOrder=false. Table web orders instead carry order_from='web', so isWebOrder stays true and the popup persists."
+}

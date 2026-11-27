@@ -1,0 +1,31 @@
+{
+  "device_model": {
+    "physical": "1280x800",
+    "devicePixelRatio": 1.5,
+    "css_landscape": "853x533",
+    "css_portrait": "533x853",
+    "derivation": "sidebar 70css->105img, CategoryPanel w-44 176css->265img on owner screenshots"
+  },
+  "landscape_853x533": {
+    "dashboard": {"docScrollH": 1723, "vh": 533, "sidebarTop_after_scroll": -1190, "clipped": 0},
+    "order_entry": {"panels": [{"name": "CategoryPanel w-44", "L": 0, "W": 176}, {"name": "middle flex-1", "L": 176, "W": 367}, {"name": "right w-96", "L": 543, "W": 384}], "total": 927, "clipped_px": 74},
+    "collect_payment": {"clipped_container": "w-96 flex-shrink-0", "R": 927},
+    "routes_clipped": {
+      "/reports-module/settlement": 1317, "/reports-module/dashboard": 1119, "/reports-module/items": 1095,
+      "/reports-module/expense-report": 1019, "/reports-module/sales": 996, "/reports-module/cashier-settlement": 996,
+      "/reports-module/profit-loss": 884
+    },
+    "routes_scrollable_only": ["/employees", "/inventory", "/reports/audit", "/reports-module/consumption-report"],
+    "routes_clean": ["/settings", "/menu", "/credit", "/day-closure", "/expenses", "/delivery-management", "/reports/summary", "/reports/rooms", "/pms/front-desk-v2", "/pms/reservations", "/visibility/status-config", "/local-printer-setup"]
+  },
+  "portrait_533x780": {
+    "dashboard": {"docScrollH": 2217, "clipped": 12, "header_add_group_R": 658, "search_input_R": 539},
+    "order_entry": {"right_panel_L": 543, "vw": 533, "note": "cart panel fully off-screen"}
+  },
+  "firebase": {
+    "sdk": "firebase 13.0.0",
+    "throw_site": "@firebase/messaging/dist/esm/index.esm.js:1815-1818 (async .then)",
+    "app_guard": "config/firebase.js:21-27 try/catch (sync only)",
+    "repro": "iframe context (no Push API) -> PAGEERROR messaging/unsupported-browser, 3/3 runs"
+  }
+}

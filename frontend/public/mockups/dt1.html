@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DT1 – Dashboard Desktop</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+</style>
+</head>
+<body style="display:flex">
+
+<!-- Sidebar -->
+<div id="sidebar" style="width:220px;min-width:220px;background:#1A1A2E;display:flex;flex-direction:column;padding:28px 0">
+  <!-- Logo -->
+  <div style="padding:0 24px 32px;border-bottom:1px solid rgba(255,255,255,0.1)">
+    <div style="font-size:28px;font-weight:800;color:white">myg<span style="color:#1DAA4B">enie</span></div>
+    <div style="font-size:14px;color:#6B7280;margin-top:4px">POS</div>
+  </div>
+  <!-- Nav items -->
+  <div style="padding:20px 16px;flex:1">
+    <div style="padding:14px 16px;border-radius:10px;background:rgba(255,255,255,0.1);color:white;font-size:16px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span>▦</span> Dashboard
+    </div>
+    <div style="padding:14px 16px;color:#9CA3AF;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span>☰</span> Orders
+    </div>
+    <div style="padding:14px 16px;color:#9CA3AF;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span>✦</span> Reports
+    </div>
+    <div style="padding:14px 16px;color:#9CA3AF;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <span>⊞</span> Menu
+    </div>
+    <div style="padding:14px 16px;color:#9CA3AF;font-size:16px;display:flex;align-items:center;gap:10px">
+      <span>⚙</span> Settings
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div style="flex:1;display:flex;flex-direction:column;padding:28px 36px;overflow:hidden" id="main-content">
+  <!-- Page Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+    <div>
+      <div style="font-size:26px;font-weight:700;color:#111827">Dashboard Report</div>
+      <div style="font-size:15px;color:#9CA3AF;margin-top:4px">Demo Kitchen — Koramangala · Today</div>
+    </div>
+    <div style="background:white;border:1px solid #E5E7EB;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:500;color:#374151">Today ▾</div>
+  </div>
+
+  <!-- Hero KPI Card -->
+  <div id="hero-card" style="background:#0A0A0A;border-radius:20px;padding:32px 40px;margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF">NET SALES</div>
+      <div style="display:flex;align-items:center;gap:8px;color:#4ADE80;font-weight:700;font-size:15px">
+        <div style="width:9px;height:9px;background:#4ADE80;border-radius:50%"></div>
+        LIVE
+      </div>
+    </div>
+    <div style="font-size:80px;font-weight:900;color:white;font-family:'SF Mono',Consolas,monospace;letter-spacing:-0.03em;line-height:1;margin-bottom:16px">₹48,650.00</div>
+    <div style="display:flex;gap:40px">
+      <div><span style="font-size:20px;font-weight:700;color:white">112</span> <span style="font-size:14px;color:#9CA3AF">Paid Orders</span></div>
+      <div><span style="font-size:20px;font-weight:700;color:white">POS</span> <span style="font-size:14px;color:#9CA3AF">Top Channel</span></div>
+      <div><span style="font-size:20px;font-weight:700;color:white">38%</span> <span style="font-size:14px;color:#9CA3AF">Repeat Customers</span></div>
+    </div>
+  </div>
+
+  <!-- Channel Mix Card -->
+  <div id="channel-card" style="background:white;border-radius:20px;padding:28px 36px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+    <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:20px">CHANNEL MIX</div>
+    <!-- POS Bar -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+      <div style="width:120px;min-width:120px;background:#DCFCE7;color:#166534;border:1px solid #BBF7D0;padding:7px 14px;border-radius:999px;font-size:15px;font-weight:600;text-align:center">POS</div>
+      <div style="flex:1;height:14px;background:#F3F4F6;border-radius:999px;overflow:hidden">
+        <div style="width:60%;height:100%;background:#1DAA4B;border-radius:999px"></div>
+      </div>
+      <div style="font-size:17px;font-weight:600;color:#111827;min-width:140px;text-align:right">₹29,190.00</div>
+    </div>
+    <!-- Swiggy Bar -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+      <div style="width:120px;min-width:120px;background:#FFF7ED;color:#9A3412;border:1px solid #FED7AA;padding:7px 14px;border-radius:999px;font-size:15px;font-weight:600;text-align:center">Swiggy</div>
+      <div style="flex:1;height:14px;background:#F3F4F6;border-radius:999px;overflow:hidden">
+        <div style="width:24%;height:100%;background:#F58346;border-radius:999px"></div>
+      </div>
+      <div style="font-size:17px;font-weight:600;color:#111827;min-width:140px;text-align:right">₹11,680.00</div>
+    </div>
+    <!-- Zomato Bar -->
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="width:120px;min-width:120px;background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;padding:7px 14px;border-radius:999px;font-size:15px;font-weight:600;text-align:center">Zomato</div>
+      <div style="flex:1;height:14px;background:#F3F4F6;border-radius:999px;overflow:hidden">
+        <div style="width:16%;height:100%;background:#EF4444;border-radius:999px"></div>
+      </div>
+      <div style="font-size:17px;font-weight:600;color:#111827;min-width:140px;text-align:right">₹7,780.00</div>
+    </div>
+  </div>
+
+  <!-- Bottom Cards -->
+  <div id="bottom-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:white;border-radius:20px;padding:28px 36px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:12px">PAYMENT MIX</div>
+      <div style="font-size:36px;font-weight:800;color:#111827;font-family:'SF Mono',Consolas,monospace;margin-bottom:8px">UPI  36%</div>
+      <div style="font-size:14px;color:#6B7280">Aggregator 34% · Cash 21% · Card 9%</div>
+    </div>
+    <div style="background:white;border-radius:20px;padding:28px 36px;box-shadow:0 1px 4px rgba(0,0,0,0.06)">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:12px">CANCELLATIONS</div>
+      <div style="font-size:36px;font-weight:800;color:#EF4444;font-family:'SF Mono',Consolas,monospace;margin-bottom:8px">7 · ₹3,240.00</div>
+      <div style="font-size:14px;color:#6B7280">Top Reason: Customer changed mind</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const isHL = new URLSearchParams(location.search).get('hl') === '1';
+if (isHL) {
+  document.getElementById('sidebar').style.filter='brightness(0.6)';
+  document.getElementById('channel-card').style.filter='brightness(0.6)';
+  document.getElementById('bottom-cards').style.filter='brightness(0.6)';
+  document.querySelectorAll('[style*="Dashboard Report"]')[0].parentElement.style.filter='brightness(0.6)';
+  const hero = document.getElementById('hero-card');
+  hero.style.outline='3px solid #F87171';
+  hero.style.outlineOffset='6px';
+  hero.style.borderRadius='20px';
+  hero.style.position='relative';
+  hero.style.zIndex='10';
+}
+</script>
+</body>
+</html>

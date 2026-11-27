@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUG-621 — Update Banner Mockup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: #f4f4f5; }
+
+    /* ── Layout ── */
+    .page { display: flex; flex-direction: column; align-items: center; padding: 32px 24px; gap: 40px; min-height: 100vh; }
+    h1 { font-size: 22px; font-weight: 700; color: #18181b; }
+    h1 span { color: #329937; }
+    .subtitle { font-size: 13px; color: #71717a; margin-top: 4px; }
+    .scenarios { display: flex; gap: 32px; width: 100%; max-width: 1100px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── Scenario Card ── */
+    .scenario-card { flex: 1; min-width: 320px; max-width: 480px; border-radius: 20px; overflow: hidden; border: 1.5px solid #e4e4e7; box-shadow: 0 8px 32px rgba(0,0,0,0.10); background: #fff; }
+    .scenario-label { display: flex; align-items: center; gap: 10px; padding: 16px 20px; background: #fafafa; border-bottom: 1px solid #e4e4e7; }
+    .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; }
+    .badge-pwa { background: #dcfce7; color: #15803d; }
+    .badge-browser { background: #dbeafe; color: #1d4ed8; }
+    .scenario-title { font-size: 13px; font-weight: 600; color: #18181b; }
+    .scenario-desc { font-size: 11px; color: #71717a; margin-top: 1px; }
+
+    /* ── POS Dashboard Background (mock) ── */
+    .dashboard-bg {
+      position: relative;
+      background: #f8f8f8;
+      overflow: hidden;
+    }
+
+    /* ── Shared POS mock UI ── */
+    .pos-header { background: #18181b; height: 48px; display: flex; align-items: center; padding: 0 16px; gap: 10px; }
+    .pos-logo { background: #329937; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+    .pos-logo svg { width: 16px; height: 16px; fill: white; }
+    .pos-header-text { color: white; font-size: 13px; font-weight: 600; }
+    .pos-header-pill { background: #27272a; border-radius: 20px; padding: 2px 10px; font-size: 10px; color: #a1a1aa; margin-left: auto; }
+    .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px; }
+    .table-card {
+      background: white; border-radius: 10px; border: 1.5px solid #e4e4e7;
+      padding: 10px 10px 8px; min-height: 70px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .table-card.active { border-color: #86efac; background: #f0fdf4; }
+    .table-card.bill { border-color: #fcd34d; background: #fffbeb; }
+    .table-num { font-size: 11px; font-weight: 700; color: #18181b; }
+    .table-status { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .status-active { color: #329937; }
+    .status-bill { color: #d97706; }
+    .status-free { color: #a1a1aa; }
+    .table-amount { font-size: 12px; font-weight: 700; color: #18181b; margin-top: 2px; }
+
+    /* ──────────────────────────────────────────── */
+    /* SCENARIO A — PWA Full-width bottom bar       */
+    /* ──────────────────────────────────────────── */
+    .pwa-device { background: #18181b; border-radius: 36px; padding: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin: 20px auto; width: 300px; }
+    .pwa-screen { background: #f8f8f8; border-radius: 28px; overflow: hidden; position: relative; min-height: 520px; display: flex; flex-direction: column; }
+    .pwa-notch { background: #18181b; height: 28px; display: flex; align-items: center; justify-content: center; }
+    .pwa-notch-pill { background: #000; width: 80px; height: 12px; border-radius: 20px; }
+    .pwa-content { flex: 1; }
+
+    /* PWA Banner */
+    .pwa-banner {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: #18181b;
+      border-top: 1.5px solid #27272a;
+      padding: 12px 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.4);
+      animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+    .countdown-ring-pwa { flex-shrink: 0; }
+    .pwa-banner-text { flex: 1; }
+    .pwa-banner-title { font-size: 12px; font-weight: 700; color: #fff; line-height: 1.3; }
+    .pwa-banner-sub { font-size: 10px; color: #a1a1aa; margin-top: 2px; line-height: 1.3; }
+    .pwa-reload-btn {
+      background: #329937; color: white;
+      border: none; border-radius: 10px;
+      padding: 10px 14px; font-size: 11px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      min-height: 44px; min-width: 80px;
+      box-shadow: 0 2px 8px rgba(50,153,55,0.35);
+    }
+    .pwa-home-bar { height: 20px; background: #18181b; display: flex; align-items: center; justify-content: center; }
+    .pwa-home-pill { background: #3f3f46; width: 80px; height: 4px; border-radius: 20px; }
+
+    /* ──────────────────────────────────────────── */
+    /* SCENARIO B — Browser Floating Pill           */
+    /* ──────────────────────────────────────────── */
+    .browser-window {
+      background: white; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12); margin: 20px;
+      position: relative;
+    }
+    .browser-chrome {
+      background: #f0f0f0; border-bottom: 1px solid #e0e0e0;
+      padding: 8px 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .browser-dots { display: flex; gap: 5px; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+    .browser-url {
+      flex: 1; background: white; border-radius: 6px;
+      padding: 4px 10px; font-size: 11px; color: #555;
+      border: 1px solid #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .browser-content { position: relative; min-height: 320px; }
+    .browser-pos-grid { padding: 10px; }
+    .browser-pos-grid .pos-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 8px; }
+    .browser-pos-grid .table-card { min-height: 56px; }
+
+    /* Browser Banner — floating pill */
+    .browser-banner {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: rgba(24,24,27,0.97);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(63,63,70,0.7);
+      border-radius: 16px; padding: 10px 16px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      white-space: nowrap;
+      animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1);
+      min-width: 340px;
+    }
+    .browser-banner-text { flex: 1; }
+    .browser-banner-title { font-size: 13px; font-weight: 700; color: #fff; }
+    .browser-banner-sub { font-size: 11px; color: #a1a1aa; margin-top: 1px; }
+    .browser-reload-btn {
+      background: #329937; color: white;
+      border: none; border-radius: 8px;
+      padding: 6px 14px; font-size: 12px; font-weight: 700;
+      cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(50,153,55,0.35);
+    }
+
+    /* Countdown ring SVG */
+    .ring-track { stroke: #3f3f46; }
+    .ring-fill {
+      stroke: #329937;
+      stroke-linecap: round;
+      transform-origin: center;
+      transform: rotate(-90deg);
+      animation: countdownRing 10s linear forwards;
+    }
+    @keyframes countdownRing {
+      from { stroke-dashoffset: 0; }
+      to   { stroke-dashoffset: 63; }
+    }
+    .ring-num {
+      font-size: 9px; font-weight: 800; fill: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      animation: countdownNum 10s step-end forwards;
+    }
+
+    /* ── Flow Diagram ── */
+    .flow-section { width: 100%; max-width: 1100px; }
+    .flow-title { font-size: 16px; font-weight: 700; color: #18181b; margin-bottom: 16px; }
+    .flow-grid { display: flex; gap: 0; border: 1.5px solid #e4e4e7; border-radius: 16px; overflow: hidden; }
+    .flow-step { flex: 1; padding: 20px; background: white; border-right: 1px solid #e4e4e7; }
+    .flow-step:last-child { border-right: none; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: #329937; color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+    .flow-step-title { font-size: 13px; font-weight: 700; color: #18181b; margin-bottom: 4px; }
+    .flow-step-body { font-size: 11px; color: #52525b; line-height: 1.6; }
+    .flow-step-tag { display: inline-block; margin-top: 6px; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+    .tag-pwa { background: #dcfce7; color: #15803d; }
+    .tag-browser { background: #dbeafe; color: #1d4ed8; }
+    .tag-both { background: #fef3c7; color: #92400e; }
+
+    /* ── Key Difference Box ── */
+    .diff-box { width: 100%; max-width: 1100px; background: white; border-radius: 16px; border: 1.5px solid #e4e4e7; padding: 20px 24px; }
+    .diff-box h3 { font-size: 15px; font-weight: 700; color: #18181b; margin-bottom: 14px; }
+    .diff-row { display: flex; gap: 16px; }
+    .diff-col { flex: 1; padding: 14px; border-radius: 10px; }
+    .diff-col.before { background: #fff1f2; border: 1px solid #fecdd3; }
+    .diff-col.after  { background: #f0fdf4; border: 1px solid #86efac; }
+    .diff-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .diff-col.before .diff-col-title { color: #e11d48; }
+    .diff-col.after  .diff-col-title { color: #16a34a; }
+    .diff-item { font-size: 12px; color: #3f3f46; line-height: 1.7; display: flex; gap: 6px; }
+    .diff-item::before { content: '•'; font-size: 14px; }
+    .diff-col.before .diff-item::before { color: #f43f5e; }
+    .diff-col.after  .diff-item::before { color: #22c55e; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div style="text-align:center">
+    <h1>BUG-621 — <span>Update Banner</span> Design Mockup</h1>
+    <p class="subtitle">How the "App updated" notification will look after the fix is deployed</p>
+  </div>
+
+  <!-- ══ SCENARIOS ══ -->
+  <div class="scenarios">
+
+    <!-- SCENARIO A: PWA Mobile -->
+    <div class="scenario-card">
+      <div class="scenario-label">
+        <div>
+          <div class="scenario-title">Scenario A — PWA (Installed App)</div>
+          <div class="scenario-desc">Phone or tablet, app installed to home screen</div>
+        </div>
+        <span class="badge badge-pwa" style="margin-left:auto">PWA</span>
+      </div>
+
+      <div style="background:#f4f4f5; padding: 16px 0; display:flex; justify-content:center;">
+        <!-- Device shell -->
+        <div class="pwa-device">
+          <div class="pwa-screen">
+            <!-- Notch -->
+            <div class="pwa-notch"><div class="pwa-notch-pill"></div></div>
+            <!-- POS header -->
+            <div class="pos-header">
+              <div class="pos-logo">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <span class="pos-header-text">MyGenie POS</span>
+              <span class="pos-header-pill">Dashboard</span>
+            </div>
+            <!-- Mock table grid -->
+            <div class="pos-grid" style="grid-template-columns:repeat(2,1fr); padding:10px; gap:6px">
+              <div class="table-card active"><div class="table-num">T-1</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹480</div></div>
+              <div class="table-card bill"><div class="table-num">T-2</div><div class="table-status status-bill">Bill Ready</div><div class="table-amount">₹1,240</div></div>
+              <div class="table-card"><div class="table-num">T-3</div><div class="table-status status-free">Available</div></div>
+              <div class="table-card active"><div class="table-num">T-4</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹320</div></div>
+            </div>
+
+            <!-- PWA Banner -->
+            <div class="pwa-banner" data-testid="update-banner-container">
+              <!-- Countdown ring -->
+              <div class="countdown-ring-pwa" data-testid="update-banner-countdown">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle class="ring-track" cx="18" cy="18" r="10" stroke-width="3" fill="none"/>
+                  <circle class="ring-fill" cx="18" cy="18" r="10" stroke-width="3" fill="none" stroke-dasharray="63" stroke-dashoffset="0"/>
+                  <text x="18" y="22" text-anchor="middle" class="ring-num">10</text>
+                </svg>
+              </div>
+              <div class="pwa-banner-text">
+                <div class="pwa-banner-title" data-testid="update-banner-title">App updated — reloading shortly</div>
+                <div class="pwa-banner-sub" data-testid="update-banner-subtitle">Tap Reload now to update immediately</div>
+              </div>
+              <button class="pwa-reload-btn" data-testid="update-banner-reload-btn">Reload<br>now</button>
+            </div>
+          </div>
+          <!-- Home bar -->
+          <div class="pwa-home-bar"><div class="pwa-home-pill"></div></div>
+        </div>
+      </div>
+
+      <div style="padding:14px 18px; background:#f9fafb; border-top:1px solid #e4e4e7;">
+        <div style="font-size:12px; color:#52525b; line-height:1.7;">
+          <strong style="color:#18181b">Full-width</strong> — spans entire screen width<br>
+          <strong style="color:#18181b">44px+ button</strong> — finger-friendly tap target<br>
+          <strong style="color:#18181b">Slide-up animation</strong> — enters from bottom<br>
+          <strong style="color:#18181b">10s ring</strong> — auto-reloads when it completes<br>
+          <strong style="color:#18181b">Works on reopen</strong> — shows when app opens after background update
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO B: Browser Desktop -->
+    <div class="scenario-card">
+      <div class="scenario-label">
+        <div>
+          <div class="scenario-title">Scenario B — Web Browser (Desktop)</div>
+          <div class="scenario-desc">Chrome / Safari / Firefox on desktop or laptop</div>
+        </div>
+        <span class="badge badge-browser" style="margin-left:auto">Browser</span>
+      </div>
+
+      <div style="background:#f4f4f5; padding:16px;">
+        <div class="browser-window">
+          <!-- Chrome UI -->
+          <div class="browser-chrome">
+            <div class="browser-dots">
+              <div class="browser-dot dot-red"></div>
+              <div class="browser-dot dot-yellow"></div>
+              <div class="browser-dot dot-green"></div>
+            </div>
+            <div class="browser-url">🔒 pos-uat.mygenie.online/dashboard</div>
+          </div>
+          <!-- POS content behind -->
+          <div class="browser-content">
+            <div class="pos-header">
+              <div class="pos-logo">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <span class="pos-header-text">MyGenie POS</span>
+              <span class="pos-header-pill">owner@palmhouse.com</span>
+            </div>
+            <div class="pos-grid" style="grid-template-columns:repeat(4,1fr); padding:10px; gap:6px">
+              <div class="table-card active"><div class="table-num">T-1</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹840</div></div>
+              <div class="table-card bill"><div class="table-num">T-2</div><div class="table-status status-bill">Bill Ready</div><div class="table-amount">₹2,100</div></div>
+              <div class="table-card active"><div class="table-num">T-3</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹460</div></div>
+              <div class="table-card"><div class="table-num">T-4</div><div class="table-status status-free">Available</div></div>
+              <div class="table-card active"><div class="table-num">T-5</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹1,380</div></div>
+              <div class="table-card"><div class="table-num">T-6</div><div class="table-status status-free">Available</div></div>
+              <div class="table-card bill"><div class="table-num">T-7</div><div class="table-status status-bill">Bill Ready</div><div class="table-amount">₹720</div></div>
+              <div class="table-card active"><div class="table-num">T-8</div><div class="table-status status-active">Occupied</div><div class="table-amount">₹290</div></div>
+            </div>
+
+            <!-- Floating pill banner -->
+            <div class="browser-banner" data-testid="update-banner-container">
+              <div data-testid="update-banner-countdown">
+                <svg width="32" height="32" viewBox="0 0 36 36">
+                  <circle class="ring-track" cx="18" cy="18" r="10" stroke-width="3" fill="none"/>
+                  <circle class="ring-fill" cx="18" cy="18" r="10" stroke-width="3" fill="none" stroke-dasharray="63" stroke-dashoffset="0"/>
+                  <text x="18" y="22" text-anchor="middle" class="ring-num">10</text>
+                </svg>
+              </div>
+              <div class="browser-banner-text">
+                <div class="browser-banner-title" data-testid="update-banner-title">App updated — reloading shortly</div>
+                <div class="browser-banner-sub" data-testid="update-banner-subtitle">New version ready · auto-reloads in 10s</div>
+              </div>
+              <button class="browser-reload-btn" data-testid="update-banner-reload-btn">Reload now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:14px 18px; background:#f9fafb; border-top:1px solid #e4e4e7;">
+        <div style="font-size:12px; color:#52525b; line-height:1.7;">
+          <strong style="color:#18181b">Floating pill</strong> — centred at bottom, doesn't block tables<br>
+          <strong style="color:#18181b">Glassmorphism</strong> — dark card with subtle blur<br>
+          <strong style="color:#18181b">Non-intrusive</strong> — cashier can still bill or take orders<br>
+          <strong style="color:#18181b">10s ring</strong> — auto-reloads when it completes<br>
+          <strong style="color:#18181b">Same session</strong> — browser tab is live, fires immediately
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ WHAT HAPPENS STEP BY STEP ══ -->
+  <div class="flow-section">
+    <div class="flow-title">What happens step by step after a new version is deployed</div>
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <div class="flow-step-title">New version deployed</div>
+        <div class="flow-step-body">You push a new build to production. The new service worker downloads in the background silently.</div>
+        <span class="flow-step-tag tag-both">Browser + PWA</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <div class="flow-step-title">New SW waits</div>
+        <div class="flow-step-body">Instead of activating immediately, the new worker sits in the "waiting" lane until the user gives the go-ahead.</div>
+        <span class="flow-step-tag tag-both">After BUG-621 fix</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <div class="flow-step-title">Banner appears</div>
+        <div class="flow-step-body">The app detects the waiting worker. The black bar slides up from the bottom with a 10-second countdown ring.</div>
+        <span class="flow-step-tag tag-both">Browser + PWA</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">4a</div>
+        <div class="flow-step-title">User clicks "Reload now"</div>
+        <div class="flow-step-body">App sends a signal to the waiting worker: "go ahead." Worker activates, page reloads immediately with new version.</div>
+        <span class="flow-step-tag tag-both">Browser + PWA</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">4b</div>
+        <div class="flow-step-title">User ignores it</div>
+        <div class="flow-step-body">Countdown ring hits zero after 10 seconds → page auto-reloads. Same result, no action needed from the user.</div>
+        <span class="flow-step-tag tag-both">Browser + PWA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BEFORE vs AFTER ══ -->
+  <div class="diff-box">
+    <h3>Before fix vs After fix</h3>
+    <div class="diff-row">
+      <div class="diff-col before">
+        <div class="diff-col-title">Before BUG-621 fix</div>
+        <div class="diff-item">Browser: silent reload with no warning</div>
+        <div class="diff-item">PWA: no banner, no reload — user stuck on old version</div>
+        <div class="diff-item">The "waiting lane" is always empty because new SW skips it instantly</div>
+        <div class="diff-item">Cashier gets unexpected page reload mid-order (browser)</div>
+        <div class="diff-item">PWA users may never know an update happened</div>
+      </div>
+      <div class="diff-col after">
+        <div class="diff-col-title">After BUG-621 fix</div>
+        <div class="diff-item">Both: banner slides up showing "App updated — reloading shortly"</div>
+        <div class="diff-item">PWA: also shows banner when app is reopened after background update</div>
+        <div class="diff-item">New SW waits politely — banner check sees it immediately</div>
+        <div class="diff-item">Cashier can finish current action then tap Reload now</div>
+        <div class="diff-item">10s fallback ensures everyone gets updated even if banner is ignored</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

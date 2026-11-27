@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUG-480 Design — Per-Item Cancel Button</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f5; padding: 24px; }
+
+  h1 { font-size: 18px; font-weight: 700; color: #18181b; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #71717a; margin-bottom: 28px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 960px; }
+
+  .panel { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .panel-header { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
+  .panel-header .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-red   { background: #fee2e2; color: #dc2626; }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .panel-label { font-size: 13px; font-weight: 600; color: #3f3f46; }
+
+  /* Item row */
+  .item-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f4f4f5; }
+  .item-row:last-child { border-bottom: none; }
+
+  /* Status icon circle */
+  .status-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .status-preparing { background: #fef9c3; }
+  .status-ready     { background: #fff7ed; }
+  .status-served    { background: #f0fdf4; }
+
+  /* Cancel button */
+  .cancel-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; background: #f4f4f5; border: none; cursor: pointer; }
+  .cancel-btn svg { width: 16px; height: 16px; color: #71717a; }
+  .cancel-placeholder { width: 36px; height: 36px; flex-shrink: 0; } /* empty space where btn would be */
+
+  /* Item info */
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 13px; font-weight: 500; color: #18181b; }
+  .item-status-label { font-size: 11px; color: #71717a; margin-top: 2px; }
+
+  /* Status labels on right */
+  .item-right { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .status-pill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .pill-preparing { background: #fef9c3; color: #a16207; }
+  .pill-ready     { background: #fff7ed; color: #ea580c; }
+  .pill-served    { background: #f0fdf4; color: #16a34a; display: flex; align-items: center; gap: 4px; }
+
+  /* Annotation */
+  .annotation { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-top: 8px; display: inline-block; }
+  .ann-blocked { background: #fee2e2; color: #dc2626; }
+  .ann-allowed { background: #dcfce7; color: #16a34a; }
+
+  .section-note { font-size: 12px; color: #52525b; padding: 10px 16px; background: #fafafa; border-top: 1px solid #f0f0f0; }
+  .section-note strong { color: #18181b; }
+
+  /* SVG icons inline */
+  svg { display: inline-block; vertical-align: middle; }
+
+  .divider { height: 1px; background: #f0f0f0; margin: 0; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #52525b; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .arrow-row { display: flex; align-items: center; justify-content: center; font-size: 22px; color: #a1a1aa; }
+  .scenario-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #a1a1aa; padding: 0 16px 8px; }
+</style>
+</head>
+<body>
+
+<h1>BUG-480 — Per-Item Cancel Button Design</h1>
+<p class="subtitle">When restaurant has "Allow Cancel After Serving" enabled — where the × button appears in Order Entry</p>
+
+<div class="grid">
+
+  <!-- BEFORE -->
+  <div>
+    <div class="scenario-label">BEFORE (broken today)</div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Table 3 — Open Order</span>
+        <span class="badge badge-red">allow_cancel_post_server = true (ignored)</span>
+      </div>
+
+      <!-- Preparing item — cancel allowed before serve regardless -->
+      <div class="item-row">
+        <div class="status-icon status-preparing">
+          <svg width="14" height="14" fill="none" stroke="#a16207" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <button class="cancel-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <div class="item-info">
+          <div class="item-name">Butter Chicken (1)</div>
+          <div class="item-status-label">Still preparing</div>
+        </div>
+        <div><span class="status-pill pill-preparing">Preparing</span></div>
+      </div>
+
+      <!-- Ready item — BUG: × hidden -->
+      <div class="item-row">
+        <div class="status-icon status-ready">
+          <svg width="14" height="14" fill="none" stroke="#ea580c" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="cancel-placeholder"></div>  <!-- no cancel button -->
+        <div class="item-info">
+          <div class="item-name">Garlic Naan (2)</div>
+          <div class="item-status-label">Marked ready by kitchen</div>
+          <span class="annotation ann-blocked">× hidden — blocked (bug)</span>
+        </div>
+        <div><span class="status-pill pill-ready">Ready</span></div>
+      </div>
+
+      <!-- Served item — BUG: × hidden -->
+      <div class="item-row">
+        <div class="status-icon status-served">
+          <svg width="14" height="14" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="cancel-placeholder"></div>  <!-- no cancel button -->
+        <div class="item-info">
+          <div class="item-name">Basil Pesto Pasta (1)</div>
+          <div class="item-status-label">Already served to table</div>
+          <span class="annotation ann-blocked">× hidden — blocked (bug)</span>
+        </div>
+        <div><span class="status-pill pill-served">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Serve
+        </span></div>
+      </div>
+
+      <div class="section-note">
+        <strong>Bug:</strong> Code reads <code>cancle_post_serve</code> (typo field) = false → blocks × on all non-preparing items, even though restaurant enabled cancel via <code>allow_cancel_post_server</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div>
+    <div class="scenario-label">AFTER (fixed)</div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-label">Table 3 — Open Order</span>
+        <span class="badge badge-green">allow_cancel_post_server = true (honoured)</span>
+      </div>
+
+      <!-- Preparing item -->
+      <div class="item-row">
+        <div class="status-icon status-preparing">
+          <svg width="14" height="14" fill="none" stroke="#a16207" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <button class="cancel-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <div class="item-info">
+          <div class="item-name">Butter Chicken (1)</div>
+          <div class="item-status-label">Still preparing</div>
+        </div>
+        <div><span class="status-pill pill-preparing">Preparing</span></div>
+      </div>
+
+      <!-- Ready item — FIXED: × visible -->
+      <div class="item-row">
+        <div class="status-icon status-ready">
+          <svg width="14" height="14" fill="none" stroke="#ea580c" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <button class="cancel-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <div class="item-info">
+          <div class="item-name">Garlic Naan (2)</div>
+          <div class="item-status-label">Marked ready by kitchen</div>
+          <span class="annotation ann-allowed">× visible — cancel allowed ✓</span>
+        </div>
+        <div><span class="status-pill pill-ready">Ready</span></div>
+      </div>
+
+      <!-- Served item — FIXED: × visible -->
+      <div class="item-row">
+        <div class="status-icon status-served">
+          <svg width="14" height="14" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <button class="cancel-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <div class="item-info">
+          <div class="item-name">Basil Pesto Pasta (1)</div>
+          <div class="item-status-label">Already served to table</div>
+          <span class="annotation ann-allowed">× visible — cancel allowed ✓</span>
+        </div>
+        <div><span class="status-pill pill-served">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Serve
+        </span></div>
+      </div>
+
+      <div class="section-note">
+        <strong>Fix:</strong> Gate checks BOTH fields — if <code>allow_cancel_post_server = true</code> OR <code>cancle_post_serve = true</code>, × is shown. Clicking × opens the Cancel Item modal (reason + qty).
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Legend -->
+<div class="legend" style="max-width:960px; margin-top: 20px;">
+  <div class="legend-item"><div class="legend-dot" style="background:#fef9c3; border:1px solid #a16207"></div> Preparing (× always shown if user has cancel permission)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fff7ed; border:1px solid #ea580c"></div> Ready — item is ready, not yet served (BUG-480 affected)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f0fdf4; border:1px solid #16a34a"></div> Served — item reached the table (BUG-480 affected)</div>
+</div>
+
+<p style="margin-top:16px; font-size:12px; color:#a1a1aa;">
+  The × opens <strong>CancelFoodModal</strong> (existing) — staff selects reason + quantity to cancel.
+  Whole-order × on OrderCard (dashboard) is separate and not affected by this fix.
+</p>
+
+</body>
+</html>

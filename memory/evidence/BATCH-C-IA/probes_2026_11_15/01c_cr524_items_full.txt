@@ -1,0 +1,30 @@
+items_count: 23
+=== ALL ITEM KEYS ===
+  food_id: 116854
+  name: 'Spaghetti  Pasta'
+  food_name: 'Spaghetti  Pasta'
+  unit_price: 320
+  scope: 'item'
+  qty: 1
+  amount: 350
+  value: 350
+  item_total: 350
+  discount: 0
+  service_charge: 0
+  gst: 0
+  vat: 0
+  stage: 'After Serving'
+  cancel_type: 'Post-Serve'
+  reason: 'Taste not good'
+  notes: 'W'
+  cancel_date: '2026-11-01'
+  cancel_time: '16:15'
+  cancelled_by: 'Pranav'
+  punched_by: 'Counter'
+  station: 'KDS'
+  order_id: '020982'
+  order_number: '020982'
+  restaurant_order_id: '020982'
+  table_no: '32'
+  table_name: '32'
+  order_date: '2026-11-01'

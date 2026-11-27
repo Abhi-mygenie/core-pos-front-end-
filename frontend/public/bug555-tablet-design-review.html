@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUG-555 — Tablet Responsiveness Design Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#E8EAED;color:#1A1A1A;font-size:13px;line-height:1.5}
+.wrap{max-width:1500px;padding:40px 48px 120px}
+h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:56px 0 6px;display:flex;align-items:center;gap:10px}
+h2 .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;color:#fff}
+.sub{color:#666;max-width:900px}
+.tag.high{background:#D9480F}.tag.med{background:#E67700}.tag.low{background:#329937}
+.od-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.od{background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:14px 16px;border-left:4px solid #F26B33}
+.od b{display:block;font-size:12px;color:#F26B33}
+.od .rec{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;background:#EAF6EB;color:#329937;padding:2px 8px;border-radius:6px}
+.row{display:flex;flex-wrap:wrap;gap:28px;margin-top:18px;align-items:flex-start}
+.card{background:#fff;border:1px solid #DADDE1;border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px rgba(0,0,0,.05)}
+.card .cap{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;gap:12px}
+.card .cap span{color:#666;font-weight:500}
+.notes{font-size:12px;color:#444;margin-top:10px;max-width:640px}
+.notes li{margin-left:16px}
+.frame{position:relative;overflow:hidden;border-radius:12px;border:8px solid #1F1F1F;background:#1F1F1F}
+.screen{position:absolute;top:0;left:0;transform-origin:0 0;background:#fff;overflow:hidden;font-size:13px}
+.before img{display:block;border-radius:8px;border:1px solid #ddd}
+.badge-before{font-size:11px;line-height:16px;font-weight:700;color:#fff;background:#C92A2A;padding:1px 7px;border-radius:4px}
+.badge-after{font-size:11px;line-height:16px;font-weight:700;color:#fff;background:#329937;padding:1px 7px;border-radius:4px}
+/* ===== POS primitives ===== */
+.oe{display:flex;width:100%;height:100%}
+.cat{flex-shrink:0;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column}
+.cat .back{margin:12px;width:40px;height:40px;border-radius:8px;background:#F26B33;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cat .c{margin:0 8px 6px;padding:11px 10px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:44px;display:flex;align-items:center}
+.cat .c.on{background:#F26B33;color:#fff}
+.mid{flex:1;min-width:0;display:flex;flex-direction:column;border-right:1px solid #E5E5E5}
+.mhead{padding:12px 16px;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;border-bottom:1px solid #E5E5E5}
+.search{flex:1 1 160px;max-width:320px;min-width:140px;border:2px solid #F26B33;border-radius:8px;padding:7px 10px 7px 32px;color:#999;font-size:12px;position:relative;box-shadow:0 2px 4px rgba(249,115,22,.15)}
+.search::before{content:"";position:absolute;left:10px;top:50%;width:11px;height:11px;border:2px solid #F26B33;border-radius:50%;transform:translateY(-60%)}
+.chip{font-size:11px;padding:3px 9px;border-radius:999px;background:#FFF1EA;color:#F26B33;font-weight:600;flex-shrink:0}
+.chip.g{background:#EFF6FF;color:#2563EB}
+.icons{display:flex;gap:6px;flex-shrink:0;margin-left:auto}
+.ib{width:40px;height:40px;border-radius:8px;border:1px solid #EEE;display:flex;align-items:center;justify-content:center}
+.ib svg{width:18px;height:18px;stroke:#666;fill:none;stroke-width:2}
+.items{flex:1;overflow:hidden;padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-content:flex-start}
+.pill{padding:12px 20px;border-radius:999px;border:1px solid #E5E5E5;font-size:13px;font-weight:500;white-space:nowrap}
+.right{flex-shrink:0;width:384px;background:#fff;display:flex;flex-direction:column}
+.rh{padding:12px 16px;border-bottom:1px solid #E5E5E5;display:flex;justify-content:space-between;align-items:center}
+.rh b{font-size:14px}
+.ci{padding:10px 16px;border-bottom:1px solid #F1F1F1;display:flex;justify-content:space-between;font-size:12px}
+.qty{display:inline-flex;align-items:center;gap:8px;margin-right:10px}
+.qty i{font-style:normal;width:22px;height:22px;border:1px solid #DDD;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.tot{margin-top:auto;padding:12px 16px;border-top:1px solid #E5E5E5;font-size:12px}
+.tot div{display:flex;justify-content:space-between;padding:2px 0}
+.tot .gt{font-size:15px;font-weight:700}
+.btns{display:flex;gap:8px;padding:0 16px 14px}
+.btn{flex:1;padding:12px;border-radius:8px;text-align:center;font-weight:600;font-size:13px}
+.btn.o{background:#F26B33;color:#fff}.btn.g{background:#329937;color:#fff}.btn.w{border:1px solid #F26B33;color:#F26B33}
+/* rotate overlay */
+.rot{position:absolute;inset:0;z-index:120;background:rgba(26,26,26,.95);backdrop-filter:blur(8px);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.rot svg{width:96px;height:96px;margin-bottom:28px;animation:tilt 3s ease-in-out infinite}
+@keyframes tilt{0%,35%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+.rot h3{font-size:24px;font-weight:700;margin-bottom:10px}
+.rot p{color:#CFCFCF;font-size:14px;max-width:340px}
+.rot .keep{margin-top:26px;font-size:12px;color:#fff;background:rgba(50,153,55,.25);border:1px solid #329937;padding:6px 12px;border-radius:999px}
+/* dashboard shell */
+.dash{display:flex;width:100%;height:100%;background:#F7F7F7;position:relative}
+.rail{width:56px;flex-shrink:0;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column;align-items:center;padding-top:10px;gap:10px}
+.rail .ham{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid #E5E5E5}
+.rail .ham svg{width:20px;height:20px;stroke:#1A1A1A;stroke-width:2;fill:none}
+.rail .dot{margin-top:auto;margin-bottom:14px;width:10px;height:10px;border-radius:50%;background:#4CAF50}
+.side{width:280px;flex-shrink:0;background:#fff;border-right:1px solid #E5E5E5;display:flex;flex-direction:column}
+.side .logo{padding:16px;border-bottom:1px solid #E5E5E5;display:flex;justify-content:space-between;align-items:center;font-weight:700;color:#F26B33;font-size:16px}
+.side .n{display:flex;align-items:center;gap:12px;padding:11px 18px;font-size:13px;min-height:44px}
+.side .n i{width:18px;height:18px;border-radius:5px;background:#E9E9E9;display:inline-block}
+.side .n.on{background:#FFF1EA;color:#F26B33;font-weight:600;border-right:3px solid #F26B33}
+.side .n.on i{background:#F26B33}
+.side .foot{margin-top:auto;border-top:1px solid #E5E5E5}
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);z-index:90}
+.drawer{position:absolute;top:0;bottom:0;left:0;z-index:100;box-shadow:8px 0 24px rgba(0,0,0,.18)}
+.dmain{flex:1;min-width:0;display:flex;flex-direction:column}
+.hdr{background:#fff;border-bottom:1px solid #E5E5E5;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.dd{border:1px solid #E5E5E5;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.dd::after{content:"▾";color:#999}
+.hsearch{flex:1;min-width:0;background:#F7F7F7;border:1px solid #E5E5E5;border-radius:8px;padding:8px 12px;color:#999;font-size:12px;white-space:nowrap;overflow:hidden}
+.add{flex-shrink:0;background:#F26B33;color:#fff;border-radius:8px;padding:10px 12px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px}
+.add.icon{padding:10px;width:44px;height:44px;justify-content:center}
+.online{width:10px;height:10px;border-radius:50%;background:#4CAF50;flex-shrink:0}
+.cards{padding:14px;display:grid;gap:12px;overflow:hidden}
+.ch{background:#fff;border:1px solid #E5E5E5;border-radius:10px;padding:10px}
+.ch h4{font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.tile{height:62px;border-radius:8px;border:1px solid #E5E5E5;padding:6px;font-size:11px;font-weight:600}
+.tile.busy{background:#FFF1EA;border-color:#F8C4AC}
+.tile.ready{background:#EAF6EB;border-color:#B6DDB8}
+/* report */
+.rpt{display:flex;width:100%;height:100%;background:#FAFAFA}
+.rhead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:12px;padding:20px 32px;background:#fff;border-bottom:1px solid #E4E4E7}
+.rtitle{display:flex;align-items:center;gap:16px}
+.rtitle .bk{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#52525B;font-size:18px}
+.rtitle h3{font-size:22px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+.rctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.drange{border:1px solid #E4E4E7;border-radius:8px;padding:8px 12px;font-size:12px;white-space:nowrap}
+.apply{background:#329937;color:#fff;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600}
+.seg{display:flex;gap:4px;background:#F4F4F5;border-radius:8px;padding:4px 6px}
+.seg span{padding:4px 10px;font-size:12px;border-radius:6px}
+.seg span.on{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+.sq{width:36px;height:36px;border:1px solid #E4E4E7;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#52525B}
+.dl{border:1px solid #E4E4E7;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:20px 32px}
+.kpi{background:#fff;border:1px solid #E4E4E7;border-radius:10px;padding:12px}
+.kpi small{color:#71717A;font-size:11px}.kpi b{display:block;font-size:18px}
+.vw{font-size:10px;font-weight:700;background:#1F1F1F;color:#fff;padding:2px 8px;border-radius:4px}
+.legend{display:flex;gap:16px;font-size:11px;color:#666;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap" data-testid="bug555-design-review">
+  <div style="font-size:12px;font-weight:600;color:#F26B33;letter-spacing:.08em">BUG-555 · GATE 2 → DESIGN REVIEW · 2026-10-15</div>
+  <h1>Tablet responsiveness — design review</h1>
+  <p class="sub" style="margin-top:6px">Every mockup below is drawn at the device's true CSS size, then scaled down, using the real flex-wrap rules the build will use. Anything that wraps or fits here will wrap or fit the same way on the tablet. Desktop (≥1280px) stays pixel-identical. Brand colours, fonts and controls are unchanged.</p>
+
+  <div class="od-grid" data-testid="od-callouts">
+    <div class="od"><b>OD-555-12 · Order Entry right pane</b>Keep the cart / Collect Payment panel at <b style="display:inline;color:#1A1A1A">384px</b>. The category rail shrinks from 176px to 128px and the middle header wraps onto 2 rows.<br><span class="rec">Recommended: a, keep 384</span><div class="notes">The payment panel and cart files drop out of scope, so no money screen changes.</div></div>
+    <div class="od"><b>OD-555-12b · Sidebar on tablet</b>A slim 56px rail with a hamburger button sits in the page flow. Tapping it opens a 280px drawer with a dark backdrop.<br><span class="rec">Recommended: a, in-flow rail</span><div class="notes">Nothing floats over the headers of the 94 pages.</div></div>
+    <div class="od"><b>OD-555-13 · Rotate screen trigger</b>Show it when the tablet is held upright (narrower than 1280px), or whenever the screen is under 800px wide.<br><span class="rec">Recommended: c, both</span><div class="notes">The cart stays loaded underneath.</div></div>
+    <div class="od"><b>OD-555-14 · Report pages count</b>Apply the wrap fix to all 39–40 report pages found in the code (the investigation counted 34).<br><span class="rec">Recommended: a, all</span></div>
+    <div class="od"><b>OD-555-15 · Sidebar risk level</b>The desktop pin is done in the Sidebar file alone, so the Dashboard page file is not touched. Package risk drops from HIGH to MEDIUM.<br><span class="rec">Recommended: approve</span></div>
+    <div class="od"><b>OD-555-16 · Dashboard top header</b>Leave it as is (it scrolls with the page). Not reported by staff.<br><span class="rec">Recommended: a, out of scope</span></div>
+  </div>
+
+  <!-- ===== WP-A ===== -->
+  <h2>1 · WP-A Order Entry, landscape <span class="tag high">HIGH · FIRST</span></h2>
+  <p class="sub">Today the three panes need 927px, so the cart is cut off on the 893px tablet. After the change it fits down to the 800px floor. The category rail is 128px, the middle header wraps, and the cart keeps its full 384px.</p>
+  <div class="row">
+    <div class="card before"><div class="cap">Today · 853×533 <span class="badge-before">BEFORE</span></div><img src="bug555/L02_order_entry_853x533.jpg" width="460" alt="before order entry"></div>
+    <div class="card"><div class="cap">Galaxy Tab A7 Lite · 893×533 <span class="badge-after">AFTER</span></div><div class="frame" data-w="893" data-h="533" data-s="0.62" data-tpl="oe" data-cat="128" data-testid="mock-oe-893"></div></div>
+  </div>
+  <div class="row">
+    <div class="card"><div class="cap">Redmi Pad SE, small display · 1006×600 <span class="badge-after">AFTER</span></div><div class="frame" data-w="1006" data-h="600" data-s="0.55" data-tpl="oe" data-cat="128" data-testid="mock-oe-1006"></div></div>
+    <div class="card"><div class="cap">Floor · 800×500 <span class="badge-after">AFTER</span></div><div class="frame" data-w="800" data-h="500" data-s="0.62" data-tpl="oe" data-cat="128" data-testid="mock-oe-800"></div>
+      <ul class="notes"><li>Middle pane is 288px. The search sits on row 1 and the 5 icon buttons drop to row 2, still 40px touch targets.</li><li>Category names longer than about 12 characters are cut short with "…", and the full name shows on hover or long-press.</li></ul></div>
+  </div>
+
+  <h2>2 · WP-A Order Entry, portrait rotate screen <span class="tag high">HIGH</span></h2>
+  <p class="sub">Held upright, a full-screen panel covers Order Entry. Order Entry stays loaded underneath, so the cart, customer and search are kept. It disappears as soon as the tablet is turned sideways. It sits above every Order Entry pop-up.</p>
+  <div class="row">
+    <div class="card before"><div class="cap">Today · 533×780 <span class="badge-before">BEFORE</span></div><img src="bug555/P02_order_entry_533x780.jpg" width="260" alt="before portrait"></div>
+    <div class="card"><div class="cap">533×893 portrait <span class="badge-after">AFTER</span></div><div class="frame" data-w="533" data-h="893" data-s="0.5" data-tpl="rot" data-testid="mock-rotate-533"></div>
+      <ul class="notes"><li>Test ID: <code>order-entry-rotate-overlay</code></li><li>Dark backdrop (#1A1A1A at 95%) with a slowly tilting tablet icon.</li><li>A green pill tells staff the order is safe.</li></ul></div>
+  </div>
+
+  <!-- ===== WP-D ===== -->
+  <h2>3 · WP-D Report toolbars <span class="tag low">LOW · SECOND</span></h2>
+  <p class="sub">The same class change goes on all report pages: the title stays on row 1 and the controls wrap onto row 2 instead of being clipped. Desktop looks the same because nothing wraps when everything fits.</p>
+  <div class="row">
+    <div class="card before"><div class="cap">Today · Settlement 853×533 <span class="badge-before">BEFORE</span></div><img src="bug555/L05_reports_settlement_853x533.jpg" width="460" alt="before settlement"></div>
+    <div class="card"><div class="cap">Settlement · 893×533 <span class="badge-after">AFTER</span></div><div class="frame" data-w="893" data-h="533" data-s="0.55" data-tpl="rpt" data-testid="mock-report-893"></div></div>
+    <div class="card"><div class="cap">Settlement · 533×893 portrait <span class="badge-after">AFTER</span></div><div class="frame" data-w="533" data-h="893" data-s="0.42" data-tpl="rpt" data-testid="mock-report-533"></div></div>
+  </div>
+
+  <!-- ===== WP-B ===== -->
+  <h2>4 · WP-B Sidebar, rail and drawer below 1280px <span class="tag med">HIGH→MEDIUM · THIRD</span></h2>
+  <p class="sub">Below 1280px the sidebar becomes a 56px rail with a menu button. Tapping it slides out the full 280px menu over a dark backdrop. The menu closes on backdrop tap, Escape, or navigating to another page. Opening it on a tablet does not change the saved desktop preference. On desktop the sidebar stays pinned while the page scrolls.</p>
+  <div class="row">
+    <div class="card before"><div class="cap">Today · scrolled down 853×533 <span class="badge-before">BEFORE</span></div><img src="bug555/L01_dashboard_scrolled_853x533.jpg" width="460" alt="before sidebar"></div>
+    <div class="card"><div class="cap">893×533 · rail (closed) <span class="badge-after">AFTER</span></div><div class="frame" data-w="893" data-h="533" data-s="0.55" data-tpl="dash" data-testid="mock-rail-893"></div></div>
+    <div class="card"><div class="cap">893×533 · drawer open <span class="badge-after">AFTER</span></div><div class="frame" data-w="893" data-h="533" data-s="0.55" data-tpl="dash" data-drawer="1" data-testid="mock-drawer-893"></div>
+      <ul class="notes"><li>Test IDs: <code>sidebar-hamburger-btn</code>, <code>sidebar-drawer</code>, <code>sidebar-drawer-backdrop</code></li><li>Slides in over 300ms, backdrop fades in over 200ms.</li></ul></div>
+  </div>
+
+  <!-- ===== WP-C ===== -->
+  <h2>5 · WP-C Dashboard header below 1280px <span class="tag med">MEDIUM · FOURTH</span></h2>
+  <p class="sub">The tablet header (status filter dropdown in place of pills, wide search) now applies up to 1279px, which fixes the iPad-landscape overflow at 1024–1077px. Below 640px, Add becomes a 44px orange + icon so it's always visible.</p>
+  <div class="row">
+    <div class="card before"><div class="cap">Today · 533 portrait <span class="badge-before">BEFORE</span></div><img src="bug555/P01_dashboard_533x780.jpg" width="260" alt="before header portrait"></div>
+    <div class="card"><div class="cap">iPad landscape · 1024×768 <span class="badge-after">AFTER</span></div><div class="frame" data-w="1024" data-h="600" data-s="0.5" data-tpl="dash" data-testid="mock-header-1024"></div></div>
+    <div class="card"><div class="cap">533×893 portrait <span class="badge-after">AFTER</span></div><div class="frame" data-w="533" data-h="893" data-s="0.42" data-tpl="dash" data-icon-add="1" data-testid="mock-header-533"></div></div>
+  </div>
+
+  <h2>Desktop ≥1280px</h2>
+  <p class="sub">No visual change. Pills, Platform dropdown, counter chip, the 176px category rail, the 70/280px sidebar, and single-row report toolbars all stay as they are. The only addition is that the sidebar stays pinned while the page scrolls. QA will compare 1920×800 screenshots before and after.</p>
+</div>
+
+<script>
+const I={plus:'<path d="M12 5v14M5 12h14"/>',user:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M19 8v6M16 11h6"/>',note:'<path d="M4 4h16v12l-4 4H4z"/><path d="M16 20v-4h4"/>',shift:'<path d="M7 7h13l-3-3M17 17H4l3 3"/>',merge:'<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M6 8v4a6 6 0 006 6h4"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24">${I[k]}</svg>`;
+const cats=['Popular','Starters','Main Course','Tandoor Specials','Breads','Rice & Biryani','Beverages','Desserts'];
+const items=['Paneer Tikka','Veg Spring Roll','Chicken 65','Hara Bhara Kebab','Butter Chicken','Dal Makhani','Garlic Naan','Jeera Rice','Masala Chaas','Fresh Lime Soda','Gulab Jamun','Mushroom Soup','Chilli Paneer','Fish Fingers'];
+function oe(cat){return `<div class="oe">
+ <div class="cat" style="width:${cat}px"><div class="back">←</div>${cats.map((c,i)=>`<div class="c ${i==2?'on':''}" title="${c}">${c}</div>`).join('')}</div>
+ <div class="mid"><div class="mhead"><div class="search">Search items...</div><span class="chip">#1042</span><span class="chip g">Normal</span><div class="icons">${['plus','user','note','shift','merge'].map(k=>`<div class="ib">${svg(k)}</div>`).join('')}</div></div>
+  <div class="items">${items.map(t=>`<div class="pill">${t}</div>`).join('')}</div></div>
+ <div class="right"><div class="rh"><b>Table T4 · Dine-in</b><span class="chip">4 items</span></div>
+  ${[['Paneer Tikka',2,'₹560'],['Butter Chicken',1,'₹420'],['Garlic Naan',3,'₹210'],['Masala Chaas',2,'₹160']].map(r=>`<div class="ci"><span><span class="qty"><i>−</i>${r[1]}<i>+</i></span>${r[0]}</span><b>${r[2]}</b></div>`).join('')}
+  <div class="tot"><div><span>Subtotal</span><span>₹1,350</span></div><div><span>Service charge</span><span>₹67.50</span></div><div><span>GST</span><span>₹70.88</span></div><div class="gt"><span>Total</span><span>₹1,488</span></div></div>
+  <div class="btns"><div class="btn w">KOT</div><div class="btn o">Collect Bill</div></div></div></div>`}
+function rot(){return oe(128)+`<div class="rot" data-testid="order-entry-rotate-overlay"><svg viewBox="0 0 64 64" fill="none" stroke="#F26B33" stroke-width="3"><rect x="18" y="6" width="28" height="52" rx="5"/><circle cx="32" cy="51" r="1.8" fill="#F26B33"/></svg><h3>Rotate your tablet</h3><p>Order Entry works in landscape. Turn your tablet sideways to continue.</p><div class="keep">✓ Your order and cart are kept</div></div>`}
+function side(){return `<div class="side"><div class="logo">MyGenie<span style="color:#999;font-size:18px">×</span></div>${['Dashboard','Orders','Menu','Customers','Credit','Reports','Inventory','Settings'].map((n,i)=>`<div class="n ${i==0?'on':''}"><i></i>${n}</div>`).join('')}<div class="foot"><div class="n"><i></i>Ringer On</div><div class="n"><i></i>Logout</div></div></div>`}
+function dash(w,drawer,iconAdd){
+ const narrow=w<640;
+ const ch=(n,c)=>`<div class="ch"><h4>${n}<span style="color:#666">${c}</span></h4><div class="tiles">${Array.from({length:c}).map((_,i)=>`<div class="tile ${i%3==0?'busy':i%4==1?'ready':''}">T${i+1}<div style="font-weight:400;color:#666">${i%3==0?'₹1,240':''}</div></div>`).join('')}</div></div>`;
+ return `<div class="dash"><div class="rail"><div class="ham" data-testid="sidebar-hamburger-btn"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div><div class="dot"></div></div>
+ <div class="dmain"><div class="hdr"><div class="dd">${narrow?'All':'All status'}</div><div class="hsearch">Search table, order, customer…</div>${iconAdd?'<div class="add icon">+</div>':'<div class="add">+ Add</div>'}<div class="online"></div></div>
+ <div class="cards">${ch('Dine-in',8)}${ch('Takeaway',5)}${ch('Delivery',4)}</div></div>
+ ${drawer?`<div class="backdrop" data-testid="sidebar-drawer-backdrop"></div><div class="drawer" data-testid="sidebar-drawer">${side()}</div>`:''}</div>`}
+function rpt(){return `<div class="rpt"><div class="rail"><div class="ham"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div><div class="dot"></div></div><div style="flex:1;min-width:0">
+ <div class="rhead"><div class="rtitle"><div class="bk">←</div><h3>Settlement Report</h3></div>
+ <div class="rctl"><div class="drange">📅 01 Oct 2026 – 15 Oct 2026</div><div class="apply">Apply</div><div class="seg"><span>Today</span><span class="on">7D</span><span>30D</span><span>MTD</span></div><div class="sq">↻</div><div class="dl">Download ▾</div></div></div>
+ <div class="kpis">${['Gross Sales|₹4,82,310','Net Sales|₹4,41,920','Cash|₹1,12,400','UPI|₹2,38,770','Card|₹90,750','Pending|₹12,300'].map(k=>{const[a,b]=k.split('|');return `<div class="kpi"><small>${a}</small><b>${b}</b></div>`}).join('')}</div></div></div>`}
+document.querySelectorAll('.frame').forEach(f=>{
+ const w=+f.dataset.w,h=+f.dataset.h,s=+f.dataset.s;
+ f.style.width=(w*s+16)+'px';f.style.height=(h*s+16)+'px';
+ const sc=document.createElement('div');sc.className='screen';sc.style.width=w+'px';sc.style.height=h+'px';sc.style.transform=`scale(${s})`;
+ const t=f.dataset.tpl;
+ sc.innerHTML=t=='oe'?oe(+f.dataset.cat):t=='rot'?rot():t=='rpt'?rpt():dash(w,f.dataset.drawer,f.dataset.iconAdd);
+ f.appendChild(sc);
+ const tag=document.createElement('div');tag.className='vw';
+});
+</script>
+</body>
+</html>

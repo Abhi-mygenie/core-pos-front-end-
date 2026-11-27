@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-C_CR-524_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-C_CR-524_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-C_CR-524_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-524 Punch time per cancelled item — DRAFT v1 — 2026-11-15</h1>
+<p>Backend: Gyan · ID: ASK 1 · IA doc: <code>impact/CR-524_IMPACT_ANALYSIS.md</code>
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong>
+<strong>Status: DRAFT v1 — waiting backend reply before FINAL. IA frozen 2026-11-15.</strong></p>
+<h2>1. Add punch time per cancelled line (ASK 1)</h2>
+<p>Endpoint: <code>GET /api/v2/vendoremployee/report/insights-cancellations</code> → items array</p>
+<p><strong>Problem:</strong> <code>created_at</code> (the time an item was punched / added to the order) is absent from the API today. FE cannot compute Cancellation Duration without it.</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Type</th>
+<th>Values</th>
+<th>Default</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[].punched_at</code></td>
+<td>string (ISO 8601 or IST datetime)</td>
+<td>Datetime when the item was originally punched / added</td>
+<td>—</td>
+<td>NEW — TBD (backend to confirm field name: <code>punched_at</code> or <code>created_at</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Naming note (R19):</strong> brief proposes <code>punched_at</code> as the semantic name (= original add time). If backend already returns a field for this under a different key, backend confirms the existing name and FE uses it as-is.</p>
+<p><strong>Probe evidence (01c_cr524_items_full.txt):</strong> Current item keys: <code>cancel_date, cancel_time, cancelled_by, punched_by, station, …</code> — <strong>no <code>created_at</code> or <code>punched_at</code> today.</strong></p>
+<p><strong>Partial-cancel rule:</strong> When a line is partially cancelled, the cancelled split-row’s <code>punched_at</code> = the <strong>original parent line’s add time</strong> (not the split time). Probe: row 3969224 (partial cancel) vs parent 3969222 — FE expects <code>punched_at</code> = parent add time.</p>
+<p><strong>Timezone:</strong> same as <code>cancel_time</code> (IST / local), or ISO with offset. Backend to confirm — today <code>cancel_time</code> = “HH:MM” (IST, no date component).</p>
+<p><strong>FE computation (once field available):</strong>
+<code>duration_min = Math.max(0, Math.round((cancel_datetime − punched_at_datetime) / 60 000))</code></p>
+<h2>2. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASK 1</td>
+<td></td>
+<td>Confirm field name (<code>punched_at</code> or existing key); confirm partial-cancel uses parent add time; confirm timezone</td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Backend Brief Tracker — Batch-wise — MyGenie POS</title>
+<style>
+body{font-family:Georgia,serif;margin:32px;color:#1d1d1b;background:#faf8f3}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:19px;margin:32px 0 6px;border-bottom:2px solid #1d1d1b;padding-bottom:4px}
+p.meta{font-size:13px;color:#555;margin:2px 0 12px}
+table{border-collapse:collapse;width:100%;font-size:13px;background:#fff}
+th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#efeadb}
+.s{font-weight:bold;font-size:11px;padding:2px 6px;border-radius:3px}
+.open{background:#ffe2c2}.prog{background:#dce8ff}.done{background:#cdeccf}.blocked{background:#f6c9c9}
+.legend span{margin-right:10px}
+</style>
+</head>
+<body>
+<h1>Backend Brief Tracker — batch-wise</h1>
+<p class="meta">Update the Status / Backend reply / Date done columns when backend delivers. Status values: <span class="legend"><span class="s open">OPEN</span><span class="s prog">IN PROGRESS</span><span class="s done">DONE</span><span class="s blocked">BLOCKED</span></span></p>
+
+<h2>Batch A — Cancellation · Complimentary · Rights · PIN · Alerts</h2>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-A_2026_11_14.md</code> (Gyan) · Sent 2026-11-14 · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-A_&lt;date&gt;.md</code></p>
+<p class="meta"><b>2026-11-15 (owner R21): base document for Batch A = <a href="BACKEND_BRIEF_BATCH-A_2026_11_15.html">BACKEND_BRIEF_BATCH-A_2026_11_15.html</a></b> (brief + links to the 8 locked contracts + reply checklist per CR). Rows below are a summary only.</p>
+<table data-testid="tracker-batch-a">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>BA-01</td><td>BUG-670</td><td>Store + return item cancel note</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-02</td><td>BUG-674</td><td>Cancel reason/note in Order Beta</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-03</td><td>BUG-674</td><td>Stop order note overwriting line reason</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-04</td><td>BUG-674</td><td>Save empty note when blank</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-05</td><td>CR-493</td><td>Notes mandatory/optional setting key</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-06</td><td>CR-493</td><td>Confirm reasons list item_type (info)</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-07</td><td>CR-492</td><td>Server-side enforce complementary_food</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-08</td><td>CR-492</td><td>Explain restaurant complementary flag</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-09</td><td>CR-515</td><td>Confirm pay-later key + enforce existing rights</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-10</td><td>CR-515</td><td>Separate item-cancel right (PHASE 2)</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td>Phase 2</td><td></td></tr>
+<tr><td>BA-11</td><td>CR-494</td><td>Separate PIN per action</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-12</td><td>CR-494</td><td>₹ thresholds per action</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-13</td><td>CR-494</td><td>Edit-after-bill PIN for everyone</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-14</td><td>CR-494</td><td>Server-side daily ₹ + count limits</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-15</td><td>CR-494</td><td>PIN config / verify / counters APIs</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-16</td><td>CR-529</td><td>OTP for PIN actions (<s>P1</s> → P2 / PHASE 2, downgraded 2026-11-16)</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td>Phase 2</td><td></td></tr>
+<tr><td>BA-17</td><td>CR-445 (P1)</td><td>Whole-order comp as 100% preset + reason</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-18</td><td>CR-445 (P1)</td><td>Right only, no PIN, normal orders only</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>BA-19</td><td>CR-443</td><td>7 push alert events (Batch E deferred P1; cancel alerts replaced by CR-543 time-threshold approach)</td><td>Gyan</td><td><span class="s blocked">BATCH E</span></td><td></td><td></td></tr>
+<tr><td>BA-20</td><td>CR-443</td><td>Delivery via existing Firebase token (Batch E deferred P1)</td><td>Gyan</td><td><span class="s blocked">BATCH E</span></td><td></td><td></td></tr>
+<tr><td>BA-21</td><td>CR-443</td><td>Right for receiving alerts (Batch E deferred P1)</td><td>Gyan</td><td><span class="s blocked">BATCH E</span></td><td></td><td></td></tr>
+<tr><td>BA-22</td><td>CR-443</td><td>Discount-alert ₹ setting key (Batch E deferred P1)</td><td>Gyan</td><td><span class="s blocked">BATCH E</span></td><td></td><td></td></tr>
+<tr><td>BA-23 <b>(v2)</b></td><td>CR-493</td><td>Auto-cancel rework: <code>cancel_source</code> field + comma-separated reasons + exclude from Insights counts + <code>all_items_cancelled</code> audit event + <b>backfill historical data</b>. Contract: <code>contracts/BATCH-A_BA-23_API_CONTRACT_2026_11_16_v2.md</code></td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td>v2 2026-11-16 (owner session). Supersedes v1 §3.</td></tr>
+<tr><td>BA-24</td><td>BUG-674</td><td>Refund-cancel note key confirm</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td>Added 2026-11-15 (Gate 3 R14-Q1)</td></tr>
+<tr><td>R-1</td><td>CR-492</td><td>Release: give owners complementary_food before release</td><td>Gyan</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+</table>
+
+<h2>Batch A — CR-495 Room comp + meal package</h2>
+<p class="meta">Brief: <code>BACKEND_BRIEF_CR-495_ROOM_COMP_MEAL_PACKAGE_2026_11_14.md</code> (Parth) · Sent 2026-11-14 · Non-PMS + PMS together</p>
+<table data-testid="tracker-batch-a-cr495">
+<tr><th>ID</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>B-495-1</td><td>Meal package on check-in</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>B-495-2</td><td>Guest count at check-in</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>B-495-3</td><td>Per-package per-meal ₹ limit keys</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>B-495-4</td><td>Server-side used counter per room/meal/business day</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>B-495-5</td><td>Meal slot assignment (to discuss)</td><td>Parth</td><td><span class="s blocked">BLOCKED</span></td><td>Owner + backend discussion</td><td></td></tr>
+<tr><td>B-495-6</td><td>Reject over-limit comp without PIN</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>B-495-7</td><td>OTA meal-plan mapping (PMS)</td><td>Parth</td><td><span class="s open">OPEN</span></td><td></td><td></td></tr>
+<tr><td>Q-3</td><td>Half board second meal (to discuss)</td><td>Owner + Parth</td><td><span class="s blocked">BLOCKED</span></td><td>Owner + backend discussion</td><td></td></tr>
+</table>
+
+<h2>Batch B — Payments · Credit · GST</h2>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-B_2026_11_15.md</code> (Gyan) · <b>DRAFT — NOT SENT</b> (owner to decide how briefs are sent) · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-B_&lt;date&gt;.md</code></p>
+<table data-testid="tracker-batch-b">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>BB-01</td><td>BUG-672</td><td>(Soft) enforce TAB prepaid flag on bill-payment + place-order</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-02</td><td>CR-526</td><td>Settled-day signal per order/date</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-03</td><td>CR-526</td><td>Reject make-order-unpaid / change method after day settled</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-04</td><td>CR-542</td><td>Reason type item_type='Unpaid' + admin list</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-05</td><td>CR-542</td><td>make-order-unpaid accepts + stores reason / reason_id (incl. Remove from Room)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-06</td><td>CR-514</td><td>Per payment type ref_enabled / ref_required / ref_label</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-07</td><td>CR-514</td><td>Confirm transaction_id stored per split part</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-08</td><td>CR-522</td><td>reconcile_tolerance_pct setting (blank or 0 = off)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-09</td><td>CR-527</td><td>Diner name on each credit row (tap-customer-record-list)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-10</td><td>CR-536</td><td>Store + print + return custGSTAddress</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-10b</td><td>CR-536</td><td>(Optional) billing address on customer profile for pre-fill</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-11</td><td>BUG-607</td><td>Category GST mode: all server tax paths use item tax</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-12</td><td>BUG-607</td><td>Share one wrong-GST order id for regression</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BB-13</td><td>CR-394</td><td>One-time Inclusive → Exclusive, GST-on outlets only</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+</table>
+<h2>Batch C — Cancellation Reports · Order Edit Audit</h2>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-C_2026_11_16_v2.md</code> (Gyan) · <b>DRAFT v2 — READY TO SEND</b> (v2 replaces v1: ASK 2 endpoint corrected, ASK 3 + ASK 4 added 2026-11-16). ASK 1 DONE, ASK 2a (foundation) DONE. · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-C_&lt;date&gt;.md</code></p>
+<p class="meta">Contracts: <code>contracts/BATCH-C_CR-524_API_CONTRACT_2026_11_15.md</code> · <code>contracts/BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md</code> (v2 supersedes v1; v1 foundation delivered 2026-11-16)</p>
+<table data-testid="tracker-batch-c">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Endpoint</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>ASK 1</td><td>CR-524</td><td>Return <code>punched_at</code> per cancelled line (original add time, full ISO, IST or with offset). Partial-cancel split lines use parent's add time. Order-scope cancels: return per-item lines with individual <code>punched_at</code>.</td><td><code>insights-cancellations</code></td><td>Gyan</td><td><span class="s done">DONE</span></td><td>Delivered as <code>created_at</code> + <code>item_punched_at</code> (identical) + <code>cancel_time_full</code>. Verified RID 672, 44 items.</td><td>2026-11-16</td></tr>
+<tr><td>ASK 2a <b>(v1)</b></td><td>CR-528</td><td>Foundation: (1) Persist <code>bill_printed_at</code> datetime. (2) Fix <code>print_bill_status</code> to 'Yes'. (3) <code>bill_print_count</code> integer. (4) <code>bill_print</code> + <code>item_cancel</code> + <code>order_cancel</code> + <code>order_edit</code> in <code>operations[]</code> with time/employee/amount.</td><td><code>order-logs-report</code></td><td>Gyan</td><td><span class="s done">DONE</span></td><td>6/6 items verified. Validation: <code>backend_replies/CR-528_BACKEND_REPLY_VALIDATION_2026_11_16.md</code></td><td>2026-11-16</td></tr>
+<tr><td>ASK 2b <b>(v2)</b></td><td>CR-528</td><td>BLOCKING: Surface post-print events on <code>insights-dashboard</code> → <code>audits</code>. (1) 3 new event types: <code>item_cancel_after_print</code>, <code>order_cancel_after_print</code>, <code>order_edit_after_print</code>. (2) 3 KPI counts. (3) Detection: cancels/edits where timestamp &gt; <code>bill_printed_at</code>. Foundation data confirmed by ASK 2a — just needs query + emit on correct endpoint.</td><td><code>insights-dashboard</code> → <code>audits</code></td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td>v2 2026-11-16: endpoint corrected. Foundation (ASK 2a) delivered. Contract: <code>BATCH-C_CR-528_API_CONTRACT_2026_11_16_v2.md</code></td></tr>
+<tr><td>ASK 3 <b>(NEW)</b></td><td>CR-543</td><td>Late Cancellation Audit: (1) New setting <code>cancel_audit_threshold_minutes</code> (integer, 0=off) on <code>profile</code> + <code>settings-list</code> + <code>update-settings</code>. (2) When threshold &gt; 0, any cancel where <code>cancel_time − punch_time &gt; threshold</code> → emit <code>late_cancel</code> event in <code>audits.orders[]</code> with <code>punch_time</code>, <code>cancel_time</code>, <code>duration_minutes</code>, <code>food_name</code>, <code>scope</code>. (3) Add <code>late_cancel_count</code> to <code>audits</code>. Depends on ASK 1 (<code>punched_at</code>).</td><td><code>insights-dashboard</code> → <code>audits</code> + settings</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td>Added 2026-11-16 (owner session)</td></tr>
+<tr><td>ASK 4 <b>(NEW)</b></td><td>CR-544</td><td>Cancel After Unpaid Audit: For each order made unpaid, any item/order cancel AFTER the <code>made_unpaid_at</code> timestamp → emit <code>cancel_after_unpaid</code> event in <code>audits.orders[]</code> with <code>made_unpaid_at</code>, <code>cancel_time</code>, <code>food_name</code>, <code>gap_minutes</code>, <code>scope</code>. Add <code>cancel_after_unpaid_count</code> to <code>audits</code>. <code>made_unpaid_at</code> derivable from existing <code>make_unpaid</code> operation in order-logs.</td><td><code>insights-dashboard</code> → <code>audits</code></td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td>Added 2026-11-16 (owner session)</td></tr>
+<tr><td>ASK 5 <b>(NEW)</b></td><td>BA-23 (CR-493)</td><td>Auto-cancel rework: (1) <code>cancel_source</code> field on every cancelled order: <code>"manual"</code> / <code>"auto_last_item"</code> / <code>"merge"</code> — on <code>cancel-order-list</code>, <code>insights-cancellations</code>, <code>combined</code> (Order Beta). (2) <code>cancellation_reason</code> on auto-cancelled orders = <b>comma-separated ALL items' reasons (deduplicated)</b>. (3) <code>insights-cancellations</code> summary: <code>cancelled_order_count</code> EXCLUDES <code>auto_last_item</code> + <code>merge</code>. (4) New audit event <code>all_items_cancelled</code> in <code>insights-dashboard</code> → <code>audits</code> with item details + comma reasons. (5) <b>Backfill</b> all historical orders: set <code>cancel_source</code>, comma-separated reason, <code>canceled_by</code> from item data.</td><td><code>insights-cancellations</code> + <code>cancel-order-list</code> + <code>combined</code> + <code>insights-dashboard</code> → <code>audits</code></td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td>Added 2026-11-16 (owner session). Contract: <code>contracts/BATCH-A_BA-23_API_CONTRACT_2026_11_16_v2.md</code>. Supersedes BA-23 §3 in v1 contract.</td></tr>
+</table>
+<h2>Batch D — Dashboard · Order entry · Cards</h2>
+<p class="meta">Brief: <code>BACKEND_BRIEF_BATCH-D_2026_11_15.md</code> (Gyan) · <b>NOT SENT</b> (Gate 2 IA closed 2026-11-15) · BD-01 is the release blocker for CR-525 / CR-521 · Reply file: <code>backend_replies/BACKEND_REPLY_BATCH-D_&lt;date&gt;.md</code></p>
+<table data-testid="tracker-batch-d">
+<tr><th>ID</th><th>Item</th><th>Ask</th><th>Owner</th><th>Status</th><th>Backend reply</th><th>Date done</th></tr>
+<tr><td>BD-01</td><td>CR-525 / CR-521</td><td>Reset <code>bill_print</code> to No when items are added after print (non-empty cart-update) + publish update-order socket — RELEASE BLOCKER</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-02</td><td>CR-525</td><td>Do NOT reset on a customer-only update</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-03</td><td>CR-525</td><td>Confirm which other edit paths reset (item cancel, qty, transfer, discount)</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-04</td><td>CR-525</td><td>Keep <code>bill_print_count</code> as history; only the flag resets</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-05</td><td>CR-523</td><td>Confirm customer-only <code>update-place-order</code> (empty cart) is supported</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-06</td><td>CR-523</td><td>Support removing (unlinking) a customer from a placed order</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-07</td><td>CR-523</td><td>Skip <code>order_edit_count</code> / edit log on customer-only updates</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-08</td><td>CR-523</td><td>(Cosmetic) clearer response message for customer-only update</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+<tr><td>BD-09</td><td>Test data</td><td>Delete probe customers 51320 / 51321 on CAFE 103; test order 1578761 cancelled</td><td>Gyan</td><td><span class="s open">NOT SENT</span></td><td></td><td></td></tr>
+</table>
+</body>
+</html>

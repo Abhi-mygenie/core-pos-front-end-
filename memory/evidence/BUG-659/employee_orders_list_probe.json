@@ -1,0 +1,15 @@
+{
+  "restaurant_discount_amount": 119.05,
+  "discount_value": "50.00",
+  "discount_type": null,
+  "order_discount": "119.05",
+  "order_discount_type": null,
+  "order_discount_json": null,
+  "round_up": null,
+  "order_amount": 138.01,
+  "gst_tax": 5.96,
+  "vat_tax": 0,
+  "service_tax": 11.91,
+  "orderDetails_count": 2,
+  "discount_member_category": ""
+}

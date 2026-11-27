@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CR-145 Design Study — BulkEditor Addon & Variation Columns</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+
+  .header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 20px 32px; display: flex; align-items: center; gap: 16px; }
+  .header-badge { background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px; border: 1px solid #fde68a; }
+  .header h1 { font-size: 18px; font-weight: 700; color: #0f172a; }
+  .header p { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 32px; }
+
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 16px; }
+
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+
+  .decision-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .decision-card.winner { border-color: #22c55e; }
+  .decision-header { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; }
+  .decision-header h3 { font-size: 14px; font-weight: 600; color: #0f172a; }
+  .decision-header .oq { font-size: 11px; color: #94a3b8; font-weight: 500; }
+  .decision-body { padding: 18px; }
+  .option { padding: 12px 14px; border-radius: 8px; margin-bottom: 10px; border: 2px solid transparent; }
+  .option.recommended { background: #f0fdf4; border-color: #86efac; }
+  .option.alternate { background: #f8fafc; border-color: #e2e8f0; }
+  .option-label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .option-label .tag { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
+  .recommended .tag { background: #bbf7d0; color: #15803d; }
+  .alternate .tag { background: #f1f5f9; color: #64748b; }
+  .option h4 { font-size: 13px; font-weight: 600; color: #0f172a; }
+  .option p { font-size: 12px; color: #64748b; line-height: 1.5; margin-top: 4px; }
+  .option .pros { font-size: 11px; color: #16a34a; margin-top: 6px; }
+  .option .cons { font-size: 11px; color: #dc2626; margin-top: 3px; }
+
+  /* Mockup section */
+  .mockup-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 32px; overflow: hidden; }
+  .mockup-header { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; }
+  .mockup-header h2 { font-size: 14px; font-weight: 600; color: #0f172a; }
+  .mockup-body { padding: 24px; }
+
+  /* Simulated BulkEditor table */
+  .bulk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .bulk-table th { background: #f8fafc; padding: 8px 12px; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+  .bulk-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .bulk-table tr:hover td { background: #fafafa; }
+  .bulk-table tr.expanded td { background: #f0fdf4; border-bottom: none; }
+  .bulk-table tr.expand-row td { background: #f0fdf4; border-bottom: 1px solid #bbf7d0; padding: 0; }
+
+  .food-name { font-weight: 500; color: #0f172a; }
+  .price { color: #475569; }
+  .status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+  .status-active { background: #dcfce7; color: #16a34a; }
+  .status-inactive { background: #fee2e2; color: #dc2626; }
+
+  .addon-chip { display: inline-flex; align-items: center; gap-4px; background: #eff6ff; color: #3b82f6; font-size: 11px; padding: 3px 8px; border-radius: 12px; cursor: pointer; border: 1px solid #bfdbfe; transition: all 0.15s; }
+  .addon-chip:hover { background: #dbeafe; }
+  .addon-chip.none { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+  .var-chip { display: inline-flex; align-items: center; gap: 4px; background: #fdf4ff; color: #9333ea; font-size: 11px; padding: 3px 8px; border-radius: 12px; cursor: pointer; border: 1px solid #e9d5ff; transition: all 0.15s; }
+  .var-chip:hover { background: #f3e8ff; }
+  .var-chip.none { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
+
+  .expand-panel { padding: 16px 20px; }
+  .expand-panel h4 { font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .addon-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .addon-item { display: flex; align-items: center; gap-6px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 12px; }
+  .addon-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: #22c55e; cursor: pointer; }
+  .addon-item label { cursor: pointer; color: #374151; }
+  .addon-item .price-tag { color: #94a3b8; font-size: 11px; margin-left: 4px; }
+  .addon-item.checked { background: #f0fdf4; border-color: #86efac; }
+
+  .var-group { margin-bottom: 12px; }
+  .var-group-title { font-size: 11px; font-weight: 600; color: #7c3aed; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .var-values { display: flex; flex-wrap: wrap; gap: 6px; }
+  .var-value { background: #fdf4ff; border: 1px solid #e9d5ff; color: #6b21a8; padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+
+  .expand-footer { display: flex; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+  .btn-primary { background: #22c55e; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .btn-secondary { background: #fff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+
+  .new-col-highlight th.new-col { background: #f0fdf4; color: #15803d; border-bottom-color: #86efac; position: relative; }
+  .new-col-highlight th.new-col::after { content: 'NEW'; position: absolute; top: 3px; right: 4px; font-size: 9px; background: #22c55e; color: #fff; padding: 1px 4px; border-radius: 3px; }
+
+  /* Option comparison table */
+  .oq-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .oq-table th { background: #f8fafc; padding: 10px 14px; text-align: left; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
+  .oq-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  .oq-table tr:last-child td { border-bottom: none; }
+  .rec-cell { background: #f0fdf4; color: #16a34a; font-weight: 600; font-size: 12px; }
+  .oq-num { font-weight: 700; color: #22c55e; margin-right: 4px; }
+  .q-text { font-weight: 600; color: #0f172a; }
+  .q-context { color: #64748b; font-size: 12px; font-weight: 400; }
+
+  .approval-box { background: #fff; border: 2px solid #22c55e; border-radius: 10px; padding: 24px; margin-bottom: 32px; }
+  .approval-box h3 { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .approval-row { display: flex; align-items: flex-start; gap: 16px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .approval-row:last-child { border-bottom: none; }
+  .approval-oq { font-size: 12px; font-weight: 700; color: #22c55e; min-width: 40px; }
+  .approval-q { font-size: 13px; color: #374151; flex: 1; }
+  .approval-rec { font-size: 12px; font-weight: 600; background: #f0fdf4; color: #15803d; padding: 3px 10px; border-radius: 6px; white-space: nowrap; }
+
+  .risk-banner { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #92400e; }
+
+  .gate-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #1e40af; margin-bottom: 32px; }
+  .gate-note strong { font-weight: 700; }
+
+  .footnote { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px">
+      <h1>CR-145 — BulkEditor Addon &amp; Variation Columns</h1>
+      <span class="header-badge">DESIGN STUDY — GATE 1.5</span>
+    </div>
+    <p>Design feasibility study for owner approval before Gate 2 (Impact Analysis) · 2026-08-15</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="gate-note">
+    <strong>Gate 1.5 (Design Gate):</strong> This study must be approved before Gate 2 (Impact Analysis) can proceed. Owner directed: "need to look at possibility with design agent." Approve the recommended approach for each OQ below, or select an alternative.
+  </div>
+
+  <div class="risk-banner">
+    ⚠️ <div><strong>Risk: HIGH.</strong> BulkEditor is 1100+ lines with CR-140/CR-036 already layered in. Nested data (addons[], variations[]) breaks the current flat-cell architecture. The chosen expand pattern determines the full implementation plan complexity.</div>
+  </div>
+
+  <!-- MOCKUP: Recommended Design -->
+  <p class="section-title" style="margin-bottom:12px">RECOMMENDED DESIGN — Live Mockup</p>
+  <div class="mockup-section">
+    <div class="mockup-header">
+      <h2>BulkEditor with Addon &amp; Variation Columns (Sub-Row Expand Pattern)</h2>
+      <span style="font-size:12px; color:#64748b">Tier 2 columns · click chip to expand</span>
+    </div>
+    <div class="mockup-body">
+      <div style="overflow-x:auto">
+        <table class="bulk-table new-col-highlight">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th class="new-col">Add-ons</th>
+              <th class="new-col">Variations</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 — collapsed -->
+            <tr>
+              <td><span class="food-name">Paneer Tikka</span></td>
+              <td>Starters</td>
+              <td class="price">₹280</td>
+              <td><span class="status-badge status-active">● Active</span></td>
+              <td>
+                <span class="addon-chip" onclick="toggleExpand('r1')">
+                  3 add-ons ▾
+                </span>
+              </td>
+              <td>
+                <span class="var-chip" onclick="toggleExpand('r1v')">
+                  2 groups ▾
+                </span>
+              </td>
+              <td>Veg</td>
+              <td style="color:#94a3b8; font-size:11px">Marinated paneer...</td>
+            </tr>
+            <!-- Expand sub-row for r1 (addons) -->
+            <tr id="r1" class="expand-row" style="display:none">
+              <td colspan="8">
+                <div class="expand-panel">
+                  <h4>
+                    <span style="color:#3b82f6">Add-ons</span> for Paneer Tikka
+                    <span style="font-size:11px; color:#94a3b8; font-weight:400">Check/uncheck to assign</span>
+                  </h4>
+                  <div class="addon-list">
+                    <div class="addon-item checked">
+                      <input type="checkbox" checked id="a1"/><label for="a1">Extra Cheese</label>
+                      <span class="price-tag">₹40</span>
+                    </div>
+                    <div class="addon-item checked">
+                      <input type="checkbox" checked id="a2"/><label for="a2">Garlic Sauce</label>
+                      <span class="price-tag">₹25</span>
+                    </div>
+                    <div class="addon-item checked">
+                      <input type="checkbox" checked id="a3"/><label for="a3">Extra Masala</label>
+                      <span class="price-tag">₹15</span>
+                    </div>
+                    <div class="addon-item">
+                      <input type="checkbox" id="a4"/><label for="a4">Dark Choco</label>
+                      <span class="price-tag">₹10</span>
+                    </div>
+                    <div class="addon-item">
+                      <input type="checkbox" id="a5"/><label for="a5">Butter Naan</label>
+                      <span class="price-tag">₹35</span>
+                    </div>
+                  </div>
+                  <div class="expand-footer">
+                    <button class="btn-primary" onclick="toggleExpand('r1')">Apply Changes</button>
+                    <button class="btn-secondary" onclick="toggleExpand('r1')">Cancel</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Expand sub-row for r1v (variations) -->
+            <tr id="r1v" class="expand-row" style="display:none">
+              <td colspan="8">
+                <div class="expand-panel">
+                  <h4>
+                    <span style="color:#9333ea">Variations</span> for Paneer Tikka
+                    <span style="font-size:11px; color:#94a3b8; font-weight:400">Read-only summary</span>
+                  </h4>
+                  <div class="var-group">
+                    <div class="var-group-title">Size</div>
+                    <div class="var-values">
+                      <span class="var-value">Half · ₹180</span>
+                      <span class="var-value">Full · ₹280</span>
+                    </div>
+                  </div>
+                  <div class="var-group">
+                    <div class="var-group-title">Spice Level</div>
+                    <div class="var-values">
+                      <span class="var-value">Mild · ₹0</span>
+                      <span class="var-value">Medium · ₹0</span>
+                      <span class="var-value">Hot · ₹0</span>
+                    </div>
+                  </div>
+                  <div class="expand-footer">
+                    <button class="btn-secondary" onclick="toggleExpand('r1v')">Close</button>
+                    <span style="font-size:11px; color:#94a3b8; margin-left:8px">Full variation edit available in Product Form</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+              <td><span class="food-name">Chicken Biryani</span></td>
+              <td>Mains</td>
+              <td class="price">₹320</td>
+              <td><span class="status-badge status-active">● Active</span></td>
+              <td>
+                <span class="addon-chip" onclick="toggleExpand('r2')">1 add-on ▾</span>
+              </td>
+              <td>
+                <span class="var-chip none">None</span>
+              </td>
+              <td>Non-Veg</td>
+              <td style="color:#94a3b8; font-size:11px">Aromatic basmati...</td>
+            </tr>
+            <tr id="r2" class="expand-row" style="display:none">
+              <td colspan="8">
+                <div class="expand-panel">
+                  <h4><span style="color:#3b82f6">Add-ons</span> for Chicken Biryani</h4>
+                  <div class="addon-list">
+                    <div class="addon-item checked">
+                      <input type="checkbox" checked id="b1"/><label for="b1">Extra Raita</label>
+                      <span class="price-tag">₹30</span>
+                    </div>
+                    <div class="addon-item">
+                      <input type="checkbox" id="b2"/><label for="b2">Garlic Sauce</label>
+                      <span class="price-tag">₹25</span>
+                    </div>
+                    <div class="addon-item">
+                      <input type="checkbox" id="b3"/><label for="b3">Extra Masala</label>
+                      <span class="price-tag">₹15</span>
+                    </div>
+                  </div>
+                  <div class="expand-footer">
+                    <button class="btn-primary" onclick="toggleExpand('r2')">Apply Changes</button>
+                    <button class="btn-secondary" onclick="toggleExpand('r2')">Cancel</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 — no addons -->
+            <tr>
+              <td><span class="food-name">Masala Chai</span></td>
+              <td>Beverages</td>
+              <td class="price">₹40</td>
+              <td><span class="status-badge status-active">● Active</span></td>
+              <td><span class="addon-chip none">None</span></td>
+              <td><span class="var-chip none">None</span></td>
+              <td>Veg</td>
+              <td style="color:#94a3b8; font-size:11px">Indian spiced tea</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">↑ Click any chip (e.g., "3 add-ons ▾") to see the inline expand panel. Dirty row: amber background + save indicator appears in toolbar.</p>
+    </div>
+  </div>
+
+  <!-- OQ Decisions Table -->
+  <p class="section-title">OPEN QUESTIONS — 5 DECISIONS NEEDED</p>
+  <div class="decision-grid">
+
+    <!-- OQ-1 -->
+    <div class="decision-card winner">
+      <div class="decision-header">
+        <h3>OQ-1 · Expand Pattern</h3>
+        <span class="oq">How to edit addons per row?</span>
+      </div>
+      <div class="decision-body">
+        <div class="option recommended">
+          <div class="option-label"><span class="tag">RECOMMENDED</span><h4>Option A — Sub-row inline</h4></div>
+          <p>Clicking the chip opens a sub-row directly below in the table. Checkbox list of all addons; pre-checked = currently assigned. Apply button saves.</p>
+          <p class="pros">✔ Consistent with table layout · No context loss · Simpler to implement · One row at a time</p>
+          <p class="cons">✗ Scrolling needed for 97+ rows; sub-row adds height</p>
+        </div>
+        <div class="option alternate">
+          <div class="option-label"><span class="tag">ALTERNATE</span><h4>Option B — Side drawer</h4></div>
+          <p>Clicking the chip slides open a right-side drawer (like ProductForm) showing the full addon list for that food.</p>
+          <p class="pros">✔ More space for future features</p>
+          <p class="cons">✗ Hides the table · Breaks BulkEditor's "spreadsheet feel" · Higher implementation complexity</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OQ-2 -->
+    <div class="decision-card winner">
+      <div class="decision-header">
+        <h3>OQ-2 · Row Dimming</h3>
+        <span class="oq">When expanded, should other rows dim?</span>
+      </div>
+      <div class="decision-body">
+        <div class="option recommended">
+          <div class="option-label"><span class="tag">RECOMMENDED</span><h4>Option A — No dimming</h4></div>
+          <p>Other rows remain fully visible. Only the expanded sub-row and its parent row are highlighted (green tint). User can close panel and open a different row freely.</p>
+          <p class="pros">✔ Simpler · Less intrusive · User can still scan other rows</p>
+          <p class="cons">✗ Slightly busy if many rows</p>
+        </div>
+        <div class="option alternate">
+          <div class="option-label"><span class="tag">ALTERNATE</span><h4>Option B — Dim other rows</h4></div>
+          <p>All other rows are dimmed (opacity 0.4) when one row is expanded, like a modal overlay effect.</p>
+          <p class="pros">✔ Clear focus state</p>
+          <p class="cons">✗ More CSS complexity · Can't compare addons across rows</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OQ-3 -->
+    <div class="decision-card winner">
+      <div class="decision-header">
+        <h3>OQ-3 · Variation Column Depth</h3>
+        <span class="oq">Read-only summary or allow edits?</span>
+      </div>
+      <div class="decision-body">
+        <div class="option recommended">
+          <div class="option-label"><span class="tag">RECOMMENDED</span><h4>Option A — Read-only summary</h4></div>
+          <p>Variation column shows group count chip. Expanding shows group names + values (as shown in mockup above). No editing. Footer link: "Full variation edit in Product Form".</p>
+          <p class="pros">✔ Low risk · No new API writes needed · Safe for P2 priority item · Scope-limited</p>
+          <p class="cons">✗ Users can't edit variations in bulk (but full edit is available via ProductForm)</p>
+        </div>
+        <div class="option alternate">
+          <div class="option-label"><span class="tag">ALTERNATE</span><h4>Option B — Allow option-value edits</h4></div>
+          <p>Let users add/remove option values within existing variation groups. POST /product/manage-variation per change.</p>
+          <p class="pros">✔ More powerful</p>
+          <p class="cons">✗ Significant risk · Complex dirty tracking · Multiple API write paths · Should be a separate CR</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OQ-4 -->
+    <div class="decision-card winner">
+      <div class="decision-header">
+        <h3>OQ-4 · Addon List Fetch</h3>
+        <span class="oq">When to fetch the restaurant addon pool?</span>
+      </div>
+      <div class="decision-body">
+        <div class="option recommended">
+          <div class="option-label"><span class="tag">RECOMMENDED</span><h4>Option A — Fetch once on BulkEditor mount</h4></div>
+          <p>BulkEditor receives <code>addons</code> prop from <code>MenuManagementPanel</code> (already fetched on panel open). No new fetch needed — BulkEditor already receives this prop today.</p>
+          <p class="pros">✔ Zero new API calls · Addons already in memory from MenuManagementPanel · Restaurants typically have &lt;50 addons</p>
+          <p class="cons">✗ Stale if user adds a new addon mid-session (but refresh button handles this)</p>
+        </div>
+        <div class="option alternate">
+          <div class="option-label"><span class="tag">ALTERNATE</span><h4>Option B — Fetch lazily per-row on first expand</h4></div>
+          <p>Fetch addon list only when user first expands a row. Cache result for subsequent expansions.</p>
+          <p class="pros">✔ Always fresh</p>
+          <p class="cons">✗ Unnecessary complexity; 97-row BulkEditor doesn't need per-row fetches for a &lt;50 item addon list</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OQ-5 -->
+    <div class="decision-card winner" style="grid-column: 1 / -1;">
+      <div class="decision-header">
+        <h3>OQ-5 · Dirty State for Arrays</h3>
+        <span class="oq">How to detect addon assignment changes?</span>
+      </div>
+      <div class="decision-body" style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+        <div class="option recommended">
+          <div class="option-label"><span class="tag">RECOMMENDED</span><h4>Option A — Sorted JSON.stringify comparison</h4></div>
+          <p>On expand, snapshot the food's current <code>addon_ids[]</code>. On Apply, compare sorted stringified arrays: <code>JSON.stringify([...new].sort()) !== JSON.stringify([...original].sort())</code>. If different, mark row dirty + include <code>addon_ids</code> in <code>buildPayload()</code>.</p>
+          <p class="pros">✔ Accurate · Simple to reason about · No dependency on order of selection</p>
+          <p class="cons">✗ Slightly heavier than integer comparison (negligible for &lt;50 addons)</p>
+        </div>
+        <div class="option alternate">
+          <div class="option-label"><span class="tag">ALTERNATE</span><h4>Option B — Shallow length + Set check</h4></div>
+          <p>Compare lengths first, then use Set symmetric difference: <code>new.some(id => !origSet.has(id)) || orig.some(id => !newSet.has(id))</code>.</p>
+          <p class="pros">✔ Slightly faster</p>
+          <p class="cons">✗ More code to maintain · No real performance gain for &lt;50 addons</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Approval Summary -->
+  <p class="section-title">OWNER APPROVAL CHECKLIST</p>
+  <div class="approval-box">
+    <h3>✅ Confirm each OQ to unblock Gate 2 (Impact Analysis)</h3>
+    <div class="approval-row">
+      <span class="approval-oq">OQ-1</span>
+      <span class="approval-q"><span class="q-text">Expand pattern?</span> <span class="q-context">Sub-row inline in table vs side drawer</span></span>
+      <span class="approval-rec">Recommended: Sub-row (A)</span>
+    </div>
+    <div class="approval-row">
+      <span class="approval-oq">OQ-2</span>
+      <span class="approval-q"><span class="q-text">Dim other rows on expand?</span> <span class="q-context">No dimming vs dim to 40%</span></span>
+      <span class="approval-rec">Recommended: No dimming (A)</span>
+    </div>
+    <div class="approval-row">
+      <span class="approval-oq">OQ-3</span>
+      <span class="approval-q"><span class="q-text">Variation column depth?</span> <span class="q-context">Read-only summary vs allow option edits</span></span>
+      <span class="approval-rec">Recommended: Read-only (A)</span>
+    </div>
+    <div class="approval-row">
+      <span class="approval-oq">OQ-4</span>
+      <span class="approval-q"><span class="q-text">Addon list fetch strategy?</span> <span class="q-context">Once on mount (use existing prop) vs lazy per-row</span></span>
+      <span class="approval-rec">Recommended: Once on mount (A)</span>
+    </div>
+    <div class="approval-row">
+      <span class="approval-oq">OQ-5</span>
+      <span class="approval-q"><span class="q-text">Array dirty tracking method?</span> <span class="q-context">sorted JSON.stringify vs Set-based comparison</span></span>
+      <span class="approval-rec">Recommended: JSON.stringify (A)</span>
+    </div>
+    <p style="margin-top:16px; font-size:13px; color:#64748b">
+      Reply with <strong>"all A"</strong> to approve all recommendations, or specify overrides per OQ (e.g., "OQ-2=B, rest A").
+      Once approved, Gate 2 (Impact Analysis) will proceed immediately.
+    </p>
+  </div>
+
+  <!-- Technical scope note -->
+  <p class="section-title">TECHNICAL SCOPE (informational — Gates 2+3 will detail)</p>
+  <div class="mockup-section">
+    <div class="mockup-header"><h2>Planned File Changes (preliminary)</h2></div>
+    <div class="mockup-body">
+      <table class="oq-table">
+        <thead><tr><th>#</th><th>File</th><th>Type</th><th>What changes</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code>components/panels/menu/BulkEditor.jsx</code></td><td>EDIT</td><td>+<code>expandedRowId</code> state, +addon/variation columns in BASE_COLUMNS, +sub-row render, +<code>isDirty</code> for arrays, +<code>addon_ids</code> in buildPayload</td></tr>
+          <tr><td>2</td><td><code>api/transforms/menuManagementTransform.js</code></td><td>EDIT</td><td>Verify <code>buildRow</code> captures <code>addOns[]</code> + <code>variations[]</code> from food. (<em>Currently dropped</em> — <code>f.addOns</code> and <code>f.variations</code> not mapped in BulkEditor's <code>buildRow</code>)</td></tr>
+          <tr><td>3</td><td><code>components/panels/menu/AddonExpandPanel.jsx</code></td><td>NEW</td><td>Checkbox list of addons for a single food row</td></tr>
+          <tr><td>4</td><td><code>components/panels/menu/VariationExpandPanel.jsx</code></td><td>NEW</td><td>Read-only variation summary for a food row</td></tr>
+        </tbody>
+      </table>
+      <p class="footnote" style="margin-top:12px">Files NOT touching: ProductForm.jsx, MenuManagementPanel.jsx, all R5 hotspots (OrderEntry, CollectPaymentPanel, orderTransform, DashboardPage, LoadingPage)</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleExpand(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+  }
+}
+</script>
+</body>
+</html>

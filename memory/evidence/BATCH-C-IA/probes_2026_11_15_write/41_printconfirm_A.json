@@ -1,0 +1,16 @@
+{
+ "status": 200,
+ "at_utc": "2026-11-15 08:23:26",
+ "body": {
+  "success": true,
+  "message": "Print counters updated successfully",
+  "data": {
+   "order_id": 1578757,
+   "bill_print_count": 1,
+   "kot_print_count": 0,
+   "socket_publish_attempted": true,
+   "bill_print": "Yes",
+   "kot_print": "No"
+  }
+ }
+}

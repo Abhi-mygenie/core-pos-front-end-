@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>BATCH-A_CR-494_API_CONTRACT_2026_11_15 — MyGenie POS</title><style>body{font-family:Georgia,serif;margin:0;color:#1d1d1b;background:#faf8f3}.wrap{max-width:1000px;margin:0 auto;padding:28px 32px}a{color:#b4471b}table{border-collapse:collapse;width:100%;font-size:13px;background:#fff;margin:10px 0}th,td{border:1px solid #d6d2c4;padding:6px 8px;text-align:left;vertical-align:top}th{background:#efeadb}code{background:#efeadb;padding:1px 4px;border-radius:3px;font-size:12px}pre{background:#efeadb;padding:10px;overflow:auto}blockquote{border-left:4px solid #d6d2c4;margin:8px 0;padding:4px 12px;color:#555}:target{background:#ffe2c2;outline:2px solid #b4471b}.top{font-size:13px;margin-bottom:16px}.copy-md{font:inherit;font-size:11px;padding:2px 7px;border:1px solid #b4471b;background:#faf8f3;color:#b4471b;border-radius:3px;cursor:pointer;vertical-align:middle}.copy-md:hover{background:#b4471b;color:#fff}</style></head><body><div class="wrap"><p class="top"><a href="/backend-tracker.html" data-testid="back-to-tracker">&larr; Backend tracker</a> · <a href="/design-tracker.html">Design tracker</a> · <a href="/briefs/BATCH-A_CR-494_API_CONTRACT_2026_11_15.md" target="_blank">Open&nbsp;.md</a> <button class="copy-md" data-src="/briefs/BATCH-A_CR-494_API_CONTRACT_2026_11_15.md" title="Copy .md to clipboard">Copy&nbsp;.md</button></p><h1>API Contract — CR-494 PIN, thresholds, daily limits — v1 — 2026-11-15</h1>
+<p>Backend: Gyan · IDs: BA-11..BA-15 · FE plan: <code>plans/BATCH-A_CR-494_IMPLEMENTATION_PLAN_2026_11_15.md</code> · Mockup M4
+Rules: <code>contracts/BATCH-A_API_CONTRACTS_INDEX_2026_11_15.md</code> — <strong>names LOCKED; renamed/changed fields → backend reply rejected.</strong>
+All endpoints NEW (guessed paths 404 today).</p>
+<h2>1. Action enum (<code>action</code>) — used everywhere below</h2>
+<p><code>cancel_before_serve</code> · <code>cancel_after_serve</code> · <code>cancel_after_bill</code> · <code>edit_after_bill</code> · <code>discount</code> · <code>complimentary</code>
+Serve stage is decided by the backend (FE sends its best guess; backend's stage wins).</p>
+<h2>2. Read config — <code>GET /api/v2/vendoremployee/pin/config</code> (BA-11, BA-12, BA-14, BA-15a)</h2>
+<pre><code class="language-json">{
+  &quot;actions&quot;: [
+    { &quot;action&quot;: &quot;cancel_before_serve&quot;, &quot;pin_enabled&quot;: &quot;Yes&quot;, &quot;threshold_amount&quot;: 500.00 }
+  ],
+  &quot;daily_limits&quot;: {
+    &quot;cancel_amount&quot;: 2000.00, &quot;cancel_count&quot;: 5,
+    &quot;discount_amount&quot;: 1500.00, &quot;discount_count&quot;: 10
+  }
+}
+</code></pre>
+<p>Rule: <code>amount ≤ threshold_amount</code> → no PIN; <code>&gt;</code> → PIN; <code>threshold_amount = 0</code> → PIN always. Amounts in ₹ <strong>incl. tax</strong>; for <code>discount</code> = ₹ of the discount. <code>edit_after_bill</code> applies to everyone (BA-13). <strong>Never returns PIN values.</strong></p>
+<h2>3. Read my usage today — <code>GET /api/v2/vendoremployee/pin/usage</code> (BA-14, BA-15c)</h2>
+<pre><code class="language-json">{ &quot;business_date&quot;: &quot;2026-11-15&quot;,
+  &quot;cancel_amount_used&quot;: 850.00, &quot;cancel_count_used&quot;: 2,
+  &quot;discount_amount_used&quot;: 300.00, &quot;discount_count_used&quot;: 1 }
+</code></pre>
+<p>Server-side, per user, shared across devices, reset per business day. Over a limit → action allowed only with PIN.</p>
+<h2>4. Verify PIN — <code>POST /api/v2/vendoremployee/pin/verify</code> (BA-15b)</h2>
+<p>Request: <code>{ "action": "&lt;enum&gt;", "pin": "&lt;string&gt;", "order_id": 123, "amount": 640.00 }</code>
+Response OK: <code>{ "verified": "Yes", "pin_token": "&lt;opaque&gt;", "expires_at": "&lt;ISO8601&gt;" }</code>
+Response fail: 403 <code>PIN_INVALID</code>.
+<code>pin_token</code> is single-use, tied to <code>action</code> + <code>order_id</code>.</p>
+<h2>5. Protected calls carry the token (BA-15d)</h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>New field</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT .../order/cancel-food-item</code></td>
+<td><code>pin_token</code> (string, optional)</td>
+<td>NEW</td>
+</tr>
+<tr>
+<td><code>PUT .../order/order-status-update</code> (cancel)</td>
+<td><code>pin_token</code></td>
+<td>NEW</td>
+</tr>
+<tr>
+<td>update-order after bill print</td>
+<td><code>pin_token</code></td>
+<td>NEW</td>
+</tr>
+<tr>
+<td>bill payment / place-order with discount or comp</td>
+<td><code>pin_token</code></td>
+<td>NEW</td>
+</tr>
+</tbody>
+</table>
+<p>If a PIN is required (threshold or daily limit) and <code>pin_token</code> is missing/invalid → 403 <code>PIN_REQUIRED</code>. Daily counters update on success.</p>
+<h2>6. Admin (BA-11)</h2>
+<p>PINs, thresholds and limits set in backend admin (phase 1). No FE admin screen.</p>
+<h2>7. Errors</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PIN_REQUIRED</code></td>
+<td>403</td>
+<td>PIN needed, token missing/expired</td>
+</tr>
+<tr>
+<td><code>PIN_INVALID</code></td>
+<td>403</td>
+<td>wrong PIN on verify</td>
+</tr>
+</tbody>
+</table>
+<h2>8. Backend sign-off</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>OK / ETA / Not feasible</th>
+<th>Notes</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td id="BA-11">BA-11</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="BA-12">BA-12</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="BA-13">BA-13</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="BA-14">BA-14</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td id="BA-15">BA-15</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table><script>document.querySelectorAll('.copy-md').forEach(function(b){b.onclick=function(e){e.preventDefault();fetch(b.dataset.src).then(function(r){return r.text()}).then(function(t){if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000)});}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.textContent='Copied!';setTimeout(function(){b.textContent='Copy .md'},2000);}}).catch(function(){b.textContent='Error'});}});</script></div></body></html>

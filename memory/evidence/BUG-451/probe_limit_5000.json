@@ -1,0 +1,11 @@
+{
+  "request": "GET /api/v1/vendoremployee/get-products-list?limit=5000&offset=1&type=all",
+  "http": 200,
+  "total_size": 561,
+  "limit_echo": "5000",
+  "offset_echo": "1",
+  "returned": 561,
+  "restaurant": "owner@yabyum.com (yabyum)",
+  "date": "2026-09-24",
+  "token": "<masked>"
+}

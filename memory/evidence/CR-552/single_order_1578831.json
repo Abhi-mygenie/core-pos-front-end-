@@ -1,0 +1,1146 @@
+{
+  "orders": [
+    {
+      "id": 1578831,
+      "restaurant_order_id": "000774",
+      "user_id": 51322,
+      "employee_id": 3416,
+      "user_name": "poly",
+      "order_amount": 2072.99,
+      "order_sub_total_without_tax": 1973.4,
+      "order_sub_total_amount": 1794,
+      "restaurant_discount_amount": 0,
+      "order_discount": "0.00",
+      "discount_value": "0.00",
+      "order_discount_type": null,
+      "discount_type": null,
+      "round_up": "0.92",
+      "total_service_tax_amount": "179.40",
+      "total_gst_tax_amount": "98.67",
+      "total_vat_tax_amount": "0.00",
+      "gst_tax": "98.67",
+      "vat_tax": "0.00",
+      "service_tax": "179.40",
+      "order_note": "",
+      "print_kot": "Yes",
+      "print_bill_status": "No",
+      "order_type": "dinein",
+      "checked": 1,
+      "restaurant_id": 672,
+      "table_id": 7874,
+      "waiter_id": 3416,
+      "daily_token": "0009",
+      "tip_amount": "0.00",
+      "tip_tax_amount": "0.00",
+      "f_order_status": 2,
+      "b_order_status": 1,
+      "k_order_status": 1,
+      "order_status": "queue",
+      "tablepart": null,
+      "parent_order_id": null,
+      "payment_status": "unpaid",
+      "payment_method": "cash_on_delivery",
+      "payment_type": "postpaid",
+      "delivery_man_status": "No",
+      "order_dispatch_status": "No",
+      "delivery_man": null,
+      "schedule_at": null,
+      "delivery_man_id": null,
+      "send_payment_link": null,
+      "payment_id": null,
+      "audio_file": "",
+      "order_edit_count": 5,
+      "delivery_charge": 0,
+      "cancel_at": null,
+      "canceled_by": null,
+      "delivery_address": {
+        "contact_person_name": "poly",
+        "contact_person_number": "8880003245",
+        "address_type": "Delivery",
+        "address": "226P+CGV, Nagorcem, Canacona, Goa 403702, India",
+        "pincode": "",
+        "city": "",
+        "floor": "",
+        "road": "",
+        "house": "",
+        "latitude": "15.01102261175794",
+        "longitude": "74.03641838879393"
+      },
+      "room_discount": null,
+      "created_at": "2026-11-17 23:07:05",
+      "updated_at": "2026-11-18 02:06:47",
+      "user": {
+        "id": 51322,
+        "f_name": "poly",
+        "l_name": "",
+        "phone": "+918880003245",
+        "email": "temp_6afc9e27374868.97755132@mygenie.online",
+        "user_restaurant": {
+          "user_id": 51322,
+          "name": "poly"
+        }
+      },
+      "vendorEmployee": {
+        "id": 3416,
+        "f_name": "Manager",
+        "l_name": null
+      },
+      "restaurantTable": {
+        "id": 7874,
+        "restaurant_id": 672,
+        "title": null,
+        "table_no": "7",
+        "waiter_id": 3416,
+        "rtype": "TB",
+        "waiter": {
+          "id": 3416,
+          "f_name": "Manager",
+          "l_name": null
+        }
+      },
+      "orderDetails": [
+        {
+          "id": 3969363,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245292,
+            "name": "Manchurian",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Paneer",
+                    "optionPrice": "40"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "100"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "manchurian-1793719938",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 78,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:18.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "KDS",
+          "quantity": 1,
+          "food_status": 2,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": "2026-11-18 00:12:32",
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 0,
+          "created_at": "2026-11-17 23:07:05",
+          "updated_at": "2026-11-18 02:06:47"
+        },
+        {
+          "id": 3969364,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245293,
+            "name": "Hot Garlic Sauce",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "50"
+                  },
+                  {
+                    "label": "Fish",
+                    "optionPrice": "100"
+                  },
+                  {
+                    "label": "Prawns",
+                    "optionPrice": "300"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "hot-garlic-sauce-1793719939",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 77,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:19.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "FOOD",
+          "quantity": 1,
+          "food_status": 7,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": null,
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 1,
+          "created_at": "2026-11-18 00:04:15",
+          "updated_at": "2026-11-18 02:06:47"
+        },
+        {
+          "id": 3969365,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245293,
+            "name": "Hot Garlic Sauce",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "50"
+                  },
+                  {
+                    "label": "Fish",
+                    "optionPrice": "100"
+                  },
+                  {
+                    "label": "Prawns",
+                    "optionPrice": "300"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "hot-garlic-sauce-1793719939",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 77,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:19.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "FOOD",
+          "quantity": 1,
+          "food_status": 7,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": null,
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 2,
+          "created_at": "2026-11-18 00:13:05",
+          "updated_at": "2026-11-18 02:06:47"
+        },
+        {
+          "id": 3969366,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245293,
+            "name": "Hot Garlic Sauce",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "50"
+                  },
+                  {
+                    "label": "Fish",
+                    "optionPrice": "100"
+                  },
+                  {
+                    "label": "Prawns",
+                    "optionPrice": "300"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "hot-garlic-sauce-1793719939",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 77,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:19.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "FOOD",
+          "quantity": 1,
+          "food_status": 7,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": null,
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 3,
+          "created_at": "2026-11-18 00:57:27",
+          "updated_at": "2026-11-18 02:06:47"
+        },
+        {
+          "id": 3969367,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245293,
+            "name": "Hot Garlic Sauce",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "50"
+                  },
+                  {
+                    "label": "Fish",
+                    "optionPrice": "100"
+                  },
+                  {
+                    "label": "Prawns",
+                    "optionPrice": "300"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "hot-garlic-sauce-1793719939",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 77,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:19.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "FOOD",
+          "quantity": 1,
+          "food_status": 7,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": null,
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 4,
+          "created_at": "2026-11-18 00:58:48",
+          "updated_at": "2026-11-18 02:06:47"
+        },
+        {
+          "id": 3969368,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245293,
+            "name": "Hot Garlic Sauce",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "50"
+                  },
+                  {
+                    "label": "Fish",
+                    "optionPrice": "100"
+                  },
+                  {
+                    "label": "Prawns",
+                    "optionPrice": "300"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "hot-garlic-sauce-1793719939",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 77,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:19.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "FOOD",
+          "quantity": 1,
+          "food_status": 7,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": null,
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 5,
+          "created_at": "2026-11-18 02:06:47",
+          "updated_at": "2026-11-18 02:06:47"
+        }
+      ],
+      "serve_order_details": [],
+      "ready_order_details": [
+        {
+          "id": 3969363,
+          "order_id": 1578831,
+          "food_details": {
+            "id": 245292,
+            "name": "Manchurian",
+            "description": "",
+            "image": null,
+            "category_id": 11053,
+            "category_ids": [
+              {
+                "id": "11053",
+                "position": 0
+              }
+            ],
+            "variations": [
+              {
+                "name": "Choose",
+                "type": "single",
+                "min": 0,
+                "max": 0,
+                "required": "on",
+                "values": [
+                  {
+                    "label": "Veg",
+                    "optionPrice": "0"
+                  },
+                  {
+                    "label": "Paneer",
+                    "optionPrice": "40"
+                  },
+                  {
+                    "label": "Chicken",
+                    "optionPrice": "100"
+                  }
+                ]
+              }
+            ],
+            "add_ons": [],
+            "attributes": "[]",
+            "choice_options": "[]",
+            "price": 299,
+            "portion_size": "",
+            "tax": 5,
+            "tax_type": "GST",
+            "tax_calc": "Exclusive",
+            "discount": 0,
+            "discount_type": "percent",
+            "available_time_starts": "00:00:00",
+            "available_time_ends": "23:59:59",
+            "web_available_time_starts": null,
+            "web_available_time_ends": null,
+            "veg": 0,
+            "allergen": "[]",
+            "egg": 0,
+            "jain": 0,
+            "status": 1,
+            "restaurant_id": 672,
+            "order_count": 0,
+            "avg_rating": 0,
+            "rating_count": 0,
+            "recommended": 0,
+            "slug": "manchurian-1793719938",
+            "food_status": 0,
+            "food_stock": 0,
+            "food_for": "Normal",
+            "dinein": "Yes",
+            "takeaway": "Yes",
+            "delivery": "Yes",
+            "takeaway_charge": "0.00",
+            "delivery_charge": "0.00",
+            "food_order": 78,
+            "prepration_time_min": 0,
+            "serve_time_in_min": 0,
+            "give_discount": "Yes",
+            "is_disable": "N",
+            "complementary": "No",
+            "complementary_price": "0",
+            "item_code": "",
+            "is_inventory": "No",
+            "packed_food": "No",
+            "is_recipe": "N",
+            "recipe_id": null,
+            "live_web": "Y",
+            "stock_out": "N",
+            "pack_charges": "0.00",
+            "created_at": "2026-11-03T15:32:18.000000Z",
+            "updated_at": "2026-11-04T04:40:41.000000Z",
+            "kcal": null,
+            "item_unit": null,
+            "item_unit_price": "0.00",
+            "hsn_code": null,
+            "restaurant_printer_id": null,
+            "upd": 0,
+            "restaurant_name": "Ruby ZAP",
+            "restaurant_status": 1,
+            "restaurant_discount": 0,
+            "restaurant_opening_time": "10:00",
+            "restaurant_closing_time": "23:00",
+            "schedule_order": false,
+            "free_delivery": 0,
+            "min_delivery_time": 0,
+            "max_delivery_time": 0,
+            "cuisines": [],
+            "recipe_status": "No",
+            "recipe": null
+          },
+          "variation": [
+            {
+              "name": "Choose",
+              "type": "single",
+              "min": 0,
+              "max": 0,
+              "required": "on",
+              "values": [
+                {
+                  "label": "Veg",
+                  "optionPrice": "0"
+                }
+              ]
+            }
+          ],
+          "add_ons": [],
+          "unit_price": "299.00",
+          "price": 299,
+          "total_add_on_price": 0,
+          "total_variation_price": "0.00",
+          "gst_tax_amount": "14.95",
+          "vat_tax_amount": "0.00",
+          "tax_amount": 14.95,
+          "discount_on_food": 0,
+          "discount_amount": "0.00",
+          "item_type": "KDS",
+          "quantity": 1,
+          "food_status": 2,
+          "food_level_notes": "",
+          "station": "KDS",
+          "ready_at": "2026-11-18 00:12:32",
+          "serve_at": null,
+          "cancel_at": null,
+          "cancel_by": null,
+          "item_update_count": 0,
+          "created_at": "2026-11-17 23:07:05",
+          "updated_at": "2026-11-18 02:06:47"
+        }
+      ],
+      "associated_order_list": null,
+      "room_info": {},
+      "waiter_call": null
+    }
+  ]
+}

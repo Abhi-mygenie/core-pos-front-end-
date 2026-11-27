@@ -1,0 +1,9 @@
+{
+ "user_id": 51321,
+ "user_name": "TEST_BATCHD_CUST2",
+ "phone": "9999900002",
+ "bill_print": "Yes",
+ "order_edit_count": 3,
+ "amount": 420,
+ "lines": 2
+}

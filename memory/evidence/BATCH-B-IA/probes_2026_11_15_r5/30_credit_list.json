@@ -1,0 +1,499 @@
+{
+ "status": 200,
+ "secs": 1.1,
+ "body": {
+  "employee-tap-list": [
+   {
+    "id": 1659,
+    "name": "louise madam",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "244,746.00",
+    "total_debit": "0.00",
+    "balance": 244746
+   },
+   {
+    "id": 1660,
+    "name": "amey puranik owner",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "28,504.50",
+    "total_debit": "330.00",
+    "balance": 28174.5
+   },
+   {
+    "id": 1675,
+    "name": "ronald cctv boi complenpmetry",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 1698,
+    "name": "YVONNE",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "43,088.00",
+    "total_debit": "0.00",
+    "balance": 43088
+   },
+   {
+    "id": 1699,
+    "name": "BRAD OWNER",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "293,668.50",
+    "total_debit": "0.00",
+    "balance": 293668.5
+   },
+   {
+    "id": 1700,
+    "name": "Abhishek(mygeinie)",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "580.00",
+    "total_debit": "580.00",
+    "balance": 0
+   },
+   {
+    "id": 1701,
+    "name": "amey purnanik",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "66,044.00",
+    "total_debit": "0.00",
+    "balance": 66044
+   },
+   {
+    "id": 1702,
+    "name": "ronald cctv boi",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "1,160.00",
+    "total_debit": "0.00",
+    "balance": 1160
+   },
+   {
+    "id": 1703,
+    "name": "salik photographer",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "12,532.50",
+    "total_debit": "0.00",
+    "balance": 12532.5
+   },
+   {
+    "id": 1707,
+    "name": "Bla Bla",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "784.00",
+    "total_debit": "784.00",
+    "balance": 0
+   },
+   {
+    "id": 1713,
+    "name": "phil louis friend",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 1764,
+    "name": "inga",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "3,285.00",
+    "total_debit": "1,752.00",
+    "balance": 1533
+   },
+   {
+    "id": 1779,
+    "name": "SHUBHAM(SOCIAL MEDIA)",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "29,490.50",
+    "total_debit": "0.00",
+    "balance": 29490.5
+   },
+   {
+    "id": 1821,
+    "name": "photography",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "8,501.50",
+    "total_debit": "0.00",
+    "balance": 8501.5
+   },
+   {
+    "id": 1849,
+    "name": "lewis",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "31,444.50",
+    "total_debit": "0.00",
+    "balance": 31444.5
+   },
+   {
+    "id": 1899,
+    "name": "Phill",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "19,189.50",
+    "total_debit": "19,189.50",
+    "balance": 0
+   },
+   {
+    "id": 1950,
+    "name": "Ankur gupta",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "5,450.00",
+    "total_debit": "5,450.00",
+    "balance": 0
+   },
+   {
+    "id": 1951,
+    "name": "Karen devies",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "4,630.50",
+    "total_debit": "4,630.50",
+    "balance": 0
+   },
+   {
+    "id": 1967,
+    "name": "niko",
+    "mobile": "***",
+    "email": "",
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 1988,
+    "name": "Rajaram Bagli",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,908.50",
+    "total_debit": "0.00",
+    "balance": 2908.5
+   },
+   {
+    "id": 1997,
+    "name": "devid",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "39,126.00",
+    "total_debit": "0.00",
+    "balance": 39126
+   },
+   {
+    "id": 2070,
+    "name": "julia",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "9,999.00",
+    "total_debit": "9,999.00",
+    "balance": 0
+   },
+   {
+    "id": 2077,
+    "name": "anupam",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "798.00",
+    "total_debit": "798.00",
+    "balance": 0
+   },
+   {
+    "id": 2085,
+    "name": "Rahul(Gm)",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "39,435.50",
+    "total_debit": "0.00",
+    "balance": 39435.5
+   },
+   {
+    "id": 2092,
+    "name": "BEX",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,900.50",
+    "total_debit": "0.00",
+    "balance": 1900.5
+   },
+   {
+    "id": 2093,
+    "name": "genevieve",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "7,854.50",
+    "total_debit": "7,854.50",
+    "balance": 0
+   },
+   {
+    "id": 2094,
+    "name": "Devika gamkar",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,018.50",
+    "total_debit": "1,018.50",
+    "balance": 0
+   },
+   {
+    "id": 2117,
+    "name": "rahul SIR",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "262.50",
+    "total_debit": "0.00",
+    "balance": 262.5
+   },
+   {
+    "id": 2127,
+    "name": "lewis dine in after (Agonda)",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "4,260.00",
+    "total_debit": "0.00",
+    "balance": 4260
+   },
+   {
+    "id": 2128,
+    "name": "Philip Terpilowski",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "15,743.00",
+    "total_debit": "15,743.00",
+    "balance": 0
+   },
+   {
+    "id": 2142,
+    "name": "Francesca minerva",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,279.00",
+    "total_debit": "0.00",
+    "balance": 2279
+   },
+   {
+    "id": 2156,
+    "name": "Mr. Devika Gamkhar",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "3,791.00",
+    "total_debit": "3,791.00",
+    "balance": 0
+   },
+   {
+    "id": 2169,
+    "name": "Devika",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2236,
+    "name": "ayush",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2351,
+    "name": "DAISY ROSE",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "16,061.50",
+    "total_debit": "16,061.50",
+    "balance": 0
+   },
+   {
+    "id": 2352,
+    "name": "Emily",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2404,
+    "name": "Devika Gamkhar",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "631.00",
+    "total_debit": "631.00",
+    "balance": 0
+   },
+   {
+    "id": 2411,
+    "name": "Daisy",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2453,
+    "name": "seating vt annaida(daisy rose friend)",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "609.00",
+    "total_debit": "0.00",
+    "balance": 609
+   },
+   {
+    "id": 2488,
+    "name": "deniel",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,468.00",
+    "total_debit": "0.00",
+    "balance": 2468
+   },
+   {
+    "id": 2685,
+    "name": "Matt DJ Boy",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "3,008.00",
+    "total_debit": "0.00",
+    "balance": 3008
+   },
+   {
+    "id": 2686,
+    "name": "DJ(NVS)",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,732.00",
+    "total_debit": "0.00",
+    "balance": 1732
+   },
+   {
+    "id": 2687,
+    "name": "DJ(DISCOKID)",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,376.00",
+    "total_debit": "0.00",
+    "balance": 1376
+   },
+   {
+    "id": 2693,
+    "name": "DJ NIVO",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "2,410.00",
+    "total_debit": "0.00",
+    "balance": 2410
+   },
+   {
+    "id": 2694,
+    "name": "dj( nivo) wife",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "4,600.00",
+    "total_debit": "0.00",
+    "balance": 4600
+   },
+   {
+    "id": 2742,
+    "name": "Pranjal DJ Men",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "735.00",
+    "total_debit": "0.00",
+    "balance": 735
+   },
+   {
+    "id": 2770,
+    "name": "Dj Gaay",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "2,010.00",
+    "total_debit": "2,010.00",
+    "balance": 0
+   },
+   {
+    "id": 2876,
+    "name": "REBECCA PARKER",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "5,309.00",
+    "total_debit": "0.00",
+    "balance": 5309
+   },
+   {
+    "id": 2914,
+    "name": "postage",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "609.00",
+    "total_debit": "0.00",
+    "balance": 609
+   },
+   {
+    "id": 2937,
+    "name": "t 8",
+    "mobile": "***",
+    "email": "***",
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 2995,
+    "name": "inga",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "0.00",
+    "total_debit": "0.00",
+    "balance": 0
+   },
+   {
+    "id": 3010,
+    "name": "boi",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "494.00",
+    "total_debit": "0.00",
+    "balance": 494
+   },
+   {
+    "id": 3038,
+    "name": "khushboo(postage)",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,208.00",
+    "total_debit": "0.00",
+    "balance": 1208
+   },
+   {
+    "id": 3084,
+    "name": "Louice Madom",
+    "mobile": "***",
+    "email": null,
+    "total_credit": "1,964.00",
+    "total_debit": "0.00",
+    "balance": 1964
+   }
+  ],
+  "restaurant-tap-summary": {
+   "total_credit": "967,699.50",
+   "total_debit": "90,622.50",
+   "balance": "877,077.00"
+  }
+ }
+}

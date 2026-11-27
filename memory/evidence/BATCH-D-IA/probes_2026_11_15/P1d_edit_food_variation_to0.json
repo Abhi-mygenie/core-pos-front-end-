@@ -1,0 +1,14 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/api/v2/vendoremployee/product/foods/248235",
+  "json": null,
+  "data": {
+   "food_info": "{\"name\": \"BATCHD_IA_PROBE_EDIT\", \"description\": \"\", \"category_id\": 10739, \"price\": 10, \"discount\": 0, \"discount_type\": \"amount\", \"food_for\": \"Normal\", \"dinein\": \"Yes\", \"delivery\": \"No\", \"takeaway\": \"No\", \"live_web\": \"N\", \"available_time_starts\": \"00:00:00\", \"available_time_ends\": \"23:59:59\", \"prepration_time_min\": 0, \"serve_time_in_min\": 0, \"pack_charges\": \"0\", \"takeaway_charge\": \"0\", \"delivery_charge\": \"0\", \"tax_type\": \"GST\", \"tax\": \"0\", \"complementary\": \"No\", \"give_discount\": \"No\", \"item_code\": \"\", \"kcal\": 0, \"allergens\": \"\", \"item_type\": 1, \"veg\": 1, \"is_inventory\": \"No\", \"packed_food\": \"No\", \"stock_out\": \"N\", \"is_disable\": \"Y\", \"tax_calc\": \"Exclusive\", \"item_unit\": \"\", \"item_unit_price\": \"\", \"variations\": [{\"name\": \"Size\", \"type\": \"single\", \"required\": \"off\", \"min\": 0, \"max\": 0, \"values\": [{\"label\": \"Small\", \"optionPrice\": \"0\"}]}]}"
+  }
+ },
+ "status": 200,
+ "response": {
+  "message": "food updated successfully"
+ }
+}
