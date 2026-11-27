@@ -6,7 +6,9 @@
 **Risk:** LOW
 **Area:** Reports / Analytics
 **Sprint:** oct_cr_batch
-**Status:** BACKEND_CONTRACT_RECEIVED — AWAITING PAGINATION STRATEGY DECISION (OD-598-03)
+**Status:** BACKEND_REVISED_CONTRACT_RECEIVED — FRONTEND_SCOPING_REQUIRED (snapshot architecture)
+**Backend contract v1 received:** 2026-11-27 (Gyan) — 3 gaps filed
+**Backend revised contract v2 received:** 2026-11-27 (Gyan) — all 3 gaps answered
 **Related:** BUG-353 (BACKEND_BLOCKED — ORDER_REPORT_BETA_COMBINED server-side cap, different issue),
              BATCH_REPORTS_FE_FIX_001 Item #6 (GATE_1 — same scope, no dedicated ID, stalled)
 **Backend contract received:** 2026-11-27 (Gyan) — `BUG-598_V1_ORDER_LOGS_API_CONTRACT_2026_11_27.md`
@@ -132,60 +134,56 @@ that the underlying endpoints support wide ranges without timeouts.
 - **RESOLVED 2026-11-27** → No change needed. V1 backend enforces 730-day hard cap
   via HTTP 422. Frontend date pickers already show "Max N days" error. No extra warning needed.
 
-**OD-598-03 — NEW (2026-11-27):** Pagination strategy for Sub-batch B pages — OPEN
-> V1 endpoint always paginates. Frontend currently loads all orders in one call.
-> - **Option A (recommended):** Sequential full-fetch — frontend loops pages until `total_pages` exhausted, merges in memory. No UI changes on OrderLedger/RoomOrders.
-> - **Option B:** True server-side pagination — page controls in UI. `payment_summary` (full range) for header totals. Major UI rebuild.
-> **Blocks:** Sub-batch B implementation planning.
+**OD-598-03 — Pagination strategy — RESOLVED 2026-11-27 v2**
+> **Moot.** Snapshot mechanism makes all-page fetching safe by design. Sequential full-fetch (Option A) is still the implementation approach but snapshot guarantees consistency across all pages. No owner decision needed.
 
-**OD-598-04 — NEW (2026-11-27):** Room Orders filtering gap — BACKEND BRIEF FILED
-> `roomOrdersService.js` pre-scans ALL orders for `order_in === 'RM'/'SRM'`. With pagination,
-> page 2+ room orders are invisible until all pages fetched.
-> **Backend brief:** `backend_briefs/BACKEND_BRIEF_BUG-598_V1_CONTRACT_GAPS_2026_11_27.md` Gap 1
-> **Options offered:** A = `order_in` server-side filter (preferred) | B = confirm fetch-all approach
-> **Blocks:** Room Orders V1 migration planning. Awaiting Gyan response.
+**OD-598-04 — Room Orders filtering — RESOLVED 2026-11-27 v2**
+> **Backend chose Option A.** New `report_scope` param added: `all_orders` or `room_orders`.
+> When `room_orders`: backend filters RM parents server-side before pagination. `room_info` and SRM associations embedded per parent. No cross-page missing rows.
+> `roomOrdersService.js` no longer needs to pre-scan all orders.
+> **One open item (needs Gyan confirmation):** Exact "current frontend status mapping" for which RM parents to exclude (cancelled, merged) must be written down before implementation.
 
-**OD-598-05 — NEW (2026-11-27):** Header totals display on OrderLedger — OPEN
-> V2 `payment_summary` = page only (displayed as full range = silent bug).
-> V1 `payment_summary` = full range (correct). `page_payment_summary` = page only.
-> Confirm display spec: header row uses `payment_summary`, visible rows total uses `page_payment_summary`.
-> **Blocks:** OrderLedger display implementation.
+**OD-598-05 — Header totals display — RESOLVED 2026-11-27 v2**
+> V1 `payment_summary` = full snapshot range (header row). `page_payment_summary` = current page (page subtotal). Display spec confirmed.
 
-**OD-598-06 — NEW (2026-11-27):** Snapshot consistency across page fetches — BACKEND BRIEF FILED
-> Sequential page fetches can see inconsistent data if orders are created mid-fetch.
-> **Backend brief:** `backend_briefs/BACKEND_BRIEF_BUG-598_V1_CONTRACT_GAPS_2026_11_27.md` Gap 2
-> **Options offered:** A = `snapshot_at` timestamp | B = cursor pagination | C = acknowledge + FE notice (recommended fast path)
-> **Blocks:** Order Ledger V1 migration planning. Awaiting Gyan response.
+**OD-598-06 — Snapshot consistency — RESOLVED 2026-11-27 v2 (more complex than asked)**
+> **Backend chose full immutable snapshot mechanism** (not Option C acknowledge-and-document).
+> Two-phase: POST → HTTP 202 + `snapshot_id` → poll until `status=ready` → fetch pages with `snapshot_id`.
+> Snapshot frozen at `captured_at`, retained 30 min from `ready_at`, expires with 410.
+> New fields: `snapshot_id`, `status`, `captured_at`, `ready_at`, `expires_at`.
+> **Frontend impact: significant new architecture.** No existing polling pattern in codebase. Must be scoped before Gate 4 GO.
+> **3 questions still open (need Gyan answers before scoping):**
+> - Typical snapshot preparation time for 30d / 60d / 730d ranges?
+> - Recommended polling interval (Retry-After header value)?
+> - Is 30-min TTL enough for 730-day export sessions?
 
-**OD-598-07 — NEW (2026-11-27):** Room-only financial totals — BACKEND BRIEF FILED
-> `payment_summary` covers all orders. Room Orders header KPIs need room-only figures.
-> **Backend brief:** `backend_briefs/BACKEND_BRIEF_BUG-598_V1_CONTRACT_GAPS_2026_11_27.md` Gap 3
-> **Options offered:** A = auto-resolved if OD-598-04 Option A chosen | B = `room_payment_summary` field | C = defer to Aug-2026 brief
-> **Blocks:** Room Orders header KPI display. Awaiting Gyan response.
-> **Fast path:** OD-598-04 Option A + OD-598-06 Option C → unblocks both Order Ledger + Room Orders in one round-trip.
+**OD-598-07 — Room-only totals — RESOLVED 2026-11-27 v2**
+> **Backend chose Option A.** New objects: `room_summary` (full snapshot) + `page_room_summary` (current page). Both null when `report_scope=all_orders`.
+> 11 fields each: `total_rooms`, `resolved_count`, `unresolved_count`, `total_room_revenue`, `total_room_collected`, `total_room_outstanding`, `folio_total`, `folio_paid`, `folio_outstanding`, `folio_discount`, `folio_transfers`.
+> Backend says these must match `computeFinancials()` in `RoomOrdersMockup.jsx:61`.
+> **One open item:** Parity validation required — sample V1 response must be tested against `computeFinancials()` output for same data before frontend accepts.
 
 ---
 
-## Backend Contract Received (2026-11-27)
+## Backend Contract v2 Received (2026-11-27)
 
 Full contract: `contracts/BUG-598_V1_ORDER_LOGS_API_CONTRACT_2026_11_27.md`
 
-**Key points:**
-- New endpoint: `POST /api/v1/vendoremployee/report/order-logs-report`
-- Mandatory pagination (`page`, `per_page` default 100 max 500)
-- 730-day hard limit enforced via HTTP 422
-- `payment_summary` = full range (new, fixes silent accuracy bug)
-- `page_payment_summary` = current page (renamed from V2's `payment_summary`)
+**v2 additions vs v1:**
+- `report_scope` param: `all_orders` | `room_orders`
+- Immutable snapshot mechanism: `snapshot_id`, two-phase HTTP 202 → poll → pages
+- `room_summary` + `page_room_summary` objects (11 fields, room_orders scope only)
+- Snapshot lifecycle: `captured_at`, `ready_at`, `expires_at` (30-min TTL)
 - V2 unchanged — backward compatible
-- **Status: PROPOSED — not yet implemented. Frontend acceptance is a gate.**
+- **Status: REVISED PROPOSED — not yet implemented. Frontend scoping required.**
 
 ---
 
 ## Gate Status
 
 - Gate 1: **COMPLETE** (this document)
-- Gate 2: **PARTIAL** — Sub-batch A impact analysis ready; Sub-batch B blocked on OD-598-03/04/05
+- Gate 2: **PARTIAL** — Sub-batch A impact analysis ready; Sub-batch B needs snapshot scoping
 - Gate 3: Not started
 - Gate 4 GO: Not given
 - **Sub-batch A Fast Lane:** Still eligible (4 files × 1 line, LOW risk) — can proceed independently of V1
-- **Sub-batch B:** Blocked until OD-598-03 decided + V1 live on preprod
+- **Sub-batch B:** All 3 gaps answered. Blocked on: (a) snapshot polling scoping, (b) RM status mapping confirmation, (c) `room_summary` parity validation, (d) V1 live on preprod

@@ -3,9 +3,9 @@
 **ID:** BUG-598
 **Date:** 2026-11-27
 **Author:** Gyan (backend)
-**Status:** PROPOSED — frontend acceptance required before backend implements
-**Source doc:** BUG-598_V1_ORDER_LOGS_PROPOSED_CONTRACT_2026_11_27.md (uploaded 2026-11-27)
-**Frontend acceptance gate:** Abhishek sign-off required (OD-598-03 — pagination strategy)
+**Status:** REVISED CONTRACT RECEIVED — FRONTEND ACCEPTANCE PENDING SCOPING
+**Backend revised contract received:** 2026-11-27 v2 (Gyan) — all 3 gaps answered
+**Frontend acceptance gate:** Snapshot polling architecture must be scoped before Gate 4 GO
 
 ---
 
@@ -185,10 +185,53 @@ Sequential page fetches can see inconsistent data if orders are created mid-fetc
 
 | Gate | Status |
 |------|--------|
-| Contract proposed by backend | ✅ 2026-11-27 |
-| Frontend gaps brief filed (OD-598-04/06/07) | ✅ 2026-11-27 — `BACKEND_BRIEF_BUG-598_V1_CONTRACT_GAPS_2026_11_27.md` |
-| Gyan answers on 3 gaps | ⏳ PENDING |
-| Frontend acceptance (OD-598-03 + gap answers) | ⏳ BLOCKED on gap answers |
+| Contract v1 proposed by backend | ✅ 2026-11-27 |
+| Frontend gaps brief filed (3 gaps) | ✅ 2026-11-27 — `BACKEND_BRIEF_BUG-598_V1_CONTRACT_GAPS_2026_11_27.md` |
+| Backend revised contract v2 received — all 3 gaps answered | ✅ 2026-11-27 |
+| Snapshot polling scoping (new architecture — no existing pattern in FE) | ⏳ REQUIRED before Gate 4 GO |
+| RM status mapping confirmation (Gyan to write down) | ⏳ PENDING Gyan |
+| `room_summary` parity validation vs `computeFinancials()` | ⏳ PENDING sample data |
+| Snapshot TTL / prep time clarification (3 questions) | ⏳ PENDING Gyan |
+| Frontend formal acceptance | ⏳ BLOCKED on above 4 items |
 | Backend implementation | ⏳ BLOCKED on frontend acceptance |
 | Frontend implementation | ⏳ BLOCKED on backend V1 live |
 | BUG-598 Sub-batch B caps lifted | ⏳ BLOCKED on V1 live |
+
+## v2 Contract Additions (2026-11-27 revised reply)
+
+### New param: `report_scope`
+| Value | Behaviour |
+|-------|-----------|
+| `all_orders` | All orders, existing V2 logic |
+| `room_orders` | RM parent orders only, server-side filtered before pagination |
+
+### Snapshot lifecycle fields (all responses)
+| Field | Type | Meaning |
+|-------|------|---------|
+| `snapshot_id` | string | Omit on first request → creates snapshot. Include on subsequent pages → reads same frozen data |
+| `status` | string | `preparing` (202) or `ready` (200) |
+| `captured_at` | ISO UTC | Consistent read-view capture time |
+| `ready_at` | ISO UTC | Snapshot ready for page reads |
+| `expires_at` | ISO UTC | 30 min after ready_at → 410 if exceeded |
+
+### New room summary objects (room_orders scope only, null for all_orders)
+| Object | Scope |
+|--------|-------|
+| `room_summary` | Full snapshot totals |
+| `page_room_summary` | Current page totals |
+
+**Fields in each (11 total):** `total_rooms`, `resolved_count`, `unresolved_count`, `total_room_revenue`, `total_room_collected`, `total_room_outstanding`, `folio_total`, `folio_paid`, `folio_outstanding`, `folio_discount`, `folio_transfers`
+
+### Snapshot two-phase flow (frontend must implement)
+```
+1. POST { from_date, to_date, sort_by, report_scope } (no snapshot_id)
+   → HTTP 202 + { snapshot_id, status: "preparing", expires_at }
+2. Poll: POST { snapshot_id, page: 1, per_page: 500 }
+   → HTTP 202 (still preparing, check Retry-After header)
+   → HTTP 200 (ready, data returned)
+3. Subsequent pages: POST { snapshot_id, page: N, per_page: 500 }
+   → HTTP 200 (all pages see same frozen data)
+4. Error states:
+   → HTTP 410 Gone = expired (30 min TTL) → create new snapshot
+   → HTTP 500 = preparation failed → show error
+```
